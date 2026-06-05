@@ -4,7 +4,7 @@
 
 ## Related Skill
 
-- Related skills: `repo-context` for project context and `commit-reviewer` for review/commit planning.
+- Related skills: `code-context` for project context and `code-review` for review/commit planning.
 - This prompt is a standalone source asset for implementation tasks.
 - Do not treat this prompt as a runtime dependency of any skill.
 

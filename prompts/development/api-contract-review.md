@@ -4,7 +4,7 @@
 
 ## Related Skill
 
-- Related skill: `commit-reviewer` when API contract review is part of pre-commit review.
+- Related skill: `code-review` when API contract review is part of pre-commit review.
 - This prompt is a standalone source asset for interface contract review.
 - If this flow becomes part of a published skill, update that skill's `references/` files before upgrading the skill.
 

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Review"
+  short_description: "Review dirty-tree ownership, contract chains, and commit plans"
+  default_prompt: "Use $code-review to inspect the full local git change scope, classify dirty-tree ownership, review changed code against repository structure, conventions, interface contract chains, docs, and validation checks, then split the work into feature-based commit groups with exact path-limited staging commands and concise Conventional Commit messages. If updating the skill from upstream, compare the trusted source first and preview proposed changes before writing. Do not commit unless explicitly asked."

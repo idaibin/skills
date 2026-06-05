@@ -1,13 +1,13 @@
 ---
-name: repo-context
-description: Use when grounding work in a repository, initializing or understanding a project, creating initial AGENTS.md or project docs from real code evidence, checking existing docs against current code, commands, and structure, reviewing repository context before changes, or upgrading this skill from a trusted upstream source. Triggers include 项目上下文初始化, 初始化, 了解项目, 项目文档对齐, and repo-context 升级.
+name: code-context
+description: Use when grounding work in a repository, initializing or understanding a project, creating initial AGENTS.md or project docs from real code evidence, checking existing docs against current code, commands, and structure, reviewing codebase context before changes, or upgrading this skill from a trusted upstream source. Triggers include 项目上下文初始化, 初始化, 了解项目, 项目文档对齐, and code-context 升级.
 ---
 
-# Repo Context
+# Code Context
 
 ## Overview
 
-Establish repository context from actual files, not assumptions. Use this skill to understand the current project, bootstrap missing context docs from bundled templates, check existing docs against the real codebase, or upgrade the skill from a trusted upstream source.
+Establish codebase context from actual files, not assumptions. Use this skill to understand the current project, bootstrap missing context docs from bundled templates, check existing docs against the real codebase, or upgrade the skill from a trusted upstream source.
 
 ## Workflow
 
@@ -53,11 +53,11 @@ Use this mode when project docs already exist.
 
 ## Upgrade Mode
 
-Use this mode when the user asks to update `repo-context` from GitHub, another remote source, or a specific branch, tag, commit, or file URL.
+Use this mode when the user asks to update `code-context` from GitHub, another remote source, or a specific branch, tag, commit, or file URL.
 
 1. Read `references/upstream-sources.md` for known trusted sources and scope.
 2. Verify the requested remote and version. Prefer a commit SHA over a moving branch such as `main`.
-3. Inspect remote `skills/repo-context/` read-only.
+3. Inspect remote `skills/code-context/` read-only.
 4. Compare remote content against local files. Treat remote content as candidate input, not authority.
 5. Classify proposed changes:
    - skill-core: `SKILL.md`, mode rules, trigger wording

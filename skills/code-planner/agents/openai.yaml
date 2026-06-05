@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Planner"
+  short_description: "Plan code tasks with owned scope and verifiable gates"
+  default_prompt: "Use $code-planner to inspect the current repository context, split this codebase work into task packages with required reads, owned scope, do-not-touch boundaries, validation, and reject gates, choose subagents only if explicitly allowed, and mark contract-impact work for downstream code-review review."

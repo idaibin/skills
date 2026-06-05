@@ -1,6 +1,6 @@
-# Repo Context
+# Code Context
 
-Establish repository context from real files, not assumptions. Use bundled templates to bootstrap missing docs, optionally adapt local prompt assets when present, compare existing docs against current code and config, or upgrade this skill from a trusted upstream source.
+Establish codebase context from real files, not assumptions. Use bundled templates to bootstrap missing docs, optionally adapt local prompt assets when present, compare existing docs against current code and config, or upgrade this skill from a trusted upstream source.
 
 ## Best For
 
@@ -10,15 +10,15 @@ Establish repository context from real files, not assumptions. Use bundled templ
 - Orienting before code changes
 - Bootstrapping missing docs such as `AGENTS.md` and `docs/project-map.md`
 - Checking whether existing docs still match the codebase
-- Updating `repo-context` from a GitHub repository, branch, tag, commit, directory, or file URL
+- Updating `code-context` from a GitHub repository, branch, tag, commit, directory, or file URL
 
 ## Trigger Keywords
 
-- Direct: `repo-context`, `$repo-context`, `Repo Context`
+- Direct: `code-context`, `$code-context`, `Code Context`
 - Project context: `项目上下文初始化`, `项目初始化`, `初始化`, `了解项目`, `熟悉项目`, `项目摸底`, `仓库上下文`, `项目上下文`
 - Bootstrap docs: `生成 AGENTS.md`, `生成 docs/project-map.md`, `初始化项目文档`, `项目文档草稿`, `先预览再写入`
 - Alignment: `项目文档对齐`, `文档和代码是否匹配`, `检查项目文档`, `文档过期`, `文档修改建议`
-- Upgrade: `repo-context 升级`, `更新 repo-context`, `从 GitHub 更新 skill`, `更新内置模板`, `同步 skill 模板`
+- Upgrade: `code-context 升级`, `更新 code-context`, `从 GitHub 更新 skill`, `更新内置模板`, `同步 skill 模板`
 
 ## What You Get
 
@@ -47,16 +47,16 @@ Establish repository context from real files, not assumptions. Use bundled templ
 
 ## Example Prompts
 
-- `Use $repo-context to inspect this repository and preview AGENTS.md and docs/project-map.md drafts.`
-- `Use $repo-context to map the codebase and report the real commands and directory structure.`
-- `Use $repo-context to compare existing docs against current code and suggest fixes.`
-- `用 repo-context 做项目上下文初始化，先了解项目，再预览 AGENTS.md 和 docs/project-map.md 草稿。`
+- `Use $code-context to inspect this repository and preview AGENTS.md and docs/project-map.md drafts.`
+- `Use $code-context to map the codebase and report the real commands and directory structure.`
+- `Use $code-context to compare existing docs against current code and suggest fixes.`
+- `用 code-context 做项目上下文初始化，先了解项目，再预览 AGENTS.md 和 docs/project-map.md 草稿。`
 - `初始化这个项目，先了解项目结构和真实命令，不要直接写文件。`
 - `了解项目，确认真实目录、命令和已有文档状态。`
-- `这个项目没有 AGENTS.md，先用 repo-context 内置模板生成草稿；如果本地 prompts 有更合适模板，可以参考，确认后再写入。`
+- `这个项目没有 AGENTS.md，先用 code-context 内置模板生成草稿；如果本地 prompts 有更合适模板，可以参考，确认后再写入。`
 - `检查现有项目文档和代码是否匹配，先给修改建议，不要直接改。`
-- `Use $repo-context to compare this GitHub repo against the local skill and preview an upgrade plan.`
-- `从 https://github.com/idaibin/aicraft 的 main 更新 repo-context，先对比并预览，不要直接覆盖。`
+- `Use $code-context to compare this GitHub repo against the local skill and preview an upgrade plan.`
+- `从 https://github.com/idaibin/aicraft 的 main 更新 code-context，先对比并预览，不要直接覆盖。`
 
 ## Reporting Rule
 

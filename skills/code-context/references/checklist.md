@@ -1,6 +1,6 @@
-# Repo Context Checklist
+# Code Context Checklist
 
-Use this checklist when applying `repo-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Chinese trigger phrases include `项目上下文初始化`, `项目初始化`, `初始化`, `了解项目`, `项目文档对齐`, and `repo-context 升级`.
+Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Chinese trigger phrases include `项目上下文初始化`, `项目初始化`, `初始化`, `了解项目`, `项目文档对齐`, and `code-context 升级`.
 
 ## Scan Order
 
@@ -65,7 +65,7 @@ Use this checklist when applying `repo-context` to understand a repository, boot
 - Read `references/upstream-sources.md` for known default sources.
 - Prefer commit SHA over moving branches; resolve and report the SHA when using a branch.
 - Inspect upstream content read-only.
-- Compare upstream `skills/repo-context/` against local files.
+- Compare upstream `skills/code-context/` against local files.
 - Classify candidates as skill-core, bundled-reference, agent-interface, or reject.
 - Preview proposed changes first. Do not write files until the user confirms.
 - Keep the skill self-contained; do not introduce required external prompt dependencies or pull from remote repository-level `prompts/`.

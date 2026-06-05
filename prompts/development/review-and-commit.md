@@ -4,10 +4,10 @@
 
 ## Related Skill
 
-- Related skill: `commit-reviewer`.
-- Prefer `commit-reviewer` for full local change review, feature-based commit grouping, path-limited staging plans, and skill upgrade behavior.
+- Related skill: `code-review`.
+- Prefer `code-review` for full local change review, feature-based commit grouping, path-limited staging plans, and skill upgrade behavior.
 - This prompt remains a standalone source asset for review-and-commit task language.
-- If prompt changes are required by `commit-reviewer`, update `skills/commit-reviewer/references/` in the skill package before upgrading the skill.
+- If prompt changes are required by `code-review`, update `skills/code-review/references/` in the skill package before upgrading the skill.
 
 ## 目标
 

@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this checklist before planning or making commits in a dirty worktree, or when upgrading this skill from a trusted upstream source. Chinese trigger phrases include `提交前审查`, `审查所有改动`, `分类提交`, `拆分 commit`, `生成 commit message`, and `commit-reviewer 升级`.
+Use this checklist before planning or making commits in a dirty worktree, reviewing interface contracts, or upgrading this skill from a trusted upstream source. Chinese trigger phrases include `提交前审查`, `审查所有改动`, `接口链路审查`, `分类提交`, `拆分 commit`, `生成 commit message`, and `code-review 升级`.
 
 ## Required Evidence
 
@@ -10,6 +10,7 @@ Use this checklist before planning or making commits in a dirty worktree, or whe
 - If anything is staged, run `git diff --cached --stat` and `git diff --cached --name-status`.
 - Inspect actual diffs for every file that may enter a commit group.
 - Identify the complete local change scope before choosing the commit-planning or staging scope.
+- Identify ownership for every changed file before editing, staging, or committing.
 - If a remote source or version is supplied for this skill, use Upgrade mode.
 
 ## Inventory
@@ -17,7 +18,10 @@ Use this checklist before planning or making commits in a dirty worktree, or whe
 - List files by state: modified, new, deleted, renamed, generated.
 - Group files by intent, not by path alone.
 - Separate code, docs, config, CI, deploy, and refactor work unless they are tightly coupled.
-- Mark unrelated local changes explicitly and leave them untouched.
+- Mark current-session or explicitly requested edits as `task-owned`.
+- Mark pre-existing edits required by the requested work as `related-existing`, then review and modify them only as needed for the requested scope.
+- Mark unrelated pre-existing edits as `unrelated-existing` and leave them untouched.
+- Mark unclear ownership as `unknown`, report it before staging or editing, and ask only when the requested scope cannot be determined from evidence.
 
 ## Completeness
 
@@ -26,6 +30,13 @@ Use this checklist before planning or making commits in a dirty worktree, or whe
 - Verify changed code follows local naming, style, and implementation conventions.
 - Verify docs were updated when contracts, commands, or paths changed.
 - Verify docs and code do not contradict each other.
+- For interface or contract changes, verify the real contract chain end to end:
+  - backend route, endpoint path, request method, and field definitions
+  - request helper, URL shaping, response unwrapping, and error handling
+  - frontend or client type definitions
+  - page, component, service, or caller usage
+  - data transformation, normalization, default values, and compatibility layers
+  - runtime payload or response evidence; write `Not verified` when runtime evidence was not checked
 - Verify tests or validation commands were updated when behavior changed.
 - Check type, lint, build, formatter, unused import, unused definition, and broken reference risk.
 - Check for missing config, workflow, or path updates.
@@ -60,9 +71,9 @@ Use this checklist before planning or making commits in a dirty worktree, or whe
 
 ## Staging Rules
 
-- Prefer exact path-limited staging commands.
+- Use exact path-limited staging commands.
 - Verify staged files before each commit.
-- Do not use `git add .`, `git add -A`, or broad wildcard staging unless the user explicitly asks for that exact scope.
+- Do not use `git add .`, `git add -A`, directory-wide adds, or broad wildcard staging unless the user explicitly approves that exact full scope.
 - If there are pre-existing staged files outside the current group, stop and report the conflict before committing.
 - For direct user requests, default to the full reviewed local change scope unless the user explicitly limits the commit scope.
 - If the user asks to commit only current context, current session, or this task's changes, default to staging only that subset after full-scope review.
@@ -81,7 +92,7 @@ Use this checklist before planning or making commits in a dirty worktree, or whe
 - Read `references/upstream-sources.md` for known default sources.
 - Prefer commit SHA over moving branches; resolve and report the SHA when using a branch.
 - Inspect upstream content read-only.
-- Compare upstream `skills/commit-reviewer/` against local files.
+- Compare upstream `skills/code-review/` against local files.
 - Classify candidates as skill-core, bundled-reference, agent-interface, or reject.
 - Preview proposed changes first. Do not write files until the user confirms or explicitly asks for implementation.
 - Keep the skill self-contained; do not introduce required external prompt dependencies.

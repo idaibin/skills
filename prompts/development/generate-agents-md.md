@@ -4,9 +4,9 @@
 
 ## Related Skill
 
-- Related skill: `repo-context`.
+- Related skill: `code-context`.
 - This prompt is a standalone source asset for project-context bootstrapping.
-- If its rules need to become part of the published skill, update `skills/repo-context/references/` in the skill package before upgrading `repo-context`.
+- If its rules need to become part of the published skill, update `skills/code-context/references/` in the skill package before upgrading `code-context`.
 
 ## 语言
 

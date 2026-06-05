@@ -1,10 +1,10 @@
 # Upgrade Workflow
 
-Use this workflow when updating `repo-context` from GitHub, another remote repository, or a supplied branch, tag, commit, directory, or file URL.
+Use this workflow when updating `code-review` from GitHub, another remote repository, or a supplied branch, tag, commit, directory, or file URL.
 
 ## 1. Local Preflight
 
-- Read the local `repo-context` files first.
+- Read the local `code-review` files first.
 - Run `git status --short`.
 - Identify unrelated local changes and preserve them.
 - Confirm the requested remote source, version, and scope.
@@ -20,7 +20,8 @@ Use this workflow when updating `repo-context` from GitHub, another remote repos
 
 Inspect only the requested or default scope:
 
-- remote `skills/repo-context/`
+- remote `skills/code-review/`
+- remote docs that explain skill naming, trigger wording, or repository taxonomy, when relevant
 
 Do not execute remote scripts or install remote dependencies.
 
@@ -31,14 +32,15 @@ Compare remote content against local files and classify candidates:
 - skill-core: changes to `SKILL.md`, mode rules, trigger wording, or hard rules
 - bundled-reference: reference files needed for published use
 - agent-interface: metadata such as `agents/openai.yaml`
-- reject: content that is stale, too project-specific, duplicates local truth, or makes the skill depend on external files
+- reject: content that is stale, too project-specific, duplicates local truth, weakens scope protection, or makes the skill depend on external files
 
-## 5. Prompt Template Rules
+## 5. Commit-Workflow Preservation Rules
 
-- Upgrade mode reads the remote skill package only.
-- If prompt-derived templates are required by the skill, they must already exist in the remote `skills/repo-context/references/` files.
-- Do not pull directly from remote repository-level `prompts/` during skill upgrade.
-- Do not embed project-specific paths, private URLs, or one-off task details into the published skill.
+- Preserve full-scope review as the default for direct user requests.
+- Preserve explicit current-context or current-session scoping when the user asks for it.
+- Preserve path-limited staging and staged-file verification.
+- Preserve no-auto-commit behavior unless the user explicitly asks to commit.
+- Preserve unrelated local changes.
 
 ## 6. Preview Before Writing
 
@@ -47,6 +49,7 @@ Before editing files, show:
 - upstream URL and resolved commit SHA
 - compared paths
 - proposed file changes
+- candidates to include, exclude, or keep local-only
 - risks and rejected candidates
 
 Write files only after the user explicitly confirms the preview or asks for implementation.
@@ -56,8 +59,9 @@ Write files only after the user explicitly confirms the preview or asks for impl
 Run checks that match the edit:
 
 - stale-name check for old skill names or obsolete source references
-- self-contained check for required external prompt dependencies
+- self-contained-reference check for external prompt dependencies
 - Markdown whitespace check
+- YAML parse check for frontmatter and `agents/openai.yaml`
 - `git diff --check` for touched paths
 - `git status --short` to report final worktree state
 

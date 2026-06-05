@@ -132,13 +132,13 @@ Response:
 
 Input:
 
-- User says: "update commit-reviewer from GitHub main."
+- User says: "update code-review from GitHub main."
 
 Response:
 
-- Read local `commit-reviewer` files first.
+- Read local `code-review` files first.
 - Resolve the upstream branch to a commit SHA.
-- Inspect upstream `skills/commit-reviewer/` read-only.
+- Inspect upstream `skills/code-review/` read-only.
 - Compare local and upstream content.
 - Preview proposed skill-core, bundled-reference, and agent-interface changes.
 - Write files only after the user confirms or explicitly asks to implement the preview.

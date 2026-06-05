@@ -1,6 +1,6 @@
 # Prompt Templates
 
-These templates are bundled with `repo-context` so the skill remains usable after publishing. Local `prompts/` files may supplement these templates, but they are never required.
+These templates are bundled with `code-context` so the skill remains usable after publishing. Local `prompts/` files may supplement these templates, but they are never required.
 
 ## Template Selection
 
