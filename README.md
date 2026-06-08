@@ -23,6 +23,10 @@ The active content should help an agent start with real project context, preserv
   - grouped by use case, such as development workflows, automation, agent systems, and project-specific prompts
   - each file should have a clear task boundary, scenario, prompt text, and usage constraints
 
+## Install Skills From GitHub
+
+For AI-assisted or manual installation from GitHub, use [`INSTALL.md`](INSTALL.md). It lists the exact skill package paths and the direct Codex install command.
+
 ## Sync Local Skills
 
 Install or upgrade all repository skills into the local Codex skills directory:
