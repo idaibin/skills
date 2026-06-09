@@ -22,15 +22,17 @@ python3 ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-githu
   --path skills/code-review
 ```
 
-After installing or upgrading skills, restart Codex so the new skills are loaded.
+Run the same command to upgrade the installed packages from GitHub. After installing or upgrading skills, restart Codex so the new descriptions and metadata are loaded.
 
 ## Local Clone Sync
 
 Use this only when working from a local clone of this repository:
 
 ```bash
+python3 scripts/sync-skills.py --validate-only
 python3 scripts/sync-skills.py
 python3 scripts/sync-skills.py --apply
+python3 scripts/sync-skills.py --validate-only --check-target
 ```
 
-The first command previews the sync. The second writes to `${CODEX_HOME:-~/.codex}/skills`.
+The first command validates source packages without touching local installed skills. The dry run previews the sync. The apply command writes to `${CODEX_HOME:-~/.codex}/skills` and validates the installed target. The final command re-checks that the selected packages are installed and that legacy names are absent.

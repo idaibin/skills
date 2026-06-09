@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Context"
   short_description: "Initialize, align, or upgrade codebase context docs"
-  default_prompt: "Use $code-context to inspect the repository read-only, read AGENTS.md or nearest repo guidance first, check git status, map real commands and paths, then preview missing context docs from bundled templates, compare existing docs against code, or compare a trusted upstream source for a skill upgrade. Local prompts are optional supplements only. Do not write files until the user explicitly confirms."
+  default_prompt: "Use $code-context to inspect the repository read-only, read AGENTS.md or nearest repo guidance first, check git status, map real commands and paths, then preview missing context docs from bundled templates, compare existing docs against code, or compare a trusted upstream source for a skill upgrade. Keep eval cases, usage docs, and metadata aligned when maintaining the skill. Do not write files until the user explicitly confirms."

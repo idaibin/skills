@@ -32,19 +32,22 @@ For AI-assisted or manual installation from GitHub, use [`INSTALL.md`](INSTALL.m
 Install or upgrade all repository skills into the local Codex skills directory:
 
 ```bash
+python3 scripts/sync-skills.py --validate-only
 python3 scripts/sync-skills.py
 python3 scripts/sync-skills.py --apply
 ```
 
-The first command previews the sync. The second writes to `${CODEX_HOME:-~/.codex}/skills`, updates every discovered `skills/*/SKILL.md` package, and removes obsolete legacy skill directories.
+The validation command checks the source packages without requiring local installation. The dry run previews the sync. The apply command writes to `${CODEX_HOME:-~/.codex}/skills`, updates every discovered `skills/*/SKILL.md` package, validates the installed target, and removes obsolete legacy skill directories.
 
 Useful targeted checks:
 
 ```bash
 python3 scripts/sync-skills.py --skill code-planner --apply
-python3 scripts/sync-skills.py --validate-only
+python3 scripts/sync-skills.py --validate-only --check-target
 python3 scripts/sync-skills.py --target /private/tmp/aicraft-skills-test --apply
 ```
+
+After installing or upgrading local skills, restart Codex so updated skill metadata and descriptions are loaded.
 
 ## Principles
 
@@ -52,5 +55,6 @@ python3 scripts/sync-skills.py --target /private/tmp/aicraft-skills-test --apply
 - keep prompt and skill assets directly accessible
 - keep publishable skills self-contained; repo-local prompts can supplement them but should not be required
 - let prompts capture task language, and let skills capture stable execution workflows
+- keep skill trigger/eval cases in `references/eval-cases.md` and validate packages before publishing or syncing
 - retire time-sensitive or old workflow material from the active root
 - avoid mixing transient notes and historical references into the active root

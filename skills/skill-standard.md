@@ -11,6 +11,7 @@ skills/<skill-name>/
   SKILL.md
   agents/openai.yaml
   references/*.md
+  references/eval-cases.md
 ```
 
 Optional `scripts/` or `assets/` are allowed only when they directly support the skill. Do not add package-local `README.md`, changelogs, install notes, or narrative process docs.
@@ -22,7 +23,7 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - `description` must start with `Use when`.
 - `description` must describe trigger conditions, not the full workflow.
 - Keep the frontmatter concise; target description length is under 500 characters.
-- Include stable Chinese trigger phrases when they materially improve routing.
+- Include stable Chinese trigger phrases and realistic user wording when they materially improve routing.
 - Do not keep obsolete skill names in trigger text unless they are explicitly marked as migration or rejection checks.
 
 ## SKILL.md Body
@@ -34,6 +35,7 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - Hard Rules: scope, safety, write, staging, tool, or verification constraints.
 - Output Contract: what the agent must report.
 - References: direct links to reference files that may be loaded only when needed.
+- Maintenance: a short note to update eval cases and metadata when triggers, modes, or output contracts change.
 
 Keep detailed examples, checklists, templates, upstream metadata, and upgrade workflows in `references/`.
 
@@ -45,6 +47,7 @@ Use references for:
 
 - detailed checklists
 - examples
+- trigger, non-trigger, and quality eval cases
 - bundled prompt or document templates
 - upstream source metadata
 - upgrade workflows
@@ -94,13 +97,20 @@ Default upgrade scope is the matching remote skill package: `skills/<skill-name>
 
 Before considering a skill package ready:
 
+- `python3 scripts/sync-skills.py --validate-only`
 - `find skills/<skill-name> -maxdepth 3 -type f | sort`
 - `rg -n "^name:|^description: Use when" skills/<skill-name>/SKILL.md`
 - `rg -n "[ \t]+$" skills/<skill-name>`
 - `git diff --check -- skills/<skill-name>`
+- confirm every `references/*.md` file is linked from `SKILL.md`
+- confirm `references/eval-cases.md` includes trigger, non-trigger, quality, and scoring cases
 - stale-name check for previous names or obsolete aliases
 - self-contained check for required external prompt or doc dependencies
 - `agents/openai.yaml` check for stale display name, short description, or default prompt
+
+After local install or upgrade:
+
+- `python3 scripts/sync-skills.py --validate-only --check-target`
 
 ## Review Rubric
 

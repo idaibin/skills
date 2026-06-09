@@ -62,6 +62,7 @@ Run checks that match the edit:
 - self-contained-reference check for external prompt dependencies
 - Markdown whitespace check
 - YAML parse check for frontmatter and `agents/openai.yaml`
+- `python3 scripts/sync-skills.py --validate-only --check-target` after local install or upgrade in the AICraft source repository
 - `git diff --check` for touched paths
 - `git status --short` to report final worktree state
 

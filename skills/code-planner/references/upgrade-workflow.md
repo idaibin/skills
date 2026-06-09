@@ -60,6 +60,7 @@ Run checks that match the edit:
 - stale-name check for old skill names or obsolete source references
 - self-contained check for required external prompt dependencies
 - Markdown whitespace check
+- `python3 scripts/sync-skills.py --validate-only --check-target` after local install or upgrade in the AICraft source repository
 - `git diff --check -- skills/code-planner`
 - `git status --short` to report final worktree state
 

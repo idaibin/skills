@@ -21,6 +21,7 @@ Use this checklist before planning or making commits in a dirty worktree, review
 - Mark current-session or explicitly requested edits as `task-owned`.
 - Mark pre-existing edits required by the requested work as `related-existing`, then review and modify them only as needed for the requested scope.
 - Mark unrelated pre-existing edits as `unrelated-existing` and leave them untouched.
+- Mark files with both in-scope and out-of-scope hunks as `mixed-hunk`; do not stage the whole file unless every hunk belongs to the current commit group.
 - Mark unclear ownership as `unknown`, report it before staging or editing, and ask only when the requested scope cannot be determined from evidence.
 
 ## Completeness
@@ -73,6 +74,7 @@ Use this checklist before planning or making commits in a dirty worktree, review
 
 - Use exact path-limited staging commands.
 - Verify staged files before each commit.
+- For `mixed-hunk` files, use hunk-level staging or split the file before staging; then verify the staged diff, not only the staged file list.
 - Do not use `git add .`, `git add -A`, directory-wide adds, or broad wildcard staging unless the user explicitly approves that exact full scope.
 - If there are pre-existing staged files outside the current group, stop and report the conflict before committing.
 - For direct user requests, default to the full reviewed local change scope unless the user explicitly limits the commit scope.
@@ -97,3 +99,4 @@ Use this checklist before planning or making commits in a dirty worktree, review
 - Preview proposed changes first. Do not write files until the user confirms or explicitly asks for implementation.
 - Keep the skill self-contained; do not introduce required external prompt dependencies.
 - After writing, run stale-name, self-contained-reference, Markdown whitespace, YAML, `git diff --check`, and status checks.
+- After local install or upgrade in the AICraft source repository, run `python3 scripts/sync-skills.py --validate-only --check-target`.

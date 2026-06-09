@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sync repository skill packages into the local Codex skills directory."""
+"""Validate and sync repository skill packages into the local Codex skills directory."""
 
 from __future__ import annotations
 
@@ -16,6 +16,14 @@ LEGACY_SKILL_NAMES = ("repo-context", "commit-reviewer", "planner")
 SKILL_NAME_RE = re.compile(r"^[a-z0-9-]+$")
 LEGACY_RE = re.compile(
     r"(?<![A-Za-z0-9-])(" + "|".join(re.escape(name) for name in LEGACY_SKILL_NAMES) + r")(?![A-Za-z0-9-])"
+)
+MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+EVAL_CASES_FILE = "eval-cases.md"
+EVAL_REQUIRED_SECTIONS = (
+    "## Trigger Eval",
+    "## Non-Trigger Eval",
+    "## Quality Eval",
+    "## Scoring",
 )
 
 
@@ -48,7 +56,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--validate-only",
         action="store_true",
-        help="validate source packages and matching target packages without copying or deleting",
+        help="validate selected source packages without copying or deleting",
+    )
+    parser.add_argument(
+        "--check-target",
+        action="store_true",
+        help="with --validate-only, also validate matching installed packages in the target directory",
     )
     parser.add_argument(
         "--skill",
@@ -65,6 +78,8 @@ def parse_args() -> argparse.Namespace:
     args = parser.parse_args()
     if args.apply and args.validate_only:
         parser.error("--apply and --validate-only cannot be used together")
+    if args.check_target and not args.validate_only:
+        parser.error("--check-target requires --validate-only")
     return args
 
 
@@ -104,8 +119,52 @@ def has_markdown_reference(package_path: Path) -> bool:
     return references_dir.is_dir() and any(references_dir.glob("*.md"))
 
 
+def markdown_links(markdown_text: str) -> set[str]:
+    links: set[str] = set()
+    for match in MARKDOWN_LINK_RE.finditer(markdown_text):
+        link = match.group(1).split("#", 1)[0]
+        if link and not re.match(r"^[a-z]+://", link):
+            links.add(link)
+    return links
+
+
 def package_files(package_path: Path) -> list[Path]:
     return [path for path in package_path.rglob("*") if path.is_file()]
+
+
+def validate_references(package_path: Path, skill_md_text: str, *, label: str) -> list[str]:
+    errors: list[str] = []
+    references_dir = package_path / "references"
+    if not references_dir.is_dir():
+        errors.append(f"{label}: missing references/")
+        return errors
+
+    reference_files = sorted(references_dir.glob("*.md"))
+    if not reference_files:
+        errors.append(f"{label}: missing references/*.md")
+        return errors
+
+    for nested_reference in sorted(references_dir.rglob("*.md")):
+        if nested_reference.parent != references_dir:
+            relative = nested_reference.relative_to(package_path)
+            errors.append(f"{label}: reference files must be one level deep: {relative}")
+
+    eval_cases = references_dir / EVAL_CASES_FILE
+    if not eval_cases.is_file():
+        errors.append(f"{label}: missing references/{EVAL_CASES_FILE}")
+    else:
+        eval_text = eval_cases.read_text(encoding="utf-8")
+        for section in EVAL_REQUIRED_SECTIONS:
+            if section not in eval_text:
+                errors.append(f"{label}: references/{EVAL_CASES_FILE} missing section {section!r}")
+
+    linked = markdown_links(skill_md_text)
+    for reference_file in reference_files:
+        expected_link = f"references/{reference_file.name}"
+        if expected_link not in linked:
+            errors.append(f"{label}: SKILL.md does not link {expected_link}")
+
+    return errors
 
 
 def validate_package(package: SkillPackage, *, label: str) -> list[str]:
@@ -113,6 +172,7 @@ def validate_package(package: SkillPackage, *, label: str) -> list[str]:
     package_path = package.path
     skill_md = package_path / "SKILL.md"
     openai_yaml = package_path / "agents" / "openai.yaml"
+    skill_md_text = ""
 
     if not SKILL_NAME_RE.match(package.name):
         errors.append(f"{label}: invalid skill directory name: {package.name}")
@@ -120,6 +180,7 @@ def validate_package(package: SkillPackage, *, label: str) -> list[str]:
     if not skill_md.is_file():
         errors.append(f"{label}: missing SKILL.md")
     else:
+        skill_md_text = skill_md.read_text(encoding="utf-8")
         frontmatter = read_frontmatter(skill_md)
         actual_name = frontmatter.get("name")
         description = frontmatter.get("description", "")
@@ -140,6 +201,8 @@ def validate_package(package: SkillPackage, *, label: str) -> list[str]:
 
     if not has_markdown_reference(package_path):
         errors.append(f"{label}: missing references/*.md")
+    else:
+        errors.extend(validate_references(package_path, skill_md_text, label=label))
 
     for forbidden in ("README.md", "CHANGELOG.md", "INSTALL.md"):
         if (package_path / forbidden).exists():
@@ -268,19 +331,22 @@ def main() -> int:
 
     print_package_list("Discovered skill packages:", packages)
 
-    source_errors = validate_source_packages(packages)
+    source_errors = validate_source_packages(selected)
     if source_errors:
         for error in source_errors:
             print(f"error: {error}", file=sys.stderr)
         return 1
 
     if args.validate_only:
-        target_errors = validate_target_packages(target_dir, selected)
-        if target_errors:
-            for error in target_errors:
-                print(f"error: {error}", file=sys.stderr)
-            return 1
-        print(f"validated source and target packages: {target_dir}")
+        if args.check_target:
+            target_errors = validate_target_packages(target_dir, selected)
+            if target_errors:
+                for error in target_errors:
+                    print(f"error: {error}", file=sys.stderr)
+                return 1
+            print(f"validated source and target packages: {target_dir}")
+        else:
+            print(f"validated source packages: {source_dir}")
         return 0
 
     ensure_safe_target(source_dir, target_dir)

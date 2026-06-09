@@ -1,15 +1,15 @@
 # Code Context Checklist
 
-Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Chinese trigger phrases include `项目上下文初始化`, `项目初始化`, `初始化`, `了解项目`, `项目文档对齐`, and `code-context 升级`.
+Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Chinese trigger phrases include `项目上下文初始化`, `项目初始化`, `先了解项目上下文`, `项目摸底`, `项目文档对齐`, and `code-context 升级`.
 
 ## Scan Order
 
 1. Read `AGENTS.md` first when present; use nearest subproject `AGENTS.md` and `AGENT.md` only as fallback.
 2. Run `git status --short` to capture real dirty-tree state.
 3. Read `README.md`, root manifests, lockfiles, and framework/build configs.
-4. If the repo is a monorepo, identify the workspace root and then inspect each app/package boundary.
-5. Map the real source tree.
-6. Read the files that implement project-specific conventions.
+4. If the repo is a monorepo, identify the workspace root and then inspect only the app/package boundaries relevant to the request.
+5. Map the real source tree only to the depth needed for the current answer.
+6. Read the files that implement project-specific conventions when those conventions affect the requested context.
 7. Run baseline checks only with commands already defined by the repo.
 8. Detect context doc state:
    - missing or sparse docs: use Bootstrap mode

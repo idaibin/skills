@@ -1,6 +1,6 @@
 # Code Planner Checklist
 
-Use this checklist when applying `code-planner` to split codebase requirements into executable and verifiable tasks. Chinese trigger phrases include `代码计划`, `任务拆分`, `可执行`, `可验证`, `子代理`, `审查`, and `打回`.
+Use this checklist when applying `code-planner` to split codebase requirements into executable and verifiable tasks. Chinese trigger phrases include `代码计划`, `任务拆分`, `可执行`, `可验证`, `子代理`, `审查计划`, `提交前判断`, and `打回`.
 
 ## Grounding Checklist
 
@@ -73,9 +73,8 @@ Each task should answer:
 
 ## Subagent Decision Checklist
 
-Use subagents only when:
+Use subagents by default when:
 
-- the user explicitly asks for or allows subagents, delegation, or parallel agents
 - subagent tools are available
 - tasks are independent and have disjoint write scopes or read-only review surfaces
 - the main thread can define bounded prompts and audit the result
@@ -84,6 +83,7 @@ Stay sequential when:
 
 - the user forbids subagents
 - delegation tools are unavailable
+- delegation is unnecessary for the task size or risk
 - the work is tightly coupled
 - the next critical-path step must be done locally
 - ownership cannot be made clear

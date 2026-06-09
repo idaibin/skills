@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Planner"
   short_description: "Plan code tasks with owned scope and verifiable gates"
-  default_prompt: "Use $code-planner to inspect the current repository context, split this codebase work into task packages with required reads, owned scope, do-not-touch boundaries, validation, and reject gates, choose subagents only if explicitly allowed, and mark contract-impact work for downstream code-review review."
+  default_prompt: "Use $code-planner to inspect the current repository context, split this codebase work into task packages with required reads, owned scope, do-not-touch boundaries, validation, done criteria, and reject gates, use subagents by default only when tools are available, scopes are independent, ownership is clear, and the main thread can audit outputs; stay sequential when delegation is forbidden, unavailable, unnecessary, tightly coupled, immediately blocking, or ownership is unclear. Mark contract-impact work for downstream code-review review. Keep eval cases, usage docs, and metadata aligned when maintaining the skill."
