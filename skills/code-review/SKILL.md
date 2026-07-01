@@ -43,7 +43,7 @@ Start with local change scope, ownership classification, and main risks. Include
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, ownership, staging, commit, contract-review, or upgrade changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing and `npx skills add https://github.com/rustzen/aicraft --list` after publishing to GitHub.
+When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, ownership, staging, commit, contract-review, or upgrade changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing and `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub.
 
 ## References
 

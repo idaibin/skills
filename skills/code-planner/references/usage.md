@@ -31,4 +31,4 @@ Expect task packages with required reads, owned scope, do-not-touch boundaries, 
 
 ## Maintenance
 
-Use `references/eval-cases.md` for trigger and quality checks. In AICraft, validate with `python3 scripts/validate-skills.py`; after publishing to GitHub, confirm discoverability with `npx skills add https://github.com/rustzen/aicraft --list`.
+Use `references/eval-cases.md` for trigger and quality checks. In AICraft, validate with `python3 scripts/validate-skills.py`; after publishing to GitHub, confirm discoverability with `npx skills add https://github.com/idaibin/aicraft --list`.

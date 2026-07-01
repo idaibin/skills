@@ -32,14 +32,14 @@ The active content should help an agent start with real project context, preserv
 Install or upgrade skills from GitHub with the standard `skills` npm CLI flow:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft
+npx skills add https://github.com/idaibin/aicraft
 npx skills update
 ```
 
 To install only selected skills:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft --skill ops-browser ops-client
+npx skills add https://github.com/idaibin/aicraft --skill ops-browser ops-client
 ```
 
 For the full command list and available skill names, see [`INSTALL.md`](INSTALL.md).

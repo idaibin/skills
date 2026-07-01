@@ -27,7 +27,7 @@ Use these cases when changing `code-review` triggers, ownership labels, staging 
 | Ownership and mixed hunks | Labels ownership, marks `mixed-hunk`, avoids whole-file staging, and verifies staged diff. | Stages mixed files with whole-file `git add`. |
 | Contract-chain review | Traces route/method/fields to helpers, types, callers, shaping, and runtime evidence or `Not verified`. | Stops at endpoint names. |
 | Commit plan | Groups by semantic unit with exact staging scope, validation status, risks, and commit messages. | Uses broad staging or auto-commits. |
-| Upgrade/publish | Compares only `skills/code-review/`, previews before writing, and confirms discoverability with `npx skills add https://github.com/rustzen/aicraft --list` after publishing. | Overwrites directly or skips source validation or publishability checks. |
+| Upgrade/publish | Compares only `skills/code-review/`, previews before writing, and confirms discoverability with `npx skills add https://github.com/idaibin/aicraft --list` after publishing. | Overwrites directly or skips source validation or publishability checks. |
 
 ## Scoring
 

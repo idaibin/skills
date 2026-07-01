@@ -4,8 +4,8 @@ Use this file when applying Upgrade mode. These sources are candidates for updat
 
 ## Default Source
 
-- Repository: `https://github.com/rustzen/aicraft`
-- Git remote: `https://github.com/rustzen/aicraft.git`
+- Repository: `https://github.com/idaibin/aicraft`
+- Git remote: `https://github.com/idaibin/aicraft.git`
 - Default branch: `main`
 - Last verified branch HEAD: `Resolved during upgrade workflow`
 - Last verified date: `Resolved during upgrade workflow`

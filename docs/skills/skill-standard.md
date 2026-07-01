@@ -110,7 +110,7 @@ Before considering a skill package ready:
 
 After publishing to GitHub, confirm the repository is discoverable by the standard installer:
 
-- `npx skills add https://github.com/rustzen/aicraft --list`
+- `npx skills add https://github.com/idaibin/aicraft --list`
 
 ## Review Rubric
 

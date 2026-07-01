@@ -62,7 +62,7 @@ Run checks that match the edit:
 - self-contained-reference check for external prompt dependencies
 - Markdown whitespace check
 - YAML parse check for frontmatter and `agents/openai.yaml`
-- `npx skills add https://github.com/rustzen/aicraft --list` after publishing to GitHub
+- `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub
 - `git diff --check` for touched paths
 - `git status --short` to report final worktree state
 

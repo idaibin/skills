@@ -18,19 +18,19 @@ Do not install the repository root, `prompts/`, `docs/`, or legacy skill names s
 Use the standard `skills` npm CLI flow:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft
+npx skills add https://github.com/idaibin/aicraft
 ```
 
 List available skills without installing:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft --list
+npx skills add https://github.com/idaibin/aicraft --list
 ```
 
 Install selected skills:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft \
+npx skills add https://github.com/idaibin/aicraft \
   --skill code-context code-planner code-review code-security ops-browser ops-client
 ```
 
@@ -39,7 +39,7 @@ For multiple selected skills, pass the names after `--skill` as shown above.
 Install only the operations skills:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft --skill ops-browser ops-client
+npx skills add https://github.com/idaibin/aicraft --skill ops-browser ops-client
 ```
 
 ## Update

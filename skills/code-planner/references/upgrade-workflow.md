@@ -60,7 +60,7 @@ Run checks that match the edit:
 - stale-name check for old skill names or obsolete source references
 - self-contained check for required external prompt dependencies
 - Markdown whitespace check
-- `npx skills add https://github.com/rustzen/aicraft --list` after publishing to GitHub
+- `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub
 - `git diff --check -- skills/code-planner`
 - `git status --short` to report final worktree state
 

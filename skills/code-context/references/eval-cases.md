@@ -25,7 +25,7 @@ Use these cases when changing `code-context` triggers, workflow, outputs, or met
 | Onboarding | Reads repo guidance, checks `git status --short`, maps real commands and paths, and stops when enough evidence exists. | Invents commands or crawls unrelated areas. |
 | Large monorepo | Reads root workspace evidence and relevant package boundaries only; marks unrelated areas `Not verified`. | Inspects every package without task need. |
 | Bootstrap docs | Uses bundled templates, previews drafts, and writes only after confirmation. | Writes before preview approval. |
-| Upgrade/publish | Resolves version, compares only `skills/code-context/`, previews before writing, and confirms discoverability with `npx skills add https://github.com/rustzen/aicraft --list` after publishing. | Overwrites directly or skips source validation before publishing. |
+| Upgrade/publish | Resolves version, compares only `skills/code-context/`, previews before writing, and confirms discoverability with `npx skills add https://github.com/idaibin/aicraft --list` after publishing. | Overwrites directly or skips source validation before publishing. |
 
 ## Scoring
 

@@ -5,7 +5,7 @@ This file defines how AI agents should work on this repository. It is not the pr
 ## Task Routing
 
 - For repository development, documentation edits, prompt edits, skill package edits, reviews, or commits, follow the repository work rules below.
-- Only when the user explicitly asks to install skills from `https://github.com/rustzen/aicraft`, read `INSTALL.md` and follow that installation flow.
+- Only when the user explicitly asks to install skills from `https://github.com/idaibin/aicraft`, read `INSTALL.md` and follow that installation flow.
 - Do not switch into installation mode just because this repository contains `skills/`.
 
 ## Repository Work Rules

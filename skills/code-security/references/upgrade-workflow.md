@@ -32,7 +32,7 @@ git diff --check -- skills/code-security
 After publishing to GitHub, run:
 
 ```bash
-npx skills add https://github.com/rustzen/aicraft --list
+npx skills add https://github.com/idaibin/aicraft --list
 ```
 
 ## Output
