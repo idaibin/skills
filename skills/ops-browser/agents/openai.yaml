@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ops Browser"
+  short_description: "Operate browser sessions cleanly"
+  default_prompt: "Use $ops-browser to inspect and operate this page while preserving existing tabs and user state."

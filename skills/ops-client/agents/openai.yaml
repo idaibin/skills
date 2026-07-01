@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ops Client"
+  short_description: "Operate real desktop app windows"
+  default_prompt: "Use $ops-client to inspect and operate the real desktop app window without relying on a browser preview."
