@@ -16,13 +16,13 @@ Ground an agent in a repository before it guesses. Use it to map real commands, 
 
 Use for prompts like:
 
-- `先了解这个项目，不要猜`
-- `做项目上下文初始化`
-- `确认真实目录、命令和入口`
-- `确认真实命令和真实入口，不要猜`
-- `检查项目文档和代码是否匹配`
-- `生成 AGENTS.md 草稿，先预览`
-- `更新 code-context，先对比`
+- `Understand this project first; do not guess.`
+- `Initialize repository context.`
+- `Confirm the real directories, commands, and entry points.`
+- `Confirm real commands and real entry points before choosing a launch path.`
+- `Check whether project docs match the code.`
+- `Draft AGENTS.md first; preview before writing.`
+- `Update code-context from GitHub; compare first.`
 
 Do not use for generic feature initialization, dirty-tree commit review, or implementation planning; prefer `code-review` or `code-planner` for those.
 

@@ -1,6 +1,6 @@
 # Code Context Checklist
 
-Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Chinese trigger phrases include `项目上下文初始化`, `项目初始化`, `先了解项目上下文`, `项目摸底`, `项目文档对齐`, and `code-context 升级`.
+Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Trigger phrases include `repository context`, `understand this project`, `do not guess`, `real commands`, `real entry points`, `doc/code alignment`, and `code-context upgrade`.
 
 ## Scan Order
 

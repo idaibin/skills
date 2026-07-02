@@ -6,19 +6,20 @@ Use these cases when changing `code-security` triggers, scope, outputs, or metad
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `审查这个接口有没有越权风险。` | Should trigger `code-security`. | Permission and IDOR risk. |
-| `检查 token/session/cookie 处理是否安全。` | Should trigger `code-security`. | Auth/session security. |
-| `发布前做一次轻量安全检查。` | Should trigger `code-security`. | Release security review. |
-| `这个上传接口有没有路径穿越或敏感信息风险？` | Should trigger `code-security`. | Upload and data exposure risk. |
+| `Review this API for authorization or IDOR risk.` | Should trigger `code-security`. | Permission and IDOR risk. |
+| `Check whether token/session/cookie handling is safe.` | Should trigger `code-security`. | Auth/session security. |
+| `Run a lightweight pre-release security check.` | Should trigger `code-security`. | Release security review. |
+| `Does this upload API have path traversal or sensitive data exposure risk?` | Should trigger `code-security`. | Upload and data exposure risk. |
 
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `审查前后端接口字段是否对齐并拆分 commit。` | Should prefer `code-review`. | Contract alignment and commit planning. |
-| `给这个系统做完整 threat model。` | Should prefer `security-threat-model`. | System-wide threat modeling. |
-| `把这个需求拆成可执行任务。` | Should prefer `code-planner`. | Future implementation planning. |
-| `先了解这个仓库真实命令和目录结构。` | Should prefer `code-context`. | Repository grounding. |
+| `Review whether frontend and backend API fields align, then split commits.` | Should prefer `code-review`. | Contract alignment and commit planning. |
+| `Create a full threat model for this system.` | Should prefer `security-threat-model`. | System-wide threat modeling. |
+| `Split this requirement into executable tasks.` | Should prefer `code-planner`. | Future implementation planning. |
+| `Understand this repository's real commands and directory structure first.` | Should prefer `code-context`. | Repository grounding. |
+| `Review all local changes and generate commit groups.` | Should prefer `code-review`. | Dirty-tree review and commit planning. |
 
 ## Quality Eval
 

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://skills.sh/schemas/skills.sh.schema.json",
+  "notGrouped": "bottom",
+  "groupings": [
+    {
+      "title": "Code",
+      "description": "Skills for repository grounding, planning, review, and security checks.",
+      "skills": [
+        "code-context",
+        "code-planner",
+        "code-review",
+        "code-security"
+      ]
+    },
+    {
+      "title": "Operations",
+      "description": "Skills for browser and desktop-client operation with state-safe evidence collection.",
+      "skills": [
+        "ops-browser",
+        "ops-client"
+      ]
+    }
+  ]
+}

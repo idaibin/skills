@@ -25,6 +25,8 @@ EVAL_REQUIRED_SECTIONS = (
     "## Quality Eval",
     "## Scoring",
 )
+FORBIDDEN_DESCRIPTION_PHRASES = ("Triggers include",)
+MAX_DESCRIPTION_CHARS = 500
 
 
 @dataclass(frozen=True)
@@ -153,6 +155,13 @@ def validate_package(package: SkillPackage, *, label: str) -> list[str]:
             errors.append(f"{label}: SKILL.md name must be {package.name!r}, found {actual_name!r}")
         if not description.startswith("Use when"):
             errors.append(f"{label}: SKILL.md description must start with 'Use when'")
+        if len(description) > MAX_DESCRIPTION_CHARS:
+            errors.append(
+                f"{label}: SKILL.md description must be {MAX_DESCRIPTION_CHARS} characters or fewer"
+            )
+        for phrase in FORBIDDEN_DESCRIPTION_PHRASES:
+            if phrase in description:
+                errors.append(f"{label}: SKILL.md description must not contain {phrase!r}")
 
     if not openai_yaml.is_file():
         errors.append(f"{label}: missing agents/openai.yaml")

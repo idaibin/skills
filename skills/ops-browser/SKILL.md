@@ -1,6 +1,6 @@
 ---
 name: ops-browser
-description: Use when operating browser pages for inspection, testing, debugging, verification, form filling, file upload/download, console/network/storage checks, or account/session-sensitive workflows while preserving existing tabs, focus, and user browser state. Triggers include 浏览器操作, 页面调试, 复用标签页, 后台操作, 不抢窗口, console/network, 填写表单, 上传文件, and 关闭临时页面.
+description: Use when operating or verifying browser pages: screenshots, data extraction, local web app testing, form/upload/download workflows, console/network/storage checks, or login/session-sensitive browser evidence.
 ---
 
 # Ops Browser
@@ -25,10 +25,17 @@ Operate browser pages as stateful user sessions. Preserve existing tabs, windows
 - **Form/Upload:** map fields by label, name, role, or test id; confirm file paths and final state before submission.
 - **Debug:** reproduce or inspect the issue with the least disruptive page state changes; isolate cache/auth only when needed.
 
+## Do Not Use For
+
+- Real Tauri, Electron, or native desktop-client runtime/window proof; use `ops-client`.
+- Repository onboarding, planning, local diff review, or security-only review; use the relevant `code-*` skill.
+- Browser-only evidence when the user explicitly requested a real desktop app window.
+
 ## Hard Rules
 
 - Reuse a matching open tab when it is in the right environment/session and will not disturb unrelated user work.
 - Open a fresh page/session when account, cache, auth, upload, or destructive-test isolation is required.
+- Stop before login, MFA, consent, account switching, purchase, permission grant, destructive submit, or irreversible state changes unless the user explicitly authorized that action.
 - Do not submit forms, upload files, clear cache, log out, refresh, or navigate away from user-owned state unless the task requires it.
 - Say `Not verified` for unchecked browser/runtime claims.
 

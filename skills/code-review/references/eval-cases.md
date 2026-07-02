@@ -6,18 +6,20 @@ Use these cases when changing `code-review` triggers, ownership labels, staging 
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `审查所有改动，分类提交。` | Should trigger `code-review`. | Full dirty-tree review. |
-| `只提交当前会话改动，先全量审查。` | Should trigger `code-review`. | Scoped commit plan after full review. |
-| `接口链路审查一下，字段从后端到页面都要看。` | Should trigger `code-review`. | Contract-chain review. |
+| `Review all changes and split commits.` | Should trigger `code-review`. | Full dirty-tree review. |
+| `Commit only the current session changes, but do a full review first.` | Should trigger `code-review`. | Scoped commit plan after full review. |
+| `Review the API contract chain; check fields from backend to page.` | Should trigger `code-review`. | Contract-chain review. |
 
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `先了解这个仓库真实命令和目录结构。` | Should prefer `code-context`. | Repository grounding. |
-| `把这个需求拆成可执行任务。` | Should prefer `code-planner`. | Forward planning. |
-| `这个功能还没写，先拆成实现计划。` | Should prefer `code-planner`. | Future implementation planning. |
-| `直接实现这个功能，不需要审查。` | Should not require `code-review`. | Implementation task. |
+| `Understand this repository's real commands and directory structure first.` | Should prefer `code-context`. | Repository grounding. |
+| `Split this requirement into executable tasks.` | Should prefer `code-planner`. | Forward planning. |
+| `This feature is not written yet; split it into an implementation plan first.` | Should prefer `code-planner`. | Future implementation planning. |
+| `Review this endpoint for token leakage and authorization risk.` | Should prefer `code-security` after the target surface is clear. | Security-only review. |
+| `Verify the real desktop client window with CGWindowID.` | Should prefer `ops-client`. | Desktop-client evidence task. |
+| `Implement this feature directly; no review needed.` | Should not require `code-review`. | Implementation task. |
 
 ## Quality Eval
 

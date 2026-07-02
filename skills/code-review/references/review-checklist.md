@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this checklist before planning or making commits in a dirty worktree, reviewing interface contracts, or upgrading this skill from a trusted upstream source. Chinese trigger phrases include `提交前审查`, `审查所有改动`, `接口链路审查`, `分类提交`, `拆分 commit`, `生成 commit message`, and `code-review 升级`.
+Use this checklist before planning or making commits in a dirty worktree, reviewing interface contracts, or upgrading this skill from a trusted upstream source. Trigger phrases include `pre-commit review`, `review all changes`, `API contract-chain review`, `classify changes`, `split commits`, `generate commit message`, and `code-review upgrade`.
 
 ## Required Evidence
 

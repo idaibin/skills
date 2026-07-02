@@ -6,18 +6,20 @@ Use these cases when changing `code-context` triggers, workflow, outputs, or met
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `先了解这个仓库，确认真实命令和入口，不要猜。` | Should trigger `code-context`. | Repository grounding. |
-| `别猜启动方式，先确认真实命令和入口。` | Should trigger `code-context`. | Command and entry-point grounding. |
-| `检查现有项目文档和代码是否匹配。` | Should trigger `code-context`. | Doc/code alignment. |
-| `从 GitHub 更新 code-context，先对比。` | Should trigger `code-context`. | Skill upgrade preview. |
+| `Understand this repository first, confirm real commands and entry points, and do not guess.` | Should trigger `code-context`. | Repository grounding. |
+| `Do not guess the startup path; confirm the real commands and entry points first.` | Should trigger `code-context`. | Command and entry-point grounding. |
+| `Check whether existing project docs match the code.` | Should trigger `code-context`. | Doc/code alignment. |
+| `Update code-context from GitHub, but compare first.` | Should trigger `code-context`. | Skill upgrade preview. |
 
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `初始化一个登录功能，直接开始实现。` | Should not trigger `code-context`. | Generic implementation task. |
-| `审查所有改动，分类提交。` | Should prefer `code-review`. | Dirty-tree review. |
-| `把这个迁移拆成可执行任务。` | Should prefer `code-planner`. | Work planning. |
+| `Initialize a login feature and start implementing directly.` | Should not trigger `code-context`. | Generic implementation task. |
+| `Review all local changes and split commits.` | Should prefer `code-review`. | Dirty-tree review. |
+| `Split this migration into executable tasks.` | Should prefer `code-planner`. | Work planning. |
+| `Verify this local web app in the browser and take a screenshot.` | Should prefer `ops-browser`. | Browser operation task. |
+| `Review this API for authorization risk.` | Should prefer `code-security`. | Security review task. |
 
 ## Quality Eval
 

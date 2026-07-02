@@ -6,18 +6,19 @@ Use `ops-client` for real desktop client operation and verification. It is curre
 
 ## Trigger Examples
 
-- `验证 Tauri 客户端窗口，不能用浏览器预览。`
-- `操作这个指定客户端，先确认启动命令。`
-- `看当前仓库里有没有客户端，以及应该怎么启动。`
-- `用 CGWindowID 截真实 app 窗口看一下。`
-- `通过 AXPress 点这个客户端按钮，不要抢鼠标。`
-- `确认现在跑的是 pnpm tauri dev 还是 release app。`
-- `这个 Tauri/客户端控件 AI 不好点，帮我补可识别的 DOM/Accessibility 标识。`
+- `Verify the real Tauri client window; do not use a browser preview.`
+- `Operate this specified client, but confirm the launch command first.`
+- `Check whether this repository contains a Tauri/Electron client and its launch command before verifying the app.`
+- `Capture the real app window with CGWindowID.`
+- `Confirm the visible Electron release app, not just the web preview.`
+- `Press this client button with AXPress without stealing the mouse.`
+- `Confirm whether the running app came from pnpm tauri dev or the release app.`
+- `This Tauri/client control is hard for AI to identify and click; add recognizable DOM or Accessibility labels.`
 
 ## Non-Triggers
 
 - Browser-only page inspection, form filling, upload/download, or console/network debugging; use `ops-browser`.
-- Repository-only context discovery; use `code-context`.
+- Generic repository context discovery without client launch review or real-window verification; use `code-context`.
 - Dirty-tree review or commit planning; use `code-review`.
 
 ## Operation Notes
@@ -29,3 +30,4 @@ Use `ops-client` for real desktop client operation and verification. It is curre
 - Prefer Accessibility actions on named controls over pointer movement or coordinate clicks.
 - Treat multiple app instances and stale bundles as common failure modes.
 - For Tauri webviews, make controls semantic and discoverable through DOM and Accessibility surfaces.
+- For Electron apps, first prove the real desktop runtime/window when the task asks for client evidence; use browser tooling only for plain web-preview behavior or after the real app identity is established.

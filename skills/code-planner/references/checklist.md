@@ -1,6 +1,6 @@
 # Code Planner Checklist
 
-Use this checklist when applying `code-planner` to split codebase requirements into executable and verifiable tasks. Chinese trigger phrases include `代码计划`, `任务拆分`, `可执行`, `可验证`, `子代理`, `审查计划`, `提交前判断`, and `打回`.
+Use this checklist when applying `code-planner` to split codebase requirements into executable and verifiable tasks. Trigger phrases include `code planning`, `plan first`, `split the approach first`, `do not edit yet`, `task breakdown`, `executable plan`, `verifiable steps`, `subagents`, `reject gates`, and `contract-impact planning`.
 
 ## Grounding Checklist
 

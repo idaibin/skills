@@ -1,6 +1,6 @@
 ---
 name: code-context
-description: Use when grounding work in a repository, first-pass onboarding, mapping real commands, paths, and entry points, checking docs against code, generating or previewing AGENTS.md/project-map docs, or upgrading this skill from a trusted upstream source. Triggers include 项目上下文初始化, 先了解项目, 熟悉项目, 项目摸底, 真实命令, 真实入口, 不要猜, 文档和代码是否匹配, 生成 AGENTS.md, and code-context 升级.
+description: Use when repository work needs grounding before claims or edits: identify real files, commands, entry points, project docs, AGENTS/project-map gaps, doc/code mismatches, or safe skill-package upgrade candidates.
 ---
 
 # Code Context
@@ -24,6 +24,13 @@ Establish repository context from real files, not assumptions. Use this for onbo
 - **Bootstrap:** preview missing `AGENTS.md`, `docs/project-map.md`, or equivalent docs from bundled templates; write only after explicit confirmation.
 - **Alignment:** compare existing docs against manifests, configs, commands, entry points, and current source layout; report stale, missing, incorrect, or duplicated claims.
 - **Upgrade:** compare only remote `skills/code-context/` against local files; remote content is candidate input, not authority.
+
+## Do Not Use For
+
+- Existing local diff review, commit grouping, or staging plans; use `code-review`.
+- Future implementation planning or subagent task splitting; use `code-planner`.
+- Browser page operation or real desktop-client verification; use `ops-browser` or `ops-client`.
+- Security-only review after the target surface is already known; use `code-security`.
 
 ## Hard Rules
 

@@ -16,14 +16,14 @@ Turn future codebase work into executable, verifiable task packages before imple
 
 Use for prompts like:
 
-- `把这个需求拆成可执行计划`
-- `先给计划，不要直接改`
-- `先拆方案，再决定是否执行`
-- `每一步都要能验证`
-- `哪些可以并行处理`
-- `分多个子代理处理`
-- `禁止子代理，主线程逐个完成`
-- `标记 contract-impact，后续交给 code-review 审查`
+- `Split this requirement into an executable plan.`
+- `Plan first; do not edit yet.`
+- `Split the approach first, then decide whether to execute.`
+- `Every step must be verifiable.`
+- `Which tasks can run in parallel?`
+- `Use multiple subagents.`
+- `No subagents; keep it sequential in the main thread.`
+- `Mark contract-impact and route the final review to code-review.`
 
 Do not use for first-pass repo onboarding, existing dirty-tree review, or commit grouping; prefer `code-context` or `code-review` for those.
 

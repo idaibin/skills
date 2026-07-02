@@ -29,20 +29,26 @@ The active content should help an agent start with real project context, preserv
 
 ## Install Skills From GitHub
 
-Install all skills globally for supported agents:
+Install all skills with the standard skills.sh CLI flow:
 
 ```bash
-npx skills add https://github.com/idaibin/aicraft -g
-npx skills update -g
+npx skills add https://github.com/idaibin/aicraft
+npx skills update
 ```
 
-To install only selected skills globally:
+Install selected skills:
 
 ```bash
-npx skills add https://github.com/idaibin/aicraft -g --skill ops-browser ops-client
+npx skills add https://github.com/idaibin/aicraft --skill ops-browser ops-client
 ```
 
-Without `-g`, the `skills` CLI installs into the current project scope. For the full command list and available skill names, see [`INSTALL.md`](INSTALL.md).
+List available skills without installing:
+
+```bash
+npx skills add https://github.com/idaibin/aicraft --list
+```
+
+For the full command list and available skill names, see [`INSTALL.md`](INSTALL.md).
 
 ## Skills
 
@@ -69,7 +75,7 @@ Useful targeted checks:
 python3 scripts/validate-skills.py --skill code-planner
 ```
 
-End-user installation and updates should use `npx skills add -g` and `npx skills update -g` for global installs.
+End-user installation and updates should use the standard `npx skills add` and `npx skills update` flow.
 
 ## Principles
 

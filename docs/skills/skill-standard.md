@@ -23,7 +23,8 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - `description` must start with `Use when`.
 - `description` must describe trigger conditions, not the full workflow.
 - Keep the frontmatter concise; target description length is under 500 characters.
-- Include stable Chinese trigger phrases and realistic user wording when they materially improve routing.
+- Do not use long `Triggers include ...` lists in frontmatter. Put rich trigger examples in `references/usage.md` and `references/eval-cases.md`.
+- Use English trigger phrases and realistic user wording by default for public, reusable skills. Add localized trigger phrases only when the skill is explicitly audience-specific.
 - Do not keep obsolete skill names in trigger text unless they are explicitly marked as migration or rejection checks.
 
 ## SKILL.md Body
@@ -32,6 +33,7 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 
 - Overview: one short paragraph explaining the capability.
 - Workflow or Modes: the core execution path and mode selection.
+- Do Not Use For: explicit routing boundaries for adjacent skills when overlap is likely.
 - Hard Rules: scope, safety, write, staging, tool, or verification constraints.
 - Output Contract: what the agent must report.
 - References: direct links to reference files that may be loaded only when needed.
@@ -98,8 +100,9 @@ Default upgrade scope is the matching remote skill package: `skills/<skill-name>
 Before considering a skill package ready:
 
 - `python3 scripts/validate-skills.py`
-- `find skills/<skill-name> -maxdepth 3 -type f | sort`
 - `rg -n "^name:|^description: Use when" skills/<skill-name>/SKILL.md`
+- `find skills/<skill-name> -maxdepth 3 -type f | sort`
+- `rg -n "Triggers include" skills/<skill-name>/SKILL.md` must return no results
 - `rg -n "[ \t]+$" skills/<skill-name>`
 - `git diff --check -- skills/<skill-name>`
 - confirm every `references/*.md` file is linked from `SKILL.md`
@@ -111,6 +114,8 @@ Before considering a skill package ready:
 After publishing to GitHub, confirm the repository is discoverable by the standard installer:
 
 - `npx skills add https://github.com/idaibin/aicraft --list`
+
+For skills.sh repository pages, use a root-level `skills.sh.json` only for display grouping. It does not change CLI install behavior or any `SKILL.md` content.
 
 ## Review Rubric
 

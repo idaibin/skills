@@ -1,6 +1,6 @@
 ---
 name: code-security
-description: Use when reviewing code, API, auth, permission, config, dependency, upload, logging, token, session, CORS, CSRF, or release changes for security risks. Triggers include 代码安全, 安全审查, 权限风险, 越权, token 泄露, 敏感信息, 接口安全, 发布前安全检查, and code-security.
+description: Use when code, API, config, dependency, upload/download, logging, auth, authorization, token/session, CORS/CSRF, secret, privacy, or release changes need security-risk review.
 ---
 
 # Code Security
@@ -24,6 +24,13 @@ Review code and configuration changes for concrete security risks. Use this afte
 - **Full-stack API security:** review an already-mapped frontend/backend API chain for auth, authorization, data exposure, input validation, and abuse risks.
 - **Release check:** do a lightweight pre-release pass over security-sensitive changes without replacing full threat modeling.
 - **Upgrade mode:** compare only remote `skills/code-security/` against local files; preview before writing.
+
+## Do Not Use For
+
+- API contract alignment, dirty-tree ownership, staging, commit grouping, or commit messages; use `code-review`.
+- Whole-system threat modeling unless the user requests that scope; use `security-threat-model` when available.
+- First-pass repository discovery or future implementation planning; use `code-context` or `code-planner`.
+- Browser/client operation evidence; use `ops-browser` or `ops-client`.
 
 ## Hard Rules
 

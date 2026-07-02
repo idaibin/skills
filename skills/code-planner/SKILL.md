@@ -1,6 +1,6 @@
 ---
 name: code-planner
-description: Use when planning future codebase work before implementation, splitting implementation/refactor/migration into independent executable and verifiable tasks, defining owned scope, validation, done/reject gates, or coordinating auditable subagents. Triggers include 代码计划, 先给计划, 先拆方案, 不要直接改, 任务拆分, 可执行, 可验证, 分阶段, 子代理, 打回, and contract-impact planning.
+description: Use when future codebase work needs a plan before implementation: split requirements into scoped executable tasks with owners, dependencies, validation gates, reject criteria, and auditable subagent coordination.
 ---
 
 # Code Planner
@@ -28,6 +28,13 @@ Turn a codebase requirement into scoped work units with required reads, owned sc
 ## Task Contract
 
 Each task must include objective, required reads, owned scope, do-not-touch boundaries, dependencies, implementation steps, validation, done criteria, and reject criteria. Mark interface-heavy work as `contract-impact` and route final chain review to `code-review` before commit.
+
+## Do Not Use For
+
+- First-pass repository discovery, real commands, entry points, or docs alignment; use `code-context`.
+- Existing local diff review, commit grouping, staging, or commit messages; use `code-review`.
+- Direct implementation when the user asks for a small change and no plan.
+- Browser/client operation or runtime evidence collection; use `ops-browser` or `ops-client`.
 
 ## Hard Rules
 

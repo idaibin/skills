@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use when reviewing existing local git changes before commit, classifying dirty-tree ownership, checking changed code/docs/API contract chains, splitting semantic commit groups, drafting exact path-limited staging commands and Conventional Commit messages, or upgrading this skill. Triggers include 提交前审查, 审查所有改动, 接口链路审查, 分类提交, 拆分 commit, 只提交本次修改, 生成 commit message, and code-review 升级.
+description: Use when existing local git changes need pre-commit review: classify dirty-tree ownership, inspect diffs and API contract chains, propose safe commit groups, exact staging, or commit messages.
 ---
 
 # Code Review
@@ -25,6 +25,13 @@ Review local git changes before commit, protect unrelated edits, verify contract
 - **Review mode:** inspect pending changes and output findings plus commit groups.
 - **Commit mode:** stage only approved files or hunks, verify staged file list and staged diff, then commit.
 - **Upgrade mode:** compare only remote `skills/code-review/` against local files; preview before writing.
+
+## Do Not Use For
+
+- First-pass repository onboarding or docs/code alignment; use `code-context`.
+- Future implementation planning before changes exist; use `code-planner`.
+- Security-only audit after ownership and contract surfaces are already known; use `code-security`.
+- Browser or desktop-client operation evidence; use `ops-browser` or `ops-client`.
 
 ## Hard Rules
 

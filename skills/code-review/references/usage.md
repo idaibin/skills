@@ -17,11 +17,11 @@ Review existing local git changes before commit. It protects unrelated edits, ch
 
 Use for prompts like:
 
-- `审查所有改动，分类提交`
-- `看下这些改动能不能提交`
-- `只提交当前会话改动`
-- `接口链路审查一下`
-- `帮我生成 commit message，但先确认文件范围`
+- `Review all changes and split commits.`
+- `Check whether these changes are safe to commit.`
+- `Commit only the current session changes.`
+- `Review the API contract chain.`
+- `Generate a commit message, but confirm file scope first.`
 
 Do not use for repo onboarding or future implementation planning before code exists; prefer `code-context` or `code-planner` for those.
 

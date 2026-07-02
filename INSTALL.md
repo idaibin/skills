@@ -13,12 +13,12 @@ Install only these skill package directories:
 
 Do not install the repository root, `prompts/`, `docs/`, or legacy skill names such as `repo-context`, `commit-reviewer`, or `planner`.
 
-## Recommended Global Install
+## Recommended Install
 
-Use the standard `skills` npm CLI user-level flow:
+Use the standard `skills` npm CLI flow shown on skills.sh:
 
 ```bash
-npx skills add https://github.com/idaibin/aicraft -g
+npx skills add https://github.com/idaibin/aicraft
 ```
 
 List available skills without installing:
@@ -31,7 +31,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  -g --skill code-context code-planner code-review code-security ops-browser ops-client
+  --skill code-context code-planner code-review code-security ops-browser ops-client
 ```
 
 For multiple selected skills, pass the names after `--skill` as shown above.
@@ -39,23 +39,21 @@ For multiple selected skills, pass the names after `--skill` as shown above.
 Install only the operations skills:
 
 ```bash
-npx skills add https://github.com/idaibin/aicraft -g --skill ops-browser ops-client
+npx skills add https://github.com/idaibin/aicraft --skill ops-browser ops-client
 ```
-
-Without `-g`, the `skills` CLI installs into the current project scope.
 
 ## Update
 
 Update installed skills:
 
 ```bash
-npx skills update -g
+npx skills update
 ```
 
 Update only selected skills:
 
 ```bash
-npx skills update -g ops-browser ops-client
+npx skills update ops-browser ops-client
 ```
 
 For updates, selected skill names are positional arguments.
@@ -74,4 +72,4 @@ Use this only when developing this repository:
 python3 scripts/validate-skills.py
 ```
 
-This validates source packages without installing them. End-user installation and updates should use `npx skills add -g` and `npx skills update -g` for global installs.
+This validates source packages without installing them. End-user installation and updates should use `npx skills add` and `npx skills update`.

@@ -1,6 +1,6 @@
 # Code Security Checklist
 
-Use this checklist when applying `code-security` to a code, API, config, dependency, or release security review. Chinese trigger phrases include `代码安全`, `安全审查`, `权限风险`, `越权`, `接口安全`, `token 泄露`, `敏感信息`, and `发布前安全检查`.
+Use this checklist when applying `code-security` to a code, API, config, dependency, or release security review. Trigger phrases include `code security`, `security review`, `authorization risk`, `IDOR`, `API security`, `token leak`, `sensitive data`, and `pre-release security check`.
 
 ## Scope Setup
 

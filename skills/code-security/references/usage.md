@@ -19,12 +19,12 @@ Review code and configuration changes for security risks after the target surfac
 
 Use for prompts like:
 
-- `审查这个接口有没有越权风险`
-- `做一次代码安全审查`
-- `检查 token/session/cookie 是否安全`
-- `看看这个上传接口有没有安全问题`
-- `发布前做轻量安全检查`
-- `检查敏感信息是否泄露`
+- `Review this API for authorization or IDOR risk.`
+- `Run a code security review.`
+- `Check whether token/session/cookie handling is safe.`
+- `Check whether this upload API has security issues.`
+- `Run a lightweight pre-release security check.`
+- `Check whether sensitive data can leak.`
 - `use code-security`
 
 Do not use for general repository onboarding, future task planning, API contract alignment, commit grouping, or system-wide threat modeling; prefer `code-context`, `code-planner`, `code-review`, or `security-threat-model` for those.

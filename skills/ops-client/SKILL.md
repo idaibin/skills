@@ -1,6 +1,6 @@
 ---
 name: ops-client
-description: Use when operating or verifying a specified real desktop/client app window, when a repository contains Tauri/Electron/native client code that needs launch-command or runtime-source review, or when browser previews are invalid. Covers process/window diagnosis, CGWindowID screenshots, Accessibility/AXPress, AI-operable DOM/control design, and startup commands. Triggers include 客户端操作, 指定客户端, Tauri 调试, 启动命令审查, 真实窗口验证, CGWindowID, AXPress, and 不抢鼠标.
+description: Use when operating or verifying a specified real desktop client window, proving Tauri/Electron/native runtime source, reviewing launch commands, capturing CGWindowID evidence, or improving AI-operable client controls.
 ---
 
 # Ops Client
@@ -27,6 +27,13 @@ Operate and verify real desktop client windows. Current guidance is Tauri-focuse
 - **Window Evidence:** prove process, runtime, window identity, and screenshot source.
 - **Interaction:** use Accessibility/control-tree paths before coordinate clicks.
 - **AI-Operable UI:** improve DOM and Accessibility surfaces so agents can identify controls reliably.
+
+## Do Not Use For
+
+- Plain browser pages, web previews, form workflows, downloads, or browser console/network checks; use `ops-browser`.
+- Ordinary repository discovery unless the user asks for client launch review, real-window verification, or browser-preview invalidation.
+- Browser preview evidence when the task requires proof from a Tauri, Electron, or native desktop runtime.
+- Local diff review, planning, or security-only review; use the relevant `code-*` skill.
 
 ## Hard Rules
 

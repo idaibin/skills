@@ -1,13 +1,13 @@
 # Skills
 
-`skills/` 保存可运行或可复用的 skill 包。
+`skills/` stores runnable or reusable skill packages.
 
-新增或更新 skill 前，先阅读 `../docs/skills/skill-standard.md`。
+Before adding or updating a skill, read `../docs/skills/skill-standard.md`.
 
-每个 skill 仍然保留自己的内部结构，例如：
+Each skill keeps its own internal structure, for example:
 
 - `SKILL.md`
 - `agents/`
 - `references/`
 
-如果要新增新的可运行技能包，优先放在这里。
+Prefer placing new runnable skill packages here.
