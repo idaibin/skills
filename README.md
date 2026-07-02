@@ -1,6 +1,8 @@
 # AICraft
 
-A focused repository for reusable AI workflow assets: prompts, skills, and packaged context patterns that can be reused, published, or adapted across real projects.
+AICraft is the source repository for reusable AI workflow assets: prompts, skills, workflow templates, and shared automation standards.
+
+It defines reusable AI capabilities and execution rules. Downstream repositories such as `blog` and `feeds-hub` consume those standards, then keep their own repository-specific task specs locally.
 
 ## Goal
 
@@ -8,9 +10,27 @@ AICraft turns repeated AI working habits into durable assets with clear boundari
 
 - `prompts/` stores reusable task templates and workflow instructions.
 - `skills/` packages stable workflows into portable agent capabilities.
-- retired material stays out of the active working set and can be recovered from git history when needed.
+- `docs/standards/` defines shared execution rules for automation, GitHub branching, and content quality.
+- `docs/templates/` stores reusable task-document templates.
+- `docs/task-registry.md` indexes concrete scheduled-task implementations in downstream repositories.
 
 The active content should help an agent start with real project context, preserve local changes, follow exact tool and command constraints, verify work, and report results clearly.
+
+## Repository Boundary
+
+```text
+aicraft = source capabilities and standards
+blog = long-form content publishing implementation
+feeds-hub = short-cycle information feed implementation
+```
+
+AICraft should not own generated blog posts, feed entries, repository-specific frontmatter, or production content files for downstream repositories.
+
+See:
+
+```text
+docs/repo-scope.md
+```
 
 ## Active Structure
 
@@ -25,7 +45,17 @@ The active content should help an agent start with real project context, preserv
 
 - `docs/`
   - repository maintenance standards and contributor-facing references
-  - not part of the installable skill package set
+  - shared automation standards under `docs/standards/`
+  - reusable templates under `docs/templates/`
+  - concrete task index in `docs/task-registry.md`
+
+## Shared Standards
+
+```text
+docs/standards/cron-automation.md
+docs/standards/github-branching.md
+docs/standards/ai-content-quality.md
+```
 
 ## Install Skills From GitHub
 
@@ -84,5 +114,7 @@ End-user installation and updates should use the standard `npx skills add` and `
 - keep publishable skills self-contained; repo-local prompts can supplement them but should not be required
 - let prompts capture task language, and let skills capture stable execution workflows
 - keep skill trigger/eval cases in `references/eval-cases.md` and validate packages before publishing
+- keep shared automation standards in `docs/standards/`
+- keep downstream repository task details out of AICraft except for the registry index
 - retire time-sensitive or old workflow material from the active root
 - avoid mixing transient notes and historical references into the active root
