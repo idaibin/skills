@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Delivery"
+  short_description: "Deliver reviewed changes to remote branches"
+  default_prompt: "Use $code-delivery to deliver reviewed local changes with path-limited staging, verification, commit, push, and branch sync."

@@ -69,7 +69,8 @@ npx skills update
 Install selected skills:
 
 ```bash
-npx skills add https://github.com/idaibin/aicraft --skill ops-browser ops-client
+npx skills add https://github.com/idaibin/aicraft \
+  --skill code-context code-planner code-review code-delivery frontend-implementation code-security ops-browser ops-client writing-editor
 ```
 
 List available skills without installing:
@@ -87,9 +88,12 @@ For the full command list and available skill names, see [`INSTALL.md`](INSTALL.
 | `code-context` | Grounding repository work in real commands, paths, entry points, docs, and project context before guessing. |
 | `code-planner` | Planning future codebase work, splitting tasks, defining validation gates, and coordinating auditable subagents before implementation. |
 | `code-review` | Reviewing existing local changes, dirty-tree ownership, contract chains, commit grouping, and exact staging before commit. |
+| `code-delivery` | Delivering reviewed local changes with validation, path-limited staging, commits, pushes, branch sync, and remote proof. |
+| `frontend-implementation` | Implementing or reviewing frontend apps while preserving the existing stack, layout, imports, routes, and validation flow. |
 | `code-security` | Reviewing code, API, auth, permission, token/session, upload, logging, dependency, config, or release changes for security risks. |
 | `ops-browser` | Operating browser pages, forms, uploads, console/network checks, background-safe browser verification, and tab/session cleanup. |
 | `ops-client` | Operating or verifying specified desktop clients, repository-contained Tauri/Electron/native apps, startup commands, real windows, and Accessibility actions. |
+| `writing-editor` | Editing Chinese personal technical writing to reduce AI-template prose while preserving viewpoint, tradeoffs, and technical accuracy. |
 
 ## Validate Local Skills
 

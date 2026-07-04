@@ -1,6 +1,6 @@
 # Review Checklist
 
-Use this checklist before planning or making commits in a dirty worktree, reviewing interface contracts, or upgrading this skill from a trusted upstream source. Trigger phrases include `pre-commit review`, `review all changes`, `API contract-chain review`, `classify changes`, `split commits`, `generate commit message`, and `code-review upgrade`.
+Use this checklist before planning or making commits in a dirty worktree or reviewing interface contracts. Trigger phrases include `pre-commit review`, `review all changes`, `API contract-chain review`, `classify changes`, `split commits`, and `generate commit message`.
 
 ## Required Evidence
 
@@ -11,7 +11,6 @@ Use this checklist before planning or making commits in a dirty worktree, review
 - Inspect actual diffs for every file that may enter a commit group.
 - Identify the complete local change scope before choosing the commit-planning or staging scope.
 - Identify ownership for every changed file before editing, staging, or committing.
-- If a remote source or version is supplied for this skill, use Upgrade mode.
 
 ## Inventory
 
@@ -27,6 +26,7 @@ Use this checklist before planning or making commits in a dirty worktree, review
 ## Completeness
 
 - Verify the functional change is closed.
+- Walk every changed line that may enter a commit and ask whether the task requires that exact line; remove or exclude lines that are only cleanup, modernization, future flexibility, or "while here" changes.
 - Verify changed files sit in the expected project directories and follow existing module/component boundaries.
 - Verify changed code follows local naming, style, and implementation conventions.
 - Verify docs were updated when contracts, commands, or paths changed.
@@ -61,6 +61,7 @@ Use this checklist before planning or making commits in a dirty worktree, review
 - Repository docs and readmes that only describe the new contract: one docs commit.
 - Generated outputs such as build caches or release artifacts: do not commit unless the artifact itself is the deliverable.
 - User-owned local edits mixed with task files: stage only the requested slice and mention the excluded files.
+- Adjacent cleanup noticed during review: report it as a follow-up or exclude it from the current commit unless the user explicitly expanded scope.
 
 ## Do Not Commit
 
@@ -82,21 +83,13 @@ Use this checklist before planning or making commits in a dirty worktree, review
 - If another AI agent invokes this skill as a sub-workflow, follow that caller's stated scope after full-scope review.
 - Ask before staging only when the requested subset is ambiguous, required files outside the subset appear necessary, or pre-existing staged files conflict with the requested scope.
 
+## Delivery Boundary
+
+- Use this skill to produce local review findings, safe commit groups, and local commit actions only when the user explicitly asks.
+- Use `code-delivery` when the requested outcome includes pushing, syncing with a remote branch, squash-merging to `main`, deleting temporary branches, or proving remote state after delivery.
+
 ## Commit Message Style
 
 - Use Conventional Commits.
 - Keep the message concise.
 - Match the user's requested language or repository convention; otherwise use concise English.
-
-## Upgrade Mode
-
-- Use when the user supplies a GitHub URL, branch, tag, commit, directory, or file URL for updating this skill.
-- Read `references/upstream-sources.md` for known default sources.
-- Prefer commit SHA over moving branches; resolve and report the SHA when using a branch.
-- Inspect upstream content read-only.
-- Compare upstream `skills/code-review/` against local files.
-- Classify candidates as skill-core, bundled-reference, agent-interface, or reject.
-- Preview proposed changes first. Do not write files until the user confirms or explicitly asks for implementation.
-- Keep the skill self-contained; do not introduce required external prompt dependencies.
-- After writing, run stale-name, self-contained-reference, Markdown whitespace, YAML, `git diff --check`, and status checks.
-- After publishing to GitHub, run `npx skills add https://github.com/idaibin/aicraft --list`.

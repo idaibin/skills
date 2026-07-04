@@ -1,6 +1,6 @@
 ---
 name: code-planner
-description: Use when future codebase work needs a plan before implementation: split requirements into scoped executable tasks with owners, dependencies, validation gates, reject criteria, and auditable subagent coordination.
+description: "Use when future codebase work needs a plan before implementation: split requirements into scoped executable tasks with owners, dependencies, validation gates, reject criteria, and auditable subagent coordination."
 ---
 
 # Code Planner
@@ -23,7 +23,6 @@ Turn a codebase requirement into scoped work units with required reads, owned sc
 - **Subagent mode:** default when tools are available, task scopes are independent, ownership is clear, and main-thread audit is possible.
 - **Sequential mode:** use when delegation is forbidden, unavailable, unnecessary, tightly coupled, immediately blocking, or ownership cannot be made clear.
 - **Review-only mode:** use when the user asks to inspect, judge feasibility, or review before implementation.
-- **Upgrade mode:** use when updating this skill from a trusted upstream source.
 
 ## Task Contract
 
@@ -51,12 +50,10 @@ Start with verified current state and dirty-tree risks. Then provide task packag
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, owner-model, task-contract, or output changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing and `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub.
+When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, owner-model, task-contract, or output changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
 
 ## References
 
 - See [references/usage.md](references/usage.md) for summary, triggers, and examples.
 - See [references/checklist.md](references/checklist.md) for planning and subagent decision details.
-- See [references/upstream-sources.md](references/upstream-sources.md) for trusted source metadata.
-- See [references/upgrade-workflow.md](references/upgrade-workflow.md) for the upgrade process.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

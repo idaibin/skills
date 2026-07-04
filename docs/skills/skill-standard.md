@@ -22,6 +22,7 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - Skill names must use lowercase letters, numbers, and hyphens only.
 - `description` must start with `Use when`.
 - `description` must describe trigger conditions, not the full workflow.
+- Quote frontmatter string values when they contain YAML-significant punctuation such as `: `.
 - Keep the frontmatter concise; target description length is under 500 characters.
 - Do not use long `Triggers include ...` lists in frontmatter. Put rich trigger examples in `references/usage.md` and `references/eval-cases.md`.
 - Use English trigger phrases and realistic user wording by default for public, reusable skills. Add localized trigger phrases only when the skill is explicitly audience-specific.
@@ -39,7 +40,7 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - References: direct links to reference files that may be loaded only when needed.
 - Maintenance: a short note to update eval cases and metadata when triggers, modes, or output contracts change.
 
-Keep detailed examples, checklists, templates, upstream metadata, and upgrade workflows in `references/`.
+Keep detailed examples, checklists, templates, and trigger/quality evals in `references/`.
 
 ## References
 
@@ -51,12 +52,10 @@ Use references for:
 - examples
 - trigger, non-trigger, and quality eval cases
 - bundled prompt or document templates
-- upstream source metadata
-- upgrade workflows
 
 References must be self-contained when the published skill needs them. Local `prompts/` files may supplement a skill, but a published skill must not require them to run.
 
-When a skill needs prompt-derived templates, maintain those templates inside that skill package before publishing. Do not make skill upgrade workflows pull from repository-level `prompts/`.
+When a skill needs prompt-derived templates, maintain those templates inside that skill package before publishing. Do not make published skills depend on repository-level `prompts/`.
 
 ## Agent Metadata
 
@@ -79,21 +78,18 @@ Every skill that touches repositories must:
 - say `Not found` for missing files, layers, or commands
 - say `Not verified` for unchecked claims
 - avoid substituting required tools, browsers, branches, or commands
-- preview generated docs or upgrade changes before writing unless the user explicitly asks for implementation
+- preview generated docs before writing unless the user explicitly asks for implementation
 
 Commit-related skills must additionally avoid broad staging such as `git add .` unless the user explicitly approves that exact scope.
 
-## Upgrade Rules
+## Distribution Rules
 
-Skills with remote update support should include:
+End-user installs and updates should use the standard skills.sh CLI flow:
 
-- `references/upstream-sources.md`
-- `references/upgrade-workflow.md`
-- an `Upgrade Mode` in `SKILL.md`
+- `npx skills add https://github.com/idaibin/aicraft`
+- `npx skills update`
 
-Remote content is candidate input, not authority. Resolve moving branches to commit SHA, compare read-only, preview proposed changes, and write only after confirmation or an explicit implementation request.
-
-Default upgrade scope is the matching remote skill package: `skills/<skill-name>/`. If prompt changes are required by the skill, they must already be reflected in that remote skill package, usually under `references/`.
+Do not add package-local self-update modes, remote-source files, or custom update workflows unless a future source-maintenance workflow explicitly needs them. For normal users, document install and update behavior in `README.md` and `INSTALL.md`, not inside each skill package.
 
 ## Validation Checklist
 
@@ -111,9 +107,7 @@ Before considering a skill package ready:
 - self-contained check for required external prompt or doc dependencies
 - `agents/openai.yaml` check for stale display name, short description, or default prompt
 
-After publishing to GitHub, confirm the repository is discoverable by the standard installer:
-
-- `npx skills add https://github.com/idaibin/aicraft --list`
+After publishing to GitHub, users install with `npx skills add https://github.com/idaibin/aicraft` and update installed copies with `npx skills update`. Use `npx skills add https://github.com/idaibin/aicraft --list` only when you need to inspect discoverability without installing.
 
 For skills.sh repository pages, use a root-level `skills.sh.json` only for display grouping. It does not change CLI install behavior or any `SKILL.md` content.
 

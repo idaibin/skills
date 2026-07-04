@@ -7,9 +7,12 @@ Install only these skill package directories:
 - `skills/code-context`
 - `skills/code-planner`
 - `skills/code-review`
+- `skills/code-delivery`
+- `skills/frontend-implementation`
 - `skills/code-security`
 - `skills/ops-browser`
 - `skills/ops-client`
+- `skills/writing-editor`
 
 Do not install the repository root, `prompts/`, `docs/`, or legacy skill names such as `repo-context`, `commit-reviewer`, or `planner`.
 
@@ -31,7 +34,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill code-context code-planner code-review code-security ops-browser ops-client
+  --skill code-context code-planner code-review code-delivery frontend-implementation code-security ops-browser ops-client writing-editor
 ```
 
 For multiple selected skills, pass the names after `--skill` as shown above.
@@ -58,7 +61,7 @@ npx skills update ops-browser ops-client
 
 For updates, selected skill names are positional arguments.
 
-After installing or upgrading skills, restart any long-running agent app so updated skill metadata and descriptions are loaded.
+After installing or updating skills, restart any long-running agent app so updated skill metadata and descriptions are loaded.
 
 ## Reproducible Project Installs
 

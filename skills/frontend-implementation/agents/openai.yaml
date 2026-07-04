@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Implementation"
+  short_description: "Keep frontend changes aligned with the existing app"
+  default_prompt: "Use $frontend-implementation to implement or review frontend changes while preserving the existing stack, layout, component system, and validation flow."

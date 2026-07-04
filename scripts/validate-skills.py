@@ -77,6 +77,31 @@ def read_frontmatter(skill_md: Path) -> dict[str, str]:
     return {}
 
 
+def frontmatter_yaml_string_errors(skill_md: Path) -> list[str]:
+    lines = skill_md.read_text(encoding="utf-8").splitlines()
+    if len(lines) < 3 or lines[0] != "---":
+        return []
+
+    errors: list[str] = []
+    for line in lines[1:]:
+        if line == "---":
+            break
+        if ":" not in line:
+            continue
+        key, raw_value = line.split(":", 1)
+        value = raw_value.strip()
+        if not value:
+            continue
+        is_quoted = (value.startswith('"') and value.endswith('"')) or (
+            value.startswith("'") and value.endswith("'")
+        )
+        if not is_quoted and ": " in value:
+            errors.append(
+                f"{key.strip()}: quote frontmatter string values that contain ': '"
+            )
+    return errors
+
+
 def yaml_value_exists(yaml_text: str, key: str) -> bool:
     return re.search(rf"^\s*{re.escape(key)}\s*:\s*.+$", yaml_text, re.MULTILINE) is not None
 
@@ -148,6 +173,8 @@ def validate_package(package: SkillPackage, *, label: str) -> list[str]:
         errors.append(f"{label}: missing SKILL.md")
     else:
         skill_md_text = skill_md.read_text(encoding="utf-8")
+        for frontmatter_error in frontmatter_yaml_string_errors(skill_md):
+            errors.append(f"{label}: SKILL.md {frontmatter_error}")
         frontmatter = read_frontmatter(skill_md)
         actual_name = frontmatter.get("name")
         description = frontmatter.get("description", "")

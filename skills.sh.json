@@ -4,11 +4,13 @@
   "groupings": [
     {
       "title": "Code",
-      "description": "Skills for repository grounding, planning, review, and security checks.",
+      "description": "Skills for repository grounding, planning, implementation guardrails, review, delivery, and security checks.",
       "skills": [
         "code-context",
         "code-planner",
         "code-review",
+        "code-delivery",
+        "frontend-implementation",
         "code-security"
       ]
     },
@@ -18,6 +20,13 @@
       "skills": [
         "ops-browser",
         "ops-client"
+      ]
+    },
+    {
+      "title": "Writing",
+      "description": "Skills for personal technical writing, editing, and publication-ready prose.",
+      "skills": [
+        "writing-editor"
       ]
     }
   ]

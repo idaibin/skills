@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing Editor"
+  short_description: "Edit personal technical writing and adapt drafts for Reddit"
+  default_prompt: "Use $writing-editor to edit this technical writing draft or adapt it for Reddit while preserving my viewpoint, concrete tradeoffs, and technical accuracy."

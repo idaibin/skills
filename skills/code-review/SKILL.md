@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Use when existing local git changes need pre-commit review: classify dirty-tree ownership, inspect diffs and API contract chains, propose safe commit groups, exact staging, or commit messages.
+description: "Use when existing local git changes need pre-commit review: classify dirty-tree ownership, inspect diffs and API contract chains, propose safe commit groups, exact staging, local commits, or commit messages."
 ---
 
 # Code Review
@@ -24,7 +24,6 @@ Review local git changes before commit, protect unrelated edits, verify contract
 
 - **Review mode:** inspect pending changes and output findings plus commit groups.
 - **Commit mode:** stage only approved files or hunks, verify staged file list and staged diff, then commit.
-- **Upgrade mode:** compare only remote `skills/code-review/` against local files; preview before writing.
 
 ## Do Not Use For
 
@@ -32,6 +31,7 @@ Review local git changes before commit, protect unrelated edits, verify contract
 - Future implementation planning before changes exist; use `code-planner`.
 - Security-only audit after ownership and contract surfaces are already known; use `code-security`.
 - Browser or desktop-client operation evidence; use `ops-browser` or `ops-client`.
+- End-to-end delivery that includes push, branch sync, squash-to-main, remote cleanup, or post-push verification; use `code-delivery`.
 
 ## Hard Rules
 
@@ -50,13 +50,11 @@ Start with local change scope, ownership classification, and main risks. Include
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, ownership, staging, commit, contract-review, or upgrade changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing and `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub.
+When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, ownership, staging, commit, or contract-review changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
 
 ## References
 
 - See [references/usage.md](references/usage.md) for summary, triggers, and examples.
 - See [references/review-checklist.md](references/review-checklist.md) for detailed review and staging rules.
 - See [references/examples.md](references/examples.md) for split examples.
-- See [references/upstream-sources.md](references/upstream-sources.md) for trusted source metadata.
-- See [references/upgrade-workflow.md](references/upgrade-workflow.md) for the upgrade process.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

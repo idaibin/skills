@@ -23,7 +23,6 @@ Review code and configuration changes for concrete security risks. Use this afte
 - **Security review:** inspect a code, API, config, dependency, or release change for security risks.
 - **Full-stack API security:** review an already-mapped frontend/backend API chain for auth, authorization, data exposure, input validation, and abuse risks.
 - **Release check:** do a lightweight pre-release pass over security-sensitive changes without replacing full threat modeling.
-- **Upgrade mode:** compare only remote `skills/code-security/` against local files; preview before writing.
 
 ## Do Not Use For
 
@@ -47,12 +46,10 @@ Start with security findings ordered by severity. If no blocking findings are fo
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, mode, or output changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing and `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub.
+When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, mode, or output changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
 
 ## References
 
 - See [references/usage.md](references/usage.md) for summary, triggers, and examples.
 - See [references/checklist.md](references/checklist.md) for security review surfaces and reporting details.
-- See [references/upstream-sources.md](references/upstream-sources.md) for trusted source metadata.
-- See [references/upgrade-workflow.md](references/upgrade-workflow.md) for the upgrade process.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

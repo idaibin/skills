@@ -9,7 +9,6 @@ Use these cases when changing `code-context` triggers, workflow, outputs, or met
 | `Understand this repository first, confirm real commands and entry points, and do not guess.` | Should trigger `code-context`. | Repository grounding. |
 | `Do not guess the startup path; confirm the real commands and entry points first.` | Should trigger `code-context`. | Command and entry-point grounding. |
 | `Check whether existing project docs match the code.` | Should trigger `code-context`. | Doc/code alignment. |
-| `Update code-context from GitHub, but compare first.` | Should trigger `code-context`. | Skill upgrade preview. |
 
 ## Non-Trigger Eval
 
@@ -28,7 +27,7 @@ Use these cases when changing `code-context` triggers, workflow, outputs, or met
 | Onboarding | Reads repo guidance, checks `git status --short`, maps real commands and paths, and stops when enough evidence exists. | Invents commands or crawls unrelated areas. |
 | Large monorepo | Reads root workspace evidence and relevant package boundaries only; marks unrelated areas `Not verified`. | Inspects every package without task need. |
 | Bootstrap docs | Uses bundled templates, previews drafts, and writes only after confirmation. | Writes before preview approval. |
-| Upgrade/publish | Resolves version, compares only `skills/code-context/`, previews before writing, and confirms discoverability with `npx skills add https://github.com/idaibin/aicraft --list` after publishing. | Overwrites directly or skips source validation before publishing. |
+| Publish readiness | Keeps the package self-contained, updates eval cases and metadata, and validates with `python3 scripts/validate-skills.py`. | Requires repository-local prompts or skips source validation. |
 
 ## Scoring
 

@@ -28,7 +28,7 @@ Use these cases when changing `code-planner` triggers, task contracts, owner mod
 | Task package | Includes required reads, owned scope, do-not-touch, dependencies, steps, validation, done criteria, and reject criteria. | Leaves hidden decisions or no validation. |
 | Subagent plan | Uses subagents only when tools are available, scopes independent, ownership clear, and audit possible. | Delegates forbidden, unnecessary, unclear, or tightly coupled work. |
 | Contract-impact | Marks risk and routes final chain review to `code-review`. | Pretends planning replaces commit review. |
-| Upgrade/publish | Compares only `skills/code-planner/`, previews before writing, and confirms discoverability with `npx skills add https://github.com/idaibin/aicraft --list` after publishing. | Overwrites directly or skips source validation or publishability checks. |
+| Publish readiness | Keeps the package self-contained, updates eval cases and metadata, and validates with `python3 scripts/validate-skills.py`. | Requires repository-local prompts or skips source validation. |
 
 ## Scoring
 

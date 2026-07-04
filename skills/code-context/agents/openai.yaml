@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Context"
-  short_description: "Initialize, align, or upgrade codebase context docs"
-  default_prompt: "Use $code-context to ground repository work in real files, commands, and docs. Stay read-only unless writes are explicitly requested; preview generated docs or upgrade changes before applying them."
+  short_description: "Initialize or align codebase context docs"
+  default_prompt: "Use $code-context to ground repository work in real files, commands, and docs. Stay read-only unless writes are explicitly requested; preview generated docs before applying them."

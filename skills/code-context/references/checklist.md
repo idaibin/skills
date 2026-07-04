@@ -1,6 +1,6 @@
 # Code Context Checklist
 
-Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, review existing docs against code, or upgrade this skill from a trusted upstream source. Trigger phrases include `repository context`, `understand this project`, `do not guess`, `real commands`, `real entry points`, `doc/code alignment`, and `code-context upgrade`.
+Use this checklist when applying `code-context` to understand a repository, bootstrap missing context docs, or review existing docs against code. Trigger phrases include `repository context`, `understand this project`, `do not guess`, `real commands`, `real entry points`, and `doc/code alignment`.
 
 ## Scan Order
 
@@ -14,7 +14,6 @@ Use this checklist when applying `code-context` to understand a repository, boot
 8. Detect context doc state:
    - missing or sparse docs: use Bootstrap mode
    - existing docs with current-truth claims: use Alignment mode
-   - remote source or version supplied for this skill: use Upgrade mode
 
 ## What To Report
 
@@ -28,7 +27,6 @@ Use this checklist when applying `code-context` to understand a repository, boot
 - Checks performed, failures, and `Not verified` items
 - Selected bundled templates, optional local prompt assets, and previewed drafts in Bootstrap mode
 - Doc/code mismatches and suggested changes in Alignment mode
-- Upstream URL, resolved version, compared skill-package paths, proposed changes, and rejected candidates in Upgrade mode
 
 ## Baseline Check Rules
 
@@ -58,17 +56,6 @@ Use this checklist when applying `code-context` to understand a repository, boot
 - Report stale, missing, incorrect, duplicated, or unverifiable doc claims.
 - Suggest exact doc changes or sections to update.
 - Do not modify docs unless the user explicitly asks.
-
-## Upgrade Mode
-
-- Use when the user supplies a GitHub URL, branch, tag, commit, directory, or file URL for updating this skill.
-- Read `references/upstream-sources.md` for known default sources.
-- Prefer commit SHA over moving branches; resolve and report the SHA when using a branch.
-- Inspect upstream content read-only.
-- Compare upstream `skills/code-context/` against local files.
-- Classify candidates as skill-core, bundled-reference, agent-interface, or reject.
-- Preview proposed changes first. Do not write files until the user confirms.
-- Keep the skill self-contained; do not introduce required external prompt dependencies or pull from remote repository-level `prompts/`.
 
 ## Read-Only Rules
 

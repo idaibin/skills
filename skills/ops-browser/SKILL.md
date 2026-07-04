@@ -1,6 +1,6 @@
 ---
 name: ops-browser
-description: Use when operating or verifying browser pages: screenshots, data extraction, local web app testing, form/upload/download workflows, console/network/storage checks, or login/session-sensitive browser evidence.
+description: "Use when operating or verifying browser pages: screenshots, data extraction, local web app testing, form/upload/download workflows, console/network/storage checks, or login/session-sensitive browser evidence."
 ---
 
 # Ops Browser
@@ -17,7 +17,8 @@ Operate browser pages as stateful user sessions. Preserve existing tabs, windows
 4. Prefer browser/tool APIs, DOM inspection, selectors, and deterministic actions over manual guessing.
 5. Keep work in the background when practical; avoid stealing focus, moving the pointer, or coordinate-clicking.
 6. Gather task evidence such as UI state, DOM, console, network, storage/auth state, screenshots, downloads, route changes, or submitted payloads.
-7. Close task-only temporary pages/windows after finishing.
+7. Distinguish direct evidence from inference; mark unchecked visual, network, account, or runtime claims as `Not verified`.
+8. Close task-only temporary pages/windows after finishing.
 
 ## Modes
 
@@ -45,7 +46,7 @@ Report the browser surface used, whether an existing tab was reused, state-chang
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` when trigger scope, modes, hard rules, or output contract changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing and `npx skills add https://github.com/idaibin/aicraft --list` after publishing to GitHub.
+When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` when trigger scope, modes, hard rules, or output contract changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
 
 ## References
 

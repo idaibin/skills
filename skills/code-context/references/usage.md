@@ -2,7 +2,7 @@
 
 ## Summary
 
-Ground an agent in a repository before it guesses. Use it to map real commands, paths, docs, and project conventions, or to preview context docs and skill upgrades safely.
+Ground an agent in a repository before it guesses. Use it to map real commands, paths, docs, and project conventions, or to preview context docs safely.
 
 ## Best For
 
@@ -10,7 +10,6 @@ Ground an agent in a repository before it guesses. Use it to map real commands, 
 - Real command and entry-point discovery
 - `AGENTS.md` or project-map draft previews
 - Doc/code alignment checks
-- Safe `code-context` upgrades from a trusted source
 
 ## Triggers
 
@@ -22,7 +21,6 @@ Use for prompts like:
 - `Confirm real commands and real entry points before choosing a launch path.`
 - `Check whether project docs match the code.`
 - `Draft AGENTS.md first; preview before writing.`
-- `Update code-context from GitHub; compare first.`
 
 Do not use for generic feature initialization, dirty-tree commit review, or implementation planning; prefer `code-review` or `code-planner` for those.
 
@@ -32,4 +30,4 @@ Expect verified current truth, real paths and commands, missing items as `Not fo
 
 ## Maintenance
 
-Use `references/eval-cases.md` for trigger and quality checks. In AICraft, validate with `python3 scripts/validate-skills.py`; after publishing to GitHub, confirm discoverability with `npx skills add https://github.com/idaibin/aicraft --list`.
+Use `references/eval-cases.md` for trigger and quality checks. In AICraft, validate with `python3 scripts/validate-skills.py`; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
