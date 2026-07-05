@@ -1,13 +1,13 @@
 ---
 name: ops-client
-description: Use when operating or verifying a specified real desktop client window, proving Tauri/Electron/native runtime source, reviewing launch commands, capturing CGWindowID evidence, or improving AI-operable client controls.
+description: Use when operating or verifying a specified real desktop client window, proving Tauri/Electron/native runtime source, reviewing launch commands, capturing CGWindowID evidence, or validating AI-operable desktop controls.
 ---
 
 # Ops Client
 
 ## Overview
 
-Operate and verify real desktop client windows. Current guidance is Tauri-focused, but the skill applies to client apps where browser previews are not valid evidence.
+Operate and verify real desktop client windows. Use this when browser previews are not valid evidence; route frontend code and webview architecture changes to `frontend-implementation`.
 
 ## Workflow
 
@@ -26,11 +26,12 @@ Operate and verify real desktop client windows. Current guidance is Tauri-focuse
 - **Launch Review:** identify the repository-owned client app and its startup command before running or verifying it.
 - **Window Evidence:** prove process, runtime, window identity, and screenshot source.
 - **Interaction:** use Accessibility/control-tree paths before coordinate clicks.
-- **AI-Operable UI:** improve DOM and Accessibility surfaces so agents can identify controls reliably.
+- **AI-Operable UI Evidence:** verify or recommend DOM and Accessibility surfaces so agents can identify controls reliably.
 
 ## Do Not Use For
 
 - Plain browser pages, web previews, form workflows, downloads, or browser console/network checks; use `ops-browser`.
+- Frontend implementation, desktop webview architecture, IPC layering, or design-system work; use `frontend-implementation`.
 - Ordinary repository discovery unless the user asks for client launch review, real-window verification, or browser-preview invalidation.
 - Browser preview evidence when the task requires proof from a Tauri, Electron, or native desktop runtime.
 - Local diff review, planning, or security-only review; use the relevant `code-*` skill.
@@ -41,6 +42,7 @@ Operate and verify real desktop client windows. Current guidance is Tauri-focuse
 - Do not start or restart a client before confirming the startup command source and whether it could disturb an existing app instance, active window, or user workflow.
 - Do not steal the user's mouse, move the pointer, activate unrelated windows, or coordinate-click unless no stable control path exists and the risk is acceptable.
 - Prefer semantic controls, accessible names, `aria-label`, `title`, `sr-only`, associated form labels, and stable `data-testid` selectors for critical controls.
+- For code changes to add those surfaces, use `frontend-implementation`; return here to verify the real desktop window.
 - Say `Not verified` when process, runtime, window source, or interaction evidence is unchecked.
 
 ## Output Contract
@@ -49,7 +51,7 @@ Report the specified client target, repository/client ownership evidence, startu
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` when trigger scope, modes, hard rules, or output contract changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
+When maintaining this package, keep `SKILL.md` concise, move detailed examples to `references/`, update `agents/openai.yaml`, and run `python3 scripts/validate-skills.py`.
 
 ## References
 

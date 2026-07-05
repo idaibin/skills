@@ -11,7 +11,7 @@ Use these cases when changing `ops-client` triggers, modes, window evidence rule
 | `Check whether this repository has a Tauri/Electron client and its launch command before verifying it.` | Should trigger `ops-client`. | Repository-contained client launch review. |
 | `Capture the app window with CGWindowID.` | Should trigger `ops-client`. | Window-level screenshot evidence. |
 | `Confirm the visible Electron release app, not just the web preview.` | Should trigger `ops-client`. | Electron runtime/window proof. |
-| `Make this Tauri/client button easier for AI to identify and click.` | Should trigger `ops-client`. | AI-operable DOM/Accessibility guidance for client UI. |
+| `Verify whether this Tauri/client button can be identified and pressed through Accessibility.` | Should trigger `ops-client`. | AI-operable desktop control evidence. |
 
 ## Non-Trigger Eval
 
@@ -19,6 +19,7 @@ Use these cases when changing `ops-client` triggers, modes, window evidence rule
 | --- | --- | --- |
 | `Reuse a browser tab to fill a web form.` | Should prefer `ops-browser`. | Browser operation workflow. |
 | `Make this webpage button easier for AI to identify and click.` | Should prefer `ops-browser` or frontend work, not `ops-client`. | Browser UI is not desktop-client operation. |
+| `Add aria-labels and stable selectors to this Tauri settings UI.` | Should prefer `frontend-implementation`. | Desktop webview code implementation. |
 | `Open the dev server page and check its console errors.` | Should prefer `ops-browser`. | Browser-preview behavior without desktop-client proof. |
 | `Review current git changes and split commits.` | Should prefer `code-review`. | Dirty-tree review. |
 | `Understand this repository's directories and commands first.` | Should prefer `code-context`. | Repository context task. |
@@ -33,7 +34,7 @@ Use these cases when changing `ops-client` triggers, modes, window evidence rule
 | Electron boundary | Uses `ops-client` for real Electron runtime/window proof and routes plain web-preview behavior to `ops-browser`. | Treats a browser preview as Electron app evidence. |
 | Startup safety | Confirms whether starting or restarting the client could disturb an existing instance, active window, or user workflow. | Restarts the client without checking impact. |
 | Background-safe interaction | Uses Accessibility/control-tree paths and avoids stealing mouse/focus where possible. | Coordinate-clicks without checking stable control paths. |
-| AI-operable UI | Recommends semantic controls, accessible names, labels, and stable selectors for critical controls. | Leaves icon-only or generic controls unidentified. |
+| AI-operable UI | Verifies or recommends semantic controls, accessible names, labels, and stable selectors for critical controls, then routes code edits to `frontend-implementation`. | Leaves icon-only or generic controls unidentified or edits UI code inside this skill's operation-only flow. |
 | Restart/rebuild | Re-verifies after relevant UI, bundle, or Accessibility changes. | Claims fix against stale client instance. |
 
 ## Scoring

@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Client"
-  short_description: "Operate and launch-review real desktop app windows"
-  default_prompt: "Use $ops-client to identify the specified desktop client, confirm its startup command and runtime source, then inspect or operate the real app window without relying on a browser preview."
+  short_description: "Verify real desktop app runtime and windows"
+  default_prompt: "Use $ops-client to identify the specified desktop client, confirm its startup command and runtime source, then inspect or operate the real app window without relying on a browser preview. Use $frontend-implementation for desktop webview code changes."

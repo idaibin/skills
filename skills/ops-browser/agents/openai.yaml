@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Browser"
-  short_description: "Operate browser sessions without disturbing user state"
-  default_prompt: "Use $ops-browser to inspect and operate this page in the background when practical while preserving existing tabs, focus, and user state."
+  short_description: "Collect browser evidence without disturbing user state"
+  default_prompt: "Use $ops-browser to inspect, verify, screenshot, debug, or operate browser pages while preserving existing tabs, focus, sessions, and user state. Use $frontend-implementation for code changes."

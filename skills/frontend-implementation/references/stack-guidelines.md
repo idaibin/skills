@@ -2,13 +2,14 @@
 
 Use these guidelines only after verifying the project actually uses the relevant stack.
 
-## Vite
+## Vite / Next.js / TanStack Router
 
 - Treat `vite.config.*`, `tsconfig.*`, aliases, env prefixes, proxy config, and build targets as project contracts.
 - Do not change alias, proxy, base path, env names, or build output paths for a component-level task.
+- Preserve route paths, params, loaders/actions, query handling, layouts, and navigation conventions.
 - Prefer existing scripts from `package.json`, docs, or repo guidance.
 
-## React
+## React / Vue
 
 - Follow the existing component style: function declarations vs arrow components, export style, memoization habits, hook placement, and file naming.
 - Keep state close to the component unless existing patterns use global stores, route loaders, query libraries, or feature hooks.
@@ -41,3 +42,10 @@ Use these guidelines only after verifying the project actually uses the relevant
 - Treat deliberate mixed stacks as local contracts: follow the page's nearest precedent rather than a global preference.
 - Prefer the component system already used in the target feature.
 - If a requested change crosses UI systems, state the boundary and keep each side using its existing components and styling.
+
+## Desktop Webviews
+
+- Treat Tauri/Electron frontend code as UI code plus a native boundary.
+- Keep shell, file, platform, and process access inside established IPC, command, or platform helper layers.
+- Validate inputs before invoking native commands and show native command errors in the UI.
+- Use `ops-client` for process, launch-command, CGWindowID, and real-window evidence.
