@@ -12,13 +12,13 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 ## Workflow
 
 1. Identify the target hostname, path, environment, account/session, and task goal.
-2. Inspect existing browser tabs/windows before opening anything new.
+2. Enumerate browser surfaces and existing tabs exposed by available tooling before opening anything new.
 3. Choose the mode: Inspect/Verify, Visual/Responsive, Form/Upload, or Debug.
 4. Prefer browser/tool APIs, DOM inspection, selectors, and deterministic actions over manual guessing.
 5. Keep work in the background when practical; avoid stealing focus, moving the pointer, or coordinate-clicking.
 6. Gather task evidence such as UI state, DOM, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads.
 7. Distinguish direct evidence from inference; mark unchecked visual, network, account, or runtime claims as `Not verified`.
-8. Close task-only temporary pages/windows after finishing.
+8. Close task-only temporary pages/windows after finishing, and report any temporary browser surface that remains open.
 
 ## Modes
 
@@ -36,16 +36,18 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Hard Rules
 
-- Reuse a matching open tab when it is in the right environment/session and will not disturb unrelated user work.
-- Open a fresh page/session when account, cache, auth, upload, or destructive-test isolation is required.
-- For visible UI changes, check relevant viewport targets such as 375px mobile, 768px tablet for complex layouts, and 1440px desktop when practical.
-- Stop before login, MFA, consent, account switching, purchase, permission grant, destructive submit, or irreversible state changes unless the user explicitly authorized that action.
+- Prefer a matching open tab in the user's default or already-authenticated browser; do not switch to Chrome just because Chrome automation is available.
+- Use browser or Chrome-extension APIs for matching tab inventory; use Computer Use only for visible/key-window state or desktop-level operation.
+- Prefer Playwright for repeatable web automation that belongs in a repository or CI; keep one-off login/session checks in the browser that owns the required state.
+- For persistent web conversations or workflows, record and reuse a stable session identifier for follow-up work on the same task.
+- Keep one browser surface and one tab whenever practical; open extra or fresh pages only for named isolation, comparison, destructive-test, or evidence needs.
+- Stop before login, MFA, consent, account switching, permission grants, destructive submits, or irreversible state changes unless explicitly authorized.
 - Do not submit forms, upload files, clear cache, log out, refresh, or navigate away from user-owned state unless the task requires it.
-- Say `Not verified` for unchecked browser/runtime claims.
+- Mark unavailable tab/window identity, unchecked visual behavior, network state, account state, or runtime claims as `Not verified`.
 
 ## Output Contract
 
-Report the browser surface used, viewport(s), whether an existing tab was reused, state-changing actions performed, evidence or artifacts produced, visual/runtime gaps marked `Not verified`, and whether temporary pages/windows were closed.
+Report the browser surface used, why it matched the default/requested/session browser, tab or session identity when available, viewport(s), state-changing actions, evidence produced, `Not verified` gaps, and temporary page/window cleanup.
 
 ## Skill Maintenance
 
