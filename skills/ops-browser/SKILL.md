@@ -39,6 +39,7 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 - Prefer a matching open tab in the user's default or already-authenticated browser; do not switch to Chrome just because Chrome automation is available.
 - Use browser or Chrome-extension APIs for matching tab inventory; use Computer Use only for visible/key-window state or desktop-level operation.
 - Prefer Playwright for repeatable web automation that belongs in a repository or CI; keep one-off login/session checks in the browser that owns the required state.
+- Prefer DOM, Playwright, or CDP text insertion over clipboard for browser text entry; use file upload only when attachment semantics are correct, and use clipboard only as a restored fallback.
 - For persistent web conversations or workflows, record and reuse a stable session identifier for follow-up work on the same task.
 - Keep one browser surface and one tab whenever practical; open extra or fresh pages only for named isolation, comparison, destructive-test, or evidence needs.
 - Stop before login, MFA, consent, account switching, permission grants, destructive submits, or irreversible state changes unless explicitly authorized.
