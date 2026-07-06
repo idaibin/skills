@@ -11,7 +11,8 @@ Reusable prompt assets are grouped by use case.
   - scheduled research, reflection, reusable asset search, digest, and advisory or planning prompts
 
 - `agent-systems/`
-  - system prompts, agent migration packages, and agent configuration prompts
+  - system prompts, agent migration packages, cross-agent workflows, and agent configuration prompts
+  - `cross-agent-verification.md`: coordinate ChatGPT strategy review with Codex repository-grounded verification
 
 - `rustzen/`
   - prompts tied to Rustzen projects, Rust backend/database rules, or Rustzen-specific architecture decisions

@@ -36,8 +36,15 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Hard Rules
 
-- Prefer a matching open tab in the user's default or already-authenticated browser; do not switch to Chrome just because Chrome automation is available.
-- Use browser or Chrome-extension APIs for matching tab inventory; use Computer Use only for visible/key-window state or desktop-level operation.
+- Browser choice priority: user-requested or recorded session browser; browser/tab that contains required session evidence; user's default browser such as Arc; approved Chrome/Chromium fallback.
+- Treat Codex Remote control, extension tab inventory, and CDP access as tool-observed capabilities. Do not assume support from browser name alone, and do not treat documented capability as usable until it works for the target tab.
+- Operate the target tab directly when possible, using a tab handle, session URL, DOM or browser-native scripting, Playwright, or CDP. Do not activate browser windows, switch visible tabs, or move the pointer when target-scoped control is available.
+- If a target-scoped path times out or fails for the target tab, treat that path as unavailable for that operation and report the degraded fallback.
+- For Arc or another default browser, preserve the user's logged-in session first. Use extension-provided browser state, tab metadata, session URLs, and direct target-tab operations when observed, even if the extension surface is named generically.
+- Combine tools by role: use Codex Remote or the Chrome plugin to identify browser/tab state and perform target-scoped operations when available; use Computer Use only for UI steps that are not exposed through target-scoped browser APIs, and report whether focus or visible state changed.
+- Use the Chrome plugin/Codex Chrome Extension for Chrome-backed background browser work only after its tab APIs work for the target browser profile.
+- If the chosen browser lacks required control but Chrome/Chromium has it, explain the account/session tradeoff and ask before switching. If consent is unavailable, do not switch and mark the browser-dependent claim `Not verified`.
+- Use Computer Use only for visible/key-window state or desktop-level operation, and only after noting the focus risk.
 - Prefer Playwright for repeatable web automation that belongs in a repository or CI; keep one-off login/session checks in the browser that owns the required state.
 - Prefer DOM, Playwright, or CDP text insertion over clipboard for browser text entry; use file upload only when attachment semantics are correct, and use clipboard only as a restored fallback.
 - For persistent web conversations or workflows, record and reuse a stable session identifier for follow-up work on the same task.
@@ -48,7 +55,7 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Output Contract
 
-Report the browser surface used, why it matched the default/requested/session browser, tab or session identity when available, viewport(s), state-changing actions, evidence produced, `Not verified` gaps, and temporary page/window cleanup.
+Report the browser surface used, why it matched the task/session, tab or session identity when available, whether visible focus or tab activation was required, viewport(s), state-changing actions, evidence produced, `Not verified` gaps, and temporary page/window cleanup.
 
 ## Skill Maintenance
 
