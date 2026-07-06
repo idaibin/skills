@@ -22,6 +22,9 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Modes
 
+- **Playwright Project Debug:** for local projects that can be started by repo commands and tested without manual login, or with test credentials/seeded auth.
+- **Codex Browser Session:** for Codex-owned web checks, third-party login flows, or sites the user has signed into in the in-app Browser.
+- **User Browser Operation:** for user-specified pages, uploads, downloads, or account state that must stay in the user's default browser, using CDP/remote APIs when available and Computer Use only for UI fallback.
 - **Inspect/Verify:** confirm the page, account, and environment; collect visual or DOM/network evidence.
 - **Visual/Responsive:** check layout, overflow, clipped text, dialogs, tables, hover/focus, and reachable loading/empty/error states across relevant viewports.
 - **Form/Upload:** map fields by label, name, role, or test id; confirm file paths and final state before submission.
@@ -36,10 +39,11 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Hard Rules
 
-- Browser choice priority: user-requested or recorded session browser; browser/tab that contains required session evidence; user's default browser such as Arc; approved Chrome/Chromium fallback.
+- Browser choice priority: user-requested or recorded session browser; browser/tab that contains required session evidence; Codex in-app Browser when it is already signed in or the task does not require an external browser profile; user's default browser such as Arc; approved Chrome/Chromium fallback.
 - Treat Codex Remote control, extension tab inventory, and CDP access as tool-observed capabilities. Do not assume support from browser name alone, and do not treat documented capability as usable until it works for the target tab.
 - Operate the target tab directly when possible, using a tab handle, session URL, DOM or browser-native scripting, Playwright, or CDP. Do not activate browser windows, switch visible tabs, or move the pointer when target-scoped control is available.
 - If a target-scoped path times out or fails for the target tab, treat that path as unavailable for that operation and report the degraded fallback.
+- Prefer Codex in-app Browser for Codex-owned web checks, local app verification, and web sessions the user has signed into there; it avoids controlling the user's desktop browser, mouse, keyboard, and focus.
 - For Arc or another default browser, preserve the user's logged-in session first. Use extension-provided browser state, tab metadata, session URLs, and direct target-tab operations when observed, even if the extension surface is named generically.
 - Combine tools by role: use Codex Remote or the Chrome plugin to identify browser/tab state and perform target-scoped operations when available; use Computer Use only for UI steps that are not exposed through target-scoped browser APIs, and report whether focus or visible state changed.
 - Use the Chrome plugin/Codex Chrome Extension for Chrome-backed background browser work only after its tab APIs work for the target browser profile.
