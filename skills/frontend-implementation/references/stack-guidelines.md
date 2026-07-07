@@ -20,7 +20,10 @@ Use these guidelines only after verifying the project actually uses the relevant
 
 - Use Tailwind only where the project already uses utility classes for the same UI layer.
 - Reuse existing class composition helpers, variants, tokens, breakpoints, and spacing scale.
-- Do not add arbitrary values, theme changes, or global utility conventions when existing tokens/classes work.
+- Use scale utilities for normal sizing and spacing, such as `h-1`, `h-12`, `w-22`, `gap-3`, or `px-4` when available.
+- Do not use arbitrary pixel utilities such as `h-[22px]`, `w-[88px]`, `mt-[7px]`, or `rounded-[13px]` for routine UI dimensions.
+- Put real product/layout constants into named classes, component variants, tokens, or CSS variables instead of scattering arbitrary Tailwind values through JSX.
+- Do not add theme changes or global utility conventions when existing tokens/classes work.
 - Do not fight component-library tokens with Tailwind overrides unless the existing page already uses that pattern.
 
 ## Ant Design
