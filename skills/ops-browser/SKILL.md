@@ -12,19 +12,19 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 ## Workflow
 
 1. Identify the target hostname, path, environment, account/session, and task goal.
-2. Enumerate browser surfaces and existing tabs exposed by available tooling before opening anything new.
+2. Enumerate browser sessions and existing tabs exposed by available tooling before opening anything new.
 3. Choose the mode: Inspect/Verify, Visual/Responsive, Form/Upload, or Debug.
 4. Prefer browser/tool APIs, DOM inspection, selectors, and deterministic actions over manual guessing.
 5. Keep work in the background when practical; avoid stealing focus, moving the pointer, or coordinate-clicking.
 6. Gather task evidence such as UI state, DOM, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads.
 7. Distinguish direct evidence from inference; mark unchecked visual, network, account, or runtime claims as `Not verified`.
-8. Close task-only temporary pages/windows after finishing, and report any temporary browser surface that remains open.
+8. Close task-only temporary pages/windows after finishing, and report any temporary browser session that remains open.
 
 ## Modes
 
-- **Playwright Project Debug:** for local projects that can be started by repo commands and tested without manual login, or with test credentials/seeded auth.
-- **Codex Browser Session:** for Codex-owned web checks, third-party login flows, or sites the user has signed into in the in-app Browser.
-- **User Browser Operation:** for user-specified pages, uploads, downloads, or account state that must stay in the user's default browser, using CDP/remote APIs when available and Computer Use only for UI fallback.
+- **Local Project Debug:** for local projects that can be started by repo commands and tested without manual login, or with test credentials/seeded auth.
+- **Managed Browser Session:** for browser checks where the agent can own the session, including user-completed sign-in or third-party login in that session.
+- **User Browser Session:** for user-specified pages, uploads, downloads, or account state that must stay in the user's existing browser profile.
 - **Inspect/Verify:** confirm the page, account, and environment; collect visual or DOM/network evidence.
 - **Visual/Responsive:** check layout, overflow, clipped text, dialogs, tables, hover/focus, and reachable loading/empty/error states across relevant viewports.
 - **Form/Upload:** map fields by label, name, role, or test id; confirm file paths and final state before submission.
@@ -39,27 +39,25 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Hard Rules
 
-- Browser choice priority: user-requested or recorded session browser; browser/tab that contains required session evidence; Codex in-app Browser when it is already signed in or the task does not require an external browser profile; user's default browser such as Arc; approved Chrome/Chromium fallback.
-- Treat Codex Remote control, extension tab inventory, and CDP access as tool-observed capabilities. Do not assume support from browser name alone, and do not treat documented capability as usable until it works for the target tab.
-- Operate the target tab directly when possible, using a tab handle, session URL, DOM or browser-native scripting, Playwright, or CDP. Do not activate browser windows, switch visible tabs, or move the pointer when target-scoped control is available.
-- If a target-scoped path times out or fails for the target tab, treat that path as unavailable for that operation and report the degraded fallback.
-- Prefer Codex in-app Browser for Codex-owned web checks, local app verification, and web sessions the user has signed into there; it avoids controlling the user's desktop browser, mouse, keyboard, and focus.
-- For Arc or another default browser, preserve the user's logged-in session first. Use extension-provided browser state, tab metadata, session URLs, and direct target-tab operations when observed, even if the extension surface is named generically.
-- Combine tools by role: use Codex Remote or the Chrome plugin to identify browser/tab state and perform target-scoped operations when available; use Computer Use only for UI steps that are not exposed through target-scoped browser APIs, and report whether focus or visible state changed.
-- Use the Chrome plugin/Codex Chrome Extension for Chrome-backed background browser work only after its tab APIs work for the target browser profile.
-- If the chosen browser lacks required control but Chrome/Chromium has it, explain the account/session tradeoff and ask before switching. If consent is unavailable, do not switch and mark the browser-dependent claim `Not verified`.
-- Use Computer Use only for visible/key-window state or desktop-level operation, and only after noting the focus risk.
-- Prefer Playwright for repeatable web automation that belongs in a repository or CI; keep one-off login/session checks in the browser that owns the required state.
-- Prefer DOM, Playwright, or CDP text insertion over clipboard for browser text entry; use file upload only when attachment semantics are correct, and use clipboard only as a restored fallback.
-- For persistent web conversations or workflows, record and reuse a stable session identifier for follow-up work on the same task.
-- Keep one browser surface and one tab whenever practical; open extra or fresh pages only for named isolation, comparison, destructive-test, or evidence needs.
+- Choose the session by evidence ownership: requested or recorded session first; existing tab with required login/state second; managed browser session when external profile state is not required; user browser session when the task depends on the user's existing profile, downloads, extensions, or account state.
+- Enumerate available browser sessions and tabs before opening anything. Record tab id/handle when exposed, URL, title, account/session note, and reuse suitability.
+- Reuse the same tab and browser session for a task whenever practical. Do not repeatedly open new tabs or windows just because lookup failed; re-enumerate, search by session record, URL, title, and account note first.
+- For persistent web conversations or workflows, keep one stable session record per task and reuse it for follow-up work. Treat the stable session id or exact conversation URL as stronger than visible tab title.
+- When opening an external AI review or chat workflow for a repository or long-running task, use the task's mapped project/workspace and existing conversation before creating a generic new chat. If no mapping exists, ask or create a record before sending substantial content.
+- Treat AI project/workspace display names as mutable labels. Match first by project/workspace URL or id when available, then task key, repository path, aliases, and account note; update the display name in the record after observing a rename.
+- Operate the intended target tab, not whichever tab is currently active. Revalidate tab identity before typing, uploading, downloading, submitting, or navigating away.
+- If the recorded tab was closed, replaced, logged out, navigated away, or cannot be identified, report the session break before starting a new session.
+- Keep one browser session and one tab whenever practical; open extra or fresh pages only for named isolation, comparison, destructive-test, or evidence needs.
+- For text entry, prefer page-native field operations over the system clipboard; use clipboard only as a saved-and-restored fallback.
+- Use file upload only when attachment semantics are correct. For temporary upload files, create a task-specific folder on the Desktop by default, report the exact local path, and delete temporary local files/folders after the upload or when no longer needed unless the user asks to keep them.
+- After deleting temporary upload files, state that local deletion does not remove any server-side uploaded attachment.
 - Stop before login, MFA, consent, account switching, permission grants, destructive submits, or irreversible state changes unless explicitly authorized.
 - Do not submit forms, upload files, clear cache, log out, refresh, or navigate away from user-owned state unless the task requires it.
 - Mark unavailable tab/window identity, unchecked visual behavior, network state, account state, or runtime claims as `Not verified`.
 
 ## Output Contract
 
-Report the browser surface used, why it matched the task/session, tab or session identity when available, whether visible focus or tab activation was required, viewport(s), state-changing actions, evidence produced, `Not verified` gaps, and temporary page/window cleanup.
+Report the browser session used, why it matched the task/session, tab or session identity when available, whether visible focus or tab activation was required, viewport(s), state-changing actions, evidence produced, upload temp paths and cleanup status, `Not verified` gaps, and temporary tab/window cleanup.
 
 ## Skill Maintenance
 
