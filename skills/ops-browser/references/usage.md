@@ -56,3 +56,13 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - Use temporary pages for account/cache isolation, destructive checks, or when the existing tab is user-owned; avoid creating several temporary pages for the same purpose.
 - Close pages/windows opened only for the task.
 - If the browser tool exposes only partial tab or window metadata, report the available URL/title/session evidence and mark missing identity as `Not verified` instead of inferring it.
+
+## Debug Notes
+
+- Build the browser feedback loop first: exact target URL, viewport or account state if relevant, action sequence, expected symptom, observed symptom, and the evidence source that can prove red/green.
+- Prefer a short repeatable browser script, deterministic DOM/console/network check, or documented manual sequence over exploratory clicking.
+- Wait for the page state that matters before inspecting dynamic apps; do not inspect stale DOM or pre-hydration markup and treat it as final.
+- Minimize the reproduction by removing steps, inputs, cache/auth isolation, and viewport changes one at a time while the symptom still appears.
+- Form one browser hypothesis at a time, then test it with the smallest safe action. Do not bundle cache clearing, reloads, account switches, and code changes into one experiment.
+- Tag temporary probes and artifacts with a unique task prefix so screenshots, downloads, console filters, local files, or injected logs can be removed or reported at the end.
+- If the issue cannot be reproduced, report the loop attempts, missing evidence, and what artifact would unblock diagnosis instead of guessing at a fix.

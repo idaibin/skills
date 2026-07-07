@@ -1,4 +1,4 @@
 interface:
   display_name: "Frontend Implementation"
-  short_description: "Implement frontend UI while preserving app contracts"
-  default_prompt: "Use $frontend-implementation to implement or review frontend UI, routes, forms, tables, dashboards, responsive behavior, or architecture while preserving the existing stack, design system, state, API contracts, and verification flow."
+  short_description: "Implement lean frontend UI while preserving contracts"
+  default_prompt: "Use $frontend-implementation to implement or review frontend UI, routes, forms, tables, dashboards, responsive behavior, DOM/CSS structure, or architecture while preserving the existing stack, design system, state, API contracts, and verification flow. Keep DOM and CSS minimal: avoid unnecessary wrappers, repeated declarations, and restated defaults; use semantic HTML, existing components, cascade, and inheritance when safe."

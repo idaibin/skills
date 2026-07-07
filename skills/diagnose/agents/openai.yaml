@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagnose"
+  short_description: "Find root causes before fixing bugs"
+  default_prompt: "Use $diagnose to investigate bugs, failing tests, build failures, unexpected behavior, regressions, flaky behavior, or performance problems. Build a red/green feedback loop for the user's exact symptom, reproduce and minimize it, rank falsifiable hypotheses, probe one variable at a time, fix the confirmed root cause, add or document regression coverage, and clean up temporary debug artifacts."

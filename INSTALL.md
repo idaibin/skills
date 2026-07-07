@@ -6,6 +6,7 @@ Install only these skill package directories:
 
 - `skills/code-context`
 - `skills/code-planner`
+- `skills/diagnose`
 - `skills/code-review`
 - `skills/code-delivery`
 - `skills/frontend-implementation`
@@ -34,7 +35,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill code-context code-planner code-review code-delivery frontend-implementation code-security ops-browser ops-client writing-editor
+  --skill code-context code-planner diagnose code-review code-delivery frontend-implementation code-security ops-browser ops-client writing-editor
 ```
 
 For multiple selected skills, pass the names after `--skill` as shown above.

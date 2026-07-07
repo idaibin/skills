@@ -10,6 +10,8 @@ Use these cases when changing `frontend-implementation` triggers, stack guidance
 | `Add this form to the existing AntD page using current patterns.` | Should trigger `frontend-implementation`. | Component-system consistency. |
 | `Build this admin table page using the existing filters, row actions, and empty/error states.` | Should trigger `frontend-implementation`. | Admin UI implementation with existing patterns. |
 | `This Vite page has messy imports and component organization; clean only what is needed.` | Should trigger `frontend-implementation`. | Frontend organization without broad refactor. |
+| `Simplify this component: too many nested divs and repeated CSS rules.` | Should trigger `frontend-implementation`. | DOM and CSS simplification in frontend code. |
+| `Review whether this diff uses the minimum useful DOM and CSS.` | Should trigger `frontend-implementation`. | Frontend structure and styling review. |
 | `Review whether this frontend diff mixed shadcn and AntD incorrectly.` | Should trigger `frontend-implementation`. | UI-stack consistency review. |
 | `Use the existing Tailwind style conventions; do not redesign the page.` | Should trigger `frontend-implementation`. | Styling convention preservation. |
 | `Fix this Tauri settings UI, but keep native commands behind IPC.` | Should trigger `frontend-implementation`. | Desktop webview UI implementation. |
@@ -32,6 +34,8 @@ Use these cases when changing `frontend-implementation` triggers, stack guidance
 | Layout preservation | Keeps layout, spacing, routes, copy, and visual system unchanged unless requested. | Redesigns or restyles adjacent UI. |
 | Admin completeness | Handles reachable table/list/form states such as loading, empty, error, disabled, pagination, and submit loading when in scope. | Delivers only the happy path for an operational page. |
 | Component consistency | Reuses existing components, wrappers, hooks, services, types, icons, and aliases. | Introduces a parallel UI kit, helper layer, or icon library. |
+| DOM minimality | Removes or avoids wrappers, fragments, components, and classes that do not provide layout, semantics, state, accessibility, or reuse value. | Adds nested `div`s or wrapper components only to pass class names or group a single child. |
+| CSS minimality | Consolidates repeated declarations and relies on existing tokens, component props, cascade, and inheritance for font, color, line-height, and spacing context when safe. | Repeats the same CSS across selectors, restates browser defaults, or adds one-off overrides where inheritance or existing styles already work. |
 | Mixed stack boundary | Avoids mixing Ant Design and shadcn/ui unless existing local code already does so deliberately. | Adds shadcn controls into an Ant Design feature without precedent. |
 | Contract preservation | Traces and preserves route, query, payload, response, permission, loading, and error behavior. | Changes data contracts silently. |
 | Desktop boundary | Keeps native access behind IPC/command helpers and routes real-window proof to `ops-client`. | Calls native APIs directly from generic UI or treats browser preview as desktop proof. |

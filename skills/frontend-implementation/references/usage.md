@@ -9,6 +9,7 @@ Use `frontend-implementation` as the first frontend coding skill. It covers UI c
 - Implementing a UI fix without changing unrelated layout.
 - Adding or changing forms, tables, modals, drawers, settings pages, or dashboards.
 - Cleaning confused imports, duplicate component paths, or oversized page files.
+- Simplifying nested markup, wrapper components, repeated CSS, or over-specified styles without redesigning the page.
 - Moving logic into existing hooks, services, helpers, features, commands, or types.
 - Reviewing a frontend diff for layout drift or UI-stack mixing.
 - Choosing between Tailwind utilities, design tokens, CSS modules, local components, Ant Design, or shadcn/ui based on the current app.
@@ -20,6 +21,8 @@ Use `frontend-implementation` as the first frontend coding skill. It covers UI c
 - `Add this form to the existing AntD page using current patterns.`
 - `Build this admin table page using the existing filters, table, and empty/error patterns.`
 - `This Vite page has messy imports and component organization; clean only what is needed.`
+- `Simplify this component: too many nested divs and repeated CSS rules.`
+- `Review whether this frontend change uses the minimum useful DOM and CSS.`
 - `Review whether this frontend diff mixed shadcn and AntD incorrectly.`
 - `Use the existing Tailwind style conventions; do not redesign the page.`
 - `Add a table action but preserve the current route and permission behavior.`

@@ -18,12 +18,17 @@ Use this checklist when implementing or reviewing frontend changes.
 - Reuse existing request helpers, response unwrap helpers, route builders, permission checks, form wrappers, table wrappers, and modal/drawer patterns.
 - Preserve path aliases and import ordering conventions.
 - Keep local UI state local; introduce global state or new data libraries only when the existing app already requires that pattern.
+- Keep DOM shallow and purposeful: remove wrappers that only forward class names, group a single child, or duplicate an existing component boundary.
+- Use semantic elements or existing components when they express the structure more directly than nested `div`s.
 
 ## Layout And Styling
 
 - Preserve existing layout, spacing, breakpoints, typography, palette, copy, nav, and component hierarchy unless requested.
 - Do not introduce a new UI kit, theme provider, global CSS reset, Tailwind config, token system, icon library, radius scale, shadow style, or button style for a local change.
 - Prefer existing tokens, class utilities, component props, and style files over one-off inline styles.
+- Prefer browser inheritance and cascade for font, color, line-height, and spacing context when the parent or design system already defines them.
+- Consolidate repeated CSS declarations into the nearest existing class, component prop, token, variant, or shared style only when that does not broaden side effects.
+- Avoid restating default browser behavior such as `display: block` on block elements, inherited font settings, or default transparent backgrounds unless the local reset requires it.
 - Avoid mixing Ant Design and shadcn/ui inside one feature unless that mix already exists and is intentional.
 - Avoid adding decorative UI, landing-page patterns, or marketing-style composition to operational/admin pages unless requested.
 - Use semantic controls: buttons for actions, links for navigation, labels for fields, and visible focus states.

@@ -8,6 +8,7 @@
       "skills": [
         "code-context",
         "code-planner",
+        "diagnose",
         "code-review",
         "code-delivery",
         "frontend-implementation",

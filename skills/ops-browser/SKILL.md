@@ -28,7 +28,7 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 - **Inspect/Verify:** confirm the page, account, and environment; collect visual or DOM/network evidence.
 - **Visual/Responsive:** check layout, overflow, clipped text, dialogs, tables, hover/focus, and reachable loading/empty/error states across relevant viewports.
 - **Form/Upload:** map fields by label, name, role, or test id; confirm file paths and final state before submission.
-- **Debug:** reproduce or inspect the issue with the least disruptive page state changes; isolate cache/auth only when needed.
+- **Debug:** build a tight browser feedback loop, reproduce the symptom, inspect evidence, test one hypothesis at a time, and keep page state changes minimal.
 
 ## Do Not Use For
 
@@ -48,6 +48,9 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 - Operate the intended target tab, not whichever tab is currently active. Revalidate tab identity before typing, uploading, downloading, submitting, or navigating away.
 - If the recorded tab was closed, replaced, logged out, navigated away, or cannot be identified, report the session break before starting a new session.
 - Keep one browser session and one tab whenever practical; open extra or fresh pages only for named isolation, comparison, destructive-test, or evidence needs.
+- For browser debugging, establish a repeatable feedback loop before proposing fixes: target URL, steps, expected symptom, observed symptom, and the evidence source that will turn red/green.
+- Reproduce and minimize the browser issue before changing page state. Test one hypothesis at a time and capture the before/after evidence that confirms or rejects it.
+- Tag temporary debug probes, logs, screenshots, downloads, and local artifacts so they can be removed or reported at cleanup.
 - For text entry, prefer page-native field operations over the system clipboard; use clipboard only as a saved-and-restored fallback.
 - Use file upload only when attachment semantics are correct. For temporary upload files, create a task-specific folder on the Desktop by default, report the exact local path, and delete temporary local files/folders after the upload or when no longer needed unless the user asks to keep them.
 - After deleting temporary upload files, state that local deletion does not remove any server-side uploaded attachment.
@@ -57,7 +60,7 @@ Operate browser pages as stateful user sessions and collect web evidence. Preser
 
 ## Output Contract
 
-Report the browser session used, why it matched the task/session, tab or session identity when available, whether visible focus or tab activation was required, viewport(s), state-changing actions, evidence produced, upload temp paths and cleanup status, `Not verified` gaps, and temporary tab/window cleanup.
+Report the browser session used, why it matched the task/session, tab or session identity when available, whether visible focus or tab activation was required, viewport(s), debug loop or reproduction steps when relevant, state-changing actions, evidence produced, upload temp paths and cleanup status, `Not verified` gaps, and temporary tab/window cleanup.
 
 ## Skill Maintenance
 

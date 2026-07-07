@@ -1,6 +1,6 @@
 ---
 name: frontend-implementation
-description: Use when implementing, modifying, or reviewing frontend UI, routes, components, forms, tables, dashboards, responsive behavior, or frontend architecture while preserving the existing stack, design system, state, API contracts, and verification flow.
+description: Use when implementing, modifying, or reviewing frontend UI, routes, components, forms, tables, dashboards, responsive behavior, DOM/CSS structure, or frontend architecture while preserving the existing stack, design system, state, API contracts, and verification flow.
 ---
 
 # Frontend Implementation
@@ -16,7 +16,7 @@ Implement frontend changes with clear UI intent, existing design-system alignmen
 3. Inspect only the target page, route, component, service, hook, style, and shared UI files needed for the requested change.
 4. Classify the existing UI system before editing: Ant Design, shadcn/ui, Tailwind-only, CSS modules, styled components, project-local components, or a deliberate mix.
 5. Preserve current typography, spacing, radius, density, routing, state, API contracts, accessibility, and visual system unless the task explicitly asks to change them.
-6. Implement with the smallest component and style surface that matches existing patterns.
+6. Implement with the smallest component, DOM, and style surface that matches existing patterns.
 7. Run project-defined type, lint, test, build, formatter, or route checks that match the change.
 8. Use `ops-browser` for web visual, responsive, interaction, console, network, or route evidence when UI behavior changes; use `ops-client` when desktop-client runtime proof is required.
 
@@ -41,6 +41,9 @@ Implement frontend changes with clear UI intent, existing design-system alignmen
 - Do not mix Ant Design and shadcn/ui within the same feature unless the existing page already does so deliberately.
 - Do not invent new colors, shadows, radius values, spacing scales, button styles, fake metrics, fake sections, or dashboard claims.
 - Do not rewrite layouts, spacing, copy, color palette, navigation, component hierarchy, table density, or form density unless the task asks for that change.
+- Do not add wrapper `div`s, fragments, components, or CSS classes unless they carry layout, semantics, state, accessibility, or reuse value.
+- Prefer semantic HTML, component props, natural document flow, and browser inheritance over redundant wrappers, repeated declarations, and one-off overrides.
+- Consolidate duplicate CSS declarations, preserve cascade boundaries, and let typography, color, and spacing inherit when the local design system already provides them.
 - Keep page files thin when the project already uses services, hooks, types, helpers, or feature components.
 - Preserve route paths, query parameters, payload shapes, response unwrapping, loading states, and permission-hidden entries unless the task requires changes.
 - Prefer existing icons, tokens, utility classes, components, and file naming over new conventions.
