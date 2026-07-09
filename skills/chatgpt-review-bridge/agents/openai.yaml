@@ -1,0 +1,4 @@
+interface:
+  display_name: "ChatGPT Review Bridge"
+  short_description: "Route ChatGPT reviews with browser and Codex CLI gates"
+  default_prompt: "Use $chatgpt-review-bridge to prepare the review package, apply the required browser/Codex gates, route to ChatGPT, capture review.md, and verify findings before fixes."

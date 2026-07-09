@@ -70,7 +70,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill code-context code-planner diagnose code-review code-delivery frontend-implementation code-security ops-browser ops-client writing-editor
+  --skill code-context code-planner diagnose code-review chatgpt-review-bridge code-delivery frontend-implementation code-security ops-browser ops-client writing-editor
 ```
 
 List available skills without installing:
@@ -89,6 +89,7 @@ For the full command list and available skill names, see [`INSTALL.md`](INSTALL.
 | `code-planner` | Planning future codebase work, splitting tasks, defining validation gates, and coordinating auditable subagents before implementation. |
 | `diagnose` | Diagnosing bugs, failing tests, regressions, flaky behavior, build failures, and performance problems before proposing fixes. |
 | `code-review` | Reviewing existing local changes, dirty-tree ownership, contract chains, commit grouping, and exact staging before commit. |
+| `chatgpt-review-bridge` | Routing ChatGPT review packages through browser, Playwright, and Codex CLI gates, then capturing `review.md` and verifying findings. |
 | `code-delivery` | Delivering reviewed local changes with validation, path-limited staging, commits, pushes, branch sync, and remote proof. |
 | `frontend-implementation` | Implementing or reviewing frontend UI, routes, forms, tables, dashboards, responsive behavior, DOM/CSS structure, and architecture while preserving existing design-system and API contracts. |
 | `code-security` | Reviewing code, API, auth, permission, token/session, upload, logging, dependency, config, or release changes for security risks. |
