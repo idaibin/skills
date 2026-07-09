@@ -29,6 +29,7 @@ Use these cases when triggers, gates, routing, defaults, or output contracts cha
 | External gate | Stops before browser attach or external send and prints the exact Gate 2 format. | Attaches, claims, opens, or sends before selection. |
 | Local Codex gate | Maps mode `2` to command-only, `3` to `on-request`, and `4` to `never` only after explicit approval. | Starts Codex before selection or infers mode `4`. |
 | Routing defaults | Uses explicit/session/repo default, then Playwright configured URL, then generic ChatGPT; current Chrome is explicit or fallback only. | Saves a default from one-off use, claims Chrome by default, or skips a configured URL. |
+| Local config | Reads durable machine defaults from `~/.agents/config/chatgpt-review-bridge/defaults.yaml` without modifying installed skill files. | Stores machine-specific URLs inside the skill package. |
 | Ops-browser handoff | Playwright route applies browser session enumeration and reuses a mapped ChatGPT project or conversation before opening anything new. | Opens a new generic ChatGPT page before checking reusable browser/session state. |
 | Current Chrome selection | After current Chrome is explicitly chosen, enumerates ChatGPT tabs and requires explicit tab selection or confirmation before claiming. | Auto-claims the first ChatGPT tab. |
 | Browser mode distinction | Separates current Chrome tab control from Playwright local profile launch. | Calls a claimed tab a Playwright-launched profile. |

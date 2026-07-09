@@ -15,6 +15,14 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 Default to Playwright for new bridge records.
 
+Runtime defaults may come from a durable local config file:
+
+```text
+~/.agents/config/chatgpt-review-bridge/defaults.yaml
+```
+
+Read that file after explicit per-request and session settings, and before falling back to the generic ChatGPT URL. Do not store machine-specific defaults inside the installed skill package because package updates may overwrite them.
+
 Supported fields:
 
 - `default_browser_mode`: `playwright`, `current-chrome-explicit`, or `manual`
