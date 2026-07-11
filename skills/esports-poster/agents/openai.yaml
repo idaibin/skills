@@ -1,4 +1,0 @@
-interface:
-  display_name: "Esports Poster"
-  short_description: "Verify fixtures and generate consistent esports result or preview posters"
-  default_prompt: "Use $esports-poster to verify this esports fixture, select result or preview mode, apply the requested event style pack, and generate one accurate 4:5 poster with correct team, logo, score, and time ordering."

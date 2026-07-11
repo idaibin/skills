@@ -16,7 +16,6 @@ Reusable prompt assets are grouped by use case.
 
 - `design/`
   - reusable visual-design, image-generation, poster, and brand-system prompts
-  - `esports-poster.md`: standalone verified esports result and preview poster prompt with reusable mode contracts
   - `msi-2026-esports-poster.md`: generate verified MSI 2026 match-result and match-preview posters with a consistent official-inspired visual system
 
 - `rustzen/`
