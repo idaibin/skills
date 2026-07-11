@@ -8,35 +8,49 @@ Confirm:
 - branch, upstream, base, and remote
 - dirty state and unrelated changes
 - allowed files and validation commands
+- outbound `review-package.md` path and whether an existing file may be replaced
+- inbound external-response `review.md` path
 
 Use local `git` first. Use `gh` or GitHub tooling only when PR, CI, compare URL, or remote metadata is needed. Mark unchecked remote metadata `Not verified`.
 
 ## Loop
 
-1. Prepare the fix branch and review package.
-2. Send the package to a standard chat or Project after explicit authorization or the relevant gate.
-3. Write or append ChatGPT output to `review.md`.
-4. Verify every finding locally.
-5. Fix confirmed issues only.
-6. Run matching validation.
-7. Commit only if requested and only for approved scope.
-8. Repeat up to the explicitly authorized round count; require new authorization before additional external rounds.
+1. Confirm the fix branch and write the self-contained outbound package to `review-package.md`.
+2. Stop here for prepare/build/draft/package-only requests.
+3. Send the package to a standard chat or Project only after explicit external-send authorization or the relevant gate.
+4. Write or append the attributed ChatGPT response to `review.md`; never copy the outbound package into it.
+5. Verify every finding locally.
+6. Fix confirmed issues only.
+7. Run matching validation.
+8. If delivery is requested, hand the verified scope to `code-delivery`; the bridge does not stage, commit, or push.
+9. Repeat up to the explicitly authorized round count; require new authorization before additional external rounds.
 
 ChatGPT may review and suggest patches, but Codex applies changes locally after inspection.
 
-## Commit Rules
+## Delivery Handoff
 
-Before committing:
+Before handing off to `code-delivery`:
 
 - inspect changed paths and diff stat
-- stage only related files
-- inspect cached diff
+- identify the exact related paths for delivery
 - include `review.md` only when it is part of the requested artifact
-- avoid broad staging
+- state that broad staging is forbidden
 
-Use a concise Conventional Commit message unless the user supplies exact text.
+`code-delivery` owns staging, cached-diff verification, commit creation, and push.
+Preserve exact user-supplied commit text; otherwise let that skill apply the
+repository's commit convention.
 
-## `review.md`
+## Artifacts
+
+`review-package.md` is the outbound, manually sendable package. It contains the
+task/scope, repository/branch/base/commit basis, review focus, selected evidence,
+validation, exclusions/redactions, and requested response format.
+
+`review.md` is inbound only: external ChatGPT responses plus Codex verification
+notes. Do not create it in Package-only mode unless the user explicitly requests
+an empty response log. Keep it local-private and untracked by default. Repository
+delivery requires explicit authorization; use the sanitized visibility mode for
+public or visibility-unknown repositories.
 
 For repeated passes, append dated sections by default. Use numbered files only when the user asks for separate artifacts.
 

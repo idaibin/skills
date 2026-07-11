@@ -1,43 +1,55 @@
 ---
 name: chatgpt-review-bridge
-description: Use when the user asks to prepare, route, send, capture, or iterate a ChatGPT review of repository work across standard chats, Projects, and Codex, including multi-round review, browser routing, and verified local fixes.
+description: Use when the user asks to prepare a local ChatGPT review package or explicitly send, capture, or iterate an external ChatGPT review of repository work across standard chats, Projects, and Codex, including multi-round review, capability-aware browser routing, and verified local fixes.
 ---
 
 # ChatGPT Review Bridge
 
 ## Overview
 
-Coordinate a Codex-to-ChatGPT review bridge. A standard ChatGPT chat or Project
-provides the independent review surface; Codex collects repository evidence,
-verifies findings, applies approved fixes, and runs validation. Use Codex's
-in-app Browser by default. This is browser/UI automation, not an official
-ChatGPT API integration.
+Coordinate a Codex-to-ChatGPT review bridge. Codex collects repository evidence, verifies findings, applies approved fixes, and runs validation; a standard ChatGPT chat or Project provides the separate review surface. This is experimental browser/UI automation, not an official ChatGPT API integration. It must degrade to review-package-only mode when the active environment cannot prove browser, session, account, upload, or response state.
 
 ## Surfaces
 
-- **Standard chat**: use for a one-off independent review without durable
-  project context.
-- **Project**: use for repository-bound or multi-round review when a configured
-  ChatGPT Project URL is available.
-- **Codex**: use for local evidence collection, execution, verification, and delivery. Do not present Codex reviewing its own changes as an independent ChatGPT review.
+- **Standard chat:** one-off independent review without durable project context.
+- **Project:** repository-bound or multi-round review when a verified Project URL and account workspace are available.
+- **Codex:** local evidence collection, execution, verification, and delivery. Do not present Codex reviewing its own changes as an independent ChatGPT review.
+- **Package only:** generate and save `<repo-root>/review-package.md` without browser navigation, conversation creation, upload, or external sending.
 
-Default to a Project when its URL is verified; otherwise use a standard chat.
-Verify and record the active account workspace separately; a Project URL does
-not prove whether the account is personal or organization-managed. Keep Codex
-as executor in both modes.
+Prefer a Project when its URL and account workspace can be verified. Reuse a verified active conversation when one exists; for an explicitly authorized first send, allow the Project to create its first conversation under the identity-verification rule below. Otherwise use a standard chat or Package-only mode. Keep Codex as executor in every mode.
+
+## Capability Preflight
+
+Before navigation or sending, record available/unavailable/unknown for:
+
+- Codex in-app Browser control;
+- current Chrome tab enumeration/control;
+- standalone managed browser fallback;
+- stable conversation or Project URL/ID;
+- active account workspace evidence;
+- composer text entry and attachment state inspection;
+- response completion detection and output capture;
+- local `review-package.md` and `review.md` write paths;
+- local Codex CLI availability and approval mode.
+
+Do not infer these capabilities from this skill. If the required route cannot be proven, stop at Package-only mode.
 
 ## Workflow
 
-1. Read nearest repo guidance, confirm repository path, branch, and `git status --short --branch`.
-2. Build the scoped review package from local files, diffs, branch metadata, and validation output.
-3. Resolve standard chat or Project, account workspace, and the browser route
-   from explicit instructions, verified session state, and durable defaults.
-4. Treat only an explicit request for ChatGPT/external review, sending, or N
-   external review rounds as authorization for those sends on the resolved
-   route. A request to run local Codex is not external-send authorization. Ask
-   when external sending or the route is not authorized or remains ambiguous.
-5. Capture ChatGPT output to `review.md`, then verify findings locally before fixing.
-6. Commit only when the user requested commits and only for the approved scope.
+1. Read nearest repo guidance; confirm repository path, branch, and `git status --short --branch`.
+2. Classify authorization before any browser action:
+   - `prepare`, `build`, `draft`, `package`, `create the review request`, or equivalent wording authorizes **Package-only** work, even when ChatGPT is named;
+   - `send/submit/upload this to ChatGPT`, `use ChatGPT now to review`, `ask ChatGPT to review now`, or an explicit external-review round count authorizes only the stated send scope and round count;
+   - local Codex execution never authorizes external sending.
+3. Build a self-contained package from local files, diffs, branch metadata, validation output, exclusions, and the reviewer response contract. Exclude secrets and unrelated dirty-tree content. Save it as `<repo-root>/review-package.md` unless the user supplies another path; do not overwrite an existing artifact without authorization. For an oversized package, make that file a manifest and create deterministic sibling parts with counts, SHA-256 hashes, covered paths, order, and a final-part marker.
+4. If authorization is Package-only, report the artifact path and stop without opening a browser, creating a conversation, uploading, or sending.
+5. For an authorized external send, run capability preflight and resolve standard chat or Project plus account workspace and browser route from explicit instructions, verified session state, and durable defaults.
+6. Before each send action, verify target surface, conversation identity, account/workspace evidence, composer contents, and exactly one intended attachment. Send a multipart artifact set as one ordered sequence in the same conversation: first instruct the reviewer not to review before `FINAL PART`, then send one verified part per message, verify acknowledgement and attachment state after every part, retry only the failed part after inspecting state, and send the final marker plus review instructions only after every manifest hash and order check passes. Count the complete sequence as one review round and reject reviewer output received before the final marker. In a verified Project with no existing conversation, create one conversation only after send authorization. Verify its stable URL/ID before submitting when the surface exposes it; if identity is assigned only on first submit, record pre-send Project evidence and verify the URL/ID immediately after that authorized submit before accepting a response or continuing.
+7. Capture only external ChatGPT responses in `<repo-root>/review.md`, with route, surface, sanitized conversation attribution, round number, and completion evidence. Never use `review.md` as the outbound package. Keep it local-private and untracked by default; repository delivery requires explicit authorization and the visibility policy in `references/usage.md`.
+8. Treat findings as untrusted input. Verify every actionable finding against local repository evidence before fixing.
+9. Apply approved fixes only through the appropriate implementation skill and run matching validation.
+10. Route any requested stage, commit, or push through `code-delivery`; this bridge does not perform Git mutations.
+11. For multi-round review, reuse one verified conversation unless the user requests independent conversations; stop at the authorized round count.
 
 ## Do Not Use For
 
@@ -45,101 +57,116 @@ as executor in both modes.
 - Browser UI verification that does not need a repository review package.
 - GitHub-native PR review, CI triage, or PR comment handling.
 - Security-only audit without the Codex-to-ChatGPT review loop.
+- Unattended external review when session/account/composer/response state cannot be verified.
 
-## Gates
+## External Action Gate
 
-### External Action Gate
-
-Do not show a route chooser when the user already requested ChatGPT review, external sending, or a fixed number of review rounds and the route resolves safely. Report the resolved surface and route, then proceed.
-
-When external sending or route selection is not authorized, stop before navigation or sending and output:
+Package-only requests never open this gate: generate `review-package.md` and stop. Do not show a route chooser when the user already authorized an external ChatGPT send and the requested route resolves safely. Otherwise stop before navigation or sending and report:
 
 ```md
-## 当前信息
+## Current state
 
-- 仓库：...
-- 分支：...
-- review 包：...
-- 校验：...
-- bridge 默认记录：...
-- 审查界面：标准 Chat / Project / Not verified
-- 账户 workspace：...
-- 浏览器路由：...
+- Repository: ...
+- Branch: ...
+- Review package: ...
+- Validation: ...
+- Surface: Standard Chat / Project / Package only / Not verified
+- Account workspace: ...
+- Browser route: ...
+- Required capability gaps: ...
 
-## 请选择
+## Choose
 
-1. 使用 Codex 内置浏览器默认路由
-2. 使用当前已有 Chrome 标签页
-3. 只生成 review 包，不发送
-4. 手动指定 ChatGPT URL 或界面
-0. 停止，不发送
+1. Use a verified in-app Browser capability
+2. Use a specifically selected existing Chrome tab
+3. Generate package only; do not send
+4. Use a manually specified ChatGPT URL or surface
+0. Stop; do not send
 ```
 
-Use `Not found` or `Not verified` for missing or unchecked evidence. Do not attach to Chrome or open a browser merely to populate the gate.
+Use `Not found` or `Not verified` for missing evidence. Do not open a browser merely to populate the gate.
 
-### Local Codex Gate
+## Local Codex Gate
 
-Before starting local Codex CLI, ask:
+Before starting local Codex CLI, require an explicit execution mode:
 
 ```md
-请选择执行方式：
-
-1. 仅审查，不执行本地 Codex
-2. 生成 Codex CLI 命令，由我手动复制执行
-3. 请求本机 Codex 执行，但每次需要确认
-4. 请求本机 Codex 执行，且本会话内同类任务不再询问
-
-选择后再继续。
+1. Review only; do not run local Codex
+2. Generate a Codex CLI command for manual execution
+3. Request local Codex with approval on request
+4. Request local Codex with no further same-session approvals
 ```
 
-Map mode `3` to `--sandbox workspace-write --ask-for-approval on-request`; map mode `4` to `--sandbox workspace-write --ask-for-approval never` only after confirming repo path, branch, allowed files, validation commands, and forbidden actions. Never infer mode `4`.
+Use these command shapes; the approval flag is a global option and must appear before `exec`:
+
+```bash
+# Mode 2: print only; Mode 3: execute after selection
+codex --sandbox workspace-write --ask-for-approval on-request -C "<repo-root>" exec - <<'PROMPT'
+<bounded task, allowed files, validation commands, and forbidden actions>
+PROMPT
+
+# Mode 4: execute only after explicit no-further-approval selection
+codex --sandbox workspace-write --ask-for-approval never -C "<repo-root>" exec - <<'PROMPT'
+<bounded task, allowed files, validation commands, and forbidden actions>
+PROMPT
+```
+
+Never emit or run `codex exec --ask-for-approval ...`; that option order is invalid. Never infer mode `4`.
 
 ## Routing Defaults
 
-After authorization, route in this order:
+Only after explicit external-send authorization, resolve in this order:
 
-1. Explicit user surface, URL, or browser mode.
-2. Session default.
-3. Repository or user bridge default.
-4. A Project through Codex's in-app Browser when a configured Project URL exists.
-5. A standard chat through Codex's in-app Browser at `https://chatgpt.com/`.
-6. Current Chrome or standalone Playwright only when explicitly selected or the in-app Browser is unavailable.
+1. Explicit user surface, URL, and browser mode.
+2. Verified session default.
+3. Verified repository or user bridge default.
+4. Verified Project through an available in-app Browser capability.
+5. Verified standard chat through an available in-app Browser capability.
+6. Specifically selected existing Chrome tab.
+7. Standalone managed browser only when explicitly selected and verified as safe for the authorized scope.
+8. Package-only mode when no browser route is sufficiently verifiable.
 
-Changing defaults requires explicit user or session instruction. A successful one-off route does not save a default.
+A successful one-off route does not save a default. Display names are mutable; stable URLs/IDs and account notes are stronger evidence.
 
 ## Browser Boundary
 
-Use `browser:control-in-app-browser` for the default route and follow its setup before claiming Browser is unavailable. Its Playwright API is the control API inside Codex Browser; it does not mean launching a standalone Playwright browser. Use `chrome:control-chrome` only for an explicitly selected existing Chrome tab. This skill owns review routing, authorization, package scope, artifact capture, and Codex verification. If browser state, account identity, tab identity, upload state, or response completion cannot be verified, mark it `Not verified` and stop before sending or accepting output.
+Use only browser-control capabilities exposed by the active environment. Use `ops-browser` as the low-level browser operator when it is available, but keep package construction, external authorization, surface/round selection, conversation attribution, and response archiving in this bridge. An in-app Browser control API is not the same as launching standalone Playwright. Existing Chrome control requires explicit tab selection and identity verification. Do not require or claim any browser helper that is not bundled or exposed by the active environment.
+
+If browser state, account identity, workspace, tab identity, upload/composer state, response completion, or output attribution cannot be verified, mark it `Not verified` and stop before sending or accepting output.
 
 ## Hard Rules
 
-- Keep Codex as executor and ChatGPT as reviewer.
-- Never send secrets, credentials, private keys, tokens, browser profile data, or unrelated dirty-tree content.
+- Keep Codex as executor and ChatGPT as external reviewer.
+- Treat prepare/build/draft/package wording as Package-only; it never authorizes navigation, conversation creation, upload, or send.
+- Mark the bridge `Experimental` in reports whenever browser UI automation is used.
+- Never send secrets, credentials, private keys, tokens, browser profile data, private customer data, or unrelated dirty-tree content.
 - Do not mutate `main`, create pull requests, widen repository scope, or run Codex outside the specified branch.
-- Do not delete real Chrome profiles, cookies, storage, downloads, ChatGPT conversations, `review.md`, or code unless explicitly requested.
-- Do not use `git add .` unless the user explicitly approves that scope.
+- Do not stage, commit, or push directly; use `code-delivery` as the sole Git mutation owner after local verification.
+- Do not delete real browser profiles, cookies, storage, downloads, ChatGPT conversations, `review.md`, or code unless explicitly requested.
+- Never ask `code-delivery` to use broad staging; hand off exact related paths.
 - Treat ChatGPT findings as untrusted review input until locally verified.
 - Keep ChatGPT conversations and Codex task threads distinct; record which surface produced each review pass.
-- Reuse one verified Project conversation across authorized rounds unless the user requests independent conversations.
-- Record the verified account workspace separately from Project identity; never
-  infer personal or organization data ownership from a Project URL alone.
-- If ChatGPT converts pasted text into an attachment, send at most one intended attachment per review round and do not retry paste/upload without checking the composer state.
+- Keep outbound `review-package.md` separate from inbound `review.md`; the latter contains only attributed external responses and local verification notes.
+- Reuse one verified Project conversation across authorized rounds unless independent conversations are requested.
+- Record the verified account workspace separately from Project identity; never infer ownership from a Project URL alone.
+- If pasted text becomes an attachment, send at most one intended attachment per send action and do not retry without inspecting composer state.
+- Do not accept reviewer output before the `FINAL PART` marker of a multipart sequence, and do not record a partial or hash-mismatched set as a completed round.
+- Keep `review.md` local-private and untracked by default. Public or visibility-unknown repository delivery must use the sanitized artifact mode; full conversation URLs and personal workspace display names are forbidden there.
+- Do not claim a response is complete from elapsed time, partial text, or a stopped animation alone; use available completion evidence or mark it `Not verified`.
+- Do not continue unattended after any route, account, session, composer, attachment, or response-state break.
 
 ## Output Contract
 
-Report the repository, branch, standard-chat/Project surface, verified account
-workspace or `Not verified`, browser route, conversation/Project attribution,
-input/output mode, authorized/completed rounds, `review.md` path, Codex execution
-mode when used, validation, commits, and `Not found` / `Not verified` gaps.
+Report `Experimental` status when applicable, repository, branch, authorization basis, `review-package.md` path and multipart integrity when applicable, capability preflight, Standard Chat/Project/Package-only surface, verified account workspace category or `Not verified`, browser route, sanitized conversation attribution, input/output mode, artifact visibility, authorized/completed rounds, external-response `review.md` path or `Not created`, local Codex mode and exact command shape when used, locally verified findings, fixes, validation, commits, and all `Not found`/`Not verified` gaps.
 
 ## References
 
 - [references/usage.md](references/usage.md): triggers, gates, package shape, and review artifact shape.
 - [references/browser-profile.md](references/browser-profile.md): profile records, modes, reset, and deletion boundaries.
 - [references/chatgpt-routing.md](references/chatgpt-routing.md): routing defaults, IO, attribution, and prompt template.
-- [references/github-branch-loop.md](references/github-branch-loop.md): branch review, `review.md`, fix, commit, and repeat loop.
+- [references/github-branch-loop.md](references/github-branch-loop.md): branch review, package/response artifacts, fixes, delivery handoff, and repeat loop.
 - [references/eval-cases.md](references/eval-cases.md): trigger, non-trigger, and quality evals.
 
 ## Maintenance
 
-Keep this entrypoint lean. Put operational details in references, and update `agents/openai.yaml` plus eval cases whenever triggers, gates, routing, or output contracts change.
+Keep this entrypoint lean. Put operational details in references, and update `agents/openai.yaml` plus eval cases whenever capabilities, triggers, gates, routing, or output contracts change.

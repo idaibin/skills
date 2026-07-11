@@ -28,6 +28,14 @@ When local changes already exist:
 6. Report any `unknown` files that may affect the plan before assigning agents, staging, or committing.
 7. Keep staging and commit scopes exact even when task-owned or related-existing files had pre-existing edits.
 
+## Complexity Classification
+
+- **Small:** one bounded owner, no contract migration, and no useful independent split; use a compact sequential plan.
+- **Coupled:** tasks share mutable files, an unfrozen interface, migration order, or one validation loop; keep one sequential owner and name the coupling.
+- **Parallelizable:** at least two scopes have disjoint write ownership, explicit or frozen interfaces, independent outputs, and separately testable acceptance.
+- Shared read-only repository context or final main-thread integration alone does not make scopes Coupled.
+- Do not select Parallelizable when two writers may change the same file, schema, migration, generated artifact, or public interface.
+
 ## Task Package Template
 
 Use this template for each main-thread or subagent task. Keep it concrete enough that a worker can execute it without guessing, and narrow enough that a reviewer can reject it cleanly.
@@ -75,13 +83,13 @@ Each task should answer:
 
 ## Subagent Decision Checklist
 
-Use subagents by default when:
+Use subagents for work classified Parallelizable when:
 
 - subagent tools are available
 - tasks are independent and have disjoint write scopes or read-only review surfaces
 - the main thread can define bounded prompts and audit the result
 
-Stay sequential when:
+Stay sequential for Small or Coupled work when:
 
 - the user forbids subagents
 - delegation tools are unavailable
@@ -89,6 +97,8 @@ Stay sequential when:
 - the work is tightly coupled
 - the next critical-path step must be done locally
 - ownership cannot be made clear
+
+Reject a sequential plan for genuinely independent scopes when it names no write conflict, interface dependency, validation dependency, integration risk, explicit user no-delegation override, or unavailable delegation tool.
 
 ## Task Type Checklist
 

@@ -25,9 +25,11 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - Domain audit skills use `audit-<domain>`, such as `audit-frontend` or
   `audit-rust`. They are read-only by default, lead with evidence-backed
   findings, and route requested fixes to the corresponding `implement-*` skill.
-- Keep `code-review` distinct from `audit-*`: `code-review` owns existing Git
-  changes, dirty-tree classification, contract and structural completeness,
-  staging, and commit readiness; `audit-*` owns domain-wide technical review.
+- Keep `code-review` distinct from `audit-*` and `code-delivery`: `code-review`
+  owns existing Git changes, dirty-tree classification, contract and structural
+  completeness, staging plans, and commit readiness; `audit-*` owns domain-wide
+  or reviewer-invoked scoped specialist analysis; `code-delivery` owns staging,
+  commits, pushes, and other Git mutations after review.
 - Do not use unclear abbreviations such as `imp-*` or mix
   `<domain>-implementation` with `implement-<domain>`.
 - `description` must start with `Use when`.
@@ -77,7 +79,12 @@ Each skill should include `agents/openai.yaml` with:
 - `short_description`
 - `default_prompt`
 
-These values must match the current `SKILL.md`. Update them whenever the skill name, modes, or major triggers change.
+These values must match the current `SKILL.md`. Update them whenever the skill name, modes, or major triggers change. The repository validator checks metadata structure, lengths, required self-routing, and referenced Skill names; semantic synchronization with workflow, mutation boundaries, and current behavior remains a required human review step unless a package defines an additional machine-readable contract.
+
+Inside `default_prompt`, bare `$name` syntax is reserved for routing to a shipped
+skill and is validated against `skills/*`. Write shell variables in braced form
+such as `${target}` (or positional form such as `$1`); member syntax such as
+`this.$watch` is not a skill route.
 
 ## Safety Rules
 
@@ -147,7 +154,7 @@ rename, or delete a skill only when all four surfaces are updated together.
 - confirm `references/eval-cases.md` includes trigger, non-trigger, quality, and scoring cases
 - stale-name check for previous names or obsolete aliases
 - self-contained check for required external prompt or doc dependencies
-- `agents/openai.yaml` check for stale display name, short description, or default prompt
+- `agents/openai.yaml` structural validator checks plus human review for stale display name, short description, default prompt, modes, mutation boundary, and routing semantics
 
 After publishing to GitHub, users install with `npx skills add https://github.com/idaibin/aicraft` and update installed copies with `npx skills update`. Use `npx skills add https://github.com/idaibin/aicraft --list` only when you need to inspect discoverability without installing.
 

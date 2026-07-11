@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Security"
-  short_description: "Review scoped code and API changes for security risks"
-  default_prompt: "Use $code-security for a lightweight, evidence-grounded security review of a known code or API surface. Use $code-review first when the contract chain is not mapped, and use a dedicated security scan workflow for repository-wide or deep vulnerability scanning."
+  short_description: "Review scoped security with framework-aware evidence"
+  default_prompt: "Use $code-security for a lightweight evidence-grounded review of a known code, API, browser, native IPC, file, config, dependency, or release surface, including a read-only specialist delegated by $code-review. In specialist mode inspect only the delegated paths or diff and return findings/gaps without dirty-tree, readiness, edit, or Git ownership. Map contracts, assets, trust boundaries, roles, and attacker inputs; select only applicable Web/API, Rust/Axum, Vue, Tauri IPC, or SQLite/File profiles. Trace browser sinks and tokens, native authorization and paths, and row/export/backup authorization where relevant; parameterized SQL is not authorization. Report scoped evidence and Not verified gaps, never a blanket secure claim. Git mutation belongs to $code-delivery."

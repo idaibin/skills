@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Review"
-  short_description: "Review dirty-tree ownership, contract chains, and commit plans"
-  default_prompt: "Use $code-review to inspect existing local changes, classify ownership, review contract and structural completeness, then propose semantic commit groups with exact path-limited staging. Route domain-wide read-only technical audits to $audit-frontend or $audit-rust. Do not commit unless explicitly asked."
+  short_description: "Review Git changes without mutating Git state"
+  default_prompt: "Use $code-review as a read-only reviewer of existing local changes: inventory the full dirty tree, classify ownership, select Focused, Standard, or High-risk depth, inspect every candidate diff, and trace contract and structural lifecycle. Coordinate scoped read-only $audit-frontend, $audit-rust, or $code-security subreviews when needed, then propose semantic groups and exact staging instructions. Do not edit files or run write-mode checks; route fixes to the matching implementation skill and Git mutations to $code-delivery."

@@ -1,6 +1,8 @@
 # Review Checklist
 
-Use this checklist before planning or making commits in a dirty worktree or reviewing interface contracts. Trigger phrases include `pre-commit review`, `review all changes`, `API contract-chain review`, `classify changes`, `split commits`, and `generate commit message`.
+Use this checklist before delivery from a dirty worktree or when reviewing interface contracts. Trigger phrases include `pre-commit review`, `review all changes`, `API contract-chain review`, `classify changes`, `split commits`, and `generate commit message`.
+
+This checklist is read-only. Do not edit, create, delete, rename, or format worktree files, and do not run write-mode checks. Route fixes to implementation and Git mutation to `code-delivery`.
 
 ## Required Evidence
 
@@ -10,7 +12,7 @@ Use this checklist before planning or making commits in a dirty worktree or revi
 - If anything is staged, run `git diff --cached --stat` and `git diff --cached --name-status`.
 - Inspect actual diffs for every file that may enter a commit group.
 - Identify the complete local change scope before choosing the commit-planning or staging scope.
-- Identify ownership for every changed file before editing, staging, or committing.
+- Identify ownership for every changed file before proposing staging or delivery.
 
 ## Inventory
 
@@ -20,7 +22,7 @@ Use this checklist before planning or making commits in a dirty worktree or revi
 - Mark current-session or explicitly requested edits as `task-owned`.
 - Mark pre-existing edits required by the requested work as `related-existing`, then review and modify them only as needed for the requested scope.
 - Mark unrelated pre-existing edits as `unrelated-existing` and leave them untouched.
-- Mark files with both in-scope and out-of-scope hunks as `mixed-hunk`; do not stage the whole file unless every hunk belongs to the current commit group.
+- Mark files with both in-scope and out-of-scope hunks as `mixed-hunk`; do not propose whole-file staging unless every hunk belongs to the current commit group.
 - Mark unclear ownership as `unknown`, report it before staging or editing, and ask only when the requested scope cannot be determined from evidence.
 
 ## Completeness
@@ -68,7 +70,7 @@ Use this checklist before planning or making commits in a dirty worktree or revi
 - Crate/package/module moves: keep manifests, exports, commands, tests, CI/deploy paths, and ownership docs in the semantic change that makes the move valid.
 - Repository docs and readmes that only describe the new contract: one docs commit.
 - Generated outputs such as build caches or release artifacts: do not commit unless the artifact itself is the deliverable.
-- User-owned local edits mixed with task files: stage only the requested slice and mention the excluded files.
+- User-owned local edits mixed with task files: plan only the requested staging slice and mention the excluded files.
 - Adjacent cleanup noticed during review: report it as a follow-up or exclude it from the current commit unless the user explicitly expanded scope.
 
 ## Do Not Commit
@@ -79,22 +81,22 @@ Use this checklist before planning or making commits in a dirty worktree or revi
 - Generated artifacts unless they are the intended deliverable.
 - Unrelated local changes, even when they are already in the same directory.
 
-## Staging Rules
+## Staging-Plan Rules
 
-- Use exact path-limited staging commands.
-- Verify staged files before each commit.
-- For `mixed-hunk` files, use hunk-level staging or split the file before staging; then verify the staged diff, not only the staged file list.
+- Produce exact path-limited staging instructions for `code-delivery`.
+- Inspect any existing staged files and staged diff read-only.
+- For `mixed-hunk` files, require hunk-level staging or a split before delivery, followed by staged-diff verification rather than file-list-only proof.
 - Do not use `git add .`, `git add -A`, directory-wide adds, or broad wildcard staging unless the user explicitly approves that exact full scope.
-- If there are pre-existing staged files outside the current group, stop and report the conflict before committing.
+- If there are pre-existing staged files outside the current group, report the delivery blocker.
 - For direct user requests, default to the full reviewed local change scope unless the user explicitly limits the commit scope.
-- If the user asks to commit only current context, current session, or this task's changes, default to staging only that subset after full-scope review.
+- If the user asks to commit only current context, current session, or this task's changes, default the staging plan to that subset after full-scope review.
 - If another AI agent invokes this skill as a sub-workflow, follow that caller's stated scope after full-scope review.
-- Ask before staging only when the requested subset is ambiguous, required files outside the subset appear necessary, or pre-existing staged files conflict with the requested scope.
+- Ask for scope clarification only when the requested subset is ambiguous, required files outside it appear necessary, or pre-existing staged files conflict.
 
 ## Delivery Boundary
 
-- Use this skill to produce local review findings, safe commit groups, and local commit actions only when the user explicitly asks.
-- Use `code-delivery` when the requested outcome includes pushing, syncing with a remote branch, squash-merging to `main`, deleting temporary branches, or proving remote state after delivery.
+- Use this skill to produce review findings, safe commit groups, exact staging instructions, validation requirements, and commit messages without Git mutation.
+- Use `code-delivery` for staging, local commits, pushes, sync, squash-to-main, branch cleanup, and remote-state proof.
 
 ## Commit Message Style
 

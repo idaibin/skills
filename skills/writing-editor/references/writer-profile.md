@@ -2,6 +2,10 @@
 
 Use this profile to keep edits aligned with the author's usual voice.
 
+This profile is a style constraint, not a content source. It cannot supply
+project facts, first-person opinions, experiences, decisions, or results that
+are absent from the draft and authoritative conversation context.
+
 ## Voice
 
 - Chinese personal technical-blog style.

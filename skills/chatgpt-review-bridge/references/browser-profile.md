@@ -8,7 +8,7 @@ A bridge profile record maps a repository or task to browser routing metadata. I
 
 - `name`
 - `repo_path`
-- `default_browser_mode`: `codex-in-app-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
+- `default_browser_mode`: `capability-auto`, `codex-in-app-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
 - `chatgpt_surface`: `standard-chat` or `project`
 - `account_workspace_note`
 - `browser`
@@ -19,25 +19,28 @@ A bridge profile record maps a repository or task to browser routing metadata. I
 - `last_verified_at`
 - `status`
 
-Never store secrets, cookies, tokens, or browser storage.
+Never store secrets, cookies, tokens, or browser storage. These fields are local bridge records, not repository-safe review metadata. When review evidence is committed, reduce workspace identity to its category and replace a full ChatGPT URL with a sanitized conversation reference unless verified repository privacy and explicit user authorization permit the full values.
 
 ## Mode Resolution
 
-1. Explicit per-request mode.
-2. Session default.
-3. Repository or user default.
-4. Codex in-app Browser with a configured Project URL.
-5. Codex in-app Browser with generic ChatGPT Chat.
-6. Current Chrome or standalone Playwright only when explicitly selected or the in-app Browser is unavailable.
+Resolve modes only after external-send authorization and capability preflight:
+
+1. Explicit per-request mode whose required capability is available.
+2. Verified session default.
+3. Verified repository or user default.
+4. A browser-control capability exposed by the current environment, preferring a verified Project route over a generic standard chat.
+5. Current Chrome or standalone Playwright only when explicitly selected and controllable.
+6. Package-only when no route can be proven.
 
 ## Codex In-App Browser Mode
 
-Use for the default standard-chat and Project routes.
+Use only when the active environment exposes and successfully preflights an in-app Browser capability.
 
-- Follow `browser:control-in-app-browser` before browser work.
+- Use `ops-browser` for low-level session, tab, composer, upload, and response-state operations; the bridge retains external authorization, package, round, conversation-attribution, and archive ownership.
 - Reuse a verified project/conversation tab when available.
 - Keep the in-app Playwright control API distinct from standalone Playwright browser launch.
 - Ask the user to sign in inside the in-app Browser when authentication is required.
+- If no in-app Browser capability is exposed, do not invent or install one; resolve another explicitly allowed route or return to Package-only.
 
 ## Current Chrome Mode
 
@@ -60,11 +63,12 @@ Use when the user chooses a local profile or profile path.
 
 ## Defaults
 
-Use `codex-in-app-browser` as the default browser mode. Prefer `project` when a
-verified Project URL exists and `standard-chat` otherwise. Verify the active
-account workspace separately. Update durable defaults only after explicit
-instruction. A successfully controlled tab proves task-local control, not
-durable ownership or workspace identity.
+Use `capability-auto` as the default browser preference. It selects only from
+capabilities proven in the current preflight. Prefer `project` when a verified
+Project URL exists and `standard-chat` otherwise. Verify the active account
+workspace separately. Update durable defaults only after explicit instruction.
+A successfully controlled tab proves task-local control, not durable ownership
+or workspace identity.
 
 Reset clears bridge defaults such as `default_browser_mode`, `chatgpt_surface`, profile record, URL, active conversation id, tab handle, account/workspace note, and verification timestamp.
 

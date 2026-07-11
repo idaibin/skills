@@ -125,7 +125,8 @@ Bun exposes repository commands for workspace checking, Clippy, cross-target
 checking, and Miri, then supplements them with sanitizers, leak tests, stress
 tests, fuzzing, platform CI, and end-to-end compatibility tests.
 
-Select gates in this order:
+Select gates from Baseline plus every applicable risk overlay. Within the
+selected overlays, order feedback from fast and focused to expensive and broad:
 
 1. format and focused static checks for fast feedback;
 2. focused unit and contract tests;
@@ -138,8 +139,10 @@ Select gates in this order:
 9. stress and repeated-operation tests for races, resource limits, and leaks;
 10. full cross-platform behavior suite with proof that tests were not skipped.
 
-Use the repository's own commands. Not every change needs every gate, but every
-omitted high-risk gate needs a stated reason.
+Use the repository's own commands. Miri, sanitizers, fuzzing, stress, leak, and
+repeated-operation gates apply only when supported and relevant to a selected
+overlay. Record unavailable required evidence as `Not verified`; do not make a
+target-only change inherit unrelated native or stress tooling.
 
 ### 7. Enforce Local Architecture With Tooling
 

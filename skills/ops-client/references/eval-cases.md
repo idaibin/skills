@@ -1,26 +1,28 @@
 # Eval Cases
 
-Use these cases when changing `ops-client` triggers, modes, window evidence rules, Accessibility guidance, AI-operable UI guidance, or metadata.
+Use these cases when changing `ops-client` triggers, modes, platform adapters, window evidence rules, Accessibility guidance, AI-operable UI guidance, or metadata.
 
 ## Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
 | `Verify the real Tauri client window; do not use a browser preview.` | Should trigger `ops-client`. | Real client-window verification. |
-| `Operate this specified client, but confirm the launch command and runtime source first.` | Should trigger `ops-client`. | Specified client and launch review. |
-| `Check whether this repository has a Tauri/Electron client and its launch command before verifying it.` | Should trigger `ops-client`. | Repository-contained client launch review. |
-| `Capture the app window with CGWindowID.` | Should trigger `ops-client`. | Window-level screenshot evidence. |
-| `Confirm the visible Electron release app, not just the web preview.` | Should trigger `ops-client`. | Electron runtime/window proof. |
-| `Verify whether this Tauri/client button can be identified and pressed through Accessibility.` | Should trigger `ops-client`. | AI-operable desktop control evidence. |
+| `Operate this specified client, but confirm the platform, launch command, runtime source, and automation capability first.` | Should trigger Capability Preflight and Launch Review. | Platform-aware client operation. |
+| `Check whether this repository has a Tauri/Electron client and its launch command before verifying it.` | Should trigger Launch Review. | Repository-contained client ownership. |
+| `Capture the macOS app window with CGWindowID.` | Should trigger the macOS adapter. | macOS window evidence. |
+| `Verify this Windows Electron app through UI Automation and HWND evidence.` | Should trigger only when a Windows adapter is available; otherwise Degraded Evidence. | Windows-specific adapter requirement. |
+| `Verify this Linux client through AT-SPI and window-manager capture evidence.` | Should trigger only when a Linux adapter is available; otherwise Degraded Evidence. | Linux-specific adapter requirement. |
+| `Verify whether this Tauri/client button can be identified and pressed through Accessibility.` | Should trigger AI-operable control evidence. | Semantic desktop control verification. |
+| `Capture this real desktop app window.` | Should trigger platform detection and adapter preflight before choosing any command. | Generic request must not default to macOS terminology. |
 
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
 | `Reuse a browser tab to fill a web form.` | Should prefer `ops-browser`. | Browser operation workflow. |
-| `Make this webpage button easier for AI to identify and click.` | Should prefer `ops-browser` or frontend work, not `ops-client`. | Browser UI is not desktop-client operation. |
+| `Make this webpage button easier for AI to identify and click.` | Should prefer `ops-browser` or frontend work. | Browser UI is not desktop-client operation. |
 | `Add aria-labels and stable selectors to this Tauri settings UI.` | Should prefer `implement-frontend`. | Desktop webview code implementation. |
-| `Open the dev server page and check its console errors.` | Should prefer `ops-browser`. | Browser-preview behavior without desktop-client proof. |
+| `Open the dev server page and check its console errors.` | Should prefer `ops-browser`. | Browser-preview behavior without desktop proof. |
 | `Review current git changes and split commits.` | Should prefer `code-review`. | Dirty-tree review. |
 | `Understand this repository's directories and commands first.` | Should prefer `code-context`. | Repository context task. |
 
@@ -28,14 +30,19 @@ Use these cases when changing `ops-client` triggers, modes, window evidence rule
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
-| Real window evidence | Confirms process/runtime/window identity and captures by `CGWindowID`. | Uses browser preview or region screenshot as client proof. |
-| Runtime source | Distinguishes `pnpm tauri dev`, debug bundle, release app, or reports `Not verified`. | Assumes runtime source without evidence. |
-| Launch command | Identifies the client app location and startup command from manifests/docs/scripts or reports `Not found`. | Starts or verifies a client without checking the owning command. |
-| Electron boundary | Uses `ops-client` for real Electron runtime/window proof and routes plain web-preview behavior to `ops-browser`. | Treats a browser preview as Electron app evidence. |
-| Startup safety | Confirms whether starting or restarting the client could disturb an existing instance, active window, or user workflow. | Restarts the client without checking impact. |
-| Background-safe interaction | Uses Accessibility/control-tree paths and avoids stealing mouse/focus where possible. | Coordinate-clicks without checking stable control paths. |
-| AI-operable UI | Verifies or recommends semantic controls, accessible names, labels, and stable selectors for critical controls, then routes code edits to `implement-frontend`. | Leaves icon-only or generic controls unidentified or edits UI code inside this skill's operation-only flow. |
-| Restart/rebuild | Re-verifies after relevant UI, bundle, or Accessibility changes. | Claims fix against stale client instance. |
+| Capability preflight | Records platform plus availability of process/window enumeration, stable identifiers, window capture, Accessibility/control-tree actions, permissions, background-safe operation, and restart support. | Begins operation or claims support from the skill text alone. |
+| Platform adapter selection | Uses macOS CGWindowID/Accessibility only on macOS, Windows UI Automation/HWND only with a Windows adapter, and Linux AT-SPI/window capture only with a Linux adapter. | Presents one platform's commands as cross-platform behavior. |
+| Real window evidence | Confirms process/runtime/window identity and captures the exact real window through the selected adapter. | Uses browser preview, cropped region, or app-like webpage as client proof. |
+| Runtime source | Distinguishes dev command, debug bundle, release app, or reports `Not verified`. | Assumes runtime source without evidence. |
+| Launch command | Identifies client location and startup command from manifests/docs/scripts or reports `Not found`. | Starts or verifies a client without checking the owning command. |
+| Startup safety | Confirms whether starting/restarting could disturb an existing instance, active window, unsaved state, or user workflow. | Restarts without checking impact. |
+| Permission evidence | Verifies screen-capture and Accessibility actions succeed or reports unavailable permission. | Assumes authorization because the app is visible. |
+| Background-safe interaction | Uses Accessibility/control-tree paths and avoids mouse/focus theft where possible. | Coordinate-clicks without checking stable control paths and target identity. |
+| AI-operable UI | Verifies semantic controls, accessible names, roles, labels, and stable automation identifiers, then routes code edits to implementation skills. | Leaves critical generic/icon-only controls unidentified or edits code in the operation workflow. |
+| Degraded evidence | Reports only proven repository/process/runtime facts and exact blocked window/interaction claims when no platform adapter exists. | Fakes equivalent evidence with browser screenshots or macOS terminology. |
+| Restart/rebuild | Re-verifies process, runtime source, window identity, and UI after relevant changes. | Claims a fix against a stale client instance. |
+| Unsupported versus unverified | Uses `Not supported` for missing adapters and `Not verified` for available but incomplete checks. | Conflates unavailable capability with unchecked work. |
+| Missing adapter | On Windows or Linux without the required UI Automation/AT-SPI and capture adapter, reports window and interaction proof as `Not supported` while preserving any separately proven repository/process evidence. | Runs macOS commands, substitutes a browser/region screenshot, or claims equivalent proof. |
 
 ## Scoring
 

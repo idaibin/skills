@@ -9,14 +9,23 @@
   documents account environments with separate conversations and files. Verify
   and record workspace identity independently from Project identity.
 
+## Authorization Before Routing
+
+Do not resolve or open a browser route for requests that only say prepare,
+build, draft, package, or create review material. Generate
+`<repo-root>/review-package.md` and stop. Continue below only when the user
+explicitly authorizes an external send, use of ChatGPT now, or a bounded number
+of external review rounds.
+
 ## Routing Order
 
 1. Explicit user surface, URL, or browser mode.
 2. Session surface and `chatgpt_default_url`.
 3. Repository or user surface and `chatgpt_default_url`.
-4. A Project through Codex's in-app Browser when a configured Project URL exists.
-5. A standard chat through Codex's in-app Browser at `https://chatgpt.com/`.
-6. Current Chrome or standalone Playwright only when explicitly selected or the in-app Browser is unavailable.
+4. A Project through a verified browser-control capability exposed by the current environment.
+5. A standard chat through a verified browser-control capability at `https://chatgpt.com/`.
+6. Current Chrome or standalone Playwright only when explicitly selected and controllable.
+7. Package-only when no route can be proven.
 
 If generic ChatGPT is used, report that the review is not project-bound.
 
@@ -32,7 +41,9 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 ## Default Configuration
 
-Default to Codex's in-app Browser for new bridge records.
+Default to `capability-auto` for new bridge records. This is a preference to use
+an available verified browser capability, not proof that any browser tool is
+installed.
 
 Runtime defaults may come from a durable local config file:
 
@@ -44,7 +55,7 @@ Read that file after explicit per-request and session settings, and before falli
 
 Supported fields:
 
-- `default_browser_mode`: `codex-in-app-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
+- `default_browser_mode`: `capability-auto`, `codex-in-app-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
 - `chatgpt_surface`: `standard-chat` or `project`
 - `account_workspace_note`
 - `chatgpt_default_url`
@@ -56,7 +67,7 @@ Supported fields:
 Example:
 
 ```yaml
-default_browser_mode: codex-in-app-browser
+default_browser_mode: capability-auto
 chatgpt_surface: project
 account_workspace_note: Not verified
 chatgpt_default_url: https://chatgpt.com/g/<project-id>/project
@@ -71,36 +82,41 @@ After the user chooses current Chrome mode:
 1. Enumerate open ChatGPT tabs.
 2. Present candidate tabs and require an explicit tab selection or confirmation.
 3. Claim only the confirmed tab.
-4. Stop before sending the review package.
+4. Stop before sending unless the current authorization explicitly covers this selected tab, package scope, and round count.
 
 Do not save a selected tab or URL as a default unless separately requested.
 
-## Codex In-App Browser Routing
+## Browser Capability Routing
 
-After the route is explicitly authorized or resolved from an explicitly requested review:
+After an external send is explicitly authorized:
 
-1. Load and follow `browser:control-in-app-browser` before browser work.
-2. Reuse the mapped ChatGPT project or conversation when available.
-3. Open the configured Project URL; otherwise open a standard chat.
-4. Ask the user to sign in inside Browser if authentication is required.
-5. Mark Project identity and account workspace `Not verified` unless each is inspected.
-6. Stop before sending content.
+1. Preflight the browser capabilities actually exposed by the environment.
+2. Use `ops-browser` as the low-level browser operator for session/tab selection, navigation, composer/upload inspection, submission, completion evidence, and response extraction. The bridge continues to own package scope, authorization, surface, round count, conversation attribution, and archive paths.
+3. Reuse the mapped ChatGPT Project conversation when available.
+4. If the verified Project has no conversation and the user authorized sending, open the Project landing page and create exactly one conversation. Verify its stable URL/ID and empty composer state before submit when exposed. If the surface assigns identity only on first submit, record the pre-send Project/account evidence, make the one authorized submit, then verify and store the resulting URL/ID before accepting the response or continuing. Do not create a conversation for Package-only requests.
+5. Otherwise open the configured Project URL or a standard chat through the selected capability.
+6. Ask the user to sign in inside that controlled browser when authentication is required.
+7. Mark Project identity and account workspace `Not verified` unless each is inspected.
+8. Stop before sending unless the current authorization covers the resolved route, scope, and round count.
 
-Step 6 does not apply when the current user request already explicitly authorizes sending or a fixed number of review rounds. That authorization covers only the resolved route, scope, and round count.
+If the environment lacks the required control or evidence capability, do not load
+or claim an unbundled browser helper. Return to Package-only.
 
 ## Standalone Playwright Routing
 
-Use only when explicitly selected or when the in-app Browser is unavailable after following its setup and recovery instructions. Ask for a profile only when profile mode is explicit or a profile record exists. Do not install browser binaries merely because the in-app Browser route is available.
+Use only when explicitly selected and verified for the authorized scope. If the in-app Browser is unavailable and standalone was not explicitly selected, return to Package-only instead of switching routes. Ask for a profile only when profile mode is explicit or a profile record exists. Do not install browser binaries merely because the in-app Browser route is available.
 
 If no browser session, tab identity, account state, upload state, or response completion signal can be verified, stop or mark the affected field `Not verified`.
 
 ## Text And File Input
 
-Use text input for compact packages and file/pasted attachments when size or structure matters. If pasted content becomes an attachment, treat it as the single intended upload for that round, verify the composer state, and do not paste or upload again unless the first attempt is removed or clearly failed. Never upload secrets, `.env`, private registry tokens, local keychains, browser profile data, or unrelated dirty files.
+Use `<repo-root>/review-package.md` as the canonical outbound artifact unless the user names another path. Use text input for compact packages and file/pasted attachments when size or structure matters. If pasted content becomes an attachment, treat it as the single intended upload for that send action, verify the composer state, and do not paste or upload again unless the first attempt is removed or clearly failed. Never upload secrets, `.env`, private registry tokens, local keychains, browser profile data, or unrelated dirty files.
+
+For a multipart artifact set, verify the manifest counts and SHA-256 values before browser work. Send the manifest with a wait-for-final instruction, then exactly one part per message in order. Verify each attachment and acknowledgement, retry only an inspected failed part, and send `FINAL PART` plus the review prompt only after the complete set matches the manifest. Treat early reviewer analysis, a missing acknowledgement, or any count/order/hash mismatch as an incomplete round.
 
 ## Output Capture
 
-Capture ChatGPT output into `review.md` by direct page extraction, download, or selected response text. Screenshots are supporting evidence only.
+Capture only external ChatGPT responses into `<repo-root>/review.md` by direct page extraction, download, or selected response text. Do not put the outbound package in this file. Screenshots are supporting evidence only. Keep the artifact local-private and untracked by default; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and sanitize public or visibility-unknown output before staging.
 
 Accept a response only when it can be tied to:
 

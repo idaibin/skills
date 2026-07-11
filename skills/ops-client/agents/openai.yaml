@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Client"
-  short_description: "Verify real desktop app runtime and windows"
-  default_prompt: "Use $ops-client to identify the specified desktop client, confirm its startup command and runtime source, then inspect or operate the real app window without relying on a browser preview. Use $implement-frontend for desktop webview code changes."
+  short_description: "Verify desktop apps through platform-specific adapters"
+  default_prompt: "Use $ops-client to identify the specified desktop client, confirm its platform, startup command, runtime source, process, and real-window evidence. Run a capability preflight for process/window enumeration, window-specific capture, Accessibility or control-tree actions, permissions, and restart support. Use CGWindowID, screencapture, and AXPress only on macOS; require an available Windows UI Automation/HWND or Linux AT-SPI/window-manager adapter for equivalent claims, otherwise mark missing adapter capabilities Not supported. Use $implement-frontend or the relevant native implementation skill for code changes."

@@ -9,8 +9,9 @@ Before adding or updating a skill, read `../docs/skills/skill-standard.md`.
 - Implementation skills use `implement-<domain>` and own requested code changes.
 - Domain audit skills use `audit-<domain>`, stay read-only by default, and route
   requested fixes to the corresponding implementation skill.
-- `code-review` owns existing Git changes, dirty-tree classification, staging,
-  and commit readiness; it does not replace a domain-wide audit.
+- `code-review` owns existing Git changes, dirty-tree classification, staging
+  plans, and commit readiness; `code-delivery` owns staging, commits, pushes,
+  and other Git mutations after review. Neither replaces a domain-wide audit.
 - Do not reintroduce retired aliases such as `frontend-implementation`,
   `frontend-governance`, or `rust-engineering-governance` inside skill packages.
 

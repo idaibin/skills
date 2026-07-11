@@ -32,24 +32,39 @@ project class and repository standard instead of forcing one layout everywhere.
 - `Extend the nearest existing trait or interface if it can own this behavior; justify any new public API.`
 - `Port this C++ or Zig module to Rust, preserve the existing behavior suite, and review lifetime and semantic differences before cleanup.`
 - `Fix this Rust/C FFI boundary while preserving layout, ownership, callbacks, panic behavior, and unsafe containment.`
+- `Update this Windows-only adapter and verify the supported target without running unrelated native stress tools.`
+- `Change the SQLite-backed FFI import path and combine database recovery with native ownership validation.`
 
 ## Non-Triggers
 
 - Repository orientation before the Rust surface is known; use `code-context`.
 - Planning a cross-repository migration before implementation; use `code-planner`.
 - Diagnosing an unknown failing test or performance regression; use `diagnose`.
-- Reviewing staged ownership or producing commits; use `code-review`.
+- Reviewing staged ownership or producing commit groups; use `code-review`. Use `code-delivery` for actual staging or commits after review.
 - Systematic read-only Rust architecture, performance, memory, concurrency,
   SQLite, unsafe, or FFI review; use `audit-rust`.
 - Frontend UI work around a Tauri backend; use `implement-frontend`.
 
 ## Output
 
-Report detected project class, toolchain, Cargo and command sources, existing
-docs/interfaces checked, reuse/extension/reference decision, new-interface
-justification, changed contract and crate/module ownership, Rust best-practice
-decisions, structural documentation updates, validation results, failures, and
-`Not verified` areas.
+Report detected project class, Baseline evidence, selected risk overlays,
+toolchain, Cargo and command sources, existing docs/interfaces checked,
+reuse/extension/reference decision, new-interface justification, changed
+contract and crate/module ownership, Rust best-practice decisions, structural
+documentation updates, validation mapped to each overlay, failures, excluded
+optional checks with reasons, and `Not verified` areas.
+
+Examples of valid selection:
+
+- routine private helper: Baseline only;
+- public API: Baseline + Contract;
+- SQLite migration: Baseline + Persistence/SQLite, plus Contract only when a
+  public or durable consumer contract changes;
+- FFI callback: Baseline + Unsafe/FFI, plus Contract when callers change;
+- FFI-backed SQLite import: Baseline + Unsafe/FFI + Persistence/SQLite;
+- target-specific adapter only: Baseline + Target/platform. Do not add Miri,
+  sanitizers, fuzzing, stress, leak, or repeated-operation checks unless another
+  selected overlay makes them relevant and the repository supports them.
 
 ## Maintenance
 

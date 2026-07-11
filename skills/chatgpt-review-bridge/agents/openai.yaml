@@ -1,4 +1,4 @@
 interface:
   display_name: "ChatGPT Review Bridge"
-  short_description: "Coordinate ChatGPT Project and Codex review loops"
-  default_prompt: "Use $chatgpt-review-bridge to route repository review through a standard ChatGPT chat or Project in the Codex in-app Browser, separately verify the active account workspace, capture attributed review rounds, and have Codex verify findings before fixes."
+  short_description: "Prepare packages or run authorized ChatGPT review loops"
+  default_prompt: "Use $chatgpt-review-bridge to prepare a self-contained review-package.md or, only when the user explicitly authorizes external rounds, route it through a verified ChatGPT chat or Project. Treat preparation as Package-only, send oversized sets through a manifest/hash/final-marker multipart sequence with one attachment per send action, use $ops-browser for low-level actions, keep review.md local-private by default and sanitize repository copies, and verify every finding locally."

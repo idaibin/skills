@@ -66,8 +66,8 @@ Avoid:
 
 ## Useful Editing Moves
 
-- Replace "这个方案可以提升可维护性" with the maintenance boundary it changes.
-- Replace "具有重要意义" with what the author would actually do differently next time.
+- Replace "这个方案可以提升可维护性" with the maintenance boundary only when the source states or proves that boundary; otherwise delete or flag it.
+- Replace "具有重要意义" with what the author explicitly says they would do differently; do not invent a preference from the empty phrase.
 - Replace broad "AI 能提高效率" claims with the concrete task AI handled.
 - Keep uncertainty when uncertainty is real.
 - Keep "I did not choose X" when it explains the author's judgment.

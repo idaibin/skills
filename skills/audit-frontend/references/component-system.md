@@ -23,6 +23,11 @@ Do not clone a component for a minor style change. Do not force unrelated
 business cases into one abstraction merely because their JSX resembles each
 other.
 
+For Vue SFCs, search templates, imported components, emitted event names,
+`v-model` arguments, slot names/scopes, provide/inject keys, and registered
+names in addition to filenames. Template similarity alone does not establish a
+shared component contract.
+
 ## Primitive And Feature Boundaries
 
 - Keep buttons, dialogs, menus, popovers, fields, tables, feedback shells, and
@@ -36,6 +41,12 @@ other.
   when it adds no boundary.
 - Promote a feature component only after real consumers share stable behavior,
   not after an arbitrary occurrence count.
+- In Vue, keep props read-only and emits explicit; preserve payload types,
+  `v-model` arguments/modifiers, named/scoped slots, fallthrough attributes,
+  and component names used by keep-alive or tooling.
+- Treat provide/inject as an ownership contract, not an invisible replacement
+  for props or a store. Review the key/default, reactive owner, mutation API,
+  consumer lifetime, and cleanup before recommending it.
 
 ## shadcn/ui And Local Systems
 

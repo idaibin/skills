@@ -1,4 +1,4 @@
 interface:
   display_name: "Diagnose"
-  short_description: "Find root causes before fixing bugs"
-  default_prompt: "Use $diagnose to investigate bugs, failing tests, build failures, unexpected behavior, regressions, flaky behavior, or performance problems. Build a red/green feedback loop for the user's exact symptom, reproduce and minimize it, rank falsifiable hypotheses, probe one variable at a time, fix the confirmed root cause, add or document regression coverage, and clean up temporary debug artifacts."
+  short_description: "Diagnose root causes without unauthorized fixes"
+  default_prompt: "Use $diagnose to reproduce, isolate, and confirm bugs, failing tests, build failures, regressions, flakes, or performance problems. Select Diagnosis-only by default for explain, why, root-cause, or before-changing-code requests; keep tracked files, index, checkout, and refs unchanged, and report the recommended fix. Require separate authorization and isolation for bisect or checkout/ref mutation. Enter Diagnose-and-fix only when the user explicitly requests a fix, then rerun the original feedback loop and clean temporary artifacts."

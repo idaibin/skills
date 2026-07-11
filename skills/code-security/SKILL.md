@@ -1,53 +1,76 @@
 ---
 name: code-security
-description: "Use when a known code change or scoped API, config, dependency, upload/download, logging, auth, authorization, token/session, CORS/CSRF, secret, privacy, or release surface needs a lightweight evidence-grounded security review rather than a repository-wide or deep vulnerability scan."
+description: "Use when a known code change or scoped API, config, dependency, upload/download, logging, auth, authorization, token/session, CORS/CSRF, secret, privacy, or release surface needs a lightweight evidence-grounded security review rather than a repository-wide or deep vulnerability scan, including when code-review delegates an explicit security surface for a read-only specialist subreview."
 ---
 
 # Code Security
 
 ## Overview
 
-Review known code and configuration changes for concrete security risks. Use this after the target surface is clear, especially for auth, permission, API, sensitive-data, dependency, or release-sensitive changes. Route repository-wide or deep vulnerability scanning to the dedicated security scan workflow.
+Review known code and configuration changes for concrete security risks. Use this after the target surface is clear, either directly or as a read-only specialist over paths or a diff explicitly delegated by `code-review`. Apply framework-specific checks only when the repository actually uses that stack, and produce a bounded threat sketch when no dedicated threat-model workflow is available.
 
 ## Workflow
 
 1. Read repo guidance related to the target files or system boundary.
-2. Identify the reviewed surface: changed files, API chain, auth path, config, dependency, upload/download path, logging path, or release boundary.
+2. Identify the reviewed surface: changed files, API chain, auth path, config, dependency, upload/download path, logging path, release boundary, or native IPC boundary. In specialist mode, record the exact delegated paths/diff and do not expand beyond them.
 3. For full-stack API changes, rely on `code-review` to map route, method, fields, helpers, types, callers, and data shaping when that contract chain is not already clear.
-4. Inspect the mapped surface for auth, authorization, input/output validation, sensitive-data exposure, browser/API protections, config defaults, dependency risk, and abuse paths.
-5. Report security findings only when grounded in code, config, docs, runtime evidence, or clearly marked assumptions.
-6. Recommend focused validation or mark gaps `Not verified`.
+4. Identify assets, trust boundaries, authenticated roles/tenants, entry points, sensitive operations, and attacker-controlled inputs relevant to the scoped surface.
+5. Select applicable profiles:
+   - **Web/browser:** cookies, tokens, storage, CORS, CSRF, redirects, XSS sinks, CSP, clickjacking, and client-side exposure.
+   - **API/service:** authentication, authorization, ownership/tenant boundaries, input/output validation, injection, replay, rate limits, error and log exposure.
+   - **Rust/Axum:** extractor validation, middleware ordering, state ownership, path/query/body limits, typed errors, unsafe/command execution, and dependency features.
+   - **Vue/frontend:** template/HTML injection, unsafe directives or DOM sinks, route-guard assumptions, token storage, debug data, source maps, and frontend-only permission checks.
+   - **Tauri/native IPC:** command allowlists, capability/permission config, path and shell access, payload validation, window/webview trust, file URLs, and frontend-to-Rust authorization.
+   - **SQLite/files:** SQL construction, path traversal, file permissions, export/download authorization, backup contents, transaction boundaries, and sensitive local data.
+6. Inspect the mapped surface for auth, authorization, validation, sensitive-data exposure, browser/API protections, config defaults, dependency risk, abuse paths, and failure behavior.
+7. When no dedicated threat-model skill is available, include a compact scoped threat sketch: assets, trust boundaries, plausible abuse cases, existing controls, and unverified assumptions. Do not present it as a whole-system threat model.
+8. Run only safe, repository-supported checks. Recommend optional secrets/dependency/static scans when relevant, but do not claim they ran unless evidence exists.
+9. Report findings only when grounded in code, config, docs, runtime evidence, or clearly marked assumptions.
 
 ## Modes
 
-- **Security review:** inspect a code, API, config, dependency, or release change for security risks.
+- **Security review:** inspect a code, API, config, dependency, file, browser, or native IPC change for scoped security risks.
 - **Full-stack API security:** review an already-mapped frontend/backend API chain for auth, authorization, data exposure, input validation, and abuse risks.
-- **Release check:** do a lightweight pre-release pass over security-sensitive changes without replacing full threat modeling.
+- **Release check:** perform a lightweight pass over security-sensitive changes, runtime config, public artifacts, and dependency deltas without replacing formal assurance.
+- **Scoped threat sketch:** document assets, trust boundaries, abuse cases, controls, and evidence gaps when a dedicated threat-model workflow is unavailable.
+- **Scoped specialist subreview:** inspect only the security surface delegated by `code-review`; return security findings and gaps while `code-review` retains read-only dirty-tree review, scope, staging-plan, readiness, and orchestration ownership.
 
 ## Do Not Use For
 
-- API contract alignment, dirty-tree ownership, staging, commit grouping, or commit messages; use `code-review`.
-- Whole-system threat modeling unless the user requests that scope; use `security-threat-model` when available.
-- Repository-wide, deep, exhaustive, or multi-pass vulnerability scanning; use the available security scan workflow.
+- API contract alignment, dirty-tree review, staging plans, commit grouping/readiness, or proposed commit messages; use `code-review`.
+- Actual staging, commit creation, rebase/squash, push, or delivery; use `code-delivery` after review.
+- Whole-system threat modeling when a dedicated threat-model workflow is available and the user requests that scope.
+- Repository-wide, deep, exhaustive, or multi-pass vulnerability scanning.
 - First-pass repository discovery or future implementation planning; use `code-context` or `code-planner`.
 - Browser/client operation evidence; use `ops-browser` or `ops-client`.
 
 ## Hard Rules
 
-- Do not replace `code-review` for API contract alignment, dirty-tree ownership, staging, commit planning, or commit messages.
-- Do not replace `security-threat-model` for system-wide threat modeling.
-- Do not run heavy scanners, network tests, or destructive checks unless the user explicitly asks and permissions allow it.
-- Do not make speculative findings sound proven; use `Not verified` for missing runtime, config, or permission evidence.
+- Do not replace `code-review` for API contract alignment, dirty-tree review, staging plans, commit readiness, specialist orchestration, or proposed commit messages, and do not replace `code-delivery` for actual Git mutation.
+- When operating under `code-review`, inspect only the delegated security paths or diff. Do not reclassify the whole dirty tree, expand into unrelated files, edit files, stage, commit, push, or claim Git readiness; return the scoped assessment to the coordinator.
+- Do not treat a scoped threat sketch as a complete threat model or security certification.
+- Do not run heavy scanners, network tests, exploit attempts, or destructive checks unless explicitly requested, authorized, and supported by repository policy.
+- Do not make speculative findings sound proven; use `Not verified` for missing runtime, deployment, config, permission, or attacker-control evidence.
 - Do not broaden a focused review into a whole-repository audit unless the user asks for that scope.
 - Preserve unrelated local changes.
+- Frontend visibility, disabled controls, route guards, and hidden menu items are never sufficient backend authorization evidence.
+- Trace authorization to the server/native boundary and verify subject, action, resource, ownership/tenant, and failure behavior.
+- Vue's normal template escaping does not protect `v-html` or other DOM/URL sinks, and it says nothing about persisted tokens, redirects, or source maps. Trace each value to its actual browser sink and trust boundary.
+- Tauri command registration, TypeScript typing, capability/permission config, and allowlists limit exposure but do not replace payload, path, or resource authorization inside the Rust/native boundary.
+- Parameterized SQL addresses value injection, not row/tenant authorization. Treat exports, backups, local databases, temp files, diagnostics, and generated artifacts as sensitive-data surfaces with independent access, retention, and cleanup checks.
+- Distinguish authentication from authorization, validation from normalization, encryption from access control, and local storage from secret storage.
+- Check sensitive data across responses, errors, logs, telemetry, exports, backups, source maps, browser storage, crash reports, and generated artifacts where applicable.
+- Check dependency changes for source, version pinning, feature flags, build scripts, postinstall, remote downloads, native code, and lockfile impact; do not report generic dependency risk without a concrete delta.
+- For uploads and paths, verify size/type/content/path handling, canonicalization, overwrite/symlink behavior, storage permissions, processing isolation, and download authorization as applicable.
+- For release checks, never say “secure” or “safe to release” solely because no findings were observed. Report checked surfaces and residual gaps.
 
 ## Output Contract
 
-Start with security findings ordered by severity. If no blocking findings are found, say that clearly and list residual `Not verified` areas. Include checked surfaces, evidence, recommended fixes or validation, and any scope intentionally excluded.
+Start with severity-ranked findings. If no blocking findings are found, state that only for the reviewed scope and list residual `Not verified` areas. Include the review mode; in specialist mode, name the delegated path/diff boundary and `code-review` as the read-only Git-change review coordinator. Include selected profiles, assets and trust boundaries, checked files/endpoints/configs, evidence, impact, recommended fix or validation, optional tools not run, and intentionally excluded scope.
 
 ## Skill Maintenance
 
-When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, and `agents/openai.yaml` with trigger, mode, or output changes. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
+When maintaining this package, update `references/eval-cases.md`, `references/usage.md`, `agents/openai.yaml`, and framework-specific guidance when triggers, profiles, or output contracts change. In AICraft, run `python3 scripts/validate-skills.py` before publishing; end-user installs use `npx skills add https://github.com/idaibin/aicraft`, and end-user updates use `npx skills update`.
 
 ## References
 

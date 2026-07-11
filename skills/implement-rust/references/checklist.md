@@ -11,6 +11,22 @@
   membership, dependency inheritance, and validation commands when present.
 - Say `Not found` for missing contracts and `Not verified` for unchecked runtime behavior.
 
+## Validation Selection
+
+- Always start with the repository Baseline: repository-defined format/check
+  and focused tests, with Clippy only when it is an adopted baseline command.
+- Select every applicable overlay independently: Contract,
+  Concurrency/runtime, Persistence/SQLite, Unsafe/FFI, Porting/parity, and
+  Target/platform.
+- Do not choose one "highest" overlay. A native SQLite adapter selects both
+  Unsafe/FFI and Persistence/SQLite; neither overlay satisfies the other.
+- Treat a routine private/local change as Baseline with no overlays.
+- Treat a target-specific-only change as Baseline + Target/platform. It does
+  not automatically require Miri, sanitizer, fuzz, stress, leak, or
+  repeated-operation tools.
+- Record selected overlays, rejected candidate overlays and why, and optional
+  checks excluded because they were unsupported or irrelevant.
+
 ## Interface Reuse Gate
 
 - Start from a current `code-context` inventory, or reproduce the same targeted
@@ -99,14 +115,30 @@ binary, migration, or shared surface, check:
 
 - Use repository-defined commands first.
 - Run matching format, check, test, and Clippy gates when present.
-- Run doc tests or rustdoc checks when public APIs or documentation change.
+- For the Contract overlay, run downstream/example compile, public docs or doc
+  tests, relevant feature combinations, compatibility fixtures, and affected
+  consumer checks.
+- For the Concurrency/runtime overlay, add deterministic cancellation, panic,
+  close, overload, timeout, shutdown, and runtime-responsiveness checks that
+  match the changed lifecycle.
+- For the Persistence/SQLite overlay, add fresh/upgrade migration, rollback or
+  restart/recovery, representative-data, transaction, query-plan, backup, and
+  integrity checks that match the changed durable contract.
+- For the Unsafe/FFI overlay, add ABI/layout, ownership/free symmetry,
+  callback/re-entry, panic-containment, target boundary, and repeated resource
+  lifecycle checks that match the changed invariant.
+- For the Porting/parity overlay, run the shared behavior suite, representative
+  source-to-Rust parity fixtures, and release-mode checks for semantic
+  differences that can change outside debug builds.
+- For the Target/platform overlay, build the affected supported target and run
+  the real platform boundary when available; do not infer all-platform support
+  from one target.
 - Fix Clippy findings instead of silencing them; use narrow justified
   `#[expect(...)]` when suppression is necessary.
 - Keep validation commands non-mutating; use an explicit formatting/fix command when writes are intended.
-- Verify feature combinations or platform targets only when the changed contract requires them.
 - Add release-mode, cross-target, Miri, sanitizer/leak, fuzz, stress, or
-  repeated-operation gates when unsafe, FFI, parsers, platform code, concurrency,
-  or resource ownership makes them relevant.
+  repeated-operation gates only when the repository/environment supports them
+  and the selected overlays make them relevant to a changed invariant.
 - Confirm selected tests actually ran and were not silently skipped.
 - Classify failures as environment, configuration, existing project, or introduced code issues.
 - Do not claim runtime, deployment, platform, or cross-consumer behavior without evidence.
@@ -120,6 +152,8 @@ binary, migration, or shared surface, check:
   an explicit reuse/extension/reference search result and new-interface reason.
 - Confirm ownership/borrowing, errors, allocation, dispatch, async/concurrency,
   tests, rustdoc, comments, and lints follow `references/best-practices.md`.
+- Confirm Baseline plus every selected overlay was validated independently, and
+  that excluded optional checks have a concrete unsupported-or-irrelevant reason.
 - For FFI, unsafe, native resources, or language ports, confirm the applicable
   source-backed checks in `references/bun-production-patterns.md` without
   copying Bun-specific toolchain or architecture choices.

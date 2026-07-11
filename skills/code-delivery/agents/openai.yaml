@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Delivery"
-  short_description: "Deliver reviewed Git changes and stop before PR creation"
-  default_prompt: "Use $code-delivery to deliver reviewed local changes with path-limited staging, verification, local commit, current-branch push or sync, and no pull-request creation. Route explicit PR publishing to the available GitHub publishing workflow."
+  short_description: "Stage, commit, and deliver reviewed Git changes"
+  default_prompt: "Use $code-delivery as the sole owner of staging, commits, pushes, and other Git mutations after review. Confirm explicit delivery authorization, branch policy, permissions, upstream, ahead/behind/diverged state, remote freshness, and exact reviewed scope; route unclear ownership to $code-review, verify the staged diff before every commit, never auto-force-push, never create a pull request, and prove final local and remote refs."

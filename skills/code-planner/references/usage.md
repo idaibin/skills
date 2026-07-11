@@ -2,7 +2,7 @@
 
 ## Summary
 
-Turn future codebase work into executable, verifiable task packages before implementation. Use subagents by default only when tools are available, scopes are independent, ownership is clear, and the main thread can audit outputs.
+Turn future codebase work into executable, verifiable task packages before implementation. Classify it as Small, Coupled, or Parallelizable first; use subagents only for genuinely independent, auditable scopes.
 
 ## Best For
 
@@ -22,6 +22,7 @@ Use for prompts like:
 - `Split the approach first, then decide whether to execute.`
 - `Every step must be verifiable.`
 - `Which tasks can run in parallel?`
+- `Classify this as Small, Coupled, or Parallelizable before assigning owners.`
 - `Use multiple subagents.`
 - `No subagents; keep it sequential in the main thread.`
 - `Mark contract-impact and route the final review to code-review.`
@@ -31,7 +32,7 @@ Do not use for first-pass repo onboarding, existing dirty-tree review, or commit
 
 ## Output
 
-Expect task packages with required reads, owned scope, do-not-touch boundaries, dependencies, implementation steps, validation, done criteria, reject criteria, owner model, and contract/structure integration gates.
+Expect a justified complexity class and owner model followed by task packages with required reads, owned scope, do-not-touch boundaries, dependencies, implementation steps, validation, done criteria, reject criteria, and contract/structure integration gates.
 
 ## Maintenance
 

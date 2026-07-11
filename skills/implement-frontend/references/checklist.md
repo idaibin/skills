@@ -8,13 +8,13 @@ Use this checklist when implementing or reviewing frontend changes.
 - Run `git status --short` before edits.
 - Identify actual package manager, scripts, frontend app boundary, target screen, route, component, framework, UI type, visual source, style system, and runtime proof requirement.
 - Identify the frontend project class, pinned runtime/package manager, lockfile, dependency policy, script contract, directory/naming standard, and documented exceptions.
-- Inspect only target page, component, route, service, hook, type, style, shared UI, and layout owner files needed for the request.
+- Inspect only target page, component, route, service, hook or composable, store, type, style, shared UI, and layout owner files needed for the request.
 - Check existing imports and nearby patterns before adding libraries, aliases, icons, helpers, or components.
 
 ## Reuse-First Gate
 
 - Start from a current `code-context` directory/file inventory, or reproduce the same targeted search when it is unavailable or stale.
-- Search relevant routes, pages, layouts, components, hooks, services, shared UI, tests, exports, and symbols before creating anything.
+- Search relevant routes, pages, layouts, components, hooks/composables, services, stores, shared UI, tests, exports, and symbols before creating anything.
 - Classify candidates as:
   - direct reuse: behavior and ownership already match
   - reference-only: adapt the nearest structure, naming, props, state, styling, and tests
@@ -34,6 +34,36 @@ Use this checklist when implementing or reviewing frontend changes.
 - Extract a shared component or package only after identifying real consumers, named ownership, stable props/API, shared tests, and consumer validation.
 - Preserve path aliases and import ordering conventions.
 - Keep local UI state local unless the app already uses a global store or route/query layer for the same responsibility.
+
+## Vue 3 Profile
+
+Apply this section only after manifests, file extensions, imports, and nearby code confirm Vue 3. Do not apply React hook, Context, or effect-dependency rules to Vue code.
+
+- Preserve the repository's SFC organization and its existing `<script setup>`, Composition API, or Options API style. Do not convert adjacent components merely for consistency with a personal preference.
+
+### Composition API And `<script setup>`
+
+- Keep `ref` values accessed and exposed according to the local template/script convention. Use `reactive` for stable object identity only where that ownership is intentional, and use `computed` for pure derivation.
+- Treat destructuring, spreading, class instances, third-party objects, and Pinia extraction as reactivity boundaries. Use `toRef`, `toRefs`, `storeToRefs`, `shallowRef`, or `markRaw` only when the actual value and local convention require them; do not apply them mechanically.
+- Give `watch` an explicit ref, getter, reactive source, or source array and document deep/flush/immediate semantics when they matter. Use `watchEffect` only when automatic dependency collection is intentional; keep the synchronous dependency window bounded and do not hide unrelated reads or request loops in it.
+- For every watcher or effect that starts async work, use invalidation cleanup or an owned abort/cancel mechanism so stale results cannot overwrite current state.
+- Keep props read-only and declared with local typing/default conventions. Define emits explicitly, preserve event payloads, `v-model` argument/modifier behavior, slot names, scoped slot values, and fallthrough-attribute expectations.
+- For `provide`/`inject`, prefer the repository's typed `InjectionKey`/symbol pattern, define missing-provider/default behavior, and keep mutations with the provider or an explicit command API. Record whether injected refs/objects are reactive and who owns disposal.
+- Keep local state in the component or composable. Use Pinia only for established cross-tree or durable business state, preserve store action boundaries, and use `storeToRefs` when reactive extraction is required.
+- Preserve route paths, params/query/meta, lazy-loading, redirects, and scroll behavior. Register global guards once at the router owner and retain their removal callback when registration is temporary; use component guards only for component-owned behavior.
+- Match cleanup to lifetime: `onUnmounted`/`onScopeDispose` for destroyed instances, `onActivated`/`onDeactivated` for keep-alive resources, and route/request cancellation when navigation can leave work in flight. Prevent duplicate listeners, guard registration, subscriptions, timers, and requests on reactivation.
+
+### Options API
+
+- Keep instance state in `data`, pure derivation in `computed`, behavior in `methods`, and declared effects in the `watch` option according to local style. Use `this.$watch` only when dynamic registration is required and retain/call its unwatch handle when its owner ends.
+- Review watch keys/getters, handler form, `deep`, `immediate`, and flush/timing behavior without translating them into Composition `watch` syntax. Do not require `ref`, `reactive`, `watchEffect`, `onScopeDispose`, or Composition imports in a pure Options component.
+- Preserve Options `props`, `emits`, `provide`, `inject`, and component registration contracts. Keep injected mutation with the provider or an explicit method/action boundary.
+- Use `mounted`/`beforeUnmount`/`unmounted` and `activated`/`deactivated` for instance and keep-alive resources. Preserve component `beforeRouteEnter`/`beforeRouteUpdate`/`beforeRouteLeave` ownership where the repository uses them; application guards remain router-owned.
+- Cancel or invalidate async work when the owning component, route, or activation lifetime ends, and prevent duplicate registration on reactivation.
+
+### Shared Vue Contracts
+
+- Preserve async component, `Suspense`, error-capture, and keep-alive contracts already used by the target feature. Mark their runtime behavior `Not verified` when it is not exercised.
 
 ## DOM And Layout Ownership
 
@@ -94,4 +124,4 @@ Use this checklist when implementing or reviewing frontend changes.
 - For added, reused, moved, renamed, or deleted routes, components, features, packages, or shared directories, verify manifests, exports, route generation, scripts, tests, CI/build/deploy paths, architecture/project-map docs, indexes, and stale references.
 - Compare before/after DOM and CSS ownership: if a wrapper or rule disappeared, confirm its old responsibility moved to the correct owner or was truly unnecessary.
 - Check that every changed line belongs to the requested frontend change.
-- Route final dirty-tree review and staging to `code-review`; route push or squash delivery to `code-delivery`.
+- Route final dirty-tree review, staging plan, specialist coordination, and commit readiness to `code-review`; route actual staging, commit, rebase/squash, push, and delivery to `code-delivery`.

@@ -29,6 +29,21 @@ Use `writing-editor` for personal technical writing where the goal is to keep th
 - Use **Reddit Adaptation** when the user asks for Reddit, subreddit, Hacker News-like community tone, or an English developer-community post. Output title and body only by default.
 - Use **Diagnose** output only when the user asks what is wrong, asks for notes, or asks for before/after explanation.
 
+## Source Resolution
+
+Use this order before editing:
+
+1. current-turn explicit instruction, correction, or named authoritative source;
+2. later direct user correction that clearly supersedes earlier material;
+3. the supplied draft;
+4. older conversation only when it fills a gap without conflicting with the draft;
+5. writer profile and examples for style only, never content.
+
+If older conversation conflicts with the draft and no correction is explicit,
+keep the draft version. Diagnose the conflict when notes are requested. Ask for
+the minimum clarification only when the conflict prevents a factual finished
+artifact; never merge both versions silently.
+
 ## Editing Bias
 
 Prefer:
@@ -56,3 +71,4 @@ Avoid:
 - For Reddit adaptation, default to `Title:` plus post body only.
 - Add change notes, removed expressions, or before/after commentary only when requested.
 - Preserve the author's judgment; clarify it when the draft already contains the evidence, but do not make the judgment stronger than the supplied context supports.
+- Do not import facts or first-person judgments from writer profiles, bundled examples, or unrelated conversation history.

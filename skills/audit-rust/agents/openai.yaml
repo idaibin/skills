@@ -1,4 +1,4 @@
 interface:
   display_name: "Rust Audit"
-  short_description: "Audit Rust architecture and runtime risks"
-  default_prompt: "Use $audit-rust to perform a read-only, evidence-backed Rust audit across toolchain baselines, architecture, structural lifecycle, ownership, concurrency, performance, memory, SQLite, unsafe code, tests, and documentation. Report severity-ranked findings and route requested fixes to $implement-rust."
+  short_description: "Audit selected Rust risk profiles with evidence"
+  default_prompt: "Use $audit-rust for a read-only, evidence-backed Rust audit. Select only the profiles required by the task: Architecture/Baseline, Ownership/Errors, Concurrency/Runtime, Performance/Memory, SQLite, or Unsafe/FFI. Score only common gates and selected profiles; mark unselected profiles Out of scope and unavailable required evidence Not verified. For an existing diff, keep $code-review as the read-only Git-change review coordinator and return a bounded specialist subreview without worktree or Git mutation. Route requested fixes to $implement-rust and explicit delivery to $code-delivery."

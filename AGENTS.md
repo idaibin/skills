@@ -9,7 +9,8 @@ This file defines how AI agents should work on this repository. It is not the pr
 - Do not switch into installation mode just because this repository contains `skills/`.
 - Use `implement-frontend` or `implement-rust` for requested code changes. Use
   `audit-frontend` or `audit-rust` for read-only domain audits. Use
-  `code-review` for existing Git changes, staging, and commit readiness.
+  `code-review` for existing Git changes, staging plans, and commit readiness;
+  use `code-delivery` for staging, commits, pushes, and other Git mutations.
 
 ## Repository Work Rules
 

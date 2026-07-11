@@ -8,6 +8,8 @@ Before final output, check:
 - [ ] Preserve the original core point.
 - [ ] Preserve or clarify real tradeoffs.
 - [ ] Keep the author's judgment no stronger than the supplied context supports.
+- [ ] Resolve draft/conversation conflicts through Source Precedence; do not silently blend versions.
+- [ ] Trace each added concrete claim to the winning source, not to a style example.
 - [ ] Avoid mechanical parallel structure.
 - [ ] Avoid adding unsupported facts.
 - [ ] Preserve technical accuracy.

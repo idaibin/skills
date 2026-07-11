@@ -1,4 +1,4 @@
 interface:
   display_name: "Frontend Audit"
-  short_description: "Audit frontend architecture and consistency"
-  default_prompt: "Use $audit-frontend to perform a read-only, evidence-backed frontend audit across architecture, reuse, ownership, state, data, layout, accessibility, performance, documentation, and desktop boundaries. Report severity-ranked findings and route requested fixes to $implement-frontend."
+  short_description: "Audit React or Vue architecture, including scoped diffs"
+  default_prompt: "Use $audit-frontend for a read-only evidence-backed audit or a scoped specialist under $code-review. Detect the framework and local API style; inspect architecture, reuse, ownership, state/data, layout, accessibility, performance, docs, and desktop boundaries. For Vue Composition inspect ref/reactive/computed, watch/watchEffect dependencies, composables/Pinia, Router, provide/inject, keep-alive, and cleanup. For Vue Options inspect data/computed/watch, dynamic instance watchers, methods, provide/inject, component guards, and lifecycle without requiring Composition helpers. For React use native hooks/effects/render boundaries. Report severity-ranked findings, route fixes to $implement-frontend, and leave Git mutation to $code-delivery."

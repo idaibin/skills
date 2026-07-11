@@ -2,7 +2,7 @@
 
 ## Summary
 
-Use `diagnose` when there is a concrete failure to understand before editing code. It covers bugs, failed tests, build failures, regressions, flaky behavior, and performance problems.
+Use `diagnose` when there is a concrete failure to understand. Diagnosis-only is the default for root-cause requests; Diagnose-and-fix requires an explicit request to apply the remediation.
 
 ## Best For
 
@@ -16,6 +16,8 @@ Use `diagnose` when there is a concrete failure to understand before editing cod
 
 - `Diagnose why this test fails before changing code.`
 - `Debug this regression; do not guess a fix.`
+- `Find the root cause and report the smallest fix, but leave the worktree unchanged.`
+- `Diagnose and fix this failing build, then rerun the original command.`
 - `This page is sometimes blank; find the root cause.`
 - `The build started failing after the last change.`
 - `This endpoint got slow; measure first, then fix.`
@@ -31,7 +33,7 @@ Use `diagnose` when there is a concrete failure to understand before editing cod
 
 ## Output
 
-Expect a named feedback loop, exact reproduction evidence, minimized scenario, ranked hypotheses, probes, root cause or `Not verified`, fix scope, regression coverage, cleanup status, and remaining risk.
+Expect the authorization boundary, named feedback loop, exact reproduction evidence, minimized scenario when needed, ranked hypotheses, probes, root cause or `Not verified`, recommended or applied fix scope, regression seam, initial/final worktree, index, checkout and ref state, cleanup status, and remaining risk.
 
 ## Maintenance
 

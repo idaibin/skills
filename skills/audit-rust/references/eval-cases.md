@@ -4,6 +4,7 @@
 
 - [Trigger Eval](#trigger-eval)
 - [Non-Trigger Eval](#non-trigger-eval)
+- [Profile Selection Eval](#profile-selection-eval)
 - [Scenario Eval](#scenario-eval)
 - [Quality Eval](#quality-eval)
 - [Scoring](#scoring)
@@ -18,6 +19,7 @@
 | `Audit crate boundaries and public APIs for a local-first Rust CLI and library.` | Trigger `audit-rust`. |
 | `Audit unsafe FFI ownership and validate it with supported Rust tools.` | Trigger `audit-rust`. |
 | `Compare our Rust baseline and audit legacy exceptions without mechanically renaming production code.` | Trigger `audit-rust`. |
+| `Under code-review, inspect only the changed Tokio/SQLite surface for concurrency and recovery findings without staging.` | Trigger `audit-rust` as a scoped read-only specialist; `code-review` retains read-only Git-change review coordination. |
 
 ## Non-Trigger Eval
 
@@ -26,9 +28,18 @@
 | `Rename one known private Rust function and run its existing test.` | Prefer `implement-rust`. |
 | `Find why this test started failing; the cause is unknown.` | Prefer `diagnose`. |
 | `Map the repository and tell me whether it contains Rust.` | Prefer `code-context`. |
-| `Review my dirty tree and prepare exact commits.` | Prefer `code-review`. |
-| `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `code-review`. |
+| `Review my dirty tree and prepare exact commits.` | Prefer `code-review`; it coordinates the read-only Git-change review and may request a bounded Rust specialist subreview. |
+| `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `code-review` as the read-only review coordinator; do not auto-route to delivery. |
 | `Audit only authentication and secret handling after the module is known.` | Prefer `code-security`. |
+
+## Profile Selection Eval
+
+| Prompt | Expected selection and scope | Reject if |
+| --- | --- | --- |
+| `Audit only crate ownership, workspace inheritance, and architecture docs for this Rust library.` | Focused audit: Architecture/baseline. Run common gates and that profile only; mark Ownership/errors, Concurrency/runtime, Performance/memory, SQLite, and Unsafe/FFI `Out of scope`. | Loads, reports, or scores all profiles; demands runtime, query-plan, or Miri evidence. |
+| `Audit only this synchronous CLI's SQLite migration and critical query plan.` | Focused audit: SQLite. Verify applicable runtime/linkage, migration, representative data, plan, rollback/recovery, and common evidence; mark unrelated profiles `Out of scope`. | Automatically adds Tokio, performance/memory, unsafe/FFI, or workspace architecture because SQLite is implemented natively. |
+| `Audit the Tokio worker that owns this SQLite connection for blocking work, cancellation, shutdown, transactions, and WAL recovery.` | Combined audit: Concurrency/runtime + SQLite. Keep both profiles' evidence and validate task/database failure, cancellation, shutdown/restart, and recovery interactions. | Treats one profile as satisfying the other, or expands into unrelated architecture, broad performance, or FFI review. |
+| `Audit this unsafe FFI adapter, but the required target and sanitizer are unavailable here.` | Focused audit: Unsafe/FFI remains selected. Review static repository evidence, mark target/sanitizer-dependent claims exactly `Not verified`, state what would verify them, and mark other profiles `Out of scope`. | Claims the unavailable checks passed, substitutes unrelated commands, drops the profile, or broadens into every domain. |
 
 ## Scenario Eval
 
@@ -258,28 +269,36 @@ supports them.
 
 ## Quality Eval
 
-| Case | Pass evidence | Reject if |
-| --- | --- | --- |
-| Grounding | reads guidance/status and maps real manifests, entries, analogous code, docs, tests, CI, and migrations | starts from a universal template |
-| Priority | resolves conflicts in the declared order | external repos override local contracts |
-| Baseline | classifies portable, organization, template, repository, and legacy rules; verifies toolchain and inheritance | hard-codes a version snapshot or directory tree |
-| Architecture | assigns stable crate/module/domain/adapter owners and justifies traits/layers | splits by file count or adds ceremonial layers |
-| Ownership | names creation/share/close/drop owners and bounded growth | flags syntax without lifecycle evidence |
-| Errors | classifies failures and traces typed context, retry, logging, and boundary mapping | panics expected errors or stringifies everything |
-| Concurrency | proves async need, blocking boundary, capacity, locks, timeout, cancellation, panic, and shutdown | unbounded work or hidden task lifecycle |
-| Performance | uses representative release baseline/profile/comparison and records trade-offs | intuition, one run, or debug-only claim |
-| Memory | distinguishes leak/live/cache/allocator/mmap/SQLite/OS causes | calls RSS a leak without evidence |
-| SQLite | verifies runtime/linkage/connections/transactions/WAL/migrations/schema/plans/maintenance/recovery | guesses from SQL or crate version |
-| Unsafe/FFI | states invariants, ownership, ABI, panic, cleanup, and supported dynamic checks | treats unsafe alone as a vulnerability or optimization proof |
-| Validation | runs real repository commands and risk-matched runtime/data checks | invents commands or equates unit tests with full proof |
-| Lifecycle | identifies drift across manifests, registrations, migrations, tests, docs, indexes, and runbooks plus the complete remediation scope | leaves known source-of-truth drift unreported |
-| Scope | preserves unrelated dirty work | performs opportunistic refactors |
-| Reporting | leads with outcome/findings and includes exact evidence plus `Not found`/`Not verified` | reports unsupported success |
-| Read-only boundary | leaves code and Git state unchanged and routes requested fixes to `implement-rust` | edits, stages, commits, or claims a fix during the audit |
+Score common rows for every audit and profile rows only when that profile is
+selected. Mark unselected rows `Out of scope`; they are not zeroes and do not
+reduce the score.
+
+| Case | Applies when | Pass evidence | Reject if |
+| --- | --- | --- | --- |
+| Grounding | Common | reads guidance/status, declares selected/excluded profiles, and maps only the evidence needed for selected claims | starts from a universal template or inventories every domain by default |
+| Priority | Common | resolves conflicts in the declared order | external repos override local contracts |
+| Scope | Common | preserves unrelated dirty work and stops at selected-profile evidence | performs opportunistic refactors or partially audits excluded profiles |
+| Validation | Common + selected profiles | runs real non-mutating repository commands and selected-profile runtime/data checks; records unavailable required evidence `Not verified` | invents commands, substitutes a weaker unrelated check, or equates unit tests with full proof |
+| Reporting | Common | leads with outcome/findings and includes selected profiles, excluded profiles, exact evidence, `Not found`, and `Not verified` | reports unsupported success or adds empty all-domain sections |
+| Read-only/Git boundary | Common | leaves worktree and Git state unchanged; under `code-review`, returns only the scoped specialist findings | edits files, stages, commits, takes over review coordination, or invokes delivery without an explicit delivery request |
+| Baseline | Architecture/baseline | classifies portable, organization, template, repository, and legacy rules; verifies applicable toolchain and inheritance | hard-codes a version snapshot or directory tree |
+| Architecture | Architecture/baseline | assigns stable crate/module/domain/adapter owners and justifies traits/layers | splits by file count or adds ceremonial layers |
+| Lifecycle | Architecture/baseline, or a selected structural claim | identifies applicable drift across manifests, registrations, migrations, tests, docs, indexes, and runbooks | requires every lifecycle surface when unrelated, or leaves known selected-scope drift unreported |
+| Ownership | Ownership/errors | names creation/share/close/drop owners and bounded growth | flags syntax without lifecycle evidence |
+| Errors | Ownership/errors | classifies failures and traces typed context, retry, logging, and boundary mapping | panics expected errors or stringifies everything |
+| Concurrency | Concurrency/runtime | proves async need, blocking boundary, capacity, locks, timeout, cancellation, panic, and shutdown | unbounded work or hidden task lifecycle |
+| Performance | Performance/memory | uses representative release baseline/profile/comparison and records trade-offs | intuition, one run, or debug-only claim |
+| Memory | Performance/memory | distinguishes leak/live/cache/allocator/mmap/SQLite/OS causes | calls RSS a leak without evidence |
+| SQLite | SQLite | verifies applicable runtime/linkage/connections/transactions/WAL/migrations/schema/plans/maintenance/recovery | guesses from SQL or crate version |
+| Unsafe/FFI | Unsafe/FFI | states invariants, ownership, ABI, panic, cleanup, and supported relevant dynamic checks | treats unsafe alone as a vulnerability or claims unsupported dynamic proof |
+| Combined interaction | Two or more selected profiles | preserves every selected profile's obligations and validates cross-boundary failure, cleanup, shutdown/restart, or recovery | lets one profile stand in for another or reports only isolated happy paths |
 
 ## Scoring
 
-Minimum pass: score each quality case 0–10. Pass only when trigger/non-trigger routing is
-correct, every scenario includes all seven required fields, and every quality
-case scores at least 7. Any fabricated command result, benchmark, runtime
-version, query plan, migration recovery, or safety proof is an automatic fail.
+Minimum pass: trigger/non-trigger routing and every profile-selection case are
+correct; every scenario includes all seven required fields; and every common,
+selected-profile, and applicable Combined row scores at least 7. Record
+unselected profile rows `Out of scope` and do not score them. Unavailable
+required evidence may remain `Not verified` without failing scope discipline,
+but claiming or fabricating a command result, benchmark, runtime version, query
+plan, migration recovery, or safety proof is an automatic fail.

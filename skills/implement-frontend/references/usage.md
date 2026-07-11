@@ -19,10 +19,14 @@ Use `implement-frontend` as the first frontend coding skill after repository con
 - Improving Tauri/Electron webview UI code while leaving real-window proof to `ops-client`.
 - Aligning frontend scripts, naming, directories, and add/reuse/move/delete documentation to an explicit repository standard.
 - Reusing or adapting an existing page/component pattern before creating a new implementation.
+- Implementing Vue 3 SFCs without changing the repository's `<script setup>`, Composition API, or Options API convention.
+- Correcting Vue reactivity, composable/Pinia ownership, Router guard lifetime, provide/inject contracts, keep-alive behavior, or stale-request cleanup in a known surface.
 
 ## Trigger Examples
 
 - `Fix this React page without changing the layout.`
+- `Add this Vue 3 settings form using the existing script setup, Pinia, Router, and component patterns.`
+- `Fix this Vue composable: keep watch sources explicit, bound watchEffect dependencies, preserve provide/inject ownership, and cancel stale requests on deactivation.`
 - `Add this form to the existing AntD page using current patterns.`
 - `Build this admin table page using the existing filters, table, and empty/error patterns.`
 - `This Vite page has messy imports and component organization; clean only what is needed.`
@@ -45,7 +49,7 @@ Use `implement-frontend` as the first frontend coding skill after repository con
 - Repository onboarding or command discovery; use `code-context`.
 - Large future planning before implementation; use `code-planner`.
 - Root-cause diagnosis before a fix is known; use `diagnose`.
-- Git diff ownership, staging, or commit planning; use `code-review`.
+- Git diff ownership, staging plans, or commit readiness; use `code-review`. Use `code-delivery` for actual staging, commit, push, or delivery.
 - Systematic read-only frontend architecture, reuse, state/data, layout,
   accessibility, performance, or Tauri-boundary review; use `audit-frontend`.
 - Browser screenshots, console, network, uploads, downloads, account state, or runtime checks; use `ops-browser`.
@@ -53,7 +57,7 @@ Use `implement-frontend` as the first frontend coding skill after repository con
 
 ## Output
 
-Report branch, frontend project class, detected stack/toolchain, existing implementations checked, direct reuse or reference candidate, new-file justification when applicable, files and UI surface touched, structural lifecycle updates, layout and outer-spacing owners, Flex/Grid choice, adaptive-child behavior, DOM/CSS simplification choices, contracts preserved, validation run, failed commands, visual/client verification status, and `Not verified` areas.
+Report branch, frontend project class, detected framework profile and toolchain, existing implementations checked, direct reuse or reference candidate, new-file justification when applicable, files and UI surface touched, structural lifecycle updates, state/reactivity/store ownership, component/injection/router/keep-alive contracts, cleanup and cancellation behavior, layout and outer-spacing owners, Flex/Grid choice, adaptive-child behavior, DOM/CSS simplification choices, contracts preserved, validation run, failed commands, visual/client verification status, and `Not verified` areas.
 
 ## Maintenance
 

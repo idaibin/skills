@@ -1,24 +1,31 @@
 # Eval Cases
 
-Use these cases when changing `code-security` triggers, scope, outputs, or metadata.
+Use these cases when changing `code-security` triggers, profiles, scope, outputs, or metadata.
 
 ## Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
 | `Review this API for authorization or IDOR risk.` | Should trigger `code-security`. | Permission and IDOR risk. |
-| `Check whether token/session/cookie handling is safe.` | Should trigger `code-security`. | Auth/session security. |
-| `Run a lightweight pre-release security check.` | Should trigger `code-security`. | Release security review. |
-| `Run a lightweight security review of this scoped API change, not a repository-wide scan.` | Should trigger `code-security`. | Scoped change review rather than vulnerability scanning. |
-| `Does this upload API have path traversal or sensitive data exposure risk?` | Should trigger `code-security`. | Upload and data exposure risk. |
+| `Check whether token/session/cookie handling is safe.` | Should trigger Web/API profiles. | Auth/session security. |
+| `Review this Vue page and Tauri command boundary for frontend-only permission checks, unsafe IPC, and path access.` | Should trigger Vue, Tauri IPC, and file profiles. | Framework-specific scoped security. |
+| `Review this Axum route's extractor limits, middleware order, tenant authorization, and typed errors.` | Should trigger Rust/Axum and API profiles. | Rust service security boundary. |
+| `Trace this Vue v-html and redirect URL flow, including token storage, Router guard assumptions, and source maps.` | Should trigger Vue and Web profiles. | Browser sinks, navigation trust, and client exposure. |
+| `Check whether this Tauri capability and typed command still enforce native authorization and canonicalize paths.` | Should trigger Tauri IPC and file profiles. | Exposure configuration is not resource authorization. |
+| `This SQLite query is parameterized; review row authorization plus export and backup data access.` | Should trigger SQLite/File and API or native authorization profiles. | Injection control does not prove authorization. |
+| `Run a lightweight pre-release security check.` | Should trigger release mode. | Release security review. |
+| `Run a lightweight security review of this scoped API change, not a repository-wide scan.` | Should trigger scoped review. | Bounded change review. |
+| `Does this upload API have path traversal or sensitive data exposure risk?` | Should trigger file/API profiles. | Upload and data exposure risk. |
+| `No threat-model skill is available; give me a scoped threat sketch for this endpoint.` | Should trigger scoped threat-sketch mode. | Local fallback without claiming whole-system coverage. |
+| `Under code-review, inspect only the delegated API and Tauri files for security risks and return a read-only specialist assessment.` | Should trigger scoped specialist subreview and keep `code-review` as coordinator. | Bounded domain delegation without Git ownership transfer. |
 
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `Review whether frontend and backend API fields align, then split commits.` | Should prefer `code-review`. | Contract alignment and commit planning. |
-| `Create a full threat model for this system.` | Should prefer `security-threat-model`. | System-wide threat modeling. |
-| `Run a deep repository-wide vulnerability scan with multiple passes.` | Should prefer a dedicated deep security scan workflow. | Repository-wide scanning is outside scoped change review. |
+| `Review whether frontend and backend API fields align, then split commits.` | Should use `code-review` for alignment/staging plan/readiness, then `code-delivery` for authorized staging and commit creation. | Review is read-only; Git mutation has a separate owner. |
+| `Create a full threat model for this system.` | Should prefer a dedicated threat-model workflow when available. | Whole-system modeling is broader than this skill. |
+| `Run a deep repository-wide vulnerability scan with multiple passes.` | Should prefer a dedicated deep security scan workflow. | Repository-wide scanning is outside scoped review. |
 | `Split this requirement into executable tasks.` | Should prefer `code-planner`. | Future implementation planning. |
 | `Understand this repository's real commands and directory structure first.` | Should prefer `code-context`. | Repository grounding. |
 | `Review all local changes and generate commit groups.` | Should prefer `code-review`. | Dirty-tree review and commit planning. |
@@ -27,11 +34,21 @@ Use these cases when changing `code-security` triggers, scope, outputs, or metad
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
-| API security | Checks auth, authorization, input/output validation, sensitive data, and abuse risks after route/method/field mapping is known. | Stops at endpoint names or duplicates contract alignment only. |
-| Permission review | Distinguishes frontend visibility from backend authorization and checks ownership or tenant boundaries. | Treats hidden UI as sufficient permission control. |
-| Sensitive data | Checks logs, errors, response fields, storage, and exports for tokens, secrets, or PII. | Ignores exposure paths or reports generic leakage without evidence. |
-| Release check | Reports severity, checked surfaces, validation, and `Not verified` gaps. | Claims the release is secure without scoped evidence. |
-| Tool safety | Avoids heavy scanners or network tests unless explicitly requested and permitted. | Runs broad or destructive checks by default. |
+| Scope mapping | Identifies reviewed files/endpoints/configs, assets, attacker-controlled inputs, trust boundaries, roles/tenants, sensitive operations, and excluded surfaces. | Starts from a generic OWASP checklist without local ownership or entry points. |
+| Profile selection | Selects only applicable Web/API, Rust/Axum, Vue, Tauri IPC, SQLite/File, dependency, or release checks from actual repository evidence. | Applies every framework checklist or assumes a stack from the prompt alone. |
+| Web/browser security | Traces cookie/token/session lifetime, browser storage, CORS/CSRF, redirects, CSP/frame controls, DOM/HTML/URL sinks, source maps, and third-party exposure only where applicable. | Treats browser storage as secret storage, assumes one sanitizer fits every sink, or lists headers without config/evidence. |
+| API security | Checks authentication separately from subject/action/resource authorization, ownership/tenant boundaries, all input channels, output minimization, IDOR/mass assignment, replay/idempotency, rate limits, and abuse risks after route/method/field mapping is known. | Stops at endpoint names, duplicates contract alignment only, or treats authenticated as authorized. |
+| Rust/Axum security | Verifies extractor/body limits, middleware ordering, state/request scope, rejection/error mapping, async/blocking boundaries, path/command/unsafe behavior, and concrete Cargo feature deltas where relevant. | Applies generic Rust advice without tracing the Axum layer/handler/state path or invents dependency risk without a delta. |
+| Vue/frontend security | Traces `v-html`, DOM/template and URL sinks, token/persisted-store exposure, redirect/route input, Router-guard assumptions, debug/source-map data, and frontend permission controls to their authoritative API/native boundary. | Calls template escaping, hidden UI, disabled controls, or a route guard sufficient authorization. |
+| Tauri/native IPC | Maps caller, wrapper, command registration, capabilities/permissions or allowlist, webview/window trust, Rust handler, payload/path/shell validation, and subject/action/resource authorization at the native boundary. | Treats typed wrappers, command registration, or capability presence alone as native authorization proof. |
+| SQLite/files | Distinguishes bound-value injection control from row/tenant authorization; checks SQL fragments/identifiers, transactions, canonicalization/traversal, permissions, overwrite/symlink behavior, temp/WAL data, export/download access, backup contents, retention, and cleanup as applicable. | Treats parameterized SQL as authorization or ignores sensitive exports/backups/generated files. |
+| Permission review | Distinguishes authentication, authorization, validation, encryption, and storage; verifies subject/action/resource/owner or tenant/failure behavior. | Collapses all controls into “authenticated” or “encrypted.” |
+| Sensitive data | Checks responses, errors, logs, telemetry, exports, backups, storage, crash reports, source maps, and generated artifacts where relevant. | Ignores exposure paths or reports generic leakage without evidence. |
+| Dependency delta | Reviews source, pinning, features, build/postinstall scripts, remote downloads, native code, and lockfile impact for actual dependency changes. | Reports dependency risk without a concrete delta. |
+| Scoped threat sketch | Records scoped assets and sensitive operations, browser/API/native/storage trust boundaries and entry points, plausible role/input-specific abuse cases, authoritative controls, excluded surfaces, and unverified assumptions while clearly stating it is not a full threat model. | Presents a generic checklist as complete threat modeling, penetration testing, certification, or evidence about excluded surfaces. |
+| Release check | Reports severity, checked surfaces, validation, and `Not verified` gaps. | Says the release or system is secure because no findings were observed. |
+| Scoped specialist boundary | States the delegated paths/diff and selected profiles, inspects only that surface, returns findings and gaps to `code-review`, and leaves files and Git state unchanged. | Reclassifies unrelated dirty files, expands scope, edits, stages, commits, pushes, or claims whole-change readiness. |
+| Tool safety | Avoids heavy scanners, exploit attempts, or network tests unless explicitly requested, authorized, and supported. | Runs broad or destructive checks by default. |
 
 ## Scoring
 

@@ -13,7 +13,10 @@ Treat these as investigation signals, not automatic rewrite instructions.
 | Deep directories with unclear ownership | vague `common/shared/utils` names and cross-feature imports | choose a named feature or real platform boundary |
 | Multiple spacing, form, toast, or request systems | similar pages import different mechanisms | follow nearest established system; migrate only as a scoped task |
 | Local dialog state in global store | no durable cross-tree consumer | return it to component/feature state |
-| Context used only to avoid props | broad provider updates and hidden dependencies | use composition/props or a narrower established store |
+| React Context used only to avoid props | broad provider updates and hidden dependencies | use composition/props or a narrower established store |
+| Vue watcher mirrors computed state or fetches from a broad watchEffect | explicit versus automatic dependencies, flush timing, invalidation, stale responses | use `computed` for derivation; narrow the effect and cancel stale async work |
+| Vue composable or injection hides shared mutable ownership | module scope, provider key/default, store consumers, mutation and disposal owner | keep instance state local or expose a typed provider/store contract with explicit commands |
+| Vue guard/listener duplicates after navigation or keep-alive activation | registration site, unregister callback, activated/deactivated/unmounted paths | register at the real router/component owner and tear down at the matching lifetime |
 | Copied component variants drift | same interaction with minor class changes | compose, add a stable variant, or keep one owner |
 | UI/API/Rust validation differs | contradictory constraints and error shapes | choose authoritative backend validation and align/generated client schema |
 | High-frequency Tauri invoke | call per row, keypress, or render | batch, debounce, cache, or stream through an adapter |

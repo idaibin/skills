@@ -1,12 +1,19 @@
 # Testing And Quality
 
+Apply the common repository gates plus only the rows required by selected audit
+profiles. A Focused audit does not inherit every command in this file. Mark an
+unselected profile `Out of scope`; when selected-profile evidence is required
+but its tool, target, runtime, or dataset is unavailable, mark that claim
+`Not verified` rather than substituting another command.
+
 ## Choose Gates From The Repository
 
 Read `justfile`, task runner, Cargo aliases, CI, contributor docs, manifests, and
 toolchain files before running commands. Use existing command order and feature
 matrices. Do not assume optional tools are installed.
 
-Common candidates, only when supported:
+Common candidates, only when repository-defined or otherwise supported and
+relevant to the selected profiles:
 
 ```bash
 cargo fmt --all --check
@@ -17,7 +24,7 @@ cargo test --workspace --doc
 cargo build --workspace --release
 ```
 
-Additional project-supported gates may include:
+Additional project-supported gates may include, only for selected claims:
 
 ```bash
 cargo nextest run --workspace --all-features

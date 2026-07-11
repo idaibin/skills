@@ -24,12 +24,25 @@ Use these guidelines only after verifying the project actually uses the relevant
 - Preserve route paths, params, loaders/actions, query handling, layouts, and navigation conventions.
 - Prefer existing scripts from `package.json`, docs, or repo guidance.
 
-## React / Vue
+## React
 
-- Follow the existing component style: function declarations vs arrow components, export style, memoization habits, hook placement, and file naming.
-- Keep state close to the component unless existing patterns use global stores, route loaders, query libraries, or feature hooks.
-- Avoid adding global state, context providers, or new data libraries for a local page change.
-- Preserve effect dependencies and cleanup behavior; do not suppress lint rules casually.
+- Follow the existing function/arrow component, export, file naming, hook placement, and render-boundary conventions.
+- Keep state close to the component unless established context/store, route loader, query, or feature-hook ownership applies.
+- Avoid adding global state, context providers, or another data library for a local page change.
+- Preserve hook ordering, effect dependencies, subscription cleanup, and repository lint rules. Add memoization only for an evidenced render or calculation boundary.
+
+## Vue 3
+
+- Preserve SFC structure and the repository's `<script setup>`, Composition API, or Options API style. Do not translate Vue ownership into React hooks, Context providers, or effect-dependency rules.
+- For Composition API or `<script setup>`, keep `ref`/`reactive` ownership intentional and pure derivation in `computed`. Treat destructuring, spreads, Pinia extraction, class instances, and third-party objects as possible reactivity escapes; use local `toRef`/`toRefs`/`storeToRefs`/shallow-or-raw patterns only when needed.
+- For Composition API or `<script setup>`, use `watch` with an explicit source and intentional deep, immediate, and flush behavior. Use `watchEffect` only for a bounded effect whose automatically collected dependencies are appropriate; its dependencies are collected during synchronous execution, so reads after an `await` must not be assumed to retrigger it.
+- For Options API, preserve native `data`, `computed`, watch options or owned `this.$watch`, `methods`, `provide`/`inject`, component Router guards, and `mounted`/`unmounted`/`activated`/`deactivated` lifecycles. Do not add Composition imports or convert the component merely to apply a rule.
+- Clean watchers, listeners, timers, subscriptions, guards, and async work through invalidation, `onScopeDispose`, component lifecycle, route lifecycle, or request cancellation according to the actual owner.
+- Preserve props/emits typing, event payloads, `v-model` argument/modifier contracts, named and scoped slots, fallthrough attributes, and component-name conventions.
+- For provide/inject, use the established typed key—preferably a `Symbol`/`InjectionKey` where the codebase does—define missing/default behavior, retain reactive ownership in the provider, and expose explicit mutation commands instead of letting consumers mutate shared state implicitly.
+- Use Pinia only for state with established cross-tree or durable ownership. Keep component-only state local, keep business mutations in store actions where that is the local contract, and avoid hidden module-level singleton state in composables.
+- Preserve Router params/query/meta, redirects, lazy routes, and scroll behavior. Register global guards at the router owner, unregister temporary guards, and use component guards for component-owned navigation behavior.
+- For cached components, pair `onActivated` with `onDeactivated`; unmount cleanup alone does not cover keep-alive deactivation. Cancel or invalidate requests when route, scope, or activation ownership ends, and prevent duplicate registration on reactivation.
 
 ## Layout Selection
 

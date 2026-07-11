@@ -1,4 +1,4 @@
 interface:
   display_name: "Writing Editor"
-  short_description: "Edit personal technical writing and adapt drafts for Reddit"
-  default_prompt: "Use $writing-editor to edit this technical writing draft or adapt it for Reddit while preserving my viewpoint, concrete tradeoffs, and technical accuracy."
+  short_description: "Edit technical writing with evidence-based calibration"
+  default_prompt: "Use $writing-editor to edit this personal technical draft or adapt it for Reddit. Resolve sources in this order: current-turn instruction or correction, later direct user correction, supplied draft, then non-conflicting older conversation. Treat writer profiles and examples as style-only calibration. Preserve viewpoint, tradeoffs, uncertainty, commands, versions, metrics, and architecture meaning; delete filler before expanding, never invent facts or opinions, and use Not enough context only when a factual finished artifact truly requires clarification."

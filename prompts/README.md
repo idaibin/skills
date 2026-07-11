@@ -14,6 +14,10 @@ Reusable prompt assets are grouped by use case.
   - system prompts, agent migration packages, cross-agent workflows, and agent configuration prompts
   - `cross-agent-verification.md`: coordinate ChatGPT strategy review with Codex repository-grounded verification
 
+- `design/`
+  - reusable visual-design, image-generation, poster, and brand-system prompts
+  - `msi-2026-esports-poster.md`: generate verified MSI 2026 match-result and match-preview posters with a consistent official-inspired visual system
+
 - `rustzen/`
   - prompts tied to Rustzen projects, Rust backend/database rules, or Rustzen-specific architecture decisions
 

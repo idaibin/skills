@@ -109,10 +109,13 @@ define a stricter or intentionally different contract.
   commands. Treat warnings as errors when the repository does.
 - Fix lints instead of silencing them. Use narrow justified `#[expect(...)]`
   rather than broad `#[allow(...)]`.
-- Treat `cargo check` as a compile gate, not proof of behavior. Add the smallest
-  matching runtime and risk gates: release-mode tests for configuration-sensitive
-  code, cross-target checks for `cfg`, Miri for supported unsafe-sensitive code,
-  sanitizers and leak tests for native ownership, and fuzzing for parsers or
-  adversarial byte-oriented inputs.
+- Treat `cargo check` as a compile gate, not proof of behavior. Start from the
+  repository Baseline and combine the overlays actually selected by the change.
+  Add release-mode tests for configuration-sensitive code, cross-target checks
+  for affected `cfg`, Miri for supported unsafe-sensitive code, sanitizers and
+  leak tests for native ownership, and fuzzing for parsers or adversarial bytes
+  only when each tool is both supported and relevant to the changed invariant.
+  Target-specific code alone does not justify Miri, sanitizers, fuzzing, stress,
+  leak, or repeated-operation checks.
 - Verify tests actually ran and were not silently skipped. Repeated-operation
   tests should prove memory plateaus when leaks are part of the risk model.

@@ -1,4 +1,4 @@
 interface:
   display_name: "Rust Implementation"
-  short_description: "Implement reuse-first production Rust safely"
-  default_prompt: "Use $implement-rust to implement, port, modify, or refactor Rust code. Consume $code-context or trace existing docs and contract chains first; reuse or extend before creating interfaces, preserve behavior before cleanup, contain FFI and unsafe behind explicit ownership and lifetime contracts, then run repository-defined checks plus risk-matched release, platform, Miri, sanitizer, leak, stress, or fuzz gates. Route systematic read-only Rust audits to $audit-rust."
+  short_description: "Implement Rust with composable risk validation"
+  default_prompt: "Use $implement-rust to implement, port, modify, or refactor Rust code. Ground in the repository's actual toolchain and contract chain, reuse or extend before creating interfaces, run the Baseline validation contract, and select every applicable risk overlay: Contract, Concurrency/Runtime, Persistence/SQLite, Unsafe/FFI, Porting/Parity, and Target/Platform. Combine overlays instead of choosing one highest profile. Run Miri, sanitizers, fuzzing, stress, leak, or repeated-operation tools only when supported and relevant, and report selected overlays plus excluded checks. Route systematic read-only Rust audits to $audit-rust."

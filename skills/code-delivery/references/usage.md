@@ -20,6 +20,7 @@ Use `code-delivery` when the user wants reviewed repository changes moved to a f
 - `Squash this completed branch into main and push main.`
 - `Sync this branch to remote; do not switch branches.`
 - `Commit these reviewed changes and show the final remote ref.`
+- `These changes are reviewed; stage and commit them locally, but do not push.`
 - `After verification, delete the temporary branch.`
 - `Ship this to main following the repo workflow.`
 
@@ -28,6 +29,7 @@ Use `code-delivery` when the user wants reviewed repository changes moved to a f
 - Repository onboarding, command discovery, or docs/code alignment; use `code-context`.
 - Future implementation planning; use `code-planner`.
 - Dirty-tree ownership, mixed-hunk review, or commit grouping before delivery scope is clear; use `code-review`.
+- Review-only requests with no staging, commit, push, sync, or cleanup authorization; use `code-review`.
 - Security-only review; use `code-security`.
 - Browser or desktop-client evidence collection; use `ops-browser` or `ops-client`.
 - A full GitHub publish flow that explicitly includes creating a draft or ready pull request; use the available GitHub publishing workflow.

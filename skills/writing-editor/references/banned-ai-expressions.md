@@ -72,4 +72,4 @@ Use this as a detection list, not a mechanical replacement list. If an expressio
 
 When a sentence only frames the article and adds no information, delete it.
 
-When a sentence hides a judgment behind abstract wording, replace it with the actual judgment, tradeoff, or project constraint.
+When a sentence hides a judgment behind abstract wording, replace it only with a judgment, tradeoff, or project constraint already supported by the winning source. Otherwise delete it or flag the missing evidence in Diagnose mode.

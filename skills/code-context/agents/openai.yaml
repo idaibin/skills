@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Context"
-  short_description: "Map codebase context and reusable surfaces"
-  default_prompt: "Use $code-context when the user requests repository grounding, directory or documentation alignment, or a targeted reuse/interface inventory. Map real files, commands, project classes, and docs; for requested frontend or Rust inventories, identify reuse, extension, and reference candidates without implementing changes."
+  short_description: "Map bounded repository context and reuse candidates"
+  default_prompt: "Use $code-context only when the user requests a separate repository-grounding, reuse-inventory, bootstrap, or docs/code-alignment deliverable. Select Quick Grounding, Targeted Inventory, Alignment, or Bootstrap; read only paths that answer named context questions, escalate scope only when a discovered boundary materially affects the task, and stop once evidence is sufficient. Report real commands, project class, reuse/reference candidates, stop reason, and Not found or Not verified gaps without implementing changes."

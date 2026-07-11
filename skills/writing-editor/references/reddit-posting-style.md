@@ -2,6 +2,10 @@
 
 Use this when adapting supplied material for Reddit or similar developer communities.
 
+All titles, openings, and project facts below are style illustrations. Reuse
+their shape only when the supplied draft or winning conversation source supports
+the same facts and author judgment.
+
 ## Shape
 
 Prefer:

@@ -2,12 +2,15 @@
 
 Use this checklist when committing, pushing, syncing, squashing, or cleaning up branches.
 
+`code-delivery` owns Git mutation after review acceptance. A review-only request does not authorize staging or committing.
+
 ## Required Evidence
 
 - Read relevant repo guidance before delivery.
 - Run `git status --short --branch`.
 - Identify branch, upstream, staged files, unstaged files, untracked files, and unrelated local work.
 - Confirm the requested delivery target and path scope.
+- Confirm the user authorized the exact staging, commit, push, sync, squash, or cleanup action being performed.
 - Confirm review status or run `code-review` first when ownership, mixed hunks, or commit groups are unclear.
 - Run task-matching validation or report why it was skipped.
 - Inspect staged diff before every commit.

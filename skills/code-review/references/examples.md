@@ -43,7 +43,7 @@ Split:
 
 - Do not commit these files.
 - Mention them only in the "not suitable for commit" section.
-- Do not stage them even if they sit under the same feature directory.
+- Exclude them from the staging plan even if they sit under the same feature directory.
 
 ## Example 4: Schema Change
 
@@ -83,9 +83,9 @@ Input:
 
 Split:
 
-- Commit only the `src/feature-a/` files when they form one semantic unit.
+- Plan a commit containing only the `src/feature-a/` files when they form one semantic unit.
 - Exclude `src/feature-b/` and `README.md`; report them as preserved unrelated changes.
-- Use exact path-limited staging, then verify the staged file list before committing.
+- Require exact path-limited staging and staged-file verification during `code-delivery`.
 
 ## Example 7: Current-Context Commit Request
 
@@ -100,7 +100,7 @@ Response:
 - Identify the current-context subset from conversation and diffs.
 - Default to a commit plan and staging scope for only the current-session files.
 - Report the rest of the reviewed local changes as preserved out-of-scope changes.
-- Ask before staging only if the current-session subset is ambiguous, needs files outside the subset, or conflicts with pre-existing staged files.
+- Ask for scope clarification only if the current-session subset is ambiguous, needs files outside it, or conflicts with pre-existing staged files.
 
 ## Example 8: Direct Full Commit Request
 
@@ -119,11 +119,11 @@ Response:
 
 Input:
 
-- Another AI agent invokes this skill to review and commit only files from its task.
+- Another AI agent invokes this skill to review only files from its task before delivery.
 - Full worktree also has unrelated user edits.
 
 Response:
 
 - First inventory and review the complete local change scope.
-- Follow the caller's stated task scope for the commit plan.
+- Follow the caller's stated task scope for the commit plan and staging instructions.
 - Report out-of-scope local changes and any safety concerns that affect the scoped commit.
