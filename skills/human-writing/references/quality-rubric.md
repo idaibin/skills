@@ -2,9 +2,16 @@
 
 Evaluate the finished text, not the intention. Defect severity and hard gates decide readiness; numeric scores are optional calibration, not proof.
 
-## Hard Gate
+## Acceptance Layers
 
-The text passes only when `fact-integrity.md` and, when applicable, `revision-transparency.md` pass, the output contract is satisfied, and no P0 or P1 editorial defect remains. A fluent draft cannot score its way past an integrity failure.
+Do not collapse these states:
+
+1. **PACKAGE CONTRACT VALID:** package structure, routing, precedence, references, and documented cases validate. This says nothing about output quality.
+2. **DETERMINISTIC FIXTURES PASS:** machine-checkable fixtures and semantic mutations pass. This finite sample does not prove complete contract conformance or production-model behavior.
+3. **REAL MODEL BEHAVIOR PASSED:** frozen inputs run against the production model at least three times per P0/P1-sensitive case, with recorded model settings, semantic source-ledger grading, and zero P0/P1 defects.
+4. **EDITORIALLY APPROVED:** blind source-relative reviewers find no credible P0/P1 issue and prefer the candidate over unnecessary rewriting or the minimally edited baseline.
+
+Report `HUMAN WRITING ACCEPTED` only when all four layers pass. A fluent draft cannot score its way past an integrity failure, and static validation cannot prove that no behavior defect exists.
 
 ## Defect Levels
 
@@ -64,3 +71,11 @@ Unreliable, unsupported, misleading, hard to follow, or materially misaligned wi
 6. Reassess the finished draft, not the change history, and stop only when the hard gate passes.
 
 Do not expose internal assessment unless the user asks. Never inflate a score to manufacture readiness.
+
+## Final Gate
+
+- Confirm source precedence, claim scope, attribution, disclosures, protected text, and revision history.
+- Confirm the opening answers the reader's task and each section adds information.
+- Diagnose template behavior only as a cluster; preserve genuine voice and asymmetry.
+- Confirm platform hard constraints separately from editorial preferences.
+- Resolve every P0/P1 defect. Stop editing when remaining changes are preference-only and the source-shaped voice is intact.

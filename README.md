@@ -65,7 +65,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill repo-context code-planner diagnose code-review repo-review code-delivery audit-security chatgpt-review-bridge implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client writing-editor
+  --skill repo-context code-planner diagnose code-review repo-review code-delivery audit-security chatgpt-review-bridge implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
 ```
 
 List available skills without installing:
@@ -94,7 +94,7 @@ For the full command list and available skill names, see [`INSTALL.md`](INSTALL.
 | `audit-rust` | Auditing selected Rust profiles for architecture, ownership, concurrency, performance, memory, SQLite, unsafe/FFI, quality gates, and documentation alignment. |
 | `ops-browser` | Operating browser pages and collecting screenshots, visual/responsive checks, form/upload/download evidence, console/network data, and session-safe verification. |
 | `ops-client` | Verifying or operating specified Tauri/Electron/native desktop clients with launch-command, runtime-source, CGWindowID, real-window, and Accessibility evidence. |
-| `writing-editor` | Drafting, rewriting, diagnosing, and adapting human-quality Chinese short posts, factual soft copy, technical essays, tutorials, retrospectives, and developer-community posts while preserving facts and voice. |
+| `human-writing` | Drafting, rewriting, diagnosing, and adapting source-grounded human-quality writing while preserving facts, technical meaning, disclosures, and voice. |
 
 ### Core Routing Boundaries
 

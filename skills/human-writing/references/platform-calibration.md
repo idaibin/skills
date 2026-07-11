@@ -1,6 +1,26 @@
 # Platform Calibration
 
-These are editorial defaults, not claims about platform algorithms. When exact platform fit matters, inspect current high-quality examples and current publishing rules before adapting.
+These are optional editorial heuristics, not claims about platform algorithms or current rules. Load this file only for an explicit platform-adaptation request.
+
+Keep compliance and editorial precedence separate.
+
+Compliance order:
+
+1. fact integrity and safety
+2. current mandatory constraints verified from an authoritative source
+3. supplied authoritative publication or community rules
+4. required revision, relationship, and creation-process disclosures
+
+Editorial order:
+
+1. the user's purpose and presentation preferences
+2. the supplied brief
+3. the selected genre profile
+4. the profiles below as non-normative heuristics
+
+A user may request a deliberately noncompliant format, but do not label that artifact compliant or platform-ready. A user preference may override a heuristic, never a verified mandatory constraint.
+
+If current verification is unavailable, do not present a static profile as a current platform requirement and do not block ordinary adaptation unless a material hard constraint is unknown. Preserve source meaning and label unverifiable recommendations as editorial assumptions only when commentary is requested.
 
 For every platform, preserve material-interest disclosures, source attribution, claim scope, and any current platform-required creation-process disclosure. Platform adaptation may change wording or placement, but it must not make interested promotion look independent, turn documented or source-reported behavior into personal testing, broaden a precise technical claim, or conceal how the artifact was produced when disclosure is required.
 
@@ -191,7 +211,7 @@ Avoid:
 - vague `would love feedback`
 - presenting first-party results as community consensus
 
-See `reddit-posting-style.md` for the complete contract.
+Keep the title plain, disclose self-interest early, include concrete build details and limitations, and end with a precise question only when feedback is genuinely needed. Do not add launch theater, fake humility, link-first promotion, community-consensus claims, or vague `would love feedback` language.
 
 ## Medium / DEV Community
 

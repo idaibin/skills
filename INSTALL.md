@@ -18,7 +18,7 @@ Install only these skill package directories:
 - `skills/audit-rust`
 - `skills/ops-browser`
 - `skills/ops-client`
-- `skills/writing-editor`
+- `skills/human-writing`
 
 Do not install the repository root, `prompts/`, `docs/`, or legacy skill names such as `code-context`, `code-security`, `commit-reviewer`, `planner`, `frontend-implementation`, `frontend-governance`, or `rust-engineering-governance`.
 
@@ -40,7 +40,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill repo-context code-planner diagnose code-review repo-review code-delivery audit-security chatgpt-review-bridge implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client writing-editor
+  --skill repo-context code-planner diagnose code-review repo-review code-delivery audit-security chatgpt-review-bridge implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
 ```
 
 For multiple selected skills, pass the names after `--skill` as shown above.

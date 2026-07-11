@@ -115,6 +115,23 @@ Do not collapse these statuses. `The documentation says`, `the vendor reports`, 
 - Do not replace a precise technical component with a broader proxy. `Compiler and language service`, `runtime`, `build step`, and `product` are not interchangeable.
 - Do not detach a number from what was measured, the comparison baseline, or the tested sample. `Build time improved on listed repositories` is not the same claim as `the language runs faster`.
 - When shortening text, split or omit claims whose scopes differ rather than merging them into one smoother but inaccurate sentence.
+- Preserve supplied technical semantics, commands, flags, order, prerequisites, and version scope. Do not silently repair disputed technical material from memory.
+- Available deterministic syntax, link, command, or repository checks may be run when they are part of the editing task. Mark unrun checks `Not verified`.
+- Apply this technical-publication decision table instead of treating every unverified item as a blocker:
+
+| Evidence or risk state | Editorial action |
+| --- | --- |
+| Clear supplied technical text | Preserve exact semantics and scope |
+| Deterministically checked | State only the check that actually ran and its scope |
+| Unverified or vendor-reported | Preserve attribution and status; do not imply independent proof |
+| Disputed | Preserve the conflict or the winning source under source precedence |
+| Correctness is required to complete the artifact | Block the affected claim or route to technical review |
+| Destructive or irreversible action | Do not present as routine publication-ready advice until reviewed |
+| Actual secret, token, password, or private key | Redact and block transmission or publication |
+| Obvious placeholder, environment-variable name, or dummy credential | Preserve when it is clearly non-secret |
+| Correctness review is the primary task | Route to the relevant technical review workflow |
+
+Ordinary unexecuted, non-destructive examples may remain when clearly labeled as unverified. A syntax-only check proves syntax only, not safety, runtime behavior, or compatibility.
 
 ## Drafting From Sparse Notes
 

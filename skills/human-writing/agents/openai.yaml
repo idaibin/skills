@@ -1,0 +1,4 @@
+interface:
+  display_name: "Human Writing"
+  short_description: "Draft and refine source-grounded human-quality writing"
+  default_prompt: "Use $human-writing to draft, rewrite, diagnose, or adapt source-grounded Chinese personal or technical writing, factual project or product copy, and developer-community posts, including English platform adaptation. Select one primary operation, one genre, the output language, and at most one explicit platform profile. Preserve source precedence, technical meaning, attribution, uncertainty, relationships, disclosures, author position, and revision history. Keep neutral sources neutral; never add experiential authority. Qualify attributed or disputed technical material, block destructive actions and actual secrets, and route correctness review when correctness is the primary task. Report package, deterministic-fixture, model-behavior, and editorial acceptance as separate evidence layers."

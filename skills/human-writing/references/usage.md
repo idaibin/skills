@@ -1,10 +1,10 @@
 # Usage
 
-Use `writing-editor` when the main job is to turn supplied facts, notes, or a draft into publishable writing with a recognizably human voice.
+Use `human-writing` when the main job is to turn supplied facts, notes, or a draft into publishable writing with a recognizably human voice.
 
 ## Trigger Examples
 
-- `用 writing-editor 把这篇技术博客重写得像我自己写的，保留所有命令和结论。`
+- `用 human-writing 把这篇技术博客重写得像我自己写的，保留所有命令和结论。`
 - `根据这些真实开发记录写一篇长文，不要补我没说过的经历。`
 - `把这段改成 200 字以内的短文，只保留一个观点。`
 - `给这个开发者工具写一篇克制的软文，不要编用户评价和数据。`
@@ -38,7 +38,16 @@ Route these to the relevant review, research, legal, academic, or creative-writi
 | Tutorial, architecture note, retrospective | Technical long-form | Finished article only |
 | Same content for another platform | Platform adaptation | Target-platform artifact only |
 
-A request can combine modes, such as `Draft from source + Technical long-form + Juejin`.
+A request has one primary operation. Genre, language, platform, disclosure, and revision handling are orthogonal selections:
+
+| Axis | Selection rule |
+| --- | --- |
+| Primary operation | Exactly one of Diagnose, Rewrite, Draft from source, Platform adaptation |
+| Genre | Exactly one primary profile when material: short-form, factual soft copy, essay, tutorial, retrospective, architecture note, resource list |
+| Language | Preserve source language unless the user requests another; translation-only work routes elsewhere |
+| Platform | Zero or one named target; load calibration only for explicit adaptation |
+| Evidence state | Complete, safely partial, conflicting, or blocked |
+| Conditional modules | Load disclosure and published-revision rules only when applicable |
 
 Load only what the request needs:
 
@@ -64,7 +73,14 @@ The useful context fields are:
 - desired action
 - claims that require verification
 
-When a missing field would change facts or the author's position, return `Not enough context` rather than asking the prose to hide the gap.
+Classify missing context:
+
+- **Safely partial:** edit the supported material and omit unsupported additions.
+- **Blocked:** return `Not enough context:` plus the minimum missing fields when completion would require invention or unjustified certainty.
+- **Diagnose:** identify unsupported claims and missing evidence.
+- **Placeholder-enabled:** retain explicit placeholders only when the user requested them or the artifact contract permits them.
+
+Use the technical-publication decision table in `fact-integrity.md`. Attributed unverified or disputed claims may remain with visible status; harmless placeholders and non-destructive unexecuted examples do not require blanket blocking. Destructive or irreversible actions, actual secrets, and claims whose correctness is required to complete the artifact must be blocked or handed to the relevant technical review skill. Do not silently correct them from memory.
 
 ## Editing Priority
 
@@ -90,4 +106,4 @@ Do not trade a higher-priority item for a smoother sentence.
 
 ## Validation Boundary
 
-`validate-skills.py --quality-report` reports documented Eval coverage. `eval-writing-editor.py` runs deterministic contract fixtures. Neither result proves broad LLM writing quality; model execution and subjective prose quality remain `Not verified` unless separately evaluated.
+`validate-skills.py --quality-report` reports documented Eval coverage. `eval-human-writing.py` runs deterministic fixtures. Report these only as `PACKAGE CONTRACT VALID` and `DETERMINISTIC FIXTURES PASS`. `REAL MODEL BEHAVIOR PASSED` requires repeated production-model runs with semantic grading; `EDITORIALLY APPROVED` requires blind source-relative editorial review. Only all four layers justify `HUMAN WRITING ACCEPTED`.

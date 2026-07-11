@@ -1,4 +1,0 @@
-interface:
-  display_name: "Writing Editor"
-  short_description: "Draft and edit human-quality Chinese writing"
-  default_prompt: "Use $writing-editor to draft or edit Chinese short posts, factual soft copy, or technical articles. Apply the Fact Integrity contract before style work: preserve source precedence, protected technical text, exact claim meaning and scope, attribution, independence limits, material relationships, required process disclosures, tradeoffs, and revision history. Treat profiles, examples, and public samples as calibration only. Load mode and platform references only when they materially affect the requested artifact. Block output on integrity failures or P0/P1 defects; do not use a self-assigned score as readiness evidence."

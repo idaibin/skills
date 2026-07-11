@@ -34,7 +34,7 @@ Framework-specific or domain-specific checks should stay as profiles when these 
 | `ops-browser` | browser session/page state | authorized browser actions | browser evidence and state-change report |
 | `ops-client` | real desktop client process/window | authorized client actions | process/window/runtime evidence |
 | `chatgpt-review-bridge` | external ChatGPT review round | authorized external action | routed package, attributed response, local verification |
-| `writing-editor` | supplied technical draft | text transformation | edited publication-ready text |
+| `human-writing` | supplied technical draft | text transformation | edited publication-ready text |
 
 ## `repo-context`, `code-review`, And `repo-review`
 

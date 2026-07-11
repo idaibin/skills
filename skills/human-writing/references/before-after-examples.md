@@ -1,5 +1,7 @@
 # Before and After Examples
 
+These examples are non-normative calibration fixtures for package maintenance. Never use them as a source of facts, author experience, or mandatory phrasing.
+
 ## Short Product Post
 
 Source facts:

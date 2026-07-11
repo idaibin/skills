@@ -26,8 +26,8 @@ validate_skill_invocations = VALIDATOR.validate_skill_invocations
 validate_specialized_eval_contracts = VALIDATOR.validate_specialized_eval_contracts
 validate_cross_artifact_contracts = VALIDATOR.validate_cross_artifact_contracts
 
-BEHAVIOR_EVAL_PATH = Path(__file__).with_name("eval-writing-editor.py")
-BEHAVIOR_SPEC = importlib.util.spec_from_file_location("eval_writing_editor", BEHAVIOR_EVAL_PATH)
+BEHAVIOR_EVAL_PATH = Path(__file__).with_name("eval-human-writing.py")
+BEHAVIOR_SPEC = importlib.util.spec_from_file_location("eval_human_writing", BEHAVIOR_EVAL_PATH)
 if BEHAVIOR_SPEC is None or BEHAVIOR_SPEC.loader is None:
     raise RuntimeError(f"Cannot load behavior eval: {BEHAVIOR_EVAL_PATH}")
 BEHAVIOR_EVAL = importlib.util.module_from_spec(BEHAVIOR_SPEC)
@@ -193,13 +193,13 @@ class ValidateSkillsTests(unittest.TestCase):
 
         self.assertEqual([], errors)
 
-    def test_writing_editor_behavior_fixtures_pass(self) -> None:
+    def test_human_writing_behavior_fixtures_pass(self) -> None:
         results = BEHAVIOR_EVAL.run_fixtures(BEHAVIOR_EVAL.DEFAULT_FIXTURES)
 
         self.assertGreaterEqual(len(results), 10)
         self.assertTrue(all(result.passed for result in results))
 
-    def test_writing_editor_behavior_fixture_detects_bad_output(self) -> None:
+    def test_human_writing_behavior_fixture_detects_bad_output(self) -> None:
         result = BEHAVIOR_EVAL.evaluate_case(
             {
                 "id": "regression",

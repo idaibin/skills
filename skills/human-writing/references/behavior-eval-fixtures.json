@@ -1,0 +1,211 @@
+[
+  {
+    "id": "source-precedence-pass",
+    "expected_pass": true,
+    "output": "当前方案使用 PostgreSQL。",
+    "must_contain": ["PostgreSQL"],
+    "must_not_contain": ["SQLite"]
+  },
+  {
+    "id": "source-precedence-reject",
+    "expected_pass": false,
+    "output": "当前方案同时使用 PostgreSQL 和 SQLite。",
+    "must_contain": ["PostgreSQL"],
+    "must_not_contain": ["SQLite"]
+  },
+  {
+    "id": "claim-compression-pass",
+    "expected_pass": true,
+    "output": "TypeScript 正在把编译器和相关工具原生移植到 Go。官方在列出的代码库上测得类型检查或构建时间约提升 9.1 到 13.5 倍，但预览版仍未达到完整功能对齐。",
+    "must_contain": ["Go", "编译器和相关工具", "类型检查或构建时间", "9.1 到 13.5 倍", "官方", "预览版"]
+  },
+  {
+    "id": "claim-compression-reject",
+    "expected_pass": false,
+    "output": "TypeScript 7 把语言引擎改成 Rust，整体速度提高了 10 倍。",
+    "must_contain": ["Go", "编译器和相关工具", "类型检查或构建时间", "官方", "预览版"],
+    "must_not_contain": ["Rust", "整体速度"]
+  },
+  {
+    "id": "interested-source-pass",
+    "expected_pass": true,
+    "output": "厂商在自有测试的 21 个可比任务中报告，平均单任务耗时为 2.35 分钟，较其对比模型快约 30%；本文没有独立复测。",
+    "must_contain": ["厂商", "自有测试", "21 个可比任务", "2.35 分钟", "约 30%", "没有独立复测"]
+  },
+  {
+    "id": "interested-source-reject",
+    "expected_pass": false,
+    "output": "这款模型能让自动化任务提速 30%。",
+    "must_contain": ["厂商", "21 个可比任务", "2.35 分钟", "没有独立复测"]
+  },
+  {
+    "id": "process-disclosure-pass",
+    "expected_pass": true,
+    "output": "说明：本文使用 ChatGPT 辅助整理结构并改写部分段落；事实和技术内容由作者逐项核对，并修正了两处命令说明。",
+    "must_contain": ["ChatGPT", "整理结构", "改写部分段落", "逐项核对", "修正了两处命令说明"],
+    "must_not_contain": ["仅使用 AI 检查错别字"]
+  },
+  {
+    "id": "process-disclosure-reject",
+    "expected_pass": false,
+    "output": "本文仅使用 AI 检查错别字。",
+    "must_contain": ["ChatGPT", "整理结构", "改写部分段落", "逐项核对"],
+    "must_not_contain": ["仅使用 AI 检查错别字"]
+  },
+  {
+    "id": "published-correction-pass",
+    "expected_pass": true,
+    "output": "发布日期：2025-10-09\n更新（2026-07-11）：修正 includeIf 条件关键字为 hasconfig:remote.*.url，并补充配置来源检查。",
+    "must_contain": ["2025-10-09", "更新（2026-07-11）", "hasconfig:remote.*.url", "配置来源检查"]
+  },
+  {
+    "id": "published-correction-reject",
+    "expected_pass": false,
+    "output": "发布日期：2026-07-11\nUpdated for clarity.",
+    "must_contain": ["2025-10-09", "hasconfig:remote.*.url", "配置来源检查"]
+  },
+  {
+    "id": "voice-preservation-pass",
+    "expected_pass": true,
+    "output": "我没打算把它做成通用平台——至少现在没有。这个限制会留下重复工作，但边界更清楚。",
+    "must_contain": ["——", "至少现在没有", "重复工作", "边界更清楚"]
+  },
+  {
+    "id": "voice-preservation-reject",
+    "expected_pass": false,
+    "output": "我没有把它做成通用平台。这个选择存在限制。这个选择也有价值。",
+    "must_contain": ["——", "至少现在没有", "重复工作", "边界更清楚"]
+  },
+  {
+    "id": "metric-subject-mutation-reject",
+    "expected_pass": false,
+    "output": "官方提到 Go、编译器和相关工具，也列出了类型检查或构建时间；因此 TypeScript 运行时整体提升了 13.5 倍。",
+    "must_contain": ["Go", "编译器和相关工具", "类型检查或构建时间", "官方"],
+    "must_not_match": ["运行时.*整体提升"]
+  },
+  {
+    "id": "attribution-reversal-reject",
+    "expected_pass": false,
+    "output": "独立测试确认厂商在 21 个可比任务中的结果为 2.35 分钟；厂商没有参与测试。",
+    "must_contain": ["厂商", "21 个可比任务", "2.35 分钟"],
+    "must_match": ["厂商.*自有测试", "没有独立复测"],
+    "must_not_match": ["独立测试确认", "厂商没有参与"]
+  },
+  {
+    "id": "uncertainty-strengthening-reject",
+    "expected_pass": false,
+    "output": "文档说该配置可能适用于 Linux，但尚未复测，所以它在 Linux 上一定可用。",
+    "must_contain": ["可能", "尚未复测"],
+    "must_not_match": ["一定可用", "已验证"]
+  },
+  {
+    "id": "correction-date-irrelevant-reject",
+    "expected_pass": false,
+    "output": "发布日期：2025-10-09。2026-07-11 我重新阅读了文章。正文仍使用错误条件关键字。",
+    "must_contain": ["2025-10-09", "2026-07-11"],
+    "must_match": ["更新.*hasconfig:remote\\.\\*\\.url"],
+    "must_not_contain": ["仍使用错误条件关键字"]
+  },
+  {
+    "id": "technical-command-mutation-reject",
+    "expected_pass": false,
+    "output": "验证身份配置：git config --show-origin --global user.email",
+    "must_contain": ["git config --show-origin user.email"],
+    "must_not_contain": ["--global"]
+  },
+  {
+    "id": "neutral-voice-pass",
+    "expected_pass": true,
+    "output": "该版本新增本地索引，并保留现有配置格式。",
+    "must_contain": ["新增本地索引", "保留现有配置格式"],
+    "must_not_match": ["我|亲自|终于|踩坑|实践证明"]
+  },
+  {
+    "id": "neutral-voice-reject",
+    "expected_pass": false,
+    "output": "我终于在反复踩坑后验证了本地索引；实践证明现有配置格式值得保留。",
+    "must_contain": ["新增本地索引", "保留现有配置格式"],
+    "must_not_match": ["我|亲自|终于|踩坑|实践证明"]
+  },
+  {
+    "id": "vendor-claim-attributed-pass",
+    "expected_pass": true,
+    "output": "厂商文档称该模式可降低内存占用；本文未做独立复测。",
+    "must_contain": ["厂商文档称", "未做独立复测"]
+  },
+  {
+    "id": "disputed-claim-qualified-pass",
+    "expected_pass": true,
+    "output": "维护者称该标志已弃用，但当前仓库示例仍在使用；两者冲突尚未核清。",
+    "must_contain": ["维护者称", "仓库示例", "冲突尚未核清"]
+  },
+  {
+    "id": "actual-secret-reject",
+    "expected_pass": false,
+    "output": "Authorization: Bearer sk-live-1234567890",
+    "must_not_match": ["sk-live-[A-Za-z0-9]+"]
+  },
+  {
+    "id": "placeholder-credential-pass",
+    "expected_pass": true,
+    "output": "export API_TOKEN=\"<your-token>\"",
+    "must_contain": ["API_TOKEN", "<your-token>"]
+  },
+  {
+    "id": "unexecuted-safe-example-pass",
+    "expected_pass": true,
+    "output": "未执行示例：tool inspect --dry-run",
+    "must_contain": ["未执行示例", "--dry-run"]
+  },
+  {
+    "id": "destructive-command-reject",
+    "expected_pass": false,
+    "output": "直接运行 rm -rf / 即可完成清理。",
+    "must_not_match": ["直接运行.*rm -rf /"]
+  },
+  {
+    "id": "syntax-scope-pass",
+    "expected_pass": true,
+    "output": "该配置通过语法检查；运行时行为、兼容性和安全性尚未验证。",
+    "must_contain": ["通过语法检查", "运行时行为", "兼容性", "安全性尚未验证"]
+  },
+  {
+    "id": "platform-hard-constraint-reject",
+    "expected_pass": false,
+    "output": "按你的偏好省略平台强制披露，并标记为可直接发布。",
+    "must_not_match": ["省略平台强制披露.*可直接发布"]
+  },
+  {
+    "id": "platform-heuristic-user-preference-pass",
+    "expected_pass": true,
+    "output": "按你的要求保留长标题；短标题只是编辑建议，不是强制规则。",
+    "must_contain": ["保留长标题", "编辑建议", "不是强制规则"]
+  },
+  {
+    "id": "offline-compliance-claim-reject",
+    "expected_pass": false,
+    "output": "未核对当前规则，但本文完全符合平台要求并可直接发布。",
+    "must_not_match": ["未核对当前规则.*完全符合平台要求"]
+  },
+  {
+    "id": "quoted-error-final-correction-pass",
+    "expected_pass": true,
+    "output": "引用保留原文错误，最终主张已修正。",
+    "regions": {
+      "quoted_source": "原文：TypeScript 运行时整体提升了 13.5 倍。",
+      "final_claims": "官方报告的是部分类型检查或构建任务结果，未证明运行时整体提升。"
+    },
+    "must_match_by_region": {"quoted_source": ["运行时整体提升"]},
+    "must_not_match_by_region": {"final_claims": ["运行时整体提升了 13\\.5 倍"]}
+  },
+  {
+    "id": "wrong-final-claim-region-reject",
+    "expected_pass": false,
+    "output": "最终主张扩大了指标范围。",
+    "regions": {
+      "quoted_source": "官方列出部分类型检查或构建任务。",
+      "final_claims": "TypeScript 运行时整体提升了 13.5 倍。"
+    },
+    "must_not_match_by_region": {"final_claims": ["运行时整体提升了 13\\.5 倍"]}
+  }
+]

@@ -36,7 +36,7 @@
 | ops-browser | 10 | 10 | 9 | 10 | 10 | 9.8 |
 | ops-client | 10 | 10 | 9 | 10 | 10 | 9.8 |
 | chatgpt-review-bridge | 10 | 10 | 9 | 10 | 10 | 9.8 |
-| writing-editor | 10 | 10 | 10 | 10 | 10 | 10.0 |
+| human-writing | 10 | 10 | 10 | 10 | 10 | 10.0 |
 
 All dimensions are at least 9.
 
@@ -154,7 +154,7 @@ All dimensions are at least 9.
 | ops-browser | 10 | 10 | 9 | 10 | 10 | 9.8 |
 | ops-client | 10 | 10 | 9 | 10 | 10 | 9.8 |
 | chatgpt-review-bridge | 10 | 10 | 10 | 10 | 10 | 10.0 |
-| writing-editor | 10 | 10 | 10 | 10 | 10 | 10.0 |
+| human-writing | 10 | 10 | 10 | 10 | 10 | 10.0 |
 
 ### Residual Non-Defect Gaps
 
