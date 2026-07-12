@@ -13,6 +13,7 @@ Reusable prompt assets are grouped by use case.
 - `agent-systems/`
   - system prompts, agent migration packages, cross-agent workflows, and agent configuration prompts
   - `cross-agent-verification.md`: coordinate ChatGPT strategy review with Codex repository-grounded verification
+  - `codex-setup-optimization.md`: audit and optimize personal Codex Skills, GPT-5.6 model/Agent routing, permissions, plugins, and global configuration
 
 - `design/`
   - reusable visual-design, image-generation, poster, and brand-system prompts
