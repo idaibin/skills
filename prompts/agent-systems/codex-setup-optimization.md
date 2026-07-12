@@ -107,14 +107,13 @@ Cleanup rules:
 
 When the installed model catalog supports these model IDs, use this baseline:
 
-- Main Agent: `gpt-5.6-sol`, medium reasoning; owns implementation, final decisions, verification, and delivery.
-- Plan mode: high reasoning; used for ambiguous, cross-module, migration, architecture, and high-cost work.
-- Explorer: `gpt-5.6-terra`, low reasoning, read-only; traces code paths and gathers evidence.
-- Test Analyst: `gpt-5.6-terra`, medium reasoning, read-only; defines behavior boundaries and the smallest reliable test matrix.
-- Reviewer: `gpt-5.6-sol`, high reasoning, read-only; independently checks correctness, regressions, security, and validation gaps.
-- Batch Worker: `gpt-5.6-luna`, low reasoning, read-only and explicit-only; performs repeatable extraction, classification, transformation, and structured summaries.
+- Codex CLI default: `gpt-5.6-luna`, high reasoning; handles the current interactive execution path.
+- Planning Agent: `gpt-5.6-sol`, extra high (`xhigh`) reasoning, read-only; owns deep decomposition, dependencies, acceptance criteria, and risk controls.
+- Reviewer: `gpt-5.6-sol`, extra high (`xhigh`) reasoning, read-only; independently checks correctness, regressions, security, and validation gaps.
+- Execution Agents (`default`, `worker`, `explorer`, `test_analyst`, and `batch_worker`): `gpt-5.6-luna`, extra high (`xhigh`) reasoning; use the minimum sandbox permissions required by each role.
+- Main Agent: owns integration, returned-output inspection, final verification, acceptance, and delivery.
 
-Keep `gpt-5.6-sol` with medium reasoning as the global default. Do not replace it globally with Luna merely because a benchmark reports similar aggregate scores.
+Pin every automatic execution Agent explicitly. Unpinned Agents may be routed to Terra by the client, which conflicts with this policy. Keep Terra available only for a deliberate one-off manual model selection; do not register it as any automatic Subagent.
 
 #### Long-context cost guardrail
 
@@ -144,46 +143,81 @@ Add this concise personal rule when the user wants proactive long-session guidan
 
 After changing either file, verify that a fresh Codex session accepts the configuration. During later work, do not claim that automatic compaction alone guarantees the next request will stay below 272,000 input tokens. If the compacted session remains near the threshold, stop expanding context, warn the user, and prepare a continuation summary containing the objective, completed work, unresolved decisions, relevant paths, current Git state, and the next verification command.
 
-Use Luna as an explicit execution path when all of these conditions hold:
+Use Luna as the default execution path when all of these conditions hold:
 
 - scope and acceptance criteria are already clear
 - the implementation does not require broad repository discovery or architecture decisions
 - lint, tests, build, or another reliable check can verify the result
 - failure is reversible and the main Agent can review the final diff
 
-Choose the lowest Luna effort that works:
+Use Luna high for the interactive CLI default and Luna extra high (`xhigh`) for all execution Subagents. This is an intentional personal routing policy, not a universal recommendation: higher reasoning increases latency and usage, so retain reliable lint, tests, builds, and diff review as acceptance gates.
 
-- low or medium for extraction, classification, formatting, documentation metadata, and mechanical transformations
-- high for bounded implementation with straightforward validation
-- extra high (`xhigh`) for difficult but still well-specified multi-step implementation
+The current official API list price is `$1` input / `$6` output per million tokens for Luna and `$5` input / `$30` output for Sol, so equal-token API work is priced at one fifth of Sol, exceeding a three-times-lower-cost target. Do not promise the same multiplier for Codex subscriptions, credits, cached traffic, tool calls, or tasks that consume different token volumes. Recheck the official model pages before repeating the numbers:
 
-Keep Terra for everyday investigation and tool use. It remains useful when repository exploration, alternative-path discovery, or test-boundary analysis needs more breadth than Luna but not Sol's full depth.
+- `https://developers.openai.com/api/docs/models/gpt-5.6-luna`
+- `https://developers.openai.com/api/docs/models/gpt-5.6-sol`
 
-Use Sol high for final review, security-sensitive work, architecture, migrations, concurrency, data integrity, and failures that survived a lower-cost attempt. Use Max or Ultra only when the task itself justifies them.
+Use Terra only after the user explicitly selects or configures it for a one-off task. Never allow an omitted Subagent model to fall back to automatic Terra selection.
 
-For the CLI, prefer an optional layered profile instead of changing the global default:
+Use Sol extra high (`xhigh`) for planning and final review, including security-sensitive work, architecture, migrations, concurrency, data integrity, and failures that survived an execution attempt. Use Max or Ultra only when the task itself justifies them.
+
+Set the CLI default directly in the global configuration:
 
 ```toml
-# ~/.codex/luna-exec.config.toml
+# ~/.codex/config.toml
 model = "gpt-5.6-luna"
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 ```
 
-Run it with `codex --profile luna-exec`. In an interactive client or CLI session, use the model control or `/model` when a one-off switch is sufficient.
+In an interactive client or CLI session, use the model control or `/model` only for a deliberate one-off override.
+
+Register each Agent in `~/.codex/config.toml`, set `max_threads = 6` and `max_depth = 1`, and point every role to an explicit config file. The thread setting is a concurrency cap, not a guarantee that exactly five children will run:
+
+```toml
+[agents]
+max_threads = 6
+max_depth = 1
+
+[agents.default]
+config_file = "agents/default.toml"
+
+[agents.worker]
+config_file = "agents/worker.toml"
+
+[agents.explorer]
+config_file = "agents/explorer.toml"
+
+[agents.planner]
+config_file = "agents/planner.toml"
+
+[agents.reviewer]
+config_file = "agents/reviewer.toml"
+```
+
+Each execution Agent file must pin Luna and each planning or review Agent file must pin Sol:
+
+```toml
+# ~/.codex/agents/worker.toml
+model = "gpt-5.6-luna"
+model_reasoning_effort = "xhigh"
+
+# ~/.codex/agents/planner.toml or reviewer.toml
+model = "gpt-5.6-sol"
+model_reasoning_effort = "xhigh"
+```
 
 If these models are unavailable or deprecated, use the current official equivalent and explain the mapping. Do not invent model IDs.
 
 Agent rules:
 
-- Small and ordinary tasks use no Subagent.
-- Delegate only independent work with no ordering dependency and no overlapping writes, or completely read-only work.
-- Prefer parallel read-only investigation followed by one main implementation path.
-- Use no more than three concurrent child tasks by default.
+- Small and ordinary tasks may use no Subagent when delegation adds no value.
+- For substantial, clearly decomposable work, let Sol define independent work packages, then use three to five Luna execution children when their writes are disjoint or their work is read-only.
+- Never assign overlapping writes or independent interface decisions to multiple children.
 - Keep `max_depth = 1`; child Agents must not recursively spawn Agents.
 - The main Agent must inspect and synthesize all child results before claiming completion.
 - Do not install Superpowers or another global orchestrator by default.
 - Do not use Max, Ultra, repeated debate, or indefinite reflection merely because a prompt asks for the strongest result.
-- Do not add a writable Luna Subagent by default. Keep one main writer unless the user explicitly requests parallel implementation and the work can be isolated without overlapping files.
+- A writable Luna Agent must remain bounded to its assigned paths and validation contract; final acceptance and delivery stay with the main Agent.
 
 ### 4. Optimize Global Codex Configuration
 
@@ -261,9 +295,9 @@ Run checks supported by the installed environment, including:
 2. Run `codex --strict-config` through a harmless smoke test.
 3. Run `codex doctor` or the available equivalent.
 4. Confirm the effective model, reasoning, sandbox, approval policy, and writable roots.
-5. If a Luna execution profile was added, confirm it loads without changing the base `Sol Medium` default.
-6. Confirm every registered custom Agent resolves to an existing config file and remains read-only where required.
-7. Run one non-ephemeral collaboration smoke test with Explorer and Test Analyst; verify the main Agent waits and synthesizes both results.
+5. Confirm the base CLI session reports Luna high.
+6. Confirm every registered custom Agent resolves to an existing config file, every execution role reports Luna `xhigh`, and Planner and Reviewer report Sol `xhigh`.
+7. Run one non-ephemeral collaboration smoke test with three to five Luna children; verify the main Agent waits, inspects, and synthesizes all returned results.
 8. Confirm the Skill inventory has no unintended duplicate names, broken links, stale project install copies, or unreferenced plugin versions.
 9. Confirm a fresh session does not report Skill-description context-budget truncation. If it does, reduce enabled plugins and overlapping Skills rather than shortening critical descriptions blindly.
 10. Check final diffs and report all unverified behavior.
