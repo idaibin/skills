@@ -21,8 +21,8 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
 
 - Browser-only page inspection, form filling, upload/download, or console/network debugging; use `ops-browser`.
 - Desktop webview code implementation, IPC layering, or component refactors; use `implement-frontend`.
-- Generic repository context discovery without client launch review or real-window verification; use `repo-context`.
-- Dirty-tree review or commit planning; use `code-review`.
+- Generic repository map discovery without client launch review or real-window verification; use `repo-map`.
+- Dirty-tree review or commit planning; use `repo-review`.
 - Root-cause coordination for unexplained client failures; use `diagnose`, which may delegate real-client reproduction and evidence collection here.
 
 ## Operation Notes

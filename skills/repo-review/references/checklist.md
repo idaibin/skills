@@ -8,14 +8,16 @@
 - [ ] For packages, verify manifest, order, count, coverage, hashes, exclusions, and final marker.
 - [ ] Record included paths, excluded paths, submodules, generated outputs, and unavailable evidence.
 - [ ] Stop if the basis is moving, truncated, mismatched, or otherwise unverifiable.
+- [ ] If a `repo-map` artifact exists, use it only as navigation and verify finding facts at this basis.
 
 ## 2. Project Classification
 
 - [ ] Read nearest repository guidance.
 - [ ] Identify actual project classes, manifests, entry points, build systems, and validation commands.
-- [ ] Consume `repo-context` output when available, but independently verify every fact that affects a finding.
+- [ ] Consume `repo-map` entries only as read-set hints; independently verify every fact that affects a finding.
 - [ ] Select only applicable profiles.
 - [ ] Mark unselected profiles `Out of scope` rather than partially reviewing them.
+- [ ] Start from changed paths or explicitly owned snapshot paths; do not repeat onboarding reads that cannot change a review decision.
 
 ## 3. Core Repository Profile
 
@@ -27,6 +29,16 @@ When applicable, inspect:
 - [ ] migrations, generated files, indexes, release artifacts, and stale references;
 - [ ] tests, fixtures, commands, CI, deployment, rollback, and documentation;
 - [ ] add/reuse/move/rename/delete lifecycle completeness.
+
+When docs or commands reference a missing path:
+
+- [ ] Resolve it at the immutable review basis, not from the current worktree.
+- [ ] Record the documentation source, exact claim, assumed working directory, and revision.
+- [ ] Test doc-relative and repository-root-relative interpretation; if the parent is missing, ascend one directory at a time to the nearest existing ancestor.
+- [ ] Search only the relevant subtree using basename, symbol, manifest/config, registration, and generated-source evidence.
+- [ ] Use history only when needed to classify moved, renamed, missing, ambiguous, generated, or branch-drift state.
+- [ ] Report a finding only when the mismatch has concrete impact; otherwise record an alignment gap or `Not verified` evidence.
+- [ ] Keep the review read-only and route repo-map repairs to `repo-map`.
 
 ## 4. Specialist Delegation
 
@@ -65,11 +77,12 @@ For every proposed finding:
 - [ ] No staging, commit, checkout, branch, ref, PR, issue, or remote mutation.
 - [ ] No PR comments without separate authorization.
 - [ ] Accepted fixes are handed to the matching implementation skill.
-- [ ] Delivery is handed to `code-delivery` only after explicit authorization.
+- [ ] Delivery is handed to `repo-delivery` only after explicit authorization.
 
 ## 8. Final Report
 
 - [ ] State immutable review basis.
+- [ ] State whether a repo map guided navigation and which finding facts were independently verified.
 - [ ] State selected profiles, specialist scopes, and exclusions.
 - [ ] Present findings in P0-P3 order.
 - [ ] Include location, evidence, impact, remediation, and verification for every finding.

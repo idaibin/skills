@@ -1,4 +1,0 @@
-interface:
-  display_name: "ChatGPT Review Bridge"
-  short_description: "Run ChatGPT reviews with optional live-page proof"
-  default_prompt: "Use $chatgpt-review-bridge to prepare a review package or run explicitly authorized external rounds. Treat preparation as Package-only. For browser work, require one browser-operation/v1 Capability Snapshot, create the operation-ledger entry, and preserve operation_id through $ops-browser handoffs; never repeat submitted or ambiguous operations. For live-page review, keep the transport browser distinct from ChatGPT's reviewer-side built-in/cloud browser, bound URLs and actions, require evidence, and verify every finding locally."

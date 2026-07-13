@@ -19,10 +19,10 @@ structure rules, validation expectations, or metadata.
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `Understand this repository's real commands and structure first.` | Should prefer `repo-context`. | Repository grounding. |
+| `Understand this repository's real commands and structure first.` | Should prefer `repo-map`. | Repository mapping. |
 | `Plan the Rust migration across six repositories before editing.` | Should prefer `code-planner`. | Future cross-repository planning. |
 | `Find why cargo test is failing before making changes.` | Should prefer `diagnose`. | Root cause unknown. |
-| `Review all dirty changes and split commits.` | Should prefer `code-review`. | Dirty-tree review. |
+| `Review all dirty changes and split commits.` | Should prefer `repo-review`. | Dirty-tree review. |
 | `Audit this Tokio and SQLite architecture for task leaks, contention, WAL growth, and query-plan risks.` | Should prefer `audit-rust`. | Read-only domain audit. |
 | `Audit this mapped Axum endpoint for authorization and token exposure.` | Should prefer `audit-security`. | Security-only audit. |
 | `Fix the React UI inside this Tauri app.` | Should prefer `implement-frontend`. | Frontend implementation. |
@@ -47,7 +47,7 @@ structure rules, validation expectations, or metadata.
 | Boundary ownership | Keeps entry, workflow, domain, persistence, and runtime responsibilities in documented owners. | Moves SQL or business rules into handlers/commands or creates empty layers. |
 | Error and async safety | Uses the local typed error model, avoids runtime panics and blocking async work, and preserves cleanup/cancellation behavior. | Adds `unwrap`, silent fallback, unbounded work, or hidden global state without contract evidence. |
 | Reuse gate | Reuses locally first and requires real consumers, stable API, named ownership, shared tests, and consumer validation before extraction. | Creates a shared crate for speculative reuse. |
-| Interface inventory | Consumes a current `repo-context` inventory or reads relevant docs and traces route, handler, service, repository, trait/type/DTO, error mapping, persistence, caller, test, and module placement before design. | Creates an endpoint or public API after inspecting one file. |
+| Interface inventory | Consumes a current `repo-map` inventory or reads relevant docs and traces route, handler, service, repository, trait/type/DTO, error mapping, persistence, caller, test, and module placement before design. | Creates an endpoint or public API after inspecting one file. |
 | Interface decision | Prefers reuse, extension, then reference adaptation; justifies a new interface and follows the nearest feature's naming, visibility, errors, docs, and tests. | Creates a parallel trait, DTO family, error model, or module convention. |
 | Ownership and allocation | Prefers borrowing/slices, narrows visibility, avoids redundant clones/intermediate allocations, and passes small Copy values by value. | Clones to bypass API design or allocates without need. |
 | Idiomatic errors | Uses the local typed error hierarchy, `Result`, `?`, lazy fallbacks, and tested error mapping without production panics. | Adds `unwrap`, `expect`, silent fallback, or erased library errors without contract reason. |

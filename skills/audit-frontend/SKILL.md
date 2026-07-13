@@ -1,13 +1,13 @@
 ---
 name: audit-frontend
-description: "Use when auditing complex or cross-cutting frontend architecture across React, Vue, TypeScript, Vite, router/state/component systems, high-density consoles, and Tauri desktops, or when code-review or repo-review delegates a bounded frontend specialist review, with explicit profile selection for architecture, state/data, layout, accessibility, performance, or desktop boundaries."
+description: "Use when auditing complex or cross-cutting frontend architecture across React, Vue, Tailwind, CSS Modules, Sass/Less, CSS-in-JS, component systems, high-density consoles, and Tauri desktops, or when repo-review delegates a bounded frontend specialist review, with explicit framework, styling, architecture, state/data, layout, accessibility, performance, and desktop profile selection."
 ---
 
 # Frontend Audit
 
 ## Overview
 
-Audit frontend engineering from repository evidence rather than a universal framework or folder template. Detect the real framework and local API style, then select only the profiles required by the request. This skill is read-only: use it directly for frontend domain audits or as a bounded specialist under `code-review` or `repo-review`; use `implement-frontend` for requested changes.
+Audit frontend engineering from repository evidence rather than a universal framework or folder template. Detect the real framework and local API style, then select only the profiles required by the request. This skill is read-only: use it directly for frontend domain audits or as a bounded specialist under `repo-review`; use `implement-frontend` for requested changes.
 
 ## Rule Priority
 
@@ -25,12 +25,8 @@ Never rewrite a working local structure merely to match this skill or an externa
 ## Workflow
 
 1. Read repository guidance, run `git status --short`, and identify the target app, project class, framework, package manager, scripts, documented architecture, and coordinating review owner when delegated.
-2. Consume current `repo-context` output or perform a targeted inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter.
-3. Classify the product surface as Web, high-density Console, or Tauri Desktop, then select the framework profile:
-   - **React:** hooks/effects, context/store subscriptions, render boundaries, React Router/Next/TanStack contracts.
-   - **Vue Composition:** SFC and `<script setup>`/Composition style, ref/reactive/computed/watch/watchEffect, composables, Pinia, Router, provide/inject, keep-alive, scope disposal, and request cancellation.
-   - **Vue Options:** data/computed/watch/`this.$watch`, methods, provide/inject, component Router guards, mounted/unmounted/activated/deactivated, and request cancellation without requiring Composition helpers.
-   - **Other:** use repository-native concepts and mark unsupported assumptions `Not verified`.
+2. Consume current `repo-map` output or perform a targeted inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter.
+3. Classify the product surface as Web, high-density Console, or Tauri Desktop. Select exactly one framework profile per audited boundary: **React**, **Vue Composition**, **Vue Options**, or **Repository-native Other**. Select only styling profiles present in scope: **Tailwind**, **CSS Modules**, **Sass/Less**, **CSS-in-JS**, **Ant Design**, **shadcn/ui**, or a documented local system.
 4. Select one or more audit profiles; explicitly mark the rest `Out of scope`:
    - **Architecture/reuse:** routes, features, shared layers, dependency direction, reuse, abstractions, structural lifecycle, and docs.
    - **State/data/contracts:** server/cache, URL, form, shared business, local UI, reactivity, stores, schemas, requests, errors, cancellation, and native IPC contracts.
@@ -50,7 +46,7 @@ Never rewrite a working local structure merely to match this skill or an externa
 - **Focused profile audit:** one or two selected frontend profiles with bounded evidence.
 - **Combined frontend audit:** interacting profiles such as state/data plus performance or layout plus accessibility, with explicit integration risk.
 - **Baseline architecture audit:** architecture/reuse plus structural lifecycle and docs against real repository conventions.
-- **Scoped specialist subreview:** inspect only the frontend paths or diff delegated by `code-review` or `repo-review`; return domain findings without taking review coordination or Git ownership.
+- **Scoped specialist subreview:** inspect only the frontend paths or diff delegated by `repo-review`; return domain findings without taking review coordination or Git ownership.
 
 ## Hard Rules
 
@@ -63,28 +59,25 @@ Never rewrite a working local structure merely to match this skill or an externa
 - Reuse existing tokens, primitives, variants, layout owners, breakpoints, request/cache mechanisms, forms, toasts, and feedback states. Do not add a parallel system for a local feature.
 - Keep DOM and CSS minimal: one owner for page-edge spacing and scrolling, Flexbox for one-dimensional layout, Grid for real two-dimensional layout, adaptive children, no empty wrappers, and no duplicate declarations or margin patches.
 - Do not recommend React memoization, Vue computed/cache changes, virtualization, caching, or bundle changes by default. Require a traced path, measurement, request counts, or explicit complexity evidence under the Performance profile.
-- For Vue Composition, verify actual reactivity boundaries, explicit watch sources, bounded synchronous watchEffect dependencies, cleanup, invalidation, cancellation, feedback loops, store/composable lifetime, Router, provide/inject, and keep-alive behavior.
-- For Vue Options, audit native data/computed/watch/`this.$watch`, methods, provide/inject, component guards, and lifecycle. Do not require Composition imports or incidental conversion.
-- Preserve props/emits, `v-model`, slots, provide/inject, route params/meta/guards, keep-alive, cancellation, and async component/error-boundary contracts when selected.
+- Apply only the selected framework and styling references. Do not cross-apply framework semantics or imply coverage of an unselected styling system.
 - Keep Tauri pages behind a typed frontend adapter or service. Commands expose stable transport DTOs and errors, delegate business logic to Rust owners, and provide real progress/cancellation for long work.
 - Under Accessibility, preserve keyboard operation, visible focus, accessible names, focus management, form labels/errors, and non-color status communication.
 - Do not refactor unrelated legacy code. File length alone never justifies splitting.
-- Do not edit, stage, commit, post review comments, or deliver code in audit mode. `code-review` owns local dirty-tree review and commit readiness; `repo-review` owns immutable repository/range/PR review coordination; `code-delivery` alone owns Git mutation. Route accepted remediation to `implement-frontend`.
+- Do not edit, stage, commit, post review comments, or deliver code in audit mode. `repo-review` owns Worktree and immutable review coordination; `repo-delivery` alone owns Git mutation. Route accepted remediation to `implement-frontend`.
 
 ## Do Not Use For
 
-- Repository orientation, commands, reuse inventory, or docs/code alignment without an audit request; use `repo-context`.
+- Repository orientation, commands, reuse inventory, or docs/code alignment without an audit request; use `repo-map`.
 - Frontend implementation, modification, or refactoring; use `implement-frontend`.
 - Root-cause diagnosis before a fix is known; use `diagnose`.
-- Owning local dirty-tree classification, mixed hunks, staging plans, or commit readiness; use `code-review`.
-- Coordinating an entire repository, branch range, PR, release candidate, or review package; use `repo-review`, which may delegate a bounded frontend surface here.
-- Actual staging, commit, rebase/squash, push, or delivery; use `code-delivery`.
+- Owning Worktree readiness or immutable repository/range/PR/release coordination; use `repo-review`, which may delegate a bounded frontend surface here.
+- Actual staging, commit, rebase/squash, push, or delivery; use `repo-delivery`.
 - Browser or real desktop runtime operation; use `ops-browser` or `ops-client`.
 - A backend-only Rust implementation or audit; use `implement-rust` or `audit-rust`.
 
 ## Output Contract
 
-Start with selected product/framework profile, selected audit profiles, explicitly excluded profiles, coordinating owner when delegated, and severity-ranked findings. For each finding, report impact, exact location, framework-specific evidence, recommended remediation owner/direction, and validation gap. Then summarize inspected rules/files, existing candidates, ownership map, selected state/data/layout/accessibility/performance/desktop evidence, component/injection/router/lifetime contracts, structural/documentation drift, commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
+Start with selected product, framework, styling, and audit profiles; explicitly excluded audit profiles; coordinating owner when delegated; and severity-ranked findings. For each finding, report impact, exact location, profile-specific evidence, recommended remediation owner/direction, and validation gap. Then summarize inspected rules/files, existing candidates, ownership map, selected state/data/layout/accessibility/performance/desktop evidence, component/injection/router/lifetime contracts, structural/documentation drift, commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
 
 ## Skill Maintenance
 
@@ -93,9 +86,11 @@ Keep this entry profile-oriented and concise. When triggers, profiles, or rules 
 ## References
 
 - Read [architecture-and-ownership.md](references/architecture-and-ownership.md) for discovery, directories, routes, pages, and file responsibility.
+- Read [framework-profiles.md](references/framework-profiles.md) for React, Vue Composition, Vue Options, and repository-native audit rules.
 - Read [component-system.md](references/component-system.md) for primitives, feature components, composition, variants, and reuse decisions.
 - Read [state-data-and-forms.md](references/state-data-and-forms.md) for state classes, requests, caching, feedback states, services, schemas, and forms.
 - Read [styling-and-layout.md](references/styling-and-layout.md) for tokens, spacing, responsive layout, Console density, DOM, and CSS ownership.
+- Read [styling-systems.md](references/styling-systems.md) for Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, shadcn/ui, and mixed-stack audit rules.
 - Read [desktop-tauri.md](references/desktop-tauri.md) for frontend adapters, commands, Rust boundaries, windows, shortcuts, progress, and cancellation.
 - Read [accessibility-and-performance.md](references/accessibility-and-performance.md) for keyboard/focus checks and evidence-based performance review.
 - Read [review-checklist.md](references/review-checklist.md) for the profile-driven audit sequence.

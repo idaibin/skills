@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repository Map"
+  short_description: "Map Git or non-Git project truth and verified reuse routes"
+  default_prompt: "Use $repo-map to resolve the real Git or non-Git project roots and create or update the smallest useful semantic repo map with boundaries, commands, shortest task routes, and verified reusable contracts across relevant provider roots."

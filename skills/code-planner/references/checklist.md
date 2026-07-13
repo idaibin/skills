@@ -65,7 +65,7 @@ Reject conditions:
   - <failed validation, missing evidence, scope drift, contract drift, unrelated edits, unclear ownership>
 ```
 
-For `contract-impact` tasks, the plan should only mark the risk and required downstream review. Do not paste the full interface review checklist into the task package; require `code-review` before commit for the complete chain check.
+For `contract-impact` tasks, the plan should only mark the risk and required downstream review. Do not paste the full interface review checklist into the task package; require `repo-review` before commit for the complete chain check.
 
 ## Task Split Checklist
 
@@ -103,8 +103,8 @@ Reject a sequential plan for genuinely independent scopes when it names no write
 ## Task Type Checklist
 
 - Feature work: split by vertical behavior, API/page pair, module, or user workflow.
-- Contract-impact work: mark the task as `contract-impact`, identify affected interface surfaces, and require downstream `code-review` for the complete pre-commit chain review. `code-planner` should not duplicate that full checklist.
-- Structure-impact work: include manifest/workspace membership, exports, commands, tests, CI/deploy paths, architecture/project-map docs, indexes, stale-reference search, migration/rollback boundaries, and downstream `code-review`.
+- Contract-impact work: mark the task as `contract-impact`, identify affected interface surfaces, and require downstream `repo-review` for the complete pre-commit chain review. `code-planner` should not duplicate that full checklist.
+- Structure-impact work: include manifest/workspace membership, exports, commands, tests, CI/deploy paths, architecture/project-map docs, indexes, stale-reference search, migration/rollback boundaries, and downstream `repo-review`.
 - Refactor work: split by ownership boundary and preserve visible behavior explicitly.
 - Migration work: split by compatibility boundary, build gate, and rollback boundary.
 - Review work: split by changed-file group, API contract surface, UI surface, runtime behavior, or commit group.

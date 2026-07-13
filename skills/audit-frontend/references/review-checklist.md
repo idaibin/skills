@@ -5,10 +5,11 @@
 - Read all applicable guidance and status.
 - Declare direct audit or bounded specialist review.
 - When delegated, record exact paths/diff, questions, exclusions, and coordinating owner:
-  - `code-review` for local dirty-tree and commit-readiness review;
+  - `repo-review` for local dirty-tree and commit-readiness review;
   - `repo-review` for repository snapshot, range, PR, release, or review-package review.
 - Identify Web, Console, or Tauri Desktop.
 - Identify React, Vue Composition, Vue Options, or repository-native framework profile.
+- Identify only the styling profiles present in scope: Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, shadcn/ui, or a documented local system.
 - Trace route/page, layout, feature owner, analogous implementation, UI primitives, tokens, request/cache, forms/schema, state, tests, docs, and desktop adapter only as required by selected profiles.
 - Record direct-reuse, composition/variant, reference-only, unrelated, and `Not found` candidates.
 
@@ -41,23 +42,7 @@ Do not perform token checks, memoization advice, generic accessibility scanning,
 - Requests, cache, schemas, errors, retry, cancellation, stale response, optimistic behavior, and feedback states follow existing project mechanisms.
 - Public component, route, schema, request, response, and IPC contracts remain compatible or have an explicit migration.
 
-### React
-
-- Hooks/effects have bounded dependencies and cleanup.
-- Context/store subscriptions match consumer scope and do not force unrelated renders.
-- Router/Next/TanStack route, loader, search, cache, and ownership contracts are preserved.
-
-### Vue Composition
-
-- Confirm local SFC and `<script setup>`/Composition conventions.
-- Trace `ref`, `reactive`, `computed`, destructuring/spread, `toRef`/`toRefs`, Pinia extraction/`storeToRefs`, shallow/raw values, and third-party objects at actual reactivity boundaries.
-- Require explicit `watch` sources. For `watchEffect`, inspect intentional synchronous dependencies, invalidation, stale-response handling, feedback loops, and flush timing.
-- Check composable instance/shared/effect-scope lifetime, Pinia ownership, Router guards, provide/inject mutation ownership, keep-alive, and cancellation.
-
-### Vue Options
-
-- Audit native `data`, `computed`, watch keys/getters/handlers, `deep`/`immediate`/timing behavior, dynamic `this.$watch` cleanup, methods, provide/inject, component Router guards, and lifecycle.
-- Do not require Composition imports or recommend incidental conversion.
+- Apply the selected rules from `framework-profiles.md`; do not apply another framework's semantics.
 
 ## 5. Component/Layout/Design-System Profile
 
@@ -66,6 +51,7 @@ Do not perform token checks, memoization advice, generic accessibility scanning,
 - Flexbox handles one-dimensional layout and Grid handles real two-dimensional layout.
 - Wrappers own semantics, layout, state, accessibility, animation, or reuse; otherwise flatten them.
 - No copied component system, duplicated token scale, repeated margin patch, or competing CSS mechanism exists in scope.
+- Apply only the detected rules from `styling-systems.md`, including Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, or shadcn/ui when present.
 - Runtime visual/responsive evidence is requested through `ops-browser` or `ops-client` when static evidence is insufficient.
 
 ## 6. Accessibility Profile
@@ -102,7 +88,7 @@ Do not perform token checks, memoization advice, generic accessibility scanning,
 - Leave source files, generated files, docs, index, checkout, refs, branches, PRs, and remote state unchanged.
 - Route accepted fixes to `implement-frontend`.
 - Return specialist findings to the coordinating review owner.
-- `code-delivery` alone performs authorized staging, commit, rebase/squash, push, or cleanup.
+- `repo-delivery` alone performs authorized staging, commit, rebase/squash, push, or cleanup.
 
 ## 10. Final Report
 

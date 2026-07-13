@@ -42,14 +42,14 @@ Subagent mode must state:
 
 ## Task Contract
 
-Each task must include objective, required reads, owned scope, do-not-touch boundaries, dependencies, implementation steps, validation, done criteria, and reject criteria. Mark interface-heavy work as `contract-impact`; mark add/reuse/move/delete work as `structure-impact`. Route final chain and completeness review to `code-review` before commit.
+Each task must include objective, required reads, owned scope, do-not-touch boundaries, dependencies, implementation steps, validation, done criteria, and reject criteria. Mark interface-heavy work as `contract-impact`; mark add/reuse/move/delete work as `structure-impact`. Route final chain and completeness review to `repo-review` before commit.
 
 For a small task, these fields may be compressed into a single concise block. Completeness does not require verbose repetition.
 
 ## Do Not Use For
 
-- First-pass repository discovery, real commands, entry points, or docs alignment; use `repo-context`.
-- Existing local diff review, commit grouping, staging plans, or commit messages; use `code-review`. Actual staging, commits, or pushes belong to `code-delivery` after review.
+- First-pass repository discovery, real commands, entry points, or docs alignment; use `repo-map`.
+- Existing local diff review, commit grouping, staging plans, or commit messages; use `repo-review`. Actual staging, commits, or pushes belong to `repo-delivery` after review.
 - Direct implementation when the user asks for a small change and no plan.
 - Browser/client operation or runtime evidence collection; use `ops-browser` or `ops-client`.
 
@@ -64,7 +64,7 @@ For a small task, these fields may be compressed into a single concise block. Co
 - Do not assign two writers to the same file, schema, migration, public interface, generated artifact, or branch unless one is explicitly review-only.
 - Do not accept subagent output without inspecting returned findings, diffs, commands, and artifacts.
 - If a required command, tool, browser, or runtime is missing, say `Not found` or `Not verified`; do not substitute silently.
-- Require planned staging, commits, and pushes to stay path-limited unless the user explicitly requests broader scope, and assign their execution to `code-delivery` after review.
+- Require planned staging, commits, and pushes to stay path-limited unless the user explicitly requests broader scope, and assign their execution to `repo-delivery` after review.
 - For `structure-impact`, include manifests/workspace membership, module exports, commands, tests, CI/deploy paths, architecture/project-map docs, indexes, stale-reference search, and rollback or migration boundaries when applicable.
 - Do not use task count, estimated duration, or agent count as a proxy for plan quality. A task is valid only when its ownership and acceptance can be tested.
 

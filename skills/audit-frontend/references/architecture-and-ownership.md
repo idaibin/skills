@@ -46,16 +46,9 @@ responsibilities with different directories.
 | Schema | input, route, form, and transport validation at an owned boundary | UI, API helper, and backend drift into unrelated duplicate rules |
 | Type | local feature vocabulary by default | types move global before a stable multi-feature contract exists |
 
-## Vue 3 Ownership
+## Framework Ownership
 
-- Record the SFC convention and whether the feature uses `<script setup>`, Composition API, or Options API. A mixed repository can have local conventions; do not convert the audited surface merely to make every file look alike.
-- Treat a component instance, composable scope, Pinia store, router instance, application provider, and module scope as different lifetimes. Identify the owner before calling state or behavior “shared.”
-- Keep `ref`/`reactive` state at its real owner and pure derivation in `computed`. Trace destructuring, spread, `toRef`/`toRefs`, `storeToRefs`, `shallowRef`, `markRaw`, class instances, and third-party objects only where they cross a reactivity boundary.
-- Keep component contracts visible: read-only props, explicit emits, `v-model` arguments/modifiers, named/scoped slots, fallthrough attributes, and stable component names where keep-alive or tooling depends on them.
-- For provide/inject, identify the provider, consumers, typed key or symbol, missing-provider/default behavior, reactive owner, allowed mutations, and disposal owner. Consumers should not become hidden owners of injected mutable state.
-- Keep component-local state local. Use Pinia for established cross-tree or durable business state, with clear action and persistence ownership; do not promote a composable or store solely to avoid passing props.
-- Register application/global Router guards at the router owner. Temporary global guards must retain and invoke their unregister callback; component guards stay component-owned and must not be duplicated by activation cycles.
-- Distinguish unmount, scope disposal, route leave/update, and keep-alive activation/deactivation. Verify that each listener, timer, watcher, subscription, guard, and request cleans up at the lifetime boundary that actually ends it.
+Select React, Vue Composition, Vue Options, or Repository-native Other and apply `framework-profiles.md`. Map component, hook/composable, store, router, provider, module, route, and cache lifetime only where the selected Architecture/Reuse profile needs it.
 
 ## Routes And Pages
 

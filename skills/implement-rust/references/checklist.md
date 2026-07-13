@@ -29,7 +29,7 @@
 
 ## Interface Reuse Gate
 
-- Start from a current `repo-context` inventory, or reproduce the same targeted
+- Start from a current `repo-map` inventory, or reproduce the same targeted
   search when it is unavailable or stale.
 - Read architecture/API docs and trace the nearest analogous route registration,
   handler, service, repository, trait/impl, types/DTOs, errors, migrations,
@@ -157,4 +157,4 @@ binary, migration, or shared surface, check:
 - For FFI, unsafe, native resources, or language ports, confirm the applicable
   source-backed checks in `references/bun-production-patterns.md` without
   copying Bun-specific toolchain or architecture choices.
-- Route final dirty-tree ownership and commit grouping to `code-review`.
+- Route final dirty-tree ownership and commit grouping to `repo-review`.

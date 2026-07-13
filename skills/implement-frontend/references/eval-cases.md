@@ -19,6 +19,9 @@ Use these cases when changing `implement-frontend` triggers, stack guidance, lay
 | `Move these split-pane widths out of JSX utilities into one layout class.` | Should trigger `implement-frontend`. | Business geometry ownership cleanup. |
 | `Replace h-[22px] and w-[88px] with project scale utilities or named CSS owners.` | Should trigger `implement-frontend`. | Tailwind arbitrary pixel cleanup. |
 | `Use the existing Tailwind style conventions; do not redesign the page.` | Should trigger `implement-frontend`. | Styling convention preservation. |
+| `Implement this React and Tailwind table using the existing variants, spacing scale, query state, and responsive conventions.` | Should trigger React plus Tailwind profiles. | Combined framework and styling implementation. |
+| `Add this Vue Composition and Pinia settings flow while preserving Router, cancellation, and keep-alive ownership.` | Should trigger Vue Composition with existing Pinia ownership. | Combined framework and state implementation. |
+| `Fix this Vue Options and Ant Design form without adding Composition helpers or replacing its controls.` | Should trigger Vue Options plus Ant Design profiles. | Combined framework and component-system implementation. |
 | `Fix this Tauri settings UI, but keep native commands behind IPC.` | Should trigger `implement-frontend`. | Desktop webview UI implementation. |
 | `Align this React app to its documented route, component, store, script, and file-naming standard.` | Should trigger `implement-frontend`. | Explicit frontend structure alignment. |
 | `Flatten these nested divs, use one flex owner for centering, and keep the children adaptive.` | Should trigger `implement-frontend`. | Minimal DOM and Flex ownership. |
@@ -30,14 +33,14 @@ Use these cases when changing `implement-frontend` triggers, stack guidance, lay
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `Understand this repository's real commands and directory structure first.` | Should prefer `repo-context`. | Repository grounding. |
+| `Understand this repository's real commands and directory structure first.` | Should prefer `repo-map`. | Repository mapping. |
 | `Plan the frontend rewrite across three apps before anyone edits code.` | Should prefer `code-planner`. | Future cross-scope planning. |
 | `Find the root cause before changing any code.` | Should prefer `diagnose`. | Diagnosis before implementation. |
-| `Review all dirty changes and propose commit groups.` | Should prefer `code-review`. | Dirty-tree review and staging plan. |
+| `Review all dirty changes and propose commit groups.` | Should prefer `repo-review`. | Dirty-tree review and staging plan. |
 | `Audit this frontend architecture for duplicated components, state boundaries, accessibility, and performance.` | Should prefer `audit-frontend`. | Read-only domain audit. |
 | `Verify this page in the browser and check console/network.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Capture the real Electron app window with platform-specific window evidence.` | Should prefer `ops-client`. | Desktop-client evidence. |
-| `These frontend changes are reviewed; stage, commit, and push them.` | Should prefer `code-delivery`. | Authorized Git mutation after review. |
+| `These frontend changes are reviewed; stage, commit, and push them.` | Should prefer `repo-delivery`. | Authorized Git mutation after review. |
 
 ## Quality Eval
 
@@ -54,7 +57,7 @@ Use these cases when changing `implement-frontend` triggers, stack guidance, lay
 | Reuse and lifecycle | Reuses locally first and updates manifests, exports, routes, scripts, tests, CI/build/deploy paths, docs, indexes, and stale references for structural changes. | Extracts speculative shared packages or moves/deletes source paths without closing ownership records. |
 | Layout preservation | Keeps layout, spacing, routes, copy, and visual system unchanged unless requested. | Redesigns or restyles adjacent UI. |
 | Component consistency | Reuses existing components, wrappers, hooks/composables, services, stores, types, icons, aliases, and interaction helpers. | Introduces a parallel UI kit, helper layer, state layer, or icon library. |
-| Existing implementation search | Consumes a current `repo-context` inventory or performs targeted file/symbol search across relevant pages, routes, layouts, components, hooks/composables, services, stores, shared UI, tests, and exports. | Starts coding from a guessed path or creates a file before checking existing code. |
+| Existing implementation search | Consumes a current `repo-map` inventory or performs targeted file/symbol search across relevant pages, routes, layouts, components, hooks/composables, services, stores, shared UI, tests, and exports. | Starts coding from a guessed path or creates a file before checking existing code. |
 | Reuse decision | Classifies candidates as direct reuse, reference-only, unrelated, or `Not found`; prefers reuse, then adaptation, then justified creation. | Duplicates an existing component or ignores the nearest established pattern. |
 | New-file placement | Explains why existing candidates are insufficient and follows the current directory, naming, props, state, styling, export, and test conventions. | Creates a parallel `shared`, `common`, `ui`, `components`, hook/composable, store, or service layer. |
 | DOM minimality | Removes or avoids wrappers, fragments, components, and classes that do not provide layout, semantics, state, accessibility, animation ownership, or reuse value. | Adds nested wrappers only to pass class names or group a single child. |
@@ -67,6 +70,7 @@ Use these cases when changing `implement-frontend` triggers, stack guidance, lay
 | Scroll ownership | Keeps one main scroll region where practical and prevents headers, sidebars, inspectors, panels, and footers from competing for overflow control. | Uses broad overflow patches or nested scroll fixes to hide unclear ownership. |
 | CSS minimality | Consolidates repeated declarations and relies on existing tokens, component props, cascade, and inheritance when safe. | Repeats CSS, restates defaults, or adds one-off overrides where existing styles work. |
 | Tailwind scale discipline | Uses project scale utilities for routine sizing and spacing, and named owners for real product geometry. | Leaves routine sizes as arbitrary pixel utilities without justification. |
+| Styling profile selection | Detects Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, shadcn/ui, or local styling ownership and applies only present profiles. | Assumes Tailwind or introduces another styling system because it is familiar. |
 | Contract preservation | Traces and preserves route, query, payload, response, permission, loading, and error behavior. | Changes data contracts silently. |
 | Desktop boundary | Keeps native access behind IPC/command helpers and routes real-window proof to `ops-client`. | Calls native APIs directly from generic UI or treats browser preview as desktop proof. |
 | Validation integrity | Uses repository-defined non-mutating checks and explicit fix/write commands only when rewrites are in scope. | Runs a write-mode check as ordinary validation or hides source rewrites. |

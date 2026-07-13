@@ -27,12 +27,12 @@ A request such as `diagnose and fix` authorizes the later implementation phase, 
 
 ## Non-Triggers
 
-- Repository onboarding, command discovery, reuse inventory, or docs/code alignment without a failure; use `repo-context`.
+- Repository onboarding, command discovery, reuse inventory, or docs/code alignment without a failure; use `repo-map`.
 - Planning a new feature; use `code-planner`.
-- Reviewing existing local changes for commit safety; use `code-review`.
+- Reviewing existing local changes for commit safety; use `repo-review`.
 - Browser operation or screenshots without repository diagnosis; use `ops-browser`.
 - Implementing a fix whose cause is already known; use the matching `implement-*` skill.
-- Staging, commit, push, or branch mutation; use `code-delivery`.
+- Staging, commit, push, or branch mutation; use `repo-delivery`.
 
 ## Implementation Handoff
 

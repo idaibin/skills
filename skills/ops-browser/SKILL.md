@@ -28,7 +28,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    - background-safe operation without stealing focus.
 3. Enumerate browser sessions and existing tabs only when the available tool exposes them; never invent missing tab/window identity.
    Imported bookmarks, history, and saved credentials may accelerate target discovery or user login, but do not prove an active session, account/workspace identity, conversation ownership, authorization, or operation state.
-4. When called by `chatgpt-review-bridge`, validate the Handoff Request fields,
+4. When called by `chatgpt-review`, validate the Handoff Request fields,
    reuse or refresh the named Capability Snapshot, and return a Handoff Result
    with the same `operation_id`; do not reconstruct bridge policy locally.
 5. Choose the surface mode and evidence plan based on capability and state ownership: Local Project, Desktop Built-in Browser, Cloud/Agent Browser, Controlled Chrome, Isolated Managed Session, Inspect/Verify, Visual/Responsive, Form/Upload, or Browser Debug Evidence. Enter Browser Debug Evidence only after `diagnose` delegates a reproduction or the caller supplies an already-isolated browser-layer evidence request; route unexplained or cross-system root-cause requests to `diagnose` before browser operation.
@@ -56,19 +56,19 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - Real Tauri, Electron, or native desktop-client runtime/window proof; use `ops-client`.
 - Frontend code changes, component architecture, design-system decisions, or UI implementation; use `implement-frontend`.
 - Cross-system root-cause coordination for intermittent or unexplained failures; use `diagnose`, which may delegate browser reproduction and evidence collection here.
-- Repository onboarding or context discovery; use `repo-context`.
+- Repository onboarding or map discovery; use `repo-map`.
 - Future implementation planning; use `code-planner`.
-- Local dirty-tree review or commit readiness; use `code-review`.
+- Local dirty-tree review or commit readiness; use `repo-review`.
 - Security-only review; use `audit-security`.
 - Browser-only evidence when the user explicitly requested a real desktop app window.
-- External ChatGPT review orchestration, package construction, send authorization, round counting, conversation attribution, or response archiving; use `chatgpt-review-bridge`. This skill may perform only the low-level browser actions that bridge explicitly routes.
+- External ChatGPT review orchestration, package construction, send authorization, round counting, conversation attribution, or response archiving; use `chatgpt-review`. This skill may perform only the low-level browser actions that review coordinator explicitly routes.
 
 ## Hard Rules
 
 - Do not claim a capability from the skill text. Capability exists only when the active tool exposes and successfully performs it.
 - Name the selected browser surface. Never call desktop built-in state, cloud/agent state, Chrome profile state, and an isolated managed session interchangeable.
 - Prefer the desktop built-in browser for in-app local/public review and user-observable work when it is exposed. Prefer controlled Chrome only for required Chrome profile/session/tab/extension state. Use cloud/agent browsing only within its verified public/auth/file/action limits.
-- When called by `chatgpt-review-bridge`, require the bridge-provided surface, authorization state, package path, round scope, selected browser route/capability, and conversation mapping or explicit first-conversation policy. Follow that route exactly. If its capability or identity evidence fails, return the blocked state to the bridge; do not switch sessions or create a managed fallback independently.
+- When called by `chatgpt-review`, require the review-provided surface, authorization state, package path, round scope, selected browser route/capability, and conversation mapping or explicit first-conversation policy. Follow that route exactly. If its capability or identity evidence fails, return the blocked state to the coordinator; do not switch sessions or create a managed fallback independently.
 - For a bridge handoff, require `schema_version`, `operation_id`, authorization, route, target, capability snapshot, preconditions, expected postcondition, and retry policy. Return the same ID and a protocol state; never create or replace the ID.
 - Before a state-changing action, inspect the requested target and prior evidence. If the ID is already submitted/completed or prior side effects are uncertain, return `blocked` or `ambiguous` without acting.
 - Choose the session by evidence ownership: requested/recorded session first when identifiable; existing tab with required state second; managed session when external profile state is unnecessary; user session only when supported and required.

@@ -7,13 +7,13 @@ This file defines how AI agents should work on this repository. It is not the pr
 - For repository development, documentation edits, prompt edits, skill package edits, reviews, or commits, follow the repository work rules below.
 - Only when the user explicitly asks to install skills from `https://github.com/idaibin/aicraft`, read `INSTALL.md` and follow that installation flow.
 - Do not switch into installation mode just because this repository contains `skills/`.
-- Use `repo-context` for separate repository grounding, reuse inventory, or docs/code alignment.
+- Use `repo-map` for separate repository mapping, reuse inventory, or docs/code alignment.
 - Use `diagnose` for concrete failures; permanent remediation transitions to the matching implementation skill.
 - Use `implement-frontend` or `implement-rust` for requested code changes.
 - Use `audit-frontend`, `audit-rust`, or `audit-security` for bounded read-only domain audits.
-- Use `code-review` for existing local Git changes, dirty-tree ownership, staging plans, and commit readiness.
-- Use `repo-review` for immutable repository snapshots, branch comparisons, commit ranges, pull requests, release candidates, or review packages.
-- Use `code-delivery` for staging, commits, pushes, squash, cleanup, and other Git mutations.
+- Use `repo-review` for read-only review of local Git changes or immutable repository snapshots, ranges, pull requests, release candidates, and review packages; select the matching basis mode first.
+- Use `chatgpt-review` for local ChatGPT review packages or explicitly authorized external ChatGPT review rounds; use `ops-browser` only for delegated low-level browser operations.
+- Use `repo-delivery` for staging, commits, pushes, squash, cleanup, and other Git mutations.
 
 ## Repository Work Rules
 

@@ -37,12 +37,12 @@ Diagnose technical failures with a tight evidence loop. Reproduce the user's exa
 
 ## Do Not Use For
 
-- First-pass repository discovery without a concrete failure; use `repo-context`.
+- First-pass repository discovery without a concrete failure; use `repo-map`.
 - Future implementation planning before a failure or bug exists; use `code-planner`.
-- Existing local diff review, staging plans, commit grouping, or pre-commit review; use `code-review`.
+- Existing local diff review, staging plans, commit grouping, or pre-commit review; use `repo-review`.
 - Browser-only operation, screenshots, console, network, uploads, downloads, or session evidence; use `ops-browser`. Combine browser evidence with this skill only when the root cause crosses code or runtime boundaries.
 - Implementing a known fix when no diagnosis remains; use the matching `implement-*` skill.
-- Staging, commits, pushes, branch changes, or delivery; use `code-delivery` after implementation and review.
+- Staging, commits, pushes, branch changes, or delivery; use `repo-delivery` after implementation and review.
 
 ## Hard Rules
 

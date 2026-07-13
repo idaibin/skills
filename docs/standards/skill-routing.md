@@ -20,65 +20,54 @@ Framework-specific or domain-specific checks should stay as profiles when these 
 
 | Skill | Primary object | Mutation | Primary output |
 | --- | --- | --- | --- |
-| `repo-context` | repository facts and ownership map | read-only by default; doc write only after explicit request | commands, paths, project class, reuse candidates, alignment gaps |
+| `repo-map` | workspace/repository semantics and reuse map | read-only by default; repo-map write only after explicit request | real boundaries, task routes, verified reuse entries, alignment gaps |
 | `code-planner` | future implementation requirement | read-only | executable tasks, dependencies, owners, validation and reject gates |
 | `diagnose` | concrete failure symptom | read-only for tracked repository and Git state | reproduction loop, confirmed cause, regression seam, implementation handoff |
-| `code-review` | current local worktree and index changes | read-only | findings, ownership, mixed hunks, commit groups, exact staging plan |
-| `repo-review` | immutable repository snapshot/range/PR/release/package | read-only | consolidated P0-P3 findings and verification scope |
+| `repo-review` | local worktree/index or immutable snapshot/range/PR/release/package | read-only | basis-specific readiness, staging guidance, or consolidated P0-P3 findings |
 | `implement-frontend` | requested frontend source change | source mutation | implemented and validated frontend change |
 | `implement-rust` | requested Rust source change | source mutation | implemented and validated Rust change |
 | `audit-frontend` | selected frontend domain profiles | read-only | bounded frontend findings and validation gaps |
 | `audit-rust` | selected Rust domain profiles | read-only | bounded Rust findings and validation gaps |
 | `audit-security` | known security-sensitive surface | read-only | scoped security findings and threat sketch |
-| `code-delivery` | reviewed local Git changes | Git mutation | staged/committed/pushed/synchronized refs and proof |
+| `repo-delivery` | reviewed local Git changes | Git mutation | staged/committed/pushed/synchronized refs and proof |
 | `ops-browser` | browser session/page state | authorized browser actions | browser evidence and state-change report |
 | `ops-client` | real desktop client process/window | authorized client actions | process/window/runtime evidence |
-| `chatgpt-review-bridge` | external ChatGPT review round | authorized external action | routed package, attributed response, local verification |
+| `chatgpt-review` | external ChatGPT review package or round | local artifact write or authorized external action | prepared/routed package, attributed response, local verification |
 | `human-writing` | supplied technical draft | text transformation | edited publication-ready text |
 
-## `repo-context`, `code-review`, And `repo-review`
+## `repo-map` And `repo-review`
 
-These remain separate even though all inspect repository files.
+These remain separate because context mapping may write navigation docs, while review is always read-only and evaluates change safety.
 
-### `repo-context`
+### `repo-map`
 
 Answers:
 
 - What exists?
 - Where is the real entry point or owner?
-- Which implementation can be reused or used as a reference?
+- Which canonical component, function, type, or API can be reused, extended, or wrapped before declaring another one?
 - Do project docs and current structure agree?
 
 It stops when the requested facts are supported. It does not rank defects or determine commit/release safety.
-
-### `code-review`
-
-Answers:
-
-- What changed in the current local worktree/index?
-- Which changes belong to this task?
-- Are there mixed hunks or unrelated staged files?
-- Are contracts and structural lifecycle complete?
-- How should the changes be staged and committed safely?
-
-Its primary object is local uncommitted state. It never claims whole-repository or branch-range coverage.
 
 ### `repo-review`
 
 Answers:
 
+- What changed in the current local worktree/index, which changes belong to this task, and are there mixed hunks?
+- How should reviewed local changes be grouped and staged safely?
 - What actionable defects exist in a fixed repository snapshot, branch comparison, commit range, PR, release candidate, or verified review package?
 - Which findings should block merge or release?
 - How do frontend, Rust, security, CI, tests, docs, and structural evidence integrate?
 
-It fixes an immutable review basis, coordinates bounded specialists, consolidates duplicate root causes, and outputs P0-P3 findings. It does not own local staging or commit readiness.
+It selects one review basis first. Worktree mode owns ownership, mixed hunks, commit readiness, and exact staging guidance; immutable modes resolve SHAs and own P0-P3 findings. All modes stay read-only and coordinate bounded specialists.
 
 ## Security Audit
 
 `audit-security` remains separate from review coordinators because its primary object is a known security-sensitive surface and its output is a bounded security assessment.
 
-- Under `code-review`, it inspects only delegated local changed paths and returns findings to the dirty-tree coordinator.
-- Under `repo-review`, it inspects only delegated immutable paths/ranges and returns findings to the repository-review coordinator.
+- Under Worktree `repo-review`, it inspects only delegated local changed paths.
+- Under immutable `repo-review`, it inspects only delegated fixed paths/ranges.
 - Direct use is appropriate when the user requests only a scoped security audit after the target surface is known.
 - It never takes over staging, commit readiness, whole-review severity integration, or Git mutation.
 
@@ -93,8 +82,8 @@ diagnose
   -> confirm exact cause and regression seam
   -> explicit implementation handoff
   -> matching implement-* skill applies the change
-  -> code-review checks the resulting local diff
-  -> code-delivery performs authorized Git mutation
+  -> repo-review checks the resulting local diff
+  -> repo-delivery performs authorized Git mutation
 ```
 
 This preserves continuous execution without merging investigation and implementation permissions.
@@ -105,7 +94,7 @@ Cross-skill workflows must transfer bounded state without transferring
 authority. The caller owns intent, authorization, scope, and the next-state
 decision; the executor owns only its direct action and evidence.
 
-For `chatgpt-review-bridge -> ops-browser -> chatgpt-review-bridge`, both
+For `chatgpt-review -> ops-browser -> chatgpt-review`, both
 published packages carry the identical `browser-operation/v1` protocol. The
 bridge owns the Capability requirements, Handoff Request, operation ledger,
 `operation_id`, retry decision, rounds, and attribution. `ops-browser` owns the
@@ -117,6 +106,16 @@ Repository validation rejects drift between the two published protocol copies.
 Behavior evals must cover at least normal completion, failure before submit,
 duplicate-submit prevention, ambiguous interruption, stale capability evidence,
 and unauthorized handoff.
+
+For `repo-map -> repo-review`, `repo-map` owns the durable semantic repo
+map: current ownership and runtime boundaries, commands, shortest task routes,
+and verified reuse entries with canonical owners, access/registration entries, consumers,
+and constraints. `repo-review` may
+use that map to select an initial read set, but independently verifies every
+fact that affects a finding at its selected Worktree or immutable review basis. Missing mapped paths
+are resolved from the nearest existing ancestor with a bounded subtree search;
+the read-only reviewer records the mismatch and routes document repair back to
+`repo-map`. This collaboration does not transfer P0-P3 authority.
 
 ## Public Skill Versus Internal Profile
 
@@ -177,7 +176,7 @@ Before publishing a skill change:
 - confirm `Do Not Use For` names the closest competing skills;
 - confirm metadata routes to the same owner and mutation boundary as `SKILL.md`;
 - add pairwise trigger/non-trigger cases for every nearest neighbor;
-- ensure only `code-delivery` owns Git mutation;
+- ensure only `repo-delivery` owns Git mutation;
 - ensure audits and reviews remain read-only;
 - ensure implementation skills do not claim staging, commit, push, or PR ownership;
 - ensure external/browser actions require their own explicit authorization;

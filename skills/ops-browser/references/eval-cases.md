@@ -30,13 +30,13 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `Review current git changes and give me commit groups.` | Should prefer `code-review`. | Repository review task. |
+| `Review current git changes and give me commit groups.` | Should prefer `repo-review`. | Repository review task. |
 | `Implement this admin dashboard using the existing component system.` | Should prefer `implement-frontend`. | Frontend code implementation. |
 | `Verify the real Tauri client window; do not use a browser preview.` | Should prefer `ops-client`. | Real desktop-client operation. |
 | `Confirm the Electron release app window with platform-specific evidence.` | Should prefer `ops-client`. | Desktop runtime/window proof. |
-| `Understand this repository's directories and commands first.` | Should prefer `repo-context`. | Repository context task. |
+| `Understand this repository's directories and commands first.` | Should prefer `repo-map`. | Repository map task. |
 | `Audit only this browser-facing endpoint for token or authorization risk.` | Should prefer `audit-security`; `ops-browser` may supply runtime evidence only when delegated. | Security review is not browser-operation ownership. |
-| `Prepare and send this branch for three ChatGPT review rounds, then archive review.md.` | Should prefer `chatgpt-review-bridge`; `ops-browser` alone does not own authorization, rounds, package, or archive. | External review orchestration boundary. |
+| `Prepare and send this branch for three ChatGPT review rounds, then archive review.md.` | Should prefer `chatgpt-review`; `ops-browser` alone does not own authorization, rounds, package, or archive. | External review orchestration boundary. |
 | `Why does this form intermittently fail after submit? Find the root cause.` | Should prefer `diagnose`, which may delegate Browser Debug Evidence to `ops-browser`. | Cross-system root-cause coordination is not browser-operation ownership. |
 | `Why does refresh sometimes lose state or return 401?` | Should prefer `diagnose` and use `ops-browser` only for bounded browser evidence. | The final cause may cross frontend, API, session, or backend boundaries. |
 

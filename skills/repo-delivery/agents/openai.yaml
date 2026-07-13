@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repository Delivery"
+  short_description: "Stage, commit, and deliver reviewed Git changes"
+  default_prompt: "Use $repo-delivery as the sole owner of staging, commits, pushes, and other Git mutations after review. Confirm explicit delivery authorization, branch policy, permissions, upstream, ahead/behind/diverged state, remote freshness, and exact reviewed scope; route unclear ownership to $repo-review, verify the staged diff before every commit, never auto-force-push, never create a pull request, and prove final local and remote refs."

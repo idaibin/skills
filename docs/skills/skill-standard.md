@@ -25,12 +25,12 @@ Optional `scripts/` or `assets/` are allowed only when they directly support the
 - Prefer short verb-led names.
 - Implementation skills use `implement-<domain>`, such as `implement-frontend` or `implement-rust`, and own requested source changes only.
 - Domain audit skills use `audit-<domain>`, such as `audit-frontend`, `audit-rust`, or `audit-security`. They are read-only, select only applicable profiles, lead with evidence-backed findings, and route fixes to the corresponding implementation skill.
-- `repo-context` owns separate repository grounding, real commands/paths, reuse inventory, and docs/code alignment. It does not rank defects or declare review readiness.
+- `repo-map` owns semantic repository-map maintenance, real boundaries/commands/task routes, verified reuse inventories, and docs/code alignment. It does not mirror source trees, rank defects, or declare review readiness.
 - `diagnose` owns failure reproduction, minimization, hypothesis testing, and root-cause confirmation. Permanent remediation transitions to the matching implementation skill.
-- `code-review` owns current local Git changes, dirty-tree classification, contract/structural completeness, mixed hunks, staging plans, and commit readiness.
-- `repo-review` owns immutable repository snapshots, branch comparisons, commit ranges, pull requests, release candidates, and verified review packages. It coordinates bounded specialists and consolidates final P0-P3 findings.
-- `audit-security` owns bounded security assessment and may act as a specialist under `code-review` or `repo-review`; it does not replace either coordinator.
-- `code-delivery` is the sole owner of staging, commits, pushes, squash, cleanup, and other Git mutation after review acceptance.
+- `repo-review` owns read-only review across basis-specific modes: local worktree/index changes, immutable snapshots, branch comparisons, commit ranges, pull requests, release candidates, and verified review packages. It owns dirty-tree readiness in Worktree mode and consolidated P0-P3 findings in immutable modes.
+- `audit-security` owns bounded security assessment and may act as a specialist under `repo-review`; it does not replace the coordinator.
+- `chatgpt-review` owns local review-package artifacts and explicitly authorized external ChatGPT review rounds. It defaults authorized transport to the desktop built-in browser; Current Chrome or standalone browser use requires an explicit request for that route.
+- `repo-delivery` is the sole owner of staging, commits, pushes, squash, cleanup, and other Git mutation after review acceptance.
 - Do not use unclear abbreviations such as `imp-*` or mix `<domain>-implementation` with `implement-<domain>`.
 - `description` must start with `Use when`.
 - `description` must describe trigger conditions, not the full workflow.
@@ -121,9 +121,9 @@ Authority boundaries:
 - context, planning, diagnosis, review, audit, and security skills are read-only unless their own documented artifact boundary explicitly permits a local output file;
 - `diagnose` does not apply permanent fixes;
 - `implement-*` may edit task-owned source but must not stage, commit, push, or create PRs;
-- `code-review` and `repo-review` do not edit or mutate Git/GitHub state;
+- `repo-review` does not edit or mutate Git/GitHub state;
 - `audit-security` does not expand beyond its bounded surface or take over review coordination;
-- `code-delivery` alone owns Git mutation;
+- `repo-delivery` alone owns Git mutation;
 - browser, client, and external ChatGPT actions require explicit action authorization and capability verification.
 
 Commit-related skills must avoid broad staging such as `git add .` unless the user explicitly approves that exact scope.
@@ -137,7 +137,7 @@ Repository-facing skills must treat engineering standards as project evidence, n
 - keep equivalent projects consistent within the same class while allowing framework-native layouts and documented legacy, prototype, multi-process, or production exceptions;
 - prefer existing local code and components before adding another implementation;
 - require at least two real consumers and a named owner before extracting a cross-repository shared capability, unless repository guidance is stricter;
-- when adding, reusing, moving, renaming, or deleting structural code, update manifests/workspace membership, exports, commands, tests, CI/deploy paths, architecture/project-map docs, generated artifacts, migrations, consumers, and indexes that describe the boundary;
+- when adding, reusing, moving, renaming, or deleting structural code, update manifests/workspace membership, exports, commands, tests, CI/deploy paths, architecture/repo-map docs, generated artifacts, migrations, consumers, and indexes that describe the boundary;
 - keep validation commands read-only during review; use explicit fix/write commands only during authorized implementation.
 
 Generic skills must not hardcode one organization's version numbers or directory names as universal rules. Put product-specific baselines in the target repository; teach the skill how to discover and enforce them.
@@ -153,10 +153,10 @@ Every skill must include realistic:
 
 When a skill boundary changes, add pairwise trigger/non-trigger cases against every closest neighbor. For example:
 
-- `repo-context` versus `code-review`, `repo-review`, and `audit-security`;
-- `code-review` versus `repo-review`, `audit-security`, and `code-delivery`;
+- `repo-map` versus `repo-review` and `audit-security`;
+- `repo-review` versus `audit-security` and `repo-delivery`;
 - `diagnose` versus matching `implement-*` skills;
-- `audit-frontend` versus `code-review`, `repo-review`, and `implement-frontend`.
+- `audit-frontend` versus `repo-review` and `implement-frontend`.
 
 Every published package must score at least 8 for every quality case. Authorization, mutation, external-action, and evidence-integrity violations are hard failures and cannot be offset by other scores.
 
@@ -165,9 +165,16 @@ Every published package must score at least 8 for every quality case. Authorizat
 End-user installs and updates should use the standard skills.sh CLI flow:
 
 - `npx skills add https://github.com/idaibin/aicraft`
-- `npx skills update`
+- `npx skills update --project` for current-project installations;
+- `npx skills update --global` for global installations, including shared Codex and Claude Code installs.
 
 Do not add package-local self-update modes, remote-source files, or custom update workflows unless a future source-maintenance workflow explicitly needs them. Document install and update behavior in `README.md` and `INSTALL.md`, not inside each skill package.
+
+Root installation documentation must distinguish CLI-tracked installs from
+manual copies, state that update is scope-based rather than agent-filtered, and
+include explicit remove-and-add instructions for every published skill rename
+or merge. Keep Codex and Claude Code on the same standard CLI flow; do not
+maintain provider-specific update instructions inside individual packages.
 
 ## Validation Checklist
 
@@ -193,7 +200,7 @@ The `Triggers include` command must return no results. Also verify:
 - no stale names, placeholders, required repository-local prompt dependencies, or broken links remain;
 - `git diff --check` passes.
 
-After publishing, users install with `npx skills add https://github.com/idaibin/aicraft` and update installed copies with `npx skills update`. Use `--list` only to inspect discoverability.
+After publishing, users install with `npx skills add https://github.com/idaibin/aicraft` and update installed copies with `npx skills update --project` or `npx skills update --global`. Use `--list` only to inspect source discoverability and `npx skills list` to inspect installed skills.
 
 For skills.sh repository pages, use root-level `skills.sh.json` only for display grouping. It does not change CLI install behavior or any `SKILL.md` content.
 

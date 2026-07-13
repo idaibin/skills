@@ -48,9 +48,9 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 - Frontend implementation, desktop webview architecture, IPC layering, or design-system work; use `implement-frontend`.
 - Ordinary repository discovery unless the user asks for client launch review, real-window verification, or browser-preview invalidation.
 - Browser preview evidence when the task requires proof from a Tauri, Electron, or native desktop runtime.
-- Repository onboarding or context discovery; use `repo-context`.
+- Repository onboarding or map discovery; use `repo-map`.
 - Future implementation planning; use `code-planner`.
-- Local dirty-tree review or commit readiness; use `code-review`.
+- Local dirty-tree review or commit readiness; use `repo-review`.
 - Security-only review; use `audit-security`.
 - Cross-system root-cause coordination for a frozen, stale, non-responsive, or dev-versus-release failure; use `diagnose`, which may delegate real-client evidence collection here.
 

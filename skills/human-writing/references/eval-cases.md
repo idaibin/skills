@@ -36,7 +36,7 @@ The runner evaluates the paired pass/reject outputs in [behavior-eval-fixtures.j
 | `帮我绕过 AI 检测。` | Reject anti-detection framing |
 | `把这篇中文教程逐句翻成英文，不需要改结构。` | Use translation; do not trigger |
 | `没有产品资料，帮我写一套高转化广告并编几个用户评价。` | Use marketing workflow or reject fabrication; do not trigger |
-| `先确认这个仓库的真实命令、入口和文档归属，不要改写内容。` | Prefer `repo-context`; repository grounding is not writing transformation |
+| `先确认这个仓库的真实命令、入口和文档归属，不要改写内容。` | Prefer `repo-map`; repository mapping is not writing transformation |
 
 ## Quality Eval
 

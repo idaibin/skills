@@ -17,20 +17,20 @@ Use these cases when changing `audit-security` triggers, profiles, scope, output
 | `Run a lightweight security audit of this scoped API change, not a repository-wide scan.` | Should trigger scoped audit. | Bounded change audit. |
 | `Does this upload API have path traversal or sensitive data exposure risk?` | Should trigger file/API profiles. | Upload and data exposure risk. |
 | `No threat-model skill is available; give me a scoped threat sketch for this endpoint.` | Should trigger scoped threat-sketch mode. | Local fallback without claiming whole-system coverage. |
-| `Under code-review, inspect only the delegated API and Tauri files for security risks.` | Should trigger a scoped specialist and keep `code-review` as local-change coordinator. | Bounded dirty-tree delegation. |
+| `Under repo-review, inspect only the delegated API and Tauri files for security risks.` | Should trigger a scoped specialist and keep `repo-review` as local-change coordinator. | Bounded dirty-tree delegation. |
 | `Under repo-review, inspect only the auth and release configuration paths.` | Should trigger a scoped specialist and keep `repo-review` as immutable-review coordinator. | Bounded repository/range delegation. |
 
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
-| `Review whether frontend and backend API fields align, then split commits.` | Should use `code-review` for alignment/staging plan/readiness, then `code-delivery` for authorized staging and commit creation. | Local change review has a separate owner. |
+| `Review whether frontend and backend API fields align, then split commits.` | Should use `repo-review` for alignment/staging plan/readiness, then `repo-delivery` for authorized staging and commit creation. | Local change review has a separate owner. |
 | `Review the whole repository and coordinate frontend, Rust, security, CI, and docs findings.` | Should prefer `repo-review`, which may delegate security paths here. | Whole-review coordination is broader than a security specialist. |
 | `Create a full threat model for this system.` | Should prefer a dedicated threat-model workflow when available. | Whole-system modeling is broader than this skill. |
 | `Run a deep repository-wide vulnerability scan with multiple passes.` | Should prefer a dedicated deep security scan workflow. | Repository-wide scanning is outside scoped audit. |
 | `Split this requirement into executable tasks.` | Should prefer `code-planner`. | Future implementation planning. |
-| `Understand this repository's real commands and directory structure first.` | Should prefer `repo-context`. | Repository grounding. |
-| `Review all local changes and generate commit groups.` | Should prefer `code-review`. | Dirty-tree review and commit planning. |
+| `Understand this repository's real commands and directory structure first.` | Should prefer `repo-map`. | Repository mapping. |
+| `Review all local changes and generate commit groups.` | Should prefer `repo-review`. | Dirty-tree review and commit planning. |
 
 ## Quality Eval
 
@@ -49,7 +49,7 @@ Use these cases when changing `audit-security` triggers, profiles, scope, output
 | Dependency delta | Reviews source, pinning, features, build/postinstall scripts, remote downloads, native code, and lockfile impact for actual dependency changes. | Reports dependency risk without a concrete delta. |
 | Scoped threat sketch | Records scoped assets and sensitive operations, browser/API/native/storage trust boundaries and entry points, plausible role/input-specific abuse cases, authoritative controls, excluded surfaces, and unverified assumptions while clearly stating it is not a full threat model. | Presents a generic checklist as complete threat modeling, penetration testing, certification, or evidence about excluded surfaces. |
 | Release check | Reports severity, checked surfaces, validation, and `Not verified` gaps. | Says the release or system is secure because no findings were observed. |
-| Scoped specialist boundary | States the delegated paths/diff and selected profiles, inspects only that surface, returns findings and gaps to `code-review` or `repo-review`, and leaves files and Git/GitHub state unchanged. | Reclassifies unrelated files, expands scope, edits, stages, commits, pushes, comments, or claims whole-review readiness. |
+| Scoped specialist boundary | States the delegated paths/diff and selected profiles, inspects only that surface, returns findings and gaps to `repo-review`, and leaves files and Git/GitHub state unchanged. | Reclassifies unrelated files, expands scope, edits, stages, commits, pushes, comments, or claims whole-review readiness. |
 | Tool safety | Avoids heavy scanners, exploit attempts, or network tests unless explicitly requested, authorized, and supported. | Runs broad or destructive checks by default. |
 
 ## Scoring

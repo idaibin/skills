@@ -1,0 +1,4 @@
+interface:
+  display_name: "ChatGPT Review"
+  short_description: "Run ChatGPT reviews with optional live-page proof"
+  default_prompt: "Use $chatgpt-review to prepare a review package or run explicitly authorized external rounds. Treat preparation as Package-only. After send authorization, prefer the desktop built-in browser unless the user explicitly selects their own browser. Require one browser-operation/v1 Capability Snapshot and operation-ledger entry, preserve operation_id through $ops-browser handoffs, stop on ambiguous state, and verify every finding locally."

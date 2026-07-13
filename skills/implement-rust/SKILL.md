@@ -14,7 +14,7 @@ Implement Rust changes against the repository's real toolchain, project class, c
 1. Read repository guidance and run `git status --short` before edits.
 2. Identify the Rust project class: library workspace, application workspace, HTTP service, CLI, Tauri/native backend, or compact single package.
 3. Inspect the relevant `Cargo.toml`, lockfile, toolchain, formatter, lint, command source, modules, tests, architecture docs, and API/interface docs.
-4. Consume a current `repo-context` inventory or perform the same targeted search across route registration, handlers, services, repositories, traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous features.
+4. Consume a current `repo-map` inventory or perform the same targeted search across route registration, handlers, services, repositories, traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous features.
 5. Start with the **Baseline** validation contract, then select every applicable risk overlay. Overlays are composable, not severity levels:
    - **Contract:** public API, endpoint, DTO, error mapping, crate/module boundary, feature flag, or downstream consumer change.
    - **Concurrency/runtime:** Tokio tasks, channels, locks, cancellation, blocking work, overload, or shutdown.
@@ -35,14 +35,14 @@ Implement Rust changes against the repository's real toolchain, project class, c
 - **Structure alignment:** align modules, crates, manifests, commands, and docs to an explicit repository standard.
 - **Contract migration:** change an API, DTO, feature, persistence, or consumer boundary with compatibility and rollout evidence.
 - **Native/porting implementation:** preserve observable behavior, ABI/resource semantics, supported targets, and release behavior before idiomatic cleanup.
-- **Implementation self-check:** verify the edited Rust surface for ownership, errors, async behavior, safety, tests, dependencies, and structural drift before `code-review` assesses commit readiness.
+- **Implementation self-check:** verify the edited Rust surface for ownership, errors, async behavior, safety, tests, dependencies, and structural drift before `repo-review` assesses commit readiness.
 
 ## Do Not Use For
 
-- First-pass repository discovery; use `repo-context`.
+- First-pass repository discovery; use `repo-map`.
 - Future multi-step migration planning; use `code-planner`.
 - Unknown root-cause investigation; use `diagnose`.
-- Dirty-tree ownership, staging plans, or commit grouping; use `code-review`. Use `code-delivery` for actual staging or commits after review.
+- Dirty-tree ownership, staging plans, or commit grouping; use `repo-review`. Use `repo-delivery` for actual staging or commits after review.
 - Systematic Rust architecture, performance, memory, concurrency, SQLite, unsafe, or FFI audit without requested edits; use `audit-rust`.
 - Security-only audit after the Rust surface is mapped; use `audit-security`.
 - Frontend or webview UI changes; use `implement-frontend`.

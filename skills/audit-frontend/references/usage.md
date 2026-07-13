@@ -22,11 +22,23 @@ Always state selected profiles and mark all other profiles `Out of scope`.
 - **Vue Options:** data/computed/watch/`this.$watch`, methods, provide/inject, component guards, lifecycle, keep-alive, and cancellation without Composition conversion.
 - **Other:** repository-native concepts; unsupported assumptions remain `Not verified`.
 
+## Styling Profiles
+
+- **Tailwind:** configured scale, tokens, variants, class composition, responsive utilities, and arbitrary-value ownership.
+- **CSS Modules:** local selector ownership, imports, tokens, unused rules, and global leakage.
+- **Sass/Less:** variables, mixins, module/import pipeline, nesting, specificity, and theme ownership.
+- **CSS-in-JS:** installed runtime or extraction model, theme ownership, dynamic props, injection order, and bundle/runtime evidence.
+- **Ant Design or shadcn/ui:** local wrappers/primitives, tokens, composition, accessibility contracts, and override boundaries.
+
+Select only styling profiles present in the audited boundary. A styling technology is not a separate public skill because it shares the same audit owner, read-only boundary, and report contract.
+
 ## Trigger Examples
 
 - `Audit this Console for architecture/reuse and state/data only; leave accessibility and performance out of scope.`
 - `Audit this Vue 3 feature for reactivity, watcher dependencies, Pinia ownership, Router teardown, and request cancellation.`
 - `Audit this frontend design system for duplicated primitives, variants, tokens, spacing, and scroll ownership.`
+- `Audit this React and Tailwind table for scale drift, class conflicts, responsive behavior, and duplicated spacing ownership.`
+- `Audit this Vue Options and Ant Design form without converting its API style or replacing its component system.`
 - `Review accessibility and performance for this React table using browser evidence where static inspection is insufficient.`
 - `Audit this Tauri frontend boundary for adapters, progress, cancellation, errors, menus, and shortcuts.`
 - `Under repo-review, inspect only the changed frontend paths for selected state/data and layout profiles.`
@@ -36,9 +48,9 @@ Always state selected profiles and mark all other profiles `Out of scope`.
 - `Change this button label in the known component.` — use `implement-frontend`.
 - `Find why this page crashes.` — use `diagnose` until the cause is confirmed.
 - `Verify the page in a browser.` — use `ops-browser`.
-- `Review all local dirty files, split commits, and prepare staging.` — use `code-review`.
+- `Review all local dirty files, split commits, and prepare staging.` — use `repo-review`.
 - `Review the whole repository or a commit range and coordinate all domains.` — use `repo-review`, which may delegate a bounded frontend surface here.
-- `Stage, commit, or push the accepted changes.` — use `code-delivery`.
+- `Stage, commit, or push the accepted changes.` — use `repo-delivery`.
 
 ## Why Not Separate `audit-react`, `audit-vue`, and `audit-ui`
 

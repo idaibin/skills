@@ -1,4 +1,0 @@
-interface:
-  display_name: "Code Review"
-  short_description: "Review local Git changes without mutation"
-  default_prompt: "Use $code-review as a read-only reviewer of existing local worktree and index changes: inventory the full dirty tree, classify ownership and mixed hunks, select Focused, Standard, or High-risk depth, inspect candidate diffs, trace contracts and structural lifecycle, and propose semantic groups plus exact staging instructions. Coordinate bounded $audit-frontend, $audit-rust, or $audit-security subreviews when needed. Route repository grounding to $repo-context; route repository snapshots, branch comparisons, commit ranges, PRs, release candidates, and review packages to $repo-review; route fixes to the matching implementation skill and Git mutation to $code-delivery."

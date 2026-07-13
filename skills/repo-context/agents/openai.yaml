@@ -1,4 +1,0 @@
-interface:
-  display_name: "Repository Context"
-  short_description: "Map bounded repository facts and reuse candidates"
-  default_prompt: "Use $repo-context only when the user requests a separate repository-grounding, reuse-inventory, bootstrap, or docs/code-alignment deliverable. Select Quick Grounding, Targeted Inventory, Alignment, or Bootstrap; read only paths that answer named context questions, and stop once evidence is sufficient. Report real commands, project class, ownership, reuse/reference candidates, stop reason, and Not found or Not verified gaps. Do not produce severity-ranked defect findings: route local dirty-tree and commit-readiness review to $code-review, immutable repository, range, PR, release, or review-package assessment to $repo-review, and scoped security review to $audit-security."

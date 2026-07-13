@@ -3,22 +3,21 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Workflow",
-      "description": "Skills for repository grounding, planning, diagnosis, local change review, and Git delivery.",
+      "title": "Repository Engineering",
+      "description": "Independent but interoperable skills for current project mapping, planning, diagnosis, local and immutable review, and Git delivery.",
       "skills": [
-        "repo-context",
+        "repo-map",
         "code-planner",
         "diagnose",
-        "code-review",
-        "code-delivery"
+        "repo-review",
+        "repo-delivery"
       ]
     },
     {
-      "title": "Review Orchestration",
-      "description": "Skills for independent repository review and external ChatGPT review coordination.",
+      "title": "External Review",
+      "description": "Skill for explicitly authorized external ChatGPT review coordination.",
       "skills": [
-        "repo-review",
-        "chatgpt-review-bridge"
+        "chatgpt-review"
       ]
     },
     {

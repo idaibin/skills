@@ -2,7 +2,7 @@
 
 ## Summary
 
-Audit a known code change or scoped API/configuration surface for security risks after the target is clear. It can also act as a read-only specialist over security paths or a diff explicitly delegated by `code-review` or `repo-review`. It is not a repository-wide or deep vulnerability scan and does not replace repository grounding, contract alignment, dirty-tree review, immutable review coordination, staging plans, or delivery.
+Audit a known code change or scoped API/configuration surface for security risks after the target is clear. It can also act as a read-only specialist over security paths or a diff explicitly delegated by `repo-review`. It is not a repository-wide or deep vulnerability scan and does not replace repository grounding, contract alignment, dirty-tree review, immutable review coordination, staging plans, or delivery.
 
 ## Best For
 
@@ -19,7 +19,7 @@ Audit a known code change or scoped API/configuration surface for security risks
 - Dependency, script, or config changes with security impact
 - Lightweight release security checks
 - A compact scoped threat sketch for a known boundary when no dedicated threat-model workflow is available
-- A bounded security specialist subreview delegated by `code-review` or `repo-review`
+- A bounded security specialist subreview delegated by `repo-review`
 
 ## Profile Routing
 
@@ -48,15 +48,15 @@ Use for prompts like:
 - `Run a lightweight security audit of this scoped API change, not a repository-wide scan.`
 - `Check whether sensitive data can leak.`
 - `No dedicated threat-model workflow is available; give me a scoped threat sketch for this endpoint and its storage boundary.`
-- `Under code-review, inspect only the delegated API and Tauri files for security risks and return a read-only specialist assessment.`
+- `Under repo-review, inspect only the delegated API and Tauri files for security risks and return a read-only specialist assessment.`
 - `Under repo-review, audit only the selected auth and release configuration paths.`
 - `use audit-security`
 
-Do not use for general repository onboarding, future task planning, API contract alignment, local commit grouping, whole-repository review coordination, system-wide threat modeling, or repository-wide/deep vulnerability scanning; prefer `repo-context`, `code-planner`, `code-review`, `repo-review`, threat-model, or security-scan workflows as applicable.
+Do not use for general repository onboarding, future task planning, API contract alignment, local commit grouping, whole-repository review coordination, system-wide threat modeling, or repository-wide/deep vulnerability scanning; prefer `repo-map`, `code-planner`, `repo-review`, threat-model, or security-scan workflows as applicable.
 
 ## Output
 
-Expect severity-ordered security findings with audit mode, selected profiles, scoped assets and trust boundaries, file/endpoint/config evidence, impact, recommendation, validation, excluded surfaces, and `Not verified` gaps. Specialist output must state the delegated path/diff boundary and return to `code-review` or `repo-review` without editing or taking coordinator/Git ownership. A scoped threat sketch must list abuse cases and existing controls while saying it is not a whole-system threat model.
+Expect severity-ordered security findings with audit mode, selected profiles, scoped assets and trust boundaries, file/endpoint/config evidence, impact, recommendation, validation, excluded surfaces, and `Not verified` gaps. Specialist output must state the delegated path/diff boundary and return to `repo-review` without editing or taking coordinator/Git ownership. A scoped threat sketch must list abuse cases and existing controls while saying it is not a whole-system threat model.
 
 ## Maintenance
 

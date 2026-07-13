@@ -38,6 +38,9 @@ Use `implement-frontend` as the first frontend coding skill after repository con
 - `Move these scattered width utilities into one layout class or CSS variable.`
 - `Replace h-[22px] and w-[88px] with project scale utilities or named CSS owners.`
 - `Use the existing Tailwind style conventions; do not redesign the page.`
+- `Implement this React and Tailwind table using the existing variants, spacing scale, query state, and responsive conventions.`
+- `Add this Vue Composition and Pinia settings flow while preserving store, Router, cancellation, and keep-alive ownership.`
+- `Fix this Vue Options and Ant Design form without introducing Composition helpers or replacing the component system.`
 - `Add a table action but preserve the current route and permission behavior.`
 - `Fix this Tauri settings UI, but keep native commands behind the existing IPC layer.`
 - `Align this React app to its documented routes/components/stores naming and update manifests, tests, and project-map entries.`
@@ -46,10 +49,10 @@ Use `implement-frontend` as the first frontend coding skill after repository con
 
 ## Non-Triggers
 
-- Repository onboarding or command discovery; use `repo-context`.
+- Repository onboarding or command discovery; use `repo-map`.
 - Large future planning before implementation; use `code-planner`.
 - Root-cause diagnosis before a fix is known; use `diagnose`.
-- Git diff ownership, staging plans, or commit readiness; use `code-review`. Use `code-delivery` for actual staging, commit, push, or delivery.
+- Git diff ownership, staging plans, or commit readiness; use `repo-review`. Use `repo-delivery` for actual staging, commit, push, or delivery.
 - Systematic read-only frontend architecture, reuse, state/data, layout, accessibility, performance, or Tauri-boundary review; use `audit-frontend`.
 - Browser screenshots, console, network, uploads, downloads, account state, or runtime checks; use `ops-browser`.
 - Real desktop-client launch, process, CGWindowID, or native runtime evidence; use `ops-client`.

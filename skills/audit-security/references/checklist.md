@@ -6,9 +6,9 @@ Use this checklist when applying `audit-security` to a code, API, config, depend
 
 1. Read relevant repo guidance when present.
 2. Confirm the audited surface: changed files, endpoint chain, auth path, browser/Vue surface, native IPC boundary, config, dependency, SQLite/file/upload/download/export/backup path, logging path, or release boundary.
-3. If this is a full-stack API change and route/method/fields/callers are unclear, route that mapping to `code-review` or `repo-review` first, or mark the chain `Not verified`.
+3. If this is a full-stack API change and route/method/fields/callers are unclear, route that mapping to `repo-review` first, or mark the chain `Not verified`.
 4. Keep the audit scoped; do not expand to a whole-repository review without explicit scope and `repo-review` coordination.
-5. If `code-review` or `repo-review` delegated a specialist subreview, record the exact paths or diff, inspect only that boundary, keep the caller as coordinator, and leave files and Git/GitHub state unchanged.
+5. If `repo-review` delegated a specialist subreview, record the exact paths or diff, inspect only that boundary, keep the caller as coordinator, and leave files and Git/GitHub state unchanged.
 
 ## Profile Selection
 
@@ -106,6 +106,6 @@ Reject the audit quality if it:
 - treats parameterized SQL as proof of row, tenant, export, or backup authorization
 - skips sensitive-data exposure checks for tokens, logs, or exports
 - ignores backups, diagnostics, local databases, temporary files, or generated artifacts on a SQLite/file surface
-- replaces `code-review` local contract/staging/readiness work, replaces `repo-review` immutable review coordination, or replaces `code-delivery` Git mutation
+- replaces `repo-review` Worktree/immutable coordination or readiness work, or replaces `repo-delivery` Git mutation
 - expands a delegated specialist subreview beyond its paths/diff, edits files, mutates Git/GitHub, or claims whole-review readiness
 - claims runtime behavior without evidence

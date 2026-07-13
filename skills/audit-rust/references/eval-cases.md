@@ -19,7 +19,7 @@
 | `Audit crate boundaries and public APIs for a local-first Rust CLI and library.` | Trigger `audit-rust`. |
 | `Audit unsafe FFI ownership and validate it with supported Rust tools.` | Trigger `audit-rust`. |
 | `Compare our Rust baseline and audit legacy exceptions without mechanically renaming production code.` | Trigger `audit-rust`. |
-| `Under code-review, inspect only the changed Tokio/SQLite surface for concurrency and recovery findings without staging.` | Trigger `audit-rust` as a scoped read-only specialist; `code-review` retains local Git-change review coordination. |
+| `Under repo-review, inspect only the changed Tokio/SQLite surface for concurrency and recovery findings without staging.` | Trigger `audit-rust` as a scoped read-only specialist; `repo-review` retains local Git-change review coordination. |
 | `Under repo-review, inspect only the Rust paths in this immutable range.` | Trigger `audit-rust` as a scoped read-only specialist; `repo-review` retains immutable-review coordination. |
 
 ## Non-Trigger Eval
@@ -28,9 +28,9 @@
 | --- | --- |
 | `Rename one known private Rust function and run its existing test.` | Prefer `implement-rust`. |
 | `Find why this test started failing; the cause is unknown.` | Prefer `diagnose`. |
-| `Map the repository and tell me whether it contains Rust.` | Prefer `repo-context`. |
-| `Review my dirty tree and prepare exact commits.` | Prefer `code-review`; it coordinates the local read-only Git-change review and may request a bounded Rust specialist subreview. |
-| `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `code-review` as the local read-only review coordinator; do not auto-route to delivery. |
+| `Map the repository and tell me whether it contains Rust.` | Prefer `repo-map`. |
+| `Review my dirty tree and prepare exact commits.` | Prefer `repo-review`; it coordinates the local read-only Git-change review and may request a bounded Rust specialist subreview. |
+| `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `repo-review` as the local read-only review coordinator; do not auto-route to delivery. |
 | `Review this immutable branch range and coordinate Rust, frontend, security, CI, and docs.` | Prefer `repo-review`; it may delegate bounded Rust paths here. |
 | `Audit only authentication and secret handling after the module is known.` | Prefer `audit-security`. |
 
@@ -277,12 +277,12 @@ reduce the score.
 
 | Case | Applies when | Pass evidence | Reject if |
 | --- | --- | --- | --- |
-| Grounding | Common | reads guidance/status, declares selected/excluded profiles, consumes `repo-context` when useful, and maps only the evidence needed for selected claims | starts from a universal template or inventories every domain by default |
+| Grounding | Common | reads guidance/status, declares selected/excluded profiles, consumes `repo-map` when useful, and maps only the evidence needed for selected claims | starts from a universal template or inventories every domain by default |
 | Priority | Common | resolves conflicts in the declared order | external repos override local contracts |
 | Scope | Common | preserves unrelated dirty work and stops at selected-profile evidence | performs opportunistic refactors or partially audits excluded profiles |
 | Validation | Common + selected profiles | runs real non-mutating repository commands and selected-profile runtime/data checks; records unavailable required evidence `Not verified` | invents commands, substitutes a weaker unrelated check, or equates unit tests with full proof |
 | Reporting | Common | leads with outcome/findings and includes selected profiles, excluded profiles, exact evidence, `Not found`, and `Not verified` | reports unsupported success or adds empty all-domain sections |
-| Read-only/Git boundary | Common | leaves worktree and Git/GitHub state unchanged; under `code-review` or `repo-review`, returns only the scoped specialist findings | edits files, stages, commits, comments, takes over review coordination, or invokes delivery without an explicit delivery request |
+| Read-only/Git boundary | Common | leaves worktree and Git/GitHub state unchanged; under `repo-review`, returns only the scoped specialist findings | edits files, stages, commits, comments, takes over review coordination, or invokes delivery without an explicit delivery request |
 | Baseline | Architecture/baseline | classifies portable, organization, template, repository, and legacy rules; verifies applicable toolchain and inheritance | hard-codes a version snapshot or directory tree |
 | Architecture | Architecture/baseline | assigns stable crate/module/domain/adapter owners and justifies traits/layers | splits by file count or adds ceremonial layers |
 | Lifecycle | Architecture/baseline, or a selected structural claim | identifies applicable drift across manifests, registrations, migrations, tests, docs, indexes, and runbooks | requires every lifecycle surface when unrelated, or leaves known selected-scope drift unreported |

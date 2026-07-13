@@ -61,11 +61,22 @@ npx skills add https://github.com/idaibin/aicraft
 npx skills update
 ```
 
+Install globally for both OpenAI Codex and Anthropic Claude Code:
+
+```bash
+npx skills add https://github.com/idaibin/aicraft \
+  --global --agent codex claude-code
+npx skills update --global
+```
+
+The CLI records the source needed for later updates. Manually copied skill
+folders are not reliably updateable through `npx skills update`.
+
 Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill repo-context code-planner diagnose code-review repo-review code-delivery audit-security chatgpt-review-bridge implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
+  --skill repo-map code-planner diagnose repo-review repo-delivery audit-security chatgpt-review implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
 ```
 
 List available skills without installing:
@@ -74,46 +85,47 @@ List available skills without installing:
 npx skills add https://github.com/idaibin/aicraft --list
 ```
 
-For the full command list and available skill names, see [`INSTALL.md`](INSTALL.md).
+For project/global scope, agent-specific installation, update limitations, and
+rename migration, see [`INSTALL.md`](INSTALL.md).
 
 ## Skills
 
 | Skill | Use when |
 | --- | --- |
-| `repo-context` | Grounding repository work in real commands, paths, entry points, docs, project classes, and existing reuse/reference candidates before guessing. |
+| `repo-map` | Maintaining the smallest useful semantic repository map of real boundaries, commands, task routes, and verified reusable components, functions, types, or APIs. |
 | `code-planner` | Planning future codebase work, splitting tasks, defining validation gates, and coordinating auditable subagents before implementation. |
 | `diagnose` | Reproducing technical failures, isolating variables, confirming root causes, and handing verified remediation to the matching implementation skill. |
-| `code-review` | Reviewing existing local Git changes, dirty-tree ownership, contract chains, commit grouping, and exact staging plans before commit. |
-| `repo-review` | Independently reviewing an immutable repository snapshot, branch comparison, commit range, pull request, release candidate, or verified review package with consolidated P0-P3 findings. |
-| `code-delivery` | Delivering reviewed local changes with path-limited staging, commits, pushes, branch sync, squash-to-main, cleanup, and remote proof. |
+| `repo-review` | Read-only review of local worktrees, fixed commits/ranges, PRs, releases, or review packages, with basis-specific ownership/readiness or P0-P3 findings. |
+| `repo-delivery` | Delivering reviewed local changes with path-limited staging, commits, pushes, branch sync, squash-to-main, cleanup, and remote proof. |
 | `audit-security` | Auditing known code, API, auth, permission, token/session, upload, logging, dependency, config, or release surfaces for scoped security risks. |
-| `chatgpt-review-bridge` | Routing prepared repository review material through standard ChatGPT chats or Projects using capability-aware browser paths, then capturing and locally verifying findings. |
-| `implement-frontend` | Implementing frontend UI reuse-first, using existing pages/components as references while preserving lean DOM/CSS, design-system, layout, state, and API contracts. |
+| `chatgpt-review` | Preparing or routing repository review material through standard ChatGPT chats or Projects, then capturing and locally verifying findings. |
+| `implement-frontend` | Implementing frontend UI reuse-first with detected React, Vue, Tailwind, CSS, design-system, state, layout, and API-contract profiles. |
 | `implement-rust` | Implementing or porting Rust reuse-first with explicit ownership, FFI/unsafe boundaries, behavior parity, idiomatic APIs, and risk-matched validation. |
-| `audit-frontend` | Auditing selected frontend profiles across React, Vue, UI/design systems, state/data, accessibility, performance, and Tauri boundaries without splitting by framework. |
+| `audit-frontend` | Auditing selected React, Vue, Tailwind/CSS, UI/design-system, state/data, accessibility, performance, and Tauri profiles without splitting by technology. |
 | `audit-rust` | Auditing selected Rust profiles for architecture, ownership, concurrency, performance, memory, SQLite, unsafe/FFI, quality gates, and documentation alignment. |
 | `ops-browser` | Operating browser pages and collecting screenshots, visual/responsive checks, form/upload/download evidence, console/network data, and session-safe verification. |
 | `ops-client` | Verifying or operating specified Tauri/Electron/native desktop clients with launch-command, runtime-source, CGWindowID, real-window, and Accessibility evidence. |
 | `human-writing` | Drafting, rewriting, diagnosing, and adapting source-grounded human-quality writing while preserving facts, technical meaning, disclosures, and voice. |
 
-### Core Routing Boundaries
+### Repository Engineering Boundaries
 
 ```text
-repo-context = what exists, where it lives, and what can be reused
-code-review  = whether current local uncommitted changes are safe and ready to commit
-repo-review  = what defects exist in an immutable repository/range/PR/release basis
+repo-map      = what exists, where it lives, and what can be reused
+repo-review   = whether local or immutable repository changes are safe, using the matching review-basis mode
+repo-delivery = authorized staging, commits, pushes, synchronization, and cleanup
 ```
 
-These skills all read repository evidence but must remain separate because their primary object, authorization boundary, stop condition, and output contract differ.
+`repo-review` keeps Worktree and immutable review evidence separate internally while presenting one public review entrypoint.
+
+`repo-map` normally maintains `<map-root>/docs/repo-map/README.md` as a compact semantic index, not a mirrored source tree. It first resolves a containing Git root; from a non-Git path it discovers child Git roots, or treats the path as an ordinary directory project when none exist. It records real ownership and runtime boundaries, shortest task routes, and verified reuse entries with canonical definitions, access/registration entries, representative consumers, and usage constraints. `repo-review` may use that map to navigate, but independently verifies every finding at its selected Worktree or immutable basis. Semantic drift is repaired as the smallest dependent consistency closure; missing paths are recovered from the nearest existing ancestor without rebuilding verified sections.
 
 ### Implementation, Audit, Review, And Delivery Boundaries
 
 - `implement-frontend` and `implement-rust` own requested code changes, refactors, ports, and implementation self-checks.
 - `audit-frontend`, `audit-rust`, and `audit-security` are read-only domain specialists. They select only applicable profiles and return bounded findings.
-- `code-review` owns local dirty-tree inventory, mixed-hunk classification, contract completeness, staging plans, and commit readiness.
-- `repo-review` owns independent review of immutable repository snapshots, ranges, PRs, release candidates, or verified review packages and coordinates bounded specialists.
+- `repo-review` owns local dirty-tree readiness and immutable snapshot/range/PR/release review through separate basis modes, and coordinates bounded specialists.
 - `diagnose` owns reproduction and root-cause confirmation; permanent fixes transition to the matching implementation skill.
-- `code-delivery` is the sole owner of staging, commits, pushes, squash, cleanup, and other Git mutation after review acceptance.
+- `repo-delivery` is the sole owner of staging, commits, pushes, squash, cleanup, and other Git mutation after review acceptance.
 
 See [`docs/standards/skill-routing.md`](docs/standards/skill-routing.md) for the design and split/merge criteria.
 
@@ -133,7 +145,7 @@ both endpoint skills to cover each other in routing evals.
 Useful targeted package checks:
 
 ```bash
-python3 scripts/validate-skills.py --skill repo-context
+python3 scripts/validate-skills.py --skill repo-map
 python3 scripts/validate-skills.py --skill repo-review
 python3 scripts/validate-skills.py --skill diagnose
 python3 scripts/validate-skills.py --skill audit-frontend

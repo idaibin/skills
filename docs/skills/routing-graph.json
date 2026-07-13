@@ -1,39 +1,30 @@
 {
-  "audit-frontend": ["code-review", "implement-frontend", "repo-review"],
-  "audit-rust": ["code-review", "implement-rust", "repo-review"],
-  "audit-security": ["code-review", "repo-context", "repo-review"],
-  "chatgpt-review-bridge": ["code-delivery", "ops-browser", "repo-review"],
-  "code-delivery": ["chatgpt-review-bridge", "code-review"],
-  "code-planner": ["repo-context"],
-  "code-review": [
-    "audit-frontend",
-    "audit-rust",
-    "audit-security",
-    "code-delivery",
-    "repo-context",
-    "repo-review"
-  ],
+  "audit-frontend": ["implement-frontend", "repo-review"],
+  "audit-rust": ["implement-rust", "repo-review"],
+  "audit-security": ["repo-map", "repo-review"],
+  "chatgpt-review": ["ops-browser", "repo-delivery", "repo-review"],
+  "code-planner": ["repo-map"],
   "diagnose": ["implement-frontend", "implement-rust", "ops-browser", "ops-client"],
-  "human-writing": ["repo-context"],
-  "implement-frontend": ["audit-frontend", "diagnose", "repo-context"],
-  "implement-rust": ["audit-rust", "diagnose", "repo-context"],
-  "ops-browser": ["chatgpt-review-bridge", "diagnose", "ops-client"],
+  "human-writing": ["repo-map"],
+  "implement-frontend": ["audit-frontend", "diagnose", "repo-map"],
+  "implement-rust": ["audit-rust", "diagnose", "repo-map"],
+  "ops-browser": ["chatgpt-review", "diagnose", "ops-client"],
   "ops-client": ["diagnose", "ops-browser"],
-  "repo-context": [
+  "repo-map": [
     "audit-security",
     "code-planner",
-    "code-review",
+    "human-writing",
     "implement-frontend",
     "implement-rust",
-    "human-writing",
     "repo-review"
   ],
+  "repo-delivery": ["chatgpt-review", "repo-review"],
   "repo-review": [
     "audit-frontend",
     "audit-rust",
     "audit-security",
-    "chatgpt-review-bridge",
-    "code-review",
-    "repo-context"
+    "chatgpt-review",
+    "repo-map",
+    "repo-delivery"
   ]
 }

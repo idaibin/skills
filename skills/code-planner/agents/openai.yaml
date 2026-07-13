@@ -1,4 +1,4 @@
 interface:
   display_name: "Code Planner"
   short_description: "Plan code tasks with owned scope and verifiable gates"
-  default_prompt: "Use $code-planner to classify future work as Small, Coupled, or Parallelizable before splitting it. Keep Small and shared-write/uncertain-interface work sequential; use subagents for at least two independent scopes with disjoint write ownership, explicit interfaces, and auditable outputs. Define task contracts, mark structure/contract impact, and route final dirty-tree review to $code-review."
+  default_prompt: "Use $code-planner to classify future work as Small, Coupled, or Parallelizable before splitting it. Keep Small and shared-write/uncertain-interface work sequential; use subagents for at least two independent scopes with disjoint write ownership, explicit interfaces, and auditable outputs. Define task contracts, mark structure/contract impact, and route final dirty-tree review to $repo-review."

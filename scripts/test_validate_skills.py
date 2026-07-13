@@ -154,13 +154,13 @@ class ValidateSkillsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             relative_paths = (
-                Path("skills/chatgpt-review-bridge/references/browser-operation-protocol.md"),
+                Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
                 Path("skills/ops-browser/references/browser-operation-protocol.md"),
             )
             source = (
                 VALIDATOR_PATH.parents[1]
                 / "skills"
-                / "chatgpt-review-bridge"
+                / "chatgpt-review"
                 / "references"
                 / "browser-operation-protocol.md"
             ).read_text(encoding="utf-8")
@@ -182,13 +182,13 @@ class ValidateSkillsTests(unittest.TestCase):
             source = (
                 VALIDATOR_PATH.parents[1]
                 / "skills"
-                / "chatgpt-review-bridge"
+                / "chatgpt-review"
                 / "references"
                 / "browser-operation-protocol.md"
             ).read_text(encoding="utf-8")
             changed = source.replace("round_id: <same request round id>\n", "", 1)
             for relative in (
-                Path("skills/chatgpt-review-bridge/references/browser-operation-protocol.md"),
+                Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
                 Path("skills/ops-browser/references/browser-operation-protocol.md"),
             ):
                 path = root / relative
@@ -207,7 +207,7 @@ class ValidateSkillsTests(unittest.TestCase):
             source = (
                 VALIDATOR_PATH.parents[1]
                 / "skills"
-                / "chatgpt-review-bridge"
+                / "chatgpt-review"
                 / "references"
                 / "browser-operation-protocol.md"
             ).read_text(encoding="utf-8")
@@ -217,7 +217,7 @@ class ValidateSkillsTests(unittest.TestCase):
                 1,
             )
             for relative in (
-                Path("skills/chatgpt-review-bridge/references/browser-operation-protocol.md"),
+                Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
                 Path("skills/ops-browser/references/browser-operation-protocol.md"),
             ):
                 path = root / relative
@@ -232,6 +232,7 @@ class ValidateSkillsTests(unittest.TestCase):
 
     def test_legacy_regex_catches_retired_skill_names(self) -> None:
         for name in (
+            "repo-context",
             "frontend-implementation",
             "frontend-governance",
             "rust-engineering-governance",
@@ -351,22 +352,22 @@ class ValidateSkillsTests(unittest.TestCase):
         self.assertTrue(any("source alpha" in error and "beta" in error for error in errors))
 
     def test_routing_expectation_requires_affirmative_semantics(self) -> None:
-        self.assertTrue(expected_routes_to_skill("Should prefer `repo-context`.", "repo-context"))
+        self.assertTrue(expected_routes_to_skill("Should prefer `repo-map`.", "repo-map"))
         self.assertTrue(
             expected_routes_to_skill(
                 "Trigger coordinator; delegate bounded work to `audit-rust`.",
                 "audit-rust",
             )
         )
-        self.assertFalse(expected_routes_to_skill("Do not use `repo-context`.", "repo-context"))
-        self.assertFalse(expected_routes_to_skill("Should not use `repo-context`.", "repo-context"))
+        self.assertFalse(expected_routes_to_skill("Do not use `repo-map`.", "repo-map"))
+        self.assertFalse(expected_routes_to_skill("Should not use `repo-map`.", "repo-map"))
         self.assertFalse(
             expected_routes_to_skill(
-                "Prefer `diagnose`, not `repo-context`.",
-                "repo-context",
+                "Prefer `diagnose`, not `repo-map`.",
+                "repo-map",
             )
         )
-        self.assertFalse(expected_routes_to_skill("Mentions `repo-context` only.", "repo-context"))
+        self.assertFalse(expected_routes_to_skill("Mentions `repo-map` only.", "repo-map"))
 
     def test_routing_graph_rejects_duplicate_json_keys(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -480,14 +481,14 @@ class ValidateSkillsTests(unittest.TestCase):
 
     def test_review_bridge_requires_split_package_contract(self) -> None:
         errors = self.specialized_contract_errors(
-            "chatgpt-review-bridge",
+            "chatgpt-review",
             ("| Split package artifact |", "| Removed split package artifact |"),
         )
         self.assertTrue(any("Split package artifact" in error for error in errors))
 
     def test_review_bridge_requires_artifact_visibility_contract(self) -> None:
         errors = self.specialized_contract_errors(
-            "chatgpt-review-bridge",
+            "chatgpt-review",
             ("| Review artifact visibility |", "| Removed artifact visibility |"),
         )
         self.assertTrue(any("Review artifact visibility" in error for error in errors))
@@ -504,9 +505,9 @@ class ValidateSkillsTests(unittest.TestCase):
         )
         self.assertTrue(any("Immutable basis" in error for error in errors))
 
-    def test_repo_context_requires_review_boundary_contract(self) -> None:
+    def test_repo_map_requires_review_boundary_contract(self) -> None:
         errors = self.specialized_contract_errors(
-            "repo-context", ("| Context-versus-review boundary |", "| Removed review boundary |")
+            "repo-map", ("| Context-versus-review boundary |", "| Removed review boundary |")
         )
         self.assertTrue(any("Context-versus-review boundary" in error for error in errors))
 

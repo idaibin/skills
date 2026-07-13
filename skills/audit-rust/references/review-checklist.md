@@ -10,7 +10,7 @@ the profile selected and mark the exact claim `Not verified`.
 
 - [ ] Read nearest repository guidance and current `git status --short`.
 - [ ] State whether this is a standalone audit or a scoped specialist subreview
-      coordinated by `code-review`. In the latter case, preserve its read-only
+      coordinated by `repo-review`. In the latter case, preserve its read-only
       Git-change review coordination boundary.
 - [ ] Record selected profiles, why each was selected, and excluded profiles as
       `Out of scope` before loading domain references or running commands.
@@ -107,4 +107,4 @@ the profile selected and mark the exact claim `Not verified`.
 - [ ] Report exact evidence and mark missing files `Not found`, unavailable
       required evidence `Not verified`, and unselected profiles `Out of scope`.
 - [ ] Leave code and Git state unchanged. Return scoped findings to
-      `code-review` when it is the coordinating owner; never stage or commit.
+      `repo-review` when it is the coordinating owner; never stage or commit.

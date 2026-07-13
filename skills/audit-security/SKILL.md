@@ -1,19 +1,19 @@
 ---
 name: audit-security
-description: "Use when a known code change or scoped API, config, dependency, upload/download, logging, auth, authorization, token/session, CORS/CSRF, secret, privacy, or release surface needs a lightweight evidence-grounded security audit rather than a repository-wide or deep vulnerability scan, including when code-review or repo-review delegates an explicit security surface for a read-only specialist subreview."
+description: "Use when a known code change or scoped API, config, dependency, upload/download, logging, auth, authorization, token/session, CORS/CSRF, secret, privacy, or release surface needs a lightweight evidence-grounded security audit rather than a repository-wide or deep vulnerability scan, including when repo-review delegates an explicit security surface for a read-only specialist subreview."
 ---
 
 # Security Audit
 
 ## Overview
 
-Audit known code and configuration surfaces for concrete security risks. Use this after the target surface is clear, either directly or as a read-only specialist over paths or a diff explicitly delegated by `code-review` or `repo-review`. Apply framework-specific checks only when the repository actually uses that stack, and produce a bounded threat sketch when no dedicated threat-model workflow is available.
+Audit known code and configuration surfaces for concrete security risks. Use this after the target surface is clear, either directly or as a read-only specialist over paths or a diff explicitly delegated by `repo-review`. Apply framework-specific checks only when the repository actually uses that stack, and produce a bounded threat sketch when no dedicated threat-model workflow is available.
 
 ## Workflow
 
 1. Read repo guidance related to the target files or system boundary.
 2. Identify the audited surface: changed files, API chain, auth path, config, dependency, upload/download path, logging path, release boundary, or native IPC boundary. In specialist mode, record the exact delegated paths/diff and do not expand beyond them.
-3. For full-stack API changes, rely on `code-review` or `repo-review` to map route, method, fields, helpers, types, callers, and data shaping when that contract chain is not already clear.
+3. For full-stack API changes, rely on `repo-review` to map route, method, fields, helpers, types, callers, and data shaping when that contract chain is not already clear.
 4. Identify assets, trust boundaries, authenticated roles/tenants, entry points, sensitive operations, and attacker-controlled inputs relevant to the scoped surface.
 5. Select applicable profiles:
    - **Web/browser:** cookies, tokens, storage, CORS, CSRF, redirects, XSS sinks, CSP, clickjacking, and client-side exposure.
@@ -33,21 +33,20 @@ Audit known code and configuration surfaces for concrete security risks. Use thi
 - **Full-stack API security:** audit an already-mapped frontend/backend API chain for auth, authorization, data exposure, input validation, and abuse risks.
 - **Release check:** perform a lightweight pass over security-sensitive changes, runtime config, public artifacts, and dependency deltas without replacing formal assurance.
 - **Scoped threat sketch:** document assets, trust boundaries, abuse cases, controls, and evidence gaps when a dedicated threat-model workflow is unavailable.
-- **Scoped specialist subreview:** inspect only the security surface delegated by `code-review` or `repo-review`; return security findings and gaps while the coordinator retains review scope, integration, severity, readiness, and report ownership.
+- **Scoped specialist subreview:** inspect only the security surface delegated by `repo-review`; return security findings and gaps while the coordinator retains review scope, integration, severity, readiness, and report ownership.
 
 ## Do Not Use For
 
-- API contract alignment, dirty-tree review, staging plans, commit grouping/readiness, or proposed commit messages; use `code-review`.
-- Whole-repository, range, PR, release-candidate, or review-package coordination; use `repo-review`, which may delegate a bounded security surface here.
-- Actual staging, commit creation, rebase/squash, push, or delivery; use `code-delivery` after review.
+- API contract alignment, Worktree readiness/staging guidance, or immutable repository/range/PR/release/package coordination; use `repo-review`, which may delegate a bounded security surface here.
+- Actual staging, commit creation, rebase/squash, push, or delivery; use `repo-delivery` after review.
 - Whole-system threat modeling when a dedicated threat-model workflow is available and the user requests that scope.
 - Repository-wide, deep, exhaustive, or multi-pass vulnerability scanning.
-- First-pass repository discovery or future implementation planning; use `repo-context` or `code-planner`.
+- First-pass repository discovery or future implementation planning; use `repo-map` or `code-planner`.
 - Browser/client operation evidence; use `ops-browser` or `ops-client`.
 
 ## Hard Rules
 
-- Do not replace `code-review` for local dirty-tree review, staging plans, commit readiness, or specialist orchestration; do not replace `repo-review` for immutable repository/range/PR review coordination; and do not replace `code-delivery` for Git mutation.
+- Do not replace `repo-review` for Worktree or immutable review coordination, readiness, staging guidance, or specialist orchestration; and do not replace `repo-delivery` for Git mutation.
 - In specialist mode, inspect only the delegated security paths or diff. Do not reclassify unrelated files, expand scope, edit files, stage, commit, push, post review comments, or claim whole-review readiness.
 - Do not treat a scoped threat sketch as a complete threat model or security certification.
 - Do not run heavy scanners, network tests, exploit attempts, or destructive checks unless explicitly requested, authorized, and supported by repository policy.
@@ -67,7 +66,7 @@ Audit known code and configuration surfaces for concrete security risks. Use thi
 
 ## Output Contract
 
-Start with severity-ranked findings. If no blocking findings are found, state that only for the audited scope and list residual `Not verified` areas. Include the audit mode; in specialist mode, name the delegated path/diff boundary and coordinating `code-review` or `repo-review` owner. Include selected profiles, assets and trust boundaries, checked files/endpoints/configs, evidence, impact, recommended fix or validation, optional tools not run, and intentionally excluded scope.
+Start with severity-ranked findings. If no blocking findings are found, state that only for the audited scope and list residual `Not verified` areas. Include the audit mode; in specialist mode, name the delegated path/diff boundary and coordinating `repo-review` owner. Include selected profiles, assets and trust boundaries, checked files/endpoints/configs, evidence, impact, recommended fix or validation, optional tools not run, and intentionally excluded scope.
 
 ## Skill Maintenance
 

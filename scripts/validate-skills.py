@@ -12,7 +12,10 @@ from pathlib import Path
 
 
 LEGACY_SKILL_NAMES = (
+    "repo-context",
     "code-context",
+    "code-review",
+    "code-delivery",
     "code-security",
     "commit-reviewer",
     "planner",
@@ -431,7 +434,7 @@ def validate_specialized_eval_contracts(
                             f"{label}: audit-rust scenario {number} missing field {field!r}"
                         )
 
-    elif skill_name == "chatgpt-review-bridge":
+    elif skill_name == "chatgpt-review":
         required = (
             "Package artifact",
             "Split package artifact",
@@ -453,7 +456,7 @@ def validate_specialized_eval_contracts(
         )
         for case in missing_table_cases(eval_text, "## Quality Eval", required):
             errors.append(
-                f"{label}: chatgpt-review-bridge Quality Eval missing required case {case!r}"
+                f"{label}: chatgpt-review Quality Eval missing required case {case!r}"
             )
 
     elif skill_name == "audit-frontend":
@@ -463,7 +466,7 @@ def validate_specialized_eval_contracts(
             errors.append(
                 f"{label}: audit-frontend Scenario Eval must contain at least 16 cases"
             )
-        for term in ("Vue Composition API", "Pure Options API", "`code-review` delegates"):
+        for term in ("Vue Composition API", "Pure Options API", "`repo-review` delegates"):
             if term not in scenario_text:
                 errors.append(
                     f"{label}: audit-frontend Scenario Eval missing required case {term!r}"
@@ -487,14 +490,14 @@ def validate_specialized_eval_contracts(
                 f"{label}: repo-review Quality Eval missing required case {case!r}"
             )
 
-    elif skill_name == "repo-context":
+    elif skill_name == "repo-map":
         for case in missing_table_cases(
             eval_text,
             "## Quality Eval",
             ("Scope and stop condition", "Context-versus-review boundary", "Reuse inventory", "New-file gate"),
         ):
             errors.append(
-                f"{label}: repo-context Quality Eval missing required case {case!r}"
+                f"{label}: repo-map Quality Eval missing required case {case!r}"
             )
 
     elif skill_name == "audit-security":
@@ -557,16 +560,16 @@ CROSS_ARTIFACT_TERM_REQUIREMENTS: tuple[
 ] = (
     ("repo-review", "SKILL.md", "## Hard Rules", ("review basis", "resolved SHAs", "read-only")),
     ("repo-review", "references/usage.md", "## Examples", ("Resolve both endpoints", "SHAs")),
-    ("repo-context", "SKILL.md", "## Overview", ("does not judge", "defects")),
-    ("repo-context", "references/usage.md", "## Triggers", ("immutable repository/range/PR review", "repo-review")),
+    ("repo-map", "SKILL.md", "## Overview", ("does not judge", "defects")),
+    ("repo-map", "references/usage.md", "## Triggers", ("immutable repository/range/PR review", "repo-review")),
     ("audit-security", "SKILL.md", "## Modes", ("Scoped specialist subreview", "coordinator retains", "severity")),
     ("audit-security", "references/usage.md", "## Output", ("delegated path/diff boundary", "without editing", "coordinator")),
     ("ops-browser", "SKILL.md", "## Modes", ("diagnose", "already-isolated", "browser-layer")),
     ("ops-browser", "agents/openai.default_prompt", None, ("only after $diagnose delegation", "before browser operation", "final cause/fix")),
     ("ops-browser", "references/usage.md", "## Browser Debug Evidence", ("diagnose", "before browser operation", "retain referenced")),
     ("ops-browser", "SKILL.md", "## Hard Rules", ("operation_id", "ambiguous", "prior evidence")),
-    ("chatgpt-review-bridge", "SKILL.md", "## Browser Handoff", ("operation_id", "operation ledger", "ambiguous")),
-    ("chatgpt-review-bridge", "agents/openai.default_prompt", None, ("browser-operation/v1", "operation-ledger", "operation_id", "ambiguous")),
+    ("chatgpt-review", "SKILL.md", "## Browser Handoff", ("operation_id", "operation ledger", "ambiguous")),
+    ("chatgpt-review", "agents/openai.default_prompt", None, ("browser-operation/v1", "operation-ledger", "operation_id", "ambiguous")),
     ("ops-client", "SKILL.md", "## Modes", ("diagnose", "already-isolated", "client-layer")),
     ("ops-client", "SKILL.md", "## Hard Rules", ("Retain screenshots", "handoff owner", "removed disposable state")),
     ("ops-client", "agents/openai.default_prompt", None, ("only after $diagnose delegation", "before client operation", "retain referenced evidence")),
@@ -624,8 +627,8 @@ def validate_cross_artifact_contracts(
     eval_text = surfaces.get("references/eval-cases.md", "")
     semantic_rows: dict[str, tuple[tuple[str, str, tuple[tuple[int, tuple[str, ...]], ...]], ...]] = {
         "repo-review": (("## Quality Eval", "Immutable basis", ((1, ("sha", "before conclusions")), (2, ("moving", "ambiguous")))),),
-        "repo-context": (("## Quality Eval", "Context-versus-review boundary", ((1, ("without p0-p3", "code-review", "repo-review")), (2, ("universal review",)))),),
-        "audit-security": (("## Quality Eval", "Scoped specialist boundary", ((1, ("delegated paths/diff", "code-review", "repo-review")), (2, ("expands scope", "whole-review readiness")))),),
+        "repo-map": (("## Quality Eval", "Context-versus-review boundary", ((1, ("without p0-p3", "repo-review")), (2, ("universal review",)))),),
+        "audit-security": (("## Quality Eval", "Scoped specialist boundary", ((1, ("delegated paths/diff", "repo-review")), (2, ("expands scope", "whole-review readiness")))),),
         "ops-browser": (
             ("## Trigger Eval", "Reproduce this known browser-only CORS failure and collect console/network evidence.", ((1, ("browser debug evidence", "directly")), (2, ("browser fact",)))),
             ("## Trigger Eval", "Diagnose delegated this exact browser reproduction; collect DOM, console, and network evidence.", ((1, ("browser debug evidence",)), (2, ("delegation",)))),
@@ -928,7 +931,7 @@ def validate_source_packages(packages: list[SkillPackage]) -> tuple[list[str], d
 
 def validate_shared_browser_operation_protocol(root: Path) -> list[str]:
     relative_paths = (
-        Path("skills/chatgpt-review-bridge/references/browser-operation-protocol.md"),
+        Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
         Path("skills/ops-browser/references/browser-operation-protocol.md"),
     )
     contents: list[str] = []
