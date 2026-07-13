@@ -8,6 +8,7 @@
 - [ChatGPT Enterprise workspaces](https://help.openai.com/en/articles/8265430-what-is-a-workspace-how-can-i-switch-workspaces)
   documents account environments with separate conversations and files. Verify
   and record workspace identity independently from Project identity.
+- [ChatGPT desktop built-in browser](https://help.openai.com/en/articles/20001277-using-the-built-in-browser-in-the-chatgpt-desktop-app), [cloud browser](https://help.openai.com/en/articles/20001280-using-cloud-browser-in-chatgpt), and [ChatGPT agent](https://help.openai.com/en/articles/11752874-chatgpt-agent/) document distinct reviewer browser surfaces. Treat their browser state and limits separately.
 
 ## Authorization Before Routing
 
@@ -55,7 +56,7 @@ Read that file after explicit per-request and session settings, and before falli
 
 Supported fields:
 
-- `default_browser_mode`: `capability-auto`, `codex-in-app-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
+- `default_browser_mode`: `capability-auto`, `desktop-built-in-browser`, `chatgpt-cloud-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
 - `chatgpt_surface`: `standard-chat` or `project`
 - `account_workspace_note`
 - `chatgpt_default_url`
@@ -99,12 +100,14 @@ After an external send is explicitly authorized:
 7. Mark Project identity and account workspace `Not verified` unless each is inspected.
 8. Stop before sending unless the current authorization covers the resolved route, scope, and round count.
 
+When ChatGPT itself will browse a target page, record that as a separate reviewer-browser route. Do not infer its cookies, account, tabs, or action permissions from the transport browser that opened the ChatGPT conversation. Load and follow `live-browser-review.md` for target and evidence contracts.
+
 If the environment lacks the required control or evidence capability, do not load
 or claim an unbundled browser helper. Return to Package-only.
 
 ## Standalone Playwright Routing
 
-Use only when explicitly selected and verified for the authorized scope. If the in-app Browser is unavailable and standalone was not explicitly selected, return to Package-only instead of switching routes. Ask for a profile only when profile mode is explicit or a profile record exists. Do not install browser binaries merely because the in-app Browser route is available.
+Use only when explicitly selected and verified for the authorized scope. If the desktop built-in browser is unavailable and standalone was not explicitly selected, return to Package-only instead of switching routes. Ask for a profile only when profile mode is explicit or a profile record exists. Do not install browser binaries merely because the desktop built-in route is available.
 
 If no browser session, tab identity, account state, upload state, or response completion signal can be verified, stop or mark the affected field `Not verified`.
 
@@ -117,6 +120,8 @@ For a multipart artifact set, verify the manifest counts and SHA-256 values befo
 ## Output Capture
 
 Capture only external ChatGPT responses into `<repo-root>/review.md` by direct page extraction, download, or selected response text. Do not put the outbound package in this file. Screenshots are supporting evidence only. Keep the artifact local-private and untracked by default; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and sanitize public or visibility-unknown output before staging.
+
+For live-browser review, also capture the declared target URL, reviewer browser surface, viewport when relevant, screenshot/source or observed-state evidence, actions taken, confirmation points, and `Not verified` gaps. Do not treat transport-browser screenshots of the ChatGPT UI as proof of the target page.
 
 Accept a response only when it can be tied to:
 

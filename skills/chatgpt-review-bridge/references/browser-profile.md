@@ -8,7 +8,7 @@ A bridge profile record maps a repository or task to browser routing metadata. I
 
 - `name`
 - `repo_path`
-- `default_browser_mode`: `capability-auto`, `codex-in-app-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
+- `default_browser_mode`: `capability-auto`, `desktop-built-in-browser`, `chatgpt-cloud-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
 - `chatgpt_surface`: `standard-chat` or `project`
 - `account_workspace_note`
 - `browser`
@@ -32,15 +32,23 @@ Resolve modes only after external-send authorization and capability preflight:
 5. Current Chrome or standalone Playwright only when explicitly selected and controllable.
 6. Package-only when no route can be proven.
 
-## Codex In-App Browser Mode
+## Desktop Built-In Browser Mode
 
-Use only when the active environment exposes and successfully preflights an in-app Browser capability.
+Use only when the active environment exposes and successfully preflights the ChatGPT desktop built-in browser.
 
 - Use `ops-browser` for low-level session, tab, composer, upload, and response-state operations; the bridge retains external authorization, package, round, conversation-attribution, and archive ownership.
 - Reuse a verified project/conversation tab when available.
-- Keep the in-app Playwright control API distinct from standalone Playwright browser launch.
-- Ask the user to sign in inside the in-app Browser when authentication is required.
-- If no in-app Browser capability is exposed, do not invent or install one; resolve another explicitly allowed route or return to Package-only.
+- Keep its independent cookies, login, tabs, downloads, extensions, and browser state distinct from Chrome and cloud/agent browsing.
+- Ask the user to sign in inside the built-in browser when authentication is required; credentials stay in the browser, not chat.
+- If no built-in Browser capability is exposed, do not invent or install one; resolve another explicitly allowed route or return to Package-only.
+
+## ChatGPT Cloud Browser Mode
+
+Use only when the active ChatGPT review surface exposes cloud/agent browsing and the target fits its verified limits.
+
+- Prefer it for public-page, remote, or background-capable reviewer-side checks.
+- Re-check sign-in, file, download, and consequential-action support; do not inherit desktop built-in or Chrome state.
+- Record it as the reviewer browser when Codex uses another browser to transport the review package.
 
 ## Current Chrome Mode
 

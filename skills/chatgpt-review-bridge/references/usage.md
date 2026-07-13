@@ -8,7 +8,9 @@
 - `Use my ChatGPT Project to review this branch for three rounds, then let Codex verify and fix each round.`
 - `Use Chat for a one-off independent review and save review.md.`
 - `Use my Chrome profile and ChatGPT project for this repo review.`
-- `Default to the Codex in-app Browser and open the ChatGPT project for this repo review.`
+- `Default to the ChatGPT desktop built-in browser and open the ChatGPT project for this repo review.`
+- `Ask ChatGPT to review this branch and use its built-in browser to verify the deployed pages.`
+- `Have ChatGPT inspect these public URLs in its cloud browser while reviewing the package.`
 - `After ChatGPT review, run local Codex CLI to fix the findings, but ask which approval mode to use first.`
 - `Reset the ChatGPT review bridge defaults for this repo.`
 
@@ -39,7 +41,7 @@ Use the gate in `SKILL.md` only when external sending or route selection is not 
 
 Option handling:
 
-- `1`: authorizes resolving and opening the Codex in-app Browser route; stop again before sending unless sending was also explicitly requested.
+- `1`: authorizes resolving and opening the ChatGPT desktop built-in browser route; stop again before sending unless sending was also explicitly requested.
 - `2`: ask before connecting to current Chrome; enumerate ChatGPT tabs; stop before claiming a tab or sending.
 - `3`: generate/update the local package only.
 - `4`: resolve the user-provided ChatGPT URL or surface; do not persist it unless separately requested.
@@ -80,6 +82,7 @@ The screenshot-style permission prompt is produced by the local execution permis
 - Treat imported bookmarks/history as target-discovery hints and saved credentials as user-login assistance only. They do not establish an authenticated session, correct account/workspace, conversation identity, send authorization, or operation completion. Require fresh direct evidence for each of those claims and avoid reading unrelated imported data.
 - Treat `operation_id` as idempotency scope, not a correlation label. Never create a replacement ID after an interruption or ambiguous submit; reconcile the original target and expected postcondition first.
 - Use one `round_id` for the external review round and a distinct `operation_id` for conversation creation, each attachment/send action, the final marker, and response capture. The round is complete only after all required operation IDs complete.
+- Distinguish the transport browser from the reviewer browser. The transport browser submits/captures the ChatGPT review; the reviewer browser is ChatGPT's desktop built-in or cloud/agent browser for target-page checks. Load `live-browser-review.md` whenever the latter is requested.
 
 For a verified Project with no mapped conversation, an explicit external send
 authorizes creation of one conversation. Open the Project, create one
@@ -107,6 +110,8 @@ Include only in-scope evidence:
 - explicit exclusions
 - redactions and omitted sensitive/unrelated material
 - requested reviewer response format and verdict
+
+For live-browser review, also include exact target URLs, environment/account boundary, expected state, allowed and forbidden actions, required screenshot/source or state evidence, and an independent verification seam. Never include credentials, tokens, connection strings, signed secret URLs, or unrelated authenticated surfaces.
 
 Prefer text input under 20,000 characters and a file/pasted attachment for 20,000-80,000 characters. Above 80,000 characters, 20 files, or 1 MB, keep `review-package.md` as the manifest and shared review contract, and write ordered sibling parts as `review-package.part-001.md`, `review-package.part-002.md`, and so on. The manifest must list the part count and, for every part, its byte and character count, SHA-256, covered paths or evidence, exclusions, order, and whether it is the final part. For a user-supplied path such as `custom.md`, use `custom.part-001.md`. Treat the manifest and every part as one artifact set: do not overwrite any existing member without authorization, and do not send a partial set as a complete package.
 
@@ -157,6 +162,7 @@ Each pass should record:
 - Codex verification notes
 - fix plan and validation
 - attribution gaps
+- reviewer browser surface, target URLs, browser evidence, actions, and confirmation points when live-page review was used
 
 ## Review Artifact Visibility
 
