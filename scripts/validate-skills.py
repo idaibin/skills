@@ -300,6 +300,12 @@ def validate_quality_evidence(
         return [f"repository: cannot read {QUALITY_EVIDENCE_FILE}: {error}"], trials
     if not isinstance(payload, dict):
         return [f"repository: {QUALITY_EVIDENCE_FILE} must contain an object"], trials
+    manifest_fields = {"schema_version", "claims", "evidence", "comparisons"}
+    if set(payload) != manifest_fields:
+        errors.append(
+            f"repository: {QUALITY_EVIDENCE_FILE} top-level fields must be "
+            f"{sorted(manifest_fields)}"
+        )
     if payload.get("schema_version") != QUALITY_EVIDENCE_SCHEMA_VERSION:
         errors.append(
             f"repository: {QUALITY_EVIDENCE_FILE} schema_version must be "
@@ -337,6 +343,14 @@ def validate_quality_evidence(
     observed_raw_hashes: set[str] = set()
     valid_evidence: dict[str, dict[str, object]] = {}
     root_resolved = root.resolve()
+    evidence_fields = {
+        "id",
+        "kind",
+        "dataset",
+        "dataset_sha256",
+        "bundle",
+        "bundle_sha256",
+    }
     for index, record in enumerate(records, 1):
         evidence_id = record.get("id")
         if not isinstance(evidence_id, str) or not evidence_id.strip():
@@ -350,6 +364,12 @@ def validate_quality_evidence(
             )
             continue
         observed_ids.add(evidence_id)
+        if set(record) != evidence_fields:
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} "
+                f"fields must be {sorted(evidence_fields)}"
+            )
+            continue
 
         kind = record.get("kind")
         if kind not in known_kinds:
@@ -584,15 +604,18 @@ def validate_quality_evidence(
             )
             continue
 
+        evaluator_command = [
+            sys.executable,
+            str(evaluator),
+            f"--{kind}-dataset",
+            str(dataset_path),
+            f"--{kind}-results",
+            str(bundle_path),
+        ]
+        if variant != "candidate":
+            evaluator_command.append("--allow-score-failure")
         completed = subprocess.run(
-            [
-                sys.executable,
-                str(evaluator),
-                f"--{kind}-dataset",
-                str(dataset_path),
-                f"--{kind}-results",
-                str(bundle_path),
-            ],
+            evaluator_command,
             cwd=root,
             check=False,
             capture_output=True,
@@ -602,7 +625,7 @@ def validate_quality_evidence(
             detail = (completed.stderr or completed.stdout).strip().splitlines()
             suffix = f": {detail[-1]}" if detail else ""
             errors.append(
-                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} did not pass scorer{suffix}"
+                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} did not pass evidence validation{suffix}"
             )
             continue
         observed_trials.add(trial_key)
@@ -615,6 +638,16 @@ def validate_quality_evidence(
             "host": bundle_payload.get("host"),
             "host_name": run_config.get("host_name"),
             "skill_revision": skill_revision,
+            "dataset_git_revision": run_config.get("dataset_git_revision"),
+            "evaluation_anchor_revision": run_config.get(
+                "evaluation_anchor_revision"
+            ),
+            "held_out_provenance_path": run_config.get(
+                "held_out_provenance_path"
+            ),
+            "held_out_provenance_sha256": run_config.get(
+                "held_out_provenance_sha256"
+            ),
             "bundle_path": bundle_path,
             "bundle_sha256": actual_hash,
             "dataset_path": dataset_path,
@@ -638,6 +671,10 @@ def validate_quality_evidence(
         "control_variant",
         "control_skill_revision",
         "dataset_sha256",
+        "dataset_git_revision",
+        "evaluation_anchor_revision",
+        "held_out_provenance_path",
+        "held_out_provenance_sha256",
         "skills",
     }
     observed_claim_ids: set[str] = set()
@@ -696,6 +733,10 @@ def validate_quality_evidence(
             "control_variant": "control_variant",
             "control_skill_revision": "control_skill_revision",
             "dataset_sha256": "dataset_sha256",
+            "dataset_git_revision": "dataset_git_revision",
+            "evaluation_anchor_revision": "evaluation_anchor_revision",
+            "held_out_provenance_path": "held_out_provenance_path",
+            "held_out_provenance_sha256": "held_out_provenance_sha256",
             "skills": "skills",
         }
         for claim_key, expected_key in scoped_fields.items():
@@ -721,6 +762,14 @@ def validate_quality_comparisons(
     observed_ids: set[str] = set()
     observed_reports: set[Path] = set()
     observed_report_hashes: set[str] = set()
+    comparison_fields = {
+        "id",
+        "kind",
+        "candidate_evidence",
+        "control_evidence",
+        "report",
+        "report_sha256",
+    }
 
     for index, record in enumerate(comparisons, 1):
         comparison_id = record.get("id")
@@ -735,6 +784,12 @@ def validate_quality_comparisons(
             )
             continue
         observed_ids.add(comparison_id)
+        if set(record) != comparison_fields:
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} "
+                f"fields must be {sorted(comparison_fields)}"
+            )
+            continue
         kind = record.get("kind")
         if kind not in {"routing", "authority", "workflow"}:
             errors.append(
@@ -920,6 +975,16 @@ def validate_quality_comparisons(
             "control_variant": control_record["variant"],
             "control_skill_revision": control_record["skill_revision"],
             "dataset_sha256": candidate_record["dataset_sha256"],
+            "dataset_git_revision": candidate_record["dataset_git_revision"],
+            "evaluation_anchor_revision": candidate_record[
+                "evaluation_anchor_revision"
+            ],
+            "held_out_provenance_path": candidate_record[
+                "held_out_provenance_path"
+            ],
+            "held_out_provenance_sha256": candidate_record[
+                "held_out_provenance_sha256"
+            ],
             "skills": sorted(
                 path.parent.name for path in (root / "skills").glob("*/SKILL.md")
             ),

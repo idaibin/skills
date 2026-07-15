@@ -187,11 +187,12 @@ def _condition(bundle: dict[str, object], *, path: Path) -> tuple[object, ...]:
     adjudication = bundle.get("adjudication")
     if not isinstance(adjudication, dict):
         raise ComparisonError(f"{path}: adjudication must be an object")
-    fields = (
+    required_fields = (
         bundle.get("dataset_revision"),
         run_config.get("prompt_set_sha256"),
         bundle.get("model"),
         bundle.get("host"),
+        run_config.get("host_name"),
         run_config.get("permissions"),
         run_config.get("timeout_seconds"),
         run_config.get("concurrency"),
@@ -200,15 +201,26 @@ def _condition(bundle: dict[str, object], *, path: Path) -> tuple[object, ...]:
         run_config.get("prompt_template_sha256"),
         run_config.get("fixture_sha256"),
         run_config.get("host_config_sha256"),
-        run_config.get("dataset_git_revision"),
         adjudication.get("method"),
         adjudication.get("reviewer"),
         adjudication.get("reviewer_version"),
         adjudication.get("config_sha256"),
     )
-    if any(value is None for value in fields):
+    if any(value is None for value in required_fields):
         raise ComparisonError(f"{path}: comparison condition metadata is incomplete")
-    return fields
+    provenance_fields = (
+        run_config.get("dataset_git_revision"),
+        run_config.get("evaluation_anchor_revision"),
+        run_config.get("held_out_provenance_path"),
+        run_config.get("held_out_provenance_sha256"),
+    )
+    if run_config.get("held_out") is True and any(
+        value is None for value in provenance_fields
+    ):
+        raise ComparisonError(
+            f"{path}: held-out comparison provenance metadata is incomplete"
+        )
+    return required_fields + provenance_fields
 
 
 def _validate_dataset_cases(
@@ -623,6 +635,15 @@ def compare_bundles(
             "previous control must use a different Skill revision and skills tree "
             "from the candidate"
         )
+    if control_variant == "previous":
+        ancestry_check = getattr(evaluator, "revision_is_ancestor", None)
+        if not callable(ancestry_check) or not ancestry_check(
+            control_revision, candidate_revision, strict=True
+        ):
+            raise ComparisonError(
+                "previous control revision must be a strict ancestor of the "
+                "candidate revision"
+            )
 
     first_condition = candidates[0].condition
     for record in [*candidates, *controls]:

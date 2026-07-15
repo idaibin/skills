@@ -152,7 +152,11 @@ class ValidateSkillsTests(unittest.TestCase):
         model_output = json.dumps(
             {"actual_owner": "diagnose", "handoffs": [], "reason": "fixture"}
         )
-        transcript = "fixture host transcript"
+        stdout = json.dumps(
+            {"usage": {"input_tokens": 1, "output_tokens": 1}}
+        )
+        stderr = ""
+        transcript = f"STDOUT\n{stdout}\nSTDERR\n{stderr}"
         raw_path.write_text(
             json.dumps(
                 {
@@ -166,6 +170,8 @@ class ValidateSkillsTests(unittest.TestCase):
                     ),
                     "model": model,
                     "host": host,
+                    "stdout": stdout,
+                    "stderr": stderr,
                     "model_output": model_output,
                     "transcript": transcript,
                     "transcript_sha256": CONTRACT_EVAL.text_hash(transcript),
@@ -664,6 +670,110 @@ class ValidateSkillsTests(unittest.TestCase):
                 errors, _ = VALIDATOR.validate_quality_evidence(root)
             self.assertTrue(any("reuses bundle path" in error for error in errors), errors)
 
+    def test_quality_evidence_rejects_extra_top_level_claim_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            manifest_path = self.write_quality_evidence_manifest(root, [])
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["improvement"] = "verified"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+            errors, _ = VALIDATOR.validate_quality_evidence(root)
+
+        self.assertTrue(any("top-level fields" in error for error in errors), errors)
+
+    def test_quality_evidence_rejects_extra_record_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            manifest_path = self.write_quality_evidence_manifest(root, [])
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["evidence"] = [
+                {
+                    "id": "misleading-evidence",
+                    "kind": "routing",
+                    "dataset": "evals/routing.jsonl",
+                    "dataset_sha256": "a" * 64,
+                    "bundle": "evidence/results.json",
+                    "bundle_sha256": "b" * 64,
+                    "status": "verified",
+                }
+            ]
+            manifest["comparisons"] = [
+                {
+                    "id": "misleading-comparison",
+                    "kind": "routing",
+                    "candidate_evidence": ["candidate-1"],
+                    "control_evidence": ["previous-1"],
+                    "report": "evidence/comparison.json",
+                    "report_sha256": "c" * 64,
+                    "improvement": "verified",
+                }
+            ]
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+            errors, _ = VALIDATOR.validate_quality_evidence(root)
+
+        self.assertTrue(
+            any("evidence misleading-evidence fields" in error for error in errors),
+            errors,
+        )
+        self.assertTrue(
+            any(
+                "comparison misleading-comparison fields" in error
+                for error in errors
+            ),
+            errors,
+        )
+
+    def test_quality_evidence_rejects_pre_scope_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            manifest_path = self.write_quality_evidence_manifest(root, [])
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["schema_version"] = 3
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+            errors, _ = VALIDATOR.validate_quality_evidence(root)
+
+        self.assertTrue(
+            any("schema_version must be 4" in error for error in errors), errors
+        )
+
+    def test_control_evidence_does_not_need_to_pass_candidate_score_gate(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            self.write_quality_evidence_manifest(
+                root,
+                [
+                    {
+                        "run_id": "00000000-0000-4000-8000-000000000501",
+                        "raw": "control evidence",
+                        "trial": 1,
+                        "variant": "previous",
+                    }
+                ],
+            )
+            calls: list[list[str]] = []
+
+            def successful_validation(
+                command: list[str], **_: object
+            ) -> subprocess.CompletedProcess[str]:
+                calls.append(command)
+                stdout = "b" * 40 + "\n" if command[:2] == ["git", "rev-parse"] else ""
+                return subprocess.CompletedProcess(command, 0, stdout, "")
+
+            with mock.patch.object(
+                VALIDATOR.subprocess, "run", side_effect=successful_validation
+            ):
+                errors, _ = VALIDATOR.validate_quality_evidence(root)
+
+        self.assertEqual([], errors)
+        evaluator_calls = [
+            command for command in calls if "eval-skill-contracts.py" in " ".join(command)
+        ]
+        self.assertEqual(1, len(evaluator_calls))
+        self.assertIn("--allow-score-failure", evaluator_calls[0])
+
     def test_quality_evidence_binds_revision_to_current_skills_tree(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -730,6 +840,10 @@ class ValidateSkillsTests(unittest.TestCase):
                                 "control_variant": "previous",
                                 "control_skill_revision": "b" * 40,
                                 "dataset_sha256": "c" * 64,
+                                "dataset_git_revision": "d" * 40,
+                                "evaluation_anchor_revision": "a" * 40,
+                                "held_out_provenance_path": "evals/held-out-provenance.json",
+                                "held_out_provenance_sha256": "e" * 64,
                                 "skills": [],
                             }
                         ],
@@ -779,6 +893,10 @@ class ValidateSkillsTests(unittest.TestCase):
                         "host": "codex-cli 1.0",
                         "host_name": "codex",
                         "skill_revision": ("a" if variant == "candidate" else "b") * 40,
+                        "dataset_git_revision": "9" * 40,
+                        "evaluation_anchor_revision": "a" * 40,
+                        "held_out_provenance_path": "evals/held-out-provenance.json",
+                        "held_out_provenance_sha256": "8" * 64,
                         "bundle_path": root / "evidence" / f"{evidence_id}.json",
                         "bundle_sha256": f"{trial}" * 64,
                         "dataset_path": dataset,
@@ -1540,6 +1658,63 @@ class ValidateSkillsTests(unittest.TestCase):
                     bundle_path, {"case-001"}, dataset
                 )
 
+    def test_result_bundle_recomputes_claude_cache_inclusive_usage(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            dataset = root / "dataset.jsonl"
+            dataset.write_text(
+                '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                encoding="utf-8",
+            )
+            bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+            payload["run_config"]["host_name"] = "claude"
+            result = payload["results"][0]
+            raw_path = root / result["raw_evidence"]
+            raw = json.loads(raw_path.read_text(encoding="utf-8"))
+            raw["stdout"] = json.dumps(
+                {
+                    "usage": {
+                        "input_tokens": 1,
+                        "cache_creation_input_tokens": 2,
+                        "cache_read_input_tokens": 3,
+                        "output_tokens": 1,
+                    }
+                }
+            )
+            raw["transcript"] = (
+                f"STDOUT\n{raw['stdout']}\nSTDERR\n{raw['stderr']}"
+            )
+            raw["transcript_sha256"] = CONTRACT_EVAL.text_hash(raw["transcript"])
+            raw_path.write_text(json.dumps(raw), encoding="utf-8")
+            result["raw_evidence_sha256"] = hashlib.sha256(
+                raw_path.read_bytes()
+            ).hexdigest()
+            bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "normalized token usage"):
+                CONTRACT_EVAL.load_result_bundle(
+                    bundle_path, {"case-001"}, dataset
+                )
+
+    def test_result_bundle_rejects_pre_token_fix_schema(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            dataset = root / "dataset.jsonl"
+            dataset.write_text(
+                '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                encoding="utf-8",
+            )
+            bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+            payload["schema_version"] = 2
+            bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "schema_version must be 3"):
+                CONTRACT_EVAL.load_result_bundle(
+                    bundle_path, {"case-001"}, dataset
+                )
+
     def test_held_out_provenance_rejects_copied_historical_prompt(self) -> None:
         skill_revision = "a" * 40
         dataset_revision = "b" * 40
@@ -1550,10 +1725,32 @@ class ValidateSkillsTests(unittest.TestCase):
                 encoding="utf-8",
             )
             relative = dataset.relative_to(CONTRACT_EVAL.ROOT).as_posix()
+            provenance = Path(temp_dir) / "held-out-provenance.json"
+            provenance_payload = {
+                "schema_version": 1,
+                "dataset_path": relative,
+                "dataset_sha256": CONTRACT_EVAL.dataset_hash(dataset),
+                "source_skill_revision": skill_revision,
+                "authorship": {
+                    "independent": True,
+                    "timing": "post_freeze",
+                    "existing_eval_comparison": "after_drafting_only",
+                },
+                "used_for_tuning": False,
+                "intended_hosts": ["codex"],
+            }
+            provenance.write_text(json.dumps(provenance_payload), encoding="utf-8")
+            provenance_relative = provenance.relative_to(
+                CONTRACT_EVAL.ROOT
+            ).as_posix()
 
             def git_result(command: list[str], **kwargs: object):
                 if "merge-base" in command:
                     return subprocess.CompletedProcess(command, 0, b"", b"")
+                if "log" in command:
+                    return subprocess.CompletedProcess(
+                        command, 0, f"{dataset_revision}\n", ""
+                    )
                 if "ls-tree" in command:
                     return subprocess.CompletedProcess(
                         command, 0, "evals/routing.jsonl\n", ""
@@ -1564,13 +1761,20 @@ class ValidateSkillsTests(unittest.TestCase):
                         return subprocess.CompletedProcess(
                             command, 0, dataset.read_bytes(), b""
                         )
+                    if revision_path == f"{dataset_revision}:{provenance_relative}":
+                        return subprocess.CompletedProcess(
+                            command, 0, provenance.read_bytes(), b""
+                        )
                     return subprocess.CompletedProcess(
                         command,
                         0,
                         '{"id":"old-id","prompt":"already public"}\n',
                         "",
                     )
-                if "cat-file" in command and command[-1] == f"{skill_revision}:{relative}":
+                if "cat-file" in command and command[-1] in {
+                    f"{skill_revision}:{relative}",
+                    f"{skill_revision}:{provenance_relative}",
+                }:
                     return subprocess.CompletedProcess(command, 1, b"", b"")
                 return subprocess.CompletedProcess(command, 0, b"", b"")
 
@@ -1584,6 +1788,238 @@ class ValidateSkillsTests(unittest.TestCase):
                         {
                             "dataset_path": relative,
                             "dataset_git_revision": dataset_revision,
+                            "evaluation_anchor_revision": skill_revision,
+                            "held_out_provenance_path": provenance_relative,
+                            "held_out_provenance_sha256": CONTRACT_EVAL.dataset_hash(
+                                provenance
+                            ),
+                            "host_name": "codex",
+                            "variant": "candidate",
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_missing_variant(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh","prompt":"fresh prompt"}\n', encoding="utf-8"
+            )
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess([], 0, b"", b""),
+            ):
+                with self.assertRaisesRegex(ValueError, "run_config.variant"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        "a" * 40,
+                        {
+                            "dataset_git_revision": "b" * 40,
+                            "evaluation_anchor_revision": "a" * 40,
+                            "held_out_provenance_path": "evals/provenance.json",
+                            "held_out_provenance_sha256": "c" * 64,
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_candidate_anchor_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh","prompt":"fresh prompt"}\n', encoding="utf-8"
+            )
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess([], 0, b"", b""),
+            ):
+                with self.assertRaisesRegex(ValueError, "must equal"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        "b" * 40,
+                        {
+                            "variant": "candidate",
+                            "dataset_git_revision": "c" * 40,
+                            "evaluation_anchor_revision": "a" * 40,
+                            "held_out_provenance_path": "evals/provenance.json",
+                            "held_out_provenance_sha256": "d" * 64,
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_nonancestor_previous(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh","prompt":"fresh prompt"}\n', encoding="utf-8"
+            )
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess([], 0, b"", b""),
+            ), mock.patch.object(
+                CONTRACT_EVAL, "revision_is_ancestor", return_value=False
+            ):
+                with self.assertRaisesRegex(ValueError, "strict ancestor"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        "b" * 40,
+                        {
+                            "variant": "previous",
+                            "dataset_git_revision": "c" * 40,
+                            "evaluation_anchor_revision": "a" * 40,
+                            "held_out_provenance_path": "evals/provenance.json",
+                            "held_out_provenance_sha256": "d" * 64,
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_hash_mismatch(self) -> None:
+        with tempfile.TemporaryDirectory(
+            dir=CONTRACT_EVAL.ROOT / "evals"
+        ) as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh","prompt":"fresh prompt"}\n', encoding="utf-8"
+            )
+            provenance = Path(temp_dir) / "provenance.json"
+            provenance.write_text("{}\n", encoding="utf-8")
+            dataset_relative = dataset.relative_to(CONTRACT_EVAL.ROOT).as_posix()
+            provenance_relative = provenance.relative_to(
+                CONTRACT_EVAL.ROOT
+            ).as_posix()
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess([], 0, b"", b""),
+            ):
+                with self.assertRaisesRegex(ValueError, "must match the provenance"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        "a" * 40,
+                        {
+                            "variant": "candidate",
+                            "dataset_path": dataset_relative,
+                            "dataset_git_revision": "b" * 40,
+                            "evaluation_anchor_revision": "a" * 40,
+                            "held_out_provenance_path": provenance_relative,
+                            "held_out_provenance_sha256": "c" * 64,
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_tuning_use(self) -> None:
+        with tempfile.TemporaryDirectory(
+            dir=CONTRACT_EVAL.ROOT / "evals"
+        ) as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh","prompt":"fresh prompt"}\n', encoding="utf-8"
+            )
+            dataset_relative = dataset.relative_to(CONTRACT_EVAL.ROOT).as_posix()
+            provenance = Path(temp_dir) / "provenance.json"
+            provenance.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "dataset_path": dataset_relative,
+                        "dataset_sha256": CONTRACT_EVAL.dataset_hash(dataset),
+                        "source_skill_revision": "a" * 40,
+                        "authorship": {
+                            "independent": True,
+                            "timing": "post_freeze",
+                            "existing_eval_comparison": "after_drafting_only",
+                        },
+                        "used_for_tuning": True,
+                        "intended_hosts": ["codex"],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            provenance_relative = provenance.relative_to(
+                CONTRACT_EVAL.ROOT
+            ).as_posix()
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess,
+                "run",
+                return_value=subprocess.CompletedProcess([], 0, b"", b""),
+            ):
+                with self.assertRaisesRegex(ValueError, "used_for_tuning"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        "a" * 40,
+                        {
+                            "variant": "candidate",
+                            "dataset_path": dataset_relative,
+                            "dataset_git_revision": "b" * 40,
+                            "evaluation_anchor_revision": "a" * 40,
+                            "held_out_provenance_path": provenance_relative,
+                            "held_out_provenance_sha256": CONTRACT_EVAL.dataset_hash(
+                                provenance
+                            ),
+                            "host_name": "codex",
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_retrofitted_history(self) -> None:
+        with tempfile.TemporaryDirectory(
+            dir=CONTRACT_EVAL.ROOT / "evals"
+        ) as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh","prompt":"fresh prompt"}\n', encoding="utf-8"
+            )
+            dataset_relative = dataset.relative_to(CONTRACT_EVAL.ROOT).as_posix()
+            provenance = Path(temp_dir) / "provenance.json"
+            provenance.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "dataset_path": dataset_relative,
+                        "dataset_sha256": CONTRACT_EVAL.dataset_hash(dataset),
+                        "source_skill_revision": "a" * 40,
+                        "authorship": {
+                            "independent": True,
+                            "timing": "post_freeze",
+                            "existing_eval_comparison": "after_drafting_only",
+                        },
+                        "used_for_tuning": False,
+                        "intended_hosts": ["codex"],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            provenance_relative = provenance.relative_to(
+                CONTRACT_EVAL.ROOT
+            ).as_posix()
+
+            def git_result(command: list[str], **_kwargs: object):
+                if "log" in command:
+                    earlier = "c" * 40 if command[-1] == dataset_relative else "d" * 40
+                    return subprocess.CompletedProcess(
+                        command, 0, f"{'b' * 40}\n{earlier}\n", ""
+                    )
+                return subprocess.CompletedProcess(command, 0, b"", b"")
+
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess, "run", side_effect=git_result
+            ):
+                with self.assertRaisesRegex(ValueError, "never retrofitted"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        "a" * 40,
+                        {
+                            "variant": "candidate",
+                            "dataset_path": dataset_relative,
+                            "dataset_git_revision": "b" * 40,
+                            "evaluation_anchor_revision": "a" * 40,
+                            "held_out_provenance_path": provenance_relative,
+                            "held_out_provenance_sha256": CONTRACT_EVAL.dataset_hash(
+                                provenance
+                            ),
+                            "host_name": "codex",
                         },
                         bundle_path=Path("fixture-bundle.json"),
                     )

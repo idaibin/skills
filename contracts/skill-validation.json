@@ -45,9 +45,9 @@
     ]
   },
   "behavior_eval": {
-    "result_schema_version": 2,
-    "raw_evidence_schema_version": 1,
-    "quality_evidence_manifest_schema_version": 3,
+    "result_schema_version": 3,
+    "raw_evidence_schema_version": 2,
+    "quality_evidence_manifest_schema_version": 4,
     "comparison_report_schema_version": 1,
     "prompt_template_version": 1,
     "maximum_clock_skew_seconds": 300,
@@ -87,7 +87,10 @@
       "host_config_sha256"
     ],
     "held_out_provenance_required_fields": [
-      "dataset_git_revision"
+      "dataset_git_revision",
+      "evaluation_anchor_revision",
+      "held_out_provenance_path",
+      "held_out_provenance_sha256"
     ],
     "adjudication_required_fields": [
       "method",
@@ -104,6 +107,8 @@
       "invocation_prompt_sha256",
       "model",
       "host",
+      "stdout",
+      "stderr",
       "model_output",
       "transcript",
       "transcript_sha256",

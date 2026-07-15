@@ -93,6 +93,68 @@ def text_hash(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
+def normalized_usage_from_stdout(
+    stdout: str, *, host_name: str
+) -> tuple[int | None, int | None]:
+    """Recompute the runner's cache-aware token metrics from verbatim output."""
+
+    values: list[object] = []
+    try:
+        values.append(json.loads(stdout, object_pairs_hook=reject_duplicate_json_keys))
+    except (json.JSONDecodeError, ValueError):
+        for line in stdout.splitlines():
+            try:
+                values.append(
+                    json.loads(line, object_pairs_hook=reject_duplicate_json_keys)
+                )
+            except (json.JSONDecodeError, ValueError):
+                continue
+    usages: list[tuple[int | None, int | None]] = []
+
+    def visit(value: object) -> None:
+        if isinstance(value, dict):
+            input_tokens = value.get("input_tokens")
+            output_tokens = value.get("output_tokens")
+            if (
+                isinstance(input_tokens, int)
+                and not isinstance(input_tokens, bool)
+                and input_tokens >= 0
+                and isinstance(output_tokens, int)
+                and not isinstance(output_tokens, bool)
+                and output_tokens >= 0
+            ):
+                if host_name == "claude":
+                    cache_tokens = 0
+                    for field in (
+                        "cache_creation_input_tokens",
+                        "cache_read_input_tokens",
+                    ):
+                        cache_value = value.get(field)
+                        if cache_value is None:
+                            continue
+                        if (
+                            isinstance(cache_value, bool)
+                            or not isinstance(cache_value, int)
+                            or cache_value < 0
+                        ):
+                            usages.append((None, None))
+                            break
+                        cache_tokens += cache_value
+                    else:
+                        usages.append((input_tokens + cache_tokens, output_tokens))
+                else:
+                    usages.append((input_tokens, output_tokens))
+            for child in value.values():
+                visit(child)
+        elif isinstance(value, list):
+            for child in value:
+                visit(child)
+
+    for value in values:
+        visit(value)
+    return usages[-1] if usages else (None, None)
+
+
 def canonical_json_hash(value: object) -> str:
     encoded = json.dumps(
         value,
@@ -178,6 +240,29 @@ def discover_skill_names(root: Path = ROOT) -> set[str]:
         for path in (root / "skills").glob("*/SKILL.md")
         if path.is_file()
     }
+
+
+def revision_is_ancestor(
+    ancestor: str, descendant: str, *, strict: bool = False
+) -> bool:
+    """Return whether two repository commits have the required ancestry."""
+
+    if strict and ancestor == descendant:
+        return False
+    check = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "merge-base",
+            "--is-ancestor",
+            ancestor,
+            descendant,
+        ],
+        check=False,
+        capture_output=True,
+    )
+    return check.returncode == 0
 
 
 def string_list(item: dict[str, object], key: str, *, case_id: str) -> list[str]:
@@ -868,6 +953,50 @@ def _validate_held_out_provenance(
         raise ValueError(
             f"{bundle_path}: held-out run_config missing fields {sorted(missing)}"
         )
+    evaluation_anchor_revision = run_config.get("evaluation_anchor_revision")
+    if not isinstance(evaluation_anchor_revision, str) or re.fullmatch(
+        r"[0-9a-f]{40}", evaluation_anchor_revision
+    ) is None:
+        raise ValueError(
+            f"{bundle_path}: run_config.evaluation_anchor_revision must be a "
+            "40-character Git SHA"
+        )
+    anchor_commit = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "cat-file",
+            "-e",
+            f"{evaluation_anchor_revision}^{{commit}}",
+        ],
+        check=False,
+        capture_output=True,
+    )
+    if anchor_commit.returncode != 0:
+        raise ValueError(
+            f"{bundle_path}: evaluation_anchor_revision is not a repository commit"
+        )
+    variant = run_config.get("variant")
+    if variant in {"candidate", "baseline"}:
+        if skill_revision != evaluation_anchor_revision:
+            raise ValueError(
+                f"{bundle_path}: {variant} skill_revision must equal "
+                "evaluation_anchor_revision"
+            )
+    elif variant == "previous":
+        if not revision_is_ancestor(
+            skill_revision, evaluation_anchor_revision, strict=True
+        ):
+            raise ValueError(
+                f"{bundle_path}: previous skill_revision must be a strict ancestor "
+                "of evaluation_anchor_revision"
+            )
+    else:
+        raise ValueError(
+            f"{bundle_path}: run_config.variant must be one of "
+            f"{sorted(RESULT_VARIANTS)}"
+        )
     try:
         dataset_relative = dataset_path.resolve().relative_to(ROOT.resolve()).as_posix()
     except ValueError as error:
@@ -877,6 +1006,108 @@ def _validate_held_out_provenance(
     if run_config.get("dataset_path") != dataset_relative:
         raise ValueError(
             f"{bundle_path}: run_config.dataset_path must equal {dataset_relative!r}"
+        )
+    provenance_relative = run_config.get("held_out_provenance_path")
+    if (
+        not isinstance(provenance_relative, str)
+        or not provenance_relative.strip()
+        or "\\" in provenance_relative
+        or PurePosixPath(provenance_relative).is_absolute()
+        or ".." in PurePosixPath(provenance_relative).parts
+        or PurePosixPath(provenance_relative).as_posix() != provenance_relative
+    ):
+        raise ValueError(
+            f"{bundle_path}: run_config.held_out_provenance_path must be a "
+            "normalized repository-relative POSIX path"
+        )
+    provenance_path = (ROOT / provenance_relative).resolve()
+    try:
+        provenance_path.relative_to(ROOT.resolve())
+    except ValueError as error:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance escapes the repository"
+        ) from error
+    if not provenance_path.is_file():
+        raise ValueError(f"{bundle_path}: held-out provenance file does not exist")
+    provenance_sha256 = run_config.get("held_out_provenance_sha256")
+    _validate_sha256(
+        provenance_sha256,
+        label=f"{bundle_path}: run_config.held_out_provenance_sha256",
+    )
+    if provenance_sha256 != dataset_hash(provenance_path):
+        raise ValueError(
+            f"{bundle_path}: run_config.held_out_provenance_sha256 must match "
+            "the provenance file"
+        )
+    try:
+        provenance = json.loads(
+            provenance_path.read_text(encoding="utf-8"),
+            object_pairs_hook=reject_duplicate_json_keys,
+        )
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+        raise ValueError(
+            f"{bundle_path}: cannot read held-out provenance: {error}"
+        ) from error
+    provenance_fields = {
+        "schema_version",
+        "dataset_path",
+        "dataset_sha256",
+        "source_skill_revision",
+        "authorship",
+        "used_for_tuning",
+        "intended_hosts",
+    }
+    if not isinstance(provenance, dict) or set(provenance) != provenance_fields:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance fields must be "
+            f"{sorted(provenance_fields)}"
+        )
+    if provenance.get("schema_version") != 1:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance schema_version must be 1"
+        )
+    if provenance.get("dataset_path") != dataset_relative:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance dataset_path must match the dataset"
+        )
+    if provenance.get("dataset_sha256") != dataset_hash(dataset_path):
+        raise ValueError(
+            f"{bundle_path}: held-out provenance dataset_sha256 must match the dataset"
+        )
+    if provenance.get("source_skill_revision") != evaluation_anchor_revision:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance source_skill_revision must match "
+            "evaluation_anchor_revision"
+        )
+    authorship = provenance.get("authorship")
+    expected_authorship = {
+        "independent": True,
+        "timing": "post_freeze",
+        "existing_eval_comparison": "after_drafting_only",
+    }
+    if authorship != expected_authorship:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance must attest independent post-freeze "
+            "authorship and comparison only after drafting"
+        )
+    if provenance.get("used_for_tuning") is not False:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance used_for_tuning must be false"
+        )
+    intended_hosts = provenance.get("intended_hosts")
+    if (
+        not isinstance(intended_hosts, list)
+        or not intended_hosts
+        or any(
+            not isinstance(host, str) or host not in {"codex", "claude"}
+            for host in intended_hosts
+        )
+        or len(intended_hosts) != len(set(intended_hosts))
+        or run_config.get("host_name") not in intended_hosts
+    ):
+        raise ValueError(
+            f"{bundle_path}: held-out provenance intended_hosts must uniquely include "
+            "the evaluated host"
         )
     dataset_git_revision = run_config.get("dataset_git_revision")
     if not isinstance(dataset_git_revision, str) or re.fullmatch(
@@ -901,9 +1132,19 @@ def _validate_held_out_provenance(
         raise ValueError(
             f"{bundle_path}: dataset_git_revision is not a repository commit"
         )
-    for ancestor, descendant, label in (
-        (skill_revision, dataset_git_revision, "postdate the Skill revision"),
-        (dataset_git_revision, "HEAD", "be reachable from current HEAD"),
+    for ancestor, descendant, label, require_strict in (
+        (
+            evaluation_anchor_revision,
+            dataset_git_revision,
+            "postdate the evaluation anchor revision",
+            True,
+        ),
+        (
+            dataset_git_revision,
+            "HEAD",
+            "be reachable from current HEAD",
+            False,
+        ),
     ):
         check = subprocess.run(
             [
@@ -918,9 +1159,37 @@ def _validate_held_out_provenance(
             check=False,
             capture_output=True,
         )
-        if check.returncode != 0 or ancestor == descendant:
+        if check.returncode != 0 or (require_strict and ancestor == descendant):
             raise ValueError(
                 f"{bundle_path}: held-out dataset revision must {label}"
+            )
+    for relative_path, label in (
+        (dataset_relative, "dataset"),
+        (provenance_relative, "provenance"),
+    ):
+        path_history = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "log",
+                "--format=%H",
+                f"{evaluation_anchor_revision}..HEAD",
+                "--",
+                relative_path,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if (
+            path_history.returncode != 0
+            or path_history.stdout.splitlines() != [dataset_git_revision]
+        ):
+            raise ValueError(
+                f"{bundle_path}: held-out {label} must have exactly one post-anchor "
+                "history entry equal to dataset_git_revision so dataset and provenance "
+                "are introduced together and never retrofitted"
             )
     dataset_blob = subprocess.run(
         [
@@ -937,6 +1206,25 @@ def _validate_held_out_provenance(
         raise ValueError(
             f"{bundle_path}: held-out dataset content must match dataset_git_revision"
         )
+    provenance_blob = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "show",
+            f"{dataset_git_revision}:{provenance_relative}",
+        ],
+        check=False,
+        capture_output=True,
+    )
+    if (
+        provenance_blob.returncode != 0
+        or provenance_blob.stdout != provenance_path.read_bytes()
+    ):
+        raise ValueError(
+            f"{bundle_path}: held-out provenance must be committed unchanged at "
+            "dataset_git_revision"
+        )
     existed_at_skill_revision = subprocess.run(
         [
             "git",
@@ -944,7 +1232,7 @@ def _validate_held_out_provenance(
             str(ROOT),
             "cat-file",
             "-e",
-            f"{skill_revision}:{dataset_relative}",
+            f"{evaluation_anchor_revision}:{dataset_relative}",
         ],
         check=False,
         capture_output=True,
@@ -952,6 +1240,22 @@ def _validate_held_out_provenance(
     if existed_at_skill_revision.returncode == 0:
         raise ValueError(
             f"{bundle_path}: held-out dataset path already existed at skill_revision"
+        )
+    provenance_existed_at_skill_revision = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "cat-file",
+            "-e",
+            f"{evaluation_anchor_revision}:{provenance_relative}",
+        ],
+        check=False,
+        capture_output=True,
+    )
+    if provenance_existed_at_skill_revision.returncode == 0:
+        raise ValueError(
+            f"{bundle_path}: held-out provenance path already existed at skill_revision"
         )
 
     # A postdated filename alone is not a holdout: reject cases or prompts copied
@@ -966,7 +1270,7 @@ def _validate_held_out_provenance(
             "ls-tree",
             "-r",
             "--name-only",
-            skill_revision,
+            evaluation_anchor_revision,
             "--",
             "evals",
         ],
@@ -982,7 +1286,13 @@ def _validate_held_out_provenance(
         if not relative_path.endswith(".jsonl"):
             continue
         historical = subprocess.run(
-            ["git", "-C", str(ROOT), "show", f"{skill_revision}:{relative_path}"],
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "show",
+                f"{evaluation_anchor_revision}:{relative_path}",
+            ],
             check=False,
             capture_output=True,
             text=True,
@@ -1325,6 +1635,36 @@ def load_result_bundle(
             run_config,
             bundle_path=path,
         )
+        dataset_commit_time_check = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "show",
+                "-s",
+                "--format=%cI",
+                str(run_config["dataset_git_revision"]),
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        try:
+            dataset_commit_time = datetime.fromisoformat(
+                dataset_commit_time_check.stdout.strip()
+            )
+        except ValueError as error:
+            raise ValueError(
+                f"{path}: cannot read held-out dataset commit timestamp"
+            ) from error
+        dataset_earliest = dataset_commit_time.astimezone(timezone.utc) - timedelta(
+            seconds=MAXIMUM_CLOCK_SKEW_SECONDS
+        )
+        if captured.astimezone(timezone.utc) < dataset_earliest:
+            raise ValueError(
+                f"{path}: captured_at predates held-out dataset/provenance commit "
+                f"by more than {MAXIMUM_CLOCK_SKEW_SECONDS} seconds"
+            )
 
     adjudication = payload["adjudication"]
     if not isinstance(adjudication, dict):
@@ -1454,6 +1794,8 @@ def load_result_bundle(
                 )
         model_output = raw["model_output"]
         transcript = raw["transcript"]
+        stdout = raw["stdout"]
+        stderr = raw["stderr"]
         if not isinstance(model_output, str) or not model_output.strip():
             raise ValueError(
                 f"{path}: result {result_id!r} raw model_output must be a non-empty string"
@@ -1461,6 +1803,15 @@ def load_result_bundle(
         if not isinstance(transcript, str) or not transcript.strip():
             raise ValueError(
                 f"{path}: result {result_id!r} raw transcript must be a non-empty string"
+            )
+        if not isinstance(stdout, str) or not isinstance(stderr, str):
+            raise ValueError(
+                f"{path}: result {result_id!r} raw stdout/stderr must be strings"
+            )
+        if transcript != f"STDOUT\n{stdout}\nSTDERR\n{stderr}":
+            raise ValueError(
+                f"{path}: result {result_id!r} raw transcript must be rebuilt "
+                "from stdout and stderr"
             )
         _validate_sha256(
             raw["transcript_sha256"],
@@ -1474,6 +1825,18 @@ def load_result_bundle(
             raw["metrics"],
             label=f"{path}: result {result_id!r} raw metrics",
         )
+        normalized_usage = normalized_usage_from_stdout(
+            stdout, host_name=str(run_config["host_name"])
+        )
+        recorded_usage = (
+            raw_metrics["input_tokens"],
+            raw_metrics["output_tokens"],
+        )
+        if recorded_usage != normalized_usage:
+            raise ValueError(
+                f"{path}: result {result_id!r} raw metrics must match normalized "
+                "token usage recomputed from stdout"
+            )
         exit_code = raw["exit_code"]
         if isinstance(exit_code, bool) or not isinstance(exit_code, int) or exit_code != 0:
             raise ValueError(
@@ -1808,6 +2171,11 @@ def score_workflow(cases: list[dict[str, object]], bundle: dict[str, object]) ->
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--validate-only", action="store_true")
+    parser.add_argument(
+        "--allow-score-failure",
+        action="store_true",
+        help=argparse.SUPPRESS,
+    )
     parser.add_argument("--routing-dataset", type=Path, default=ROUTING_DATA)
     parser.add_argument("--authority-dataset", type=Path, default=AUTHORITY_DATA)
     parser.add_argument("--workflow-dataset", type=Path, default=WORKFLOW_DATA)
@@ -1886,7 +2254,8 @@ def main() -> int:
         print(f"{label} score: {'PASS' if score.passed else 'FAIL'}")
         for line in score.lines:
             print(f"  {line}")
-        failed = failed or not score.passed
+        if not score.passed and not args.allow_score_failure:
+            failed = True
     return 1 if failed else 0
 
 

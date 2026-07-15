@@ -28,11 +28,11 @@ from typing import Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATASET = ROOT / "evals" / "routing.jsonl"
-RESULT_SCHEMA_VERSION = 2
-RAW_SCHEMA_VERSION = 1
+RESULT_SCHEMA_VERSION = 3
+RAW_SCHEMA_VERSION = 2
 PROMPT_TEMPLATE_VERSION = 1
 PROMPT_VALUE_PLACEHOLDER = "<NATURAL_REQUEST_JSON>"
-RUNNER_VERSION = "1"
+RUNNER_VERSION = "2"
 OWNER_ENUM = (
     "audit-frontend",
     "audit-rust",
@@ -106,6 +106,9 @@ class RunConfig:
     dataset_path_relative: str
     dataset_sha256: str
     dataset_git_revision: str | None
+    evaluation_anchor_revision: str | None
+    held_out_provenance_path_relative: str | None
+    held_out_provenance_sha256: str | None
     revision: GitRevision
     cases: tuple[EvalCase, ...]
 
@@ -236,6 +239,20 @@ def _repository_dataset_path(value: str) -> tuple[Path, str]:
         raise RunnerError("--dataset must resolve inside the current repository") from error
     if not resolved.is_file():
         raise RunnerError(f"dataset does not exist: {resolved}")
+    return resolved, relative.as_posix()
+
+
+def _repository_provenance_path(value: str) -> tuple[Path, str]:
+    candidate = Path(value)
+    if not candidate.is_absolute():
+        candidate = ROOT / candidate
+    resolved = candidate.resolve()
+    try:
+        relative = resolved.relative_to(ROOT.resolve())
+    except ValueError as error:
+        raise RunnerError("--provenance must resolve inside the current repository") from error
+    if not resolved.is_file():
+        raise RunnerError(f"provenance does not exist: {resolved}")
     return resolved, relative.as_posix()
 
 
@@ -736,7 +753,7 @@ def _extract_model_output(stdout: str, response_path: Path) -> tuple[str, dict[s
     return candidates[-1]
 
 
-def _extract_usage(stdout: str) -> tuple[int | None, int | None]:
+def _extract_usage(stdout: str, *, host: str) -> tuple[int | None, int | None]:
     values: list[object] = []
     whole = _json_value(stdout)
     if whole is not None:
@@ -747,7 +764,7 @@ def _extract_usage(stdout: str) -> tuple[int | None, int | None]:
             for line in stdout.splitlines()
             if (parsed := _json_value(line)) is not None
         )
-    usages: list[tuple[int, int]] = []
+    usages: list[tuple[int | None, int | None]] = []
 
     def visit(value: object) -> None:
         if isinstance(value, dict):
@@ -761,7 +778,32 @@ def _extract_usage(stdout: str) -> tuple[int | None, int | None]:
                 and not isinstance(output_tokens, bool)
                 and output_tokens >= 0
             ):
-                usages.append((input_tokens, output_tokens))
+                normalized_input_tokens = input_tokens
+                if host == "claude":
+                    cache_tokens = 0
+                    for field in (
+                        "cache_creation_input_tokens",
+                        "cache_read_input_tokens",
+                    ):
+                        value_for_field = value.get(field)
+                        if value_for_field is None:
+                            continue
+                        if (
+                            isinstance(value_for_field, bool)
+                            or not isinstance(value_for_field, int)
+                            or value_for_field < 0
+                        ):
+                            usages.append((None, None))
+                            break
+                        cache_tokens += value_for_field
+                    else:
+                        usages.append(
+                            (normalized_input_tokens + cache_tokens, output_tokens)
+                        )
+                else:
+                    # OpenAI cached-input fields are subsets of input_tokens and
+                    # must not be added a second time.
+                    usages.append((normalized_input_tokens, output_tokens))
             for child in value.values():
                 visit(child)
         elif isinstance(value, list):
@@ -845,7 +887,7 @@ def _invoke_case(
         if exit_code != 0:
             raise RunnerError(f"host exited with code {exit_code}")
         model_output, observations = _extract_model_output(stdout, response_path)
-        input_tokens, output_tokens = _extract_usage(stdout)
+        input_tokens, output_tokens = _extract_usage(stdout, host=config.host)
     except subprocess.TimeoutExpired as timeout:
         exit_code = 124
         stdout = (
@@ -1050,6 +1092,9 @@ def run_evaluation(config: RunConfig) -> RunOutcome:
             "held_out": config.held_out,
             "dataset_path": config.dataset_path_relative,
             "dataset_git_revision": config.dataset_git_revision,
+            "evaluation_anchor_revision": config.evaluation_anchor_revision,
+            "held_out_provenance_path": config.held_out_provenance_path_relative,
+            "held_out_provenance_sha256": config.held_out_provenance_sha256,
             "prompt_set_sha256": config.dataset_sha256,
             "case_set_sha256": _case_set_hash(config.cases),
             "case_ids": [case.case_id for case in config.cases],
@@ -1128,6 +1173,14 @@ def _build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--concurrency", type=_positive_integer, default=1)
     parser.add_argument("--output-dir", type=Path, default=ROOT / "eval-results" / "routing")
     parser.add_argument("--dataset", default=str(DEFAULT_DATASET))
+    parser.add_argument(
+        "--provenance",
+        help="Committed provenance JSON required for a held-out execution.",
+    )
+    parser.add_argument(
+        "--evaluation-anchor-revision",
+        help="Frozen candidate Skill revision shared by every held-out variant.",
+    )
     parser.add_argument("--case", action="append", default=[], dest="case_values")
     parser.add_argument("--cases", help="comma-separated explicit case ids")
     parser.add_argument("--skill-revision", "--skills-revision", default="HEAD")
@@ -1173,9 +1226,29 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
                 "--execute requires a versioned model identifier, not a mutable alias"
             )
     dataset_git_revision: str | None = None
+    evaluation_anchor_revision: str | None = None
+    provenance_relative: str | None = None
+    provenance_sha256: str | None = None
     if arguments.held_out:
+        if not arguments.provenance:
+            raise RunnerError("--held-out requires --provenance")
+        if not arguments.evaluation_anchor_revision:
+            raise RunnerError("--held-out requires --evaluation-anchor-revision")
         if dataset_path.resolve() == DEFAULT_DATASET.resolve():
             raise RunnerError("the public routing dataset cannot be marked held-out")
+        provenance_path, provenance_relative = _repository_provenance_path(
+            arguments.provenance
+        )
+        provenance_sha256 = _sha256_bytes(provenance_path.read_bytes())
+        evaluation_anchor_revision = _git_text(
+            [
+                "rev-parse",
+                "--verify",
+                f"{arguments.evaluation_anchor_revision}^{{commit}}",
+            ]
+        )
+        if re.fullmatch(r"[0-9a-f]{40}", evaluation_anchor_revision) is None:
+            raise RunnerError("--evaluation-anchor-revision must resolve to a full commit")
         dataset_git_revision = _committed_dataset_revision(
             dataset_path, dataset_relative
         )
@@ -1184,10 +1257,19 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
             dataset_path,
             revision.commit,
             {
+                "variant": arguments.variant,
                 "dataset_path": dataset_relative,
                 "dataset_git_revision": dataset_git_revision,
+                "evaluation_anchor_revision": evaluation_anchor_revision,
+                "held_out_provenance_path": provenance_relative,
+                "held_out_provenance_sha256": provenance_sha256,
+                "host_name": arguments.host,
             },
             bundle_path=Path("dry-run"),
+        )
+    elif arguments.provenance or arguments.evaluation_anchor_revision:
+        raise RunnerError(
+            "--provenance and --evaluation-anchor-revision are only valid with --held-out"
         )
     return RunConfig(
         host=arguments.host,
@@ -1203,6 +1285,9 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
         dataset_path_relative=dataset_relative,
         dataset_sha256=_sha256_bytes(dataset_path.read_bytes()),
         dataset_git_revision=dataset_git_revision,
+        evaluation_anchor_revision=evaluation_anchor_revision,
+        held_out_provenance_path_relative=provenance_relative,
+        held_out_provenance_sha256=provenance_sha256,
         revision=revision,
         cases=cases,
     )
@@ -1221,6 +1306,9 @@ def _dry_run_plan(config: RunConfig) -> dict[str, object]:
         "dataset_path": config.dataset_path_relative,
         "dataset_revision": config.dataset_sha256,
         "dataset_git_revision": config.dataset_git_revision,
+        "evaluation_anchor_revision": config.evaluation_anchor_revision,
+        "held_out_provenance_path": config.held_out_provenance_path_relative,
+        "held_out_provenance_sha256": config.held_out_provenance_sha256,
         "case_ids": [case.case_id for case in config.cases],
         "skill_revision": config.revision.commit,
         "skill_tree_sha": config.revision.skills_tree,
@@ -1252,7 +1340,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         }
         print(json.dumps(summary, ensure_ascii=False, indent=2, sort_keys=True))
         return 0 if outcome.succeeded else 1
-    except RunnerError as error:
+    except (RunnerError, ValueError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 2
 

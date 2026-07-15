@@ -12,6 +12,7 @@ maturity labels or treat format validation as proof of model behavior.
 - Behavior host and model: `Not verified`
 - Workflow host and model: `Not verified`
 - Comparative previous/no-Skill run: `Not verified`
+- Held-out provenance: `Not yet committed/evaluated`
 
 `Structure = verified` means the source package and repository consistency
 checks passed. It does not prove live model routing, authority behavior, or
@@ -83,7 +84,7 @@ the current source changes produce these deterministic reductions:
 Reproduce with
 `python3 scripts/measure-skill-footprint.py --baseline-ref abebbfc913753b5e67f43e49e47f2b3027391bf2`.
 This is a context-footprint measurement, not a model-behavior, quality, speed,
-or token-cost result. Those claims remain `not_verified` until the controlled
+or token-usage result. Those claims remain `not_verified` until the controlled
 comparison contract passes.
 
 ## Unverified Scope

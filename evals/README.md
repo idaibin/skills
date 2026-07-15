@@ -9,6 +9,9 @@ outcomes or efficiency requires matched `candidate` and `baseline` or
 ## Files
 
 - `routing.jsonl`: natural-language owner-selection and handoff cases.
+- `routing-held-out.jsonl`: post-freeze routing holdout with two cases per Skill.
+- `routing-held-out-provenance.json`: source revision, authorship, and host-use
+  record for the holdout.
 - `authority.jsonl`: mutation and external-action boundary cases.
 - `workflow-smoke.jsonl`: representative end-to-end task specifications.
 
@@ -34,7 +37,7 @@ metrics; scored observations come from the referenced raw evidence file:
 
 ```json
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "run_id": "UUID",
   "model": "exact model identifier",
   "host": "exact host and version",
@@ -46,7 +49,10 @@ metrics; scored observations come from the referenced raw evidence file:
     "variant": "candidate",
     "trial": 1,
     "dataset_path": "evals/routing-held-out.jsonl",
-    "dataset_git_revision": "commit that first introduced the held-out dataset",
+    "dataset_git_revision": "single post-anchor commit for dataset and provenance",
+    "evaluation_anchor_revision": "frozen candidate Skill commit shared by every variant",
+    "held_out_provenance_path": "evals/routing-held-out-provenance.json",
+    "held_out_provenance_sha256": "sha256 of the committed provenance record",
     "prompt_set_sha256": "same value as dataset_revision",
     "case_set_sha256": "sha256 of the ordered id/prompt-hash set",
     "case_ids": ["held-out-001", "held-out-002"],
@@ -86,11 +92,16 @@ metrics; scored observations come from the referenced raw evidence file:
 }
 ```
 
+Result schema `3` and routing-runner reviewer version `2` define the current
+cache-inclusive Claude token-accounting semantics. Earlier result bundles fail
+closed and cannot support a current token-efficiency claim.
+
 Every raw routing record contains the matching run, case, source-prompt hash,
-exact invocation prompt and hash, model, and host identifiers; the verbatim
-model output and transcript plus their hashes; the exit code; parsed
-`actual_owner` and `handoffs`; and the same metrics mirrored by the bundle. The
-loader rebuilds the invocation from the recorded template and dataset prompt.
+exact invocation prompt and hash, model, and host identifiers; verbatim stdout,
+stderr, model output, and a transcript rebuilt from stdout/stderr; the exit
+code; parsed `actual_owner` and `handoffs`; and the same metrics mirrored by the bundle. The
+loader rebuilds the invocation from the recorded template and dataset prompt,
+then recomputes cache-aware token usage from stdout before accepting metrics.
 Authority and workflow records additionally retain the execution trace,
 before/after manifests and diff, and verifier output. Evidence paths are
 relative to the bundle, cannot escape it, and are verified by hash. The scorer
@@ -134,12 +145,18 @@ randomized-interleaving fallback. Use the contract-defined minimum trials per
 condition and retain raw trace, duration, token counts when available, outcome
 grade, verifier output, and workspace diff.
 
-A held-out routing file must be committed after the evaluated Skill revision,
-must not exist at that revision, and must not reuse any case ID or prompt hash
-from repository eval datasets that existed at that revision. The check requires
-full Git history. This prevents copy/rename reuse but cannot prove that a human
-never saw the prompts while tuning; record independent/blind-set provenance and
-leave the claim unverified when that provenance is unavailable.
+A held-out routing file and its provenance record must be introduced together
+in one post-anchor commit, have no other post-anchor path history, and must not
+exist at the frozen candidate `evaluation_anchor_revision`. Captures must
+postdate that dataset/provenance commit. Candidate and baseline bundles use the
+anchor as their Skill revision; a previous bundle must use a strict ancestor.
+The dataset must not reuse any case ID or prompt hash from repository eval datasets
+that existed at the frozen revision. The provenance file binds the dataset hash,
+anchor/source revision, post-freeze independent authorship attestation,
+`used_for_tuning=false`, and intended hosts; the runner binds its path and hash
+to every bundle. The check requires full Git history. This prevents
+copy/rename reuse and fails closed when the attestation is absent, but it still
+cannot prove that a human never saw the prompts while tuning.
 
 Generate a comparison report only from matched, scored bundles:
 
@@ -159,6 +176,8 @@ python3 scripts/compare-skill-evals.py \
 The comparison passes only when every candidate trial passes the normal
 contract and either outcome improves by the contract threshold, or outcome
 does not regress while measured token use improves by the contract threshold.
+Claude input-token totals include cache-creation and cache-read input tokens
+when its CLI reports them; the verbatim host output retains that breakdown.
 Duration is reported but is not a gate because paired wall-clock samples remain
 vulnerable to host-load noise. Means, standard deviations, unavailable token
 data, revisions, pair timing, and evidence hashes remain visible in the report.
@@ -172,6 +191,7 @@ record references validated candidate/control evidence IDs and a self-hashed
 report. `claims` is a list of scoped verified assertions; each entry must match
 one replayed passing comparison's kind, dimension, host name/version, exact
 model, candidate/control revisions, dataset hash, and Skill inventory. Omit
-unverified claims. The current contract permits scoped routing outcome or token
-efficiency claims only; it rejects global “improvement” wording and
-authority/workflow claims.
+unverified claims. Routing claims also bind the evaluation anchor, dataset Git
+revision, and held-out provenance path/hash. The current contract permits
+scoped routing outcome or token efficiency claims only; it rejects global
+“improvement” wording and authority/workflow claims.

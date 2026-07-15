@@ -10,6 +10,7 @@ import tempfile
 import types
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 SCRIPT = Path(__file__).with_name("compare-skill-evals.py")
@@ -57,6 +58,10 @@ class FakeEvaluator(types.ModuleType):
     @staticmethod
     def discover_skill_names() -> set[str]:
         return {"repo-map", "repo-review"}
+
+    @staticmethod
+    def revision_is_ancestor(_ancestor, _descendant, *, strict=False):
+        return True
 
     @staticmethod
     def validate_routing_cases(cases, known_skills, *, routing_graph_path):
@@ -183,6 +188,9 @@ class CompareSkillEvalsTests(unittest.TestCase):
                 "pair_id": f"00000000-0000-4000-8000-{trial:012d}",
                 "dataset_path": str(self.dataset),
                 "dataset_git_revision": "9" * 40,
+                "evaluation_anchor_revision": "d" * 40,
+                "held_out_provenance_path": "evals/routing-held-out-provenance.json",
+                "held_out_provenance_sha256": "5" * 64,
                 "prompt_set_sha256": "a" * 64,
                 "case_set_sha256": "7" * 64,
                 "held_out": held_out,
@@ -303,6 +311,27 @@ class CompareSkillEvalsTests(unittest.TestCase):
         self.assertEqual(report["status"], "FAIL")
         self.assertIn("condition differs", report["errors"][0])
 
+    def test_host_name_mismatch_fails_even_when_host_version_matches(self) -> None:
+        candidates, controls = self.matched()
+        changed = json.loads(controls[0].read_text(encoding="utf-8"))
+        changed["run_config"]["host_name"] = "claude"
+        controls[0].write_text(json.dumps(changed), encoding="utf-8")
+
+        report = self.report(candidates, controls)
+
+        self.assertEqual(report["status"], "FAIL")
+        self.assertIn("condition differs", report["errors"][0])
+
+    def test_previous_control_must_be_candidate_ancestor(self) -> None:
+        candidates, controls = self.matched()
+        with mock.patch.object(
+            self.evaluator, "revision_is_ancestor", return_value=False
+        ):
+            report = self.report(candidates, controls)
+
+        self.assertEqual(report["status"], "FAIL")
+        self.assertIn("strict ancestor", report["errors"][0])
+
     def test_trial_pair_id_and_capture_window_are_enforced(self) -> None:
         candidates, controls = self.matched()
         changed = json.loads(controls[0].read_text(encoding="utf-8"))
@@ -422,6 +451,21 @@ class CompareSkillEvalsTests(unittest.TestCase):
         report = self.report(candidates, controls)
         self.assertEqual(report["status"], "FAIL")
         self.assertIn("held_out=true", report["errors"][0])
+
+    def test_non_held_out_condition_allows_null_provenance_fields(self) -> None:
+        path = self.write_bundle(variant="candidate", trial=1, held_out=False)
+        bundle = json.loads(path.read_text(encoding="utf-8"))
+        for field in (
+            "dataset_git_revision",
+            "evaluation_anchor_revision",
+            "held_out_provenance_path",
+            "held_out_provenance_sha256",
+        ):
+            bundle["run_config"][field] = None
+
+        condition = COMPARE._condition(bundle, path=path)
+
+        self.assertEqual((None, None, None, None), condition[-4:])
 
     def test_held_out_routing_uses_its_28_case_two_kind_coverage(self) -> None:
         evaluator = COMPARE.load_evaluator()

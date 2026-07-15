@@ -100,12 +100,20 @@ Contract verification and comparative improvement are separate experiments.
   rate, duration, and token mean plus variation; retain every trial rather than
   selecting the best run.
 - Changes to `name`, `description`, or discovery metadata require a held-out
-  routing set committed after the Skill revision, absent at that revision, and
-  disjoint by case ID and prompt hash from existing eval datasets. Also record
-  independent/blind-set provenance; Git chronology cannot prove human blindness.
+  routing set committed after the frozen candidate
+  `evaluation_anchor_revision`, absent at that revision, and
+  disjoint by case ID and prompt hash from existing eval datasets. Commit an
+  exact-hashed provenance record with the dataset that attests independent
+  post-freeze authorship and `used_for_tuning=false`; every bundle and claim
+  must bind the same anchor and provenance. Candidate and baseline use the
+  anchor revision; previous controls must be strict ancestors. Git chronology
+  and an attestation still cannot prove human blindness.
 - Grade task outcomes and authority violations independently from style. Store
   raw traces, verifier output, and workspace diffs so a score can be audited.
 - When a host does not expose token counts, record `null`; do not estimate them.
+  Claude normalized input totals include reported cache-creation and cache-read
+  input tokens; OpenAI cached-input detail remains a subset of `input_tokens`
+  and is not added again. Retain the verbatim host output for audit.
 - Report duration but do not use it as an improvement gate. Host-load noise is
   not controlled tightly enough; only outcome or non-regressing token
   efficiency can pass the current comparison gate.
@@ -126,7 +134,9 @@ Contract verification and comparative improvement are separate experiments.
   source revisions, or evidence selection no longer matches.
 - Every verified claim is scoped to one dimension, kind, host name/version,
   exact model, candidate/control revisions, dataset hash, and Skill inventory.
-  A single comparison cannot establish a global quality or collaboration claim.
+  Routing claims additionally bind the evaluation anchor, dataset commit, and
+  held-out provenance path/hash. A single comparison cannot establish a global
+  quality or collaboration claim.
 - Unchecked hosts, models, stacks, or runtime claims remain `not_verified`.
 - Update descriptions, contracts, fixtures, and regression tests when official
   standards change or recorded evidence demonstrates drift. Do not preserve a

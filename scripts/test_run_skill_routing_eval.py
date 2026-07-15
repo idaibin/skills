@@ -37,7 +37,9 @@ class RoutingRunnerTests(unittest.TestCase):
             RUNNER.EvalCase("case-two", "Route the second natural request."),
         )
 
-    def _config(self, root: Path, *, variant: str = "candidate"):
+    def _config(
+        self, root: Path, *, host: str = "codex", variant: str = "candidate"
+    ):
         dataset = root / "routing.jsonl"
         dataset.write_text(
             "\n".join(
@@ -48,7 +50,7 @@ class RoutingRunnerTests(unittest.TestCase):
             encoding="utf-8",
         )
         return RUNNER.RunConfig(
-            host="codex",
+            host=host,
             variant=variant,
             trial=2,
             pair_id="00000000-0000-4000-8000-000000000002",
@@ -61,6 +63,9 @@ class RoutingRunnerTests(unittest.TestCase):
             dataset_path_relative="evals/routing-held-out.jsonl",
             dataset_sha256=hashlib.sha256(dataset.read_bytes()).hexdigest(),
             dataset_git_revision="d" * 40,
+            evaluation_anchor_revision="a" * 40,
+            held_out_provenance_path_relative="evals/routing-held-out-provenance.json",
+            held_out_provenance_sha256="e" * 64,
             revision=self._revision(),
             cases=self._cases(),
         )
@@ -89,6 +94,23 @@ class RoutingRunnerTests(unittest.TestCase):
         for evaluator_key in ("expected_owner", "forbidden_owners", "high_risk", case["id"]):
             self.assertNotIn(evaluator_key, prompt)
         self.assertNotIn("correct owner", prompt.casefold())
+
+    def test_runner_schema_versions_match_the_repository_contract(self) -> None:
+        contract = json.loads(
+            (RUNNER.ROOT / "contracts" / "skill-validation.json").read_text(
+                encoding="utf-8"
+            )
+        )["behavior_eval"]
+
+        self.assertEqual(
+            contract["result_schema_version"], RUNNER.RESULT_SCHEMA_VERSION
+        )
+        self.assertEqual(
+            contract["raw_evidence_schema_version"], RUNNER.RAW_SCHEMA_VERSION
+        )
+        self.assertEqual(
+            contract["prompt_template_version"], RUNNER.PROMPT_TEMPLATE_VERSION
+        )
 
     def test_default_mode_does_not_invoke_any_model_cli(self) -> None:
         revision = self._revision()
@@ -157,6 +179,66 @@ class RoutingRunnerTests(unittest.TestCase):
             )
         )
 
+    def test_claude_usage_includes_cache_creation_and_read_tokens(self) -> None:
+        stdout = json.dumps(
+            {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": 20,
+                    "cache_read_input_tokens": 30,
+                    "output_tokens": 4,
+                }
+            }
+        )
+        self.assertEqual((60, 4), RUNNER._extract_usage(stdout, host="claude"))
+
+    def test_claude_usage_treats_missing_or_null_cache_tokens_as_zero(self) -> None:
+        missing = json.dumps(
+            {"usage": {"input_tokens": 10, "output_tokens": 4}}
+        )
+        null = json.dumps(
+            {
+                "usage": {
+                    "input_tokens": 10,
+                    "cache_creation_input_tokens": None,
+                    "cache_read_input_tokens": None,
+                    "output_tokens": 4,
+                }
+            }
+        )
+        self.assertEqual((10, 4), RUNNER._extract_usage(missing, host="claude"))
+        self.assertEqual((10, 4), RUNNER._extract_usage(null, host="claude"))
+
+    def test_claude_usage_fails_closed_for_invalid_cache_tokens(self) -> None:
+        for invalid in (True, -1, 1.5, "5"):
+            with self.subTest(invalid=invalid):
+                stdout = json.dumps(
+                    {
+                        "usage": {
+                            "input_tokens": 10,
+                            "cache_creation_input_tokens": invalid,
+                            "output_tokens": 4,
+                        }
+                    }
+                )
+                self.assertEqual(
+                    (None, None), RUNNER._extract_usage(stdout, host="claude")
+                )
+
+    def test_codex_usage_does_not_double_count_cached_input_subset(self) -> None:
+        stdout = json.dumps(
+            {
+                "usage": {
+                    "input_tokens": 10,
+                    "output_tokens": 4,
+                    "input_tokens_details": {"cached_tokens": 7},
+                    "cache_creation_input_tokens": 20,
+                    "cache_read_input_tokens": 30,
+                }
+            }
+        )
+        self.assertEqual((10, 4), RUNNER._extract_usage(stdout, host="codex"))
+
     def test_dataset_contract_selects_held_out_validator(self) -> None:
         validator = mock.Mock()
         validator.validate_held_out_routing_cases.return_value = []
@@ -172,7 +254,63 @@ class RoutingRunnerTests(unittest.TestCase):
         )
         validator.validate_routing_cases.assert_not_called()
 
-    def test_success_writes_schema_v2_bundle_and_unique_hashed_raw_v1(self) -> None:
+    def test_held_out_preflight_binds_variant(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            dataset = root / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"held-out-one","prompt":"Route this request."}\n',
+                encoding="utf-8",
+            )
+            provenance = root / "provenance.json"
+            provenance.write_text("{}\n", encoding="utf-8")
+            validator = mock.Mock()
+            arguments = RUNNER._build_parser().parse_args(
+                [
+                    "--host",
+                    "codex",
+                    "--variant",
+                    "previous",
+                    "--model",
+                    "gpt-5-test",
+                    "--held-out",
+                    "--dataset",
+                    str(dataset),
+                    "--provenance",
+                    str(provenance),
+                    "--evaluation-anchor-revision",
+                    "anchor",
+                    "--skill-revision",
+                    "previous",
+                ]
+            )
+            with mock.patch.object(
+                RUNNER,
+                "_repository_dataset_path",
+                return_value=(dataset, "evals/held-out.jsonl"),
+            ), mock.patch.object(
+                RUNNER,
+                "_repository_provenance_path",
+                return_value=(provenance, "evals/provenance.json"),
+            ), mock.patch.object(
+                RUNNER, "_validate_dataset_contract"
+            ), mock.patch.object(
+                RUNNER,
+                "resolve_revision",
+                return_value=RUNNER.GitRevision("b" * 40, "c" * 40),
+            ), mock.patch.object(
+                RUNNER, "_git_text", return_value="a" * 40
+            ), mock.patch.object(
+                RUNNER, "_committed_dataset_revision", return_value="d" * 40
+            ), mock.patch.object(
+                RUNNER, "_contract_validator_module", return_value=validator
+            ):
+                RUNNER._configuration_from_args(arguments)
+
+            run_config = validator._validate_held_out_provenance.call_args.args[2]
+            self.assertEqual("previous", run_config["variant"])
+
+    def test_success_writes_schema_v3_bundle_and_unique_hashed_raw_v2(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             config = self._config(root)
@@ -228,13 +366,17 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertIsNotNone(outcome.bundle_path)
             bundle = json.loads(outcome.bundle_path.read_text(encoding="utf-8"))
             uuid.UUID(bundle["run_id"])
-            self.assertEqual(2, bundle["schema_version"])
+            self.assertEqual(3, bundle["schema_version"])
             self.assertTrue(bundle["complete"])
             self.assertEqual("evals/routing-held-out.jsonl", bundle["run_config"]["dataset_path"])
             self.assertEqual(config.pair_id, bundle["run_config"]["pair_id"])
             self.assertEqual(
                 config.dataset_git_revision,
                 bundle["run_config"]["dataset_git_revision"],
+            )
+            self.assertEqual(
+                config.evaluation_anchor_revision,
+                bundle["run_config"]["evaluation_anchor_revision"],
             )
             self.assertEqual("a" * 40, bundle["skill_revision"])
             self.assertEqual("b" * 40, bundle["skill_tree_sha"])
@@ -256,6 +398,7 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertTrue(bundle["run_config"]["skills_installed"])
             self.assertRegex(bundle["run_config"]["host_config_sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual("deterministic", bundle["adjudication"]["method"])
+            self.assertEqual("2", bundle["adjudication"]["reviewer_version"])
             self.assertRegex(bundle["adjudication"]["config_sha256"], r"^[0-9a-f]{64}$")
 
             evidence_paths = [item["raw_evidence"] for item in bundle["results"]]
@@ -269,7 +412,7 @@ class RoutingRunnerTests(unittest.TestCase):
                     hashlib.sha256(raw_path.read_bytes()).hexdigest(),
                 )
                 raw = json.loads(raw_path.read_text(encoding="utf-8"))
-                self.assertEqual(1, raw["schema_version"])
+                self.assertEqual(2, raw["schema_version"])
                 self.assertEqual(0, raw["exit_code"])
                 self.assertTrue(raw["stdout"])
                 self.assertIn("stderr", raw)
@@ -293,6 +436,66 @@ class RoutingRunnerTests(unittest.TestCase):
                 baseline_bundle["run_config"]["skill_fixture_sha256"]
             )
             self.assertFalse(baseline_bundle["run_config"]["skills_installed"])
+
+    def test_claude_bundle_records_normalized_cache_inclusive_tokens(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = self._config(root, host="claude")
+            invocation = 0
+
+            def fake_subprocess(command, **_kwargs):
+                nonlocal invocation
+                if command[:2] == ["git", "init"]:
+                    return subprocess.CompletedProcess(command, 0, "", "")
+                if command == ["claude", "--version"]:
+                    return subprocess.CompletedProcess(
+                        command, 0, "claude-code 9.9\n", ""
+                    )
+                owner = RUNNER.OWNER_ENUM[invocation]
+                invocation += 1
+                return subprocess.CompletedProcess(
+                    command,
+                    0,
+                    json.dumps(
+                        {
+                            "structured_output": {
+                                "actual_owner": owner,
+                                "handoffs": [],
+                            },
+                            "usage": {
+                                "input_tokens": 10,
+                                "cache_creation_input_tokens": 20,
+                                "cache_read_input_tokens": 30,
+                                "output_tokens": 4,
+                            },
+                        }
+                    ),
+                    "",
+                )
+
+            with mock.patch.object(
+                RUNNER,
+                "_materialize_skill_fixture",
+                side_effect=self._fake_fixture,
+            ), mock.patch.object(
+                RUNNER.subprocess, "run", side_effect=fake_subprocess
+            ), mock.patch.object(RUNNER, "_validate_written_bundle"):
+                outcome = RUNNER.run_evaluation(config)
+
+            self.assertTrue(outcome.succeeded)
+            bundle = json.loads(outcome.bundle_path.read_text(encoding="utf-8"))
+            self.assertEqual(
+                [60, 60],
+                [result["metrics"]["input_tokens"] for result in bundle["results"]],
+            )
+            raw = json.loads(
+                (outcome.run_dir / bundle["results"][0]["raw_evidence"]).read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(60, raw["metrics"]["input_tokens"])
+            self.assertIn('"cache_creation_input_tokens": 20', raw["stdout"])
+            self.assertIn('"cache_read_input_tokens": 30', raw["stdout"])
 
     def test_failed_case_retains_raw_but_never_writes_complete_bundle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -461,6 +664,9 @@ class RoutingRunnerTests(unittest.TestCase):
                 dataset_path_relative=dataset.name,
                 dataset_sha256=hashlib.sha256(dataset.read_bytes()).hexdigest(),
                 dataset_git_revision=None,
+                evaluation_anchor_revision=None,
+                held_out_provenance_path_relative=None,
+                held_out_provenance_sha256=None,
                 revision=revision,
                 cases=(RUNNER.EvalCase("integration-one", prompt),),
             )
