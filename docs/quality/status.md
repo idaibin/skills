@@ -12,7 +12,7 @@ maturity labels or treat format validation as proof of model behavior.
 - Behavior host and model: `Not verified`
 - Workflow host and model: `Not verified`
 - Comparative previous/no-Skill run: `Not verified`
-- Held-out provenance: `Not yet committed/evaluated`
+- Held-out provenance: `Committed and hash-bound; live evaluation not verified`
 
 `Structure = verified` means the source package and repository consistency
 checks passed. It does not prove live model routing, authority behavior, or
