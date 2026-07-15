@@ -5,7 +5,7 @@ maturity labels or treat format validation as proof of model behavior.
 
 ## Evidence Basis
 
-- Recorded: `2026-07-15`
+- Recorded: `2026-07-16`
 - Evidence revision: the commit containing this file; resolve with
   `git log -1 --format=%H -- docs/quality/status.md`
 - Structure host: local repository validator on macOS
