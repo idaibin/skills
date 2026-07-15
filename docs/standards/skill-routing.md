@@ -102,7 +102,9 @@ measured Capability Snapshot and same-ID Handoff Result. An interruption with
 uncertain side effects is `ambiguous` and must stop for reconciliation rather
 than trigger a replacement operation.
 
-Repository validation rejects drift between the two published protocol copies.
+`protocols/browser-operation-v1.md` is the repository authority;
+`scripts/sync-shared-protocols.py` generates both published copies. Repository
+validation rejects any copy that differs from that source.
 Behavior evals must cover at least normal completion, failure before submit,
 duplicate-submit prevention, ambiguous interruption, stale capability evidence,
 and unauthorized handoff.

@@ -62,6 +62,33 @@ npx skills add https://github.com/idaibin/aicraft \
   --skill repo-map code-planner diagnose repo-review repo-delivery
 ```
 
+## Installation Bundles
+
+Install the Core Read-only bundle for mapping, planning, diagnosis, and review
+without implementation or Git delivery ownership:
+
+```bash
+npx skills add https://github.com/idaibin/aicraft \
+  --skill repo-map code-planner diagnose repo-review
+```
+
+Install the Engineering bundle for the normal implementation lifecycle:
+
+```bash
+npx skills add https://github.com/idaibin/aicraft \
+  --skill repo-map code-planner diagnose repo-review repo-delivery implement-rust implement-frontend
+```
+
+Install the Full bundle with the repository's normal all-skills command:
+
+```bash
+npx skills add https://github.com/idaibin/aicraft
+```
+
+Bundles describe install scope only. They do not imply behavior or workflow
+verification. Current evidence is recorded in
+[`docs/quality/status.md`](docs/quality/status.md).
+
 Add bounded domain-audit specialists when the repository work needs them:
 
 ```bash
@@ -171,15 +198,21 @@ Restart long-running agent apps afterward and use `npx skills list` or
 
 ## Reproducible Project Installs
 
-The `skills` CLI also exposes `skills-lock.json` restore support through `skills experimental_install`. Treat it as experimental for now; prefer the standard install flow for normal use.
+The `skills` CLI exposes `skills-lock.json` restore support through the command
+currently named `skills experimental_install`. This is an external CLI command
+name, not an AICraft maturity label. Use the standard `skills add` flow for
+normal installs; lockfile restore behavior is not verified by this repository.
 
 ## Maintainer Validation
 
 Use this only when developing this repository:
 
 ```bash
+python3 scripts/sync-shared-protocols.py --check
 python3 scripts/validate-skills.py
 python3 scripts/test_validate_skills.py
+python3 scripts/eval-skill-contracts.py --validate-only
+git diff --check
 ```
 
 Useful targeted checks:

@@ -89,6 +89,11 @@ References must be self-contained when the published skill needs them. Local `pr
 
 When a skill needs prompt-derived templates, maintain those templates inside that skill package before publishing. Do not make published skills depend on repository-level `prompts/`.
 
+When multiple published skills require an identical protocol, keep one
+repository source under `protocols/` and generate the self-contained package
+copies with `scripts/sync-shared-protocols.py`. The generated copies remain part
+of each published package; they are not independent authoring surfaces.
+
 ## Agent Metadata
 
 Each skill should include `agents/openai.yaml` with:
@@ -160,6 +165,27 @@ When a skill boundary changes, add pairwise trigger/non-trigger cases against ev
 
 Every published package must score at least 8 for every quality case. Authorization, mutation, external-action, and evidence-integrity violations are hard failures and cannot be offset by other scores.
 
+## Status And Evidence
+
+Do not assign subjective maturity labels to public skills. Keep three concerns
+separate:
+
+- functional category: what capability and authority the skill owns;
+- release state: `available`, `hidden`, or `removed`;
+- validation state: `verified` or `not_verified` independently for structure,
+  behavior, and workflow.
+
+Structure verification covers repository/package consistency only. Behavior
+verification requires real natural-language routing, authority, stop, and
+handoff results bound to a model, host, committed Skill revision, dataset, and
+raw result. Workflow verification additionally requires end-to-end repository
+task evidence. Do not infer either from Markdown eval tables or compare against
+an unskilled-model baseline as a prerequisite.
+
+Record the current inventory and evidence boundary in
+`docs/quality/status.md`. A public install bundle describes scope only and must
+not imply behavior or workflow verification.
+
 ## Distribution Rules
 
 End-user installs and updates should use the standard skills.sh CLI flow:
@@ -181,8 +207,10 @@ maintain provider-specific update instructions inside individual packages.
 Before considering a skill package ready:
 
 ```bash
+python3 scripts/sync-shared-protocols.py --check
 python3 scripts/validate-skills.py
 python3 scripts/test_validate_skills.py
+python3 scripts/eval-skill-contracts.py --validate-only
 rg -n "^name:|^description: Use when" skills/<skill-name>/SKILL.md
 find skills/<skill-name> -maxdepth 3 -type f | sort
 rg -n "Triggers include" skills/<skill-name>/SKILL.md

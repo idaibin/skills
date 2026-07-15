@@ -1,0 +1,44 @@
+{
+  "specialized_evals": {
+    "audit-rust": {
+      "profile_section": "## Profile Selection Eval",
+      "required_profiles": [
+        "Architecture/baseline",
+        "SQLite",
+        "Concurrency/runtime",
+        "Unsafe/FFI"
+      ],
+      "out_of_scope_term": "Out of scope",
+      "scenario_section": "## Scenario Eval",
+      "scenario_end_section": "## Quality Eval",
+      "minimum_scenarios": 8,
+      "scenario_fields": [
+        "Input",
+        "Investigate",
+        "Correct",
+        "Reject",
+        "Acceptable scope",
+        "Validation",
+        "Final report"
+      ]
+    }
+  },
+  "cross_artifact_terms": [
+    {"skill": "repo-review", "surface": "SKILL.md", "section": "## Hard Rules", "terms": ["review basis", "resolved SHAs", "read-only"]},
+    {"skill": "repo-review", "surface": "references/usage.md", "section": "## Examples", "terms": ["Resolve both endpoints", "SHAs"]},
+    {"skill": "repo-map", "surface": "SKILL.md", "section": "## Overview", "terms": ["does not judge", "defects"]},
+    {"skill": "repo-map", "surface": "references/usage.md", "section": "## Triggers", "terms": ["immutable repository/range/PR review", "repo-review"]},
+    {"skill": "audit-security", "surface": "SKILL.md", "section": "## Modes", "terms": ["Scoped specialist subreview", "coordinator retains", "severity"]},
+    {"skill": "audit-security", "surface": "references/usage.md", "section": "## Output", "terms": ["delegated path/diff boundary", "without editing", "coordinator"]},
+    {"skill": "ops-browser", "surface": "SKILL.md", "section": "## Modes", "terms": ["diagnose", "already-isolated", "browser-layer"]},
+    {"skill": "ops-browser", "surface": "agents/openai.default_prompt", "section": null, "terms": ["only after $diagnose delegation", "before browser operation", "final cause/fix"]},
+    {"skill": "ops-browser", "surface": "references/usage.md", "section": "## Browser Debug Evidence", "terms": ["diagnose", "before browser operation", "retain referenced"]},
+    {"skill": "ops-browser", "surface": "SKILL.md", "section": "## Hard Rules", "terms": ["operation_id", "ambiguous", "prior evidence"]},
+    {"skill": "chatgpt-review", "surface": "SKILL.md", "section": "## Browser Handoff", "terms": ["operation_id", "operation ledger", "ambiguous"]},
+    {"skill": "chatgpt-review", "surface": "agents/openai.default_prompt", "section": null, "terms": ["browser-operation/v1", "operation-ledger", "operation_id", "ambiguous"]},
+    {"skill": "ops-client", "surface": "SKILL.md", "section": "## Modes", "terms": ["diagnose", "already-isolated", "client-layer"]},
+    {"skill": "ops-client", "surface": "SKILL.md", "section": "## Hard Rules", "terms": ["Retain screenshots", "handoff owner", "removed disposable state"]},
+    {"skill": "ops-client", "surface": "agents/openai.default_prompt", "section": null, "terms": ["only after $diagnose delegation", "before client operation", "retain referenced evidence"]},
+    {"skill": "ops-client", "surface": "references/usage.md", "section": "## Operation Notes", "terms": ["diagnose", "already-isolated", "retain referenced"]}
+  ]
+}

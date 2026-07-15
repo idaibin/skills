@@ -28,6 +28,12 @@ Keep `SKILL.md`, `agents/openai.yaml`, `references/usage.md`, `references/eval-c
 
 For add, reuse, move, rename, or delete operations, update the source package, README skill table, `INSTALL.md` package list, `skills.sh.json`, local links, tests, and stale-name checks in the same task.
 
+Shared cross-skill protocols are authored under `protocols/` and synchronized
+into self-contained published packages with
+`python3 scripts/sync-shared-protocols.py`. Do not hand-edit a generated copy.
+Skill-specific validation thresholds and cross-artifact term contracts belong in
+`contracts/skill-validation.json`, not as new prose literals in the validator.
+
 Before review or delivery, run from the repository root:
 
 ```bash

@@ -7,7 +7,7 @@ description: Use when the user asks to prepare a local ChatGPT review package or
 
 ## Overview
 
-Coordinate independent ChatGPT review of repository work. Codex collects repository evidence, verifies findings, applies approved fixes, and runs validation; a standard ChatGPT chat or Project provides the separate review surface. An authorized review may also ask ChatGPT to inspect supplied live pages through its own available browser. Keep the browser used to transport the review package distinct from the reviewer-side browser used to inspect the target site. This is experimental browser/UI orchestration, not an official ChatGPT API integration.
+Coordinate independent ChatGPT review of repository work. Codex collects repository evidence, verifies findings, applies approved fixes, and runs validation; a standard ChatGPT chat or Project provides the separate review surface. An authorized review may also ask ChatGPT to inspect supplied live pages through its own available browser. Keep the browser used to transport the review package distinct from the reviewer-side browser used to inspect the target site. Browser/UI execution depends on host-provided capabilities and is not an official ChatGPT API integration.
 
 ## Surfaces
 
@@ -158,7 +158,7 @@ If browser state, account identity, workspace, tab identity, upload/composer sta
 
 - Keep Codex as executor and ChatGPT as external reviewer.
 - Treat prepare/build/draft/package wording as Package-only; it never authorizes navigation, conversation creation, upload, or send.
-- Mark the review workflow `Experimental` in reports whenever browser UI automation is used.
+- Report browser/UI execution as host-provided automation with exact capability evidence and gaps; never describe it as an official ChatGPT API integration.
 - Never send secrets, credentials, private keys, tokens, browser profile data, private customer data, or unrelated dirty-tree content.
 - Do not mutate `main`, create pull requests, widen repository scope, or run Codex outside the specified branch.
 - Do not stage, commit, or push directly; use `repo-delivery` as the sole Git mutation owner after local verification.
@@ -183,7 +183,7 @@ If browser state, account identity, workspace, tab identity, upload/composer sta
 
 ## Output Contract
 
-Report `Experimental` status when applicable, repository, branch, authorization basis, `review-package.md` path and multipart integrity when applicable, Capability Snapshot ID and gaps, Standard Chat/Project/Package-only surface, verified account workspace category or `Not verified`, transport browser route, reviewer browser surface and target evidence when used, operation IDs and terminal states, sanitized conversation attribution, input/output mode, artifact visibility, authorized/completed rounds, external-response `review.md` path or `Not created`, local Codex mode and exact command shape when used, locally verified findings, fixes, validation, commits, and all `Not found`/`Not verified` gaps.
+Report repository, branch, authorization basis, `review-package.md` path and multipart integrity when applicable, Capability Snapshot ID and gaps, Standard Chat/Project/Package-only surface, verified account workspace category or `Not verified`, transport browser route, reviewer browser surface and target evidence when used, operation IDs and terminal states, sanitized conversation attribution, input/output mode, artifact visibility, authorized/completed rounds, external-response `review.md` path or `Not created`, local Codex mode and exact command shape when used, locally verified findings, fixes, validation, commits, and all `Not found`/`Not verified` gaps.
 
 ## References
 

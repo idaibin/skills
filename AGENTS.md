@@ -40,8 +40,10 @@ When editing or adding skill packages under `skills/`, also read `skills/AGENTS.
 Before reviewing, committing, or publishing skill changes, run:
 
 ```bash
+python3 scripts/sync-shared-protocols.py --check
 python3 scripts/validate-skills.py
 python3 scripts/test_validate_skills.py
+python3 scripts/eval-skill-contracts.py --validate-only
 ```
 
 Also run `git diff --check` and report any runtime or external behavior that was not verified.

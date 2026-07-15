@@ -3,7 +3,7 @@
   "notGrouped": "bottom",
   "groupings": [
     {
-      "title": "Repository Engineering",
+      "title": "Core Engineering",
       "description": "Independent but interoperable skills for current project mapping, planning, diagnosis, local and immutable review, and Git delivery.",
       "skills": [
         "repo-map",
@@ -29,7 +29,7 @@
       ]
     },
     {
-      "title": "Audit",
+      "title": "Specialist Audit",
       "description": "Read-only specialist skills for frontend, Rust, and scoped security assessment.",
       "skills": [
         "audit-frontend",
@@ -38,7 +38,7 @@
       ]
     },
     {
-      "title": "Operations",
+      "title": "Runtime Operations",
       "description": "Skills for browser and desktop-client operation with state-safe evidence collection.",
       "skills": [
         "ops-browser",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "title": "Writing",
+      "title": "Writing Extension",
       "description": "Skills for personal technical writing, editing, and publication-ready prose.",
       "skills": [
         "human-writing"

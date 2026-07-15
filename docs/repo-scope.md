@@ -14,6 +14,9 @@ It defines how AI-assisted workflows should be structured. It does not own the g
 - Shared automation standards.
 - Shared content quality standards.
 - Shared GitHub branch and commit rules.
+- Deterministic validation and synchronization scripts.
+- Canonical cross-skill protocols and validation contracts.
+- Version-bound quality status and historical validation evidence.
 - Task registry entries that point to concrete repository task specs.
 
 ## Does Not Own
@@ -51,12 +54,18 @@ Automation-standard maintenance may modify:
 
 ```text
 docs/standards/**
+docs/quality/**
+docs/history/**
 docs/templates/**
 docs/task-registry.md
 prompts/**
 skills/**
+scripts/**
+protocols/**
+contracts/**
 workflows/**
 README.md
+INSTALL.md
 ```
 
 It must not write generated blog posts, feed entries, or production content for downstream repositories.

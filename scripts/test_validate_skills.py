@@ -22,6 +22,7 @@ markdown_table_rows = VALIDATOR.markdown_table_rows
 validate_eval_cases = VALIDATOR.validate_eval_cases
 validate_local_links = VALIDATOR.validate_local_links
 validate_repository_indexes = VALIDATOR.validate_repository_indexes
+validate_quality_status = VALIDATOR.validate_quality_status
 validate_routing_graph = VALIDATOR.validate_routing_graph
 validate_skill_invocations = VALIDATOR.validate_skill_invocations
 validate_specialized_eval_contracts = VALIDATOR.validate_specialized_eval_contracts
@@ -36,6 +37,16 @@ if BEHAVIOR_SPEC is None or BEHAVIOR_SPEC.loader is None:
 BEHAVIOR_EVAL = importlib.util.module_from_spec(BEHAVIOR_SPEC)
 sys.modules[BEHAVIOR_SPEC.name] = BEHAVIOR_EVAL
 BEHAVIOR_SPEC.loader.exec_module(BEHAVIOR_EVAL)
+
+CONTRACT_EVAL_PATH = Path(__file__).with_name("eval-skill-contracts.py")
+CONTRACT_EVAL_SPEC = importlib.util.spec_from_file_location(
+    "eval_skill_contracts", CONTRACT_EVAL_PATH
+)
+if CONTRACT_EVAL_SPEC is None or CONTRACT_EVAL_SPEC.loader is None:
+    raise RuntimeError(f"Cannot load contract eval: {CONTRACT_EVAL_PATH}")
+CONTRACT_EVAL = importlib.util.module_from_spec(CONTRACT_EVAL_SPEC)
+sys.modules[CONTRACT_EVAL_SPEC.name] = CONTRACT_EVAL
+CONTRACT_EVAL_SPEC.loader.exec_module(CONTRACT_EVAL)
 
 
 VALID_EVAL = """# Eval Cases
@@ -150,9 +161,43 @@ class ValidateSkillsTests(unittest.TestCase):
         self.assertTrue(any("missing skill beta" in error for error in errors))
         self.assertTrue(any("unknown skill gamma" in error for error in errors))
 
+    def test_quality_status_uses_verifiable_axes_and_complete_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            status = root / "docs" / "quality" / "status.md"
+            status.parent.mkdir(parents=True)
+            status.write_text(
+                "## Skill Status\n\n"
+                "| Skill | Functional category | Release | Structure | Behavior | Workflow |\n"
+                "| --- | --- | --- | --- | --- | --- |\n"
+                "| `alpha` | Core Engineering | available | verified | not_verified | not_verified |\n"
+                "| `beta` | Runtime Operations | hidden | verified | not_verified | not_verified |\n",
+                encoding="utf-8",
+            )
+            packages = [
+                VALIDATOR.SkillPackage(name="alpha", path=root / "skills" / "alpha"),
+                VALIDATOR.SkillPackage(name="beta", path=root / "skills" / "beta"),
+            ]
+
+            self.assertEqual([], validate_quality_status(root, packages))
+
+            status.write_text(
+                status.read_text(encoding="utf-8").replace(
+                    "Runtime Operations | hidden | verified",
+                    "Experimental | beta | partial",
+                ),
+                encoding="utf-8",
+            )
+            errors = validate_quality_status(root, packages)
+
+        self.assertTrue(any("unknown category" in error for error in errors))
+        self.assertTrue(any("unknown release state" in error for error in errors))
+        self.assertTrue(any("unknown structure state" in error for error in errors))
+
     def test_shared_browser_operation_protocol_must_not_drift(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
+            source_relative = Path("protocols/browser-operation-v1.md")
             relative_paths = (
                 Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
                 Path("skills/ops-browser/references/browser-operation-protocol.md"),
@@ -164,6 +209,9 @@ class ValidateSkillsTests(unittest.TestCase):
                 / "references"
                 / "browser-operation-protocol.md"
             ).read_text(encoding="utf-8")
+            source_path = root / source_relative
+            source_path.parent.mkdir(parents=True)
+            source_path.write_text(source, encoding="utf-8")
             for relative in relative_paths:
                 path = root / relative
                 path.parent.mkdir(parents=True)
@@ -174,7 +222,7 @@ class ValidateSkillsTests(unittest.TestCase):
             (root / relative_paths[1]).write_text(source + "drift\n", encoding="utf-8")
             errors = validate_shared_browser_operation_protocol(root)
 
-        self.assertTrue(any("must be identical" in error for error in errors))
+        self.assertTrue(any("generated browser-operation protocol is stale" in error for error in errors))
 
     def test_shared_browser_operation_protocol_requires_structured_fields(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -187,6 +235,9 @@ class ValidateSkillsTests(unittest.TestCase):
                 / "browser-operation-protocol.md"
             ).read_text(encoding="utf-8")
             changed = source.replace("round_id: <same request round id>\n", "", 1)
+            protocol_source = root / "protocols" / "browser-operation-v1.md"
+            protocol_source.parent.mkdir(parents=True)
+            protocol_source.write_text(changed, encoding="utf-8")
             for relative in (
                 Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
                 Path("skills/ops-browser/references/browser-operation-protocol.md"),
@@ -216,6 +267,9 @@ class ValidateSkillsTests(unittest.TestCase):
                 "retry_policy: <always>",
                 1,
             )
+            protocol_source = root / "protocols" / "browser-operation-v1.md"
+            protocol_source.parent.mkdir(parents=True)
+            protocol_source.write_text(changed, encoding="utf-8")
             for relative in (
                 Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
                 Path("skills/ops-browser/references/browser-operation-protocol.md"),
@@ -412,6 +466,71 @@ class ValidateSkillsTests(unittest.TestCase):
         self.assertFalse(result.passed)
         self.assertTrue(result.failures)
 
+    def test_skill_contract_datasets_and_perfect_scores_pass(self) -> None:
+        self.assertEqual([], CONTRACT_EVAL.validate_datasets())
+
+        routing = CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.ROUTING_DATA)
+        authority = CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.AUTHORITY_DATA)
+        workflow = CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.WORKFLOW_DATA)
+        self.assertEqual(60, len(routing))
+        self.assertGreaterEqual(len(authority), 12)
+        self.assertEqual(12, len(workflow))
+
+        routing_bundle = {
+            "results": [
+                {
+                    "id": case["id"],
+                    "actual_owner": case["expected_owner"],
+                    "handoffs": [],
+                }
+                for case in routing
+            ]
+        }
+        authority_bundle = {
+            "results": [
+                {
+                    "id": case["id"],
+                    "actual_owner": case["expected_owner"],
+                    "observed_actions": list(case["required_actions"]),
+                }
+                for case in authority
+            ]
+        }
+        workflow_bundle = {
+            "results": [
+                {
+                    "id": case["id"],
+                    "route": list(case["expected_route"]),
+                    "observed_evidence": list(case["required_evidence"]),
+                    "observed_actions": [],
+                }
+                for case in workflow
+            ]
+        }
+
+        self.assertTrue(CONTRACT_EVAL.score_routing(routing, routing_bundle).passed)
+        self.assertTrue(CONTRACT_EVAL.score_authority(authority, authority_bundle).passed)
+        self.assertTrue(CONTRACT_EVAL.score_workflow(workflow, workflow_bundle).passed)
+
+        risky = next(
+            case for case in routing if case["high_risk"] and case["forbidden_owners"]
+        )
+        risky_result = next(
+            result for result in routing_bundle["results"] if result["id"] == risky["id"]
+        )
+        risky_result["actual_owner"] = risky["forbidden_owners"][0]
+        self.assertFalse(CONTRACT_EVAL.score_routing(routing, routing_bundle).passed)
+
+        authority_bundle["results"][0]["observed_actions"].append(
+            authority[0]["forbidden_actions"][0]
+        )
+        self.assertFalse(
+            CONTRACT_EVAL.score_authority(authority, authority_bundle).passed
+        )
+
+        workflow_bundle["results"][0]["observed_evidence"] = []
+        self.assertFalse(CONTRACT_EVAL.score_workflow(workflow, workflow_bundle).passed)
+
     def test_local_link_validation_rejects_missing_targets(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             package = Path(temp_dir) / "sample-skill"
@@ -466,6 +585,28 @@ class ValidateSkillsTests(unittest.TestCase):
             "audit-rust", ("- **Validation:**", "- **Removed validation:**")
         )
         self.assertTrue(any("scenario 1 missing field 'Validation'" in error for error in errors))
+
+    def test_audit_rust_allows_scenario_growth_or_reduction_above_minimum(self) -> None:
+        path = (
+            VALIDATOR_PATH.parents[1]
+            / "skills"
+            / "audit-rust"
+            / "references"
+            / "eval-cases.md"
+        )
+        original = path.read_text(encoding="utf-8")
+        changed = re.sub(
+            r"\n### 22\..*?(?=\n## Quality Eval)",
+            "\n",
+            original,
+            count=1,
+            flags=re.DOTALL,
+        )
+        self.assertNotEqual(original, changed)
+
+        errors = validate_specialized_eval_contracts("audit-rust", changed, label="test")
+
+        self.assertFalse(any("Scenario Eval must contain" in error for error in errors))
 
     def test_audit_rust_requires_out_of_scope_profile_rule(self) -> None:
         path = (

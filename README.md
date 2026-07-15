@@ -10,6 +10,14 @@ AICraft turns repeated AI working habits into durable assets with clear boundari
 
 The active content should help an agent start with real project context, preserve local changes, follow exact tool and command constraints, verify work, and report results clearly.
 
+AICraft is currently in a validation phase rather than a public-skill expansion
+phase. Quality claims are evidence-based: functional category describes
+ownership, release status describes availability, and validation status records
+structure, behavior, and workflow evidence separately. See
+[`docs/quality/status.md`](docs/quality/status.md) for the current record.
+The evidence roadmap is in
+[`docs/quality/validation-plan.md`](docs/quality/validation-plan.md).
+
 ## Repository Boundary
 
 ```text
@@ -40,8 +48,15 @@ docs/repo-scope.md
 - `docs/`
   - repository maintenance standards and contributor-facing references
   - shared automation standards under `docs/standards/`
+  - verifiable Skill status under `docs/quality/`
+  - version-bound historical evidence under `docs/history/`
   - reusable templates under `docs/templates/`
   - concrete task index in `docs/task-registry.md`
+
+- `scripts/`, `protocols/`, and `contracts/`
+  - deterministic validation and synchronization tools
+  - canonical cross-skill protocol sources
+  - data-driven validation contracts
 
 ## Shared Standards
 
@@ -107,6 +122,39 @@ rename migration, see [`INSTALL.md`](INSTALL.md).
 | `ops-client` | Verifying or operating specified Tauri/Electron/native desktop clients with launch-command, runtime-source, CGWindowID, real-window, and Accessibility evidence. |
 | `human-writing` | Drafting, rewriting, diagnosing, and adapting source-grounded human-quality writing while preserving facts, technical meaning, disclosures, and voice. |
 
+### Functional Categories
+
+- **Core Engineering:** `repo-map`, `code-planner`, `diagnose`, `repo-review`, `repo-delivery`
+- **Implementation:** `implement-rust`, `implement-frontend`
+- **Specialist Audit:** `audit-rust`, `audit-frontend`, `audit-security`
+- **Runtime Operations:** `ops-browser`, `ops-client`
+- **External Review:** `chatgpt-review`
+- **Writing Extension:** `human-writing`
+
+These categories describe responsibility, not quality. Published skills use
+`available`, `hidden`, or `removed` as release states. Validation is recorded
+independently for structure, live behavior, and end-to-end workflow evidence.
+
+### Recommended Workflows
+
+```text
+simple change: implement-* -> repo-review -> repo-delivery
+unknown failure: diagnose -> implement-* -> repo-review -> repo-delivery
+complex change: repo-map -> code-planner -> implement-* -> repo-review -> repo-delivery
+read-only review: repo-review -> audit-* only when needed
+external review: chatgpt-review only after an explicit request
+```
+
+### Installation Bundles
+
+- **Core Read-only:** `repo-map`, `code-planner`, `diagnose`, `repo-review`
+- **Engineering:** Core Read-only plus `repo-delivery`, `implement-rust`, and `implement-frontend`
+- **Full:** all published skills
+
+Bundles are installation shortcuts, not validation claims. Full does not mean
+that every skill has behavior or workflow verification. Exact commands are in
+[`INSTALL.md`](INSTALL.md).
+
 ### Repository Engineering Boundaries
 
 ```text
@@ -134,8 +182,11 @@ See [`docs/standards/skill-routing.md`](docs/standards/skill-routing.md) for the
 For repository development, validate source skill packages before publishing changes:
 
 ```bash
+python3 scripts/sync-shared-protocols.py --check
 python3 scripts/validate-skills.py
 python3 scripts/test_validate_skills.py
+python3 scripts/eval-skill-contracts.py --validate-only
+git diff --check
 ```
 
 The validator also checks the symmetric nearest-neighbor routing inventory in
@@ -167,3 +218,13 @@ End-user installation and updates should use the standard `npx skills add` and `
 - keep downstream repository task details out of AICraft except for the registry index
 - retire time-sensitive or old workflow material from the active root
 - avoid mixing transient notes and historical references into the active root
+
+## License
+
+Unless a file or directory states otherwise, AICraft source material is
+available under the [Apache License, Version 2.0](./LICENSE). Third-party
+materials remain under their original terms. The license does not grant rights
+to Rustzen or AICraft names, logos, official domains, package namespaces, or
+official distribution channels; see [NOTICE.md](./NOTICE.md),
+[TRADEMARKS.md](./TRADEMARKS.md), and
+[THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md).

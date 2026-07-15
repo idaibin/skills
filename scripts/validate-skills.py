@@ -31,6 +31,8 @@ MARKDOWN_LINK_RE = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 SKILL_INVOCATION_RE = re.compile(r"(?<![A-Za-z0-9_.])\$([a-z][a-z0-9-]*)")
 EVAL_CASES_FILE = "eval-cases.md"
 ROUTING_GRAPH_FILE = "docs/skills/routing-graph.json"
+QUALITY_STATUS_FILE = "docs/quality/status.md"
+VALIDATION_CONTRACT_FILE = "contracts/skill-validation.json"
 EVAL_REQUIRED_SECTIONS = (
     "## Trigger Eval",
     "## Non-Trigger Eval",
@@ -45,15 +47,16 @@ MAX_DEFAULT_PROMPT_CHARS = 800
 MIN_TRIGGER_CASES = 3
 MIN_NON_TRIGGER_CASES = 3
 MIN_QUALITY_CASES = 4
-AUDIT_RUST_SCENARIO_FIELDS = (
-    "Input",
-    "Investigate",
-    "Correct",
-    "Reject",
-    "Acceptable scope",
-    "Validation",
-    "Final report",
-)
+QUALITY_CATEGORIES = {
+    "Core Engineering",
+    "Implementation",
+    "Specialist Audit",
+    "Runtime Operations",
+    "External Review",
+    "Writing Extension",
+}
+RELEASE_STATES = {"available", "hidden", "removed"}
+VALIDATION_STATES = {"verified", "not_verified"}
 REQUIRED_SKILL_SECTIONS = (
     "## Overview",
     "## Do Not Use For",
@@ -66,6 +69,19 @@ PLACEHOLDER_RE = re.compile(
     re.MULTILINE,
 )
 TEXT_FILE_SUFFIXES = {".md", ".yaml", ".yml", ".py", ".sh", ".json", ".toml", ".txt"}
+
+
+def load_validation_contracts() -> dict[str, object]:
+    path = Path(__file__).resolve().parents[1] / VALIDATION_CONTRACT_FILE
+    with path.open(encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if not isinstance(payload, dict):
+        raise ValueError(f"{VALIDATION_CONTRACT_FILE} must contain an object")
+    return payload
+
+
+VALIDATION_CONTRACTS = load_validation_contracts()
+AUDIT_RUST_CONTRACT = VALIDATION_CONTRACTS["specialized_evals"]["audit-rust"]
 
 
 @dataclass(frozen=True)
@@ -152,6 +168,54 @@ def validate_repository_indexes(root: Path, packages: list[SkillPackage]) -> lis
         for name in sorted(listed - expected):
             errors.append(f"repository: {path.name} lists unknown skill {name}")
 
+    return errors
+
+
+def validate_quality_status(root: Path, packages: list[SkillPackage]) -> list[str]:
+    errors: list[str] = []
+    path = root / QUALITY_STATUS_FILE
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as error:
+        return [f"repository: cannot read {QUALITY_STATUS_FILE}: {error}"]
+
+    rows = markdown_table_rows(text, "## Skill Status")
+    expected = {package.name for package in packages}
+    observed: dict[str, list[str]] = {}
+    for row in rows:
+        if len(row) != 6:
+            errors.append(
+                f"repository: {QUALITY_STATUS_FILE} skill row must have 6 columns: {row}"
+            )
+            continue
+        name = row[0].strip().strip("`")
+        if name in observed:
+            errors.append(f"repository: {QUALITY_STATUS_FILE} duplicates skill {name}")
+            continue
+        observed[name] = row
+        category, release, structure, behavior, workflow = row[1:]
+        if category not in QUALITY_CATEGORIES:
+            errors.append(
+                f"repository: {QUALITY_STATUS_FILE} skill {name} has unknown category {category!r}"
+            )
+        if release not in RELEASE_STATES:
+            errors.append(
+                f"repository: {QUALITY_STATUS_FILE} skill {name} has unknown release state {release!r}"
+            )
+        for axis, state in (
+            ("structure", structure),
+            ("behavior", behavior),
+            ("workflow", workflow),
+        ):
+            if state not in VALIDATION_STATES:
+                errors.append(
+                    f"repository: {QUALITY_STATUS_FILE} skill {name} has unknown {axis} state {state!r}"
+                )
+
+    for name in sorted(expected - set(observed)):
+        errors.append(f"repository: {QUALITY_STATUS_FILE} missing skill {name}")
+    for name in sorted(set(observed) - expected):
+        errors.append(f"repository: {QUALITY_STATUS_FILE} lists unknown skill {name}")
     return errors
 
 
@@ -383,7 +447,7 @@ def validate_specialized_eval_contracts(
                     )
 
     elif skill_name == "audit-rust":
-        profile_section = "## Profile Selection Eval"
+        profile_section = AUDIT_RUST_CONTRACT["profile_section"]
         if profile_section not in eval_text:
             errors.append(f"{label}: missing specialized section {profile_section!r}")
         else:
@@ -394,31 +458,30 @@ def validate_specialized_eval_contracts(
                 if profile_end < 0
                 else eval_text[profile_start:profile_end]
             )
-            for term in (
-                "Architecture/baseline",
-                "SQLite",
-                "Concurrency/runtime",
-                "Unsafe/FFI",
-            ):
+            for term in AUDIT_RUST_CONTRACT["required_profiles"]:
                 if term not in profile_text:
                     errors.append(
                         f"{label}: {profile_section} missing required profile case {term!r}"
                     )
-            if "Out of scope" not in profile_text:
+            out_of_scope_term = AUDIT_RUST_CONTRACT["out_of_scope_term"]
+            if out_of_scope_term not in profile_text:
                 errors.append(
-                    f"{label}: {profile_section} must require unselected profiles to be 'Out of scope'"
+                    f"{label}: {profile_section} must require unselected profiles to be {out_of_scope_term!r}"
                 )
 
-        scenario_start = eval_text.find("## Scenario Eval")
-        scenario_end = eval_text.find("\n## Quality Eval", scenario_start)
+        scenario_section = AUDIT_RUST_CONTRACT["scenario_section"]
+        scenario_end_section = AUDIT_RUST_CONTRACT["scenario_end_section"]
+        scenario_start = eval_text.find(scenario_section)
+        scenario_end = eval_text.find(f"\n{scenario_end_section}", scenario_start)
         if scenario_start < 0 or scenario_end < 0:
-            errors.append(f"{label}: missing complete specialized section '## Scenario Eval'")
+            errors.append(f"{label}: missing complete specialized section {scenario_section!r}")
         else:
             scenario_text = eval_text[scenario_start:scenario_end]
             matches = list(re.finditer(r"^###\s+(\d+)\.\s+.+$", scenario_text, re.MULTILINE))
-            if len(matches) != 22:
+            minimum_scenarios = AUDIT_RUST_CONTRACT["minimum_scenarios"]
+            if len(matches) < minimum_scenarios:
                 errors.append(
-                    f"{label}: audit-rust Scenario Eval must contain exactly 22 scenarios"
+                    f"{label}: audit-rust Scenario Eval must contain at least {minimum_scenarios} scenarios"
                 )
             for index, match in enumerate(matches):
                 block_end = (
@@ -428,7 +491,7 @@ def validate_specialized_eval_contracts(
                 )
                 block = scenario_text[match.start():block_end]
                 number = match.group(1)
-                for field in AUDIT_RUST_SCENARIO_FIELDS:
+                for field in AUDIT_RUST_CONTRACT["scenario_fields"]:
                     if f"**{field}:**" not in block:
                         errors.append(
                             f"{label}: audit-rust scenario {number} missing field {field!r}"
@@ -557,23 +620,14 @@ def markdown_section(markdown_text: str, section: str) -> str:
 
 CROSS_ARTIFACT_TERM_REQUIREMENTS: tuple[
     tuple[str, str, str | None, tuple[str, ...]], ...
-] = (
-    ("repo-review", "SKILL.md", "## Hard Rules", ("review basis", "resolved SHAs", "read-only")),
-    ("repo-review", "references/usage.md", "## Examples", ("Resolve both endpoints", "SHAs")),
-    ("repo-map", "SKILL.md", "## Overview", ("does not judge", "defects")),
-    ("repo-map", "references/usage.md", "## Triggers", ("immutable repository/range/PR review", "repo-review")),
-    ("audit-security", "SKILL.md", "## Modes", ("Scoped specialist subreview", "coordinator retains", "severity")),
-    ("audit-security", "references/usage.md", "## Output", ("delegated path/diff boundary", "without editing", "coordinator")),
-    ("ops-browser", "SKILL.md", "## Modes", ("diagnose", "already-isolated", "browser-layer")),
-    ("ops-browser", "agents/openai.default_prompt", None, ("only after $diagnose delegation", "before browser operation", "final cause/fix")),
-    ("ops-browser", "references/usage.md", "## Browser Debug Evidence", ("diagnose", "before browser operation", "retain referenced")),
-    ("ops-browser", "SKILL.md", "## Hard Rules", ("operation_id", "ambiguous", "prior evidence")),
-    ("chatgpt-review", "SKILL.md", "## Browser Handoff", ("operation_id", "operation ledger", "ambiguous")),
-    ("chatgpt-review", "agents/openai.default_prompt", None, ("browser-operation/v1", "operation-ledger", "operation_id", "ambiguous")),
-    ("ops-client", "SKILL.md", "## Modes", ("diagnose", "already-isolated", "client-layer")),
-    ("ops-client", "SKILL.md", "## Hard Rules", ("Retain screenshots", "handoff owner", "removed disposable state")),
-    ("ops-client", "agents/openai.default_prompt", None, ("only after $diagnose delegation", "before client operation", "retain referenced evidence")),
-    ("ops-client", "references/usage.md", "## Operation Notes", ("diagnose", "already-isolated", "retain referenced")),
+] = tuple(
+    (
+        item["skill"],
+        item["surface"],
+        item["section"],
+        tuple(item["terms"]),
+    )
+    for item in VALIDATION_CONTRACTS["cross_artifact_terms"]
 )
 
 
@@ -930,22 +984,28 @@ def validate_source_packages(packages: list[SkillPackage]) -> tuple[list[str], d
 
 
 def validate_shared_browser_operation_protocol(root: Path) -> list[str]:
-    relative_paths = (
+    source_relative = Path("protocols/browser-operation-v1.md")
+    generated_paths = (
         Path("skills/chatgpt-review/references/browser-operation-protocol.md"),
         Path("skills/ops-browser/references/browser-operation-protocol.md"),
     )
-    contents: list[str] = []
     errors: list[str] = []
-    for relative in relative_paths:
+    try:
+        source_content = (root / source_relative).read_text(encoding="utf-8")
+    except OSError as error:
+        return [f"repository: cannot read {source_relative}: {error}"]
+    for relative in generated_paths:
         path = root / relative
         try:
-            contents.append(path.read_text(encoding="utf-8"))
+            generated_content = path.read_text(encoding="utf-8")
         except OSError as error:
             errors.append(f"repository: cannot read {relative}: {error}")
-    if errors:
-        return errors
-    if contents[0] != contents[1]:
-        errors.append("repository: shared browser-operation protocol copies must be identical")
+            continue
+        if generated_content != source_content:
+            errors.append(
+                f"repository: generated browser-operation protocol is stale: {relative}; "
+                "run python3 scripts/sync-shared-protocols.py"
+            )
     required_by_section = {
         "## Capability Snapshot": (
             "schema_version: browser-operation/v1",
@@ -1004,7 +1064,7 @@ def validate_shared_browser_operation_protocol(root: Path) -> list[str]:
         "## Degraded Mode": ("blocked", "ambiguous", "do not retry"),
     }
     for section, terms in required_by_section.items():
-        scoped = markdown_section(contents[0], section)
+        scoped = markdown_section(source_content, section)
         if not scoped:
             errors.append(f"repository: shared browser-operation protocol missing section {section!r}")
             continue
@@ -1107,6 +1167,7 @@ def main() -> int:
     )
     if not args.skill:
         source_errors.extend(validate_repository_indexes(root, packages))
+        source_errors.extend(validate_quality_status(root, packages))
         source_errors.extend(validate_routing_graph(root, packages))
         source_errors.extend(validate_shared_browser_operation_protocol(root))
     if source_errors:

@@ -1,8 +1,10 @@
 # Browser Operation Protocol
 
-This protocol is shared by `chatgpt-review` and `ops-browser`. Each
-published package carries the same file so it remains self-contained. Repository
-validation must reject any drift between the two copies.
+This protocol is shared by `chatgpt-review` and `ops-browser`. Repository authors
+maintain its canonical source at `protocols/browser-operation-v1.md` and use the
+synchronization script to copy it into each published package, so installed
+skills remain self-contained. Repository validation rejects stale or modified
+generated copies.
 
 ## Capability Snapshot
 

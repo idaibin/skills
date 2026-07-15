@@ -1,5 +1,9 @@
 # AICraft Skills Review
 
+> Historical record archived from the repository root. Conclusions, branch
+> names, revisions, and runtime evidence below describe the original review
+> passes and are not current repository guidance.
+
 ## Review Pass 1
 
 - Timestamp: 2026-07-10T23:39:55+08:00
