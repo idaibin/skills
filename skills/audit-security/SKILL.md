@@ -1,6 +1,6 @@
 ---
 name: audit-security
-description: "Use when a known code or config surface needs a scoped, read-only security audit, including bounded specialist delegation from repo-review; stay within evidenced trust boundaries and exclude repository-wide, exhaustive, or multi-pass scans."
+description: "Use when a known code or configuration surface needs a scoped, read-only security audit within evidenced trust boundaries; exclude repository-wide, exhaustive, or multi-pass scans and broader review coordination."
 ---
 
 # Security Audit

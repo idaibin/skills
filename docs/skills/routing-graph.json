@@ -1,10 +1,10 @@
 {
   "audit-frontend": ["implement-frontend", "repo-review"],
-  "audit-rust": ["implement-rust", "repo-review"],
+  "audit-rust": ["diagnose", "implement-rust", "repo-review"],
   "audit-security": ["repo-map", "repo-review"],
   "chatgpt-review": ["ops-browser", "repo-delivery", "repo-review"],
   "code-planner": ["repo-map"],
-  "diagnose": ["implement-frontend", "implement-rust", "ops-browser", "ops-client"],
+  "diagnose": ["audit-rust", "implement-frontend", "implement-rust", "ops-browser", "ops-client"],
   "human-writing": ["repo-map"],
   "implement-frontend": ["audit-frontend", "diagnose", "repo-map"],
   "implement-rust": ["audit-rust", "diagnose", "repo-map"],

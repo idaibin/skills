@@ -23,6 +23,12 @@ AICraft-required OpenAI integration surface, not a portable requirement. See
 [`../quality/official-skill-alignment.md`](../quality/official-skill-alignment.md)
 for provider lanes and pinned sources.
 
+The portable specification permits optional `license`, `compatibility`,
+`metadata`, and experimental `allowed-tools` frontmatter. AICraft deliberately
+uses only `name` and `description`; the collection license is the root
+`LICENSE`, while host capabilities and tool authority remain in runtime
+instructions and provider metadata.
+
 ## Naming And Metadata
 
 - Directory name and `SKILL.md` frontmatter `name` must match.
@@ -183,6 +189,14 @@ and the repository validator. Authorization, mutation, external-action, and
 evidence-integrity violations are hard failures and cannot be offset by other
 scores.
 
+Routing evaluation must score the complete owner-and-handoff contract. A case
+passes only when an accepted primary owner is selected, all necessary direct
+handoffs and exactly one member of every necessary one-of group are present,
+and no unauthorized or optional handoff is emitted.
+Datasets must include both positive required-handoff cases and cases where an
+empty handoff list is the only correct result; report violations by affected
+case count as well as individual handoff count.
+
 ## Status And Evidence
 
 Do not assign subjective maturity labels to public skills. Keep three concerns
@@ -202,7 +216,11 @@ they do not authenticate the host or independently prove self-reported action
 labels. Until the repository adds an independent semantic verifier, authority
 and workflow remain `not_verified`. Do not infer either from Markdown eval
 tables. A baseline is not required for contract evaluation, but a controlled
-previous/no-Skill baseline is required for a narrowly scoped improvement claim.
+candidate/previous/no-Skill group is required for a narrowly scoped improvement
+claim. Formal held-out claims additionally require a committed preregistered
+campaign, an anchor-frozen evaluation protocol, canonical prompt de-duplication,
+and the complete retained attempt ledger described in
+[`../quality/validation-plan.md`](../quality/validation-plan.md).
 
 Record the current inventory and evidence boundary in
 `docs/quality/status.md`. A public install bundle describes scope only and must

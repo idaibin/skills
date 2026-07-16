@@ -99,6 +99,21 @@ Cross-skill workflows must transfer bounded state without transferring
 authority. The caller owns intent, authorization, scope, and the next-state
 decision; the executor owns only its direct action and evidence.
 
+For discovery and routing evaluation, the **primary owner** is the published
+Skill responsible for the current request's requested result, authority
+boundary, and next-state decision. A **handoff** is another published Skill
+that must actually execute a bounded part of the same request now, or must own
+a later phase that the user explicitly requested in the same request. Do not
+emit optional recommendations, alternative owners, internal implementation
+details, or unrequested future work as handoffs. If the primary owner can
+complete the requested outcome alone, the handoff list is empty.
+
+Routing correctness is a full case contract: the selected owner must be
+accepted, every required direct handoff and exactly one member of every
+required one-of group must be present, and no undeclared, optional, or
+forbidden handoff may appear. Exact top-1 remains a diagnostic and per-Skill
+coverage metric, but it is not sufficient on its own.
+
 For `chatgpt-review -> ops-browser -> chatgpt-review`, both
 published packages carry the identical `browser-operation/v1` protocol. The
 bridge owns the Capability requirements, Handoff Request, operation ledger,

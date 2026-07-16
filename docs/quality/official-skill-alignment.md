@@ -7,23 +7,30 @@ AICraft applies locally.
 
 ## Review Record
 
-- Reviewed: `2026-07-15`
-- Review due: `2026-10-15`
+- Reviewed: `2026-07-16`
+- Review due: `2026-10-16`
 - Machine-readable authority:
   [`contracts/skill-validation.json`](../../contracts/skill-validation.json)
 
 | Lane | Primary source | Pinned evidence |
 | --- | --- | --- |
-| Portable core | [Agent Skills specification](https://agentskills.io/specification) | Retrieved `2026-07-15` |
-| OpenAI Codex | [Build Skills](https://learn.chatgpt.com/docs/build-skills) | Retrieved `2026-07-15` |
+| Portable core | [Agent Skills specification](https://agentskills.io/specification) | Retrieved `2026-07-16` |
+| OpenAI Codex | [Build Skills](https://learn.chatgpt.com/docs/build-skills) | Retrieved `2026-07-16` |
 | OpenAI distribution examples | [openai/plugins](https://github.com/openai/plugins) | Commit `11c74d6ba24d3a6d48f54a194cd00ef3beea18f9` |
 | Claude reference packages | [anthropics/skills](https://github.com/anthropics/skills) | Commit `9d2f1ae187231d8199c64b5b762e1bdf2244733d` |
-| Claude Code behavior | [Extend Claude with skills](https://code.claude.com/docs/en/skills) and [How Claude remembers your project](https://code.claude.com/docs/en/memory) | Retrieved `2026-07-15` |
+| Claude Code behavior | [Extend Claude with skills](https://code.claude.com/docs/en/skills) and [How Claude remembers your project](https://code.claude.com/docs/en/memory) | Retrieved `2026-07-16` |
+| Skill evaluation | [Agent Skills evaluation](https://agentskills.io/skill-creation/evaluating-skills) | Commit `38a2ff82958afee88dadf4831509e6f7e9d8ef4e` |
+| Evaluation architecture | [UK AISI Inspect AI](https://github.com/UKGovernmentBEIS/inspect_ai) | Commit `ea007a79c556e30fb391c5e98ce2bf80b2362fbf` |
+| Agent workflow evaluation | [OpenAI Agent Evals](https://developers.openai.com/api/docs/guides/agent-evals) | Retrieved `2026-07-16` |
 
 The pinned repositories are comparison snapshots, not vendored dependencies.
 The retrieved documentation is time-sensitive and must be reviewed again by
 the due date. Validation must fail rather than silently treating an expired
 baseline as current.
+
+The evaluation sources define reusable experiment structure and evidence
+practices. They do not replace AICraft's repository-specific owner, handoff,
+authority, or workflow assertions.
 
 ## Portable Core
 
@@ -31,6 +38,12 @@ The portable contract is a directory containing `SKILL.md` with YAML
 frontmatter and Markdown instructions. `name` and `description` are required;
 supporting `scripts/`, `references/`, and `assets/` are optional and should be
 loaded only when needed.
+
+Portable frontmatter may also carry optional `license`, `compatibility`, and
+string-map `metadata` fields, plus the experimental `allowed-tools` field.
+AICraft intentionally uses the stricter `name`/`description` subset, applies
+the repository-level `LICENSE` to the published collection, and does not
+duplicate license or host-specific capability metadata across every package.
 
 AICraft adopts this progressive-disclosure model. Its package limits, metadata
 rules, reference navigation requirements, and validation thresholds may be
@@ -45,6 +58,12 @@ OpenAI Codex uses the portable `SKILL.md` contract and may add
 AICraft requires this file for its published packages, keeps
 `short_description` compact, and uses a short self-routing `default_prompt`
 that names the Skill as `$skill-name`.
+
+Codex builds its initial discovery list from each Skill's name, description,
+and path under a two-percent or 8,000-character context budget, shortening or
+omitting descriptions when necessary. AICraft's tighter per-description limit
+and aggregate footprint measurement are local safeguards for that discovery
+budget, not portable schema requirements.
 
 `agents/openai.yaml` is an OpenAI integration surface, not part of the portable
 Agent Skills minimum. AICraft keeps skills.sh as its cross-provider install
@@ -72,13 +91,19 @@ specific filename.
   navigation; move detailed examples and checklists to linked references.
 - Keep startup metadata concise because every Skill description competes for
   discovery context before invocation.
-- Validate the portable package with current provider validators in addition to
-  AICraft's repository checks.
+- Validate the portable package against current provider specifications with
+  AICraft's repository checks. Record a provider-owned validator and its exact
+  version separately when one is actually executed; none is implied here.
 - Keep provider-specific metadata in its provider lane.
 - Use held-out natural-language requests and repeated real runs for behavior
   claims; retain raw outputs and execution evidence.
-- Compare a changed Skill against the previous Skill or a no-Skill condition
-  before claiming that it noticeably improves outcomes or efficiency.
+- Compare a changed Skill in one matched candidate/previous/no-Skill group
+  before claiming that it noticeably improves outcomes or Skill-attributable
+  input efficiency.
+- Preregister formal held-out trials in a committed post-anchor campaign and
+  freeze the contract, runner, scorer, comparator, validator, canonical prompt,
+  adjudication, host/environment policy, revisions, and full attempt set before
+  any model call.
 - Review official sources on a recorded cadence and update contracts, fixtures,
   tests, and documentation together when the external baseline changes.
 
@@ -86,8 +111,9 @@ specific filename.
 
 - OpenAI plugin manifests or `agents/openai.yaml` as portable Agent Skills
   requirements.
-- Claude-only frontmatter such as tool allowlists, invocation controls, hooks,
-  or forked context when a package does not need those behaviors.
+- Portable experimental `allowed-tools`, or Claude-specific invocation
+  controls, hooks, and forked context, when a package does not need those
+  behaviors.
 - Provider example structure as proof that a package is correct for AICraft's
   authority and routing boundaries.
 - A provider's maximum file size as AICraft's working target when the local
@@ -103,16 +129,23 @@ authority, hands off correctly, finishes a repository task, or improves
 quality, time, or token use.
 
 Contract correctness can be evaluated without a baseline. A claim such as
-"noticeably improves collaboration" requires controlled candidate and
-previous/no-Skill runs using the same prompts and environment in parallel when
-the host supports it, at least the required repeated trials, held-out requests
-for changed discovery text, raw traces, duration and token data when exposed by
-the host, outcome grading, and workspace-diff evidence. See
+"noticeably improves collaboration" requires controlled candidate, previous,
+and no-Skill runs using the same prompts and canonical environment policy in
+parallel when the host supports it, at least the required repeated trials,
+held-out requests for changed discovery text, raw traces, duration and token
+data when exposed by the host, outcome grading, and workspace-diff evidence.
+The current hash binds the environment-variable allowlist and fixed isolation
+overrides, not the actual PATH, proxy, locale, or certificate values; that
+runtime drift remains visible only through trusted execution records. See
 [`validation-plan.md`](validation-plan.md) and [`status.md`](status.md).
 
 Recorded hashes provide tamper evidence under a trusted evidence producer; they
 are not host signatures and do not independently establish that a self-reported
 tool action or verifier label is semantically true. The current machine claim
-gate therefore permits only scoped routing outcome or token-efficiency claims.
+gate therefore permits only scoped routing outcome contribution or marginal
+Skill-input efficiency claims.
+The marginal input claim additionally requires candidate overhead to be no
+greater than previous in every group, at least 15% relative reduction, and at
+least 50 saved input tokens per case on average.
 Authority and workflow stay `not_verified` until an independent semantic
 verifier is part of the contract.

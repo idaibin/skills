@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when repository changes need read-only review against a fixed worktree, immutable, pull-request, release, or package basis; coordinate bounded specialists, report evidence-ranked findings, and never edit source or mutate Git."
+description: "Use when a local worktree/index or immutable snapshot, range, pull request, release candidate, or verified package needs read-only review; own local commit-readiness and exact staging guidance or immutable severity-ranked findings."
 ---
 
 # Repository Review

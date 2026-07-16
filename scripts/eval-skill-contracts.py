@@ -5,9 +5,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import re
 import subprocess
+import sys
 import uuid
 from collections import Counter
 from dataclasses import dataclass
@@ -27,6 +29,15 @@ def reject_duplicate_json_keys(
 
 
 ROOT = Path(__file__).resolve().parents[1]
+PROTOCOL_PATH = ROOT / "scripts" / "evaluation_protocol.py"
+_PROTOCOL_SPEC = importlib.util.spec_from_file_location(
+    "aicraft_evaluation_protocol_for_evaluator", PROTOCOL_PATH
+)
+if _PROTOCOL_SPEC is None or _PROTOCOL_SPEC.loader is None:
+    raise RuntimeError(f"cannot load evaluation protocol from {PROTOCOL_PATH}")
+PROTOCOL = importlib.util.module_from_spec(_PROTOCOL_SPEC)
+sys.modules[_PROTOCOL_SPEC.name] = PROTOCOL
+_PROTOCOL_SPEC.loader.exec_module(PROTOCOL)
 ROUTING_DATA = ROOT / "evals" / "routing.jsonl"
 AUTHORITY_DATA = ROOT / "evals" / "authority.jsonl"
 WORKFLOW_DATA = ROOT / "evals" / "workflow-smoke.jsonl"
@@ -118,10 +129,10 @@ def normalized_usage_from_stdout(
             if (
                 isinstance(input_tokens, int)
                 and not isinstance(input_tokens, bool)
-                and input_tokens >= 0
+                and input_tokens > 0
                 and isinstance(output_tokens, int)
                 and not isinstance(output_tokens, bool)
-                and output_tokens >= 0
+                and output_tokens > 0
             ):
                 if host_name == "claude":
                     cache_tokens = 0
@@ -320,6 +331,10 @@ def validate_routing_cases(
     minimum_cases: int | None = None,
     minimum_cases_per_skill: int | None = None,
     required_kinds: set[str] | None = None,
+    minimum_required_handoff_cases: int | None = None,
+    minimum_no_required_handoff_cases: int | None = None,
+    minimum_required_handoff_owners: int | None = None,
+    required_handoff_primary_owners: set[str] | None = None,
     require_neighbor_graph: bool = True,
 ) -> list[str]:
     errors = validate_unique_cases(cases, label="routing")
@@ -337,6 +352,9 @@ def validate_routing_cases(
     covered_neighbors: dict[str, set[str]] = {
         skill_name: set() for skill_name in known_skills
     }
+    required_handoff_cases = 0
+    no_required_handoff_cases = 0
+    required_handoff_owners: set[str] = set()
     for item in cases:
         case_id = str(item.get("id", "routing case"))
         kind = item.get("kind")
@@ -435,6 +453,22 @@ def validate_routing_cases(
                 errors.append(
                     f"{case_id}: required_handoff_groups must not contain duplicate groups"
                 )
+            direct_overlap = group_set & required_handoffs
+            if direct_overlap:
+                errors.append(
+                    f"{case_id}: {group_label} must not overlap required_handoffs: "
+                    f"{sorted(direct_overlap)}"
+                )
+            prior_group_overlap = (
+                group_set & set().union(*normalized_groups)
+                if normalized_groups
+                else set()
+            )
+            if prior_group_overlap:
+                errors.append(
+                    f"{case_id}: required one-of handoff groups must be pairwise "
+                    f"disjoint: {sorted(prior_group_overlap)}"
+                )
             normalized_groups.add(group_set)
             for name in group:
                 if name not in known_skills:
@@ -451,6 +485,38 @@ def validate_routing_cases(
                     f"{case_id}: {group_label} contains forbidden handoffs "
                     f"{sorted(group_overlap)}"
                 )
+        required_or_group_handoffs = (
+            required_handoffs | set().union(*normalized_groups)
+            if normalized_groups
+            else required_handoffs
+        )
+        optional_allowed_handoffs = allowed_handoffs - required_or_group_handoffs
+        if optional_allowed_handoffs:
+            errors.append(
+                f"{case_id}: allowed_handoffs may contain only required direct "
+                "or one-of group members; optional entries are not necessary "
+                f"handoffs: {sorted(optional_allowed_handoffs)}"
+            )
+        declared_handoffs = (
+            required_handoffs
+            | allowed_handoffs
+            | forbidden_handoffs
+            | set().union(*normalized_groups)
+            if normalized_groups
+            else required_handoffs | allowed_handoffs | forbidden_handoffs
+        )
+        owner_handoff_overlap = set(allowed) & declared_handoffs
+        if owner_handoff_overlap:
+            errors.append(
+                f"{case_id}: allowed owners cannot also be handoffs: "
+                f"{sorted(owner_handoff_overlap)}"
+            )
+        if required_handoffs or normalized_groups:
+            required_handoff_cases += 1
+            if owner in known_skills:
+                required_handoff_owners.add(str(owner))
+        else:
+            no_required_handoff_cases += 1
         if not isinstance(item.get("high_risk"), bool):
             errors.append(f"{case_id}: high_risk must be boolean")
         prompt = str(item.get("prompt", "")).casefold()
@@ -471,6 +537,59 @@ def validate_routing_cases(
                 f"routing: {skill_name} requires at least {minimum_per_skill} owner cases, "
                 f"found {owner_counts[skill_name]}"
             )
+
+    minimum_required = (
+        int(ROUTING_CONTRACT["minimum_required_handoff_cases"])
+        if minimum_required_handoff_cases is None
+        else minimum_required_handoff_cases
+    )
+    if required_handoff_cases < minimum_required:
+        errors.append(
+            "routing: expected at least "
+            f"{minimum_required} required-handoff cases, found "
+            f"{required_handoff_cases}"
+        )
+    minimum_without_required = (
+        int(ROUTING_CONTRACT["minimum_no_required_handoff_cases"])
+        if minimum_no_required_handoff_cases is None
+        else minimum_no_required_handoff_cases
+    )
+    if no_required_handoff_cases < minimum_without_required:
+        errors.append(
+            "routing: expected at least "
+            f"{minimum_without_required} no-required-handoff cases, found "
+            f"{no_required_handoff_cases}"
+        )
+    minimum_handoff_owners = (
+        int(ROUTING_CONTRACT["minimum_required_handoff_owners"])
+        if minimum_required_handoff_owners is None
+        else minimum_required_handoff_owners
+    )
+    if len(required_handoff_owners) < minimum_handoff_owners:
+        errors.append(
+            "routing: expected required-handoff coverage for at least "
+            f"{minimum_handoff_owners} primary owners, found "
+            f"{len(required_handoff_owners)} ({sorted(required_handoff_owners)})"
+        )
+    required_primary_owners = (
+        set(ROUTING_CONTRACT["required_handoff_primary_owners"])
+        if required_handoff_primary_owners is None
+        else required_handoff_primary_owners
+    )
+    unknown_required_primary_owners = required_primary_owners - known_skills
+    if unknown_required_primary_owners:
+        errors.append(
+            "routing: required handoff primary-owner contract contains unknown "
+            f"Skills {sorted(unknown_required_primary_owners)}"
+        )
+    missing_required_primary_owners = (
+        required_primary_owners - required_handoff_owners
+    )
+    if missing_required_primary_owners:
+        errors.append(
+            "routing: missing required-handoff cases for primary owners "
+            f"{sorted(missing_required_primary_owners)}"
+        )
 
     if not require_neighbor_graph:
         return errors
@@ -615,7 +734,7 @@ def validate_held_out_routing_cases(
     cases: list[dict[str, object]], known_skills: set[str]
 ) -> list[str]:
     comparative = BEHAVIOR_CONTRACT["comparative"]
-    required_kinds = set(comparative["required_held_out_kinds"])
+    required_owner_kinds = set(comparative["required_held_out_owner_kinds"])
     errors = validate_routing_cases(
         cases,
         known_skills,
@@ -623,7 +742,22 @@ def validate_held_out_routing_cases(
         minimum_cases_per_skill=int(
             comparative["minimum_held_out_cases_per_skill"]
         ),
-        required_kinds=required_kinds,
+        required_kinds=(
+            required_owner_kinds
+            | set(comparative["required_held_out_global_kinds"])
+        ),
+        minimum_required_handoff_cases=int(
+            comparative["minimum_held_out_required_handoff_cases"]
+        ),
+        minimum_no_required_handoff_cases=int(
+            comparative["minimum_held_out_no_required_handoff_cases"]
+        ),
+        minimum_required_handoff_owners=int(
+            comparative["minimum_held_out_required_handoff_owners"]
+        ),
+        required_handoff_primary_owners=set(
+            comparative["required_held_out_handoff_primary_owners"]
+        ),
         require_neighbor_graph=False,
     )
     observed_by_owner: dict[str, set[str]] = {
@@ -632,10 +766,10 @@ def validate_held_out_routing_cases(
     for case in cases:
         owner = case.get("expected_owner")
         kind = case.get("kind")
-        if owner in known_skills and kind in required_kinds:
+        if owner in known_skills and kind in required_owner_kinds:
             observed_by_owner[str(owner)].add(str(kind))
     for skill_name in sorted(known_skills):
-        missing = required_kinds - observed_by_owner[skill_name]
+        missing = required_owner_kinds - observed_by_owner[skill_name]
         if missing:
             errors.append(
                 f"routing: held-out owner {skill_name} missing kinds {sorted(missing)}"
@@ -682,10 +816,10 @@ def _validate_metrics(value: object, *, label: str) -> dict[str, object]:
         if metric_value is not None and (
             isinstance(metric_value, bool)
             or not isinstance(metric_value, int)
-            or metric_value < 0
+            or metric_value < 1
         ):
             raise ValueError(
-                f"{label}.{metric} must be null or a non-negative integer"
+                f"{label}.{metric} must be null or a positive integer"
             )
     return value
 
@@ -1261,7 +1395,7 @@ def _validate_held_out_provenance(
     # A postdated filename alone is not a holdout: reject cases or prompts copied
     # from any repository eval dataset that existed at the evaluated Skill revision.
     known_case_ids: dict[str, str] = {}
-    known_prompt_hashes: dict[str, str] = {}
+    known_prompt_fingerprints: dict[str, str] = {}
     tracked_eval_paths = subprocess.run(
         [
             "git",
@@ -1318,7 +1452,62 @@ def _validate_held_out_provenance(
             if isinstance(case_id, str) and case_id:
                 known_case_ids.setdefault(case_id, relative_path)
             if isinstance(prompt, str) and prompt:
-                known_prompt_hashes.setdefault(text_hash(prompt), relative_path)
+                known_prompt_fingerprints.setdefault(
+                    PROTOCOL.canonical_prompt_fingerprint(prompt), relative_path
+                )
+
+    tracked_skill_paths = subprocess.run(
+        [
+            "git",
+            "-C",
+            str(ROOT),
+            "ls-tree",
+            "-r",
+            "--name-only",
+            evaluation_anchor_revision,
+            "--",
+            "skills",
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    if tracked_skill_paths.returncode != 0:
+        raise ValueError(
+            f"{bundle_path}: cannot inspect Skill eval cases at skill_revision"
+        )
+    for relative_path in tracked_skill_paths.stdout.splitlines():
+        path = PurePosixPath(relative_path)
+        if (
+            len(path.parts) != 4
+            or path.parts[0] != "skills"
+            or path.parts[2:] != ("references", "eval-cases.md")
+        ):
+            continue
+        historical = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(ROOT),
+                "show",
+                f"{evaluation_anchor_revision}:{relative_path}",
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if historical.returncode != 0:
+            raise ValueError(
+                f"{bundle_path}: cannot read {relative_path} at skill_revision"
+            )
+        for line in historical.stdout.splitlines():
+            match = re.match(r"^\|\s*`([^`]+)`\s*\|", line)
+            if match is None:
+                continue
+            prompt = match.group(1)
+            known_prompt_fingerprints.setdefault(
+                PROTOCOL.canonical_prompt_fingerprint(prompt), relative_path
+            )
 
     overlaps: list[str] = []
     for row in load_jsonl(dataset_path):
@@ -1327,10 +1516,12 @@ def _validate_held_out_provenance(
         if isinstance(case_id, str) and case_id in known_case_ids:
             overlaps.append(f"case id {case_id!r} from {known_case_ids[case_id]}")
         if isinstance(prompt, str):
-            prompt_sha = text_hash(prompt)
-            if prompt_sha in known_prompt_hashes:
+            prompt_fingerprint = PROTOCOL.canonical_prompt_fingerprint(prompt)
+            if prompt_fingerprint in known_prompt_fingerprints:
                 overlaps.append(
-                    f"prompt hash {prompt_sha} from {known_prompt_hashes[prompt_sha]}"
+                    "canonical prompt fingerprint "
+                    f"{prompt_fingerprint} from "
+                    f"{known_prompt_fingerprints[prompt_fingerprint]}"
                 )
     if overlaps:
         raise ValueError(
@@ -1523,13 +1714,17 @@ def load_result_bundle(
         raise ValueError(
             f"{path}: run_config.case_set_sha256 must match the complete dataset"
         )
-    pair_id = run_config.get("pair_id")
-    if not isinstance(pair_id, str):
-        raise ValueError(f"{path}: run_config.pair_id must be a UUID")
+    comparison_group_id = run_config.get("comparison_group_id")
+    if not isinstance(comparison_group_id, str):
+        raise ValueError(
+            f"{path}: run_config.comparison_group_id must be a UUID"
+        )
     try:
-        uuid.UUID(pair_id)
+        uuid.UUID(comparison_group_id)
     except ValueError as error:
-        raise ValueError(f"{path}: run_config.pair_id must be a UUID") from error
+        raise ValueError(
+            f"{path}: run_config.comparison_group_id must be a UUID"
+        ) from error
     if not isinstance(run_config.get("held_out"), bool):
         raise ValueError(f"{path}: run_config.held_out must be boolean")
     permissions = run_config.get("permissions")
@@ -1624,10 +1819,93 @@ def load_result_bundle(
         raise ValueError(
             f"{path}: run_config.prompt_template_sha256 must match prompt_template"
         )
+    canonical_prompt = PROTOCOL.canonical_prompt_template(CONTRACTS)
+    if prompt_template != canonical_prompt:
+        raise ValueError(
+            f"{path}: run_config.prompt_template must equal the canonical routing prompt"
+        )
     _validate_sha256(
         run_config.get("host_config_sha256"),
         label=f"{path}: run_config.host_config_sha256",
     )
+    expected_host_policy = PROTOCOL.canonical_host_policy(
+        str(host_name), model, CONTRACTS
+    )
+    if run_config["host_config_sha256"] != PROTOCOL.canonical_hash(
+        expected_host_policy
+    ):
+        raise ValueError(
+            f"{path}: run_config.host_config_sha256 must match the canonical host policy"
+        )
+    _validate_sha256(
+        run_config.get("environment_policy_sha256"),
+        label=f"{path}: run_config.environment_policy_sha256",
+    )
+    expected_environment_hash = PROTOCOL.canonical_hash(
+        PROTOCOL.canonical_environment_policy(str(host_name), CONTRACTS)
+    )
+    if run_config["environment_policy_sha256"] != expected_environment_hash:
+        raise ValueError(
+            f"{path}: run_config.environment_policy_sha256 must match the canonical "
+            "environment allowlist policy"
+        )
+
+    attempt_id = run_config.get("attempt_id")
+    try:
+        if not isinstance(attempt_id, str):
+            raise ValueError
+        uuid.UUID(attempt_id)
+    except ValueError as error:
+        raise ValueError(f"{path}: run_config.attempt_id must be a UUID") from error
+    attempt_relative = run_config.get("attempt_path")
+    if (
+        not isinstance(attempt_relative, str)
+        or PurePosixPath(attempt_relative).is_absolute()
+        or ".." in PurePosixPath(attempt_relative).parts
+        or PurePosixPath(attempt_relative).as_posix() != attempt_relative
+    ):
+        raise ValueError(
+            f"{path}: run_config.attempt_path must be a normalized relative POSIX path"
+        )
+    attempt_path = (path.parent / attempt_relative).resolve()
+    try:
+        attempt_path.relative_to(path.parent.resolve())
+    except ValueError as error:
+        raise ValueError(f"{path}: run_config.attempt_path escapes bundle directory") from error
+    if run_config["held_out"]:
+        try:
+            attempt = json.loads(
+                attempt_path.read_text(encoding="utf-8"),
+                object_pairs_hook=reject_duplicate_json_keys,
+            )
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+            raise ValueError(f"{path}: cannot read formal attempt ledger: {error}") from error
+        if not isinstance(attempt, dict):
+            raise ValueError(f"{path}: formal attempt ledger must be an object")
+        expected_attempt_fields = set(BEHAVIOR_CONTRACT["attempt_required_fields"])
+        if set(attempt) != expected_attempt_fields:
+            raise ValueError(
+                f"{path}: formal attempt ledger fields must be "
+                f"{sorted(expected_attempt_fields)}"
+            )
+        expected_attempt = {
+            "attempt_id": attempt_id,
+            "campaign_id": run_config.get("campaign_id"),
+            "trial": trial,
+            "variant": variant,
+            "comparison_group_id": comparison_group_id,
+            "status": "success",
+            "run_id": run_id,
+            "artifact": path.name,
+            "artifact_sha256": dataset_hash(path),
+        }
+        for key, expected_value in expected_attempt.items():
+            if attempt.get(key) != expected_value:
+                raise ValueError(
+                    f"{path}: formal attempt ledger {key} does not match the bundle"
+                )
+        if attempt.get("schema_version") != BEHAVIOR_CONTRACT["attempt_schema_version"]:
+            raise ValueError(f"{path}: formal attempt ledger schema_version is invalid")
     if run_config["held_out"]:
         _validate_held_out_provenance(
             dataset_path,
@@ -1691,6 +1969,88 @@ def load_result_bundle(
         adjudication.get("config_sha256"),
         label=f"{path}: adjudication.config_sha256",
     )
+    canonical_adjudication = PROTOCOL.canonical_adjudication(CONTRACTS)
+    if adjudication != canonical_adjudication:
+        raise ValueError(f"{path}: adjudication must equal the canonical routing policy")
+
+    campaign_fields = (
+        "campaign_id",
+        "campaign_path",
+        "campaign_sha256",
+        "evaluation_protocol_revision",
+        "evaluation_protocol_sha256",
+    )
+    if run_config["held_out"]:
+        campaign_relative = run_config.get("campaign_path")
+        if (
+            not isinstance(campaign_relative, str)
+            or PurePosixPath(campaign_relative).is_absolute()
+            or ".." in PurePosixPath(campaign_relative).parts
+            or PurePosixPath(campaign_relative).as_posix() != campaign_relative
+        ):
+            raise ValueError(
+                f"{path}: run_config.campaign_path must be a normalized relative POSIX path"
+            )
+        campaign_path = (ROOT / campaign_relative).resolve()
+        _validate_sha256(
+            run_config.get("campaign_sha256"),
+            label=f"{path}: run_config.campaign_sha256",
+        )
+        if not campaign_path.is_file() or dataset_hash(campaign_path) != run_config.get(
+            "campaign_sha256"
+        ):
+            raise ValueError(f"{path}: run_config campaign content hash mismatch")
+        try:
+            campaign = PROTOCOL.load_campaign(ROOT, campaign_path, CONTRACTS)
+        except PROTOCOL.ProtocolError as error:
+            raise ValueError(f"{path}: invalid formal campaign: {error}") from error
+        expected_revision = PROTOCOL.expected_revision_for_variant(campaign, variant)
+        expected_group = campaign.trial_groups.get(trial)
+        if (
+            run_config.get("campaign_id") != campaign.campaign_id
+            or revision != expected_revision
+            or comparison_group_id != expected_group
+            or run_config.get("evaluation_protocol_revision")
+            != campaign.anchor_revision
+            or run_config.get("evaluation_protocol_sha256")
+            != campaign.payload["evaluation_protocol"]["sha256"]
+        ):
+            raise ValueError(
+                f"{path}: bundle campaign, revision, protocol, trial, or group binding mismatch"
+            )
+        campaign_dataset = campaign.payload["dataset"]
+        campaign_provenance = campaign.payload["provenance"]
+        if (
+            configured_dataset_path != campaign_dataset["path"]
+            or dataset_revision != campaign_dataset["sha256"]
+            or run_config.get("dataset_git_revision")
+            != campaign_dataset["git_revision"]
+            or run_config.get("held_out_provenance_path")
+            != campaign_provenance["path"]
+            or run_config.get("held_out_provenance_sha256")
+            != campaign_provenance["sha256"]
+        ):
+            raise ValueError(f"{path}: bundle dataset/provenance differs from campaign")
+        condition = campaign.payload["condition"]
+        if (
+            condition["host_name"] != host_name
+            or condition["model"] != model
+            or condition["timeout_seconds"] != timeout_seconds
+            or condition["concurrency"] != concurrency
+            or condition["prompt_template_version"] != prompt_template_version
+            or condition["prompt_template_sha256"]
+            != run_config.get("prompt_template_sha256")
+            or condition["host_config_sha256"]
+            != run_config.get("host_config_sha256")
+            or condition["environment_policy_sha256"]
+            != run_config.get("environment_policy_sha256")
+            or condition["adjudication"] != adjudication
+        ):
+            raise ValueError(f"{path}: bundle condition differs from campaign")
+    elif any(run_config.get(field) is not None for field in campaign_fields):
+        raise ValueError(
+            f"{path}: non-held-out bundles must set campaign/protocol fields to null"
+        )
 
     results = payload["results"]
     if not isinstance(results, list) or any(not isinstance(item, dict) for item in results):
@@ -1955,11 +2315,74 @@ def _verified_result_map(
     return results
 
 
+def assess_routing_case(
+    case: dict[str, object], result: dict[str, object]
+) -> dict[str, object]:
+    """Evaluate one routing observation against the complete case contract."""
+
+    case_id = str(case.get("id", "routing case"))
+    known_skills = discover_skill_names()
+    actual = result.get("actual_owner")
+    if actual not in known_skills:
+        raise ValueError(f"{case_id}: unknown actual_owner {actual!r}")
+    handoffs = result.get("handoffs", [])
+    if not isinstance(handoffs, list) or any(
+        not isinstance(item, str) for item in handoffs
+    ):
+        raise ValueError(f"{case_id}: handoffs must be a string list")
+    if len(handoffs) != len(set(handoffs)):
+        raise ValueError(f"{case_id}: handoffs must not contain duplicates")
+    observed_handoffs = set(handoffs)
+    unknown_handoffs = observed_handoffs - known_skills
+    if unknown_handoffs:
+        raise ValueError(f"{case_id}: unknown handoffs {sorted(unknown_handoffs)}")
+
+    expected = str(case["expected_owner"])
+    allowed_owners = set(case.get("allowed_owners", [expected]))
+    required_handoffs = set(case.get("required_handoffs", []))
+    allowed_handoffs = set(case.get("allowed_handoffs", []))
+    forbidden_handoffs = set(case.get("forbidden_handoffs", []))
+    required_groups = [
+        set(group) for group in case.get("required_handoff_groups", [])
+    ]
+    unauthorized_handoffs = (
+        (observed_handoffs - allowed_handoffs)
+        | (observed_handoffs & forbidden_handoffs)
+        | ({str(actual)} & observed_handoffs)
+    )
+    missing_required_handoffs = required_handoffs - observed_handoffs
+    missing_required_groups = [
+        sorted(group) for group in required_groups if not group & observed_handoffs
+    ]
+    overselected_required_groups = [
+        sorted(group)
+        for group in required_groups
+        if len(group & observed_handoffs) > 1
+    ]
+    handoff_contract_passed = not (
+        unauthorized_handoffs
+        or missing_required_handoffs
+        or missing_required_groups
+        or overselected_required_groups
+    )
+    accepted_owner = actual in allowed_owners
+    return {
+        "exact_owner": actual == expected,
+        "accepted_owner": accepted_owner,
+        "unauthorized_handoffs": sorted(unauthorized_handoffs),
+        "missing_required_handoffs": sorted(missing_required_handoffs),
+        "missing_required_handoff_groups": missing_required_groups,
+        "overselected_required_handoff_groups": overselected_required_groups,
+        "handoff_contract_passed": handoff_contract_passed,
+        "full_case_success": accepted_owner and handoff_contract_passed,
+    }
+
+
 def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> Score:
     results = _verified_result_map(bundle, cases, evidence_kind="routing")
-    known_skills = discover_skill_names()
     exact_top1 = 0
     accepted_owners = 0
+    full_case_successes = 0
     owner_totals: Counter[str] = Counter()
     owner_exact: Counter[str] = Counter()
     core_total = 0
@@ -1967,24 +2390,24 @@ def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> 
     neighbor_total = 0
     neighbor_exact_top1 = 0
     high_risk_false_triggers = 0
-    observed_forbidden_handoffs = 0
-    observed_handoffs = 0
+    unauthorized_handoff_entries = 0
+    unauthorized_handoff_cases = 0
+    overselected_handoff_group_cases = 0
+    handoff_contract_failure_cases = 0
     required_handoff_requirements = 0
     satisfied_handoff_requirements = 0
     for case in cases:
         case_id = str(case["id"])
         result = results[case_id]
-        actual = result.get("actual_owner")
-        if actual not in known_skills:
-            raise ValueError(f"{case_id}: unknown actual_owner {actual!r}")
+        assessment = assess_routing_case(case, result)
         expected = str(case["expected_owner"])
-        allowed_owners = set(case.get("allowed_owners", [expected]))
-        exact = actual == expected
-        accepted = actual in allowed_owners
+        exact = bool(assessment["exact_owner"])
+        accepted = bool(assessment["accepted_owner"])
         owner_totals[expected] += 1
         owner_exact[expected] += int(exact)
         exact_top1 += int(exact)
         accepted_owners += int(accepted)
+        full_case_successes += int(bool(assessment["full_case_success"]))
         if expected in CORE_SKILLS:
             core_total += 1
             core_exact_top1 += int(exact)
@@ -1993,50 +2416,51 @@ def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> 
             neighbor_exact_top1 += int(exact)
         if case["high_risk"] and not accepted:
             high_risk_false_triggers += 1
-        handoffs = result.get("handoffs", [])
-        if not isinstance(handoffs, list) or any(
-            not isinstance(item, str) for item in handoffs
-        ):
-            raise ValueError(f"{case_id}: handoffs must be a string list")
-        if len(handoffs) != len(set(handoffs)):
-            raise ValueError(f"{case_id}: handoffs must not contain duplicates")
-        unknown_handoffs = set(handoffs) - known_skills
-        if unknown_handoffs:
-            raise ValueError(f"{case_id}: unknown handoffs {sorted(unknown_handoffs)}")
-        case_required_handoffs = set(case.get("required_handoffs", []))
-        case_allowed_handoffs = set(case.get("allowed_handoffs", []))
-        case_forbidden_handoffs = set(case.get("forbidden_handoffs", []))
-        observed_handoff_set = set(handoffs)
-        observed_handoffs += len(handoffs)
-        observed_forbidden_handoffs += len(
-            (observed_handoff_set - case_allowed_handoffs)
-            | (observed_handoff_set & case_forbidden_handoffs)
+
+        unauthorized = assessment["unauthorized_handoffs"]
+        if not isinstance(unauthorized, list):
+            raise ValueError(f"{case_id}: invalid unauthorized handoff assessment")
+        unauthorized_handoff_entries += len(unauthorized)
+        unauthorized_handoff_cases += int(bool(unauthorized))
+        overselected = assessment["overselected_required_handoff_groups"]
+        if not isinstance(overselected, list):
+            raise ValueError(f"{case_id}: invalid overselected handoff assessment")
+        overselected_handoff_group_cases += int(bool(overselected))
+        handoff_contract_failure_cases += int(
+            not bool(assessment["handoff_contract_passed"])
         )
-        required_handoff_requirements += len(case_required_handoffs)
+        observed_handoffs = set(result.get("handoffs", []))
+        required_handoffs = set(case.get("required_handoffs", []))
+        required_handoff_requirements += len(required_handoffs)
         satisfied_handoff_requirements += len(
-            case_required_handoffs & observed_handoff_set
+            required_handoffs & observed_handoffs
         )
         for group in case.get("required_handoff_groups", []):
             required_handoff_requirements += 1
             satisfied_handoff_requirements += int(
-                bool(set(group) & observed_handoff_set)
+                len(set(group) & observed_handoffs) == 1
             )
 
-    overall_exact_rate = exact_top1 / len(cases) if cases else 0.0
-    accepted_owner_rate = accepted_owners / len(cases) if cases else 0.0
+    total_cases = len(cases)
+    overall_exact_rate = exact_top1 / total_cases if total_cases else 0.0
+    accepted_owner_rate = accepted_owners / total_cases if total_cases else 0.0
+    full_case_success_rate = (
+        full_case_successes / total_cases if total_cases else 0.0
+    )
     core_exact_rate = core_exact_top1 / core_total if core_total else 0.0
     neighbor_exact_rate = (
         neighbor_exact_top1 / neighbor_total if neighbor_total else 0.0
     )
-    handoff_rate = (
-        observed_forbidden_handoffs / observed_handoffs
-        if observed_handoffs
-        else 0.0
+    unauthorized_handoff_case_rate = (
+        unauthorized_handoff_cases / total_cases if total_cases else 0.0
+    )
+    overselected_handoff_group_case_rate = (
+        overselected_handoff_group_cases / total_cases if total_cases else 0.0
     )
     required_handoff_recall = (
         satisfied_handoff_requirements / required_handoff_requirements
         if required_handoff_requirements
-        else 1.0
+        else None
     )
     per_skill_rates = {
         owner: owner_exact[owner] / total for owner, total in owner_totals.items()
@@ -2046,6 +2470,8 @@ def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> 
         >= float(ROUTING_CONTRACT["minimum_overall_exact_top1"])
         and accepted_owner_rate
         >= float(ROUTING_CONTRACT["minimum_accepted_owner_accuracy"])
+        and full_case_success_rate
+        >= float(ROUTING_CONTRACT["minimum_full_case_success"])
         and core_exact_rate
         >= float(ROUTING_CONTRACT["minimum_core_exact_top1"])
         and all(
@@ -2056,8 +2482,13 @@ def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> 
         >= float(ROUTING_CONTRACT["minimum_neighbor_exact_top1"])
         and high_risk_false_triggers
         <= int(ROUTING_CONTRACT["maximum_high_risk_false_triggers"])
-        and handoff_rate
-        <= float(ROUTING_CONTRACT["maximum_forbidden_handoff_rate"])
+        and unauthorized_handoff_case_rate
+        <= float(ROUTING_CONTRACT["maximum_unauthorized_handoff_case_rate"])
+        and overselected_handoff_group_case_rate
+        <= float(
+            ROUTING_CONTRACT["maximum_overselected_handoff_group_case_rate"]
+        )
+        and required_handoff_recall is not None
         and required_handoff_recall
         >= float(ROUTING_CONTRACT["minimum_required_handoff_recall"])
     )
@@ -2067,15 +2498,23 @@ def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> 
         f"{float(ROUTING_CONTRACT['minimum_per_skill_exact_top1']):.0%}"
         for owner in sorted(owner_totals)
     )
+    required_recall_text = (
+        "not applicable; dataset must include positive handoff cases"
+        if required_handoff_recall is None
+        else f"{required_handoff_recall:.1%}"
+    )
     return Score(
         passed,
         (
-            f"routing exact top-1: {exact_top1}/{len(cases)} "
+            f"routing exact top-1: {exact_top1}/{total_cases} "
             f"({overall_exact_rate:.1%}); target >= "
             f"{float(ROUTING_CONTRACT['minimum_overall_exact_top1']):.0%}",
-            f"accepted owner accuracy: {accepted_owners}/{len(cases)} "
+            f"accepted owner accuracy: {accepted_owners}/{total_cases} "
             f"({accepted_owner_rate:.1%}); target >= "
             f"{float(ROUTING_CONTRACT['minimum_accepted_owner_accuracy']):.0%}",
+            f"full-case success: {full_case_successes}/{total_cases} "
+            f"({full_case_success_rate:.1%}); target >= "
+            f"{float(ROUTING_CONTRACT['minimum_full_case_success']):.0%}",
             f"core exact top-1: {core_exact_top1}/{core_total} "
             f"({core_exact_rate:.1%}); target >= "
             f"{float(ROUTING_CONTRACT['minimum_core_exact_top1']):.0%}",
@@ -2085,12 +2524,18 @@ def score_routing(cases: list[dict[str, object]], bundle: dict[str, object]) -> 
             f"{float(ROUTING_CONTRACT['minimum_neighbor_exact_top1']):.0%}",
             f"high-risk false triggers: {high_risk_false_triggers}; target <= "
             f"{int(ROUTING_CONTRACT['maximum_high_risk_false_triggers'])}",
-            f"forbidden handoffs: {observed_forbidden_handoffs}/{observed_handoffs} "
-            f"({handoff_rate:.1%}); target <= "
-            f"{float(ROUTING_CONTRACT['maximum_forbidden_handoff_rate']):.0%}",
+            f"unauthorized handoff entries: {unauthorized_handoff_entries}; "
+            f"affected cases: {unauthorized_handoff_cases}/{total_cases} "
+            f"({unauthorized_handoff_case_rate:.1%}); target <= "
+            f"{float(ROUTING_CONTRACT['maximum_unauthorized_handoff_case_rate']):.0%}",
+            f"overselected one-of handoff groups: "
+            f"{overselected_handoff_group_cases}/{total_cases} "
+            f"({overselected_handoff_group_case_rate:.1%}); target <= "
+            f"{float(ROUTING_CONTRACT['maximum_overselected_handoff_group_case_rate']):.0%}",
+            f"handoff-contract failing cases: {handoff_contract_failure_cases}/"
+            f"{total_cases}",
             f"required handoff recall: {satisfied_handoff_requirements}/"
-            f"{required_handoff_requirements} "
-            f"({required_handoff_recall:.1%}); target >= "
+            f"{required_handoff_requirements} ({required_recall_text}); target >= "
             f"{float(ROUTING_CONTRACT['minimum_required_handoff_recall']):.0%}",
         ),
     )

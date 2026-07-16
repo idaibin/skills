@@ -1,6 +1,6 @@
 ---
 name: audit-frontend
-description: "Use when a known frontend surface needs a scoped, read-only audit of architecture, reuse, data/UI contracts, accessibility, performance, or desktop boundaries, including bounded specialist delegation from repo-review; choose only relevant profiles."
+description: "Use when a known frontend surface needs a scoped, read-only audit of selected architecture, reuse, data/UI contract, accessibility, performance, or desktop-boundary profiles."
 ---
 
 # Frontend Audit

@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Review"
   short_description: "Review worktrees, ranges, PRs, and releases read-only"
-  default_prompt: "Use $repo-review to perform a read-only, basis-specific review of a worktree, snapshot, range, PR, release candidate, or verified package."
+  default_prompt: "Use $repo-review to classify local change ownership and commit readiness with exact staging guidance, or produce severity-ranked findings from one immutable review basis."

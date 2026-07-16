@@ -34,7 +34,11 @@ This file defines how AI agents should work on this repository. It is not the pr
 - `scripts/test_*.py` contains validator, runner, and comparison regressions.
 - `scripts/run-skill-routing-eval.py` plans reproducible routing trials and
   requires explicit `--execute` before it calls a model host.
-- `scripts/compare-skill-evals.py` replays matched candidate/control evidence.
+- `scripts/create-skill-routing-campaign.py` creates and self-validates the
+  committed preregistration file for formal held-out trials without calling a
+  model host.
+- `scripts/compare-skill-evals.py` replays matched candidate, previous, and
+  no-Skill evidence from one preregistered campaign.
 - `contracts/skill-validation.json` is the machine-readable authority for
   package limits, behavior-eval coverage and score gates, result schemas, and
   official-source review freshness.

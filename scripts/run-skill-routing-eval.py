@@ -28,27 +28,28 @@ from typing import Sequence
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATASET = ROOT / "evals" / "routing.jsonl"
-RESULT_SCHEMA_VERSION = 3
-RAW_SCHEMA_VERSION = 2
-PROMPT_TEMPLATE_VERSION = 1
-PROMPT_VALUE_PLACEHOLDER = "<NATURAL_REQUEST_JSON>"
-RUNNER_VERSION = "3"
-OWNER_ENUM = (
-    "audit-frontend",
-    "audit-rust",
-    "audit-security",
-    "chatgpt-review",
-    "code-planner",
-    "diagnose",
-    "human-writing",
-    "implement-frontend",
-    "implement-rust",
-    "ops-browser",
-    "ops-client",
-    "repo-delivery",
-    "repo-map",
-    "repo-review",
+DEFAULT_OUTPUT_ROOT = ROOT / "eval-results" / "routing"
+PROTOCOL_PATH = ROOT / "scripts" / "evaluation_protocol.py"
+_PROTOCOL_SPEC = importlib.util.spec_from_file_location(
+    "aicraft_evaluation_protocol_for_runner", PROTOCOL_PATH
 )
+if _PROTOCOL_SPEC is None or _PROTOCOL_SPEC.loader is None:
+    raise RuntimeError(f"cannot load evaluation protocol from {PROTOCOL_PATH}")
+PROTOCOL = importlib.util.module_from_spec(_PROTOCOL_SPEC)
+sys.modules[_PROTOCOL_SPEC.name] = PROTOCOL
+_PROTOCOL_SPEC.loader.exec_module(PROTOCOL)
+CONTRACTS = PROTOCOL.load_contract(ROOT)
+BEHAVIOR_CONTRACT = CONTRACTS["behavior_eval"]
+RESULT_SCHEMA_VERSION = int(BEHAVIOR_CONTRACT["result_schema_version"])
+RAW_SCHEMA_VERSION = int(BEHAVIOR_CONTRACT["raw_evidence_schema_version"])
+PROMPT_TEMPLATE_VERSION = int(BEHAVIOR_CONTRACT["prompt_template_version"])
+PROMPT_VALUE_PLACEHOLDER = "<NATURAL_REQUEST_JSON>"
+RUNNER_VERSION = str(
+    BEHAVIOR_CONTRACT["evaluation_protocol"]["canonical_routing"][
+        "reviewer_version"
+    ]
+)
+OWNER_ENUM = PROTOCOL.OWNER_ENUM
 VARIANTS = ("candidate", "previous", "baseline")
 HOSTS = ("codex", "claude")
 TASK_FIXTURE_DESCRIPTOR = {
@@ -59,18 +60,7 @@ TASK_FIXTURE_DESCRIPTOR = {
     "skill_packages_excluded": True,
 }
 
-ROUTING_RESPONSE_SCHEMA: dict[str, object] = {
-    "type": "object",
-    "additionalProperties": False,
-    "properties": {
-        "actual_owner": {"type": "string", "enum": list(OWNER_ENUM)},
-        "handoffs": {
-            "type": "array",
-            "items": {"type": "string", "enum": list(OWNER_ENUM)},
-        },
-    },
-    "required": ["actual_owner", "handoffs"],
-}
+ROUTING_RESPONSE_SCHEMA: dict[str, object] = PROTOCOL.routing_response_schema()
 
 
 class RunnerError(ValueError):
@@ -94,7 +84,12 @@ class RunConfig:
     host: str
     variant: str
     trial: int
-    pair_id: str
+    comparison_group_id: str
+    campaign_id: str | None
+    campaign_path_relative: str | None
+    campaign_sha256: str | None
+    evaluation_protocol_revision: str | None
+    evaluation_protocol_sha256: str | None
     held_out: bool
     model: str
     timeout_seconds: int
@@ -240,6 +235,11 @@ def _repository_dataset_path(value: str) -> tuple[Path, str]:
     return resolved, relative.as_posix()
 
 
+def _cli_path(value: str | Path) -> Path:
+    path = Path(value)
+    return (path if path.is_absolute() else ROOT / path).resolve()
+
+
 def _repository_provenance_path(value: str) -> tuple[Path, str]:
     candidate = Path(value)
     if not candidate.is_absolute():
@@ -377,96 +377,15 @@ def build_prompt(natural_request: str) -> str:
 
 
 def _prompt_template() -> str:
-    owners = _canonical_json(list(OWNER_ENUM))
-    return (
-        "Route this natural request to one primary owner and zero or more handoff owners.\n"
-        f"Natural request: {PROMPT_VALUE_PLACEHOLDER}\n"
-        f"Owner enum: {owners}\n"
-        "Return only JSON with keys actual_owner and handoffs."
-    )
+    return PROTOCOL.canonical_prompt_template(CONTRACTS)
 
 
 def _host_policy(host: str, model: str) -> dict[str, object]:
-    common: dict[str, object] = {
-        "schema_version": 1,
-        "host": host,
-        "model": model,
-        "prompt_template_version": PROMPT_TEMPLATE_VERSION,
-        "prompt_template_sha256": _sha256_text(_prompt_template()),
-        "owner_enum": list(OWNER_ENUM),
-        "response_schema": ROUTING_RESPONSE_SCHEMA,
-        "environment_isolation": {
-            "home": "unique temporary directory per case",
-            "xdg_roots": "unique temporary directories per case",
-            "global_skill_roots": "excluded",
-            "credentials": "auth files only; no user config or Skill packages",
-            "project_skill_root": ".agents/skills" if host == "codex" else ".claude/skills",
-        },
-    }
-    if host == "codex":
-        common["command_template"] = [
-            "codex",
-            "exec",
-            "--sandbox",
-            "read-only",
-            "--ephemeral",
-            "--ignore-user-config",
-            "--ignore-rules",
-            "--json",
-            "--color",
-            "never",
-            "--config",
-            'approval_policy="never"',
-            "--cd",
-            "<CASE_REPO>",
-            "--model",
-            "<MODEL>",
-            "--output-schema",
-            "<SCHEMA_PATH>",
-            "--output-last-message",
-            "<RESPONSE_PATH>",
-            "<LABEL_FREE_PROMPT>",
-        ]
-        common["permissions"] = "read-only; never-approve; ephemeral; ignore-user-config"
-    else:
-        common["command_template"] = [
-            "claude",
-            "--print",
-            "--model",
-            "<MODEL>",
-            "--output-format",
-            "json",
-            "--json-schema",
-            "<RESPONSE_SCHEMA>",
-            "--tools",
-            "<EMPTY>",
-            "--no-session-persistence",
-            "--setting-sources",
-            "project",
-            "--permission-mode",
-            "dontAsk",
-            "--no-chrome",
-            "--strict-mcp-config",
-            "--mcp-config",
-            "{}",
-            "<LABEL_FREE_PROMPT>",
-        ]
-        common["permissions"] = "tools-disabled; no-session-persistence; project-settings-only"
-    return common
+    return PROTOCOL.canonical_host_policy(host, model, CONTRACTS)
 
 
 def _response_schema_hash() -> str:
-    adjudication_config = {
-        "schema_version": 1,
-        "response_schema": ROUTING_RESPONSE_SCHEMA,
-        "parser": "strict JSON; reject duplicate keys and extra fields",
-        "mapping": {
-            "actual_owner": "observations.actual_owner",
-            "handoffs": "observations.handoffs",
-        },
-        "reject_primary_owner_handoff": True,
-    }
-    return _sha256_text(_canonical_json(adjudication_config))
+    return str(PROTOCOL.canonical_adjudication(CONTRACTS)["config_sha256"])
 
 
 def _task_fixture_hash() -> str:
@@ -586,18 +505,12 @@ def _isolated_host_environment(host: str, isolated_home: Path) -> dict[str, str]
     for name in ("config", "data", "cache"):
         (xdg_root / name).mkdir(parents=True, mode=0o700)
 
-    environment = source_environment
-    for key in (
-        "AGENTS_HOME",
-        "CLAUDE_CONFIG_DIR",
-        "CODEX_HOME",
-        "CODEX_SKILLS_DIR",
-        "SKILLS_DIR",
-        "XDG_CACHE_HOME",
-        "XDG_CONFIG_HOME",
-        "XDG_DATA_HOME",
-    ):
-        environment.pop(key, None)
+    environment_policy = PROTOCOL.canonical_environment_policy(host, CONTRACTS)
+    environment = {
+        key: source_environment[key]
+        for key in environment_policy["source_allowlist"]
+        if key in source_environment
+    }
     environment.update(
         {
             "CI": "1",
@@ -639,6 +552,8 @@ def _host_command(
         return [
             "codex",
             "exec",
+            "--disable",
+            "remote_plugin",
             "--sandbox",
             "read-only",
             "--ephemeral",
@@ -771,10 +686,10 @@ def _extract_usage(stdout: str, *, host: str) -> tuple[int | None, int | None]:
             if (
                 isinstance(input_tokens, int)
                 and not isinstance(input_tokens, bool)
-                and input_tokens >= 0
+                and input_tokens > 0
                 and isinstance(output_tokens, int)
                 and not isinstance(output_tokens, bool)
-                and output_tokens >= 0
+                and output_tokens > 0
             ):
                 normalized_input_tokens = input_tokens
                 if host == "claude":
@@ -985,12 +900,16 @@ def _validate_written_bundle(bundle_path: Path, config: RunConfig) -> None:
     validator.score_routing(cases, loaded)
 
 
-def run_evaluation(config: RunConfig) -> RunOutcome:
-    """Execute one complete selected-case run and retain auditable evidence."""
+def _run_evaluation_attempt(
+    config: RunConfig,
+    *,
+    run_id: str,
+    run_dir: Path,
+    attempt_id: str,
+    attempt_started_at: str,
+) -> RunOutcome:
+    """Execute one reserved campaign attempt."""
 
-    run_id = str(uuid.uuid4())
-    run_dir = config.output_root.resolve() / run_id
-    run_dir.mkdir(parents=True, exist_ok=False)
     raw_root = run_dir / "raw" / "routing"
     raw_root.mkdir(parents=True)
     host_version = _host_version(config.host, config.timeout_seconds)
@@ -1086,7 +1005,14 @@ def run_evaluation(config: RunConfig) -> RunOutcome:
         "run_config": {
             "variant": config.variant,
             "trial": config.trial,
-            "pair_id": config.pair_id,
+            "comparison_group_id": config.comparison_group_id,
+            "attempt_id": attempt_id,
+            "attempt_path": "attempt.json",
+            "campaign_id": config.campaign_id,
+            "campaign_path": config.campaign_path_relative,
+            "campaign_sha256": config.campaign_sha256,
+            "evaluation_protocol_revision": config.evaluation_protocol_revision,
+            "evaluation_protocol_sha256": config.evaluation_protocol_sha256,
             "held_out": config.held_out,
             "dataset_path": config.dataset_path_relative,
             "dataset_git_revision": config.dataset_git_revision,
@@ -1103,20 +1029,24 @@ def run_evaluation(config: RunConfig) -> RunOutcome:
             "fixture": TASK_FIXTURE_DESCRIPTOR,
             "skill_fixture_sha256": skill_fixture_sha256,
             "host_config_sha256": host_config_sha256,
+            "environment_policy_sha256": PROTOCOL.canonical_hash(
+                PROTOCOL.canonical_environment_policy(config.host, CONTRACTS)
+            ),
             "host_name": config.host,
             "prompt_template_version": PROMPT_TEMPLATE_VERSION,
             "prompt_template": _prompt_template(),
             "prompt_template_sha256": _sha256_text(_prompt_template()),
             "skills_installed": config.variant in {"candidate", "previous"},
             "skill_install_root": ".agents/skills" if config.host == "codex" else ".claude/skills",
-            "isolation": "committed export; unique repository and isolated HOME per case",
+            "isolation": (
+                "committed export; unique repository and isolated HOME per case; "
+                "remote_plugin disabled"
+                if config.host == "codex"
+                else "committed export; unique repository and isolated HOME per case; "
+                "strict empty MCP configuration"
+            ),
         },
-        "adjudication": {
-            "method": "deterministic",
-            "reviewer": "scripts/run-skill-routing-eval.py",
-            "reviewer_version": RUNNER_VERSION,
-            "config_sha256": _response_schema_hash(),
-        },
+        "adjudication": PROTOCOL.canonical_adjudication(CONTRACTS),
         "results": [
             {
                 "id": outcome.case_id,
@@ -1138,6 +1068,15 @@ def run_evaluation(config: RunConfig) -> RunOutcome:
     }
     bundle_path = run_dir / "routing-results.json"
     _write_json(bundle_path, bundle)
+    _write_attempt_ledger(
+        run_dir / "attempt.json",
+        config,
+        attempt_id=attempt_id,
+        run_id=run_id,
+        started_at=attempt_started_at,
+        status="success",
+        artifact=bundle_path,
+    )
     try:
         _validate_written_bundle(bundle_path, config)
     except (OSError, ValueError, RunnerError) as error:
@@ -1156,21 +1095,143 @@ def run_evaluation(config: RunConfig) -> RunOutcome:
     return RunOutcome(run_id, run_dir, bundle_path, None)
 
 
+def _assert_campaign_attempt_unused(config: RunConfig) -> None:
+    if config.campaign_id is None or not config.output_root.exists():
+        return
+    for path in config.output_root.resolve().glob("*/attempt.json"):
+        try:
+            payload = json.loads(
+                path.read_text(encoding="utf-8"),
+                object_pairs_hook=_reject_duplicate_json_keys,
+            )
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as error:
+            raise RunnerError(f"cannot audit existing attempt ledger {path}: {error}") from error
+        if not isinstance(payload, dict):
+            raise RunnerError(f"existing attempt ledger is not an object: {path}")
+        if (
+            payload.get("campaign_id") == config.campaign_id
+            and payload.get("trial") == config.trial
+            and payload.get("variant") == config.variant
+        ):
+            raise RunnerError(
+                "campaign trial/variant already has an attempt; failed attempts consume "
+                "the slot and require a new campaign"
+            )
+
+
+def _write_attempt_ledger(
+    path: Path,
+    config: RunConfig,
+    *,
+    attempt_id: str,
+    run_id: str,
+    started_at: str,
+    status: str,
+    artifact: Path | None,
+) -> None:
+    artifact_relative = artifact.relative_to(path.parent).as_posix() if artifact else None
+    _write_json(
+        path,
+        {
+            "schema_version": int(BEHAVIOR_CONTRACT["attempt_schema_version"]),
+            "attempt_id": attempt_id,
+            "campaign_id": config.campaign_id,
+            "trial": config.trial,
+            "variant": config.variant,
+            "comparison_group_id": config.comparison_group_id,
+            "started_at": started_at,
+            "completed_at": _utc_now() if status != "running" else None,
+            "status": status,
+            "run_id": run_id,
+            "artifact": artifact_relative,
+            "artifact_sha256": (
+                _sha256_bytes(artifact.read_bytes()) if artifact is not None else None
+            ),
+        },
+    )
+
+
+def run_evaluation(config: RunConfig) -> RunOutcome:
+    """Reserve and execute one auditable campaign attempt."""
+
+    _assert_campaign_attempt_unused(config)
+    run_id = str(uuid.uuid4())
+    attempt_id = str(uuid.uuid4())
+    run_dir = config.output_root.resolve() / run_id
+    run_dir.mkdir(parents=True, exist_ok=False)
+    attempt_path = run_dir / "attempt.json"
+    started_at = _utc_now()
+    _write_attempt_ledger(
+        attempt_path,
+        config,
+        attempt_id=attempt_id,
+        run_id=run_id,
+        started_at=started_at,
+        status="running",
+        artifact=None,
+    )
+    try:
+        outcome = _run_evaluation_attempt(
+            config,
+            run_id=run_id,
+            run_dir=run_dir,
+            attempt_id=attempt_id,
+            attempt_started_at=started_at,
+        )
+    except Exception as error:
+        failure_path = run_dir / "run-failure.json"
+        _write_json(
+            failure_path,
+            {
+                "schema_version": 1,
+                "complete": False,
+                "run_id": run_id,
+                "campaign_id": config.campaign_id,
+                "trial": config.trial,
+                "variant": config.variant,
+                "comparison_group_id": config.comparison_group_id,
+                "error": f"unhandled evaluation failure: {error}",
+            },
+        )
+        outcome = RunOutcome(run_id, run_dir, None, failure_path)
+    artifact = outcome.bundle_path or outcome.failure_path
+    _write_attempt_ledger(
+        attempt_path,
+        config,
+        attempt_id=attempt_id,
+        run_id=run_id,
+        started_at=started_at,
+        status="success" if outcome.succeeded else "failure",
+        artifact=artifact,
+    )
+    return outcome
+
+
 def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", choices=HOSTS, required=True)
     parser.add_argument("--variant", choices=VARIANTS, required=True)
     parser.add_argument("--trial", type=_positive_integer, default=1)
     parser.add_argument(
-        "--pair-id",
-        help="UUID shared by the candidate and control runs for this trial.",
+        "--comparison-group-id",
+        help=(
+            "UUID shared by every matched candidate, previous, and no-Skill "
+            "baseline run for this trial."
+        ),
+    )
+    parser.add_argument(
+        "--campaign",
+        help=(
+            "Committed post-anchor campaign JSON required for formal held-out "
+            "execution."
+        ),
     )
     parser.add_argument("--held-out", action="store_true")
     parser.add_argument("--model", required=True)
     parser.add_argument("--timeout", type=_positive_integer, default=120, dest="timeout_seconds")
     parser.add_argument("--concurrency", type=_positive_integer, default=1)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "eval-results" / "routing")
-    parser.add_argument("--dataset", default=str(DEFAULT_DATASET))
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--dataset")
     parser.add_argument(
         "--provenance",
         help="Committed provenance JSON required for a held-out execution.",
@@ -1181,7 +1242,7 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--case", action="append", default=[], dest="case_values")
     parser.add_argument("--cases", help="comma-separated explicit case ids")
-    parser.add_argument("--skill-revision", "--skills-revision", default="HEAD")
+    parser.add_argument("--skill-revision", "--skills-revision")
     parser.add_argument(
         "--execute",
         action="store_true",
@@ -1191,6 +1252,54 @@ def _build_parser() -> argparse.ArgumentParser:
 
 
 def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
+    campaign = None
+    output_root = arguments.output_dir or DEFAULT_OUTPUT_ROOT
+    if arguments.campaign:
+        campaign_path, _ = _repository_provenance_path(arguments.campaign)
+        try:
+            campaign = PROTOCOL.load_campaign(ROOT, campaign_path, CONTRACTS)
+        except PROTOCOL.ProtocolError as error:
+            raise RunnerError(str(error)) from error
+        if not arguments.held_out:
+            raise RunnerError("--campaign requires --held-out")
+        condition = campaign.payload["condition"]
+        for key, actual in (
+            ("host_name", arguments.host),
+            ("model", arguments.model),
+            ("timeout_seconds", arguments.timeout_seconds),
+            ("concurrency", arguments.concurrency),
+        ):
+            if condition[key] != actual:
+                raise RunnerError(
+                    f"--{key.replace('_', '-')} must match the campaign value"
+                )
+        dataset_spec = str(campaign.payload["dataset"]["path"])
+        provenance_spec = str(campaign.payload["provenance"]["path"])
+        if (
+            arguments.dataset is not None
+            and _cli_path(arguments.dataset) != (ROOT / dataset_spec).resolve()
+        ):
+            raise RunnerError("--dataset must match the campaign dataset path")
+        if arguments.provenance and _cli_path(arguments.provenance) != (
+            ROOT / provenance_spec
+        ).resolve():
+            raise RunnerError("--provenance must match the campaign provenance path")
+        arguments.dataset = dataset_spec
+        arguments.provenance = provenance_spec
+        arguments.evaluation_anchor_revision = campaign.anchor_revision
+        expected_output_root = (ROOT / campaign.artifact_root).resolve()
+        if (
+            arguments.output_dir is not None
+            and _cli_path(arguments.output_dir) != expected_output_root
+        ):
+            raise RunnerError("--output-dir must match the campaign artifact_root")
+        output_root = expected_output_root
+    elif arguments.held_out and arguments.execute:
+        raise RunnerError("formal --held-out --execute requires --campaign")
+
+    if arguments.dataset is None:
+        arguments.dataset = str(DEFAULT_DATASET)
+
     dataset_path, dataset_relative = _repository_dataset_path(arguments.dataset)
     dataset_rows = _load_dataset_rows(dataset_path)
     _validate_dataset_contract(
@@ -1205,16 +1314,36 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
             "dataset file instead of using --case/--cases"
         )
     cases = _load_cases(dataset_path, requested_ids)
-    revision = resolve_revision(arguments.skill_revision)
-    pair_id = arguments.pair_id
-    if pair_id is None:
+    revision_spec = arguments.skill_revision or "HEAD"
+    if campaign is not None:
+        expected_revision = PROTOCOL.expected_revision_for_variant(
+            campaign, arguments.variant
+        )
+        if arguments.skill_revision is not None:
+            supplied_revision = resolve_revision(arguments.skill_revision)
+            if supplied_revision.commit != expected_revision:
+                raise RunnerError("--skill-revision does not match the campaign variant")
+        revision_spec = expected_revision
+    revision = resolve_revision(revision_spec)
+    comparison_group_id = arguments.comparison_group_id
+    if campaign is not None:
+        declared_groups = campaign.trial_groups
+        if arguments.trial not in declared_groups:
+            raise RunnerError("--trial is not declared by the campaign")
+        declared_group = declared_groups[arguments.trial]
+        if comparison_group_id is not None and comparison_group_id != declared_group:
+            raise RunnerError("--comparison-group-id does not match the campaign trial")
+        comparison_group_id = declared_group
+    elif comparison_group_id is None:
         if arguments.execute:
-            raise RunnerError("--execute requires --pair-id with a shared trial UUID")
-        pair_id = "00000000-0000-4000-8000-000000000000"
+            raise RunnerError(
+                "--execute requires --comparison-group-id with a shared trial UUID"
+            )
+        comparison_group_id = "00000000-0000-4000-8000-000000000000"
     try:
-        uuid.UUID(pair_id)
+        uuid.UUID(comparison_group_id)
     except ValueError as error:
-        raise RunnerError("--pair-id must be a UUID") from error
+        raise RunnerError("--comparison-group-id must be a UUID") from error
     if arguments.execute:
         aliases = {"auto", "default", "latest", "opus", "sonnet", "haiku", "fable"}
         if arguments.model.casefold() in aliases or not any(
@@ -1250,6 +1379,15 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
         dataset_git_revision = _committed_dataset_revision(
             dataset_path, dataset_relative
         )
+        if campaign is not None:
+            expected_dataset = campaign.payload["dataset"]
+            expected_provenance = campaign.payload["provenance"]
+            if dataset_git_revision != expected_dataset["git_revision"]:
+                raise RunnerError("dataset Git revision does not match the campaign")
+            if _sha256_bytes(dataset_path.read_bytes()) != expected_dataset["sha256"]:
+                raise RunnerError("dataset hash does not match the campaign")
+            if provenance_sha256 != expected_provenance["sha256"]:
+                raise RunnerError("provenance hash does not match the campaign")
         validator = _contract_validator_module()
         validator._validate_held_out_provenance(
             dataset_path,
@@ -1273,12 +1411,25 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
         host=arguments.host,
         variant=arguments.variant,
         trial=arguments.trial,
-        pair_id=pair_id,
+        comparison_group_id=comparison_group_id,
+        campaign_id=campaign.campaign_id if campaign is not None else None,
+        campaign_path_relative=(
+            campaign.relative_path if campaign is not None else None
+        ),
+        campaign_sha256=campaign.sha256 if campaign is not None else None,
+        evaluation_protocol_revision=(
+            campaign.anchor_revision if campaign is not None else None
+        ),
+        evaluation_protocol_sha256=(
+            str(campaign.payload["evaluation_protocol"]["sha256"])
+            if campaign is not None
+            else None
+        ),
         held_out=arguments.held_out,
         model=arguments.model,
         timeout_seconds=arguments.timeout_seconds,
         concurrency=arguments.concurrency,
-        output_root=arguments.output_dir,
+        output_root=output_root,
         dataset_path=dataset_path,
         dataset_path_relative=dataset_relative,
         dataset_sha256=_sha256_bytes(dataset_path.read_bytes()),
@@ -1299,7 +1450,12 @@ def _dry_run_plan(config: RunConfig) -> dict[str, object]:
         "model": config.model,
         "variant": config.variant,
         "trial": config.trial,
-        "pair_id": config.pair_id,
+        "comparison_group_id": config.comparison_group_id,
+        "campaign_id": config.campaign_id,
+        "campaign_path": config.campaign_path_relative,
+        "campaign_sha256": config.campaign_sha256,
+        "evaluation_protocol_revision": config.evaluation_protocol_revision,
+        "evaluation_protocol_sha256": config.evaluation_protocol_sha256,
         "held_out": config.held_out,
         "dataset_path": config.dataset_path_relative,
         "dataset_revision": config.dataset_sha256,
@@ -1313,6 +1469,9 @@ def _dry_run_plan(config: RunConfig) -> dict[str, object]:
         "skills_installed": config.variant in {"candidate", "previous"},
         "fixture_sha256": _task_fixture_hash(),
         "host_config_sha256": _sha256_text(_canonical_json(policy)),
+        "environment_policy_sha256": PROTOCOL.canonical_hash(
+            PROTOCOL.canonical_environment_policy(config.host, CONTRACTS)
+        ),
         "timeout_seconds": config.timeout_seconds,
         "concurrency": config.concurrency,
         "output_root": str(config.output_root.resolve()),

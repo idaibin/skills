@@ -9,13 +9,14 @@ maturity labels or treat format validation as proof of model behavior.
 - Evidence revision: the commit containing this file; resolve with
   `git log -1 --format=%H -- docs/quality/status.md`
 - Structure host: local repository validator on macOS
-- Behavior host and model: `codex-cli 0.144.1` / `gpt-5.6-sol` routing
-  comparison executed; quality gate failed
+- Behavior host and model: historical `codex-cli 0.144.1` / `gpt-5.6-sol`
+  routing comparison executed under evaluation v1 and failed; evaluation v2
+  has not been executed
 - Workflow host and model: `Not verified`
-- Comparative previous/no-Skill run: previous revision comparison executed;
-  status `FAIL`
-- Held-out provenance: `Committed and hash-bound; three paired live trials
-  executed, not claimable`
+- Comparative run: historical candidate/previous comparison executed under v1;
+  status `FAIL`; required v2 candidate/previous/no-Skill group is `Not verified`
+- Held-out provenance: `Historical v1 only; committed, hash-bound, consumed by
+  three paired live trials, and not claimable for v2`
 
 `Structure = verified` means the source package and repository consistency
 checks passed. It does not prove live model routing, authority behavior, or
@@ -75,6 +76,26 @@ action/evidence labels. The validator therefore prevents these suites from
 setting behavior or workflow to `verified` until an independent semantic
 verifier is added.
 
+## Evaluation Contract v2 (Pending Live Evidence)
+
+The current contract upgrades routing success from primary-owner top-1 to the
+complete owner-and-handoff case: accepted owner, every required direct handoff,
+exactly one member of every required one-of group, and zero unauthorized or
+optional handoffs. It reports unauthorized
+handoff entries and affected cases separately and rejects held-out datasets
+without both positive required-handoff and correct-empty-handoff coverage.
+
+Improvement evaluation now requires matched candidate, previous, and no-Skill
+conditions under one comparison group per trial. Previous establishes
+non-regression; no-Skill establishes outcome contribution and removes fixed
+host input from the marginal Skill-input metric. Total tokens and duration are
+reported but are not discovery-efficiency gates. Formal runs must first commit
+a post-anchor campaign that freezes revisions, dataset/provenance, exact trial
+groups, canonical policies, a unique artifact root, and the full evaluation
+protocol. Failed attempts consume their preregistered slots. Marginal input
+claims require per-group non-increase, 15% relative reduction, and at least 50
+saved tokens per case on average. No live v2 result or claim is recorded yet.
+
 ## Deterministic Footprint Delta
 
 Compared with repository revision `abebbfc913753b5e67f43e49e47f2b3027391bf2`,
@@ -82,8 +103,8 @@ the current source changes produce these deterministic reductions:
 
 | Surface | Baseline | Current | Change |
 | --- | ---: | ---: | ---: |
-| Frontmatter descriptions | 4,216 characters | 3,135 characters | -25.6% |
-| OpenAI default prompts | 7,682 characters | 2,077 characters | -73.0% |
+| Frontmatter descriptions | 4,216 characters | 2,999 characters | -28.9% |
+| OpenAI default prompts | 7,682 characters | 2,137 characters | -72.2% |
 | `SKILL.md` entrypoints | 1,344 lines | 1,169 lines | -13.0% |
 
 Reproduce with
@@ -92,7 +113,7 @@ This is a context-footprint measurement, not a model-behavior, quality, speed,
 or token-usage result. Those claims remain `not_verified` until the controlled
 comparison contract passes.
 
-## Live Routing Comparison (Failed Gate)
+## Live Routing Comparison (Historical v1 Failed Gate)
 
 On `2026-07-16`, the Codex runner executed three paired candidate/previous
 trials over the 28-case held-out dataset: 168 successful model calls in total.
@@ -122,23 +143,23 @@ for the bound scope, exact report, and repository replay boundary.
 
 ## Unverified Scope
 
-- A passing live top-1 routing and neighboring non-trigger contract; the
-  recorded Codex comparison failed
+- A passing live v2 full-case routing and neighboring non-trigger contract; the
+  recorded Codex comparison used v1 and failed
 - Authority enforcement under real model/tool execution
 - Stop conditions and cross-skill handoff behavior
 - End-to-end repository workflow completion and interruption recovery
 - Claude Code compatibility
 - Technology stacks outside the repository's future recorded workflow corpus
-- Scoped comparative routing outcome or Token improvement over a previous/no-Skill
-  run; the recorded Codex comparison did not meet either gate
+- Scoped comparative routing outcome contribution or marginal Skill-input
+  improvement from a v2 candidate/previous/no-Skill group
 - Any time improvement claim; duration is reported but not a current gate
 
 Future behavior or workflow verification must bind every raw result to the
 model, host, committed Skill revision, exact dataset hash, trial configuration,
 adjudication, metrics, and execution evidence, then independently derive the
-semantic action/evidence result from the raw host events. A baseline is not
-required to evaluate contract correctness, but it is required before a scoped
-improvement claim over the previous or no-Skill condition.
+semantic action/evidence result from the raw host events. A no-Skill baseline is
+not required to evaluate contract correctness, but the complete three-condition
+group is required before a scoped improvement claim.
 
 See [`validation-plan.md`](validation-plan.md) for the routing, authority, and
 workflow evidence phases, and

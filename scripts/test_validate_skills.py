@@ -141,7 +141,9 @@ class ValidateSkillsTests(unittest.TestCase):
         run_id = "00000000-0000-4000-8000-000000000001"
         model = "fixture-model-1"
         host = "fixture-host/1"
-        prompt_template = f"Evaluate request: {CONTRACT_EVAL.PROMPT_VALUE_PLACEHOLDER}"
+        prompt_template = CONTRACT_EVAL.PROTOCOL.canonical_prompt_template(
+            CONTRACT_EVAL.CONTRACTS
+        )
         invocation_prompt = prompt_template.replace(
             CONTRACT_EVAL.PROMPT_VALUE_PLACEHOLDER,
             json.dumps(prompt, ensure_ascii=False),
@@ -216,7 +218,14 @@ class ValidateSkillsTests(unittest.TestCase):
                 "prompt_set_sha256": CONTRACT_EVAL.dataset_hash(dataset_path),
                 "case_set_sha256": CONTRACT_EVAL.case_set_hash(dataset_rows),
                 "case_ids": [str(row["id"]) for row in dataset_rows],
-                "pair_id": "00000000-0000-4000-8000-000000000002",
+                "comparison_group_id": "00000000-0000-4000-8000-000000000002",
+                "attempt_id": "00000000-0000-4000-8000-000000000003",
+                "attempt_path": "attempt.json",
+                "campaign_id": None,
+                "campaign_path": None,
+                "campaign_sha256": None,
+                "evaluation_protocol_revision": None,
+                "evaluation_protocol_sha256": None,
                 "held_out": False,
                 "permissions": "read-only",
                 "timeout_seconds": 60,
@@ -231,14 +240,20 @@ class ValidateSkillsTests(unittest.TestCase):
                 "prompt_template_version": CONTRACT_EVAL.PROMPT_TEMPLATE_VERSION,
                 "prompt_template": prompt_template,
                 "prompt_template_sha256": CONTRACT_EVAL.text_hash(prompt_template),
-                "host_config_sha256": "c" * 64,
+                "host_config_sha256": CONTRACT_EVAL.PROTOCOL.canonical_hash(
+                    CONTRACT_EVAL.PROTOCOL.canonical_host_policy(
+                        "codex", model, CONTRACT_EVAL.CONTRACTS
+                    )
+                ),
+                "environment_policy_sha256": CONTRACT_EVAL.PROTOCOL.canonical_hash(
+                    CONTRACT_EVAL.PROTOCOL.canonical_environment_policy(
+                        "codex", CONTRACT_EVAL.CONTRACTS
+                    )
+                ),
             },
-            "adjudication": {
-                "method": "deterministic",
-                "reviewer": "validator-regression",
-                "reviewer_version": "1",
-                "config_sha256": "d" * 64,
-            },
+            "adjudication": CONTRACT_EVAL.PROTOCOL.canonical_adjudication(
+                CONTRACT_EVAL.CONTRACTS
+            ),
             "results": [
                 {
                     "id": result_id,
@@ -264,6 +279,9 @@ class ValidateSkillsTests(unittest.TestCase):
             encoding="utf-8",
         )
         dataset_hash = hashlib.sha256(dataset_path.read_bytes()).hexdigest()
+        campaign_path = root / "evals" / "routing-campaign.json"
+        campaign_path.write_text('{"fixture":"campaign"}\n', encoding="utf-8")
+        campaign_hash = hashlib.sha256(campaign_path.read_bytes()).hexdigest()
         records: list[dict[str, object]] = []
         for index, spec in enumerate(specs, 1):
             bundle_name = str(spec.get("bundle_name", f"bundle-{index}"))
@@ -286,6 +304,11 @@ class ValidateSkillsTests(unittest.TestCase):
                     "concurrency": 1,
                     "fixture_sha256": None,
                     "host_config_sha256": "d" * 64,
+                    "campaign_id": "00000000-0000-4000-8000-000000000099",
+                    "campaign_path": str(campaign_path.relative_to(root)),
+                    "campaign_sha256": campaign_hash,
+                    "evaluation_protocol_revision": "a" * 40,
+                    "evaluation_protocol_sha256": "f" * 64,
                 },
                 "adjudication": {
                     "method": "deterministic",
@@ -309,6 +332,8 @@ class ValidateSkillsTests(unittest.TestCase):
                     "kind": str(spec.get("kind", "routing")),
                     "dataset": str(dataset_path.relative_to(root)),
                     "dataset_sha256": dataset_hash,
+                    "campaign": str(campaign_path.relative_to(root)),
+                    "campaign_sha256": campaign_hash,
                     "bundle": str(bundle_path.relative_to(root)),
                     "bundle_sha256": hashlib.sha256(bundle_path.read_bytes()).hexdigest(),
                 }
@@ -472,9 +497,9 @@ class ValidateSkillsTests(unittest.TestCase):
         contracts = copy.deepcopy(VALIDATOR.VALIDATION_CONTRACTS)
         validator = getattr(VALIDATOR, "validate_official_baseline")
 
-        self.assertEqual([], validator(contracts, today=date(2026, 7, 15)))
+        self.assertEqual([], validator(contracts, today=date(2026, 7, 16)))
 
-        stale_errors = validator(contracts, today=date(2026, 10, 16))
+        stale_errors = validator(contracts, today=date(2026, 10, 17))
         self.assertTrue(any("review" in error.casefold() for error in stale_errors))
 
         contracts["official_baseline"]["sources"] = [
@@ -482,8 +507,17 @@ class ValidateSkillsTests(unittest.TestCase):
             for source in contracts["official_baseline"]["sources"]
             if source["lane"] != "claude"
         ]
-        lane_errors = validator(contracts, today=date(2026, 7, 15))
+        lane_errors = validator(contracts, today=date(2026, 7, 16))
         self.assertTrue(any("claude" in error.casefold() for error in lane_errors))
+
+        contracts = copy.deepcopy(VALIDATOR.VALIDATION_CONTRACTS)
+        contracts["official_baseline"]["sources"] = [
+            source
+            for source in contracts["official_baseline"]["sources"]
+            if source["lane"] != "evaluation"
+        ]
+        lane_errors = validator(contracts, today=date(2026, 7, 16))
+        self.assertTrue(any("evaluation" in error.casefold() for error in lane_errors))
 
     def test_official_baseline_rejects_future_review_date(self) -> None:
         contracts = copy.deepcopy(VALIDATOR.VALIDATION_CONTRACTS)
@@ -736,7 +770,7 @@ class ValidateSkillsTests(unittest.TestCase):
             errors, _ = VALIDATOR.validate_quality_evidence(root)
 
         self.assertTrue(
-            any("schema_version must be 4" in error for error in errors), errors
+            any("schema_version must be 6" in error for error in errors), errors
         )
 
     def test_control_evidence_does_not_need_to_pass_candidate_score_gate(self) -> None:
@@ -831,17 +865,22 @@ class ValidateSkillsTests(unittest.TestCase):
                                 "id": "routing-outcome-improvement",
                                 "status": "verified",
                                 "comparison_id": "missing-comparison",
-                                "dimension": "outcome",
+                                "dimension": "routing_outcome_vs_previous",
                                 "kind": "routing",
                                 "host_name": "codex",
                                 "host_version": "codex-cli 1.0",
                                 "model": "gpt-5-test",
                                 "candidate_skill_revision": "a" * 40,
-                                "control_variant": "previous",
-                                "control_skill_revision": "b" * 40,
+                                "previous_skill_revision": "b" * 40,
+                                "baseline_skill_revision": "a" * 40,
                                 "dataset_sha256": "c" * 64,
                                 "dataset_git_revision": "d" * 40,
                                 "evaluation_anchor_revision": "a" * 40,
+                                "campaign_id": "00000000-0000-4000-8000-000000000099",
+                                "campaign_path": "evals/routing-campaign.json",
+                                "campaign_sha256": "f" * 64,
+                                "evaluation_protocol_revision": "a" * 40,
+                                "evaluation_protocol_sha256": "1" * 64,
                                 "held_out_provenance_path": "evals/held-out-provenance.json",
                                 "held_out_provenance_sha256": "e" * 64,
                                 "skills": [],
@@ -871,18 +910,14 @@ class ValidateSkillsTests(unittest.TestCase):
             report = root / "evidence" / "comparison.json"
             report.parent.mkdir(parents=True)
             recorded = {
-                "schema_version": 1,
+                "schema_version": 3,
                 "status": "PASS",
-                "comparison": {
-                    "outcome_threshold_met": True,
-                    "outcome_non_regression": True,
-                    "token_threshold_met": False,
-                },
+                "claimable_dimensions": ["routing_outcome_vs_previous"],
                 "errors": [],
             }
             report.write_text(json.dumps(recorded), encoding="utf-8")
             evidence: dict[str, dict[str, object]] = {}
-            for variant in ("candidate", "previous"):
+            for variant in ("candidate", "previous", "baseline"):
                 for trial in range(1, 4):
                     evidence_id = f"{variant}-{trial}"
                     evidence[evidence_id] = {
@@ -892,13 +927,23 @@ class ValidateSkillsTests(unittest.TestCase):
                         "model": "gpt-5-test",
                         "host": "codex-cli 1.0",
                         "host_name": "codex",
-                        "skill_revision": ("a" if variant == "candidate" else "b") * 40,
+                        "skill_revision": (
+                            "b" if variant == "previous" else "a"
+                        )
+                        * 40,
                         "dataset_git_revision": "9" * 40,
                         "evaluation_anchor_revision": "a" * 40,
+                        "campaign_id": "00000000-0000-4000-8000-000000000099",
+                        "campaign_path": "evals/routing-campaign.json",
+                        "campaign_sha256": "f" * 64,
+                        "evaluation_protocol_revision": "a" * 40,
+                        "evaluation_protocol_sha256": "1" * 64,
                         "held_out_provenance_path": "evals/held-out-provenance.json",
                         "held_out_provenance_sha256": "8" * 64,
                         "bundle_path": root / "evidence" / f"{evidence_id}.json",
-                        "bundle_sha256": f"{trial}" * 64,
+                        "bundle_sha256": hashlib.sha256(
+                            evidence_id.encode("utf-8")
+                        ).hexdigest(),
                         "dataset_path": dataset,
                         "dataset_sha256": dataset_hash,
                     }
@@ -906,7 +951,10 @@ class ValidateSkillsTests(unittest.TestCase):
                 "id": "routing-improvement",
                 "kind": "routing",
                 "candidate_evidence": [f"candidate-{trial}" for trial in range(1, 4)],
-                "control_evidence": [f"previous-{trial}" for trial in range(1, 4)],
+                "previous_evidence": [f"previous-{trial}" for trial in range(1, 4)],
+                "baseline_evidence": [f"baseline-{trial}" for trial in range(1, 4)],
+                "campaign": "evals/routing-campaign.json",
+                "campaign_sha256": "f" * 64,
                 "report": str(report.relative_to(root)),
                 "report_sha256": hashlib.sha256(report.read_bytes()).hexdigest(),
             }
@@ -1353,6 +1401,33 @@ class ValidateSkillsTests(unittest.TestCase):
                         "high_risk": False,
                     }
                 )
+        required_handoff_owners = list(
+            CONTRACT_EVAL.BEHAVIOR_CONTRACT["comparative"][
+                "required_held_out_handoff_primary_owners"
+            ]
+        )
+        additional_owner = next(
+            name for name in known_skills if name not in required_handoff_owners
+        )
+        for index, skill_name in enumerate(
+            [*required_handoff_owners, additional_owner]
+        ):
+            owner_index = known_skills.index(skill_name)
+            handoff = known_skills[(owner_index + 7) % len(known_skills)]
+            cases.append(
+                {
+                    "id": f"heldout-handoff-{index + 1:02d}",
+                    "prompt": f"Fresh multi-part evaluation request {index + 1}.",
+                    "kind": "multi_intent",
+                    "expected_owner": skill_name,
+                    "allowed_owners": [skill_name],
+                    "forbidden_owners": [],
+                    "required_handoffs": [handoff],
+                    "allowed_handoffs": [handoff],
+                    "forbidden_handoffs": [],
+                    "high_risk": False,
+                }
+            )
 
         self.assertEqual(
             [], CONTRACT_EVAL.validate_held_out_routing_cases(cases, set(known_skills))
@@ -1364,6 +1439,19 @@ class ValidateSkillsTests(unittest.TestCase):
         )
         self.assertTrue(
             any("missing kinds ['neighbor_non_trigger']" in error for error in errors),
+            errors,
+        )
+
+        no_positive_handoffs = copy.deepcopy(cases)
+        for case in no_positive_handoffs:
+            case["required_handoffs"] = []
+            case["required_handoff_groups"] = []
+            case["allowed_handoffs"] = []
+        errors = CONTRACT_EVAL.validate_held_out_routing_cases(
+            no_positive_handoffs, set(known_skills)
+        )
+        self.assertTrue(
+            any("required-handoff cases, found 0" in error for error in errors),
             errors,
         )
 
@@ -1429,34 +1517,156 @@ class ValidateSkillsTests(unittest.TestCase):
         self.assertFalse(score.passed)
         self.assertTrue(any("required handoff" in line.casefold() for line in score.lines))
 
-    def test_forbidden_handoff_rate_uses_observed_handoffs_as_denominator(self) -> None:
+    def test_routing_case_assessment_requires_owner_and_complete_handoff_contract(
+        self,
+    ) -> None:
+        case = {
+            "id": "assessment",
+            "expected_owner": "diagnose",
+            "allowed_owners": ["diagnose", "audit-rust"],
+            "required_handoffs": ["implement-rust"],
+            "required_handoff_groups": [["repo-review", "audit-security"]],
+            "allowed_handoffs": [
+                "implement-rust",
+                "repo-review",
+                "audit-security",
+            ],
+            "forbidden_handoffs": ["repo-delivery"],
+        }
+        accepted = CONTRACT_EVAL.assess_routing_case(
+            case,
+            {
+                "actual_owner": "audit-rust",
+                "handoffs": ["implement-rust", "repo-review"],
+            },
+        )
+        self.assertTrue(accepted["full_case_success"])
+
+        missing_group = CONTRACT_EVAL.assess_routing_case(
+            case,
+            {"actual_owner": "diagnose", "handoffs": ["implement-rust"]},
+        )
+        self.assertFalse(missing_group["full_case_success"])
+        self.assertEqual(
+            [["audit-security", "repo-review"]],
+            missing_group["missing_required_handoff_groups"],
+        )
+
+        overselected_group = CONTRACT_EVAL.assess_routing_case(
+            case,
+            {
+                "actual_owner": "diagnose",
+                "handoffs": [
+                    "implement-rust",
+                    "repo-review",
+                    "audit-security",
+                ],
+            },
+        )
+        self.assertFalse(overselected_group["full_case_success"])
+        self.assertEqual(
+            [["audit-security", "repo-review"]],
+            overselected_group["overselected_required_handoff_groups"],
+        )
+
+        unauthorized = CONTRACT_EVAL.assess_routing_case(
+            case,
+            {
+                "actual_owner": "diagnose",
+                "handoffs": ["implement-rust", "repo-review", "repo-delivery"],
+            },
+        )
+        self.assertFalse(unauthorized["full_case_success"])
+        self.assertEqual(["repo-delivery"], unauthorized["unauthorized_handoffs"])
+
+    def test_unauthorized_handoff_rate_uses_affected_cases_as_denominator(self) -> None:
         cases = copy.deepcopy(CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.ROUTING_DATA))
         bundle = self.perfect_routing_bundle(cases)
         known_skills = sorted(CONTRACT_EVAL.discover_skill_names())
-        candidates = [case for case in cases if not case.get("required_handoffs")][:10]
-        for index, case in enumerate(candidates):
-            forbidden = set(case["forbidden_owners"])
-            target = next(
-                name
-                for name in known_skills
-                if name != case["expected_owner"] and name not in forbidden
-            )
-            forbidden_handoff = case["forbidden_owners"][0]
-            case["forbidden_handoffs"] = [forbidden_handoff] if index == 0 else []
-            case["allowed_handoffs"] = [] if index == 0 else [target]
-            result = next(
-                item for item in bundle["results"] if item["id"] == case["id"]
-            )
-            result["handoffs"] = [forbidden_handoff if index == 0 else target]
+        case = next(item for item in cases if not item.get("allowed_handoffs"))
+        target = next(
+            name for name in known_skills if name != case["expected_owner"]
+        )
+        result = next(
+            item for item in bundle["results"] if item["id"] == case["id"]
+        )
+        result["handoffs"] = [target]
 
         score = CONTRACT_EVAL.score_routing(cases, bundle)
 
         self.assertFalse(score.passed)
-        observed_handoffs = sum(
-            len(result["handoffs"]) for result in bundle["results"]
-        )
         self.assertTrue(
-            any(f"1/{observed_handoffs}" in line for line in score.lines)
+            any(
+                f"affected cases: 1/{len(cases)}" in line
+                for line in score.lines
+            )
+        )
+
+    def test_routing_dataset_rejects_owner_handoff_overlap(self) -> None:
+        cases = copy.deepcopy(CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.ROUTING_DATA))
+        case = next(item for item in cases if item.get("required_handoffs"))
+        case["allowed_owners"] = [
+            case["expected_owner"],
+            case["required_handoffs"][0],
+        ]
+
+        errors = CONTRACT_EVAL.validate_routing_cases(
+            cases,
+            CONTRACT_EVAL.discover_skill_names(),
+            routing_graph_path=CONTRACT_EVAL.ROOT
+            / "docs"
+            / "skills"
+            / "routing-graph.json",
+        )
+
+        self.assertTrue(
+            any("allowed owners cannot also be handoffs" in error for error in errors),
+            errors,
+        )
+
+    def test_routing_dataset_rejects_optional_allowed_handoffs(self) -> None:
+        cases = copy.deepcopy(CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.ROUTING_DATA))
+        case = next(item for item in cases if not item.get("allowed_handoffs"))
+        case["allowed_handoffs"] = [
+            next(
+                name
+                for name in sorted(CONTRACT_EVAL.discover_skill_names())
+                if name != case["expected_owner"]
+            )
+        ]
+
+        errors = CONTRACT_EVAL.validate_routing_cases(
+            cases,
+            CONTRACT_EVAL.discover_skill_names(),
+            routing_graph_path=CONTRACT_EVAL.ROOT
+            / "docs"
+            / "skills"
+            / "routing-graph.json",
+        )
+
+        self.assertTrue(
+            any("optional entries are not necessary handoffs" in error for error in errors),
+            errors,
+        )
+
+    def test_routing_dataset_rejects_overlapping_handoff_requirements(self) -> None:
+        cases = copy.deepcopy(CONTRACT_EVAL.load_jsonl(CONTRACT_EVAL.ROUTING_DATA))
+        case = next(item for item in cases if item.get("required_handoff_groups"))
+        group_member = case["required_handoff_groups"][0][0]
+        case["required_handoffs"] = [group_member]
+
+        errors = CONTRACT_EVAL.validate_routing_cases(
+            cases,
+            CONTRACT_EVAL.discover_skill_names(),
+            routing_graph_path=CONTRACT_EVAL.ROOT
+            / "docs"
+            / "skills"
+            / "routing-graph.json",
+        )
+
+        self.assertTrue(
+            any("must not overlap required_handoffs" in error for error in errors),
+            errors,
         )
 
     def test_routing_rejects_duplicate_and_undeclared_handoffs(self) -> None:
@@ -1658,6 +1868,32 @@ class ValidateSkillsTests(unittest.TestCase):
                     bundle_path, {"case-001"}, dataset
                 )
 
+    def test_result_bundle_rejects_zero_token_metrics(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            dataset = root / "dataset.jsonl"
+            dataset.write_text(
+                '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                encoding="utf-8",
+            )
+            bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+            result = payload["results"][0]
+            raw_path = root / result["raw_evidence"]
+            raw = json.loads(raw_path.read_text(encoding="utf-8"))
+            raw["metrics"]["input_tokens"] = 0
+            result["metrics"]["input_tokens"] = 0
+            raw_path.write_text(json.dumps(raw), encoding="utf-8")
+            result["raw_evidence_sha256"] = hashlib.sha256(
+                raw_path.read_bytes()
+            ).hexdigest()
+            bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "null or a positive integer"):
+                CONTRACT_EVAL.load_result_bundle(
+                    bundle_path, {"case-001"}, dataset
+                )
+
     def test_result_bundle_recomputes_claude_cache_inclusive_usage(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -1669,6 +1905,20 @@ class ValidateSkillsTests(unittest.TestCase):
             )
             bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
             payload["run_config"]["host_name"] = "claude"
+            payload["run_config"]["host_config_sha256"] = (
+                CONTRACT_EVAL.PROTOCOL.canonical_hash(
+                    CONTRACT_EVAL.PROTOCOL.canonical_host_policy(
+                        "claude", payload["model"], CONTRACT_EVAL.CONTRACTS
+                    )
+                )
+            )
+            payload["run_config"]["environment_policy_sha256"] = (
+                CONTRACT_EVAL.PROTOCOL.canonical_hash(
+                    CONTRACT_EVAL.PROTOCOL.canonical_environment_policy(
+                        "claude", CONTRACT_EVAL.CONTRACTS
+                    )
+                )
+            )
             result = payload["results"][0]
             raw_path = root / result["raw_evidence"]
             raw = json.loads(raw_path.read_text(encoding="utf-8"))
@@ -1710,18 +1960,18 @@ class ValidateSkillsTests(unittest.TestCase):
             payload["schema_version"] = 2
             bundle_path.write_text(json.dumps(payload), encoding="utf-8")
 
-            with self.assertRaisesRegex(ValueError, "schema_version must be 3"):
+            with self.assertRaisesRegex(ValueError, "schema_version must be 5"):
                 CONTRACT_EVAL.load_result_bundle(
                     bundle_path, {"case-001"}, dataset
                 )
 
-    def test_held_out_provenance_rejects_copied_historical_prompt(self) -> None:
+    def test_held_out_provenance_rejects_canonicalized_historical_prompt(self) -> None:
         skill_revision = "a" * 40
         dataset_revision = "b" * 40
         with tempfile.TemporaryDirectory(dir=CONTRACT_EVAL.ROOT / "evals") as temp_dir:
             dataset = Path(temp_dir) / "held-out.jsonl"
             dataset.write_text(
-                '{"id":"fresh-id","prompt":"already public"}\n',
+                '{"id":"fresh-id","prompt":"  ALREADY\\tPUBLIC  "}\n',
                 encoding="utf-8",
             )
             relative = dataset.relative_to(CONTRACT_EVAL.ROOT).as_posix()
@@ -1771,6 +2021,97 @@ class ValidateSkillsTests(unittest.TestCase):
                         '{"id":"old-id","prompt":"already public"}\n',
                         "",
                     )
+                if "cat-file" in command and command[-1] in {
+                    f"{skill_revision}:{relative}",
+                    f"{skill_revision}:{provenance_relative}",
+                }:
+                    return subprocess.CompletedProcess(command, 1, b"", b"")
+                return subprocess.CompletedProcess(command, 0, b"", b"")
+
+            with mock.patch.object(
+                CONTRACT_EVAL.subprocess, "run", side_effect=git_result
+            ):
+                with self.assertRaisesRegex(ValueError, "overlaps eval data"):
+                    CONTRACT_EVAL._validate_held_out_provenance(
+                        dataset,
+                        skill_revision,
+                        {
+                            "dataset_path": relative,
+                            "dataset_git_revision": dataset_revision,
+                            "evaluation_anchor_revision": skill_revision,
+                            "held_out_provenance_path": provenance_relative,
+                            "held_out_provenance_sha256": CONTRACT_EVAL.dataset_hash(
+                                provenance
+                            ),
+                            "host_name": "codex",
+                            "variant": "candidate",
+                        },
+                        bundle_path=Path("fixture-bundle.json"),
+                    )
+
+    def test_held_out_provenance_rejects_skill_eval_case_prompt(self) -> None:
+        skill_revision = "a" * 40
+        dataset_revision = "b" * 40
+        with tempfile.TemporaryDirectory(dir=CONTRACT_EVAL.ROOT / "evals") as temp_dir:
+            dataset = Path(temp_dir) / "held-out.jsonl"
+            dataset.write_text(
+                '{"id":"fresh-id","prompt":"known skill prompt"}\n',
+                encoding="utf-8",
+            )
+            relative = dataset.relative_to(CONTRACT_EVAL.ROOT).as_posix()
+            provenance = Path(temp_dir) / "held-out-provenance.json"
+            provenance_payload = {
+                "schema_version": 1,
+                "dataset_path": relative,
+                "dataset_sha256": CONTRACT_EVAL.dataset_hash(dataset),
+                "source_skill_revision": skill_revision,
+                "authorship": {
+                    "independent": True,
+                    "timing": "post_freeze",
+                    "existing_eval_comparison": "after_drafting_only",
+                },
+                "used_for_tuning": False,
+                "intended_hosts": ["codex"],
+            }
+            provenance.write_text(json.dumps(provenance_payload), encoding="utf-8")
+            provenance_relative = provenance.relative_to(
+                CONTRACT_EVAL.ROOT
+            ).as_posix()
+            skill_eval_path = "skills/diagnose/references/eval-cases.md"
+
+            def git_result(command: list[str], **kwargs: object):
+                if "merge-base" in command:
+                    return subprocess.CompletedProcess(command, 0, b"", b"")
+                if "log" in command:
+                    return subprocess.CompletedProcess(
+                        command, 0, f"{dataset_revision}\n", ""
+                    )
+                if "ls-tree" in command:
+                    output = (
+                        f"{skill_eval_path}\n"
+                        if command[-1] == "skills"
+                        else ""
+                    )
+                    return subprocess.CompletedProcess(command, 0, output, "")
+                if "show" in command:
+                    revision_path = command[-1]
+                    if revision_path == f"{dataset_revision}:{relative}":
+                        return subprocess.CompletedProcess(
+                            command, 0, dataset.read_bytes(), b""
+                        )
+                    if revision_path == f"{dataset_revision}:{provenance_relative}":
+                        return subprocess.CompletedProcess(
+                            command, 0, provenance.read_bytes(), b""
+                        )
+                    if revision_path == f"{skill_revision}:{skill_eval_path}":
+                        return subprocess.CompletedProcess(
+                            command,
+                            0,
+                            "| Input | Expected |\n"
+                            "| --- | --- |\n"
+                            "| `Known   Skill Prompt` | Trigger |\n",
+                            "",
+                        )
                 if "cat-file" in command and command[-1] in {
                     f"{skill_revision}:{relative}",
                     f"{skill_revision}:{provenance_relative}",

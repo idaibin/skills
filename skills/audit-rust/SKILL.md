@@ -1,6 +1,6 @@
 ---
 name: audit-rust
-description: "Use when a Rust workspace or known Rust surface needs a scoped, read-only audit of architecture, ownership, errors, concurrency, performance, persistence, or unsafe boundaries, including bounded specialist work delegated by repo-review."
+description: "Use when a Rust workspace or known Rust surface needs a scoped, read-only audit of selected architecture, ownership, error, concurrency, performance, persistence, or unsafe-boundary risks."
 ---
 
 # Rust Audit

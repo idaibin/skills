@@ -54,6 +54,7 @@
 | Evidence isolation | Keeps current-worktree content out of another SHA basis. | Clears immutable findings with local files. |
 | Context collaboration | Uses repo maps only for navigation and verifies facts at the basis. | Trusts or edits the map. |
 | Specialist composition | Delegates bounded paths to audit skills and retains final scope, integration, severity, and report ownership. | Hands off the whole review or concatenates reports. |
+| Necessary handoff | Emits an audit-skill handoff only when that specialist must actually inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or security-sensitive code. |
 | Contract completeness | Traces manifests, exports, callers, types, migrations, generated files, tests, CI/deploy, docs, indexes, and stale references when applicable. | Reviews isolated source lines only. |
 | Duplicate control | Consolidates symptoms sharing one root cause. | Repeats one issue across profiles. |
 | Read-only boundary | Leaves files, Git, GitHub, and remote state unchanged and routes mutation to `repo-delivery`. | Edits, formats, stages, commits, pushes, comments, or changes refs. |

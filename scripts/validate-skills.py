@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import re
 import subprocess
@@ -69,6 +70,16 @@ PLACEHOLDER_RE = re.compile(
     re.MULTILINE,
 )
 TEXT_FILE_SUFFIXES = {".md", ".yaml", ".yml", ".py", ".sh", ".json", ".toml", ".txt"}
+ROOT = Path(__file__).resolve().parents[1]
+PROTOCOL_PATH = ROOT / "scripts" / "evaluation_protocol.py"
+_PROTOCOL_SPEC = importlib.util.spec_from_file_location(
+    "aicraft_evaluation_protocol_for_validator", PROTOCOL_PATH
+)
+if _PROTOCOL_SPEC is None or _PROTOCOL_SPEC.loader is None:
+    raise RuntimeError(f"cannot load evaluation protocol from {PROTOCOL_PATH}")
+PROTOCOL = importlib.util.module_from_spec(_PROTOCOL_SPEC)
+sys.modules[_PROTOCOL_SPEC.name] = PROTOCOL
+_PROTOCOL_SPEC.loader.exec_module(PROTOCOL)
 
 
 def load_validation_contracts() -> dict[str, object]:
@@ -185,7 +196,7 @@ def validate_official_baseline(
             errors.append(
                 f"repository: official_baseline source {index} url must use https"
             )
-    required_lanes = {"portable-core", "openai", "claude"}
+    required_lanes = {"portable-core", "openai", "claude", "evaluation"}
     missing_lanes = required_lanes - observed_lanes
     if missing_lanes:
         errors.append(
@@ -348,6 +359,8 @@ def validate_quality_evidence(
         "kind",
         "dataset",
         "dataset_sha256",
+        "campaign",
+        "campaign_sha256",
         "bundle",
         "bundle_sha256",
     }
@@ -411,6 +424,36 @@ def validate_quality_evidence(
                 f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} dataset hash mismatch"
             )
             continue
+        campaign = record.get("campaign")
+        if (
+            not isinstance(campaign, str)
+            or not campaign.strip()
+            or Path(campaign).is_absolute()
+        ):
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} campaign must be a relative path"
+            )
+            continue
+        campaign_path = (root / campaign).resolve()
+        try:
+            campaign_path.relative_to(root_resolved)
+        except ValueError:
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} campaign escapes repository"
+            )
+            continue
+        expected_campaign_hash = record.get("campaign_sha256")
+        if (
+            not campaign_path.is_file()
+            or not isinstance(expected_campaign_hash, str)
+            or re.fullmatch(r"[0-9a-f]{64}", expected_campaign_hash) is None
+            or hashlib.sha256(campaign_path.read_bytes()).hexdigest()
+            != expected_campaign_hash
+        ):
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} campaign hash mismatch"
+            )
+            continue
         bundle = record.get("bundle")
         if not isinstance(bundle, str) or not bundle.strip() or Path(bundle).is_absolute():
             errors.append(
@@ -464,6 +507,14 @@ def validate_quality_evidence(
         except (OSError, json.JSONDecodeError, KeyError, TypeError, ValueError) as error:
             errors.append(
                 f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} cannot read run_config: {error}"
+            )
+            continue
+        if (
+            run_config.get("campaign_path") != campaign
+            or run_config.get("campaign_sha256") != expected_campaign_hash
+        ):
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} evidence {evidence_id} bundle campaign binding mismatch"
             )
             continue
         if variant not in {"candidate", "baseline", "previous"} or (
@@ -642,6 +693,15 @@ def validate_quality_evidence(
             "evaluation_anchor_revision": run_config.get(
                 "evaluation_anchor_revision"
             ),
+            "campaign_id": run_config.get("campaign_id"),
+            "campaign_path": run_config.get("campaign_path"),
+            "campaign_sha256": run_config.get("campaign_sha256"),
+            "evaluation_protocol_revision": run_config.get(
+                "evaluation_protocol_revision"
+            ),
+            "evaluation_protocol_sha256": run_config.get(
+                "evaluation_protocol_sha256"
+            ),
             "held_out_provenance_path": run_config.get(
                 "held_out_provenance_path"
             ),
@@ -668,11 +728,16 @@ def validate_quality_evidence(
         "host_version",
         "model",
         "candidate_skill_revision",
-        "control_variant",
-        "control_skill_revision",
+        "previous_skill_revision",
+        "baseline_skill_revision",
         "dataset_sha256",
         "dataset_git_revision",
         "evaluation_anchor_revision",
+        "campaign_id",
+        "campaign_path",
+        "campaign_sha256",
+        "evaluation_protocol_revision",
+        "evaluation_protocol_sha256",
         "held_out_provenance_path",
         "held_out_provenance_sha256",
         "skills",
@@ -730,11 +795,16 @@ def validate_quality_evidence(
             "host_version": "host",
             "model": "model",
             "candidate_skill_revision": "candidate_skill_revision",
-            "control_variant": "control_variant",
-            "control_skill_revision": "control_skill_revision",
+            "previous_skill_revision": "previous_skill_revision",
+            "baseline_skill_revision": "baseline_skill_revision",
             "dataset_sha256": "dataset_sha256",
             "dataset_git_revision": "dataset_git_revision",
             "evaluation_anchor_revision": "evaluation_anchor_revision",
+            "campaign_id": "campaign_id",
+            "campaign_path": "campaign_path",
+            "campaign_sha256": "campaign_sha256",
+            "evaluation_protocol_revision": "evaluation_protocol_revision",
+            "evaluation_protocol_sha256": "evaluation_protocol_sha256",
             "held_out_provenance_path": "held_out_provenance_path",
             "held_out_provenance_sha256": "held_out_provenance_sha256",
             "skills": "skills",
@@ -766,7 +836,10 @@ def validate_quality_comparisons(
         "id",
         "kind",
         "candidate_evidence",
-        "control_evidence",
+        "previous_evidence",
+        "baseline_evidence",
+        "campaign",
+        "campaign_sha256",
         "report",
         "report_sha256",
     }
@@ -799,7 +872,11 @@ def validate_quality_comparisons(
 
         selected: dict[str, list[str]] = {}
         invalid_selection = False
-        for key in ("candidate_evidence", "control_evidence"):
+        for key in (
+            "candidate_evidence",
+            "previous_evidence",
+            "baseline_evidence",
+        ):
             values = record.get(key)
             if (
                 not isinstance(values, list)
@@ -816,14 +893,24 @@ def validate_quality_comparisons(
             selected[key] = values
         if invalid_selection:
             continue
-        if set(selected["candidate_evidence"]) & set(selected["control_evidence"]):
+        selected_sets = [
+            set(selected["candidate_evidence"]),
+            set(selected["previous_evidence"]),
+            set(selected["baseline_evidence"]),
+        ]
+        if any(
+            selected_sets[left] & selected_sets[right]
+            for left in range(len(selected_sets))
+            for right in range(left + 1, len(selected_sets))
+        ):
             errors.append(
                 f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} reuses evidence across variants"
             )
             continue
         evidence_ids = [
             *selected["candidate_evidence"],
-            *selected["control_evidence"],
+            *selected["previous_evidence"],
+            *selected["baseline_evidence"],
         ]
         missing = [evidence_id for evidence_id in evidence_ids if evidence_id not in evidence]
         if missing:
@@ -832,8 +919,9 @@ def validate_quality_comparisons(
             )
             continue
         candidate_records = [evidence[item] for item in selected["candidate_evidence"]]
-        control_records = [evidence[item] for item in selected["control_evidence"]]
-        all_records = [*candidate_records, *control_records]
+        previous_records = [evidence[item] for item in selected["previous_evidence"]]
+        baseline_records = [evidence[item] for item in selected["baseline_evidence"]]
+        all_records = [*candidate_records, *previous_records, *baseline_records]
         if any(item["kind"] != kind for item in all_records):
             errors.append(
                 f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} mixes evidence kinds"
@@ -844,10 +932,14 @@ def validate_quality_comparisons(
                 f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} candidate_evidence must use candidate bundles"
             )
             continue
-        control_variants = {str(item["variant"]) for item in control_records}
-        if len(control_variants) != 1 or "candidate" in control_variants:
+        if any(item["variant"] != "previous" for item in previous_records):
             errors.append(
-                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} control_evidence must use one control variant"
+                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} previous_evidence must use previous bundles"
+            )
+            continue
+        if any(item["variant"] != "baseline" for item in baseline_records):
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} baseline_evidence must use baseline bundles"
             )
             continue
         dataset_paths = {Path(item["dataset_path"]) for item in all_records}
@@ -857,6 +949,24 @@ def validate_quality_comparisons(
                 f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} must use one dataset"
             )
             continue
+        campaign_paths = {str(item["campaign_path"]) for item in all_records}
+        campaign_hashes = {str(item["campaign_sha256"]) for item in all_records}
+        if len(campaign_paths) != 1 or len(campaign_hashes) != 1:
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} must use one campaign"
+            )
+            continue
+        campaign_relative = next(iter(campaign_paths))
+        campaign_hash = next(iter(campaign_hashes))
+        if (
+            record.get("campaign") != campaign_relative
+            or record.get("campaign_sha256") != campaign_hash
+        ):
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} campaign binding mismatch"
+            )
+            continue
+        campaign_path = (root / campaign_relative).resolve()
 
         report = record.get("report")
         if not isinstance(report, str) or not report.strip() or Path(report).is_absolute():
@@ -907,7 +1017,8 @@ def validate_quality_comparisons(
             continue
 
         candidate_records.sort(key=lambda item: int(item["trial"]))
-        control_records.sort(key=lambda item: int(item["trial"]))
+        previous_records.sort(key=lambda item: int(item["trial"]))
+        baseline_records.sort(key=lambda item: int(item["trial"]))
         command = [
             sys.executable,
             str(comparator),
@@ -915,11 +1026,15 @@ def validate_quality_comparisons(
             str(kind),
             "--dataset",
             str(next(iter(dataset_paths))),
+            "--campaign",
+            str(campaign_path),
         ]
         for item in candidate_records:
             command.extend(("--candidate", str(item["bundle_path"])))
-        for item in control_records:
-            command.extend(("--control", str(item["bundle_path"])))
+        for item in previous_records:
+            command.extend(("--previous", str(item["bundle_path"])))
+        for item in baseline_records:
+            command.extend(("--baseline", str(item["bundle_path"])))
         completed = subprocess.run(
             command,
             cwd=root,
@@ -949,35 +1064,51 @@ def validate_quality_comparisons(
                 f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} report does not match replay"
             )
             continue
-        comparison_metrics = replayed_report.get("comparison")
-        if not isinstance(comparison_metrics, dict):
+        dimensions = replayed_report.get("claimable_dimensions")
+        if not isinstance(dimensions, list) or any(
+            not isinstance(item, str) for item in dimensions
+        ):
             errors.append(
                 f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} report "
-                "missing comparison metrics"
+                "missing claimable_dimensions"
             )
             continue
-        dimensions: list[str] = []
-        if comparison_metrics.get("outcome_threshold_met") is True:
-            dimensions.append("outcome")
-        if (
-            comparison_metrics.get("outcome_non_regression") is True
-            and comparison_metrics.get("token_threshold_met") is True
-        ):
-            dimensions.append("token_efficiency")
+        allowed_dimensions = set(
+            VALIDATION_CONTRACTS["behavior_eval"]["comparative"][
+                "claimable_dimensions"
+            ]
+        )
+        unknown_dimensions = set(dimensions) - allowed_dimensions
+        if unknown_dimensions:
+            errors.append(
+                f"repository: {QUALITY_EVIDENCE_FILE} comparison {comparison_id} "
+                f"reports unknown claimable dimensions {sorted(unknown_dimensions)}"
+            )
+            continue
         candidate_record = candidate_records[0]
-        control_record = control_records[0]
+        previous_record = previous_records[0]
+        baseline_record = baseline_records[0]
         passing[str(comparison_id)] = {
             "kind": str(kind),
             "host_name": candidate_record["host_name"],
             "host": candidate_record["host"],
             "model": candidate_record["model"],
             "candidate_skill_revision": candidate_record["skill_revision"],
-            "control_variant": control_record["variant"],
-            "control_skill_revision": control_record["skill_revision"],
+            "previous_skill_revision": previous_record["skill_revision"],
+            "baseline_skill_revision": baseline_record["skill_revision"],
             "dataset_sha256": candidate_record["dataset_sha256"],
             "dataset_git_revision": candidate_record["dataset_git_revision"],
             "evaluation_anchor_revision": candidate_record[
                 "evaluation_anchor_revision"
+            ],
+            "campaign_id": candidate_record["campaign_id"],
+            "campaign_path": candidate_record["campaign_path"],
+            "campaign_sha256": candidate_record["campaign_sha256"],
+            "evaluation_protocol_revision": candidate_record[
+                "evaluation_protocol_revision"
+            ],
+            "evaluation_protocol_sha256": candidate_record[
+                "evaluation_protocol_sha256"
             ],
             "held_out_provenance_path": candidate_record[
                 "held_out_provenance_path"

@@ -28,6 +28,7 @@
 | --- | --- |
 | `Rename one known private Rust function and run its existing test.` | Prefer `implement-rust`. |
 | `Find why this test started failing; the cause is unknown.` | Prefer `diagnose`. |
+| `Memory grows after each Rust import and nobody knows whether the cause is ownership, allocator retention, or the operating system.` | Prefer `diagnose`; reproduce the concrete symptom and isolate its cause before auditing a selected remediation surface. |
 | `Map the repository and tell me whether it contains Rust.` | Prefer `repo-map`. |
 | `Review my dirty tree and prepare exact commits.` | Prefer `repo-review`; it coordinates the local read-only Git-change review and may request a bounded Rust specialist subreview. |
 | `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `repo-review` as the local read-only review coordinator; do not auto-route to delivery. |

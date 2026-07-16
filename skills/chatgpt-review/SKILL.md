@@ -1,6 +1,6 @@
 ---
 name: chatgpt-review
-description: "Use when preparing a local ChatGPT review package or, only with explicit user authorization, running an external review round; package-only is default, with no implied conversation, upload, send, or live-page check."
+description: "Use when preparing a local ChatGPT review package or, only with explicit authorization, running an external review round whose findings must be verified locally; package-only never implies browser, upload, or send."
 ---
 
 # ChatGPT Review

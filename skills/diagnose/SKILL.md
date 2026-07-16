@@ -1,6 +1,6 @@
 ---
 name: diagnose
-description: "Use when a bug, failed check, regression, flake, or performance problem needs root-cause isolation before any fix; reproduce it, test falsifiable hypotheses, then hand confirmed remediation to implementation."
+description: "Use when a concrete bug, failed check, regression, flake, or performance symptom needs read-only root-cause isolation before any fix; reproduce it, test falsifiable hypotheses, and confirm the cause or exact evidence gap."
 ---
 
 # Diagnose

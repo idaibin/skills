@@ -53,7 +53,12 @@ class RoutingRunnerTests(unittest.TestCase):
             host=host,
             variant=variant,
             trial=2,
-            pair_id="00000000-0000-4000-8000-000000000002",
+            comparison_group_id="00000000-0000-4000-8000-000000000002",
+            campaign_id="00000000-0000-4000-8000-000000000099",
+            campaign_path_relative="evals/routing-campaign.json",
+            campaign_sha256="f" * 64,
+            evaluation_protocol_revision="a" * 40,
+            evaluation_protocol_sha256="9" * 64,
             held_out=True,
             model="test-model",
             timeout_seconds=20,
@@ -94,6 +99,61 @@ class RoutingRunnerTests(unittest.TestCase):
         for evaluator_key in ("expected_owner", "forbidden_owners", "high_risk", case["id"]):
             self.assertNotIn(evaluator_key, prompt)
         self.assertNotIn("correct owner", prompt.casefold())
+        self.assertIn("responsible for the requested outcome", prompt)
+        self.assertIn("authorization boundary", prompt)
+        self.assertIn("next externally meaningful state", prompt)
+        self.assertIn("must actually execute a bounded part", prompt)
+        self.assertIn("clearly requested subsequent phase", prompt)
+        self.assertIn("optional recommendations", prompt)
+        self.assertIn("alternatives", prompt)
+        self.assertIn("unrequested future work", prompt)
+        self.assertIn("return an empty handoffs array", prompt)
+
+    def test_codex_policy_disables_remote_plugin_and_records_isolation(self) -> None:
+        policy = RUNNER._host_policy("codex", "gpt-5-test")
+        command = policy["command_template"]
+
+        disable_index = command.index("--disable")
+        self.assertEqual("remote_plugin", command[disable_index + 1])
+        self.assertIn("remote-plugin-disabled", policy["permissions"])
+        self.assertEqual(
+            "disabled by explicit Codex CLI feature override",
+            policy["environment_isolation"]["remote_plugin"],
+        )
+
+    def test_canonical_command_template_matches_executed_command(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for host in ("codex", "claude"):
+                host_root = root / host
+                host_root.mkdir()
+                config = self._config(host_root, host=host)
+                repo = root / f"{host}-repo"
+                schema = root / f"{host}-schema.json"
+                response = root / f"{host}-response.json"
+                prompt = "label-free prompt"
+                actual = RUNNER._host_command(
+                    config,
+                    repo=repo,
+                    schema_path=schema,
+                    response_path=response,
+                    prompt=prompt,
+                )
+                replacements = {
+                    "<CASE_REPO>": str(repo),
+                    "<MODEL>": config.model,
+                    "<SCHEMA_PATH>": str(schema),
+                    "<RESPONSE_PATH>": str(response),
+                    "<LABEL_FREE_PROMPT>": prompt,
+                    "<RESPONSE_SCHEMA>": RUNNER._canonical_json(
+                        RUNNER.ROUTING_RESPONSE_SCHEMA
+                    ),
+                    "<EMPTY>": "",
+                }
+                expected = [replacements.get(item, item) for item in RUNNER._host_policy(
+                    host, config.model
+                )["command_template"]]
+                self.assertEqual(expected, actual)
 
     def test_response_schema_uses_openai_supported_subset_and_parser_enforces_uniqueness(
         self,
@@ -152,7 +212,42 @@ class RoutingRunnerTests(unittest.TestCase):
         mocked_run.assert_not_called()
         plan = json.loads(stdout.getvalue())
         self.assertFalse(plan["execute"])
+        self.assertEqual(
+            "00000000-0000-4000-8000-000000000000",
+            plan["comparison_group_id"],
+        )
+        self.assertNotIn("pair_id", plan)
         self.assertEqual("dry-run only; no model CLI was invoked", plan["note"])
+
+    def test_comparison_group_cli_accepts_only_v2_flag(self) -> None:
+        group_id = "00000000-0000-4000-8000-000000000005"
+        arguments = RUNNER._build_parser().parse_args(
+            [
+                "--host",
+                "codex",
+                "--variant",
+                "candidate",
+                "--model",
+                "gpt-5-test",
+                "--comparison-group-id",
+                group_id,
+            ]
+        )
+
+        self.assertEqual(group_id, arguments.comparison_group_id)
+        with redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            RUNNER._build_parser().parse_args(
+                [
+                    "--host",
+                    "codex",
+                    "--variant",
+                    "candidate",
+                    "--model",
+                    "gpt-5-test",
+                    "--pair-id",
+                    group_id,
+                ]
+            )
 
     def test_execute_rejects_case_subset_before_any_model_cli(self) -> None:
         stderr = io.StringIO()
@@ -223,6 +318,17 @@ class RoutingRunnerTests(unittest.TestCase):
         )
         self.assertEqual((10, 4), RUNNER._extract_usage(missing, host="claude"))
         self.assertEqual((10, 4), RUNNER._extract_usage(null, host="claude"))
+
+    def test_usage_requires_positive_input_and_output_tokens(self) -> None:
+        for usage in (
+            {"input_tokens": 0, "output_tokens": 4},
+            {"input_tokens": 10, "output_tokens": 0},
+        ):
+            with self.subTest(usage=usage):
+                self.assertEqual(
+                    (None, None),
+                    RUNNER._extract_usage(json.dumps({"usage": usage}), host="codex"),
+                )
 
     def test_claude_usage_fails_closed_for_invalid_cache_tokens(self) -> None:
         for invalid in (True, -1, 1.5, "5"):
@@ -325,7 +431,7 @@ class RoutingRunnerTests(unittest.TestCase):
             run_config = validator._validate_held_out_provenance.call_args.args[2]
             self.assertEqual("previous", run_config["variant"])
 
-    def test_success_writes_schema_v3_bundle_and_unique_hashed_raw_v2(self) -> None:
+    def test_success_writes_schema_v5_bundle_and_unique_hashed_raw_v2(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             config = self._config(root)
@@ -342,6 +448,8 @@ class RoutingRunnerTests(unittest.TestCase):
                 self.assertIn("read-only", command)
                 self.assertIn("--ephemeral", command)
                 self.assertIn("--ignore-user-config", command)
+                disable_index = command.index("--disable")
+                self.assertEqual("remote_plugin", command[disable_index + 1])
                 environment = kwargs["env"]
                 self.assertNotEqual(os.environ.get("HOME"), environment["HOME"])
                 self.assertTrue(Path(environment["HOME"]).is_dir())
@@ -381,10 +489,14 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertIsNotNone(outcome.bundle_path)
             bundle = json.loads(outcome.bundle_path.read_text(encoding="utf-8"))
             uuid.UUID(bundle["run_id"])
-            self.assertEqual(3, bundle["schema_version"])
+            self.assertEqual(5, bundle["schema_version"])
             self.assertTrue(bundle["complete"])
             self.assertEqual("evals/routing-held-out.jsonl", bundle["run_config"]["dataset_path"])
-            self.assertEqual(config.pair_id, bundle["run_config"]["pair_id"])
+            self.assertEqual(
+                config.comparison_group_id,
+                bundle["run_config"]["comparison_group_id"],
+            )
+            self.assertNotIn("pair_id", bundle["run_config"])
             self.assertEqual(
                 config.dataset_git_revision,
                 bundle["run_config"]["dataset_git_revision"],
@@ -411,9 +523,15 @@ class RoutingRunnerTests(unittest.TestCase):
                 "c" * 64, bundle["run_config"]["skill_fixture_sha256"]
             )
             self.assertTrue(bundle["run_config"]["skills_installed"])
+            self.assertIn(
+                "remote_plugin disabled", bundle["run_config"]["isolation"]
+            )
+            self.assertIn(
+                "remote-plugin-disabled", bundle["run_config"]["permissions"]
+            )
             self.assertRegex(bundle["run_config"]["host_config_sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual("deterministic", bundle["adjudication"]["method"])
-            self.assertEqual("3", bundle["adjudication"]["reviewer_version"])
+            self.assertEqual("5", bundle["adjudication"]["reviewer_version"])
             self.assertRegex(bundle["adjudication"]["config_sha256"], r"^[0-9a-f]{64}$")
 
             evidence_paths = [item["raw_evidence"] for item in bundle["results"]]
@@ -551,6 +669,9 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertFalse(failure["complete"])
             self.assertEqual(["case-two"], [item["id"] for item in failure["failed_cases"]])
             self.assertEqual(2, len(list((outcome.run_dir / "raw" / "routing").glob("*.json"))))
+            attempt = json.loads((outcome.run_dir / "attempt.json").read_text())
+            self.assertEqual("failure", attempt["status"])
+            self.assertEqual(config.campaign_id, attempt["campaign_id"])
 
     def test_previous_installs_committed_fixture_and_baseline_stays_empty(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -620,6 +741,7 @@ class RoutingRunnerTests(unittest.TestCase):
                 "HOME": str(source_home),
                 "CODEX_HOME": str(codex_home),
                 "CLAUDE_CONFIG_DIR": str(claude_home),
+                "AICRAFT_TEST_SECRET": "must-not-propagate",
             }
             with mock.patch.dict(os.environ, environment, clear=False):
                 codex_environment = RUNNER._isolated_host_environment(
@@ -628,6 +750,8 @@ class RoutingRunnerTests(unittest.TestCase):
                 claude_environment = RUNNER._isolated_host_environment(
                     "claude", root / "claude-isolated"
                 )
+            self.assertNotIn("AICRAFT_TEST_SECRET", codex_environment)
+            self.assertNotIn("AICRAFT_TEST_SECRET", claude_environment)
 
             isolated_codex = Path(codex_environment["CODEX_HOME"])
             isolated_claude = Path(claude_environment["CLAUDE_CONFIG_DIR"])
@@ -669,7 +793,12 @@ class RoutingRunnerTests(unittest.TestCase):
                 host="codex",
                 variant="candidate",
                 trial=1,
-                pair_id="00000000-0000-4000-8000-000000000010",
+                comparison_group_id="00000000-0000-4000-8000-000000000010",
+                campaign_id=None,
+                campaign_path_relative=None,
+                campaign_sha256=None,
+                evaluation_protocol_revision=None,
+                evaluation_protocol_sha256=None,
                 held_out=False,
                 model="gpt-5-test",
                 timeout_seconds=20,

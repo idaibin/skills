@@ -14,6 +14,7 @@ Use these cases when changing `diagnose` triggers, investigation workflow, imple
 | `Debug this regression; do not guess a fix.` | Trigger `diagnose`. | Root-cause workflow before implementation. |
 | `This page is sometimes blank; make it reproducible.` | Trigger flaky/timing investigation. | Non-deterministic failure. |
 | `This endpoint got slow; measure the cause before changing it.` | Trigger performance investigation. | Comparable baseline required. |
+| `This Rust import path keeps growing in memory; reproduce it and distinguish a leak from allocator or OS retention before proposing changes.` | Trigger `diagnose`. | A concrete observed symptom has an unknown cause. |
 
 ## Non-Trigger Eval
 
@@ -26,6 +27,7 @@ Use these cases when changing `diagnose` triggers, investigation workflow, imple
 | `The cause is already confirmed; implement the frontend fix now.` | Prefer `implement-frontend`. | No diagnosis remains. |
 | `The cause is already confirmed; implement the Rust fix now.` | Prefer `implement-rust`. | No diagnosis remains. |
 | `Reproduce this already-isolated release-client window failure and return process/window evidence only.` | Prefer `ops-client`. | Bounded client operation after isolation. |
+| `Audit this already selected Rust memory path and assess whether the profiling and benchmark design can support a performance claim.` | Prefer `audit-rust`. | The Rust surface is known and the request is a scoped audit of measurement design, not root-cause isolation of a symptom. |
 | `Stage and commit the verified fix.` | Prefer `repo-delivery`. | Git mutation is not diagnosis. |
 
 ## Quality Eval
