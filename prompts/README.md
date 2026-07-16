@@ -8,6 +8,7 @@ Reusable, standalone prompt assets. The collection is intentionally flat while i
 | --- | --- |
 | `api-contract-review.md` | Verify a backend-to-frontend API contract chain. |
 | `chatgpt-5.6-optimization.md` | Simplify and verify personal GPT-5.6 routing, context, permissions, Skills, plugins, and Codex configuration. |
+| `chatgpt-work-page-verification.md` | Deploy a service in a ChatGPT Work-style environment and verify real pages with headless Firefox screenshots. |
 | `review-chat-history.md` | Turn available daily conversations into a concise work review. |
 | `scheduled-topic-digest.md` | Run a configurable, source-backed digest for selected topics and recurring information needs. |
 
