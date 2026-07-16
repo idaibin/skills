@@ -85,5 +85,7 @@ Do not expose internal assessment unless the user asks. Never inflate a score to
 - Diagnose template behavior only as a cluster; preserve genuine voice and asymmetry.
 - Confirm parallel structure and repeated technical terms were changed only when a concrete information or reader problem existed.
 - Confirm specificity came from evidence rather than plausible gap-filling, and no style heuristic became a global punctuation, vocabulary, or syntax ban.
+- Confirm evergreen prose describes the current contract instead of narrating an irrelevant diff, while release notes, migrations, and correction records retain necessary change history.
+- Confirm clipped punchlines, aphorism formulas, and fake-candid openers remain only when they carry source-shaped voice or information, and that quotations, titles, proper names, code, fixtures, and examples were not rewritten as ordinary prose.
 - Confirm platform hard constraints separately from editorial preferences.
 - Resolve every P0/P1 defect. Compare against the unchanged source and stop when the candidate has no concrete benefit or weakens terminology, modality, workflow closure, or source-shaped voice.

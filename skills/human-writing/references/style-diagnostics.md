@@ -2,6 +2,18 @@
 
 Load this reference only when voice, rhythm, or template residue materially affects the task. It is an editorial diagnostic, never a source of facts or invented experience.
 
+## Contents
+
+- [Voice Calibration](#voice-calibration)
+- [Cluster Diagnosis](#cluster-diagnosis)
+- [Pattern Families](#pattern-families)
+- [Protected And Secondhand Text](#protected-and-secondhand-text)
+- [Research-Process Leakage](#research-process-leakage)
+- [Iterative-Edit Seams](#iterative-edit-seams)
+- [Chinese Technical Prose](#chinese-technical-prose)
+- [Human Signals Worth Preserving](#human-signals-worth-preserving)
+- [Stop Rule](#stop-rule)
+
 ## Voice Calibration
 
 Prefer, in order:
@@ -34,6 +46,33 @@ Parallel sentences, stable technical nouns, tables, and lists may be the cleares
 Repeated questions can mark the reader's next inference; repeated code can expose one controlled change; a long detour can eliminate a plausible wrong model; a heading-free passage can preserve a continuous derivation. Treat these as defects only when they fail to perform that job. Every editorial rule should name the reader failure it prevents rather than target a surface pattern.
 
 Do not turn frequent model habits into universal bans. Passive voice can keep the object of interest in focus; a dash can preserve a real cadence; an adverb, rhetorical question, list of three, or repeated technical noun can be the clearest choice. Rewrite only when the form contributes to a diagnosed cluster or weakens meaning, trust, rhythm, or reader comprehension.
+
+## Pattern Families
+
+Use this compact inventory to find clusters, not to count forbidden tokens. A surface form becomes an editing problem only when it performs one of the reader failures in the last column.
+
+| Family | Contextual signals | Reader failure to confirm |
+| --- | --- | --- |
+| Inflated importance or promotion | ordinary facts framed as historic shifts, broad trends, proof of excellence, or generic excitement | replaces the supported mechanism, result, limit, or reason the reader cares |
+| Vague authority or synthetic depth | unnamed experts, unsupported consensus, ornamental `-ing` clauses, or a generic challenge-and-future section | hides provenance or simulates analysis without adding evidence |
+| Mechanical variation | avoiding simple `is / has`, cycling synonyms for one stable concept, false `from X to Y` ranges, or forced groups of three | makes the subject harder to track or creates coverage the source does not support |
+| Scripted rhetoric | scheduled contrasts, `not just X but Y`, tutorial announcements, fake-candid openers, or a rhetorical question before an ordinary answer | delays the point or manufactures intimacy, surprise, or authority |
+| Manufactured surface polish | repeated bold labels, emoji decoration, title-case headings, identical paragraph shapes, or punctuation used on a schedule | turns formatting and rhythm into a visible template instead of serving the content |
+| Chatbot and uncertainty residue | praise, offers to continue, training-cutoff disclaimers, stacked hedges, or speculative filler around missing facts | addresses the prompt instead of the reader or disguises an evidence gap |
+| Generic uplift | vague optimism, universal lessons, or a conclusion that merely says the work matters | replaces the earned judgment, limitation, next action, or unresolved question |
+
+Give four failure shapes an explicit pass:
+
+- **Diff-anchored narration:** an evergreen document says what was added, replaced, or improved instead of describing the current behavior. Keep change narration in release notes, migration guides, correction notes, and other version-scoped artifacts; elsewhere rewrite around the present contract.
+- **Manufactured punchlines:** several clipped declarations or fragments try to make every sentence land. Keep one short sentence when it earns emphasis; join or vary a run that creates drama without information.
+- **Aphorism formulas:** a concrete claim is recast as a portable slogan or grand metaphor. Restore the mechanism, condition, or consequence the phrase is standing in for.
+- **Fake-candid openers:** `说实话`, `你知道吗`, `真正的问题是`, `Here's the thing`, or a one-word question creates a theatrical pause before a routine claim. Keep genuine conversational wording when it belongs to the author; remove the stage direction when it only manufactures intimacy.
+
+## Protected And Secondhand Text
+
+Do not diagnose watched language inside quotations, titles, proper names, code, fixtures, or examples as though the author wrote it directly. First classify whether the text is evidence, an object under discussion, or editable prose. Preserve it verbatim when its wording is the evidence or the task protects it. If a surrounding sentence is templated, edit the frame rather than silently changing the quoted material.
+
+Professional polish, formal vocabulary, mixed registers, curly quotes, an isolated transition, a single dash, and one short emphatic sentence are not reliable signals by themselves. Prefer a false-negative style decision over flattening a recognizable human voice when no reader harm is visible.
 
 ## Research-Process Leakage
 

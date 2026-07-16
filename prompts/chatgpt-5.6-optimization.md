@@ -112,14 +112,15 @@ writable_roots = [
 - Do not trust the whole home directory when narrower roots work.
 - Do not use `danger-full-access` with `approval_policy = "never"` as a personal default.
 
-If the client has a separate personalization or custom-instructions field, replace its existing content with exactly this pointer:
+Treat the Codex Personalization UI and `~/.codex/AGENTS.md` as the same settings surface unless the installed client proves that they use separate storage. Never write a pointer from `~/.codex/AGENTS.md` back to itself, and never replace existing durable personal rules with such a pointer.
 
-```text
-~/.codex/AGENTS.md 是本机唯一的个人执行偏好来源。
-请遵循当前任务路径下生效的 AGENTS.md；如有冲突，以我在当前对话中的明确要求为准。
-```
+Before changing Personalization:
 
-Do not copy the long-session block or other durable personal rules into that field. The field is only an entry pointer; `~/.codex/AGENTS.md` remains the single editable source. If the field is account-synced or available only through the Codex settings UI, prepare the exact text but do not claim it was changed unless the saved UI state was verified.
+1. Inspect the current `~/.codex/AGENTS.md` and preserve its existing durable rules.
+2. Verify whether saving the Personalization UI changes that file.
+3. Merge the requested changes into the existing rules instead of replacing the whole file.
+
+Only use a short pointer when a genuinely separate custom-instructions field has been verified. If the storage relationship is uncertain, leave the field unchanged and report the uncertainty. Do not claim that a UI-only setting was changed unless its saved state was verified.
 
 ### 6. Remove Drift
 

@@ -562,5 +562,44 @@
     "output": "项目只有方向变化记录，没有技术故障；为了符合复盘结构，补写一个可复现症状和最小失败案例。",
     "must_contain": ["实际证据链", "不", "虚构可复现故障"],
     "must_not_match": ["补写一个可复现症状"]
+  },
+  {
+    "id": "evergreen-current-contract-pass",
+    "expected_pass": true,
+    "output": "常青文档直接描述当前契约：应用从 project.toml 读取配置，同名环境变量优先；config.json 的替换历史只放在 v2 迁移说明中。",
+    "must_contain": ["当前契约", "project.toml", "同名环境变量优先", "v2 迁移说明"]
+  },
+  {
+    "id": "evergreen-diff-narration-reject",
+    "expected_pass": false,
+    "output": "我们新增了 project.toml，改进了加载方式并优化了覆盖逻辑，但没有说明现在如何读取和覆盖配置。",
+    "must_contain": ["当前契约", "project.toml", "同名环境变量优先"],
+    "must_not_match": ["新增了.*改进了.*优化了"]
+  },
+  {
+    "id": "manufactured-rhetoric-cluster-pass",
+    "expected_pass": true,
+    "output": "缓存减少重复计算，但可能返回过期数据；是否使用取决于允许的数据陈旧时间和失效机制。",
+    "must_contain": ["减少重复计算", "过期数据", "取决于", "失效机制"]
+  },
+  {
+    "id": "manufactured-rhetoric-cluster-reject",
+    "expected_pass": false,
+    "output": "说实话？缓存是性能的货币。很快。很强。也很危险。真正的问题是我们是否准备好了。",
+    "must_contain": ["减少重复计算", "过期数据", "取决于", "失效机制"],
+    "must_not_match": ["说实话？", "性能的货币", "很快。很强。也很危险"]
+  },
+  {
+    "id": "protected-secondhand-text-pass",
+    "expected_pass": true,
+    "output": "保留日志原文 ‘No configuration file needed’，只修改周围分析；引用、标题、专名、代码和示例在作为证据时不按普通正文改写。",
+    "must_contain": ["No configuration file needed", "只修改周围分析", "作为证据", "不按普通正文改写"]
+  },
+  {
+    "id": "protected-secondhand-text-reject",
+    "expected_pass": false,
+    "output": "为了消除无主语短句，把日志原文改成 ‘You do not need a configuration file’。",
+    "must_contain": ["No configuration file needed", "只修改周围分析", "作为证据"],
+    "must_not_match": ["把日志原文改成"]
   }
 ]

@@ -512,6 +512,14 @@ If a requested metric mismatches the architecture, state the mismatch, preserve 
 
 Apply witness-preserving reduction only to reproducible failures. A debugging retrospective must retain the failure while reducing the case; a project retrospective based on changing constraints must preserve its actual evidence chain without fabricating a technical symptom or failing/passing pair.
 
+### 24. Template clusters and protected secondhand text
+
+An evergreen configuration guide says `we added project.toml`, `replaced config.json`, and `improved overrides`. The supplied facts define the current file, precedence rule, and a version-scoped migration. Rewrite the evergreen guide around the current contract and keep the historical replacement only in the migration context. Reject prose that requires the reader to know the previous diff to understand present behavior. Keep change narration when the requested artifact is a release note, migration guide, correction note, or another version-scoped record.
+
+A draft opens with `说实话？`, calls caching `性能的货币`, then stacks `很快。很强。也很危险。` before asking whether the team is ready. Diagnose the cluster: fake intimacy, unsupported aphorism, and manufactured staccato. Replace it with the concrete cache mechanism, risk, and decision criterion. Do not reject one candid phrase, metaphor, rhetorical question, or short emphatic sentence when it belongs to the supplied voice and adds information.
+
+The source quotes the exact log text `No configuration file needed` and asks why it misleads users. Preserve the quote verbatim and edit only the surrounding analysis. Apply the same protection to titles, proper names, code, fixtures, and examples when their exact wording is evidence or protected text. Reject a rewrite that edits the quoted phrase because it resembles an AI-writing pattern.
+
 ## Output Regression
 
 - Rewrite returns only finished text.

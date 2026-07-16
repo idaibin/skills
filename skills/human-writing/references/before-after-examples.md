@@ -404,3 +404,65 @@ Stronger explanation:
 ```
 
 The stronger version preserves both valid constraints, locates the composition seam, and names what can and cannot cross it. It changes the reader's model without inventing an implementation.
+
+## Present Contract, Not Diff Narration
+
+Source notes:
+
+```text
+- configuration is loaded from project.toml
+- environment variables override file values
+- migration note: this replaced config.json in v2
+```
+
+Weak evergreen documentation:
+
+```text
+我们新增了 project.toml，并改进了配置加载方式，替换掉旧的 config.json。环境变量覆盖也得到了优化。
+```
+
+Better evergreen documentation:
+
+```text
+应用默认从 project.toml 读取配置。环境变量与文件字段同名时，以环境变量为准。v1 项目从 config.json 迁移时，按 v2 迁移指南转换字段。
+```
+
+The better version describes the current contract and moves the version change to the migration context where it helps. A release note or correction record would keep the change narration because the change itself is the subject.
+
+## Manufactured Voice Versus Earned Emphasis
+
+Weak draft:
+
+```text
+说实话？缓存不是工具，而是性能的货币。它很快。很强。也很危险。真正的问题是，我们是否准备好了。
+```
+
+Better edit:
+
+```text
+缓存减少了重复计算，但也会让过期数据继续被读取。是否值得使用，取决于数据允许多旧，以及系统能否可靠地失效缓存。
+```
+
+The weak version stacks a fake-candid opener, an aphorism, and clipped punchlines without explaining the decision. The better version names the mechanism and criterion. One short sentence, metaphor, or candid aside could remain when the surrounding source and voice earn it.
+
+## Protect Quoted Evidence
+
+Source:
+
+```text
+日志原文是 “No configuration file needed”。请解释为什么这条提示误导用户，不要改日志内容。
+```
+
+Bad edit:
+
+```text
+日志写着 “You do not need a configuration file”。这条提示没有说明默认配置从哪里加载。
+```
+
+Better edit:
+
+```text
+日志写着 “No configuration file needed”。这条提示容易让人以为系统没有配置来源，但程序实际上仍会读取默认路径。
+```
+
+The phrase under review is evidence. Edit the author's analysis around it; do not silently rewrite the quote merely because the same fragment would be weak as ordinary prose.
