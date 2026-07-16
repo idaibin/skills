@@ -32,7 +32,7 @@ RESULT_SCHEMA_VERSION = 3
 RAW_SCHEMA_VERSION = 2
 PROMPT_TEMPLATE_VERSION = 1
 PROMPT_VALUE_PLACEHOLDER = "<NATURAL_REQUEST_JSON>"
-RUNNER_VERSION = "2"
+RUNNER_VERSION = "3"
 OWNER_ENUM = (
     "audit-frontend",
     "audit-rust",
@@ -60,7 +60,6 @@ TASK_FIXTURE_DESCRIPTOR = {
 }
 
 ROUTING_RESPONSE_SCHEMA: dict[str, object] = {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
     "type": "object",
     "additionalProperties": False,
     "properties": {
@@ -68,7 +67,6 @@ ROUTING_RESPONSE_SCHEMA: dict[str, object] = {
         "handoffs": {
             "type": "array",
             "items": {"type": "string", "enum": list(OWNER_ENUM)},
-            "uniqueItems": True,
         },
     },
     "required": ["actual_owner", "handoffs"],

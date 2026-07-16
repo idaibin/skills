@@ -95,6 +95,21 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertNotIn(evaluator_key, prompt)
         self.assertNotIn("correct owner", prompt.casefold())
 
+    def test_response_schema_uses_openai_supported_subset_and_parser_enforces_uniqueness(
+        self,
+    ) -> None:
+        encoded_schema = json.dumps(RUNNER.ROUTING_RESPONSE_SCHEMA)
+        self.assertNotIn("uniqueItems", encoded_schema)
+        self.assertNotIn('"$schema"', encoded_schema)
+        self.assertIsNone(
+            RUNNER._routing_object(
+                {
+                    "actual_owner": "repo-map",
+                    "handoffs": ["repo-review", "repo-review"],
+                }
+            )
+        )
+
     def test_runner_schema_versions_match_the_repository_contract(self) -> None:
         contract = json.loads(
             (RUNNER.ROOT / "contracts" / "skill-validation.json").read_text(
@@ -398,7 +413,7 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertTrue(bundle["run_config"]["skills_installed"])
             self.assertRegex(bundle["run_config"]["host_config_sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual("deterministic", bundle["adjudication"]["method"])
-            self.assertEqual("2", bundle["adjudication"]["reviewer_version"])
+            self.assertEqual("3", bundle["adjudication"]["reviewer_version"])
             self.assertRegex(bundle["adjudication"]["config_sha256"], r"^[0-9a-f]{64}$")
 
             evidence_paths = [item["raw_evidence"] for item in bundle["results"]]

@@ -92,9 +92,10 @@ metrics; scored observations come from the referenced raw evidence file:
 }
 ```
 
-Result schema `3` and routing-runner reviewer version `2` define the current
-cache-inclusive Claude token-accounting semantics. Earlier result bundles fail
-closed and cannot support a current token-efficiency claim.
+Result schema `3` and routing-runner reviewer version `3` define the current
+cache-inclusive token accounting and OpenAI-supported response-schema subset.
+Earlier result bundles fail closed and cannot support a current
+token-efficiency claim.
 
 Every raw routing record contains the matching run, case, source-prompt hash,
 exact invocation prompt and hash, model, and host identifiers; verbatim stdout,
