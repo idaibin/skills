@@ -70,6 +70,8 @@ Use when the text should persuade without becoming deceptive marketing.
 
 Use for project decisions, architecture thinking, product boundaries, and learning notes.
 
+Load `reasoning-and-explanation.md` when the essay's value depends on repairing a reader model, deriving a decision from constraints, or explaining why the author's judgment changed.
+
 ### Shape
 
 - the problem as experienced
@@ -81,9 +83,15 @@ Use for project decisions, architecture thinking, product boundaries, and learni
 
 The article can move chronologically or by decision. It should not read like a status report.
 
+Use Git history, chats, logs, and research to verify the sequence and recover real turning points, not as automatic section subjects. Convert background evidence into the author's experience only when author-supplied material supports the participation, perception, decision, cost, or changed judgment. Otherwise keep it neutral, attributed, inferred, or omitted. Name commits, records, or the analysis method only when the reader needs that provenance or the user explicitly asks for it.
+
+When the essay includes future work, apply the claim-status rules in `fact-integrity.md`. Tie plans to the author's current judgment, priority, or validation rule instead of listing features for completeness.
+
 ## Tutorial
 
 Use when the reader should reproduce a result.
+
+Load `reasoning-and-explanation.md` when the tutorial progressively introduces a model, uses a proxy or simulation, or diagnoses a failure through controlled reduction.
 
 ### Shape
 
@@ -105,10 +113,13 @@ Use when the reader should reproduce a result.
 - For volatile products or interfaces, include the tested date, version, region, plan, or environment that matters.
 - Prefer a complete small path over an exhaustive catalog.
 - Put warnings before the risky step, not after it.
+- Test combination states, not only the happy path. When several configuration conditions can match at once, document precedence, override behavior, and silent-failure consequences.
 
 ## Engineering Retrospective
 
 Use when the value lies in the decision process.
+
+Load `reasoning-and-explanation.md` when failed attempts, changed constraints, or counterexamples must support the final decision rather than merely appear in chronology.
 
 ### Shape
 
@@ -121,9 +132,15 @@ Use when the value lies in the decision process.
 
 Avoid the project-report sequence `background / achievements / lessons / outlook` unless that is the requested format.
 
+Evidence can establish what happened without becoming the narrator. Prefer `我后来不想继续维护两套数据库` over `Git 记录显示项目转向 SQLite`, unless the retrospective is specifically about repository history or the source itself must be attributed.
+
+For iterative revisions, place a new insight at the decision point it explains. Rework nearby transitions and the conclusion when needed; do not add a detached `补充` section merely because the insight arrived in a later user turn.
+
 ## Architecture Note
 
 Use when explaining a system boundary.
+
+Load `reasoning-and-explanation.md` when the artifact must explain a boundary, lifecycle, representation change, incompatible invariant, composition seam, or other architectural relationship that changes the reader's model. Skip it for bounded factual updates, inventories, and local source-preserving edits. Make only the boundary dimensions that affect the conclusion explicit.
 
 ### Shape
 
@@ -146,3 +163,7 @@ Use when the artifact is primarily a curated list.
 - Mark official, maintained, archived, outdated, interested, independent, or unverified status when it affects interpretation.
 - Add a recommended order or decision rule.
 - Do not pad every item with the same generic description.
+- Do not call a list `完整` without a bounded corpus and completion criterion.
+- Separate issues visible inside the artifact (duplicates, mismatched titles and URLs, redundant classifications) from volatile facts that require live checks (reachability, redirects, maintainers, and archive status).
+- Describe maintenance provenance with enough precision for the corpus: project, organization, working group, vendor, independent community, archived source, or not verified. A binary `官方 / 非官方` label is often too coarse.
+- Present a learning order as a default route with a reason, not as a universal sequence unless the source establishes one.

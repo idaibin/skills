@@ -52,17 +52,19 @@ A request has one primary operation. Genre, language, platform, disclosure, and 
 
 | Axis | Selection rule |
 | --- | --- |
-| Primary operation | Exactly one of Diagnose, Rewrite, Draft from source, Platform adaptation |
-| Genre | Exactly one primary profile when material: short-form, factual soft copy, essay, tutorial, retrospective, architecture note, resource list |
+| Primary operation | One per artifact: Diagnose, Rewrite, Draft from source, or Platform adaptation; a bounded secondary operation may directly support it |
+| Genre | One primary profile per artifact when material; bounded secondary elements may support it without blending incompatible contracts |
 | Language | Preserve source language unless the user requests another; translation-only work routes elsewhere |
 | Platform | Zero or one named target; load calibration only for explicit adaptation |
 | Evidence state | Complete, safely partial, conflicting, or blocked |
+| Claim state | Observed past, current state, committed plan, candidate direction, or unresolved question |
 | Conditional modules | Load disclosure and published-revision rules only when applicable |
 
 Load only what the request needs:
 
 - always apply `fact-integrity.md`
 - load `content-modes.md` when form changes structure or evidence requirements
+- load `reasoning-and-explanation.md` when long-form value depends on changing a mental model, deriving a decision, explaining a boundary, or preserving a diagnostic witness
 - load `platform-calibration.md` only for a named platform adaptation
 - load `revision-transparency.md` only for already-published material with substantive changes
 - use style references and examples for calibration, never as sources of facts or author experience
@@ -70,6 +72,8 @@ Load only what the request needs:
 ## Required Context
 
 Use what the user has already supplied. Infer only low-risk editorial choices such as paragraph length. Do not infer facts.
+
+Recover context from the current draft, supplied notes, named repository files, and already-established decisions before asking follow-up questions. Ask only when a missing answer would change the claim, audience, action, format, or safety of the artifact. Do not turn a reusable brief into a ritual questionnaire.
 
 The useful context fields are:
 
@@ -82,6 +86,17 @@ The useful context fields are:
 - protected text
 - desired action
 - claims that require verification
+
+Classify visibility separately from transformation:
+
+- **Visibility:** artifact-visible, artifact-visible with attribution, background-only, or do-not-disclose.
+- **Transformation:** verbatim, meaning-preserving edit, summarize-only, or do-not-use.
+
+`Read these records before writing` normally requests better analysis, not an article about the records. Promote background evidence into the artifact only when the user asks to show the method, the source is itself the topic, or attribution is necessary for trust.
+
+Apply claim status, actor role, directive precedence, and claim authority from `fact-integrity.md`. A style request does not change factual confidence or commitment status.
+
+For follow-up edits, use the latest authoritative draft under `fact-integrity.md`. Locate the argument the instruction changes, integrate it there, then scan the opening, adjacent section, and ending for stale framing, duplication, or contradiction. Create a new section only when the idea has enough independent weight or the user explicitly asks for one.
 
 Classify missing context:
 
@@ -106,13 +121,21 @@ Use this order:
 
 Do not trade a higher-priority item for a smoother sentence.
 
+## Planning Boundary
+
+For a new long-form or multi-claim artifact, use a private outline that pairs each section's job with supported claims, evidence, limits, and transitions. Convert that outline into the requested prose; do not return planning bullets unless the user asks for an outline. Skip the outline for short-form, straightforward rewrites, and bounded local edits where it adds no decision value.
+
+The outline may organize evidence but cannot upgrade it. A blank evidence slot stays blank, qualified, omitted, or blocked under `fact-integrity.md`; it is never filled with a plausible example, metric, quotation, scene, or experience.
+
 ## Output Behavior
 
 - Do not announce the workflow.
 - Do not explain that the text was "humanized."
+- Do not expose the source ledger, inspection process, prompt interpretation, or editorial analysis unless requested.
 - Do not append a change log, score, or offer unless requested.
 - Preserve repository frontmatter, links, code fences, and headings when editing a content file.
 - When the user asks for multiple variants, make each variant solve a distinct editorial goal rather than swapping synonyms.
+- In iterative editing, return the updated artifact or edit the requested file; do not narrate the sequence of additions inside the artifact.
 
 ## Validation Boundary
 

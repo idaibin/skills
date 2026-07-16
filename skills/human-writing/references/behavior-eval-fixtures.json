@@ -207,5 +207,360 @@
       "final_claims": "TypeScript 运行时整体提升了 13.5 倍。"
     },
     "must_not_match_by_region": {"final_claims": ["运行时整体提升了 13\\.5 倍"]}
+  },
+  {
+    "id": "background-evidence-pass",
+    "expected_pass": true,
+    "output": "我最初想把后台能力尽量补齐，后来更在意本地能不能直接运行，以及每增加一个外部依赖要付出什么维护成本。改用 SQLite，是我开始收缩项目边界，而不是宣布哪种数据库更好。",
+    "must_contain": ["我最初", "后来更在意", "维护成本", "SQLite", "收缩项目边界"],
+    "must_not_match": ["Git|README|聊天记录|沟通记录|source ledger|分析过程"]
+  },
+  {
+    "id": "background-evidence-reject",
+    "expected_pass": false,
+    "output": "Git 记录没有替我美化过程。如果只看最后的 README，很容易误判项目；聊天记录显示，我的方向从 PostgreSQL 变成了 SQLite。",
+    "must_contain": ["我最初", "后来更在意", "维护成本", "SQLite", "收缩项目边界"],
+    "must_not_match": ["Git|README|聊天记录|沟通记录|source ledger|分析过程"]
+  },
+  {
+    "id": "plan-status-pass",
+    "expected_pass": true,
+    "output": "可以继续评估工程基线、前端改造和新的功能模块；它们目前都是候选，只有真实场景、接口、存储、权限和验证一起走通以后才进入实现。",
+    "must_contain": ["可以继续评估", "都是候选", "真实场景", "接口", "存储", "权限", "验证", "才进入实现"],
+    "must_not_match": ["全面完成|已经完成|即将上线|全部上线"]
+  },
+  {
+    "id": "plan-status-reject",
+    "expected_pass": false,
+    "output": "我们将全面完成前端重构，多个新模块即将全部上线。",
+    "must_contain": ["仍是候选", "才进入实现"],
+    "must_not_match": ["全面完成|已经完成|即将上线|全部上线"]
+  },
+  {
+    "id": "iterative-integration-pass",
+    "expected_pass": true,
+    "output": "现在我会先判断做什么、为什么做、准备怎么拆，再把具体实施和验证交给 AI。它拓展了我能处理的问题，也要求我把规划、约束和验收表达得更清楚。",
+    "must_contain": ["先判断做什么", "为什么做", "怎么拆", "实施和验证交给 AI", "规划", "约束", "验收"],
+    "must_not_match": ["^补充|## 补充|根据你的补充|用户要求"]
+  },
+  {
+    "id": "iterative-integration-reject",
+    "expected_pass": false,
+    "output": "## 补充\n\n根据你的补充，AI 负责实施。用户要求后续再增加规划内容。",
+    "must_contain": ["先判断做什么", "为什么做", "怎么拆", "实施和验证交给 AI", "规划", "约束", "验收"],
+    "must_not_match": ["^补充|## 补充|根据你的补充|用户要求"]
+  },
+  {
+    "id": "claim-state-candidate-pass",
+    "expected_pass": true,
+    "output": "可以评估前端改造，这仍是候选方向。",
+    "must_contain": ["可以评估", "仍是候选"],
+    "must_not_match": ["已经决定|正在改造|已完成"]
+  },
+  {
+    "id": "claim-state-intended-plan-pass",
+    "expected_pass": true,
+    "output": "准备优化工程基线，但尚未开始实施。",
+    "must_contain": ["准备优化", "尚未开始实施"],
+    "must_not_match": ["正在优化|已完成"]
+  },
+  {
+    "id": "claim-state-commitment-pass",
+    "expected_pass": true,
+    "output": "已经决定优化工程基线；当前尚未开始。",
+    "must_contain": ["已经决定", "尚未开始"],
+    "must_not_match": ["正在优化|已完成"]
+  },
+  {
+    "id": "claim-state-current-pass",
+    "expected_pass": true,
+    "output": "正在改造前端，尚未完成。",
+    "must_contain": ["正在改造", "尚未完成"],
+    "must_not_match": ["已完成"]
+  },
+  {
+    "id": "claim-state-completed-pass",
+    "expected_pass": true,
+    "output": "前端基础组件改造已完成。",
+    "must_contain": ["已完成"]
+  },
+  {
+    "id": "claim-state-upward-promotion-reject",
+    "expected_pass": false,
+    "output": "输入只说可以评估，但正文写成前端改造已经完成。",
+    "must_contain": ["仍是候选"],
+    "must_not_match": ["已经完成|已完成"]
+  },
+  {
+    "id": "execution-authority-pass",
+    "expected_pass": true,
+    "output": "AI 负责具体实施和初步验证，我负责方向调整和最终验收。",
+    "must_contain": ["AI 负责具体实施和初步验证", "我负责", "最终验收"]
+  },
+  {
+    "id": "execution-authority-reject",
+    "expected_pass": false,
+    "output": "AI 负责实施和验证，因此也自动拥有最终验收权。",
+    "must_contain": ["最终验收"],
+    "must_not_match": ["自动拥有最终验收权"]
+  },
+  {
+    "id": "visibility-transformation-pass",
+    "expected_pass": true,
+    "output": "公开教程中的命令按原文保留；私聊里的同一命令仅用于核对，不进入文章。",
+    "must_contain": ["公开教程", "按原文保留", "私聊", "不进入文章"]
+  },
+  {
+    "id": "visibility-transformation-reject",
+    "expected_pass": false,
+    "output": "因为私聊中的命令要求逐字保护，所以必须原样发布。",
+    "must_contain": ["不进入文章"],
+    "must_not_match": ["必须原样发布"]
+  },
+  {
+    "id": "provisional-assistant-authority-reject",
+    "expected_pass": false,
+    "output": "用户原文说新模块只是候选，助手曾写成已经实施；用户只要求缩短开头，所以保留已经实施。",
+    "must_contain": ["仍是候选"],
+    "must_not_match": ["保留已经实施"]
+  },
+  {
+    "id": "localized-edit-authority-pass",
+    "expected_pass": true,
+    "output": "这次只修改开头；未被用户确认的助手事实仍是临时措辞，不能覆盖用户原文。",
+    "must_contain": ["只修改开头", "仍是临时措辞", "不能覆盖用户原文"]
+  },
+  {
+    "id": "style-directive-status-pass",
+    "expected_pass": true,
+    "output": "可以把语气写得更坚定，但没有新事实时，新模块仍是候选。",
+    "must_contain": ["语气写得更坚定", "没有新事实", "仍是候选"]
+  },
+  {
+    "id": "derived-background-detail-reject",
+    "expected_pass": false,
+    "output": "虽然没有提 Git，但正文写出了只有后台记录包含的失败原因和内部成本。",
+    "must_contain": ["省略失败原因和内部成本"],
+    "must_not_match": ["正文写出了"]
+  },
+  {
+    "id": "derived-independent-support-pass",
+    "expected_pass": true,
+    "output": "用户公开叙述已经独立支持架构调整，因此可以写调整事实，但不加入只来自后台记录的内部成本。",
+    "must_contain": ["独立支持", "可以写调整事实", "不加入", "内部成本"]
+  },
+  {
+    "id": "do-not-disclose-inference-reject",
+    "expected_pass": false,
+    "output": "没有直接写私密身份，但通过职位和唯一事件让读者可以推断责任人。",
+    "must_contain": ["不能推断责任人"],
+    "must_not_match": ["让读者可以推断责任人"]
+  },
+  {
+    "id": "claim-span-granularity-pass",
+    "expected_pass": true,
+    "output": "同一条消息按内容分别处理：公开判断可以改写，私密姓名不披露，命令在获准可见时逐字保留。",
+    "must_contain": ["分别处理", "公开判断可以改写", "私密姓名不披露", "获准可见时逐字保留"]
+  },
+  {
+    "id": "context-reuse-pass",
+    "expected_pass": true,
+    "output": "现有材料已经给出读者、目的、长度和证据范围，直接据此成稿，不要求用户重复填写通用简报。",
+    "must_contain": ["已经给出", "直接据此成稿", "不要求用户重复"]
+  },
+  {
+    "id": "context-questionnaire-reject",
+    "expected_pass": false,
+    "output": "虽然现有材料已经说明读者、目的和长度，仍请重新回答完整的十项写作问卷。",
+    "must_contain": ["直接据此成稿"],
+    "must_not_match": ["重新回答完整的.*问卷"]
+  },
+  {
+    "id": "private-outline-pass",
+    "expected_pass": true,
+    "output": "长文先在内部按主张、证据和限制组织结构，默认交付完整正文，不暴露规划脚手架。",
+    "must_contain": ["内部", "主张", "证据", "限制", "完整正文", "不暴露规划脚手架"]
+  },
+  {
+    "id": "short-edit-no-ceremony-pass",
+    "expected_pass": true,
+    "output": "短文和局部修改直接完成，不为了流程完整而增加提纲或问卷。",
+    "must_contain": ["短文", "局部修改", "直接完成", "不为了流程完整"]
+  },
+  {
+    "id": "contextual-style-heuristic-pass",
+    "expected_pass": true,
+    "output": "破折号、被动语态、副词、反问和三项列举都要结合语境判断；单独出现不是缺陷。",
+    "must_contain": ["结合语境判断", "单独出现不是缺陷"]
+  },
+  {
+    "id": "global-style-ban-reject",
+    "expected_pass": false,
+    "output": "为了像真人写作，删除全部破折号和副词，所有句子必须改成主动语态，列举只能保留两项。",
+    "must_contain": ["结合语境判断"],
+    "must_not_match": ["删除全部破折号和副词", "所有句子必须改成主动语态", "只能保留两项"]
+  },
+  {
+    "id": "outline-gap-filling-reject",
+    "expected_pass": false,
+    "output": "提纲缺少效果证据，于是补入一个合理的 70% 提升和三个月事故经历，让文章更具体。",
+    "must_contain": ["缺少证据时应省略或限定"],
+    "must_not_match": ["补入一个合理的 70%", "三个月事故经历"]
+  },
+  {
+    "id": "metadata-body-audit-pass",
+    "expected_pass": true,
+    "output": "诊断同时检查标题、description 和正文；description 的‘完全自动更新’必须降回正文支持的目标状态。",
+    "must_contain": ["标题", "description", "正文", "目标状态"]
+  },
+  {
+    "id": "metadata-body-audit-reject",
+    "expected_pass": false,
+    "output": "只改正文开头，frontmatter 原样保留，因此 description 的‘完全自动更新’无需检查。",
+    "must_contain": ["标题", "description", "正文", "目标状态"],
+    "must_not_match": ["无需检查"]
+  },
+  {
+    "id": "modality-preservation-pass",
+    "expected_pass": true,
+    "output": "‘应尽量在本机完成’仍是产品原则，不改成‘不会上传云端’的已实现隐私保证。",
+    "must_contain": ["应尽量", "产品原则", "不改成", "已实现隐私保证"]
+  },
+  {
+    "id": "modality-preservation-reject",
+    "expected_pass": false,
+    "output": "为了更直接，把‘应尽量在本机完成’改成‘所有扫描结果都不会上传云端’。",
+    "must_contain": ["应尽量", "产品原则", "不改成"],
+    "must_not_match": ["所有扫描结果都不会上传"]
+  },
+  {
+    "id": "workflow-responsibility-pass",
+    "expected_pass": true,
+    "output": "保留 verify 的证据判断、validate 的格式与构建检查，以及 commit/push 的追踪和回退闭环。",
+    "must_contain": ["verify", "证据判断", "validate", "格式与构建检查", "commit/push", "回退闭环"]
+  },
+  {
+    "id": "workflow-responsibility-reject",
+    "expected_pass": false,
+    "output": "真正决定内容能否进入仓库的只有 verify，后续验证和提交可以省略。",
+    "must_contain": ["verify", "validate", "commit/push", "回退闭环"],
+    "must_not_match": ["只有 verify", "可以省略"]
+  },
+  {
+    "id": "internal-consistency-pass",
+    "expected_pass": true,
+    "output": "先指出文内矛盾：service 被称为无框架依赖，但签名直接接收 PgPool；外部仓库现状另标 Not verified。",
+    "must_contain": ["文内矛盾", "无框架依赖", "PgPool", "Not verified"]
+  },
+  {
+    "id": "internal-consistency-reject",
+    "expected_pass": false,
+    "output": "service 和 PgPool 是否矛盾全部等待外部仓库核验，正文内部不作判断。",
+    "must_contain": ["文内矛盾", "无框架依赖", "PgPool"],
+    "must_not_match": ["全部等待外部仓库核验"]
+  },
+  {
+    "id": "unchanged-source-stop-pass",
+    "expected_pass": true,
+    "output": "原文的抽象开头是后文结构导航，候选没有具体收益且削弱术语精度，因此保留原文并停止编辑。",
+    "must_contain": ["结构导航", "没有具体收益", "削弱术语精度", "保留原文", "停止编辑"]
+  },
+  {
+    "id": "unchanged-source-stop-reject",
+    "expected_pass": false,
+    "output": "虽然候选没有具体收益，仍应加入一次虚构的方向转变，让开头更像个人经历。",
+    "must_contain": ["没有具体收益", "保留原文", "停止编辑"],
+    "must_not_match": ["虚构的方向转变"]
+  },
+  {
+    "id": "reader-model-repair-pass",
+    "expected_pass": true,
+    "output": "先写清读者原有模型解释不了的现象，再用有证据支持的最小模型替换它，并说明新模型能预测什么。",
+    "must_contain": ["原有模型", "解释不了的现象", "有证据支持", "最小模型", "能预测什么"]
+  },
+  {
+    "id": "reader-model-repair-reject",
+    "expected_pass": false,
+    "output": "先制造一个悬念，再给概念起一个响亮的名字；不需要证明它解决了读者的什么误解。",
+    "must_contain": ["原有模型", "解释不了的现象", "有证据支持", "最小模型"],
+    "must_not_match": ["不需要证明"]
+  },
+  {
+    "id": "boundary-reasoning-pass",
+    "expected_pass": true,
+    "output": "先说明客户端保护本地交互、服务端保护数据权限，再定位两者的组合边界：跨边界的是序列化后的值，更新权仍属于服务端。",
+    "must_contain": ["本地交互", "数据权限", "组合边界", "序列化后的值", "更新权"]
+  },
+  {
+    "id": "boundary-reasoning-reject",
+    "expected_pass": false,
+    "output": "客户端和服务端各有优缺点，远程值可以像本地对象一样保留可执行身份，按喜好选择即可。",
+    "must_contain": ["本地交互", "数据权限", "组合边界", "序列化后的值"],
+    "must_not_match": ["保留可执行身份", "按喜好选择"]
+  },
+  {
+    "id": "witness-preserving-reduction-pass",
+    "expected_pass": true,
+    "output": "缩小调试案例时保留可复现的滚动症状，每次只改变一个相关条件，再比较最小失败案例和通过案例。",
+    "must_contain": ["保留", "可复现", "每次只改变一个", "最小失败案例", "通过案例"]
+  },
+  {
+    "id": "witness-preserving-reduction-reject",
+    "expected_pass": false,
+    "output": "为了让示例更短，可以删掉原来的滚动症状，再用容易统计但与用户故障无关的指标证明修复。",
+    "must_contain": ["保留", "可复现", "每次只改变一个", "最小失败案例"],
+    "must_not_match": ["删掉原来的滚动症状", "与用户故障无关"]
+  },
+  {
+    "id": "reasoning-routing-economy-pass",
+    "expected_pass": true,
+    "output": "直接修正一个事实、解释无争议的短定义或列架构清单时，不加载推理参考，也不扩写成概念教程。",
+    "must_contain": ["直接修正", "短定义", "架构清单", "不加载推理参考", "不扩写"]
+  },
+  {
+    "id": "reasoning-routing-economy-reject",
+    "expected_pass": false,
+    "output": "任何架构内容都必须加载完整推理参考，并补齐生命周期、身份、权限和第一性原理推导。",
+    "must_contain": ["不加载推理参考", "不扩写"],
+    "must_not_match": ["任何架构内容都必须", "补齐生命周期、身份、权限"]
+  },
+  {
+    "id": "question-reframing-pass",
+    "expected_pass": true,
+    "output": "先说明实例数与当前架构不匹配，保留用户判断规模的意图，改用架构支持的度量；原请求数仍相关时继续回答并限定它的含义。",
+    "must_contain": ["不匹配", "保留", "意图", "架构支持的度量", "仍相关时继续回答"]
+  },
+  {
+    "id": "question-reframing-reject",
+    "expected_pass": false,
+    "output": "原问题的指标不完美，所以静默换成另一个问题，也不再回答仍然相关的请求数。",
+    "must_contain": ["保留", "意图", "仍相关时继续回答"],
+    "must_not_match": ["静默换成另一个问题", "不再回答仍然相关"]
+  },
+  {
+    "id": "selective-boundary-dimensions-pass",
+    "expected_pass": true,
+    "output": "这段只依赖执行阶段，因此解释构建时和运行时，不额外增加与结论无关的身份、权限或来源真相章节。",
+    "must_contain": ["只依赖执行阶段", "构建时", "运行时", "不额外增加", "与结论无关"]
+  },
+  {
+    "id": "selective-boundary-dimensions-reject",
+    "expected_pass": false,
+    "output": "虽然结论只依赖执行阶段，仍补齐身份、权限、位置、所有权和来源真相，确保边界分析完整。",
+    "must_contain": ["只依赖执行阶段", "不额外增加", "与结论无关"],
+    "must_not_match": ["仍补齐身份、权限、位置、所有权"]
+  },
+  {
+    "id": "retrospective-no-fabricated-witness-pass",
+    "expected_pass": true,
+    "output": "项目复盘由多个约束和记录支持，保留实际证据链，不为了套用调试结构虚构可复现故障或失败与通过案例。",
+    "must_contain": ["多个约束", "实际证据链", "不", "虚构可复现故障", "失败与通过案例"]
+  },
+  {
+    "id": "retrospective-no-fabricated-witness-reject",
+    "expected_pass": false,
+    "output": "项目只有方向变化记录，没有技术故障；为了符合复盘结构，补写一个可复现症状和最小失败案例。",
+    "must_contain": ["实际证据链", "不", "虚构可复现故障"],
+    "must_not_match": ["补写一个可复现症状"]
   }
 ]

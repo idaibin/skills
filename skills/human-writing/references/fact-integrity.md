@@ -16,7 +16,9 @@ Good prose cannot repair unsupported content. Build a source ledger before draft
 
 ## Source Ledger
 
-Classify material into four buckets:
+Classify content, visibility, and transformation on separate axes. One label must not stand in for another.
+
+### Content class
 
 ### Supplied facts
 
@@ -54,9 +56,23 @@ Examples:
 - exact causes of an incident
 - current product or policy status
 
-### Protected text
+### Visibility
 
-Content that must not drift during editing:
+- **Artifact-visible:** may appear without special attribution when other integrity rules allow it.
+- **Artifact-visible with attribution:** may appear only with the required source, relationship, status, or disclosure.
+- **Background-only:** may verify, detect contradictions, check chronology, or guide structure, but may not be the sole published provenance of a factual claim. Its source identity and restricted details remain out of the artifact unless separately authorized.
+- **Do not disclose:** neither the content nor uniquely inferable details may appear. It may cause omission, conflict handling, or escalation, but must not shape wording that reveals the protected information.
+
+Git history, logs, chats, searches, repository scans, and the source ledger are background-only by default unless the requested subject is the method or source, or attribution is required. Secrets and explicitly private material are do-not-disclose.
+
+### Transformation policy
+
+- **Verbatim:** preserve exact text.
+- **Meaning-preserving edit:** wording may change but semantics, attribution, scope, and confidence may not.
+- **Summarize-only:** use the supported meaning without copying protected or unnecessarily identifying wording.
+- **Do not use:** exclude from both artifact generation and internal evidentiary use.
+
+Apply `verbatim` by default to:
 
 - code
 - commands
@@ -69,17 +85,58 @@ Content that must not drift during editing:
 - quotations
 - legal or security warnings
 
-## Source Precedence
+Visibility controls whether material may appear. Transformation policy controls how permitted material may change and never expands visibility. A verbatim command can still be background-only or do-not-disclose; required attribution does not grant permission to expose a private quotation.
 
-When the draft, conversation, notes, or calibration material disagree, resolve content in this order:
+Apply both axes to the smallest practical semantic unit: claim, quotation, command, identifier, field, or contiguous span. A document or message may define defaults, but narrower classifications override them. Split a derived sentence when independently governed claims can be separated; otherwise apply the strictest applicable policy.
 
-1. current-turn explicit instructions, corrections, and any source the user names as authoritative
-2. a later direct user correction that clearly supersedes an earlier statement
-3. the current supplied draft
-4. older relevant conversation only when it does not conflict with the winning source
-5. writer profiles, style guides, public samples, and before/after examples for style calibration only
+## Editing Directives And Claim Authority
+
+Editing-directive precedence controls what operation to perform:
+
+1. current explicit task instruction
+2. earlier non-conflicting task instruction
+
+A request to strengthen, simplify, dramatize, shorten, or adapt wording does not change a claim's fact, status, intent, confidence, or authority unless the user explicitly supplies that change.
+
+Claim-authority precedence controls what the artifact may assert:
+
+1. current explicit factual, intent, status, or authority correction
+2. the latest applicable user-named authoritative source
+3. current and earlier applicable user-supplied sources unless explicitly superseded
+4. a complete prior draft explicitly approved by the user or resubmitted by the user as the current source
+5. permitted background evidence for verification, conflict detection, and inference within its visibility limits
+6. writer profiles, style guides, public samples, and examples for style calibration only
+
+Assistant-generated wording has no independent claim authority. It may be reused as phrasing only when consistent with higher-authority material. A localized correction or edit accepts only the supplied or explicitly modified claims and their directly dependent transitions; it does not accept untouched assistant claims. Silence never constitutes acceptance. A later higher-authority source may invalidate an accepted draft.
 
 Do not silently blend contradictory versions of a framework, database, command, version, metric, result, product status, or author position. In Diagnose mode, report the conflict. In finished-artifact modes, use the winning source; return `Not enough context` only when no source wins and the unresolved conflict makes the requested artifact factually unsafe.
+
+## Claim Status And Actor Role
+
+Classify material claims as observed past, current state, committed plan, intended but not started, candidate direction, capability, prediction, or unresolved question. Preserve the actor and modality rather than mapping isolated keywords mechanically. `可以` may describe capability or a candidate; `准备`, `已经决定`, `正在`, and `已完成` do not mean the same state. Never promote a claim upward without explicit evidence.
+
+When delegation matters, preserve who proposes, executes, checks, recommends, approves, accepts, or publishes. AI drafting, implementation, checking, or preliminary validation does not imply final approval, acceptance, publication, or accountability. Preserve the supplied authority model and do not invent an approver when none is established.
+
+Modal terms are evidence-bearing. Preserve distinctions such as `我认为`, `可能`, `可以`, `应尽量`, `目标是`, `正在`, and `已经`. A smoother sentence that drops one of these terms may silently promote a principle into a guarantee, a capability into observed behavior, or a candidate into a commitment.
+
+## Whole-Artifact And Internal-Consistency Audit
+
+Audit the complete publishable surface before rewriting:
+
+- title, description, and other frontmatter versus the body
+- architecture labels versus code signatures and dependencies
+- workflow summaries versus every distinct stage, gate, actor, and closing step
+- duplicated URLs, titles, entries, headings, and numbering
+- current-state language versus plans, principles, risks, and historical descriptions
+- conditions that may match simultaneously, including precedence and silent-failure behavior
+
+Resolve what the artifact itself proves before routing volatile facts to external verification. `Not verified` is appropriate for current reachability, maintenance status, runtime behavior, or external product state; it is not a substitute for reporting an internally visible contradiction, duplicate, title-target mismatch, or unsupported `完整`, `自动`, `安全`, or `高效` claim.
+
+## Derived Claims
+
+Every output claim needs permitted provenance. A claim that depends on multiple indispensable sources inherits the strictest visibility and attribution requirement among them. Paraphrasing, generalizing, inferring, or combining sources does not reset restrictions.
+
+When the same claim is independently supported by a less restrictive source, the artifact may rely on that source while excluding details learned only from stricter material. An inference inherits the restrictions of the evidence required to make it.
 
 ## Claim Trace
 
@@ -112,6 +169,8 @@ Do not collapse these statuses. `The documentation says`, `the vendor reports`, 
 - Apply source precedence before merging draft, conversation, notes, or examples.
 - Preserve supplied facts from the winning source.
 - Keep author judgments attributed and proportionate.
+- Use background evidence to locate sequence, turning points, and consequences. Convert it into first-person experience only when an author-supplied source or explicit instruction supports the author's participation, perception, decision, or judgment. Otherwise keep the statement neutral, attribute it, mark it as inference, or omit it.
+- Preserve actor roles separately from claim status. `proposes`, `executes`, `checks`, `recommends`, `approves`, `accepts`, and `publishes` are not interchangeable.
 - Omit unknown claims, label them `Not verified`, or research them before use.
 - Preserve protected text exactly unless the user explicitly requests a verified correction.
 - Do not turn a plan into a completed result.
@@ -128,6 +187,8 @@ Do not collapse these statuses. `The documentation says`, `the vendor reports`, 
 - Do not detach a number from what was measured, the comparison baseline, or the tested sample. `Build time improved on listed repositories` is not the same claim as `the language runs faster`.
 - When shortening text, split or omit claims whose scopes differ rather than merging them into one smoother but inaccurate sentence.
 - Preserve supplied technical semantics, commands, flags, order, prerequisites, and version scope. Do not silently repair disputed technical material from memory.
+- Treat a runnable workflow as one verification unit: command family, tool identity, prerequisites, order, version scope, mutually matching conditions, failure behavior, and expected result. Verifying one line does not validate the chain.
+- Preserve distinct workflow responsibilities. Do not collapse discovery, evidence verification, schema validation, build checks, commit, publication, or rollback into one generic gate when the source assigns them different meanings.
 - Available deterministic syntax, link, command, or repository checks may be run when they are part of the editing task. Mark unrun checks `Not verified`.
 - Apply this technical-publication decision table instead of treating every unverified item as a blocker:
 
@@ -144,6 +205,8 @@ Do not collapse these statuses. `The documentation says`, `the vendor reports`, 
 | Correctness review is the primary task | Route to the relevant technical review workflow |
 
 Ordinary unexecuted, non-destructive examples may remain when clearly labeled as unverified. A syntax-only check proves syntax only, not safety, runtime behavior, or compatibility.
+
+For unresolved P0/P1 issues, use the safe-partial or blocked-artifact response in the main Output Contract. Apply a winning source, preserve and label uncertainty, exclude only the affected claim, or request the minimum authoritative information. Never silently choose between equal-authority conflicts, invent a disclosure, expose do-not-disclose material, or rewrite verbatim text to hide the conflict.
 
 ## Drafting From Sparse Notes
 

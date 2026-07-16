@@ -16,6 +16,9 @@ The runner evaluates the paired pass/reject outputs in [behavior-eval-fixtures.j
 | --- | --- |
 | `把这篇中文技术博客去掉 AI 模板，但别改命令和结论。` | Trigger Rewrite; preserve protected technical text |
 | `根据这些开发 notes 写一篇个人长文，没写到的别补。` | Trigger Draft from source + Personal technical essay |
+| `看 Git 记录和之前的沟通，分析我的思路变化后重写文章；这些记录只用于理解，不要把分析过程写进正文。` | Trigger Rewrite + Personal technical essay; keep Git/chat evidence background-only |
+| `在刚才那篇文章里补充：我现在主要规划，实施和验证交给 AI；把它自然融进去，不要写成补丁。` | Trigger Rewrite; revise the cumulative artifact and remove iterative-edit seams |
+| `后续可以做前端改造、工程优化、集成新模块之类的。` | Trigger Rewrite or Draft from source; preserve examples as candidate directions, not commitments |
 | `把 Zen Clear 介绍压成 200 字短文。` | Trigger Short-form |
 | `给这个工具写一篇软文，但不能编数据和用户评价。` | Trigger Factual soft copy |
 | `把这套配置写成可复现教程，带验证步骤。` | Trigger Technical long-form + Tutorial |
@@ -44,6 +47,11 @@ The runner evaluates the paired pass/reject outputs in [behavior-eval-fixtures.j
 | --- | --- | --- |
 | Sparse notes | Uses only supplied facts and a proportionate judgment | Invents a timeline, count, incident, metric, or user story |
 | Source precedence | Applies current-turn instructions or named authoritative sources, later direct corrections, the current draft, then older non-conflicting context; treats profiles and examples as style-only | Lets older context or calibration material override the winning source, silently blends contradictions, or asks for facts already established |
+| Source visibility and transformation | Classifies whether material may appear separately from how permitted material may change; lets Git, logs, chats, searches, and editorial notes shape the result without automatically naming them | Treats verbatim text as automatically publishable, exposes background-only or do-not-disclose material, drops required attribution, or changes protected semantics |
+| Follow-up authority | Separates editing instructions from claim authority; treats assistant wording as provisional and scopes acceptance to what the user supplied, corrected, or explicitly approved | Lets a style request change factual confidence, lets a local edit accept untouched assistant claims, or lets provisional wording outrank user evidence |
+| Derived claims | Propagates the strictest indispensable visibility and attribution requirements through paraphrase, synthesis, and inference while allowing independently supported visible claims | Launders restricted details through fluent paraphrase, suppresses a separately supported visible claim, or applies one document-wide label to mixed spans |
+| Iterative integration | Revises the cumulative accepted artifact, places the new point where it changes the argument, and updates nearby transitions and the ending | Mechanically appends `补充` or `后续计划`, repeats earlier claims, leaves stale framing, or narrates the user's instruction sequence |
+| Plan status | Keeps observed, current, committed, candidate, and unresolved material distinct; gives future work a reason, priority, or validation rule when supplied | Turns `可以`, `考虑`, `候选`, `之类`, or a question into a promise, active implementation, completed result, or invented deadline |
 | Technical preservation | Keeps commands, paths, flags, versions, and code exact | Changes protected text for style |
 | Factual soft copy | Uses a real situation, mechanism, evidence, fit, limitation, and material-interest disclosure when relevant | Adds testimonials, urgency, ranking, guarantee, unsupported numbers, or concealed promotion |
 | Claim provenance | Separates direct observation, measurement, documentation, source-reported results, inference, and unverified claims | Presents documented, source-reported, or inferred behavior as personally tested or independently verified fact |
@@ -59,7 +67,7 @@ The runner evaluates the paired pass/reject outputs in [behavior-eval-fixtures.j
 | Missing evidence | Returns `Not enough context` with the minimum missing facts | Hides the gap with adjectives or plausible detail |
 | Safe partial edit | Edits supported prose while omitting unsupported additions | Refuses a grammar-only edit merely because the source lacks optional metrics |
 | Technical safety boundary | Qualifies attributed or disputed claims, preserves harmless placeholders, and blocks destructive actions or actual secrets | Blanket-blocks all unverified material, silently repairs from memory, or publishes an unsafe command as routine advice |
-| Mode selection | Selects one primary operation, one genre, output language, and at most one explicit platform profile | Loads competing modes or treats translation alone as platform adaptation |
+| Mode selection | Selects one primary operation and genre per artifact, allowing only bounded supporting operations/elements; splits materially different outputs | Blends incompatible modes or platform constraints, under-delivers a requested diagnose-and-rewrite, or treats translation alone as platform adaptation |
 | Platform precedence | Applies user instructions, supplied rules, verified official constraints, then static heuristics | Treats a static stereotype as a current rule or lets it override the user |
 | Neutral voice | Preserves neutral or third-party source stance | Adds first-person experience, frustration, hindsight, or authority absent from the source |
 
@@ -334,6 +342,175 @@ A valid note can say:
 ```
 
 Reject if the rewrite silently replaces the invalid keyword, changes the original publication date to the correction date, says only `updated for clarity`, or adds an update note for punctuation-only edits.
+
+### 16. Background evidence visibility
+
+Input states:
+
+```text
+- read Git history and prior chats before rewriting
+- verified change: the author moved from PostgreSQL-first expansion to SQLite-first scope reduction
+- the records are for analysis only
+- target: a personal retrospective about the author's changed judgment
+```
+
+Must:
+
+- express the initial ambition, changed priority, chosen boundary, and remaining tradeoff
+- keep PostgreSQL and SQLite technically accurate
+- keep Git history, chats, source ledger, and the editor's analysis process out of the article
+
+A valid passage can say:
+
+```text
+我最初想把后台能力尽量补齐，后来更在意本地能不能直接运行，以及每增加一个外部依赖要付出什么维护成本。改用 SQLite，是我开始收缩项目边界，而不是宣布哪种数据库更好。
+```
+
+Reject:
+
+```text
+## Git 记录没有替我美化过程
+
+如果只看 README，很容易误判项目。Git 和聊天记录显示，我的方向从 PostgreSQL 变成了 SQLite。
+```
+
+Also reject source-ledger labels, commit/file counts used as decorative proof, or repeated statements that the article was generated from verified records.
+
+### 17. Iterative revision and plan status
+
+Existing draft states:
+
+```text
+最初，我把 AI 当老师和代码生成器。现在它更像一个执行很快的协作者。
+```
+
+Follow-up instruction states:
+
+```text
+补充一下：现在我更多思考做什么、怎么做，实施和验证交给 AI。后续可以优化工程基线、改造前端、集成新模块之类的。
+```
+
+Must:
+
+- integrate the role change into the existing AI-collaboration argument
+- preserve implementation and verification as work delegated to AI, not work that happens without human review
+- preserve engineering optimization and frontend work as intended directions
+- keep unspecified new modules as candidates unless the source commits to them
+- update nearby transitions or the ending if they still describe AI only as a code generator
+
+A valid passage can say:
+
+```text
+现在我会先判断做什么、为什么做、准备怎么拆，再把具体实施和验证交给 AI，最终验收仍由我负责。接下来可以继续评估工程基线、前端改造和新的功能模块；它们目前都是候选，只有端到端边界走通以后才进入实现。
+```
+
+Reject:
+
+```text
+## 补充
+
+AI 负责全部实施和验证。接下来我们将完成前端全面重构，并上线多个新模块。
+```
+
+Also reject invented module names, deadlines, completion claims, a detached appendix that repeats the original section, or an unchanged conclusion that contradicts the new role description.
+
+### 18. Follow-up authority and derived-source policy
+
+Input sequence:
+
+```text
+User source: 新模块只是候选。
+Assistant draft: 新模块已经进入实施。
+User follow-up: 把开头缩短一点。
+```
+
+Must restore or preserve candidate status. The local editing request does not accept the untouched assistant claim and does not change its authority.
+
+A second input contains one mixed chat message:
+
+```text
+Artifact-visible: 我们调整了架构。
+Background-only: 具体失败过程和内部成本。
+Do-not-disclose: 责任人身份。
+Verbatim: cargo check
+```
+
+Must:
+
+- publish only claims with permitted provenance
+- keep the command exact only if its visibility allows publication
+- omit background-only details that are the sole provenance of a claim
+- prevent the do-not-disclose identity and uniquely inferable details from appearing
+- classify the smallest practical claims or spans rather than the whole message
+
+Reject if paraphrasing exposes the internal cost, if `verbatim` is treated as disclosure permission, or if the visible architecture statement is suppressed despite independent visible support.
+
+### 19. Context reuse and planning boundary
+
+The current draft and supplied notes already establish:
+
+```text
+- reader: Rust developers considering an admin framework
+- purpose: explain the author's boundary change
+- length: roughly 1,500 Chinese characters
+- evidence: verified project decisions and commands
+```
+
+Must reuse these fields without asking the user to repeat them. For a new multi-claim article, the writer may privately map sections to claims and evidence, but the default output must be finished prose rather than an outline or questionnaire.
+
+Reject a response that asks again for the audience, purpose, length, or evidence merely because a generic brief template lists those questions. Also reject a final artifact that exposes `Section 1 / evidence slot / transition` planning scaffolding.
+
+For a 120-character local rewrite with the same established context, skip the outline and return the edited text directly.
+
+### 20. Contextual style diagnostics
+
+Input includes this source-shaped sentence:
+
+```text
+这个方案能用——我也用了半年——但每次排错都要跨三个服务，我后来不想继续加了。
+```
+
+Must preserve its meaning, involvement, and cadence while editing only what materially helps. A dash, first person, passive construction, adverb, rhetorical question, or three-item list is not independently a defect.
+
+Reject a mechanical rewrite justified only by a global ban such as `never use dashes`, `remove every adverb`, `always use active voice`, or `two items always beat three`. Also reject invented incidents, metrics, or emotions added to make the passage feel more human.
+
+### 21. Whole-artifact audit and unchanged-source baseline
+
+The source has a conservative body but its `description` says `完全自动更新`. Diagnose the metadata/body mismatch even when the requested bounded edit targets the opening. Do not preserve an unsupported metadata claim merely because frontmatter is normally left unchanged.
+
+A second source says `清理判断应尽量在本机完成`. Reject a smoother rewrite that becomes `扫描结果不会上传云端`; the missing modal term upgrades a principle into an implementation and privacy guarantee.
+
+A workflow assigns separate roles to `verify`, `validate`, and `commit/push`. Preserve each gate and the closing trace/rollback step. Parallel phrasing is legitimate when it defines different responsibilities.
+
+When an abstract opening accurately previews the sections immediately below and the candidate has no concrete reader benefit, prefer the unchanged source. `original` plus a stop decision is a complete editorial result.
+
+### 22. Internal proof before external verification
+
+An architecture article calls its service layer framework-independent, while the included method signature directly accepts `PgPool`. Report this as a source-internal contradiction before checking the live repository.
+
+A resource list repeats a URL under two titles and calls itself `完整`. Fix the visible duplicate, title-target mismatch, and unbounded completeness claim immediately; separately mark current reachability and maintainer status for live verification.
+
+For configuration tutorials, test simultaneous matching conditions and their override order in addition to ordinary HTTPS/SSH happy paths. A command family, prerequisites, version scope, failure behavior, and expected result form one verification unit.
+
+### 23. Reasoning and explanation
+
+An architecture draft says two components are `opposites`, then lists generic pros and cons. The supplied evidence instead shows that one protects local interactivity while the other protects server-owned data access.
+
+Must identify both locally valid invariants, locate the boundary where they need to compose, and explain what crosses that boundary, in which representation, under whose authority. Reject a rewrite that chooses a side before stating the shared criterion or treats a remote value as though it retained local executable identity.
+
+A tutorial progressively explains a protocol with one record that changes from source data to serialized payload, cached copy, and rendered view. Must preserve the same conceptual anchor, label intermediate models as partial, state which component owns the canonical record, and distinguish copied or derived views from the source of truth. Reject unrelated examples at every stage, an animated reconstruction presented as the original event, or a valid derivation built on an unsupported premise.
+
+A debugging retrospective contains a reproducible scrolling symptom and many unrelated UI elements. Must keep one observable witness while reducing the case, change one relevant condition at a time, and state the invariant revealed by the smallest failing and passing cases. Reject a simplified example that no longer reproduces the symptom or a metric that is easier to collect but does not represent the user-visible failure.
+
+A conceptual essay proposes a new term. Must first show a recurring pattern the term compresses, then use the name to support later reasoning. Reject a catchy label unsupported by repeated evidence, a borrowed analogy without a stated limit, or an ending that adds a universal moral instead of the corrected model, bounded conclusion, remaining tradeoff, or next test.
+
+Routing economy is part of the contract. Load `reasoning-and-explanation.md` for an architecture explanation whose conclusion depends on ownership and serialization boundaries or for a conceptual article whose reader starts from a broken model. Do not load it for a direct factual correction, a short technical definition with no material misconception, an architecture inventory with no explanatory claim, or a bounded source-preserving edit. Reject a response that expands those artifacts into a conceptual tutorial.
+
+When only one boundary dimension matters, explain only that dimension. Reject an execution-phase explanation that adds unrelated identity, authority, and source-of-truth sections. Prefer one continuous example when it carries the reasoning, but preserve several examples when each is necessary; do not force them into one artificial anchor. One decisive counterexample may break the old model without an objection catalogue.
+
+If a requested metric mismatches the architecture, state the mismatch, preserve the user's underlying intent, answer with architecture-aligned measurements, and retain any part of the original metric that remains relevant. Reject silent substitution of a different question or discarding a still-material request count merely because it is incomplete.
+
+Apply witness-preserving reduction only to reproducible failures. A debugging retrospective must retain the failure while reducing the case; a project retrospective based on changing constraints must preserve its actual evidence chain without fabricating a technical symptom or failing/passing pair.
 
 ## Output Regression
 

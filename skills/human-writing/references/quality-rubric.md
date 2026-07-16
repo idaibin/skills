@@ -16,8 +16,8 @@ Report `HUMAN WRITING ACCEPTED` only when all four layers pass. A fluent draft c
 ## Defect Levels
 
 - **P0 — misleading or unsafe:** invented or materially wrong fact, changed technical meaning, concealed material relationship, false attribution, or unsafe command. Blocks output.
-- **P1 — publication blocker:** unresolved source conflict, missing required disclosure or material correction note, lost author position, unusable tutorial step, or structure that changes the argument. Blocks publication.
-- **P2 — substantive edit:** generic structure, repeated reasoning, weak evidence placement, over-editing, platform mismatch, or noticeably flattened voice. Fix unless the user accepts it.
+- **P1 — publication blocker:** unresolved source conflict, missing required disclosure or material correction note, lost author position, background research replacing the requested author narrative, a candidate presented as committed or completed, a visible metadata/body or architecture/code contradiction, unusable tutorial step, or structure that changes the argument. Blocks publication.
+- **P2 — substantive edit:** generic structure, repeated reasoning, weak evidence placement, append-only revision seams, over-editing, platform mismatch, or noticeably flattened voice. Fix unless the user accepts it.
 - **P3 — preference edit:** local wording, rhythm, naming, or formatting improvement with no effect on meaning or trust.
 
 ## Dimensions
@@ -25,11 +25,11 @@ Report `HUMAN WRITING ACCEPTED` only when all four layers pass. A fluent draft c
 | Dimension | Weight | 10-point standard |
 | --- | ---: | --- |
 | Factual and technical integrity | 20% | Every claim follows source precedence and is supported, qualified, or clearly opinion; provenance, status, source interest, independence, exact subject, operation, metric, baseline, scope, material relationships, required creation-process details, and applicable revision history are accurate; protected text is exact |
-| Intent and reader fit | 10% | The text solves the requested reader task without irrelevant coverage |
+| Intent and reader fit | 10% | The text solves the requested reader task without irrelevant coverage or unrequested research-process narration |
 | Author voice fidelity | 10% | The voice matches supplied samples or the calibrated default without imitation theater |
 | Specificity and evidence | 10% | Claims are grounded in concrete mechanisms, examples, constraints, observations, or traceable sources; numbers remain attached to the operation, comparison, source, and evidence status they actually represent |
-| Logic and structure | 10% | Each section follows from the previous one; no missing step or artificial template |
-| Information density | 10% | Nearly every paragraph adds information; repetition and framing are minimal |
+| Logic and structure | 10% | The reader's starting model, supported premises, derivation, constraints, examples, boundaries, and conclusion form a visible path where material; partial models and proxies keep their limits; follow-up additions are integrated without stale transitions, repetition, missing steps, or artificial templates |
+| Information density | 10% | Nearly every paragraph adds information; repetition, editorial framing, and background-source leakage are minimal |
 | Natural rhythm | 10% | Sentence and paragraph length vary with meaning; emphasis is not manufactured |
 | Platform fit | 5% | Opening, length, formatting, density, sourcing, terminology, attribution, material-interest disclosure, required creation-process disclosure, and any required correction notice fit the target platform without changing claim meaning |
 | Persuasion and trust | 5% | The text earns belief through honest proof, limitations, source transparency, material-interest disclosure, truthful process disclosure, and transparent correction history rather than pressure |
@@ -64,7 +64,7 @@ Unreliable, unsupported, misleading, hard to follow, or materially misaligned wi
 ## Assessment Procedure
 
 1. Read once as the target reader.
-2. Check source precedence, unresolved conflicts, the source ledger, claim trace, source interest, evidence independence, semantic fidelity, material relationships, current platform rules, required creation-process disclosures, published revision history, and protected text.
+2. Check source precedence, unresolved conflicts, the whole publishable surface, internal consistency, the source ledger, claim trace, source interest, evidence independence, semantic fidelity, material relationships, current platform rules, required creation-process disclosures, published revision history, and protected text.
 3. List concrete defects with severity and evidence.
 4. Resolve P0 and P1 items before optimizing lower-severity prose.
 5. If a numeric score is requested, score each dimension independently with one evidence sentence and state that it is editorial calibration, not behavioral validation.
@@ -75,7 +75,15 @@ Do not expose internal assessment unless the user asks. Never inflate a score to
 ## Final Gate
 
 - Confirm source precedence, claim scope, attribution, disclosures, protected text, and revision history.
+- Confirm title, description, body, code, tables, links, numbering, and workflow summaries do not contradict or silently omit one another.
+- Confirm past, current, committed, candidate, and unresolved material retain their actual status.
+- Confirm background-only evidence shaped the result without becoming visible editorial scaffolding.
+- Confirm follow-up additions were integrated into the argument and did not leave stale framing, repetition, contradiction, or an outdated ending.
 - Confirm the opening answers the reader's task and each section adds information.
+- For explanatory work, confirm the draft repairs or extends a plausible reader model; separates premise, derivation, and judgment; and ends with the model, criterion, tradeoff, question, or next test it actually earned.
+- For long-form or multi-claim work, confirm the private outline became prose and no planning scaffold leaked into the artifact; for short or local edits, confirm no unnecessary planning ceremony expanded the task.
 - Diagnose template behavior only as a cluster; preserve genuine voice and asymmetry.
+- Confirm parallel structure and repeated technical terms were changed only when a concrete information or reader problem existed.
+- Confirm specificity came from evidence rather than plausible gap-filling, and no style heuristic became a global punctuation, vocabulary, or syntax ban.
 - Confirm platform hard constraints separately from editorial preferences.
-- Resolve every P0/P1 defect. Stop editing when remaining changes are preference-only and the source-shaped voice is intact.
+- Resolve every P0/P1 defect. Compare against the unchanged source and stop when the candidate has no concrete benefit or weakens terminology, modality, workflow closure, or source-shaped voice.

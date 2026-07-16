@@ -29,6 +29,32 @@ Treat a passage as templated only when several signals reinforce one another:
 
 One heading, list, transition, dash, short sentence, or familiar phrase is not evidence by itself. Technical conventions, accessibility requirements, and platform formatting can create legitimate repetition.
 
+Parallel sentences, stable technical nouns, tables, and lists may be the clearest way to define separate responsibilities, states, or comparison axes. An abstract opening may also be a precise map of the sections that immediately follow. Diagnose a defect only when the structure loses information, obscures priority, or repeats the same reasoning without a new role.
+
+Repeated questions can mark the reader's next inference; repeated code can expose one controlled change; a long detour can eliminate a plausible wrong model; a heading-free passage can preserve a continuous derivation. Treat these as defects only when they fail to perform that job. Every editorial rule should name the reader failure it prevents rather than target a surface pattern.
+
+Do not turn frequent model habits into universal bans. Passive voice can keep the object of interest in focus; a dash can preserve a real cadence; an adverb, rhetorical question, list of three, or repeated technical noun can be the clearest choice. Rewrite only when the form contributes to a diagnosed cluster or weakens meaning, trust, rhythm, or reader comprehension.
+
+## Research-Process Leakage
+
+Treat every item below as a contextual review signal, not an automatic defect. Act only when it replaces the requested subject with source-process narration, exposes background-only material, duplicates an existing claim, changes the argument, or creates a visible editing seam.
+
+Background research leaks into the artifact when the text explains how the editor reached a conclusion instead of expressing the author's experience or argument. Common signals include:
+
+- headings centered on `Git 记录`, `聊天记录`, `检索结果`, or `分析过程` when those sources are not the requested topic
+- sentences such as `如果只看 README`, `记录没有美化过程`, `从沟通记录可以看出`, or `下面的判断来自...`
+- commit counts, file totals, hashes, or source-ledger categories used as narrative decoration rather than necessary evidence
+- repeated reminders that the draft is factual, source-grounded, or based on research
+- editor commentary that tells the reader what the article is trying not to do
+
+Do not ban source names mechanically. A Git postmortem, release history, investigative report, correction note, or cited external claim may need visible provenance. Otherwise keep the research in the reasoning layer and write the resulting scene, choice, cost, uncertainty, or changed judgment in the author's frame.
+
+## Iterative-Edit Seams
+
+Follow-up edits can leave visible seams even when every paragraph is individually sound. Treat a late section as a seam only when its information logically belongs earlier, repeats a claim, changes a role or commitment without updating related passages, or leaves the conclusion inconsistent. Reintegrate the point at the decision or transition it explains, then reread the surrounding section and ending.
+
+Do not remove every additive transition mechanically. Keep it when the chronology or argument genuinely adds a second point. The defect is structural afterthought, not the word itself.
+
 ## Chinese Technical Prose
 
 - Put the subject and action close together; prefer concrete verbs over abstract management nouns.
@@ -46,4 +72,4 @@ Keep genuine uncertainty, disagreement, asymmetric emphasis, rejected alternativ
 
 ## Stop Rule
 
-After factual, structural, and voice blockers are resolved, stop when further edits only normalize preference-level wording. A clean but source-shaped sentence is better than a more polished house style.
+After factual, structural, and voice blockers are resolved, compare the candidate against the unchanged source. Stop when the edit has no concrete reader benefit, only normalizes preference-level wording, weakens a precise term, changes a qualifier, or invents narrative motion. A clean but source-shaped sentence is better than a more polished house style; `original` is a valid finished decision.

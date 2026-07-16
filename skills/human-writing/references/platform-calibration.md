@@ -35,6 +35,8 @@ If current verification is unavailable, do not present a static profile as a cur
 
 For every platform, preserve material-interest disclosures, source attribution, claim scope, and any current platform-required creation-process disclosure. Platform adaptation may change wording or placement, but it must not make interested promotion look independent, turn documented or source-reported behavior into personal testing, broaden a precise technical claim, or conceal how the artifact was produced when disclosure is required.
 
+Preserve source visibility as well as source accuracy. Background Git history, chats, logs, and editorial research do not become platform copy merely because they informed the adaptation; required attribution and disclosures remain visible.
+
 ## Personal Blog
 
 Reader expectation:

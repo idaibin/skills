@@ -286,3 +286,154 @@ The external reviewer returned no P0, P1, P2, or P3 findings and verdict `pass`.
 - External suggestions were not accepted solely on reviewer authority; each was checked against the supplied package and current local source.
 - Representative runtime execution against real monorepo, nested-Git/submodule, multi-repo, and ordinary non-Git fixtures remains `Not verified`; the current evidence is static contract, validator, and eval coverage.
 - No files were staged, committed, pushed, or otherwise delivered in this review pass.
+
+## Review Pass 7 — human-writing Six-Round Study and Closeout
+
+- Timestamp: 2026-07-13T21:29:47+08:00
+- Review basis: isolated worktree at `fac9f4efbb27e07094812114a042bc4937e2222c`
+- Scope: `skills/human-writing/` and synchronized metadata/eval surfaces
+- Artifact visibility: `repository-sanitized`
+- Surface: standard ChatGPT conversation
+- Conversation reference: `suffix-c8f9b5a2`
+- Account workspace: `personal`
+- Browser route: Codex in-app Browser (Experimental)
+- Final cumulative package SHA-256: `b4bf129808ec0a1c445be0b05793323d45630674a190b8473b556c07e121eba1`
+- Authorized/completed rounds: 6 / 6 in one stable conversation
+
+### First Three Review Rounds
+
+| Round | Operation IDs | External verdict | Local disposition |
+| --- | --- | --- | --- |
+| 1 | `hw-initial-1:submit`, `hw-initial-1:capture` | `needs changes` | Confirmed source-visibility, acceptance-authority, claim-state, actor-role, partial-output, and diagnostic false-positive gaps; repaired them and expanded fixtures |
+| 2 | `hw-initial-2:submit`, `hw-initial-2:capture` | `needs changes` | Separated editing directives from claim authority; removed assistant wording as evidence; propagated restrictions through derived claims; consolidated normative ownership in `fact-integrity.md` |
+| 3 | `hw-initial-3:submit`, `hw-initial-3:capture` | `No actionable findings`; `pass` | No further change |
+
+### External Writing-Skill Study
+
+Repository star counts were checked on 2026-07-13 as popularity signals only. Each concrete writing asset was read before deciding what to adopt.
+
+| Repository and writing asset | Stars | Applied learning | Deliberately not copied |
+| --- | ---: | --- | --- |
+| [anthropics/skills — internal-comms](https://github.com/anthropics/skills/blob/main/skills/internal-comms/SKILL.md) | 161k | type-based routing and selective genre references | company-specific formats as universal structure |
+| [coreyhaines31/marketingskills — copywriting](https://github.com/coreyhaines31/marketingskills/blob/main/skills/copywriting/SKILL.md) | 38k | reuse established context; define reader, purpose, action, evidence, voice, and output | conversion scope, formulaic variants, mandatory annotations |
+| [blader/humanizer](https://github.com/blader/humanizer/blob/main/SKILL.md) | 29k | supplied-sample voice calibration and draft-audit-final iteration | universal dash removal and default personality injection |
+| [K-Dense-AI/scientific-agent-skills — scientific-writing](https://github.com/K-Dense-AI/scientific-agent-skills/blob/main/scientific-skills/scientific-writing/SKILL.md) | 26.2k | private claim-and-evidence outline before complex prose | IMRAD, mandatory research tooling, universal no-bullets output |
+| [hardikpandya/stop-slop](https://github.com/hardikpandya/stop-slop/blob/main/SKILL.md) | 13.7k | concise checks for filler, vague agency, specificity, rhythm, and reader trust | absolute bans on adverbs, passive voice, dashes, and three-item lists |
+| [op7418/Humanizer-zh](https://github.com/op7418/Humanizer-zh/blob/main/SKILL.md) | 13k | Chinese checks for vague conclusions, excessive qualification, concrete detail, and cadence | deliberate messiness, automatic first-person promotion, and default change summaries |
+
+Study-driven changes reuse supplied context before asking, apply private outlines only to new long-form or multi-claim work, keep planning scaffolds out of final prose, prevent outline gaps from becoming invented evidence, and treat common AI-writing forms as contextual cluster signals rather than lexical violations.
+
+### Final Three Discussion Rounds
+
+| Round | Operation IDs | Focus | External verdict |
+| --- | --- | --- | --- |
+| 4 | `hw-research-1:submit`, `hw-research-1:capture` | coherence, scope control, private-outline/output boundary, contextual diagnostics | `No actionable findings`; `pass` |
+| 5 | `hw-research-2:submit`, `hw-research-2:capture` | adversarial failures in context reuse, outline leakage, diagnostic underreach, voice copying, and contract duplication | `No actionable findings`; `pass` |
+| 6 | `hw-research-3:submit`, `hw-research-3:capture` | final correctness and execution-weight closeout | `No actionable findings`; `pass` |
+
+Each round was submitted once and counted only after the completed assistant response was captured with the stop control absent. No full conversation URL, account display name, or unrelated repository content is stored here.
+
+### Local Verification Boundary
+
+- External suggestions were checked against current source before application; star count and reviewer agreement were not treated as correctness proof.
+- Deterministic fixtures prove only finite contract behavior. Production-model repetition and blind editorial acceptance remain separate evidence layers.
+- No files were staged, committed, pushed, installed globally, or published in this review pass.
+
+## Review Pass 8 — human-writing Real-Article Evaluation
+
+- Timestamp: 2026-07-13
+- Scope: 10 frozen public articles from `idaibin/blog`; blog repository remained read-only
+- Artifact visibility: `repository-sanitized`
+- Surface: standard ChatGPT conversation
+- Conversation reference: `suffix-48f9d4`
+- Account workspace: `personal`
+- Browser route: Codex in-app Browser (Experimental)
+- Authorized/completed rounds: 10 / 10 in one stable conversation
+
+| Round | Source artifact | Package SHA-256 | External decision | Local finding |
+| --- | --- | --- | --- | --- |
+| 1 | `feeds-hub-editorial-system-lessons.zh.mdx` | `d8225d9cab8b0093bf70023ec49622a489b136bc29bf9e71013b308a67d3c563` | bounded edit; `needs changes` | Confirmed claim-state issue; added whole-artifact metadata checks after the diagnosis missed the stronger `description` claim and its own edit introduced absolutes |
+| 2 | `why-rust-admin.zh.mdx` | `fd1d9975ac216bc26490e3767d3bd142446021ca64d443f493b13c5da70ac527` | original; `needs changes` | Candidate weakened precise engineering terms; strengthened unchanged-source comparison and stop behavior |
+| 3 | `rustzen-series-product-notes.zh.mdx` | `1bd3e36610cae6cbbdbff29614df258c5540028bdc401d2d873d35279fb3c09f` | original; `needs changes` | Candidate invented a lived direction change from a prospective risk and misdiagnosed a useful table |
+| 4 | `aicraft-skills-as-ai-assets.zh.mdx` | `95d6a4206f3a5a4647b9075b98ddaebfa6464008f0cb83c38ac7fec5ef094fca` | technical verification first; `needs changes` | Expanded verification from one command to the complete executable workflow and lowered unsupported error assumptions |
+| 5 | `feeds-hub-information-automation.zh.mdx` | `c2962bc710f171961d36d4bbdbb2777823fc3b46af88cc5f887fdffe1e6bea8d` | original; `needs changes` | Candidate collapsed `verify` and `validate` roles and omitted the submit/rollback closure |
+| 6 | `git-multi-repo-identity.zh.mdx` | `a6531ccfb40fdba713ceb50ba912776158cf76b2eda57d54a174b411abd1db56` | technical verification first; `needs changes` | Added combination-state and precedence checks after a multi-remote silent identity conflict was identified |
+| 7 | `where-macos-developer-disk-space-goes.zh.mdx` | `86bc806cb57040f67f46e5330505653a5548108226569dc4195cf44abba9b2eb` | original; `needs changes` | Candidate dropped `应尽量` and upgraded a product principle into an implemented privacy guarantee |
+| 8 | `rustzen-architecture-guide.zh.mdx` | `262493df32d8cea90cb9f2028bc5f24b1fa5cba57b10bf8bba3fa7e11e4d7293` | technical verification first; `needs changes` | Added source-internal consistency checks for architecture/code, authentication semantics, and performance wording before live-repository verification |
+| 9 | `rust-learning.zh.mdx` | `7027bcdb5990c14acbdd91cb1962657f4e099a8f90caa57b6582d80088e77404` | technical verification first; `needs changes` | Separated visible duplicate/title/completeness defects from volatile link and maintainer checks; refined resource provenance |
+| 10 | `zen-clear-tweet.zh.mdx` | `453300b422417439bd9ea208e28a30801c2a21a9b8822fa7310b90b6f2a609c1` | original; `pass` | Confirmed that a short, bounded, disclosed product note should remain unchanged |
+
+### Resulting Contract Changes
+
+1. Audit frontmatter, title, description, body, code, tables, links, and disclosures as one artifact.
+2. Treat modal words as claim evidence; do not turn principles, risks, capabilities, or candidate directions into guarantees, incidents, or current implementation.
+3. Check source-internal contradictions and duplicates before using `Not verified` for genuinely external or volatile facts.
+4. Verify runnable instructions as a complete workflow, including combination states, precedence, failure behavior, and expected results.
+5. Preserve distinct workflow responsibilities and closing trace/rollback steps even when parallel prose looks repetitive.
+6. Compare every candidate against the unchanged source; `original` is a valid finished result when the edit has no concrete benefit.
+
+Ten new deterministic fixtures cover metadata/body mismatch, modality preservation, workflow responsibility, internal consistency, and unchanged-source stopping. ChatGPT findings were treated as independent review evidence and checked against each frozen source; they were not accepted solely on reviewer authority.
+
+### Evidence Boundary
+
+- This pass is a genre-diverse, single-run behavioral sample, not the three repetitions per P0/P1-sensitive case required for `HUMAN WRITING ACCEPTED`.
+- Link reachability, live repository correctness, and every technical claim in the ten source articles were outside this writing-behavior test unless the contradiction was visible inside the frozen artifact.
+- No blog article was changed, and no files were staged, committed, pushed, installed globally, or published.
+
+## Review Pass 9 — human-writing Overreacted Corpus Study and Forward Writing Test
+
+- Timestamp: 2026-07-14T00:26:59+08:00
+- Skill scope: `skills/human-writing/` and synchronized metadata, examples, rubric, and eval surfaces
+- Forward-writing artifact: `idaibin/blog/src/content/blog/what-i-do-after-ai-implementation.zh.mdx`
+- Artifact visibility: `repository-sanitized`
+- Surface: standard ChatGPT conversation
+- Conversation reference: `suffix-c8f9b5a2`
+- Account workspace: `personal`
+- Browser route: Codex in-app Browser (Experimental)
+- Corpus: 58 public articles from `gaearon/overreacted.io`
+- Frozen source commit: `ac1ad4fe9168b350d3dc59ac0cbe0d53405702bf`
+- Corpus index SHA-256: `b63cdaad42bbc5bc65867e7e34de3c31f4f9fecb8761092c431e19dddfbe9dfc`
+- Final reasoning reference SHA-256: `9e2a2f6c7659fdad081c1f38db821f233fb4e7173e15250a12c34bdc1d637909`
+- Final article SHA-256: `5929efe1ead356b8107c68959c6c6e4620c2d0a3fc8cffdd3d13ebb7dbd306a4`
+
+### Complete Corpus Study
+
+The official source repository was frozen before analysis. Its 58 article sources were divided chronologically into six batches of `10 / 10 / 10 / 10 / 10 / 8`. Codex inspected every source locally; ChatGPT independently inspected every public article or its matching frozen official source and returned one evidence-anchored card per article.
+
+| Batch | Articles | External response SHA-256 | Verdict |
+| ---: | ---: | --- | --- |
+| 1 | 10 / 10 | `4193b119542c72500784965d06f9afac3691b2ab5dae0e66a4ef2bf6fac43294` | `learning complete` |
+| 2 | 10 / 10 | `d287ec2d38fc2a4d4b1db10082b82cb2ff4f804799d0ce43730fc43d73ba7e7b` | `learning complete` |
+| 3 | 10 / 10 | `9046d70ad2fa44015bf59f4e23637b2018e71c6a02387bd8e6520265f3b498ad` | `learning complete` |
+| 4 | 10 / 10 | `e8d23525b7929f2b17fbb5c13aed25e3de590b801be69bbd8f48877a13ad7439` | `learning complete` |
+| 5 | 10 / 10 | `e5d6faa8108744cdf0266c60fb1b0d37e25c56018f9557d0baded031e3379c0c` | `learning complete` |
+| 6 | 8 / 8 | `f1d66ca7ed23713c50f144b9ecb73b9dedf10f53a0c32406dacfcb13a7f8dc4f` | `learning complete` |
+
+Cross-corpus synthesis retained only recurring, executable capabilities: reader-model repair, dependency- and constraint-led progression, premise/derivation/judgment separation, controlled examples, boundary and lifecycle explanation, criterion-led alternatives, bounded analogies, evidence-earned naming, conceptual compression, and earned endings. It explicitly rejects copying the reference author's phrasing, jokes, rhetorical cadence, autobiographical authority, personal history, heading pattern, or long-form manner.
+
+### Skill Synthesis Review
+
+The first external review found no P0/P1 but reported five P2 overreach risks: unconditional architecture routing, silent question replacement, retrospective over-scoping of reproducible witnesses, collectively mandatory boundary dimensions, and missing context-economy fixtures. Each was confirmed and repaired locally. Eight new deterministic fixtures cover routing economy, question reframing, selective boundary dimensions, and non-debugging retrospectives.
+
+The second review returned `No actionable P0-P2 findings` and `pass`. Local checks then reported `85 / 85` finite behavior fixtures, valid package/quality coverage, 34 validator tests passing, successful Skill Creator quick validation, and clean `git diff --check`. These results do not claim complete real-model generalization or editorial acceptance beyond the recorded forward test.
+
+### Active Writing and Adversarial Comparison
+
+The revised Skill drafted a new Chinese technical essay from verified author experience: implementation and preliminary verification are increasingly delegated to AI, while task selection, constraint definition, communication, correction, evidence interpretation, and final acceptance become more important. The article uses the verified `rustzen-admin` PostgreSQL-to-SQLite-first history as its central engineering example and does not invent metrics, incidents, users, or universal productivity claims.
+
+The candidate was compared structurally, not stylistically, with three task-relevant references: `My Wishlist for Hot Reloading`, `What Are the React Team Principles?`, and `My Decade in Review`.
+
+| Round | Purpose | External verdict | Local disposition |
+| ---: | --- | --- | --- |
+| 1 | Independent source and structure review | `below` | Confirmed opening, anchoring, overclaim, and compression issues; verified the repository history before editing disputed facts |
+| 2 | Remediation comparison | `comparable — pass` | Accepted provisionally |
+| 3 | Adversarial attempt to falsify `comparable` | `below` with two P2 findings | Corrected an unverified completed frontend sequence and a circular implementation-entry condition |
+| 4 | Full final closure | `No actionable P0-P2; comparable confirmed; pass` | Accepted |
+
+`Comparable` here means the candidate reaches the same structural reasoning tier for its narrower purpose. It does not mean stylistic similarity, equivalent length, equivalent subject importance, or imitation of the reference author.
+
+### Delivery Boundary
+
+- The blog build and Astro check pass with zero errors; existing Zod deprecation messages remain hints.
+- The pre-existing `blog/src/site.ts` modification and all existing `rustzen-admin` worktree changes were preserved untouched.
+- No files were staged, committed, pushed, installed globally, submitted to Juejin, or published.
