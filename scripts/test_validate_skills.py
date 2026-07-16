@@ -254,6 +254,7 @@ class ValidateSkillsTests(unittest.TestCase):
             "skill_tree_sha": skill_tree_sha,
             "dataset_revision": CONTRACT_EVAL.dataset_hash(dataset_path),
             "captured_at": datetime.now(timezone.utc).isoformat(),
+            "complete": True,
             "run_config": {
                 "trial": 1,
                 "variant": "candidate",
@@ -1836,6 +1837,177 @@ class ValidateSkillsTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "captured_at"):
                 CONTRACT_EVAL.load_result_bundle(bundle_path, {"case-001"}, dataset)
 
+    def test_result_bundle_requires_complete_true(self) -> None:
+        for mode, expected_error in (
+            ("missing", "missing metadata.*complete"),
+            ("false", "complete must be true"),
+        ):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                dataset = root / "dataset.jsonl"
+                dataset.write_text(
+                    '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                    '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                    encoding="utf-8",
+                )
+                bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+                if mode == "missing":
+                    del payload["complete"]
+                else:
+                    payload["complete"] = False
+                bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+                with self.assertRaisesRegex(ValueError, expected_error):
+                    CONTRACT_EVAL.load_result_bundle(
+                        bundle_path, {"case-001"}, dataset
+                    )
+
+    def test_result_bundle_binds_capture_to_raw_timeline(self) -> None:
+        for mode, expected_error in (
+            ("raw-after-capture", "captured_at predates raw evidence completion"),
+            ("stale-capture", "follows raw evidence completion by more than"),
+            ("future-raw", "raw interval 0 timestamp.*future"),
+        ):
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                dataset = root / "dataset.jsonl"
+                dataset.write_text(
+                    '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                    '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                    encoding="utf-8",
+                )
+                bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+                result = payload["results"][0]
+                raw_path = root / result["raw_evidence"]
+                raw = json.loads(raw_path.read_text(encoding="utf-8"))
+                now = datetime.now(timezone.utc)
+                if mode == "raw-after-capture":
+                    raw_time = now
+                    captured = now - timedelta(seconds=1)
+                elif mode == "stale-capture":
+                    raw_time = now - timedelta(
+                        seconds=CONTRACT_EVAL.MAXIMUM_CLOCK_SKEW_SECONDS + 1
+                    )
+                    captured = now
+                else:
+                    raw_time = now + timedelta(
+                        seconds=CONTRACT_EVAL.MAXIMUM_CLOCK_SKEW_SECONDS + 10
+                    )
+                    captured = now
+                raw_timestamp = raw_time.isoformat()
+                raw["started_at"] = raw_timestamp
+                raw["completed_at"] = raw_timestamp
+                raw["host_attempts"][0]["started_at"] = raw_timestamp
+                raw["host_attempts"][0]["completed_at"] = raw_timestamp
+                raw_path.write_text(json.dumps(raw), encoding="utf-8")
+                result["raw_evidence_sha256"] = hashlib.sha256(
+                    raw_path.read_bytes()
+                ).hexdigest()
+                payload["captured_at"] = captured.isoformat()
+                bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+                with self.assertRaisesRegex(ValueError, expected_error):
+                    CONTRACT_EVAL.load_result_bundle(
+                        bundle_path, {"case-001"}, dataset
+                    )
+
+    def test_formal_attempt_interval_rejects_invalid_or_future_timestamps(self) -> None:
+        now = datetime.now(timezone.utc)
+        latest_allowed = now + timedelta(
+            seconds=CONTRACT_EVAL.MAXIMUM_CLOCK_SKEW_SECONDS
+        )
+        cases = (
+            (
+                {"started_at": "not-a-date", "completed_at": now.isoformat()},
+                "started_at must be an ISO-8601 timestamp",
+            ),
+            (
+                {
+                    "started_at": now.isoformat(),
+                    "completed_at": (now - timedelta(seconds=1)).isoformat(),
+                },
+                "completed_at predates started_at",
+            ),
+            (
+                {
+                    "started_at": (
+                        latest_allowed + timedelta(seconds=1)
+                    ).isoformat(),
+                    "completed_at": (
+                        latest_allowed + timedelta(seconds=2)
+                    ).isoformat(),
+                },
+                "timestamp is more than.*future",
+            ),
+        )
+        for attempt, expected_error in cases:
+            with self.subTest(attempt=attempt), self.assertRaisesRegex(
+                ValueError, expected_error
+            ):
+                CONTRACT_EVAL._validate_attempt_interval(
+                    attempt,
+                    label="formal attempt",
+                    latest_allowed=latest_allowed,
+                )
+
+    def test_held_out_timeline_binds_attempt_raw_and_capture_boundaries(self) -> None:
+        now = datetime.now(timezone.utc)
+        maximum_skew = timedelta(
+            seconds=CONTRACT_EVAL.MAXIMUM_CLOCK_SKEW_SECONDS
+        )
+        raw_intervals = [
+            (now + timedelta(seconds=1), now + timedelta(seconds=10)),
+            (now + timedelta(minutes=10), now + timedelta(minutes=11)),
+        ]
+        captured = now + timedelta(minutes=11, seconds=1)
+        attempt = (now, captured + timedelta(seconds=1))
+
+        CONTRACT_EVAL._validate_result_timeline(
+            label="held-out",
+            captured_at=captured,
+            raw_intervals=raw_intervals,
+            latest_allowed=now + timedelta(hours=1),
+            attempt_interval=attempt,
+        )
+
+        invalid_timelines = (
+            (
+                (now + timedelta(seconds=2), attempt[1]),
+                raw_intervals,
+                captured,
+                "formal attempt starts after raw evidence",
+            ),
+            (
+                (now - maximum_skew - timedelta(seconds=1), attempt[1]),
+                raw_intervals,
+                captured,
+                "first raw evidence follows formal attempt start by more than",
+            ),
+            (
+                attempt,
+                raw_intervals,
+                attempt[1] + timedelta(seconds=1),
+                "captured_at follows formal attempt completion",
+            ),
+            (
+                (now, captured + maximum_skew + timedelta(seconds=1)),
+                raw_intervals,
+                captured,
+                "formal attempt completion follows captured_at by more than",
+            ),
+        )
+        for attempt_interval, intervals, capture_time, expected_error in invalid_timelines:
+            with self.subTest(expected_error=expected_error), self.assertRaisesRegex(
+                ValueError, expected_error
+            ):
+                CONTRACT_EVAL._validate_result_timeline(
+                    label="held-out",
+                    captured_at=capture_time,
+                    raw_intervals=intervals,
+                    latest_allowed=now + timedelta(hours=1),
+                    attempt_interval=attempt_interval,
+                )
+
     def test_result_bundle_rejects_missing_or_changed_raw_evidence(self) -> None:
         for mode in ("missing", "changed"):
             with self.subTest(mode=mode), tempfile.TemporaryDirectory() as temp_dir:
@@ -1977,6 +2149,9 @@ class ValidateSkillsTests(unittest.TestCase):
             raw["metrics"]["attempt_count"] = 2
             raw["metrics"]["retry_count"] = 1
             result["metrics"] = dict(raw["metrics"])
+            payload["captured_at"] = (
+                second_completed + timedelta(milliseconds=1)
+            ).isoformat()
             raw_path.write_text(json.dumps(raw), encoding="utf-8")
             result["raw_evidence_sha256"] = hashlib.sha256(
                 raw_path.read_bytes()

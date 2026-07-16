@@ -9,13 +9,13 @@ maturity labels or treat format validation as proof of model behavior.
 - Evidence revision: the commit containing this file; resolve with
   `git log -1 --format=%H -- docs/quality/status.md`
 - Structure host: local repository validator on macOS
-- Behavior host and model: `codex-cli 0.144.5` / `gpt-5.6-sol`; the historical evaluation-v1
-  comparison failed, and two evaluation-v2 campaigns were invalidated by
-  infrastructure before a complete comparison was available
+- Behavior host and model: `codex-cli 0.144.5` / `gpt-5.6-sol`; the historical
+  evaluation-v1 comparison failed, and three preregistered evaluation-v2
+  campaign rounds were invalidated before a complete comparison was available
 - Workflow host and model: `Not verified`
 - Comparative run: historical candidate/previous comparison executed under v1;
   status `FAIL`; required v2 candidate/previous/no-Skill group is `Not verified`
-- Held-out provenance: `v1, v2, and v3 datasets are committed, hash-bound, and
+- Held-out provenance: `v1, v2, v3, and v4 datasets are committed, hash-bound, and
   consumed; none is reusable for a successor campaign`
 
 `Structure = verified` means the source package and repository consistency
@@ -65,8 +65,10 @@ freshness are defined by
 
 The routing, authority, and workflow datasets satisfy static schema and coverage
 validation at this revision. No passing model-bound evidence is recorded in the
-manifest. The latest failed comparison is archived under
+manifest. The historical failed comparison is archived under
 [`docs/history/evals/`](../history/evals/2026-07-16-codex-gpt56-routing-comparison.md),
+and the three later non-scoring campaigns are recorded in the
+[`infrastructure-failure record`](../history/evals/2026-07-16-codex-gpt56-routing-infrastructure-failures.md),
 so behavior and workflow remain `not_verified`.
 
 Authority/workflow raw hashes and trace/workspace/verifier bindings are
@@ -98,14 +100,22 @@ groups, canonical policies, a unique artifact root, and the full evaluation
 claims require per-group non-increase, 15% relative reduction, and at least 50
   saved tokens per case on average.
 
-Two preregistered v2 campaigns were started but neither produced valid
-comparison evidence. The first made zero model-service calls because a local
-Volta isolation defect prevented Codex from starting. After that defect was
-fixed, the replacement campaign made 210 host calls: 209 succeeded and one
-returned the exact model-capacity error. That left trial 2 incomplete, and
-trial 3 was not started. The campaign was not scored, its five complete bundles
-were not selected or recombined, and no behavior or improvement claim is
-recorded. See the
+Three preregistered evaluation-v2 campaign rounds were started, but none
+produced valid comparison evidence. Round v2 made zero model-service calls
+because a local Volta isolation defect prevented Codex from starting. After
+that defect was fixed, round v3 made 210 host calls: 209 succeeded and one
+returned the exact model-capacity error. Round v4 then wrote six attempt
+ledgers and 210 raw records under campaign
+`eb47a629-8c22-40f5-9c34-70f388f0b736`: five slots succeeded, while trial 2
+candidate failed on `v4-heldout-034` after the 120-second timeout (209
+exit-code-0 records, one exit-code-124 record, and zero retries). Trial 3 was
+not started.
+No v3 or v4 score, comparison report, or quality-manifest entry was created,
+and complete bundles were not selected or recombined. The v2 and v3 runtime
+roots were not committed, so their historical hashes identify capture-time
+files but do not make those runs independently reproducible. The v4 failure
+root is retained in evidence commit
+`207e61c62df5fc044a68aa123707fe4caa56a7c7`. See the
 [`2026-07-16 infrastructure-failure record`](../history/evals/2026-07-16-codex-gpt56-routing-infrastructure-failures.md).
 
 ## Deterministic Footprint Delta
@@ -129,9 +139,11 @@ comparison contract passes.
 
 On `2026-07-16`, the Codex runner executed three paired candidate/previous
 trials over the 28-case held-out dataset: 168 successful model calls in total.
-All six bundles were complete, with 28 raw observations each, zero timeouts,
-zero non-zero exits, and matching host, model, dataset, provenance, anchor,
-trial, pair, and revision bindings.
+Contemporaneous local checks reported six complete bundles, with 28 raw
+observations each, zero timeouts, zero non-zero exits, and matching host, model,
+dataset, provenance, anchor, trial, pair, and revision fields. Those raw
+bundles were not committed, so these checks cannot now be independently rerun
+from repository contents.
 
 | Measure | Candidate `9c7f6488` | Previous `abebbfc9` | Result |
 | --- | ---: | ---: | --- |
@@ -140,24 +152,26 @@ trial, pair, and revision bindings.
 | Forbidden handoffs | 9 | 4 | candidate did not pass the routing contract |
 | Mean duration per trial | 676,536 ms | 662,293 ms | candidate 2.15% slower; duration is not a gate |
 
-The archived comparison report status is `FAIL` with comparison self-hash
+The retained comparison-report copy records status `FAIL` with comparison self-hash
 `e7b8cf2bbd5b76fcac84bc9ebf0b48c1972269eed4084959e1b37a54dd222519`.
 The candidate's first trial also had one owner error (`audit-rust` expected,
-`diagnose` returned). The local raw bundles and generated report remain ignored
-runtime artifacts under `eval-results/`; the exact report copy linked below is
-historical only. Neither the bundles nor the failed comparison are registered
-in `evidence-manifest.json`, and no verified behavior or improvement claim is
-made. The held-out cases must not be used to tune this candidate.
+`diagnose` returned). The raw bundles were excluded from Git and are not
+present in this worktree; only the historical report copy linked below is
+retained. Its hashes can detect changes to that retained file, but cannot
+reconstruct or authenticate the absent raw bundles. Neither the bundles nor
+the failed comparison are registered in `evidence-manifest.json`, and no
+verified behavior or improvement claim is made. The held-out cases must not be
+used to tune this candidate.
 
 See the
 [`2026-07-16 Codex routing comparison`](../history/evals/2026-07-16-codex-gpt56-routing-comparison.md)
-for the bound scope, exact report, and repository replay boundary.
+for the bound scope, retained report, and repository evidence boundary.
 
 ## Unverified Scope
 
 - A passing live v2 full-case routing and neighboring non-trigger contract; v1
-  failed its behavior gate, while the v2 and v3 campaigns were invalidated by
-  infrastructure and not scored
+  failed its behavior gate, while the v2, v3, and v4 campaign rounds were
+  invalidated and not scored
 - Authority enforcement under real model/tool execution
 - Stop conditions and cross-skill handoff behavior
 - End-to-end repository workflow completion and interruption recovery

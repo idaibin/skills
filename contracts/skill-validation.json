@@ -92,6 +92,7 @@
       "skill_tree_sha",
       "dataset_revision",
       "captured_at",
+      "complete",
       "run_config",
       "adjudication",
       "results"

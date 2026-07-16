@@ -1,17 +1,19 @@
 # 2026-07-16 Codex Routing Infrastructure Failures
 
-This record preserves the non-scoring disposition of two preregistered routing
+This record preserves the non-scoring disposition of three preregistered routing
 campaigns. It contains identifiers, counts, and hashes only; it does not copy
 held-out prompts, Skill package contents, or model responses.
 
 ## Disposition
 
-- Neither campaign is eligible for behavior scoring or a comparative claim.
-- Both held-out datasets are consumed and must not be reused for formal
+- None of the campaigns is eligible for behavior scoring or a comparative claim.
+- All three held-out datasets are consumed and must not be reused for formal
   evaluation or candidate tuning.
-- The ignored runtime artifact roots remain local under
-  `eval-results/routing/campaigns/`. The hashes below bind the material facts
-  without publishing raw prompts or responses.
+- The v2 and v3 runtime roots were not committed; their recorded hashes identify
+  the files inspected at capture time but do not make those runs independently
+  reproducible from this repository. The v4 root is retained in Git under
+  `eval-results/routing/campaigns/`; it is historical failure evidence, not
+  quality-manifest evidence.
 
 ## v2: local toolchain failure before model service
 
@@ -77,6 +79,48 @@ the complete `run-failure.json` SHA-256 is
 `f45965b4b654f99321dac1cf4f029ec859010188ac985b727c49b5ceb7cf6fc7`.
 Because the matched trial is incomplete and trial 3 never started, the 209
 successful results cannot be selected or recombined into a comparison.
+
+### v3 label erratum (historical only)
+
+`v3-heldout-002` asks for a read-only review of a known dirty worktree and exact
+staging guidance. Its correct owner is `repo-review`, not the committed
+`repo-map` label. The consumed dataset remains unchanged so its committed hash
+and historical record stay intact. This erratum does not authorize rescoring,
+reuse, relabeling of captured results, or tuning against the prompt.
+
+## v4: one timeout invalidated the campaign
+
+- Campaign: `eb47a629-8c22-40f5-9c34-70f388f0b736`
+- Campaign SHA-256:
+  `156adcdecc73cfe34c5d512382e14e0947f1bec128641044d7fee69985294386`
+- Evaluation anchor:
+  `4a5be052c9b1cdf47557a4e0555c483d7abca95e`
+- Previous revision:
+  `9d86056cb2e3a7762232cf268beef3a12b1d99d7`
+- Dataset commit: `2c4daca114b88655eb7620dae7bdeeef886e6036`
+- Dataset SHA-256:
+  `d68d2d8cf7777f35791250659af8ab873a506761d45f65df33f63cc0d9570217`
+- Campaign commit: `68050020ff65f3abeb69edd6449dcbba60029f40`
+- Evidence commit: `207e61c62df5fc044a68aa123707fe4caa56a7c7`
+- Execution window:
+  `2026-07-16T09:05:44.335506Z` through `2026-07-16T09:38:25.015668Z`
+- Host/model: `codex-cli 0.144.5` / `gpt-5.6-sol`
+- Attempt ledgers: `6`
+- Persisted raw host records: `210`
+- Successful exits: `209` with exit code `0`
+- Failed exits: `1` with exit code `124`
+- Complete bundles: `5`
+- Failed bundles: `1`
+- Retries: `0`
+- Trial 3 slots started: `0`
+
+Trial 2 candidate failed on `v4-heldout-034` after the preregistered 120-second
+timeout. A timeout is not the exact capacity condition, so it was not retried.
+The failed slot's `run-failure.json` SHA-256 is
+`20e8678a877707fc53ccd2bee2cfdde912b3c56afa2593e999019d1129e0b52a`.
+The incomplete trial prevented scoring and comparison; no comparison report or
+quality-manifest entry was created. The v4 dataset is consumed and must not be
+used by a successor campaign.
 
 ## Successor rule
 

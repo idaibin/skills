@@ -857,6 +857,81 @@ def _iso_timestamp(value: object, *, label: str) -> datetime:
     return parsed
 
 
+def _validate_attempt_interval(
+    attempt: dict[str, object],
+    *,
+    label: str,
+    latest_allowed: datetime,
+) -> tuple[datetime, datetime]:
+    started = _iso_timestamp(attempt.get("started_at"), label=f"{label}.started_at")
+    completed = _iso_timestamp(
+        attempt.get("completed_at"), label=f"{label}.completed_at"
+    )
+    if completed < started:
+        raise ValueError(f"{label}.completed_at predates started_at")
+    if started.astimezone(timezone.utc) > latest_allowed or completed.astimezone(
+        timezone.utc
+    ) > latest_allowed:
+        raise ValueError(
+            f"{label} timestamp is more than {MAXIMUM_CLOCK_SKEW_SECONDS} "
+            "seconds in the future"
+        )
+    return started, completed
+
+
+def _validate_result_timeline(
+    *,
+    label: str,
+    captured_at: datetime,
+    raw_intervals: list[tuple[datetime, datetime]],
+    latest_allowed: datetime,
+    attempt_interval: tuple[datetime, datetime] | None,
+) -> None:
+    if not raw_intervals:
+        raise ValueError(f"{label}: result bundle has no raw evidence intervals")
+
+    for index, (started, completed) in enumerate(raw_intervals):
+        raw_label = f"{label}: raw interval {index}"
+        if completed < started:
+            raise ValueError(f"{raw_label} completed_at predates started_at")
+        if started.astimezone(timezone.utc) > latest_allowed or completed.astimezone(
+            timezone.utc
+        ) > latest_allowed:
+            raise ValueError(
+                f"{raw_label} timestamp is more than "
+                f"{MAXIMUM_CLOCK_SKEW_SECONDS} seconds in the future"
+            )
+
+    earliest_raw = min(started for started, _completed in raw_intervals)
+    latest_raw_completed = max(completed for _started, completed in raw_intervals)
+    maximum_skew = timedelta(seconds=MAXIMUM_CLOCK_SKEW_SECONDS)
+    if latest_raw_completed > captured_at:
+        raise ValueError(f"{label}: captured_at predates raw evidence completion")
+    if captured_at - latest_raw_completed > maximum_skew:
+        raise ValueError(
+            f"{label}: captured_at follows raw evidence completion by more than "
+            f"{MAXIMUM_CLOCK_SKEW_SECONDS} seconds"
+        )
+
+    if attempt_interval is None:
+        return
+    attempt_started, attempt_completed = attempt_interval
+    if attempt_started > earliest_raw:
+        raise ValueError(f"{label}: formal attempt starts after raw evidence")
+    if earliest_raw - attempt_started > maximum_skew:
+        raise ValueError(
+            f"{label}: first raw evidence follows formal attempt start by more than "
+            f"{MAXIMUM_CLOCK_SKEW_SECONDS} seconds"
+        )
+    if captured_at > attempt_completed:
+        raise ValueError(f"{label}: captured_at follows formal attempt completion")
+    if attempt_completed - captured_at > maximum_skew:
+        raise ValueError(
+            f"{label}: formal attempt completion follows captured_at by more than "
+            f"{MAXIMUM_CLOCK_SKEW_SECONDS} seconds"
+        )
+
+
 def _validate_host_attempts(
     raw: dict[str, object],
     *,
@@ -1799,6 +1874,8 @@ def load_result_bundle(
     ):
         if not isinstance(payload[key], str) or not str(payload[key]).strip():
             raise ValueError(f"{path}: {key} must be a non-empty string")
+    if payload["complete"] is not True:
+        raise ValueError(f"{path}: complete must be true")
 
     run_id = str(payload["run_id"])
     try:
@@ -2116,6 +2193,7 @@ def load_result_bundle(
         attempt_path.relative_to(path.parent.resolve())
     except ValueError as error:
         raise ValueError(f"{path}: run_config.attempt_path escapes bundle directory") from error
+    attempt_interval: tuple[datetime, datetime] | None = None
     if run_config["held_out"]:
         try:
             attempt = json.loads(
@@ -2150,6 +2228,11 @@ def load_result_bundle(
                 )
         if attempt.get("schema_version") != BEHAVIOR_CONTRACT["attempt_schema_version"]:
             raise ValueError(f"{path}: formal attempt ledger schema_version is invalid")
+        attempt_interval = _validate_attempt_interval(
+            attempt,
+            label=f"{path}: formal attempt ledger",
+            latest_allowed=latest_allowed,
+        )
     if run_config["held_out"]:
         _validate_held_out_provenance(
             dataset_path,
@@ -2317,6 +2400,7 @@ def load_result_bundle(
     bundle_root = path.resolve().parent
     seen_evidence_paths: set[Path] = set()
     seen_evidence_hashes: set[str] = set()
+    raw_intervals: list[tuple[datetime, datetime]] = []
     verified_results: dict[str, dict[str, object]] = {}
     for item in results:
         result_id = str(item["id"])
@@ -2404,6 +2488,18 @@ def load_result_bundle(
             evidence_kind=kind,
             result_id=result_id,
             label=f"{path}: result {result_id!r} raw",
+        )
+        raw_intervals.append(
+            (
+                _iso_timestamp(
+                    raw["started_at"],
+                    label=f"{path}: result {result_id!r} raw.started_at",
+                ),
+                _iso_timestamp(
+                    raw["completed_at"],
+                    label=f"{path}: result {result_id!r} raw.completed_at",
+                ),
+            )
         )
         model_output = raw["model_output"]
         transcript = raw["transcript"]
@@ -2534,6 +2630,13 @@ def load_result_bundle(
             raise ValueError(
                 f"{path}: result {result_id!r} metrics mirror must match raw evidence"
             )
+    _validate_result_timeline(
+        label=str(path),
+        captured_at=captured,
+        raw_intervals=raw_intervals,
+        latest_allowed=latest_allowed,
+        attempt_interval=attempt_interval,
+    )
     payload["_verified_results"] = verified_results
     payload["_evidence_kind"] = kind
     return payload

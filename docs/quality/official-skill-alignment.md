@@ -138,12 +138,14 @@ and no-Skill runs using the same prompts and canonical environment policy in
 parallel when the host supports it, at least the required repeated trials,
 held-out requests for changed discovery text, raw traces, duration and token
 data when exposed by the host, outcome grading, and workspace-diff evidence.
-The current hash binds the environment-variable allowlist and fixed isolation
-overrides, including required executable-toolchain roots such as `VOLTA_HOME`,
-not the actual PATH, toolchain-root, proxy, locale, or certificate values; that
-runtime drift remains visible only through trusted execution records. A
-separate frozen `retry_policy_sha256` binds the one-retry limit, backoff, host,
-and exact capacity classifier. Result schema `6`, raw-evidence schema `3`,
+The current hash binds the names of source environment variables that may be
+copied, fixed isolation placeholders, and the credential-copy rule. It does not
+bind or record the copied PATH, `VOLTA_HOME`, proxy, locale, certificate, or
+temporary-directory values. Hash equality therefore does not establish runtime
+environment equality or expose drift; either claim needs separate non-secret
+execution evidence. A separate frozen `retry_policy_sha256` binds the
+one-retry limit, backoff, host, and exact capacity classifier. Result schema
+`6`, raw-evidence schema `3`,
 campaign schema `2`, comparison report schema `4`, and reviewer version `6`
 require ordered evidence for every host attempt plus case-level attempt and
 retry counts. Capacity is

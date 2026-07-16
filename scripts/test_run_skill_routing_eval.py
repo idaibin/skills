@@ -13,8 +13,11 @@ import sys
 import tempfile
 import unittest
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 from contextlib import redirect_stderr, redirect_stdout
+from dataclasses import replace
 from pathlib import Path
+from threading import Barrier
 from unittest import mock
 
 
@@ -55,6 +58,7 @@ class RoutingRunnerTests(unittest.TestCase):
             trial=2,
             comparison_group_id="00000000-0000-4000-8000-000000000002",
             campaign_id="00000000-0000-4000-8000-000000000099",
+            campaign_scored_slots=18,
             campaign_path_relative="evals/routing-campaign.json",
             campaign_sha256="f" * 64,
             evaluation_protocol_revision="a" * 40,
@@ -285,6 +289,17 @@ class RoutingRunnerTests(unittest.TestCase):
             plan["comparison_group_id"],
         )
         self.assertNotIn("pair_id", plan)
+        self.assertEqual(
+            {
+                "maximum_attempts_per_scored_slot": 2,
+                "selected_run": {
+                    "scored_slots": 1,
+                    "maximum_model_calls": 2,
+                },
+                "campaign": None,
+            },
+            plan["model_call_budget"],
+        )
         self.assertEqual("dry-run only; no model CLI was invoked", plan["note"])
 
     def test_comparison_group_cli_accepts_only_v2_flag(self) -> None:
@@ -975,6 +990,140 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertEqual("failure", attempt["status"])
             self.assertEqual(config.campaign_id, attempt["campaign_id"])
 
+    def test_concurrency_one_stops_after_first_failed_or_crashed_case(self) -> None:
+        for failure_mode in ("ordinary", "worker"):
+            with self.subTest(failure_mode=failure_mode), tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary)
+                cases = (
+                    RUNNER.EvalCase("case-one", "Route the first natural request."),
+                    RUNNER.EvalCase("case-two", "Route the second natural request."),
+                    RUNNER.EvalCase("case-three", "Route the third natural request."),
+                )
+                config = replace(self._config(root), cases=cases)
+                invoked = []
+
+                def fake_invoke(_config, case, **kwargs):
+                    invoked.append(case.case_id)
+                    if failure_mode == "worker":
+                        raise RuntimeError("synthetic worker crash")
+                    raw_path = kwargs["raw_root"] / f"{case.case_id}.json"
+                    raw_path.write_text("{}\n", encoding="utf-8")
+                    return RUNNER.CaseOutcome(
+                        case_id=case.case_id,
+                        raw_path=raw_path,
+                        raw_sha256=hashlib.sha256(raw_path.read_bytes()).hexdigest(),
+                        prompt_sha256="1" * 64,
+                        observations=None,
+                        duration_ms=1,
+                        input_tokens=None,
+                        output_tokens=None,
+                        attempt_count=1,
+                        retry_count=0,
+                        exit_code=7,
+                        error="synthetic host failure",
+                    )
+
+                with mock.patch.object(
+                    RUNNER, "_host_version", return_value="codex-cli 9.9"
+                ), mock.patch.object(
+                    RUNNER, "_materialize_skill_fixture", return_value="c" * 64
+                ), mock.patch.object(
+                    RUNNER, "_invoke_case", side_effect=fake_invoke
+                ):
+                    outcome = RUNNER.run_evaluation(config)
+
+                self.assertFalse(outcome.succeeded)
+                self.assertEqual(["case-one"], invoked)
+                self.assertTrue(outcome.failure_path.is_file())
+
+    def test_campaign_slot_directory_is_atomically_reserved_by_uuid5(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            config = self._config(root)
+            namespace = uuid.UUID(config.campaign_id)
+            slot_identity = RUNNER._canonical_json(
+                {
+                    "trial": config.trial,
+                    "variant": config.variant,
+                    "comparison_group_id": config.comparison_group_id,
+                }
+            )
+            expected_run_id = str(uuid.uuid5(namespace, slot_identity))
+            both_audited = Barrier(2)
+
+            def simultaneous_audit(_config):
+                both_audited.wait(timeout=5)
+
+            def successful_attempt(
+                _config,
+                *,
+                run_id,
+                run_dir,
+                attempt_id,
+                attempt_started_at,
+            ):
+                del attempt_id, attempt_started_at
+                bundle_path = run_dir / "routing-results.json"
+                RUNNER._write_json(
+                    bundle_path,
+                    {"complete": True, "run_id": run_id},
+                )
+                return RUNNER.RunOutcome(run_id, run_dir, bundle_path, None)
+
+            def invoke():
+                try:
+                    return RUNNER.run_evaluation(config)
+                except RUNNER.RunnerError as error:
+                    return error
+
+            with mock.patch.object(
+                RUNNER,
+                "_assert_campaign_attempt_unused",
+                side_effect=simultaneous_audit,
+            ), mock.patch.object(
+                RUNNER,
+                "_run_evaluation_attempt",
+                side_effect=successful_attempt,
+            ) as execute, ThreadPoolExecutor(max_workers=2) as executor:
+                futures = [executor.submit(invoke) for _ in range(2)]
+                results = [future.result(timeout=10) for future in futures]
+
+            outcomes = [
+                result for result in results if isinstance(result, RUNNER.RunOutcome)
+            ]
+            errors = [
+                result for result in results if isinstance(result, RUNNER.RunnerError)
+            ]
+
+            self.assertEqual(1, execute.call_count)
+            self.assertEqual(1, len(outcomes))
+            self.assertTrue(outcomes[0].succeeded)
+            self.assertEqual(1, len(errors))
+            self.assertIn("already reserved", str(errors[0]))
+            self.assertEqual(expected_run_id, RUNNER._run_id_for_config(config))
+            run_dirs = list(config.output_root.iterdir())
+            self.assertEqual([expected_run_id], [path.name for path in run_dirs])
+            attempt_paths = list(config.output_root.glob("*/attempt.json"))
+            self.assertEqual(1, len(attempt_paths))
+            attempt = json.loads(attempt_paths[0].read_text(encoding="utf-8"))
+            self.assertEqual("success", attempt["status"])
+
+    def test_campaign_dry_run_reports_full_slot_and_retry_budget(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            config = self._config(Path(temporary))
+
+            budget = RUNNER._dry_run_plan(config)["model_call_budget"]
+
+        self.assertEqual(2, budget["maximum_attempts_per_scored_slot"])
+        self.assertEqual(
+            {"scored_slots": 2, "maximum_model_calls": 4},
+            budget["selected_run"],
+        )
+        self.assertEqual(
+            {"scored_slots": 18, "maximum_model_calls": 36},
+            budget["campaign"],
+        )
+
     def test_previous_installs_committed_fixture_and_baseline_stays_empty(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -1121,6 +1270,7 @@ class RoutingRunnerTests(unittest.TestCase):
                 trial=1,
                 comparison_group_id="00000000-0000-4000-8000-000000000010",
                 campaign_id=None,
+                campaign_scored_slots=None,
                 campaign_path_relative=None,
                 campaign_sha256=None,
                 evaluation_protocol_revision=None,

@@ -19,7 +19,7 @@ import sys
 import tempfile
 import time
 import uuid
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
@@ -86,6 +86,7 @@ class RunConfig:
     trial: int
     comparison_group_id: str
     campaign_id: str | None
+    campaign_scored_slots: int | None
     campaign_path_relative: str | None
     campaign_sha256: str | None
     evaluation_protocol_revision: str | None
@@ -1016,9 +1017,17 @@ def _run_evaluation_attempt(
             skill_fixture_sha256 = None
 
         outcomes_by_id: dict[str, CaseOutcome] = {}
+        worker_failure: tuple[str, Exception] | None = None
         with ThreadPoolExecutor(max_workers=config.concurrency) as executor:
-            futures = {
-                executor.submit(
+            remaining_cases = iter(config.cases)
+            futures = {}
+
+            def submit_next() -> bool:
+                try:
+                    case = next(remaining_cases)
+                except StopIteration:
+                    return False
+                future = executor.submit(
                     _invoke_case,
                     config,
                     case,
@@ -1027,29 +1036,58 @@ def _run_evaluation_attempt(
                     temp_root=temp_root,
                     skill_fixture=skill_fixture,
                     raw_root=raw_root,
-                ): case.case_id
-                for case in config.cases
-            }
-            for future in as_completed(futures):
-                case_id = futures[future]
-                try:
-                    outcomes_by_id[case_id] = future.result()
-                except Exception as error:
-                    # Preserve an unexpected worker failure without a bundle.
-                    failure_path = run_dir / "run-failure.json"
-                    _write_json(
-                        failure_path,
-                        {
-                            "schema_version": 1,
-                            "complete": False,
-                            "run_id": run_id,
-                            "failed_cases": [case_id],
-                            "error": f"worker failed: {error}",
-                        },
-                    )
-                    return RunOutcome(run_id, run_dir, None, failure_path)
+                )
+                futures[future] = case.case_id
+                return True
 
-    ordered = [outcomes_by_id[case.case_id] for case in config.cases]
+            for _ in range(min(config.concurrency, len(config.cases))):
+                submit_next()
+
+            while futures:
+                completed, _ = wait(futures, return_when=FIRST_COMPLETED)
+                stop_scheduling = False
+                for future in completed:
+                    case_id = futures.pop(future)
+                    try:
+                        outcome = future.result()
+                    except Exception as error:
+                        if worker_failure is None:
+                            worker_failure = (case_id, error)
+                        stop_scheduling = True
+                        continue
+                    outcomes_by_id[case_id] = outcome
+                    if not outcome.succeeded:
+                        stop_scheduling = True
+
+                if stop_scheduling:
+                    for future in futures:
+                        future.cancel()
+                    break
+
+                while len(futures) < config.concurrency and submit_next():
+                    pass
+
+        if worker_failure is not None:
+            case_id, error = worker_failure
+            # Preserve an unexpected worker failure without a bundle.
+            failure_path = run_dir / "run-failure.json"
+            _write_json(
+                failure_path,
+                {
+                    "schema_version": 1,
+                    "complete": False,
+                    "run_id": run_id,
+                    "failed_cases": [case_id],
+                    "error": f"worker failed: {error}",
+                },
+            )
+            return RunOutcome(run_id, run_dir, None, failure_path)
+
+    ordered = [
+        outcomes_by_id[case.case_id]
+        for case in config.cases
+        if case.case_id in outcomes_by_id
+    ]
     failed = [outcome for outcome in ordered if not outcome.succeeded]
     if failed:
         failure_path = run_dir / "run-failure.json"
@@ -1243,14 +1281,37 @@ def _write_attempt_ledger(
     )
 
 
+def _run_id_for_config(config: RunConfig) -> str:
+    if config.campaign_id is None:
+        return str(uuid.uuid4())
+    try:
+        namespace = uuid.UUID(config.campaign_id)
+    except ValueError as error:
+        raise RunnerError("campaign_id must be a UUID") from error
+    slot_identity = _canonical_json(
+        {
+            "trial": config.trial,
+            "variant": config.variant,
+            "comparison_group_id": config.comparison_group_id,
+        }
+    )
+    return str(uuid.uuid5(namespace, slot_identity))
+
+
 def run_evaluation(config: RunConfig) -> RunOutcome:
     """Reserve and execute one auditable campaign attempt."""
 
     _assert_campaign_attempt_unused(config)
-    run_id = str(uuid.uuid4())
+    run_id = _run_id_for_config(config)
     attempt_id = str(uuid.uuid4())
     run_dir = config.output_root.resolve() / run_id
-    run_dir.mkdir(parents=True, exist_ok=False)
+    try:
+        run_dir.mkdir(parents=True, exist_ok=False)
+    except FileExistsError as error:
+        raise RunnerError(
+            "campaign trial/variant slot is already reserved; failed attempts "
+            "consume the slot and require a new campaign"
+        ) from error
     attempt_path = run_dir / "attempt.json"
     started_at = _utc_now()
     _write_attempt_ledger(
@@ -1505,6 +1566,11 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
         trial=arguments.trial,
         comparison_group_id=comparison_group_id,
         campaign_id=campaign.campaign_id if campaign is not None else None,
+        campaign_scored_slots=(
+            len(dataset_rows) * len(VARIANTS) * len(campaign.trial_groups)
+            if campaign is not None
+            else None
+        ),
         campaign_path_relative=(
             campaign.relative_path if campaign is not None else None
         ),
@@ -1536,6 +1602,17 @@ def _configuration_from_args(arguments: argparse.Namespace) -> RunConfig:
 
 def _dry_run_plan(config: RunConfig) -> dict[str, object]:
     policy = _host_policy(config.host, config.model)
+    retry_policy = PROTOCOL.canonical_transient_retry_policy(config.host, CONTRACTS)
+    maximum_attempts = int(retry_policy["maximum_attempts_per_case"])
+    selected_run_scored_slots = len(config.cases)
+    campaign_budget = (
+        {
+            "scored_slots": config.campaign_scored_slots,
+            "maximum_model_calls": config.campaign_scored_slots * maximum_attempts,
+        }
+        if config.campaign_scored_slots is not None
+        else None
+    )
     return {
         "execute": False,
         "host": config.host,
@@ -1566,6 +1643,14 @@ def _dry_run_plan(config: RunConfig) -> dict[str, object]:
         ),
         "timeout_seconds": config.timeout_seconds,
         "concurrency": config.concurrency,
+        "model_call_budget": {
+            "maximum_attempts_per_scored_slot": maximum_attempts,
+            "selected_run": {
+                "scored_slots": selected_run_scored_slots,
+                "maximum_model_calls": selected_run_scored_slots * maximum_attempts,
+            },
+            "campaign": campaign_budget,
+        },
         "output_root": str(config.output_root.resolve()),
         "note": "dry-run only; no model CLI was invoked",
     }

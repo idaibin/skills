@@ -13,6 +13,23 @@ outcomes or efficiency requires matched `candidate`, `previous`, and no-Skill
   archived failed comparison; never reuse it for tuning or a new claim.
 - `routing-held-out-provenance.json`: immutable round-one source revision,
   authorship, and host-use record.
+- `routing-held-out-v2.jsonl` and `routing-held-out-v2-provenance.json`:
+  consumed holdout whose campaign failed before reaching the model service.
+- `routing-held-out-v3.jsonl` and `routing-held-out-v3-provenance.json`:
+  consumed holdout whose campaign ended on one capacity failure. The historical
+  `v3-heldout-002` owner label has a no-rescore, no-reuse erratum in the failure
+  record linked below; do not edit the consumed dataset.
+- `routing-held-out-v4.jsonl` and `routing-held-out-v4-provenance.json`:
+  consumed holdout for campaign `eb47a629-8c22-40f5-9c34-70f388f0b736`.
+  Its six attempt ledgers contain 210 raw host records: five slots succeeded,
+  while trial 2 candidate `v4-heldout-034` timed out after 120 seconds (209
+  exit-code-0 records, one exit-code-124 record, and zero retries). Trial 3 was
+  not started, and no score, comparison report, or quality-manifest entry was
+  created.
+- `routing-held-out-v2-campaign.json`, `routing-held-out-v3-campaign.json`, and
+  `routing-held-out-v4-campaign.json`: preregistrations retained for those
+  non-scoring campaigns. See the
+  [`2026-07-16 infrastructure-failure record`](../docs/history/evals/2026-07-16-codex-gpt56-routing-infrastructure-failures.md).
 - `authority.jsonl`: mutation and external-action boundary cases.
 - `workflow-smoke.jsonl`: representative end-to-end task specifications.
 
@@ -39,6 +56,7 @@ metrics; scored observations come from the referenced raw evidence file:
 ```json
 {
   "schema_version": 6,
+  "complete": true,
   "run_id": "UUID",
   "model": "exact model identifier",
   "host": "exact host and version",
@@ -150,6 +168,15 @@ python3 scripts/eval-skill-contracts.py \
 The routing runner is dry-run by default. It prints the planned condition,
 case IDs, revisions, and configuration hashes without exposing credentials or
 calling a model; `--execute` is an explicit cost and side-effect gate.
+Its `model_call_budget` reports `scored_slots` and `maximum_model_calls` for
+the `selected_run` and, when present, the complete `campaign`, plus the frozen
+retry policy's `maximum_attempts_per_scored_slot`. The campaign budget is the
+dataset case count times three variants times the preregistered trial count;
+the model-call ceiling is that slot count times the per-case attempt limit.
+Atomic campaign-slot claiming and the enforced per-case attempt limit prevent
+execution from exceeding this bound. For v4, `35 × 3 × 3` is 315 scored slots
+and at most two attempts per slot is 630 model calls. This is an upper-bound
+audit record; it neither says calls occurred nor grants execution authority.
 Each real case uses a unique temporary repository and isolated `HOME`, XDG, and
 host configuration root. Only the host credential file is copied; global
 Codex/Claude configuration and global Skill roots are excluded. Candidate and
@@ -199,11 +226,14 @@ Use the same prompts, fixture, model, host, permissions, timeout, and rubric for
 all comparative variants. Use one `comparison_group_id` for the candidate,
 previous, and no-Skill runs in each trial, a versioned model identifier, and the
 same canonical isolated-environment policy. The policy hash binds the source
-variable allowlist and fixed overrides, including required executable-toolchain
-roots such as `VOLTA_HOME`, but not the actual PATH, toolchain-root, proxy,
-locale, or certificate values. Run the group from one controlled parent
-environment and record any runtime drift. Run matched groups in parallel when
-the host supports it and record any randomized-interleaving fallback. Each
+variable names that may be copied, fixed isolation placeholders, and the
+credential-copy rule. It does not bind or record the copied PATH, `VOLTA_HOME`,
+proxy, locale, certificate, or temporary-directory values. A matching policy
+hash therefore proves policy identity, not runtime-environment identity or the
+absence of drift. Run the group from one controlled parent environment; do not
+claim that runtime drift was measured unless separate non-secret evidence was
+captured. Run matched groups in parallel when the host supports it and record
+any randomized-interleaving fallback. Each
 campaign slot permits one formal attempt. Within that attempt, the canonical
 policy permits at most one additional host invocation, after a five-second
 backoff, only when Codex exits with code `1` and contains the exact normalized JSON

@@ -25,9 +25,11 @@ claim. The repository comparator returned `FAIL`.
   `91c0598a-3dc2-45d1-9892-46c21b43e97e`, and
   `7e3797e6-0764-45c2-88aa-71d28e0feb3d`
 
-All six bundles were complete. Independent replay checks found 28 results and
-28 raw records per bundle, zero timeouts, zero non-zero exits, and matching
-host, model, dataset, provenance, anchor, pair, trial, and revision bindings.
+Contemporaneous checks over the local artifacts reported six complete bundles,
+28 results and 28 raw records per bundle, zero timeouts, zero non-zero exits,
+and matching host, model, dataset, provenance, anchor, pair, trial, and revision
+fields. The raw bundles were not committed, so those checks cannot now be
+independently replayed from repository contents.
 
 ## Result
 
@@ -46,7 +48,7 @@ host, model, dataset, provenance, anchor, pair, trial, and revision bindings.
 - Previous trials also failed the zero-forbidden-handoff contract, but their
   exact owner outcome remained 84/84.
 
-The exact comparator output is archived as
+The retained comparator-output copy is archived as
 [`2026-07-16-codex-gpt56-routing-comparison-report.json`](2026-07-16-codex-gpt56-routing-comparison-report.json).
 Its comparison self-hash is
 `e7b8cf2bbd5b76fcac84bc9ebf0b48c1972269eed4084959e1b37a54dd222519`;
@@ -55,9 +57,12 @@ the archived file SHA-256 is
 
 ## Evidence Boundary
 
-The six raw bundles remain local ignored artifacts under
-`eval-results/routing/codex-gpt56-v3/`; they are not committed, so this archive
-cannot be replayed from repository contents alone. Because the candidate did
-not pass its normal contract, neither the bundles nor this comparison are
-registered in `docs/quality/evidence-manifest.json`, whose claims remain empty.
-The held-out cases were not used to tune the candidate after this result.
+The six raw bundles were written under the ignored
+`eval-results/routing/codex-gpt56-v3/` path, were not committed, and are not
+present in this worktree. The archived report and its hashes can detect changes
+to that retained copy, but cannot reconstruct the missing bundles, authenticate
+their producer, or independently reproduce the comparison. Because the
+candidate did not pass its normal contract, neither the bundles nor this
+comparison are registered in `docs/quality/evidence-manifest.json`, whose
+claims remain empty. The held-out cases were not used to tune the candidate
+after this result.
