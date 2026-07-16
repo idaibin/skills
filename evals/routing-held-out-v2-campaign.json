@@ -1,0 +1,79 @@
+{
+  "artifact_root": "eval-results/routing/campaigns/3576e60d-7003-40a4-a0f6-1184f1fabac8",
+  "baseline_skill_revision": "4f774168cbd8925ae4e2071a1d59c8c7d82320a1",
+  "campaign_id": "3576e60d-7003-40a4-a0f6-1184f1fabac8",
+  "candidate_skill_revision": "4f774168cbd8925ae4e2071a1d59c8c7d82320a1",
+  "condition": {
+    "adjudication": {
+      "config_sha256": "88c7533a50a903a69a7b627e16c9f33fe4c884d92c74b3bab9383719e776eacb",
+      "method": "deterministic",
+      "reviewer": "scripts/run-skill-routing-eval.py",
+      "reviewer_version": "5"
+    },
+    "concurrency": 1,
+    "environment_policy_sha256": "5ebb8d22c33c60133ba7ee5a60b65cf500a57700f3dcb9d303ab8aa8e46b5c7b",
+    "host_config_sha256": "d1fcadeb5ac8336bf2f715ca79209e25780d33305c28093113125f8d7c15ed41",
+    "host_name": "codex",
+    "model": "gpt-5.6-sol",
+    "prompt_template_sha256": "8ef19b29a77c631a34abb5abf67ae0f936ff8b32191fb0ab441e34d14ca4f80d",
+    "prompt_template_version": 2,
+    "timeout_seconds": 120
+  },
+  "dataset": {
+    "git_revision": "1eaba50ad30016f5bfa25484a26ab8d3bcfebab3",
+    "path": "evals/routing-held-out-v2.jsonl",
+    "sha256": "7bf0bdd819e4eff2f484f4f8df18baa982ba3d78800ad7f3cf5370d7347d9269"
+  },
+  "evaluation_anchor_revision": "4f774168cbd8925ae4e2071a1d59c8c7d82320a1",
+  "evaluation_protocol": {
+    "files": [
+      {
+        "path": "contracts/skill-validation.json",
+        "sha256": "9d151848c36f22631873c9e768395d08f93c1305ac2ce7e8d486e939fbf7d02b"
+      },
+      {
+        "path": "scripts/compare-skill-evals.py",
+        "sha256": "1f5e0abc8f6330727e0a2fbfed8c91b162610d9bd33a59000a004514f30505d3"
+      },
+      {
+        "path": "scripts/eval-skill-contracts.py",
+        "sha256": "543998b6d15f1ad11568b679526b9dc01aecbe5d46fd3f16a2e863f3b724c113"
+      },
+      {
+        "path": "scripts/evaluation_protocol.py",
+        "sha256": "e43636567eed36d450da7852c4b5eef2e258cead918c6768b7a1a6b51b8e57d7"
+      },
+      {
+        "path": "scripts/run-skill-routing-eval.py",
+        "sha256": "45b8c1d53cfb4ccbf4555bc99558901f2f57cf790d207e09e0e734b7941409ce"
+      },
+      {
+        "path": "scripts/validate-skills.py",
+        "sha256": "c41e6a2106ebe42c5b8c8ccb70677134153cd92437a93ae9c0ab785891a1e57e"
+      }
+    ],
+    "revision": "4f774168cbd8925ae4e2071a1d59c8c7d82320a1",
+    "sha256": "8997a4741bf53e86c8847aa971abf07449af37bf79e7f51c2a02a27debb3ac44"
+  },
+  "previous_skill_revision": "9d86056cb2e3a7762232cf268beef3a12b1d99d7",
+  "provenance": {
+    "git_revision": "1eaba50ad30016f5bfa25484a26ab8d3bcfebab3",
+    "path": "evals/routing-held-out-v2-provenance.json",
+    "sha256": "bbf6eda3dce8d216d21a40a0c74c5de269604beaecceda6a339e62f9fcffbd58"
+  },
+  "schema_version": 1,
+  "trials": [
+    {
+      "comparison_group_id": "7c1bcbb8-3864-5a5a-85d3-c3b394a141d2",
+      "trial": 1
+    },
+    {
+      "comparison_group_id": "03afa092-afc6-5a75-b60b-542bab667171",
+      "trial": 2
+    },
+    {
+      "comparison_group_id": "ec5e4f97-dc66-557b-8a72-472067977d29",
+      "trial": 3
+    }
+  ]
+}
