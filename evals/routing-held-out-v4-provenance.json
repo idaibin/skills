@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "dataset_path": "evals/routing-held-out-v4.jsonl",
+  "dataset_sha256": "d68d2d8cf7777f35791250659af8ab873a506761d45f65df33f63cc0d9570217",
+  "source_skill_revision": "4a5be052c9b1cdf47557a4e0555c483d7abca95e",
+  "authorship": {
+    "independent": true,
+    "timing": "post_freeze",
+    "existing_eval_comparison": "after_drafting_only"
+  },
+  "used_for_tuning": false,
+  "intended_hosts": ["codex"]
+}
