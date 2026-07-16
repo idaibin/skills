@@ -13,6 +13,7 @@
 | `Review this release candidate for migrations, CI, packaging, and rollback.` | Trigger Release mode. |
 | `Validate this multipart review package, then review it.` | Trigger Package mode only after integrity verification. |
 | `Coordinate frontend, Rust, and security review where relevant.` | Trigger `repo-review` with bounded specialist profiles. |
+| `Review this branch against both repository standards and the originating specification.` | Trigger two-axis `repo-review`. |
 
 ## Non-Trigger Eval
 
@@ -54,6 +55,9 @@
 | Evidence isolation | Keeps current-worktree content out of another SHA basis. | Clears immutable findings with local files. |
 | Context collaboration | Uses repo maps only for navigation and verifies facts at the basis. | Trusts or edits the map. |
 | Specialist composition | Delegates bounded paths to audit skills and retains final scope, integration, severity, and report ownership. | Hands off the whole review or concatenates reports. |
+| Standards axis | Checks applicable repository guidance, architecture, correctness, security, performance, and maintainability with cited evidence. | Treats generic preferences as hard repository violations. |
+| Spec axis | Checks requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and scope creep; marks the axis `Not verified` when no trustworthy spec exists. | Infers a spec from the diff or claims compliance without a source. |
+| Axis independence | Collects Standards and Spec evidence independently, optionally in bounded parallel read-only passes, then verifies, deduplicates, labels, and severity-ranks findings centrally. | Lets one axis mask the other or concatenates unverified subagent output. |
 | Necessary handoff | Emits an audit-skill handoff only when that specialist must actually inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or security-sensitive code. |
 | Contract completeness | Traces manifests, exports, callers, types, migrations, generated files, tests, CI/deploy, docs, indexes, and stale references when applicable. | Reviews isolated source lines only. |
 | Duplicate control | Consolidates symptoms sharing one root cause. | Repeats one issue across profiles. |

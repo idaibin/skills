@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Delivery"
   short_description: "Stage, commit, and deliver reviewed Git changes"
-  default_prompt: "Use $repo-delivery to stage and deliver only the reviewed, explicitly authorized Git scope with staged-diff and final-ref verification."
+  default_prompt: "Use $repo-delivery to deliver only the reviewed, authorized Git scope with staged-diff proof, final refs, and a compact delivery report."

@@ -61,10 +61,11 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 
 ## Output Contract
 
-Start with delivery target, branch/upstream, branch policy, ahead/behind/diverged state, dirty-tree risks, and validation status. Then report staged scope, commit hash or skipped commit reason, push/merge/rebase/squash/cleanup actions, final local and remote ref evidence, rejected unsafe operations, and any `Not verified` items.
+Return a compact Delivery Report with `Completed`, `Changed Files`, `Verification`, `Known Issues`, `Next Steps`, and `Git Status`. Include delivery target, branch/upstream, branch policy, ahead/behind/diverged state, dirty-tree risks, staged scope, commit hash or skipped commit reason, push/merge/rebase/squash/cleanup actions, final local and remote ref evidence, rejected unsafe operations, and every `Not verified` item. Reference existing specs, plans, reviews, commits, and artifacts instead of duplicating them; redact secrets and unrelated personal data.
 
 ## References
 
 - See [references/usage.md](references/usage.md) for trigger guidance and mode examples.
 - See [references/checklist.md](references/checklist.md) for delivery and verification details.
+- See [references/delivery-report.md](references/delivery-report.md) for the compact handoff/report template.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

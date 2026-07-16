@@ -13,6 +13,7 @@
 | `梳理公用组件、函数和 API，后续新增前先判断复用、扩展还是包装。` | Trigger Reuse Inventory mode. | Duplicate-declaration prevention needs verified reuse entries. |
 | `当前目录不是 Git；检查里面有没有子 Git 仓库，没有也按普通目录项目梳理。` | Trigger Repo Map mode. | Root classification must support multi-repo and non-Git directory projects. |
 | `路径还在，但导出和路由注册已经换了，局部修复 repo map。` | Trigger Navigation Repair mode. | Semantic staleness must be repaired even when paths resolve. |
+| `Map the repository sources that define the Order domain, but do not decide its business vocabulary or lifecycle.` | Trigger `repo-map`; domain decisions remain with `domain-modeling`. | Repository evidence mapping only. |
 
 ## Non-Trigger Eval
 
@@ -24,6 +25,7 @@
 | `Review main..feature for P0-P3 findings.` | Prefer `repo-review`. | Immutable range review. |
 | `Find why the build fails.` | Prefer `diagnose`. | Concrete failure. |
 | `Split this migration into tasks.` | Prefer `code-planner`. | Future work planning. |
+| `Define the entities, relationships, lifecycle, invariants, and bounded contexts for this product domain.` | Prefer `domain-modeling`. | Business model, not repository semantics. |
 | `Audit this endpoint for authorization risk.` | Prefer `audit-security`. | Bounded security audit. |
 | `Turn these verified project notes into a technical article.` | Prefer `human-writing`. | Source-grounded writing, not repository mapping. |
 

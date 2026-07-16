@@ -44,6 +44,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | Dirty sync safety | Does not rebase/merge over a dirty worktree without an explicit preservation plan. | Risks overwriting local work during sync. |
 | Cleanup | Deletes temporary branches only after final target state is verified and cleanup is requested or repo-required. | Deletes branches before proving delivery. |
 | Pull-request boundary | Stops after Git delivery and routes an explicit PR request to the publishing workflow. | Creates or updates a pull request. |
+| Delivery handoff | Reports Completed, Changed Files, Verification, Known Issues, Next Steps, and Git Status; references existing artifacts and redacts sensitive data. | Duplicates large specs/reviews, omits final Git proof, or leaks sensitive content. |
 
 ## Scoring
 

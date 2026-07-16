@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Review"
-  short_description: "Review worktrees, ranges, PRs, and releases read-only"
-  default_prompt: "Use $repo-review to classify local change ownership and commit readiness with exact staging guidance, or produce severity-ranked findings from one immutable review basis."
+  short_description: "Review repository changes against standards and specs"
+  default_prompt: "Use $repo-review to review a local or immutable repository basis read-only across independent Standards and Spec axes, then return consolidated P0-P3 findings."

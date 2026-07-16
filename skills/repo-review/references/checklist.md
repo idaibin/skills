@@ -49,7 +49,15 @@ When docs or commands reference a missing path:
 - [ ] Keep final scope, cross-domain integration, duplicate removal, severity, and report ownership in `repo-review`.
 - [ ] Reject specialist findings that cannot be verified against the fixed basis.
 
-## 5. Finding Quality
+## 5. Standards and Spec Axes
+
+- [ ] Build the Standards source set from effective repository guidance, architecture/contribution docs, selected domain conventions, and non-mutating tool evidence.
+- [ ] Locate the originating requirement, issue, PRD, decisions, and acceptance criteria without inferring intent from the diff.
+- [ ] Review Standards and Spec independently; use parallel read-only passes only when delegation is available and the fixed scopes are auditable.
+- [ ] Mark Spec `Not verified` when no trustworthy source exists.
+- [ ] Consolidate duplicates, retain axis labels, and assign one impact-based P0-P3 severity under `repo-review` ownership.
+
+## 6. Finding Quality
 
 For every proposed finding:
 
@@ -62,7 +70,7 @@ For every proposed finding:
 - [ ] Provide a verification command, test, runtime check, or artifact inspection.
 - [ ] Mark unavailable runtime, CI, deployment, data, or consumer evidence `Not verified`.
 
-## 6. Severity Calibration
+## 7. Severity Calibration
 
 - [ ] P0 is catastrophic, active/readily reachable, and immediately blocking.
 - [ ] P1 should block merge or release because of high-impact correctness, security, migration, compatibility, or availability risk.
@@ -70,7 +78,7 @@ For every proposed finding:
 - [ ] P3 has concrete maintenance, test, documentation, or resilience cost.
 - [ ] Personal preference, generic best practice, speculative misuse, and file length are not findings.
 
-## 7. Read-Only Boundary
+## 8. Read-Only Boundary
 
 - [ ] No source/config/test/doc/generated-file edits.
 - [ ] No formatter or fixer write mode.
@@ -79,7 +87,7 @@ For every proposed finding:
 - [ ] Accepted fixes are handed to the matching implementation skill.
 - [ ] Delivery is handed to `repo-delivery` only after explicit authorization.
 
-## 8. Final Report
+## 9. Final Report
 
 - [ ] State immutable review basis.
 - [ ] State whether a repo map guided navigation and which finding facts were independently verified.

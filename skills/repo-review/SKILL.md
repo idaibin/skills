@@ -31,12 +31,17 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 3. Build the smallest complete read set from changed or explicitly owned paths. A `repo-map` artifact may guide navigation but is never review proof.
 4. In Worktree mode, classify every changed file as `task-owned`, `related-existing`, `unrelated-existing`, `mixed-hunk`, or `unknown` before proposing commit groups.
 5. Trace relevant interfaces through registrations, callers, types, data shaping, persistence, generated artifacts, runtime config, tests, docs, CI/deploy, and stale references.
-6. Select only applicable frontend, Rust, security, validation, and release profiles. Delegate bounded evidence to `audit-frontend`, `audit-rust`, or `audit-security`; retain scope, integration, deduplication, severity, and final report ownership.
-7. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
-8. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Rank actionable findings P0-P3 from concrete impact and urgency.
-9. Run only non-mutating repository checks needed for the selected basis and risk.
-10. In Worktree mode, produce semantic commit groups and exact path- or hunk-level staging guidance for `repo-delivery`. In immutable modes, report merge/release implications without staging guidance.
-11. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap.
+6. Evaluate two independent axes:
+   - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
+   - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
+   If no trustworthy spec exists, mark Spec `Not verified`; do not infer one from the diff.
+7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
+8. Select only applicable frontend, Rust, security, validation, and release profiles. Delegate bounded evidence to `audit-frontend`, `audit-rust`, or `audit-security`; retain scope, integration, deduplication, severity, and final report ownership.
+9. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
+10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
+11. Run only non-mutating repository checks needed for the selected basis and risk.
+12. In Worktree mode, produce semantic commit groups and exact path- or hunk-level staging guidance for `repo-delivery`. In immutable modes, report merge/release implications without staging guidance.
+13. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap.
 
 ## Modes
 
@@ -51,6 +56,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 - Repository mapping or repo-map maintenance; use `repo-map`.
 - Future implementation planning; use `code-planner`.
+- Business-domain modeling without a change basis; use `domain-modeling`.
 - Root-cause diagnosis of a concrete failure; use `diagnose`.
 - A bounded security-only audit when the target surface is already known; use `audit-security`.
 - Implementing accepted fixes; use the matching `implement-*` skill.
@@ -72,12 +78,13 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode, basis, scope, exclusions, validation, and severity-ranked findings. Every finding includes exact location, evidence, impact, remediation, and verification. For Worktree mode, also report ownership labels, staged-state risks, semantic commit groups, exact staging approach, validation status, and concise commit messages. For immutable modes, include resolved SHAs, cross-domain integration, merge/release implications, and `No actionable findings` for empty requested groups. Finish with residual risk and all `Not found` or `Not verified` items.
+Lead with mode, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes exact location, cited standard or requirement when available, evidence, impact, remediation, and verification. Include a concise Standards verdict and Spec Compliance verdict; mark missing specification evidence `Not verified`. For Worktree mode, also report ownership labels, staged-state risks, semantic commit groups, exact staging approach, validation status, and concise commit messages. For immutable modes, include resolved SHAs, cross-domain integration, merge/release implications, and `No actionable findings` for empty requested groups. Finish with final verdict, residual risk, and all `Not found` or `Not verified` items.
 
 ## References
 
 - See [references/usage.md](references/usage.md) for routing and mode examples.
 - See [references/worktree-checklist.md](references/worktree-checklist.md) for dirty-tree ownership and commit-readiness review.
 - See [references/checklist.md](references/checklist.md) for immutable basis, severity, and release review.
+- See [references/standards-and-spec.md](references/standards-and-spec.md) for independent Standards and Spec review axes.
 - See [references/worktree-examples.md](references/worktree-examples.md) for commit grouping examples.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger, boundary, scenario, and quality evals.
