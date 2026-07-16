@@ -200,6 +200,7 @@ class CompareSkillEvalsTests(unittest.TestCase):
         skill_revision: str | None = None,
         skill_tree_sha: str | None = None,
         formal_pass: bool = True,
+        retried_results: int = 0,
     ) -> Path:
         self.bundle_sequence += 1
         bundle_dir = self.root / f"{variant}-{trial}-{self.bundle_sequence}"
@@ -239,6 +240,8 @@ class CompareSkillEvalsTests(unittest.TestCase):
                         ),
                         "input_tokens": result_input,
                         "output_tokens": result_output,
+                        "attempt_count": 2 if index < retried_results else 1,
+                        "retry_count": 1 if index < retried_results else 0,
                     },
                 }
             )
@@ -298,6 +301,7 @@ class CompareSkillEvalsTests(unittest.TestCase):
                 ),
                 "host_config_sha256": "c" * 64,
                 "environment_policy_sha256": "d" * 64,
+                "retry_policy_sha256": "e" * 64,
                 "prompt_template_version": 2,
                 "prompt_template_sha256": "6" * 64,
             },
@@ -354,6 +358,7 @@ class CompareSkillEvalsTests(unittest.TestCase):
         candidate_input: int | None = 120,
         previous_input: int | None = 120,
         baseline_input: int | None = 100,
+        candidate_retried_results: int = 0,
     ) -> tuple[list[Path], list[Path], list[Path]]:
         candidates = [
             self.write_bundle(
@@ -363,6 +368,7 @@ class CompareSkillEvalsTests(unittest.TestCase):
                 unauthorized_handoffs=candidate_handoffs,
                 duration_ms=candidate_ms,
                 input_tokens=candidate_input,
+                retried_results=candidate_retried_results,
             )
             for trial in range(1, 4)
         ]
@@ -492,6 +498,14 @@ class CompareSkillEvalsTests(unittest.TestCase):
         report = self.report(candidates, previous, baseline)
         self.assertEqual(report["status"], "FAIL")
         self.assertIn("adjudication", report["errors"][0])
+
+        candidates, previous, baseline = self.matched()
+        changed = json.loads(baseline[1].read_text(encoding="utf-8"))
+        changed["run_config"]["retry_policy_sha256"] = "0" * 64
+        baseline[1].write_text(json.dumps(changed), encoding="utf-8")
+        report = self.report(candidates, previous, baseline)
+        self.assertEqual(report["status"], "FAIL")
+        self.assertIn("condition differs", report["errors"][0])
 
     def test_previous_must_be_strict_ancestor_with_different_tree(self) -> None:
         candidates, previous, baseline = self.matched()
@@ -752,6 +766,54 @@ class CompareSkillEvalsTests(unittest.TestCase):
         self.assertEqual(report["candidate"]["tokens"]["output"]["mean"], 20)
         self.assertEqual(report["candidate"]["tokens"]["total"]["mean"], 130)
 
+    def test_retry_metrics_are_aggregated_without_changing_score_or_tokens(self) -> None:
+        candidates = [
+            self.write_bundle(
+                variant="candidate",
+                trial=trial,
+                retried_results=retried,
+            )
+            for trial, retried in enumerate((2, 0, 1), start=1)
+        ]
+        previous = [
+            self.write_bundle(variant="previous", trial=trial, correct=9)
+            for trial in range(1, 4)
+        ]
+        baseline = [
+            self.write_bundle(variant="baseline", trial=trial)
+            for trial in range(1, 4)
+        ]
+
+        report = self.report(candidates, previous, baseline)
+
+        first = report["candidate"]["trials"][0]
+        self.assertEqual(first["attempt_count"], 12)
+        self.assertEqual(first["retry_count"], 2)
+        self.assertEqual(report["candidate"]["attempt_count"]["total"], 33)
+        self.assertEqual(report["candidate"]["retry_count"]["total"], 3)
+        self.assertEqual(report["candidate"]["outcome"]["mean"], 1.0)
+        self.assertEqual(report["candidate"]["tokens"]["input"]["mean"], 120)
+        self.assertEqual(report["campaign"]["retry_policy_sha256"], "e" * 64)
+
+    def test_retry_metrics_are_required_and_consistent(self) -> None:
+        mutations = (
+            ("attempt_count", None, "attempt_count cannot be null"),
+            ("attempt_count", True, "positive integer or null"),
+            ("retry_count", None, "non-negative integer"),
+            ("retry_count", 1, "must equal metrics.attempt_count - 1"),
+        )
+        for field, value, expected_error in mutations:
+            with self.subTest(field=field, value=value):
+                candidates, previous, baseline = self.matched()
+                changed = json.loads(candidates[0].read_text(encoding="utf-8"))
+                changed["results"][0]["metrics"][field] = value
+                candidates[0].write_text(json.dumps(changed), encoding="utf-8")
+
+                report = self.report(candidates, previous, baseline)
+
+                self.assertEqual(report["status"], "FAIL")
+                self.assertIn(expected_error, report["errors"][0])
+
     def test_held_out_is_required_for_every_variant(self) -> None:
         candidates, previous, baseline = self.matched()
         changed = json.loads(baseline[2].read_text(encoding="utf-8"))
@@ -783,10 +845,10 @@ class CompareSkillEvalsTests(unittest.TestCase):
             )
         self.assertEqual(report["status"], "PASS")
 
-    def test_schema_three_report_exposes_stable_manifest_keys(self) -> None:
+    def test_schema_four_report_exposes_stable_manifest_keys(self) -> None:
         candidates, previous, baseline = self.matched(previous_correct=9)
         report = self.report(candidates, previous, baseline)
-        self.assertEqual(report["schema_version"], 3)
+        self.assertEqual(report["schema_version"], 4)
         for key in (
             "candidate",
             "previous",

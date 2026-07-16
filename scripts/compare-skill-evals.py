@@ -73,6 +73,7 @@ class Trial:
     evaluation_protocol_revision: str
     evaluation_protocol_sha256: str
     environment_policy_sha256: str
+    retry_policy_sha256: str
     captured_at: datetime
     condition: tuple[object, ...]
     score_passed: bool
@@ -82,6 +83,8 @@ class Trial:
     input_tokens: int | None
     output_tokens: int | None
     total_tokens: int | None
+    attempt_count: int
+    retry_count: int
     unavailable_input_token_results: tuple[str, ...]
     unavailable_output_token_results: tuple[str, ...]
     unavailable_total_token_results: tuple[str, ...]
@@ -240,6 +243,7 @@ def _condition(bundle: dict[str, object], *, path: Path) -> tuple[object, ...]:
         run_config.get("fixture_sha256"),
         run_config.get("host_config_sha256"),
         run_config.get("environment_policy_sha256"),
+        run_config.get("retry_policy_sha256"),
         run_config.get("campaign_id"),
         run_config.get("campaign_path"),
         run_config.get("campaign_sha256"),
@@ -321,6 +325,17 @@ def _optional_positive_int(
         raise ComparisonError(
             f"{path}: result {result_id!r} metrics.{field} must be a positive "
             "integer or null"
+        )
+    return value
+
+
+def _required_nonnegative_int(
+    value: object, *, path: Path, result_id: str, field: str
+) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise ComparisonError(
+            f"{path}: result {result_id!r} metrics.{field} must be a "
+            "non-negative integer"
         )
     return value
 
@@ -425,6 +440,8 @@ def _load_trial(
     duration_ms = 0
     input_tokens = 0
     output_tokens = 0
+    attempt_count = 0
+    retry_count = 0
     unavailable_input_tokens: list[str] = []
     unavailable_output_tokens: list[str] = []
     raw_hashes: list[str] = []
@@ -446,6 +463,29 @@ def _load_trial(
                 f"{path}: result {result_id!r} metrics.duration_ms cannot be null"
             )
         duration_ms += duration
+        result_attempts = _optional_positive_int(
+            metrics.get("attempt_count"),
+            path=path,
+            result_id=result_id,
+            field="attempt_count",
+        )
+        if result_attempts is None:
+            raise ComparisonError(
+                f"{path}: result {result_id!r} metrics.attempt_count cannot be null"
+            )
+        result_retries = _required_nonnegative_int(
+            metrics.get("retry_count"),
+            path=path,
+            result_id=result_id,
+            field="retry_count",
+        )
+        if result_retries != result_attempts - 1:
+            raise ComparisonError(
+                f"{path}: result {result_id!r} metrics.retry_count must equal "
+                "metrics.attempt_count - 1"
+            )
+        attempt_count += result_attempts
+        retry_count += result_retries
         result_input = _optional_positive_int(
             metrics.get("input_tokens"),
             path=path,
@@ -511,6 +551,7 @@ def _load_trial(
         environment_policy_sha256=str(
             run_config.get("environment_policy_sha256")
         ),
+        retry_policy_sha256=str(run_config.get("retry_policy_sha256")),
         captured_at=captured_at.astimezone(timezone.utc),
         condition=_condition(bundle, path=path),
         score_passed=bool(score.passed),
@@ -520,6 +561,8 @@ def _load_trial(
         input_tokens=complete_input,
         output_tokens=complete_output,
         total_tokens=complete_total,
+        attempt_count=attempt_count,
+        retry_count=retry_count,
         unavailable_input_token_results=tuple(unavailable_input_tokens),
         unavailable_output_token_results=tuple(unavailable_output_tokens),
         unavailable_total_token_results=tuple(unavailable_total_tokens),
@@ -630,6 +673,12 @@ def _metric_summary(values: Sequence[float | int]) -> dict[str, float | int]:
     }
 
 
+def _count_summary(values: Sequence[int]) -> dict[str, float | int]:
+    summary = _metric_summary(values)
+    summary["total"] = sum(values)
+    return summary
+
+
 def _token_dimension_summary(
     records: Sequence[Trial], attribute: str
 ) -> dict[str, object]:
@@ -687,6 +736,8 @@ def _trial_report(record: Trial) -> dict[str, object]:
         "input_tokens": record.input_tokens,
         "output_tokens": record.output_tokens,
         "total_tokens": record.total_tokens,
+        "attempt_count": record.attempt_count,
+        "retry_count": record.retry_count,
         "token_availability": {
             "input": "available" if record.input_tokens is not None else "unavailable",
             "output": (
@@ -708,6 +759,10 @@ def _variant_report(records: Sequence[Trial]) -> dict[str, object]:
         "all_contract_passed": all(record.score_passed for record in ordered),
         "outcome": _metric_summary([record.outcome for record in ordered]),
         "duration_ms": _metric_summary([record.duration_ms for record in ordered]),
+        "attempt_count": _count_summary(
+            [record.attempt_count for record in ordered]
+        ),
+        "retry_count": _count_summary([record.retry_count for record in ordered]),
         "tokens": _token_summary(ordered),
         "trials": [_trial_report(record) for record in ordered],
     }
@@ -1213,6 +1268,7 @@ def compare_bundles(
             "evaluation_protocol_sha256": campaign.payload["evaluation_protocol"][
                 "sha256"
             ],
+            "retry_policy_sha256": candidates[0].retry_policy_sha256,
         },
         "attempt_ledger": attempt_ledger,
         "kind": kind,

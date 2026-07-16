@@ -116,6 +116,8 @@ class CaseOutcome:
     duration_ms: int
     input_tokens: int | None
     output_tokens: int | None
+    attempt_count: int
+    retry_count: int
     exit_code: int
     error: str | None
 
@@ -599,22 +601,7 @@ def _host_command(
 
 
 def _routing_object(value: object) -> dict[str, object] | None:
-    if not isinstance(value, dict):
-        return None
-    if set(value) != {"actual_owner", "handoffs"}:
-        return None
-    owner = value.get("actual_owner")
-    handoffs = value.get("handoffs")
-    if owner not in OWNER_ENUM:
-        return None
-    if (
-        not isinstance(handoffs, list)
-        or any(item not in OWNER_ENUM for item in handoffs)
-        or len(handoffs) != len(set(handoffs))
-        or owner in handoffs
-    ):
-        return None
-    return {"actual_owner": owner, "handoffs": handoffs}
+    return PROTOCOL.routing_observation(value)
 
 
 def _json_value(text: str) -> object | None:
@@ -624,46 +611,16 @@ def _json_value(text: str) -> object | None:
         return None
 
 
-def _response_candidates(value: object) -> list[tuple[str, dict[str, object]]]:
-    candidates: list[tuple[str, dict[str, object]]] = []
-    routed = _routing_object(value)
-    if routed is not None:
-        candidates.append((_canonical_json(routed), routed))
-    if isinstance(value, dict):
-        for key in ("structured_output", "result", "text"):
-            child = value.get(key)
-            if isinstance(child, str):
-                parsed = _json_value(child)
-                routed_child = _routing_object(parsed)
-                if routed_child is not None:
-                    candidates.append((child, routed_child))
-            elif child is not None:
-                candidates.extend(_response_candidates(child))
-        for key, child in value.items():
-            if key not in {"structured_output", "result", "text"}:
-                candidates.extend(_response_candidates(child))
-    elif isinstance(value, list):
-        for child in value:
-            candidates.extend(_response_candidates(child))
-    return candidates
-
-
 def _extract_model_output(stdout: str, response_path: Path) -> tuple[str, dict[str, object]]:
-    if response_path.is_file():
-        response = response_path.read_text(encoding="utf-8")
-        routed = _routing_object(_json_value(response))
-        if routed is not None:
-            return response, routed
-    parsed_whole = _json_value(stdout)
-    candidates = _response_candidates(parsed_whole) if parsed_whole is not None else []
-    if not candidates:
-        for line in stdout.splitlines():
-            parsed_line = _json_value(line)
-            if parsed_line is not None:
-                candidates.extend(_response_candidates(parsed_line))
-    if not candidates:
+    response = (
+        response_path.read_text(encoding="utf-8")
+        if response_path.is_file()
+        else ""
+    )
+    extracted = PROTOCOL.extract_routing_result(stdout, response)
+    if extracted is None:
         raise RunnerError("host response did not contain valid structured routing JSON")
-    return candidates[-1]
+    return extracted
 
 
 def _extract_usage(stdout: str, *, host: str) -> tuple[int | None, int | None]:
@@ -732,6 +689,28 @@ def _transcript(stdout: str, stderr: str) -> str:
     return f"STDOUT\n{stdout}\nSTDERR\n{stderr}"
 
 
+def _retryable_error_class(
+    host: str,
+    *,
+    exit_code: int,
+    stdout: str,
+    stderr: str,
+    observations: dict[str, object] | None,
+    input_tokens: int | None,
+    output_tokens: int | None,
+) -> str | None:
+    return PROTOCOL.classify_transient_host_failure(
+        host,
+        exit_code=exit_code,
+        stdout=stdout,
+        stderr=stderr,
+        has_valid_result=observations is not None,
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        contract=CONTRACTS,
+    )
+
+
 def _write_json(path: Path, value: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     encoded = (
@@ -752,7 +731,6 @@ def _invoke_case(
     skill_fixture: Path | None,
     raw_root: Path,
 ) -> CaseOutcome:
-    case_repo = temp_root / "cases" / case.case_id
     started_at = _utc_now()
     start = time.monotonic()
     stdout = ""
@@ -764,89 +742,196 @@ def _invoke_case(
     input_tokens: int | None = None
     output_tokens: int | None = None
     prompt = build_prompt(case.prompt)
-    try:
-        _prepare_case_repo(
-            case_repo,
-            host=config.host,
-            variant=config.variant,
-            skill_fixture=skill_fixture,
+    retry_policy = PROTOCOL.canonical_transient_retry_policy(config.host, CONTRACTS)
+    retry_policy_sha256 = PROTOCOL.canonical_hash(retry_policy)
+    maximum_attempts = int(retry_policy["maximum_attempts_per_case"])
+    backoff_seconds = list(retry_policy["backoff_seconds"])
+    host_attempts: list[dict[str, object]] = []
+    raw_path = raw_root / f"{case.case_id}.json"
+
+    def raw_snapshot(
+        *, snapshot_completed_at: str, snapshot_duration_ms: int
+    ) -> dict[str, object]:
+        transcript = _transcript(stdout, stderr)
+        return {
+            "schema_version": RAW_SCHEMA_VERSION,
+            "run_id": run_id,
+            "case_id": case.case_id,
+            "prompt_sha256": _sha256_text(case.prompt),
+            "invocation_prompt": prompt,
+            "invocation_prompt_sha256": _sha256_text(prompt),
+            "model": config.model,
+            "host": host_version,
+            "started_at": started_at,
+            "completed_at": snapshot_completed_at,
+            "exit_code": exit_code,
+            "stdout": stdout,
+            "stderr": stderr,
+            "response": model_output,
+            "model_output": model_output,
+            "transcript": transcript,
+            "transcript_sha256": _sha256_text(transcript),
+            "retry_policy_sha256": retry_policy_sha256,
+            "host_attempts": host_attempts,
+            "observations": observations or {"actual_owner": "", "handoffs": []},
+            "metrics": {
+                "duration_ms": snapshot_duration_ms,
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "attempt_count": len(host_attempts),
+                "retry_count": len(host_attempts) - 1,
+            },
+            **({"error": error} if error is not None else {}),
+        }
+
+    for attempt_index in range(1, maximum_attempts + 1):
+        attempt_started_at = _utc_now()
+        attempt_start = time.monotonic()
+        attempt_stdout = ""
+        attempt_stderr = ""
+        attempt_response = ""
+        attempt_model_output = ""
+        attempt_observations: dict[str, object] | None = None
+        attempt_exit_code = 1
+        attempt_error: str | None = None
+        attempt_input_tokens: int | None = None
+        attempt_output_tokens: int | None = None
+        attempt_root = temp_root / "cases" / case.case_id / f"attempt-{attempt_index}"
+        try:
+            _prepare_case_repo(
+                attempt_root,
+                host=config.host,
+                variant=config.variant,
+                skill_fixture=skill_fixture,
+            )
+            schema_path = attempt_root / ".routing-response-schema.json"
+            response_path = attempt_root / ".routing-response.json"
+            _write_json(schema_path, ROUTING_RESPONSE_SCHEMA)
+            command = _host_command(
+                config,
+                repo=attempt_root,
+                schema_path=schema_path,
+                response_path=response_path,
+                prompt=prompt,
+            )
+            environment = _isolated_host_environment(
+                config.host,
+                temp_root / "homes" / case.case_id / f"attempt-{attempt_index}",
+            )
+            completed = subprocess.run(
+                command,
+                cwd=attempt_root,
+                check=False,
+                capture_output=True,
+                text=True,
+                stdin=subprocess.DEVNULL,
+                timeout=config.timeout_seconds,
+                env=environment,
+            )
+            attempt_stdout = completed.stdout or ""
+            attempt_stderr = completed.stderr or ""
+            attempt_exit_code = completed.returncode
+            if response_path.is_file():
+                attempt_response = response_path.read_text(encoding="utf-8")
+            try:
+                attempt_model_output, attempt_observations = _extract_model_output(
+                    attempt_stdout, response_path
+                )
+            except (OSError, UnicodeDecodeError, RunnerError) as caught:
+                attempt_error = str(caught)
+            attempt_input_tokens, attempt_output_tokens = _extract_usage(
+                attempt_stdout, host=config.host
+            )
+            if attempt_exit_code != 0:
+                attempt_error = f"host exited with code {attempt_exit_code}"
+        except subprocess.TimeoutExpired as timeout:
+            attempt_exit_code = 124
+            attempt_stdout = (
+                timeout.stdout.decode("utf-8", errors="replace")
+                if isinstance(timeout.stdout, bytes)
+                else (timeout.stdout or "")
+            )
+            attempt_stderr = (
+                timeout.stderr.decode("utf-8", errors="replace")
+                if isinstance(timeout.stderr, bytes)
+                else (timeout.stderr or "")
+            )
+            attempt_error = f"host timed out after {config.timeout_seconds} seconds"
+        except (OSError, UnicodeDecodeError, RunnerError) as caught:
+            attempt_error = str(caught)
+
+        error_class = _retryable_error_class(
+            config.host,
+            exit_code=attempt_exit_code,
+            stdout=attempt_stdout,
+            stderr=attempt_stderr,
+            observations=attempt_observations,
+            input_tokens=attempt_input_tokens,
+            output_tokens=attempt_output_tokens,
         )
-        schema_path = case_repo / ".routing-response-schema.json"
-        response_path = case_repo / ".routing-response.json"
-        _write_json(schema_path, ROUTING_RESPONSE_SCHEMA)
-        command = _host_command(
-            config,
-            repo=case_repo,
-            schema_path=schema_path,
-            response_path=response_path,
-            prompt=prompt,
+        retryable = error_class is not None
+        will_retry = retryable and attempt_index < maximum_attempts
+        backoff_before_next = (
+            int(backoff_seconds[attempt_index - 1]) if will_retry else 0
         )
-        environment = _isolated_host_environment(
-            config.host, temp_root / "homes" / case.case_id
+        attempt_duration_ms = max(
+            1, round((time.monotonic() - attempt_start) * 1000)
         )
-        completed = subprocess.run(
-            command,
-            cwd=case_repo,
-            check=False,
-            capture_output=True,
-            text=True,
-            stdin=subprocess.DEVNULL,
-            timeout=config.timeout_seconds,
-            env=environment,
+        attempt_completed_at = _utc_now()
+        attempt_transcript = _transcript(attempt_stdout, attempt_stderr)
+        host_attempts.append(
+            {
+                "attempt_index": attempt_index,
+                "started_at": attempt_started_at,
+                "completed_at": attempt_completed_at,
+                "duration_ms": attempt_duration_ms,
+                "exit_code": attempt_exit_code,
+                "stdout": attempt_stdout,
+                "stderr": attempt_stderr,
+                "response": attempt_response,
+                "model_output": attempt_model_output,
+                "transcript": attempt_transcript,
+                "transcript_sha256": _sha256_text(attempt_transcript),
+                "error_class": error_class,
+                "error": attempt_error,
+                "retryable": retryable,
+                "backoff_seconds_before_next": backoff_before_next,
+                "observations": attempt_observations,
+                "metrics": {
+                    "duration_ms": attempt_duration_ms,
+                    "input_tokens": attempt_input_tokens,
+                    "output_tokens": attempt_output_tokens,
+                },
+            }
         )
-        stdout = completed.stdout or ""
-        stderr = completed.stderr or ""
-        exit_code = completed.returncode
-        if exit_code != 0:
-            raise RunnerError(f"host exited with code {exit_code}")
-        model_output, observations = _extract_model_output(stdout, response_path)
-        input_tokens, output_tokens = _extract_usage(stdout, host=config.host)
-    except subprocess.TimeoutExpired as timeout:
-        exit_code = 124
-        stdout = (
-            timeout.stdout.decode("utf-8", errors="replace")
-            if isinstance(timeout.stdout, bytes)
-            else (timeout.stdout or "")
+        stdout = attempt_stdout
+        stderr = attempt_stderr
+        model_output = attempt_model_output
+        observations = attempt_observations
+        exit_code = attempt_exit_code
+        error = attempt_error
+        input_tokens = attempt_input_tokens
+        output_tokens = attempt_output_tokens
+        checkpoint_duration_ms = max(
+            1, round((time.monotonic() - start) * 1000)
         )
-        stderr = (
-            timeout.stderr.decode("utf-8", errors="replace")
-            if isinstance(timeout.stderr, bytes)
-            else (timeout.stderr or "")
+        _write_json(
+            raw_path,
+            raw_snapshot(
+                snapshot_completed_at=attempt_completed_at,
+                snapshot_duration_ms=checkpoint_duration_ms,
+            ),
         )
-        error = f"host timed out after {config.timeout_seconds} seconds"
-    except (OSError, UnicodeDecodeError, RunnerError) as caught:
-        error = str(caught)
+        if not will_retry:
+            break
+        time.sleep(backoff_before_next)
+
     duration_ms = max(1, round((time.monotonic() - start) * 1000))
     completed_at = _utc_now()
-    transcript = _transcript(stdout, stderr)
-    raw: dict[str, object] = {
-        "schema_version": RAW_SCHEMA_VERSION,
-        "run_id": run_id,
-        "case_id": case.case_id,
-        "prompt_sha256": _sha256_text(case.prompt),
-        "invocation_prompt": prompt,
-        "invocation_prompt_sha256": _sha256_text(prompt),
-        "model": config.model,
-        "host": host_version,
-        "started_at": started_at,
-        "completed_at": completed_at,
-        "exit_code": exit_code,
-        "stdout": stdout,
-        "stderr": stderr,
-        "response": model_output,
-        "model_output": model_output,
-        "transcript": transcript,
-        "transcript_sha256": _sha256_text(transcript),
-        "observations": observations or {"actual_owner": "", "handoffs": []},
-        "metrics": {
-            "duration_ms": duration_ms,
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
-        },
-    }
-    if error is not None:
-        raw["error"] = error
-    raw_path = raw_root / f"{case.case_id}.json"
+    raw = raw_snapshot(
+        snapshot_completed_at=completed_at,
+        snapshot_duration_ms=duration_ms,
+    )
     _write_json(raw_path, raw)
     raw_hash = _sha256_bytes(raw_path.read_bytes())
     return CaseOutcome(
@@ -858,6 +943,8 @@ def _invoke_case(
         duration_ms=duration_ms,
         input_tokens=input_tokens,
         output_tokens=output_tokens,
+        attempt_count=len(host_attempts),
+        retry_count=len(host_attempts) - 1,
         exit_code=exit_code,
         error=error,
     )
@@ -1032,6 +1119,9 @@ def _run_evaluation_attempt(
             "environment_policy_sha256": PROTOCOL.canonical_hash(
                 PROTOCOL.canonical_environment_policy(config.host, CONTRACTS)
             ),
+            "retry_policy_sha256": PROTOCOL.canonical_hash(
+                PROTOCOL.canonical_transient_retry_policy(config.host, CONTRACTS)
+            ),
             "host_name": config.host,
             "prompt_template_version": PROMPT_TEMPLATE_VERSION,
             "prompt_template": _prompt_template(),
@@ -1039,10 +1129,10 @@ def _run_evaluation_attempt(
             "skills_installed": config.variant in {"candidate", "previous"},
             "skill_install_root": ".agents/skills" if config.host == "codex" else ".claude/skills",
             "isolation": (
-                "committed export; unique repository and isolated HOME per case; "
+                "committed export; unique repository and isolated HOME per host attempt; "
                 "remote_plugin disabled"
                 if config.host == "codex"
-                else "committed export; unique repository and isolated HOME per case; "
+                else "committed export; unique repository and isolated HOME per host attempt; "
                 "strict empty MCP configuration"
             ),
         },
@@ -1060,6 +1150,8 @@ def _run_evaluation_attempt(
                     "duration_ms": outcome.duration_ms,
                     "input_tokens": outcome.input_tokens,
                     "output_tokens": outcome.output_tokens,
+                    "attempt_count": outcome.attempt_count,
+                    "retry_count": outcome.retry_count,
                 },
             }
             for outcome in ordered

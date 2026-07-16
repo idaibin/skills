@@ -54,7 +54,7 @@ class CampaignCreatorTests(unittest.TestCase):
         ]
         contract = {
             "behavior_eval": {
-                "campaign_schema_version": 1,
+                "campaign_schema_version": 2,
                 "campaign_required_fields": [
                     "schema_version",
                     "campaign_id",
@@ -76,9 +76,28 @@ class CampaignCreatorTests(unittest.TestCase):
                     "files": protocol_files,
                     "canonical_routing": {
                         "reviewer": "scripts/run-skill-routing-eval.py",
-                        "reviewer_version": "5",
+                        "reviewer_version": "6",
                         "environment_policy_version": 1,
                         "environment_source_allowlist": ["LANG", "PATH"],
+                        "transient_retry_policy": {
+                            "schema_version": 1,
+                            "maximum_attempts_per_case": 2,
+                            "backoff_seconds": [5],
+                            "retryable_errors": {
+                                "claude": [],
+                                "codex": [
+                                    {
+                                        "error_class": "model_capacity",
+                                        "exit_codes": [1],
+                                        "json_fields": ["message"],
+                                        "normalized_values": [
+                                            "selected model is at capacity. "
+                                            "please try a different model."
+                                        ],
+                                    }
+                                ],
+                            },
+                        },
                     },
                 },
             }

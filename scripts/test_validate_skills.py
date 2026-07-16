@@ -13,7 +13,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
 
@@ -148,17 +148,56 @@ class ValidateSkillsTests(unittest.TestCase):
             CONTRACT_EVAL.PROMPT_VALUE_PLACEHOLDER,
             json.dumps(prompt, ensure_ascii=False),
         )
-        metrics = {"duration_ms": 1, "input_tokens": 1, "output_tokens": 1}
+        metrics = {
+            "duration_ms": 1,
+            "input_tokens": 1,
+            "output_tokens": 1,
+            "attempt_count": 1,
+            "retry_count": 0,
+        }
         raw_path = root / "raw" / f"{result_id}.json"
         raw_path.parent.mkdir(parents=True)
         model_output = json.dumps(
-            {"actual_owner": "diagnose", "handoffs": [], "reason": "fixture"}
+            {"actual_owner": "diagnose", "handoffs": []}
         )
         stdout = json.dumps(
             {"usage": {"input_tokens": 1, "output_tokens": 1}}
         )
         stderr = ""
         transcript = f"STDOUT\n{stdout}\nSTDERR\n{stderr}"
+        raw_started_at = datetime.now(timezone.utc).isoformat()
+        raw_completed_at = raw_started_at
+        retry_policy_sha256 = CONTRACT_EVAL.PROTOCOL.canonical_hash(
+            CONTRACT_EVAL.PROTOCOL.canonical_transient_retry_policy(
+                "codex", CONTRACT_EVAL.CONTRACTS
+            )
+        )
+        host_attempt = {
+            "attempt_index": 1,
+            "started_at": raw_started_at,
+            "completed_at": raw_completed_at,
+            "duration_ms": 1,
+            "exit_code": 0,
+            "stdout": stdout,
+            "stderr": stderr,
+            "response": model_output,
+            "model_output": model_output,
+            "transcript": transcript,
+            "transcript_sha256": CONTRACT_EVAL.text_hash(transcript),
+            "error_class": None,
+            "error": None,
+            "retryable": False,
+            "backoff_seconds_before_next": 0,
+            "observations": {
+                "actual_owner": "diagnose",
+                "handoffs": [],
+            },
+            "metrics": {
+                "duration_ms": 1,
+                "input_tokens": 1,
+                "output_tokens": 1,
+            },
+        }
         raw_path.write_text(
             json.dumps(
                 {
@@ -172,11 +211,15 @@ class ValidateSkillsTests(unittest.TestCase):
                     ),
                     "model": model,
                     "host": host,
+                    "started_at": raw_started_at,
+                    "completed_at": raw_completed_at,
                     "stdout": stdout,
                     "stderr": stderr,
                     "model_output": model_output,
                     "transcript": transcript,
                     "transcript_sha256": CONTRACT_EVAL.text_hash(transcript),
+                    "retry_policy_sha256": retry_policy_sha256,
+                    "host_attempts": [host_attempt],
                     "exit_code": 0,
                     "observations": {
                         "actual_owner": "diagnose",
@@ -250,6 +293,7 @@ class ValidateSkillsTests(unittest.TestCase):
                         "codex", CONTRACT_EVAL.CONTRACTS
                     )
                 ),
+                "retry_policy_sha256": retry_policy_sha256,
             },
             "adjudication": CONTRACT_EVAL.PROTOCOL.canonical_adjudication(
                 CONTRACT_EVAL.CONTRACTS
@@ -1857,6 +1901,8 @@ class ValidateSkillsTests(unittest.TestCase):
             raw_path = root / result["raw_evidence"]
             raw = json.loads(raw_path.read_text(encoding="utf-8"))
             raw["metrics"]["duration_ms"] = 2
+            raw["host_attempts"][0]["duration_ms"] = 2
+            raw["host_attempts"][0]["metrics"]["duration_ms"] = 2
             raw_path.write_text(json.dumps(raw), encoding="utf-8")
             result["raw_evidence_sha256"] = hashlib.sha256(
                 raw_path.read_bytes()
@@ -1864,6 +1910,133 @@ class ValidateSkillsTests(unittest.TestCase):
             bundle_path.write_text(json.dumps(payload), encoding="utf-8")
 
             with self.assertRaisesRegex(ValueError, "metrics mirror"):
+                CONTRACT_EVAL.load_result_bundle(
+                    bundle_path, {"case-001"}, dataset
+                )
+
+    def test_result_bundle_accepts_auditable_capacity_retry(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            dataset = root / "dataset.jsonl"
+            dataset.write_text(
+                '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                encoding="utf-8",
+            )
+            bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+            result = payload["results"][0]
+            raw_path = root / result["raw_evidence"]
+            raw = json.loads(raw_path.read_text(encoding="utf-8"))
+            retry_started = datetime.now(timezone.utc)
+            first_completed = retry_started + timedelta(milliseconds=1)
+            second_started = first_completed + timedelta(seconds=5)
+            second_completed = second_started + timedelta(milliseconds=1)
+            capacity_stdout = json.dumps(
+                {
+                    "type": "error",
+                    "message": (
+                        "Selected model is at capacity. "
+                        "Please try a different model."
+                    ),
+                }
+            )
+            capacity_transcript = f"STDOUT\n{capacity_stdout}\nSTDERR\n"
+            first_attempt = {
+                "attempt_index": 1,
+                "started_at": retry_started.isoformat(),
+                "completed_at": first_completed.isoformat(),
+                "duration_ms": 1,
+                "exit_code": 1,
+                "stdout": capacity_stdout,
+                "stderr": "",
+                "response": "",
+                "model_output": "",
+                "transcript": capacity_transcript,
+                "transcript_sha256": CONTRACT_EVAL.text_hash(
+                    capacity_transcript
+                ),
+                "error_class": "model_capacity",
+                "error": "host exited with code 1",
+                "retryable": True,
+                "backoff_seconds_before_next": 5,
+                "observations": None,
+                "metrics": {
+                    "duration_ms": 1,
+                    "input_tokens": None,
+                    "output_tokens": None,
+                },
+            }
+            terminal_attempt = raw["host_attempts"][0]
+            terminal_attempt["attempt_index"] = 2
+            terminal_attempt["started_at"] = second_started.isoformat()
+            terminal_attempt["completed_at"] = second_completed.isoformat()
+            raw["host_attempts"] = [first_attempt, terminal_attempt]
+            raw["started_at"] = retry_started.isoformat()
+            raw["completed_at"] = second_completed.isoformat()
+            raw["metrics"]["duration_ms"] = 5002
+            raw["metrics"]["attempt_count"] = 2
+            raw["metrics"]["retry_count"] = 1
+            result["metrics"] = dict(raw["metrics"])
+            raw_path.write_text(json.dumps(raw), encoding="utf-8")
+            result["raw_evidence_sha256"] = hashlib.sha256(
+                raw_path.read_bytes()
+            ).hexdigest()
+            bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            loaded = CONTRACT_EVAL.load_result_bundle(
+                bundle_path, {"case-001"}, dataset
+            )
+
+            self.assertEqual(2, loaded["results"][0]["metrics"]["attempt_count"])
+            self.assertEqual(1, loaded["results"][0]["metrics"]["retry_count"])
+
+            for mode, expected_error in (
+                ("hidden-valid-result", "result does not match host response"),
+                ("missing-backoff", "omits the canonical retry backoff"),
+            ):
+                with self.subTest(mode=mode):
+                    changed = copy.deepcopy(raw)
+                    if mode == "hidden-valid-result":
+                        valid_route = json.dumps(
+                            {"actual_owner": "diagnose", "handoffs": []}
+                        )
+                        changed["host_attempts"][0]["response"] = valid_route
+                        changed["host_attempts"][0]["model_output"] = valid_route
+                    else:
+                        changed["host_attempts"][1]["started_at"] = changed[
+                            "host_attempts"
+                        ][0]["completed_at"]
+                    raw_path.write_text(json.dumps(changed), encoding="utf-8")
+                    result["raw_evidence_sha256"] = hashlib.sha256(
+                        raw_path.read_bytes()
+                    ).hexdigest()
+                    bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, expected_error):
+                        CONTRACT_EVAL.load_result_bundle(
+                            bundle_path, {"case-001"}, dataset
+                        )
+
+    def test_result_bundle_rejects_noncanonical_retry_backoff(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            dataset = root / "dataset.jsonl"
+            dataset.write_text(
+                '{"id":"case-001","prompt":"fixture prompt","kind":"trigger",'
+                '"expected_owner":"diagnose","forbidden_owners":[]}\n',
+                encoding="utf-8",
+            )
+            bundle_path, payload = self.write_result_bundle_fixture(root, dataset)
+            result = payload["results"][0]
+            raw_path = root / result["raw_evidence"]
+            raw = json.loads(raw_path.read_text(encoding="utf-8"))
+            raw["host_attempts"][0]["backoff_seconds_before_next"] = 5
+            raw_path.write_text(json.dumps(raw), encoding="utf-8")
+            result["raw_evidence_sha256"] = hashlib.sha256(
+                raw_path.read_bytes()
+            ).hexdigest()
+            bundle_path.write_text(json.dumps(payload), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "backoff_seconds.*canonical"):
                 CONTRACT_EVAL.load_result_bundle(
                     bundle_path, {"case-001"}, dataset
                 )
@@ -1882,6 +2055,7 @@ class ValidateSkillsTests(unittest.TestCase):
             raw_path = root / result["raw_evidence"]
             raw = json.loads(raw_path.read_text(encoding="utf-8"))
             raw["metrics"]["input_tokens"] = 0
+            raw["host_attempts"][0]["metrics"]["input_tokens"] = 0
             result["metrics"]["input_tokens"] = 0
             raw_path.write_text(json.dumps(raw), encoding="utf-8")
             result["raw_evidence_sha256"] = hashlib.sha256(
@@ -1919,6 +2093,13 @@ class ValidateSkillsTests(unittest.TestCase):
                     )
                 )
             )
+            payload["run_config"]["retry_policy_sha256"] = (
+                CONTRACT_EVAL.PROTOCOL.canonical_hash(
+                    CONTRACT_EVAL.PROTOCOL.canonical_transient_retry_policy(
+                        "claude", CONTRACT_EVAL.CONTRACTS
+                    )
+                )
+            )
             result = payload["results"][0]
             raw_path = root / result["raw_evidence"]
             raw = json.loads(raw_path.read_text(encoding="utf-8"))
@@ -1936,13 +2117,21 @@ class ValidateSkillsTests(unittest.TestCase):
                 f"STDOUT\n{raw['stdout']}\nSTDERR\n{raw['stderr']}"
             )
             raw["transcript_sha256"] = CONTRACT_EVAL.text_hash(raw["transcript"])
+            raw["retry_policy_sha256"] = payload["run_config"][
+                "retry_policy_sha256"
+            ]
+            raw["host_attempts"][0]["stdout"] = raw["stdout"]
+            raw["host_attempts"][0]["transcript"] = raw["transcript"]
+            raw["host_attempts"][0]["transcript_sha256"] = raw[
+                "transcript_sha256"
+            ]
             raw_path.write_text(json.dumps(raw), encoding="utf-8")
             result["raw_evidence_sha256"] = hashlib.sha256(
                 raw_path.read_bytes()
             ).hexdigest()
             bundle_path.write_text(json.dumps(payload), encoding="utf-8")
 
-            with self.assertRaisesRegex(ValueError, "normalized token usage"):
+            with self.assertRaisesRegex(ValueError, "normalized usage"):
                 CONTRACT_EVAL.load_result_bundle(
                     bundle_path, {"case-001"}, dataset
                 )
@@ -1960,7 +2149,7 @@ class ValidateSkillsTests(unittest.TestCase):
             payload["schema_version"] = 2
             bundle_path.write_text(json.dumps(payload), encoding="utf-8")
 
-            with self.assertRaisesRegex(ValueError, "schema_version must be 5"):
+            with self.assertRaisesRegex(ValueError, "schema_version must be 6"):
                 CONTRACT_EVAL.load_result_bundle(
                     bundle_path, {"case-001"}, dataset
                 )

@@ -9,14 +9,14 @@ maturity labels or treat format validation as proof of model behavior.
 - Evidence revision: the commit containing this file; resolve with
   `git log -1 --format=%H -- docs/quality/status.md`
 - Structure host: local repository validator on macOS
-- Behavior host and model: historical `codex-cli 0.144.1` / `gpt-5.6-sol`
-  routing comparison executed under evaluation v1 and failed; evaluation v2
-  has not been executed
+- Behavior host and model: `codex-cli 0.144.5` / `gpt-5.6-sol`; the historical evaluation-v1
+  comparison failed, and two evaluation-v2 campaigns were invalidated by
+  infrastructure before a complete comparison was available
 - Workflow host and model: `Not verified`
 - Comparative run: historical candidate/previous comparison executed under v1;
   status `FAIL`; required v2 candidate/previous/no-Skill group is `Not verified`
-- Held-out provenance: `Historical v1 only; committed, hash-bound, consumed by
-  three paired live trials, and not claimable for v2`
+- Held-out provenance: `v1, v2, and v3 datasets are committed, hash-bound, and
+  consumed; none is reusable for a successor campaign`
 
 `Structure = verified` means the source package and repository consistency
 checks passed. It does not prove live model routing, authority behavior, or
@@ -76,7 +76,7 @@ action/evidence labels. The validator therefore prevents these suites from
 setting behavior or workflow to `verified` until an independent semantic
 verifier is added.
 
-## Evaluation Contract v2 (Pending Live Evidence)
+## Evaluation Contract v2 (No Valid Live Evidence)
 
 The current contract upgrades routing success from primary-owner top-1 to the
 complete owner-and-handoff case: accepted owner, every required direct handoff,
@@ -92,9 +92,21 @@ host input from the marginal Skill-input metric. Total tokens and duration are
 reported but are not discovery-efficiency gates. Formal runs must first commit
 a post-anchor campaign that freezes revisions, dataset/provenance, exact trial
 groups, canonical policies, a unique artifact root, and the full evaluation
-protocol. Failed attempts consume their preregistered slots. Marginal input
+  protocol. A frozen, exact capacity-only retry may retain at most two host
+  attempts inside one formal slot; other failures consume their preregistered
+  slots. Marginal input
 claims require per-group non-increase, 15% relative reduction, and at least 50
-saved tokens per case on average. No live v2 result or claim is recorded yet.
+  saved tokens per case on average.
+
+Two preregistered v2 campaigns were started but neither produced valid
+comparison evidence. The first made zero model-service calls because a local
+Volta isolation defect prevented Codex from starting. After that defect was
+fixed, the replacement campaign made 210 host calls: 209 succeeded and one
+returned the exact model-capacity error. That left trial 2 incomplete, and
+trial 3 was not started. The campaign was not scored, its five complete bundles
+were not selected or recombined, and no behavior or improvement claim is
+recorded. See the
+[`2026-07-16 infrastructure-failure record`](../history/evals/2026-07-16-codex-gpt56-routing-infrastructure-failures.md).
 
 ## Deterministic Footprint Delta
 
@@ -143,8 +155,9 @@ for the bound scope, exact report, and repository replay boundary.
 
 ## Unverified Scope
 
-- A passing live v2 full-case routing and neighboring non-trigger contract; the
-  recorded Codex comparison used v1 and failed
+- A passing live v2 full-case routing and neighboring non-trigger contract; v1
+  failed its behavior gate, while the v2 and v3 campaigns were invalidated by
+  infrastructure and not scored
 - Authority enforcement under real model/tool execution
 - Stop conditions and cross-skill handoff behavior
 - End-to-end repository workflow completion and interruption recovery

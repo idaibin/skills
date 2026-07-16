@@ -159,6 +159,81 @@ def routing_response_schema() -> dict[str, object]:
     }
 
 
+def routing_observation(value: object) -> dict[str, object] | None:
+    if not isinstance(value, dict) or set(value) != {"actual_owner", "handoffs"}:
+        return None
+    owner = value.get("actual_owner")
+    handoffs = value.get("handoffs")
+    if owner not in OWNER_ENUM:
+        return None
+    if (
+        not isinstance(handoffs, list)
+        or any(item not in OWNER_ENUM for item in handoffs)
+        or len(handoffs) != len(set(handoffs))
+        or owner in handoffs
+    ):
+        return None
+    return {"actual_owner": owner, "handoffs": handoffs}
+
+
+def _routing_response_candidates(
+    value: object,
+) -> list[tuple[str, dict[str, object]]]:
+    candidates: list[tuple[str, dict[str, object]]] = []
+    routed = routing_observation(value)
+    if routed is not None:
+        candidates.append((canonical_json(routed), routed))
+    if isinstance(value, dict):
+        for key in ("structured_output", "result", "text"):
+            child = value.get(key)
+            if isinstance(child, str):
+                try:
+                    parsed = json.loads(
+                        child, object_pairs_hook=reject_duplicate_json_keys
+                    )
+                except (json.JSONDecodeError, ProtocolError):
+                    parsed = None
+                routed_child = routing_observation(parsed)
+                if routed_child is not None:
+                    candidates.append((child, routed_child))
+            elif child is not None:
+                candidates.extend(_routing_response_candidates(child))
+        for key, child in value.items():
+            if key not in {"structured_output", "result", "text"}:
+                candidates.extend(_routing_response_candidates(child))
+    elif isinstance(value, list):
+        for child in value:
+            candidates.extend(_routing_response_candidates(child))
+    return candidates
+
+
+def extract_routing_result(
+    stdout: str, response: str
+) -> tuple[str, dict[str, object]] | None:
+    """Rebuild the same strict routing result used by runner and validator."""
+
+    if not isinstance(stdout, str) or not isinstance(response, str):
+        raise ProtocolError("routing stdout and response must be strings")
+    if response:
+        try:
+            parsed_response = json.loads(
+                response, object_pairs_hook=reject_duplicate_json_keys
+            )
+        except (json.JSONDecodeError, ProtocolError):
+            parsed_response = None
+        routed = routing_observation(parsed_response)
+        if routed is not None:
+            return response, routed
+
+    parsed_values, valid = _parse_json_or_jsonl(stdout)
+    if not valid:
+        return None
+    candidates: list[tuple[str, dict[str, object]]] = []
+    for value in parsed_values:
+        candidates.extend(_routing_response_candidates(value))
+    return candidates[-1] if candidates else None
+
+
 def canonical_prompt_template(contract: Mapping[str, object]) -> str:
     del contract
     owners = canonical_json(list(OWNER_ENUM))
@@ -245,6 +320,236 @@ def canonical_environment_policy(
     }
 
 
+def canonical_transient_retry_policy(
+    host: str, contract: Mapping[str, object]
+) -> dict[str, object]:
+    """Return the frozen host-specific transient retry policy.
+
+    This deliberately accepts one narrowly defined transient class.  Any
+    change to the retry count, backoff, or classifier entries must change the
+    canonical host policy hash and therefore invalidate an existing campaign.
+    """
+
+    if host not in {"codex", "claude"}:
+        raise ProtocolError(f"unsupported host {host!r}")
+    routing = _protocol_contract(contract).get("canonical_routing")
+    if not isinstance(routing, dict):
+        raise ProtocolError("canonical_routing must be an object")
+    policy = routing.get("transient_retry_policy")
+    if not isinstance(policy, dict):
+        raise ProtocolError("transient_retry_policy must be an object")
+    required_fields = {
+        "schema_version",
+        "maximum_attempts_per_case",
+        "backoff_seconds",
+        "retryable_errors",
+    }
+    if set(policy) != required_fields:
+        raise ProtocolError(
+            "transient_retry_policy fields must be "
+            f"{sorted(required_fields)}"
+        )
+
+    schema_version = policy["schema_version"]
+    if isinstance(schema_version, bool) or schema_version != 1:
+        raise ProtocolError("transient_retry_policy schema_version must be 1")
+    maximum_attempts = policy["maximum_attempts_per_case"]
+    if isinstance(maximum_attempts, bool) or maximum_attempts != 2:
+        raise ProtocolError(
+            "transient_retry_policy maximum_attempts_per_case must be 2"
+        )
+    backoff_seconds = policy["backoff_seconds"]
+    if (
+        not isinstance(backoff_seconds, list)
+        or any(
+            isinstance(value, bool) or not isinstance(value, int)
+            for value in backoff_seconds
+        )
+        or backoff_seconds != [5]
+    ):
+        raise ProtocolError(
+            "transient_retry_policy backoff_seconds must be [5]"
+        )
+
+    expected_entries: dict[str, list[dict[str, object]]] = {
+        "claude": [],
+        "codex": [
+            {
+                "error_class": "model_capacity",
+                "exit_codes": [1],
+                "json_fields": ["message"],
+                "normalized_values": [
+                    "selected model is at capacity. please try a different model."
+                ],
+            }
+        ],
+    }
+    retryable_errors = policy["retryable_errors"]
+    if not isinstance(retryable_errors, dict) or set(retryable_errors) != set(
+        expected_entries
+    ):
+        raise ProtocolError(
+            "transient_retry_policy retryable_errors must contain exactly "
+            "claude and codex entries"
+        )
+    entry_fields = {
+        "error_class",
+        "exit_codes",
+        "json_fields",
+        "normalized_values",
+    }
+    for host_name, entries in retryable_errors.items():
+        if not isinstance(entries, list):
+            raise ProtocolError(
+                f"transient_retry_policy retryable_errors[{host_name!r}] "
+                "must be a list"
+            )
+        for entry in entries:
+            if not isinstance(entry, dict) or set(entry) != entry_fields:
+                raise ProtocolError(
+                    "transient_retry_policy retryable error fields must be "
+                    f"{sorted(entry_fields)}"
+                )
+            if not isinstance(entry["error_class"], str) or not entry["error_class"]:
+                raise ProtocolError(
+                    "transient_retry_policy error_class must be a non-empty string"
+                )
+            exit_codes = entry["exit_codes"]
+            if (
+                not isinstance(exit_codes, list)
+                or not exit_codes
+                or any(
+                    isinstance(code, bool) or not isinstance(code, int) or code < 1
+                    for code in exit_codes
+                )
+                or len(exit_codes) != len(set(exit_codes))
+            ):
+                raise ProtocolError(
+                    "transient_retry_policy exit_codes must be unique positive integers"
+                )
+            for field in ("json_fields", "normalized_values"):
+                value = entry[field]
+                if not isinstance(value, list) or any(
+                    not isinstance(item, str) or not item for item in value
+                ):
+                    raise ProtocolError(
+                        f"transient_retry_policy {field} must be a string list"
+                    )
+    if retryable_errors != expected_entries:
+        raise ProtocolError(
+            "transient_retry_policy retryable_errors are not canonical"
+        )
+
+    return {
+        "schema_version": 1,
+        "maximum_attempts_per_case": 2,
+        "backoff_seconds": [5],
+        "retryable_errors": [dict(entry) for entry in expected_entries[host]],
+    }
+
+
+def _normalized_retry_text(value: str) -> str:
+    normalized = unicodedata.normalize("NFKC", value)
+    return " ".join(normalized.strip().split()).casefold()
+
+
+def _parse_json_or_jsonl(text: str) -> tuple[list[object], bool]:
+    """Parse a JSON value or JSONL stream, rejecting duplicate-key payloads."""
+
+    if not text.strip():
+        return [], True
+    try:
+        return [json.loads(text, object_pairs_hook=reject_duplicate_json_keys)], True
+    except json.JSONDecodeError:
+        values: list[object] = []
+        for line in text.splitlines():
+            if not line.strip():
+                continue
+            try:
+                values.append(
+                    json.loads(line, object_pairs_hook=reject_duplicate_json_keys)
+                )
+            except json.JSONDecodeError:
+                return [], False
+            except ProtocolError:
+                return [], False
+        return values, True
+    except ProtocolError:
+        return [], False
+
+
+def _iter_retry_field_values(value: object, json_fields: set[str]):
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key in json_fields and isinstance(child, str):
+                yield child
+            yield from _iter_retry_field_values(child, json_fields)
+    elif isinstance(value, list):
+        for child in value:
+            yield from _iter_retry_field_values(child, json_fields)
+
+
+def _contains_exposed_token_count(value: object) -> bool:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if key in {"input_tokens", "output_tokens"} and child is not None:
+                return True
+            if _contains_exposed_token_count(child):
+                return True
+    elif isinstance(value, list):
+        return any(_contains_exposed_token_count(child) for child in value)
+    return False
+
+
+def classify_transient_host_failure(
+    host: str,
+    exit_code: int,
+    stdout: str,
+    stderr: str,
+    has_valid_result: bool,
+    input_tokens: int | None,
+    output_tokens: int | None,
+    contract: Mapping[str, object],
+) -> str | None:
+    """Classify only a policy-approved, retryable host failure.
+
+    The classifier fails closed: invalid JSON, duplicate keys, token-bearing
+    failures, valid routing output, and all non-canonical messages return
+    ``None``.
+    """
+
+    if isinstance(exit_code, bool) or not isinstance(exit_code, int):
+        raise ProtocolError("host exit_code must be an integer")
+    if not isinstance(has_valid_result, bool):
+        raise ProtocolError("has_valid_result must be boolean")
+    if not isinstance(stdout, str) or not isinstance(stderr, str):
+        raise ProtocolError("host stdout and stderr must be strings")
+    if exit_code == 0 or has_valid_result:
+        return None
+    if input_tokens is not None or output_tokens is not None:
+        return None
+
+    policy = canonical_transient_retry_policy(host, contract)
+    streams: list[object] = []
+    for text in (stdout, stderr):
+        parsed, valid = _parse_json_or_jsonl(text)
+        if not valid:
+            return None
+        streams.extend(parsed)
+    if any(_contains_exposed_token_count(parsed) for parsed in streams):
+        return None
+    for rule in policy["retryable_errors"]:
+        if exit_code not in rule["exit_codes"]:
+            continue
+        json_fields = set(rule["json_fields"])
+        normalized_values = set(rule["normalized_values"])
+        for parsed in streams:
+            for value in _iter_retry_field_values(parsed, json_fields):
+                if _normalized_retry_text(value) in normalized_values:
+                    return str(rule["error_class"])
+    return None
+
+
 def canonical_host_policy(
     host: str, model: str, contract: Mapping[str, object]
 ) -> dict[str, object]:
@@ -260,9 +565,10 @@ def canonical_host_policy(
         "owner_enum": list(OWNER_ENUM),
         "response_schema": routing_response_schema(),
         "environment_policy_sha256": canonical_hash(environment),
+        "transient_retry_policy": canonical_transient_retry_policy(host, contract),
         "environment_isolation": {
-            "home": "unique temporary directory per case",
-            "xdg_roots": "unique temporary directories per case",
+            "home": "unique temporary directory per host attempt",
+            "xdg_roots": "unique temporary directories per host attempt",
             "global_skill_roots": "excluded",
             "remote_plugin": (
                 "disabled by explicit Codex CLI feature override"
@@ -581,6 +887,7 @@ def load_campaign(
         "adjudication",
         "host_config_sha256",
         "environment_policy_sha256",
+        "retry_policy_sha256",
     }
     if not isinstance(condition, dict) or set(condition) != condition_fields:
         raise ProtocolError(f"campaign condition fields must be {sorted(condition_fields)}")
@@ -608,6 +915,10 @@ def load_campaign(
     environment_hash = canonical_hash(environment)
     if condition.get("environment_policy_sha256") != environment_hash:
         raise ProtocolError("campaign environment policy is not canonical")
+    retry_policy = canonical_transient_retry_policy(str(host), contract)
+    retry_policy_hash = canonical_hash(retry_policy)
+    if condition.get("retry_policy_sha256") != retry_policy_hash:
+        raise ProtocolError("campaign transient retry policy is not canonical")
     host_policy = canonical_host_policy(str(host), str(model), contract)
     if condition.get("host_config_sha256") != canonical_hash(host_policy):
         raise ProtocolError("campaign host policy is not canonical")

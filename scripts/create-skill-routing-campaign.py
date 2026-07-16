@@ -182,6 +182,9 @@ def build_campaign(
         environment_hash = PROTOCOL.canonical_hash(
             PROTOCOL.canonical_environment_policy(host, contract)
         )
+        retry_policy_hash = PROTOCOL.canonical_hash(
+            PROTOCOL.canonical_transient_retry_policy(host, contract)
+        )
         host_hash = PROTOCOL.canonical_hash(
             PROTOCOL.canonical_host_policy(host, model, contract)
         )
@@ -200,6 +203,7 @@ def build_campaign(
         "adjudication": adjudication,
         "host_config_sha256": host_hash,
         "environment_policy_sha256": environment_hash,
+        "retry_policy_sha256": retry_policy_hash,
     }
     identity = {
         "schema_version": int(

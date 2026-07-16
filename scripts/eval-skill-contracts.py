@@ -71,6 +71,9 @@ ADJUDICATION_REQUIRED = set(
 RAW_EVIDENCE_REQUIRED = set(
     BEHAVIOR_CONTRACT["raw_evidence_required_fields"]
 )
+HOST_ATTEMPT_REQUIRED = set(
+    BEHAVIOR_CONTRACT["host_attempt_required_fields"]
+)
 RESULT_VARIANTS = set(BEHAVIOR_CONTRACT["result_variants"])
 ADJUDICATION_METHODS = set(BEHAVIOR_CONTRACT["adjudication_methods"])
 
@@ -821,7 +824,236 @@ def _validate_metrics(value: object, *, label: str) -> dict[str, object]:
             raise ValueError(
                 f"{label}.{metric} must be null or a positive integer"
             )
+    attempt_count = value.get("attempt_count")
+    retry_count = value.get("retry_count")
+    if attempt_count is not None or retry_count is not None:
+        if (
+            isinstance(attempt_count, bool)
+            or not isinstance(attempt_count, int)
+            or attempt_count < 1
+        ):
+            raise ValueError(f"{label}.attempt_count must be a positive integer")
+        if (
+            isinstance(retry_count, bool)
+            or not isinstance(retry_count, int)
+            or retry_count < 0
+            or retry_count != attempt_count - 1
+        ):
+            raise ValueError(
+                f"{label}.retry_count must equal attempt_count - 1"
+            )
     return value
+
+
+def _iso_timestamp(value: object, *, label: str) -> datetime:
+    if not isinstance(value, str) or not value:
+        raise ValueError(f"{label} must be an ISO-8601 timestamp")
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError as error:
+        raise ValueError(f"{label} must be an ISO-8601 timestamp") from error
+    if parsed.tzinfo is None:
+        raise ValueError(f"{label} must include a timezone")
+    return parsed
+
+
+def _validate_host_attempts(
+    raw: dict[str, object],
+    *,
+    host_name: str,
+    evidence_kind: str,
+    result_id: str,
+    label: str,
+) -> dict[str, object]:
+    policy = PROTOCOL.canonical_transient_retry_policy(host_name, CONTRACTS)
+    policy_hash = PROTOCOL.canonical_hash(policy)
+    _validate_sha256(
+        raw.get("retry_policy_sha256"),
+        label=f"{label}.retry_policy_sha256",
+    )
+    if raw["retry_policy_sha256"] != policy_hash:
+        raise ValueError(f"{label}.retry_policy_sha256 must match canonical policy")
+    attempts = raw.get("host_attempts")
+    maximum_attempts = int(policy["maximum_attempts_per_case"])
+    if (
+        not isinstance(attempts, list)
+        or not attempts
+        or len(attempts) > maximum_attempts
+    ):
+        raise ValueError(
+            f"{label}.host_attempts must contain 1..{maximum_attempts} attempts"
+        )
+
+    raw_started = _iso_timestamp(
+        raw.get("started_at"), label=f"{label}.started_at"
+    )
+    raw_completed = _iso_timestamp(
+        raw.get("completed_at"), label=f"{label}.completed_at"
+    )
+    if raw_completed < raw_started:
+        raise ValueError(f"{label}.completed_at predates started_at")
+
+    total_attempt_duration = 0
+    total_backoff_seconds = 0
+    next_attempt_not_before: datetime | None = None
+    first_attempt_started: datetime | None = None
+    terminal_attempt_completed: datetime | None = None
+    for index, attempt in enumerate(attempts, 1):
+        attempt_label = f"{label}.host_attempts[{index - 1}]"
+        if not isinstance(attempt, dict) or set(attempt) != HOST_ATTEMPT_REQUIRED:
+            raise ValueError(
+                f"{attempt_label} fields must be {sorted(HOST_ATTEMPT_REQUIRED)}"
+            )
+        if attempt.get("attempt_index") != index:
+            raise ValueError(f"{attempt_label}.attempt_index must equal {index}")
+        started = _iso_timestamp(
+            attempt.get("started_at"), label=f"{attempt_label}.started_at"
+        )
+        completed = _iso_timestamp(
+            attempt.get("completed_at"), label=f"{attempt_label}.completed_at"
+        )
+        if first_attempt_started is None:
+            first_attempt_started = started
+        if next_attempt_not_before is not None and started < next_attempt_not_before:
+            raise ValueError(
+                f"{attempt_label}.started_at omits the canonical retry backoff"
+            )
+        if completed < started:
+            raise ValueError(f"{attempt_label}.completed_at predates started_at")
+        terminal_attempt_completed = completed
+        duration = attempt.get("duration_ms")
+        if isinstance(duration, bool) or not isinstance(duration, int) or duration < 1:
+            raise ValueError(f"{attempt_label}.duration_ms must be a positive integer")
+        total_attempt_duration += duration
+        stdout = attempt.get("stdout")
+        stderr = attempt.get("stderr")
+        transcript = attempt.get("transcript")
+        if not isinstance(stdout, str) or not isinstance(stderr, str):
+            raise ValueError(f"{attempt_label}.stdout/stderr must be strings")
+        if transcript != f"STDOUT\n{stdout}\nSTDERR\n{stderr}":
+            raise ValueError(f"{attempt_label}.transcript must match stdout/stderr")
+        _validate_sha256(
+            attempt.get("transcript_sha256"),
+            label=f"{attempt_label}.transcript_sha256",
+        )
+        if attempt["transcript_sha256"] != text_hash(str(transcript)):
+            raise ValueError(f"{attempt_label}.transcript_sha256 does not match")
+        response = attempt.get("response")
+        model_output = attempt.get("model_output")
+        if not isinstance(response, str) or not isinstance(model_output, str):
+            raise ValueError(f"{attempt_label}.response/model_output must be strings")
+        exit_code = attempt.get("exit_code")
+        if isinstance(exit_code, bool) or not isinstance(exit_code, int):
+            raise ValueError(f"{attempt_label}.exit_code must be an integer")
+        error = attempt.get("error")
+        if error is not None and (not isinstance(error, str) or not error):
+            raise ValueError(f"{attempt_label}.error must be null or non-empty string")
+        metrics = _validate_metrics(
+            attempt.get("metrics"), label=f"{attempt_label}.metrics"
+        )
+        if metrics["duration_ms"] != duration:
+            raise ValueError(f"{attempt_label}.metrics.duration_ms must match attempt")
+        normalized_usage = normalized_usage_from_stdout(stdout, host_name=host_name)
+        if (
+            metrics["input_tokens"],
+            metrics["output_tokens"],
+        ) != normalized_usage:
+            raise ValueError(f"{attempt_label}.metrics must match normalized usage")
+        observations = attempt.get("observations")
+        observations_are_valid = False
+        if observations is not None:
+            try:
+                _validate_observations(
+                    observations,
+                    evidence_kind=evidence_kind,
+                    result_id=result_id,
+                )
+            except ValueError:
+                observations_are_valid = False
+            else:
+                observations_are_valid = True
+        has_valid_result = observations_are_valid
+        if evidence_kind == "routing":
+            extracted = PROTOCOL.extract_routing_result(stdout, response)
+            has_valid_result = extracted is not None
+            if extracted is None:
+                if model_output or observations is not None:
+                    raise ValueError(
+                        f"{attempt_label} records a result the host output does not contain"
+                    )
+            else:
+                extracted_output, extracted_observations = extracted
+                if (
+                    model_output != extracted_output
+                    or observations != extracted_observations
+                ):
+                    raise ValueError(
+                        f"{attempt_label} result does not match host response/stdout"
+                    )
+        classified = PROTOCOL.classify_transient_host_failure(
+            host_name,
+            exit_code=exit_code,
+            stdout=stdout,
+            stderr=stderr,
+            has_valid_result=has_valid_result,
+            input_tokens=metrics["input_tokens"],
+            output_tokens=metrics["output_tokens"],
+            contract=CONTRACTS,
+        )
+        if attempt.get("error_class") != classified:
+            raise ValueError(f"{attempt_label}.error_class is not canonical")
+        if attempt.get("retryable") is not (classified is not None):
+            raise ValueError(f"{attempt_label}.retryable is not canonical")
+        backoff = attempt.get("backoff_seconds_before_next")
+        if isinstance(backoff, bool) or not isinstance(backoff, int) or backoff < 0:
+            raise ValueError(
+                f"{attempt_label}.backoff_seconds_before_next must be non-negative"
+            )
+        is_terminal = index == len(attempts)
+        expected_backoff = (
+            0 if is_terminal else int(policy["backoff_seconds"][index - 1])
+        )
+        if backoff != expected_backoff:
+            raise ValueError(f"{attempt_label}.backoff_seconds_before_next is not canonical")
+        if not is_terminal and classified is None:
+            raise ValueError(f"{attempt_label} non-terminal attempt is not retryable")
+        total_backoff_seconds += backoff
+        next_attempt_not_before = completed + timedelta(seconds=backoff)
+
+    if first_attempt_started is None or terminal_attempt_completed is None:
+        raise ValueError(f"{label}.host_attempts cannot be empty")
+    if raw_started > first_attempt_started:
+        raise ValueError(f"{label}.started_at must not follow the first host attempt")
+    if raw_completed < terminal_attempt_completed:
+        raise ValueError(f"{label}.completed_at must include the terminal host attempt")
+
+    terminal = attempts[-1]
+    for key in (
+        "exit_code",
+        "stdout",
+        "stderr",
+        "model_output",
+        "transcript",
+        "transcript_sha256",
+        "observations",
+    ):
+        if raw.get(key) != terminal.get(key):
+            raise ValueError(f"{label} terminal attempt does not match raw {key}")
+    raw_metrics = _validate_metrics(raw.get("metrics"), label=f"{label}.metrics")
+    if raw_metrics.get("attempt_count") != len(attempts):
+        raise ValueError(f"{label}.metrics.attempt_count must match host_attempts")
+    if raw_metrics.get("retry_count") != len(attempts) - 1:
+        raise ValueError(f"{label}.metrics.retry_count must match host_attempts")
+    if (
+        raw_metrics["input_tokens"] != terminal["metrics"]["input_tokens"]
+        or raw_metrics["output_tokens"] != terminal["metrics"]["output_tokens"]
+    ):
+        raise ValueError(f"{label}.metrics token usage must match terminal attempt")
+    minimum_duration = total_attempt_duration + total_backoff_seconds * 1000
+    rounding_tolerance_ms = len(attempts)
+    if raw_metrics["duration_ms"] + rounding_tolerance_ms < minimum_duration:
+        raise ValueError(f"{label}.metrics.duration_ms omits attempts or backoff")
+    return terminal
 
 
 def _validate_observations(
@@ -1849,6 +2081,18 @@ def load_result_bundle(
             f"{path}: run_config.environment_policy_sha256 must match the canonical "
             "environment allowlist policy"
         )
+    _validate_sha256(
+        run_config.get("retry_policy_sha256"),
+        label=f"{path}: run_config.retry_policy_sha256",
+    )
+    expected_retry_hash = PROTOCOL.canonical_hash(
+        PROTOCOL.canonical_transient_retry_policy(str(host_name), CONTRACTS)
+    )
+    if run_config["retry_policy_sha256"] != expected_retry_hash:
+        raise ValueError(
+            f"{path}: run_config.retry_policy_sha256 must match the canonical "
+            "transient retry policy"
+        )
 
     attempt_id = run_config.get("attempt_id")
     try:
@@ -2044,6 +2288,8 @@ def load_result_bundle(
             != run_config.get("host_config_sha256")
             or condition["environment_policy_sha256"]
             != run_config.get("environment_policy_sha256")
+            or condition["retry_policy_sha256"]
+            != run_config.get("retry_policy_sha256")
             or condition["adjudication"] != adjudication
         ):
             raise ValueError(f"{path}: bundle condition differs from campaign")
@@ -2152,6 +2398,13 @@ def load_result_bundle(
                     f"{path}: result {result_id!r} raw {key} does not match "
                     "the result bundle"
                 )
+        _validate_host_attempts(
+            raw,
+            host_name=str(run_config["host_name"]),
+            evidence_kind=kind,
+            result_id=result_id,
+            label=f"{path}: result {result_id!r} raw",
+        )
         model_output = raw["model_output"]
         transcript = raw["transcript"]
         stdout = raw["stdout"]

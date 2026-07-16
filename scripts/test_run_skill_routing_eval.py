@@ -83,6 +83,74 @@ class RoutingRunnerTests(unittest.TestCase):
             (package / "SKILL.md").write_text(f"# {owner}\n", encoding="utf-8")
         return "c" * 64
 
+    def _invoke_one_case_with_host_responses(
+        self, root: Path, responses, *, sleep_side_effect=None
+    ):
+        """Invoke one case without a real host while retaining raw attempts."""
+
+        config = self._config(root)
+        case = config.cases[0]
+        raw_root = root / "raw"
+        raw_root.mkdir()
+        invocations = []
+
+        def fake_prepare(case_root: Path, **_kwargs):
+            case_root.mkdir(parents=True)
+            return case_root
+
+        def fake_environment(_host: str, isolated_home: Path):
+            isolated_home.mkdir(parents=True)
+            return {"HOME": str(isolated_home)}
+
+        def fake_subprocess(command, **kwargs):
+            index = len(invocations)
+            if index >= len(responses):
+                self.fail("runner exceeded the expected host invocation count")
+            response = responses[index]
+            invocations.append(
+                {
+                    "cwd": Path(kwargs["cwd"]),
+                    "home": Path(kwargs["env"]["HOME"]),
+                }
+            )
+            model_response = response.get("response")
+            if model_response is not None:
+                response_path = Path(
+                    command[command.index("--output-last-message") + 1]
+                )
+                response_path.write_text(
+                    json.dumps(model_response), encoding="utf-8"
+                )
+            return subprocess.CompletedProcess(
+                command,
+                response.get("exit_code", 1),
+                response.get("stdout", ""),
+                response.get("stderr", ""),
+            )
+
+        sleep = mock.Mock(side_effect=sleep_side_effect)
+        with mock.patch.object(
+            RUNNER, "_prepare_case_repo", side_effect=fake_prepare
+        ), mock.patch.object(
+            RUNNER, "_isolated_host_environment", side_effect=fake_environment
+        ), mock.patch.object(
+            RUNNER.subprocess, "run", side_effect=fake_subprocess
+        ), mock.patch.object(
+            RUNNER.time, "sleep", sleep
+        ):
+            outcome = RUNNER._invoke_case(
+                config,
+                case,
+                run_id="00000000-0000-4000-8000-000000000123",
+                host_version="codex-cli 9.9",
+                temp_root=root / "temporary",
+                skill_fixture=None,
+                raw_root=raw_root,
+            )
+
+        raw = json.loads(outcome.raw_path.read_text(encoding="utf-8"))
+        return outcome, raw, invocations, sleep
+
     def test_prompt_contains_only_natural_request_and_fixed_owner_enum(self) -> None:
         case = {
             "id": "secret-case-id",
@@ -431,7 +499,7 @@ class RoutingRunnerTests(unittest.TestCase):
             run_config = validator._validate_held_out_provenance.call_args.args[2]
             self.assertEqual("previous", run_config["variant"])
 
-    def test_success_writes_schema_v5_bundle_and_unique_hashed_raw_v2(self) -> None:
+    def test_success_writes_schema_v6_bundle_and_unique_hashed_raw_v3(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             config = self._config(root)
@@ -489,7 +557,7 @@ class RoutingRunnerTests(unittest.TestCase):
             self.assertIsNotNone(outcome.bundle_path)
             bundle = json.loads(outcome.bundle_path.read_text(encoding="utf-8"))
             uuid.UUID(bundle["run_id"])
-            self.assertEqual(5, bundle["schema_version"])
+            self.assertEqual(6, bundle["schema_version"])
             self.assertTrue(bundle["complete"])
             self.assertEqual("evals/routing-held-out.jsonl", bundle["run_config"]["dataset_path"])
             self.assertEqual(
@@ -530,8 +598,11 @@ class RoutingRunnerTests(unittest.TestCase):
                 "remote-plugin-disabled", bundle["run_config"]["permissions"]
             )
             self.assertRegex(bundle["run_config"]["host_config_sha256"], r"^[0-9a-f]{64}$")
+            self.assertRegex(
+                bundle["run_config"]["retry_policy_sha256"], r"^[0-9a-f]{64}$"
+            )
             self.assertEqual("deterministic", bundle["adjudication"]["method"])
-            self.assertEqual("5", bundle["adjudication"]["reviewer_version"])
+            self.assertEqual("6", bundle["adjudication"]["reviewer_version"])
             self.assertRegex(bundle["adjudication"]["config_sha256"], r"^[0-9a-f]{64}$")
 
             evidence_paths = [item["raw_evidence"] for item in bundle["results"]]
@@ -545,7 +616,7 @@ class RoutingRunnerTests(unittest.TestCase):
                     hashlib.sha256(raw_path.read_bytes()).hexdigest(),
                 )
                 raw = json.loads(raw_path.read_text(encoding="utf-8"))
-                self.assertEqual(2, raw["schema_version"])
+                self.assertEqual(3, raw["schema_version"])
                 self.assertEqual(0, raw["exit_code"])
                 self.assertTrue(raw["stdout"])
                 self.assertIn("stderr", raw)
@@ -557,6 +628,21 @@ class RoutingRunnerTests(unittest.TestCase):
                     hashlib.sha256(raw["transcript"].encode("utf-8")).hexdigest(),
                 )
                 self.assertEqual(raw["observations"], json.loads(raw["model_output"]))
+                self.assertEqual(1, raw["metrics"]["attempt_count"])
+                self.assertEqual(0, raw["metrics"]["retry_count"])
+                self.assertEqual(1, result["metrics"]["attempt_count"])
+                self.assertEqual(0, result["metrics"]["retry_count"])
+                self.assertEqual(
+                    bundle["run_config"]["retry_policy_sha256"],
+                    raw["retry_policy_sha256"],
+                )
+                self.assertEqual(1, len(raw["host_attempts"]))
+                host_attempt = raw["host_attempts"][0]
+                self.assertEqual(1, host_attempt["attempt_index"])
+                self.assertFalse(host_attempt["retryable"])
+                self.assertEqual(0, host_attempt["backoff_seconds_before_next"])
+                self.assertEqual(raw["stdout"], host_attempt["stdout"])
+                self.assertEqual(raw["observations"], host_attempt["observations"])
 
             baseline_bundle = json.loads(
                 baseline_outcome.bundle_path.read_text(encoding="utf-8")
@@ -569,6 +655,222 @@ class RoutingRunnerTests(unittest.TestCase):
                 baseline_bundle["run_config"]["skill_fixture_sha256"]
             )
             self.assertFalse(baseline_bundle["run_config"]["skills_installed"])
+
+    def test_exact_codex_capacity_then_success_retries_once_with_fresh_isolation(
+        self,
+    ) -> None:
+        capacity = "\n".join(
+            (
+                json.dumps({"type": "thread.started"}),
+                json.dumps(
+                    {
+                        "type": "error",
+                        "message": (
+                            "Selected model is at capacity. "
+                            "Please try a different model."
+                        ),
+                    }
+                ),
+                json.dumps(
+                    {
+                        "type": "turn.failed",
+                        "error": {
+                            "message": (
+                                "Selected model is at capacity. "
+                                "Please try a different model."
+                            )
+                        },
+                    }
+                ),
+            )
+        )
+        success_stdout = json.dumps(
+            {
+                "type": "turn.completed",
+                "usage": {"input_tokens": 15, "output_tokens": 3},
+            }
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            outcome, raw, invocations, sleep = (
+                self._invoke_one_case_with_host_responses(
+                    Path(temporary),
+                    (
+                        {"exit_code": 1, "stdout": capacity},
+                        {
+                            "exit_code": 0,
+                            "stdout": success_stdout,
+                            "response": {
+                                "actual_owner": "repo-map",
+                                "handoffs": [],
+                            },
+                        },
+                    ),
+                )
+            )
+
+        self.assertTrue(outcome.succeeded)
+        self.assertEqual(2, len(invocations))
+        self.assertNotEqual(invocations[0]["cwd"], invocations[1]["cwd"])
+        self.assertNotEqual(invocations[0]["home"], invocations[1]["home"])
+        self.assertEqual("attempt-1", invocations[0]["cwd"].name)
+        self.assertEqual("attempt-2", invocations[1]["cwd"].name)
+        self.assertEqual("attempt-1", invocations[0]["home"].name)
+        self.assertEqual("attempt-2", invocations[1]["home"].name)
+        sleep.assert_called_once_with(5)
+        self.assertEqual(2, raw["metrics"]["attempt_count"])
+        self.assertEqual(1, raw["metrics"]["retry_count"])
+        first, second = raw["host_attempts"]
+        self.assertEqual("model_capacity", first["error_class"])
+        self.assertTrue(first["retryable"])
+        self.assertEqual(5, first["backoff_seconds_before_next"])
+        self.assertIsNone(first["metrics"]["input_tokens"])
+        self.assertIsNone(first["metrics"]["output_tokens"])
+        self.assertIsNone(second["error_class"])
+        self.assertFalse(second["retryable"])
+        self.assertEqual(0, second["backoff_seconds_before_next"])
+        self.assertEqual(15, raw["metrics"]["input_tokens"])
+        self.assertEqual(3, raw["metrics"]["output_tokens"])
+
+    def test_near_match_capacity_error_does_not_retry(self) -> None:
+        near_match = json.dumps(
+            {"message": "Selected model is at capacity; please try again."}
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            outcome, raw, invocations, sleep = (
+                self._invoke_one_case_with_host_responses(
+                    Path(temporary),
+                    ({"exit_code": 1, "stdout": near_match},),
+                )
+            )
+
+        self.assertFalse(outcome.succeeded)
+        self.assertEqual(1, len(invocations))
+        sleep.assert_not_called()
+        self.assertEqual(1, raw["metrics"]["attempt_count"])
+        self.assertEqual(0, raw["metrics"]["retry_count"])
+        self.assertIsNone(raw["host_attempts"][0]["error_class"])
+        self.assertFalse(raw["host_attempts"][0]["retryable"])
+
+    def test_two_capacity_failures_stop_after_exactly_two_attempts(self) -> None:
+        capacity = json.dumps(
+            {
+                "message": (
+                    "Selected model is at capacity. "
+                    "Please try a different model."
+                )
+            }
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            outcome, raw, invocations, sleep = (
+                self._invoke_one_case_with_host_responses(
+                    Path(temporary),
+                    (
+                        {"exit_code": 1, "stderr": capacity},
+                        {"exit_code": 1, "stderr": capacity},
+                    ),
+                )
+            )
+
+        self.assertFalse(outcome.succeeded)
+        self.assertEqual(2, len(invocations))
+        sleep.assert_called_once_with(5)
+        self.assertEqual(2, raw["metrics"]["attempt_count"])
+        self.assertEqual(1, raw["metrics"]["retry_count"])
+        self.assertEqual(
+            ["model_capacity", "model_capacity"],
+            [attempt["error_class"] for attempt in raw["host_attempts"]],
+        )
+        self.assertEqual(
+            [5, 0],
+            [
+                attempt["backoff_seconds_before_next"]
+                for attempt in raw["host_attempts"]
+            ],
+        )
+
+    def test_completed_attempt_is_checkpointed_before_retry_backoff(self) -> None:
+        capacity = json.dumps(
+            {
+                "message": (
+                    "Selected model is at capacity. "
+                    "Please try a different model."
+                )
+            }
+        )
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            with self.assertRaisesRegex(InterruptedError, "interrupted backoff"):
+                self._invoke_one_case_with_host_responses(
+                    root,
+                    ({"exit_code": 1, "stdout": capacity},),
+                    sleep_side_effect=InterruptedError("interrupted backoff"),
+                )
+            raw_paths = list((root / "raw").glob("*.json"))
+            self.assertEqual(1, len(raw_paths))
+            raw = json.loads(raw_paths[0].read_text(encoding="utf-8"))
+
+        self.assertEqual(1, len(raw["host_attempts"]))
+        self.assertEqual("model_capacity", raw["host_attempts"][0]["error_class"])
+        self.assertEqual(5, raw["host_attempts"][0]["backoff_seconds_before_next"])
+        self.assertEqual(1, raw["metrics"]["attempt_count"])
+        self.assertEqual(0, raw["metrics"]["retry_count"])
+
+    def test_valid_route_or_token_bearing_capacity_failure_does_not_retry(
+        self,
+    ) -> None:
+        capacity_message = (
+            "Selected model is at capacity. Please try a different model."
+        )
+        scenarios = (
+            {
+                "name": "valid route",
+                "response": {"actual_owner": "repo-map", "handoffs": []},
+                "stdout": json.dumps({"message": capacity_message}),
+            },
+            {
+                "name": "token-bearing",
+                "stdout": "\n".join(
+                    (
+                        json.dumps({"message": capacity_message}),
+                        json.dumps(
+                            {
+                                "usage": {
+                                    "input_tokens": 12,
+                                    "output_tokens": 3,
+                                }
+                            }
+                        ),
+                    )
+                ),
+            },
+        )
+
+        for scenario in scenarios:
+            with self.subTest(scenario=scenario["name"]), tempfile.TemporaryDirectory() as temporary:
+                outcome, raw, invocations, sleep = (
+                    self._invoke_one_case_with_host_responses(
+                        Path(temporary),
+                        (
+                            {
+                                "exit_code": 1,
+                                "stdout": scenario["stdout"],
+                                "response": scenario.get("response"),
+                            },
+                        ),
+                    )
+                )
+
+            self.assertFalse(outcome.succeeded)
+            self.assertEqual(1, len(invocations))
+            sleep.assert_not_called()
+            self.assertEqual(1, raw["metrics"]["attempt_count"])
+            self.assertEqual(0, raw["metrics"]["retry_count"])
+            self.assertIsNone(raw["host_attempts"][0]["error_class"])
+            self.assertFalse(raw["host_attempts"][0]["retryable"])
 
     def test_claude_bundle_records_normalized_cache_inclusive_tokens(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

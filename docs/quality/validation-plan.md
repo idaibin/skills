@@ -85,10 +85,12 @@ recall.
 
 Retain the prompt, dataset hash, exact model and host, committed Skill revision,
 selected owner, handoffs, adjudication, raw output, duration, token counts when
-the host exposes them, prompt template, fixture, comparison-group identity, and isolated
-host-environment policy. Rebuild the prompt, adjudication, host policy, and
-non-sensitive environment allowlist policy from the machine contract; a bundle
-cannot introduce an arbitrary self-consistent hash.
+the host exposes them, prompt template, fixture, comparison-group identity,
+isolated host-environment policy, frozen retry-policy hash, ordered host-attempt
+evidence, and case-level attempt/retry counts. Rebuild the prompt,
+adjudication, host policy, transient retry policy, and non-sensitive
+environment allowlist policy from the machine contract; a bundle cannot
+introduce an arbitrary self-consistent hash.
 
 ### Authority Suite
 
@@ -130,12 +132,20 @@ Contract verification and comparative improvement are separate experiments.
   isolated HOME/config/Skill roots and one shared `comparison_group_id` per
   trial. Run matched groups in parallel when possible. If the host cannot do
   that, use randomized interleaving and record the limitation.
-- Before any held-out call, commit a schema-v1 campaign after the candidate
+- Before any held-out call, commit a schema-v2 campaign after the candidate
   anchor. It fixes the exact previous revision, no-Skill baseline revision,
   artifact root, dataset/provenance, condition, complete trial/group set, and
-  protocol hash. Each planned variant/trial slot permits one retained attempt;
-  a failure consumes the slot and requires a new campaign, not selection of a
-  replacement run.
+  protocol and retry-policy hashes. Each planned variant/trial slot permits one
+  retained formal attempt. Within that slot, the frozen policy permits at most
+  one additional Codex host invocation after a five-second backoff, and only
+  for the exact normalized JSON model-capacity message when the failed
+  invocation exits with code `1`, has no valid structured result, and no exposed
+  input or output token count. Both host invocations remain in raw schema `3`;
+  the retry does not create or replace a campaign slot. Timeouts, behavior or
+  scoring failures, invalid structured output, generic host failures,
+  near-match errors, valid results, and token-bearing failures are not
+  retried. An exhausted or otherwise failed formal attempt consumes the slot
+  and requires a new campaign, not selection of a replacement run.
 - Run the contract-defined minimum number of trials per condition. Report pass
   rate, duration, and token mean plus variation; retain every trial rather than
   selecting the best run.
@@ -160,7 +170,11 @@ Contract verification and comparative improvement are separate experiments.
 - When a host does not expose token counts, record `null`; do not estimate them.
   Reported input and output counts must be positive; zero is unavailable or
   invalid for a successful non-empty model invocation. Total tokens are
-  reported but are not the Skill-discovery efficiency gate.
+  reported but are not the Skill-discovery efficiency gate. A capacity failure
+  is retryable only when both counts are `null`; token-bearing failures remain
+  terminal. Every host attempt keeps its own token fields, while case-level
+  tokens mirror the terminal attempt and `attempt_count`/`retry_count` disclose
+  the retry separately.
   Subtract the matched no-Skill input total from candidate and previous input
   totals, then compare those marginal Skill overheads. The metric is unavailable
   if any group member lacks token data, any marginal overhead is negative, or
@@ -190,7 +204,8 @@ Contract verification and comparative improvement are separate experiments.
 - Formal held-out scoring and replay require the contract, runner, evaluator,
   comparator, validator, and shared protocol module to match their blobs at the
   campaign's evaluation anchor. The manifest and every claim bind the campaign
-  and protocol revision/hash.
+  and protocol revision/hash; each bundle and raw record must also match the
+  campaign's canonical `retry_policy_sha256`.
 - Every verified claim is scoped to one dimension, kind, host name/version,
   exact model, candidate/previous/baseline revisions, dataset hash, and Skill inventory.
   Routing claims additionally bind the evaluation anchor, dataset commit, and
@@ -203,7 +218,11 @@ Contract verification and comparative improvement are separate experiments.
 - Do not add public Skills or weaken score gates to improve a metric.
 
 The campaign artifact root is append-only under the trusted evaluator process:
-the comparator rejects missing, extra, duplicate, or failed attempts. Local
+the comparator rejects missing, extra, duplicate, or failed formal attempts.
+Raw evidence schema `3` preserves every within-slot host attempt, and result
+schema `6`, comparison report schema `4`, plus reviewer version `6` validate
+its classification, backoff, terminal mirrors, retry counts, and token
+semantics. Local
 hashes cannot stop an operator from deleting an uncommitted failed directory;
 nor can they discover unreported preliminary calls or selection among multiple
 campaigns. Every campaign and complete artifact root must be preserved and

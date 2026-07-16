@@ -38,7 +38,7 @@ metrics; scored observations come from the referenced raw evidence file:
 
 ```json
 {
-  "schema_version": 5,
+  "schema_version": 6,
   "run_id": "UUID",
   "model": "exact model identifier",
   "host": "exact host and version",
@@ -78,12 +78,13 @@ metrics; scored observations come from the referenced raw evidence file:
     "prompt_template": "Template with one <NATURAL_REQUEST_JSON> placeholder",
     "prompt_template_sha256": "sha256 of the exact prompt template",
     "host_config_sha256": "sha256 of the canonical host configuration",
-    "environment_policy_sha256": "sha256 of allowed variable names and isolated overrides, never secret values"
+    "environment_policy_sha256": "sha256 of allowed variable names and isolated overrides, never secret values",
+    "retry_policy_sha256": "sha256 of the canonical host-specific transient retry policy"
   },
   "adjudication": {
     "method": "deterministic",
     "reviewer": "exact verifier or reviewer identifier",
-    "reviewer_version": "version",
+    "reviewer_version": "6",
     "config_sha256": "sha256 of the adjudication configuration"
   },
   "results": [
@@ -94,24 +95,35 @@ metrics; scored observations come from the referenced raw evidence file:
       "metrics": {
         "duration_ms": 1250,
         "input_tokens": null,
-        "output_tokens": null
+        "output_tokens": null,
+        "attempt_count": 1,
+        "retry_count": 0
       }
     }
   ]
 }
 ```
 
-Result schema `5` and routing-runner reviewer version `5` define the current
+Result schema `6`, raw-evidence schema `3`, campaign schema `2`, comparison
+report schema `4`, and routing-runner reviewer version `6` define the current
 three-condition comparison group, necessary-handoff prompt semantics,
 cache-inclusive token accounting, preregistered campaign, frozen protocol,
-attempt ledger, and OpenAI-supported response-schema subset.
+attempt ledger, bounded transient-capacity retry, and OpenAI-supported
+response-schema subset.
 Earlier result bundles fail closed and cannot support a current marginal
 Skill-input efficiency claim.
 
 Every raw routing record contains the matching run, case, source-prompt hash,
 exact invocation prompt and hash, model, and host identifiers; verbatim stdout,
-stderr, model output, and a transcript rebuilt from stdout/stderr; the exit
-code; parsed `actual_owner` and `handoffs`; and the same metrics mirrored by the bundle. The
+stderr, model output, start/completion timestamps, and a transcript rebuilt from stdout/stderr; the exit
+code; parsed `actual_owner` and `handoffs`; the frozen `retry_policy_sha256`;
+and an ordered `host_attempts` list containing the timestamps, transcript and
+hash, response, observations, error classification, backoff, and token metrics
+for every host invocation. Top-level raw output and tokens mirror the terminal
+host attempt, while `attempt_count` and `retry_count` expose whether the single
+permitted retry occurred. The same metrics are mirrored by the bundle. The
+runner atomically checkpoints each completed host attempt before any backoff or
+next invocation, so an interrupted formal slot retains the last completed call.
 loader rebuilds the invocation from the recorded template and dataset prompt,
 then recomputes cache-aware token usage from stdout before accepting metrics.
 Authority and workflow records additionally retain the execution trace,
@@ -147,13 +159,14 @@ retaining the project-local committed Skill fixture. Successful output is
 loaded and scored again through the production evaluator before the runner
 reports success.
 
-Formal held-out execution requires `--campaign`. A schema-v1 campaign is a
+Formal held-out execution requires `--campaign`. A schema-v2 campaign is a
 committed JSON file created after the candidate anchor. It fixes the campaign
 UUID, unique repository-relative artifact root, candidate/evaluation anchor,
 one explicit strict-ancestor previous revision, no-Skill baseline revision,
 dataset and provenance paths/hashes/commits, exact host/model/timeout/concurrency,
 the complete ordered trial-to-group-ID set, canonical prompt/adjudication/host
-and environment-policy hashes, and the evaluation-protocol manifest. The
+and environment-policy hashes, the canonical `retry_policy_sha256`, and the
+evaluation-protocol manifest. The
 protocol hashes the contract, runner, evaluator, comparator, validator, and
 shared protocol module at the anchor. Formal run, score, comparison, and
 manifest replay fail if any current protocol blob differs from that anchor.
@@ -190,23 +203,36 @@ variable allowlist and fixed overrides, including required executable-toolchain
 roots such as `VOLTA_HOME`, but not the actual PATH, toolchain-root, proxy,
 locale, or certificate values. Run the group from one controlled parent
 environment and record any runtime drift. Run matched groups in parallel when
-the host supports it and record any randomized-interleaving fallback. Each campaign
-slot permits one attempt. The runner writes `attempt.json` before calling the
-host; a failed or interrupted attempt consumes that slot. Preserve the complete
-artifact root and create a new post-anchor campaign instead of retrying under a
-different group ID. The comparator requires exactly every planned
+the host supports it and record any randomized-interleaving fallback. Each
+campaign slot permits one formal attempt. Within that attempt, the canonical
+policy permits at most one additional host invocation, after a five-second
+backoff, only when Codex exits with code `1` and contains the exact normalized JSON
+`message` `Selected model is at capacity. Please try a different model.`, no
+valid structured result exists, and no input or output token count was exposed.
+Claude currently has no retryable error class. Timeouts, behavior failures,
+invalid structured output, generic host failures, near-match messages, valid
+results, and token-bearing failures are never retried. Both host invocations
+remain in the raw record; the retry does not create or replace a campaign slot.
+
+The runner writes `attempt.json` before calling the host; a failed or
+interrupted formal attempt consumes that slot. Preserve the complete artifact
+root and create a new post-anchor campaign instead of retrying under a
+different group ID or selecting a replacement result. The comparator requires
+exactly every planned
 candidate/previous/baseline slot, no extra or failed attempt, and the exact
 campaign revisions and group IDs. Use the contract-defined minimum trials per
 condition and retain raw trace,
 duration, token counts when available, outcome grade, verifier output, and
 workspace diff.
 
-Attempt status and Skill score are different. `attempt.status=success` means a
-complete, schema-valid bundle was captured; the Skill can still score `FAIL`,
-and that result is not an infrastructure retry. Only an interrupted or invalid
-capture consumes the campaign as a failed attempt and requires a new campaign.
-Retain the failed campaign and record its successor in the evaluation notes;
-do not choose among multiple campaigns after inspecting scores.
+Formal-attempt status and Skill score are different.
+`attempt.status=success` means a complete, schema-valid bundle was captured;
+the Skill can still score `FAIL`, and behavior or scoring failure is never a
+retry trigger. If the one exact capacity retry is exhausted, or the capture is
+interrupted or invalid for any other reason, the formal attempt remains failed
+and consumes the campaign slot. Retain the failed campaign and record its
+successor in the evaluation notes; do not choose among multiple campaigns
+after inspecting scores.
 
 A held-out routing file and its provenance record must be introduced together
 in one post-anchor commit, have no other post-anchor path history, and must not
@@ -252,8 +278,13 @@ the contract, full-case outcome does not regress against the previous Skill,
 and at least one scoped improvement dimension reaches its preregistered gate.
 
 Reported input and output token counts must be positive; zero is unavailable or
-invalid for a successful non-empty model invocation. Total tokens remain
-visible but are not a discovery-efficiency gate. The live
+invalid for a successful non-empty model invocation. A capacity response is
+retryable only when both token counts are `null`; if either count is present,
+the failure is retained without retry. The case-level token fields mirror the
+terminal host attempt, and every host attempt retains its own fields. Therefore
+the earlier capacity invocation contributes no tokens to the case total only
+because the host exposed none; its raw evidence and retry count remain visible.
+Total tokens remain visible but are not a discovery-efficiency gate. The live
 Skill-context metric uses input tokens only and subtracts the matched no-Skill
 condition from both candidate and previous totals. It is available only when
 all three conditions expose tokens, every per-group marginal overhead is

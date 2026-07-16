@@ -102,8 +102,12 @@ specific filename.
   input efficiency.
 - Preregister formal held-out trials in a committed post-anchor campaign and
   freeze the contract, runner, scorer, comparator, validator, canonical prompt,
-  adjudication, host/environment policy, revisions, and full attempt set before
-  any model call.
+  adjudication, host/environment/retry policy, revisions, and full attempt set
+  before any model call.
+- Permit at most one within-slot host retry, only for the exact canonical Codex
+  model-capacity JSON error with no valid result and no exposed token counts;
+  retain both attempts and never retry behavior, structured-output, timeout, or
+  generic host failures.
 - Review official sources on a recorded cadence and update contracts, fixtures,
   tests, and documentation together when the external baseline changes.
 
@@ -137,7 +141,15 @@ data when exposed by the host, outcome grading, and workspace-diff evidence.
 The current hash binds the environment-variable allowlist and fixed isolation
 overrides, including required executable-toolchain roots such as `VOLTA_HOME`,
 not the actual PATH, toolchain-root, proxy, locale, or certificate values; that
-runtime drift remains visible only through trusted execution records. See
+runtime drift remains visible only through trusted execution records. A
+separate frozen `retry_policy_sha256` binds the one-retry limit, backoff, host,
+and exact capacity classifier. Result schema `6`, raw-evidence schema `3`,
+campaign schema `2`, comparison report schema `4`, and reviewer version `6`
+require ordered evidence for every host attempt plus case-level attempt and
+retry counts. Capacity is
+retryable only when no valid structured result and no input or output token
+count exists; terminal case tokens mirror the final host attempt, while all
+per-attempt token fields remain auditable. See
 [`validation-plan.md`](validation-plan.md) and [`status.md`](status.md).
 
 Recorded hashes provide tamper evidence under a trusted evidence producer; they
