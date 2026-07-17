@@ -1,0 +1,19 @@
+version: 1
+revision: 1
+status: not-verified
+deterministic:
+  results: []
+hard_blockers: []
+scores:
+  product_truth: 0
+  user_task: 0
+  information_architecture: 0
+  visual_coherence: 0
+  components_layout: 0
+  interaction_states: 0
+  engineering_fit: 0
+  evidence: 0
+total: 0
+decision: pending
+reviewer: pending-human-review
+gaps: []

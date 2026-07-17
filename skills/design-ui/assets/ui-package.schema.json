@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aicraft.local/schemas/ui-package.v1.json",
+  "title": "AICraft UI design package",
+  "type": "object",
+  "required": [
+    "profile.yaml",
+    "references.yaml",
+    "task.yaml",
+    "design-tokens.json",
+    "component-map.json",
+    "evaluation.yaml",
+    "artifact-manifest.yaml"
+  ],
+  "properties": {
+    "profile.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "product", "layout", "surface", "implementation"]
+    },
+    "references.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "references"],
+      "properties": {
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "source", "rights_status", "use", "ignore"]
+          }
+        }
+      }
+    },
+    "task.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "task", "scope", "facts", "validation", "budget"]
+    },
+    "design-tokens.json": {
+      "type": "object",
+      "required": ["version", "revision", "source"]
+    },
+    "component-map.json": {
+      "type": "object",
+      "required": ["version", "revision", "components"]
+    },
+    "evaluation.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "deterministic", "hard_blockers", "scores", "decision"]
+    },
+    "artifact-manifest.yaml": {
+      "type": "object",
+      "required": ["version", "artifact", "source", "inputs", "outputs", "evaluation", "approval", "rollback"]
+    }
+  }
+}

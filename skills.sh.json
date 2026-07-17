@@ -22,6 +22,13 @@
       ]
     },
     {
+      "title": "Design",
+      "description": "Skill for evidence-grounded UI profiles, references, task assets, tokens, and evaluation contracts before implementation.",
+      "skills": [
+        "design-ui"
+      ]
+    },
+    {
       "title": "Implementation",
       "description": "Skills that own requested source-code implementation and refactoring within their domains.",
       "skills": [

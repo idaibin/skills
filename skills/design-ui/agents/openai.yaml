@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI Design"
+  short_description: "Create evidence-backed UI briefs, tokens, and assets"
+  default_prompt: "Use $design-ui to turn project evidence and scoped references into a versioned UI profile, task brief, tokens, component map, and evaluation contract."

@@ -25,6 +25,7 @@
 | `Review the whole local dirty tree and prepare exact staging.` | Prefer `repo-review`. |
 | `Review this entire repository range and coordinate frontend, Rust, security, CI, and docs.` | Prefer `repo-review`, which may delegate bounded frontend paths. |
 | `Stage and commit the accepted frontend fix.` | Prefer `repo-delivery`. |
+| `Create a new UI profile, scoped reference registry, tokens, and task brief before implementation.` | Prefer `design-ui`. |
 
 ## Scenario Eval
 

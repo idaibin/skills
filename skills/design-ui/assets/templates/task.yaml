@@ -1,0 +1,42 @@
+version: 1
+revision: 1
+task:
+  id: surface-redesign
+  project: project-name
+  surface: route-or-window
+  goal: Complete the primary user job with the accepted UI direction.
+scope:
+  include:
+    - target-ui-surface
+  exclude:
+    - backend-contract-changes
+facts:
+  available:
+    - repository-confirmed-capabilities
+  unavailable:
+    - invented-capabilities
+references: []
+required_states:
+  - loading
+  - empty
+  - error
+  - populated
+validation:
+  target_sizes:
+    - 1440x900
+  deterministic:
+    - repository-build
+    - no-material-overflow
+    - no-console-errors
+acceptance: []
+budget:
+  max_variants: 4
+  max_generation_rounds: 3
+  max_runtime_runs: 5
+  max_duration_minutes: 40
+  max_cost_usd: 3
+  max_artifact_storage_mb: 200
+recovery:
+  preserve_last_accepted_revision: true
+  allow_resume: true
+  allow_rollback: true

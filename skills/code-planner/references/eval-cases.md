@@ -26,6 +26,7 @@ Use these cases when changing `code-planner` triggers, task contracts, owner mod
 | `Open the app in a browser and check console/network errors.` | Should prefer `ops-browser`. | Browser operation task. |
 | `Fix this button style directly.` | Should not require `code-planner` unless planning is requested. | Simple implementation. |
 | `Define the meaning, identity, lifecycle, and invariants of Alert and Observation, but do not design code.` | Should prefer `domain-modeling`. | Business model without technical planning. |
+| `Create a UI profile, reference registry, task tokens, and visual evaluation contract before implementation.` | Should prefer `design-ui`. | UI design asset ownership. |
 
 ## Quality Eval
 

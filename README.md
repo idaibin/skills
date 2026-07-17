@@ -93,7 +93,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill repo-map domain-modeling code-planner diagnose repo-review repo-delivery audit-security chatgpt-review implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
+  --skill repo-map domain-modeling code-planner diagnose repo-review repo-delivery design-ui audit-security chatgpt-review implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
 ```
 
 List available skills without installing:
@@ -112,6 +112,7 @@ rename migration, see [`INSTALL.md`](INSTALL.md).
 | `repo-map` | Maintaining the smallest useful semantic repository map of real boundaries, commands, task routes, and verified reusable components, functions, types, or APIs. |
 | `domain-modeling` | Clarifying business language, entities, relationships, lifecycle, invariants, scenarios, and bounded contexts before technical design. |
 | `code-planner` | Turning requirements into grounded specifications, technical design, acceptance criteria, vertical task slices, and validation gates. |
+| `design-ui` | Producing versioned UI profiles, scoped reference rules, task briefs, tokens, component maps, and evaluation contracts before implementation. |
 | `diagnose` | Reproducing technical failures, isolating variables, confirming root causes, and handing verified remediation to the matching implementation skill. |
 | `repo-review` | Read-only review of local worktrees, fixed commits/ranges, PRs, releases, or review packages, with basis-specific ownership/readiness or P0-P3 findings. |
 | `repo-delivery` | Delivering reviewed local changes with path-limited staging, commits, pushes, branch sync, squash-to-main, cleanup, and remote proof. |

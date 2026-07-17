@@ -7,6 +7,7 @@ Install only these skill package directories:
 - `skills/repo-map`
 - `skills/domain-modeling`
 - `skills/code-planner`
+- `skills/design-ui`
 - `skills/diagnose`
 - `skills/repo-review`
 - `skills/repo-delivery`
@@ -51,7 +52,7 @@ Install selected skills:
 
 ```bash
 npx skills add https://github.com/idaibin/aicraft \
-  --skill repo-map domain-modeling code-planner diagnose repo-review repo-delivery audit-security chatgpt-review implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
+  --skill repo-map domain-modeling code-planner diagnose repo-review repo-delivery design-ui audit-security chatgpt-review implement-frontend implement-rust audit-frontend audit-rust ops-browser ops-client human-writing
 ```
 
 For multiple selected skills, pass the names after `--skill` as shown above.

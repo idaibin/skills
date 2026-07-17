@@ -1,0 +1,13 @@
+version: 1
+revision: 1
+references:
+  - id: reference-01
+    source: local-or-https-source
+    rights_status: reference-only
+    local_copy_allowed: false
+    use:
+      - layout-hierarchy
+    ignore:
+      - brand
+      - business-content
+      - unverified-functionality

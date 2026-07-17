@@ -13,7 +13,7 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions.
-3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing.
+3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When an accepted `design-ui` package exists, verify its revisions and consume its fact boundary, tokens, component map, and acceptance contract.
 4. Read the approved requirement/specification when one exists. Confirm acceptance criteria, non-goals, affected contracts/files, and validation seams; for complex work without a usable specification, stop and route planning to `code-planner`.
 5. Consume a current `repo-map` inventory or perform the same targeted search for existing routes, pages, layouts, components, hooks or composables, services, stores, shared UI, tests, and analogous implementations.
 6. Decide in order: directly reuse, adapt the nearest reference, or create new. Record why existing candidates are insufficient before adding a file or abstraction.
@@ -39,6 +39,7 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 - First-pass repository discovery, real commands, or entry points; use `repo-map`.
 - Future task decomposition or multi-agent implementation planning; use `code-planner`.
 - Business terminology, lifecycle, or invariant modeling; use `domain-modeling` before planning when those questions remain unresolved.
+- UI direction, project profiles, reference responsibilities, task briefs, tokens, or evaluation contracts without source edits; use `design-ui`.
 - Dirty-tree ownership, mixed-hunk review, staging plans, or commit readiness; use `repo-review`.
 - Actual staging, commit creation, rebase/squash, push, or delivery; use `repo-delivery` after review.
 - Systematic frontend architecture, reuse, state/data, accessibility, performance, or Tauri-boundary audit without requested edits; use `audit-frontend`.

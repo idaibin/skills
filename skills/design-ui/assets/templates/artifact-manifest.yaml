@@ -1,0 +1,34 @@
+version: 1
+artifact:
+  id: project-surface-redesign
+  revision: 1
+source:
+  repository: repository-name
+  ref: branch-or-commit
+inputs:
+  profile_revision: 1
+  task_revision: 1
+  reference_revision: 1
+  rubric_revision: 1
+generation:
+  provider: not-used
+  model: not-used
+  generated_at: null
+outputs:
+  profile: docs/ui/profile.yaml
+  references: docs/ui/references.yaml
+  task: artifacts/ui/surface-redesign/task.yaml
+  tokens: artifacts/ui/surface-redesign/design-tokens.json
+  component_map: artifacts/ui/surface-redesign/component-map.json
+  evaluation: artifacts/ui/surface-redesign/evaluation.yaml
+evaluation:
+  score: null
+  status: not-verified
+approval:
+  approved_by: null
+  approved_at: null
+cost:
+  usd: 0
+  duration_minutes: 0
+rollback:
+  accepted_revision: null

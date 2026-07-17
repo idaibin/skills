@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "revision": 1,
+  "components": {
+    "surface-root": {
+      "decision": "reuse",
+      "source": "repository-native-owner",
+      "reason": "Preserve the existing shell and layout contract."
+    }
+  }
+}

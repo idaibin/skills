@@ -41,6 +41,7 @@ Use these cases when changing `implement-frontend` triggers, stack guidance, lay
 | `Verify this page in the browser and check console/network.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Capture the real Electron app window with platform-specific window evidence.` | Should prefer `ops-client`. | Desktop-client evidence. |
 | `These frontend changes are reviewed; stage, commit, and push them.` | Should prefer `repo-delivery`. | Authorized Git mutation after review. |
+| `Create the UI direction, project profile, reference responsibilities, task tokens, and rubric, but do not edit product source.` | Should prefer `design-ui`. | UI design asset ownership. |
 
 ## Quality Eval
 

@@ -50,6 +50,7 @@ MIN_NON_TRIGGER_CASES = 3
 MIN_QUALITY_CASES = 4
 QUALITY_CATEGORIES = {
     "Core Engineering",
+    "Design",
     "Implementation",
     "Specialist Audit",
     "Runtime Operations",

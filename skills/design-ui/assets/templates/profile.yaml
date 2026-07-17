@@ -1,0 +1,38 @@
+version: 1
+revision: 1
+product:
+  name: project-name
+  type: product-type
+  platform: web
+  audience:
+    - primary-user
+  primary_job: Complete the target workflow.
+principles:
+  - factual-over-decorative
+layout:
+  shell: repository-native
+  content_owner: page-root
+  scroll_owner: main-content
+  target_sizes:
+    - 1440x900
+surface:
+  theme: system
+  material: repository-native
+typography:
+  display: repository-display
+  body: repository-body
+  utility: repository-utility
+density: medium
+preferred_patterns: []
+restricted_patterns: []
+required_states:
+  - loading
+  - empty
+  - error
+  - populated
+implementation:
+  preserve_routes: true
+  preserve_data_contracts: true
+  preserve_component_system: true
+  invented_capabilities: prohibited
+avoid: []
