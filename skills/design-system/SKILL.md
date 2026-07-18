@@ -1,6 +1,6 @@
 ---
 name: design-system
-description: "Use when a project needs an evidence-grounded design system created, extracted, maintained, or evaluated as versioned profiles, references, tokens, component maps, task briefs, and acceptance contracts before frontend source implementation."
+description: "Use when a project needs an evidence-grounded design system or intentional visual direction created, extracted, maintained, or evaluated as versioned profiles, tokens, component maps, task briefs, and acceptance contracts before frontend implementation."
 ---
 
 # Design System
@@ -16,7 +16,7 @@ Turn product facts, existing UI evidence, and explicitly scoped references into 
 3. Inspect the smallest useful set of current screenshots, routes, components, tokens, DTOs, and analogous surfaces. Say `Not found` or `Not verified` for missing evidence.
 4. Select one primary mode: **create**, **extract**, **maintain**, **task**, or **evaluate**. Supporting outputs may be included only when needed by that mode.
 5. Assign each reference an explicit `use` and `ignore` list plus source and rights status. Never treat a reference as authorization to copy brand, content, or functionality.
-6. Create one coherent visual direction: named palette, typography roles, layout concept, density, material, interaction tone, and one justified signature element. Preserve product truth over decoration.
+6. Create one coherent, subject-specific visual direction: named palette, typography roles, layout concept, density, material, interaction tone, and one justified signature element. Reject interchangeable AI-design defaults and preserve product truth over decoration. Load `references/visual-direction.md` when creating or materially reshaping that direction.
 7. Treat `assets/ui-package.schema.json` as the package contract, then produce or update the project profile, task brief, reference registry, design tokens, component map, evaluation, and manifest from `assets/templates/`.
 8. Separate deterministic acceptance checks from visual or experience judgment. Apply hard blockers before weighted scoring.
 9. Version every input and output in the manifest. Never overwrite the last accepted revision without preserving rollback.
@@ -57,6 +57,7 @@ Report the selected mode, evidence basis, product/audience/job, fact boundary, r
 
 - See [references/usage.md](references/usage.md) for routing and artifact examples.
 - See [references/workflow.md](references/workflow.md) for design and handoff details.
+- See [references/visual-direction.md](references/visual-direction.md) for distinctive visual direction, interface writing, motion, restraint, and self-critique.
 - See [references/artifact-contract.md](references/artifact-contract.md) for fields and version rules.
 - See [references/evaluation-rubric.md](references/evaluation-rubric.md) for blockers and scoring.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

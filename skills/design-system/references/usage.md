@@ -6,10 +6,13 @@
 - extracting durable rules from existing code, screenshots, tokens, and components;
 - maintaining an accepted profile without overwriting its history;
 - defining one page, window, tray, flow, or component redesign before code;
+- creating a distinctive visual direction grounded in the product's subject, audience, and real work;
 - explaining what to use and ignore from one or more reference images;
 - deriving project-compatible tokens without creating a competing owner;
 - comparing variants with deterministic gates, a weighted rubric, cost, and a recorded decision;
 - preparing a complete design package for `implement-frontend`.
+
+This Skill absorbs visual-direction guidance but does not own frontend source mutation. A request to design the contract and implement it routes from `design-system` to `implement-frontend`; a request to code an already accepted direction starts with `implement-frontend`.
 
 ## Typical chain
 

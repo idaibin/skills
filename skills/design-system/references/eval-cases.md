@@ -9,6 +9,7 @@
 | `Update the accepted design profile for the new dense-data surface and preserve the rollback revision.` | Trigger Maintain mode. |
 | `Use image A only for material and B only for layout; produce tokens and a task brief.` | Trigger Task mode with explicit use/ignore and rights fields. |
 | `Design a new operations page from real routes and DTOs, but do not edit source yet.` | Trigger Task mode and preserve fact boundaries. |
+| `Give this new product a distinctive visual direction rooted in its audience and subject, then define the tokens, states, and acceptance contract before code.` | Trigger Create or Task mode, reject interchangeable defaults, and keep source mutation out of scope. |
 | `Compare these three UI variants with deterministic gates, cost, and a 100-point rubric.` | Trigger Evaluate mode. |
 
 ## Non-Trigger Eval
@@ -30,6 +31,9 @@
 | Mode | selects create, extract, maintain, task, or evaluate and applies its evidence baseline | blends modes until ownership and acceptance are unclear |
 | Reference scope | every reference has source, rights, use, and ignore | says only `make it look like this` |
 | Direction | defines palette, type roles, layout, material, density, and one product-rooted signature | defaults to unrelated neon, glass, hero, or KPI cards |
+| Differentiation | traces the visual thesis and one justified aesthetic risk to the subject, then removes interchangeable or unsupported decoration | copies a fashionable preset or spends boldness across unrelated effects |
+| Interface language | uses recognizable concepts, consistent action names, and actionable empty/error states | uses generic labels, filler copy, or contradictory action vocabulary |
+| Responsive interaction | specifies target sizes, focus, reduced motion, overflow, and realistic content behavior | treats one polished desktop screenshot as a complete design |
 | Project isolation | durable style lives in the project profile, not the reusable Skill | hardcodes one product's colors or geometry in the Skill |
 | Reuse | component map checks existing owners before adapt/create | creates another kit or token layer |
 | Fact boundary | distinguishes available and unavailable product capabilities | turns visual references into features |

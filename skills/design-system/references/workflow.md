@@ -29,9 +29,11 @@ Define:
 - **Type:** display, body, and utility/data roles using available project fonts.
 - **Layout:** shell, content owner, density, focus, scroll owner, and target sizes.
 - **Material:** solid, translucent, native, or mixed with explicit limits.
+- **Motion:** one coherent motion idea tied to state, hierarchy, or subject, with a reduced-motion alternative.
 - **Signature:** one memorable detail rooted in the product's actual work.
+- **Language:** user-recognizable terms, consistent action names, and actionable empty/error states.
 
-Critique the direction before creating assets. Replace any decision that could be pasted unchanged into an unrelated dashboard or desktop utility.
+Critique the direction before creating assets. Replace any decision that could be pasted unchanged into an unrelated dashboard or desktop utility. Spend visual boldness on one justified signature, remove unsupported decoration, and reject a direction whose complexity exceeds the implementation budget. Load `visual-direction.md` for the full direction and self-critique method.
 
 ## Artifact pass
 
