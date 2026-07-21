@@ -22,8 +22,11 @@ RFC, feature, requirements, or product directory already owns the fact.
   visual-system ownership belongs to `ui-design`.
 - Handoff: only for unfinished cross-session continuation. Follow repository
   convention, such as `.codex/handoffs/<task-id>.md` for local task/worktree state
-  or a repository-approved docs location for team-shared continuation. A handoff is
-  not automatically loaded and is not a substitute for durable product facts.
+  or a repository-approved docs location for explicitly requested team-shared
+  continuation. Before writing a local handoff, verify that its directory is ignored;
+  use an existing ignored workspace or request authorization to add the ignore rule
+  instead of silently changing tracked policy. A handoff is not automatically loaded
+  and is not a substitute for durable product facts.
 
 ## Authority
 

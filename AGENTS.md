@@ -17,9 +17,11 @@ This file defines how AI agents should work on this repository. It is not the pr
 - Use `ask-chatgpt` for local ChatGPT packages or explicitly authorized ChatGPT review, research, visual exploration, and decision challenge after the Codex-first gate; use `ops-browser` only for delegated low-level browser operations.
 - Use `repo-delivery` for categorized commits by default, explicit single commits, pushes, evidence-based branch integration, cleanup, and other Git mutations.
 
-Store raw local review packages, external responses, ledgers, and attachments under
-`.codex/reviews/<review-id>/`; `.codex/reviews/` is ignored. Put only explicitly approved,
-sanitized, durable review evidence under `docs/history/reviews/` or `docs/quality/`.
+Use `.codex/` as the local task workspace. Store unfinished cross-session continuation
+under `.codex/handoffs/<task-id>.md` and raw review packages, external responses,
+ledgers, and attachments under `.codex/reviews/<review-id>/`; both subdirectories are
+ignored. Put only explicitly approved, sanitized, durable handoffs or review evidence
+under the repository's established `docs/` structure.
 
 ## Repository Work Rules
 

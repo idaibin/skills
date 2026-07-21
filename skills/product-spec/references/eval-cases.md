@@ -56,6 +56,7 @@
 | Evidence states | Separates Confirmed, Assumption, Open, Rejected, and Deferred. | Hides assumptions as requirements. |
 | Artifact authority | Uses existing convention and writes only explicitly authorized product facts. | Overwrites or invents an authority. |
 | Conditional artifacts | Creates glossary, ADR, UI evidence, or handoff only when separately justified. | Treats them as minimum output. |
+| Local handoff visibility | Writes an unfinished local continuation to a verified ignored `.codex/handoffs/<task-id>.md`; uses a repository-approved docs location only for explicitly requested team-shared continuation. | Tracks a local-private handoff, silently edits ignore policy, or treats a handoff as durable product authority. |
 | Domain boundary | Keeps slice-local rules and routes deep shared modeling. | Absorbs `domain-modeling`. |
 | Design boundary | Keeps feature UI states and routes shared visual-system ownership. | Absorbs `ui-design`. |
 | Planning boundary | Leaves technical decomposition to host planning when product behavior is decided. | Captures every planning request. |

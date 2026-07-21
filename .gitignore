@@ -3,4 +3,5 @@ archive.zip
 eval-results/
 __pycache__/
 *.py[cod]
+.codex/handoffs/
 .codex/reviews/
