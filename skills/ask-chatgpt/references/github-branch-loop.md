@@ -8,8 +8,8 @@ Confirm:
 - branch, upstream, base, and remote
 - dirty state and unrelated changes
 - allowed files and validation commands
-- outbound `review-package.md` path and whether an existing file may be replaced
-- inbound external-response `review.md` path
+- ignored review directory, normally `.codex/reviews/<review-id>/`
+- outbound `review-package.md` and inbound external-response `review.md` paths inside it, plus whether an existing artifact set may be replaced
 
 Use local `git` first. Use `gh` or GitHub tooling only when PR, CI, compare URL, or remote metadata is needed. Mark unchecked remote metadata `Not verified`.
 
@@ -32,7 +32,8 @@ Before handing off to `repo-delivery`:
 
 - inspect changed paths and diff stat
 - identify the exact related paths for delivery
-- include `review.md` only when it is part of the requested artifact
+- create a separate sanitized durable review copy only when it is part of the requested artifact
+- never stage the raw `.codex/reviews/` workspace
 - state that broad staging is forbidden
 
 `repo-delivery` owns staging, cached-diff verification, commit creation, and push.
@@ -41,15 +42,15 @@ repository's commit convention.
 
 ## Artifacts
 
-`review-package.md` is the outbound, manually sendable package. It contains the
+`.codex/reviews/<review-id>/review-package.md` is the outbound, manually sendable package. It contains the
 task/scope, repository/branch/base/commit basis, review focus, selected evidence,
 validation, exclusions/redactions, and requested response format.
 
-`review.md` is inbound only: external ChatGPT responses plus Codex verification
+The matching `.codex/reviews/<review-id>/review.md` is inbound only: external ChatGPT responses plus Codex verification
 notes. Do not create it in Package-only mode unless the user explicitly requests
-an empty response log. Keep it local-private and untracked by default. Repository
-delivery requires explicit authorization; use the sanitized visibility mode for
-public or visibility-unknown repositories.
+an empty response log. Keep the whole review directory local-private and ignored.
+Repository delivery requires explicit authorization and a separate sanitized
+durable copy under the repository's approved documentation structure.
 
 For repeated passes, append dated sections by default. Use numbered files only when the user asks for separate artifacts.
 

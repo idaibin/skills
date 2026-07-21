@@ -52,7 +52,8 @@ Before any external action, collect only local read-only context:
 - repository path, branch, and dirty state
 - review package scope and approximate size
 - validation commands already run and results
-- canonical outbound artifact path, normally `<repo-root>/review-package.md`
+- canonical review directory, normally `<repo-root>/.codex/reviews/<review-id>/`
+- outbound `review-package.md` and inbound `review.md` paths inside that directory
 - bridge default record status
 - local Chrome profile directory candidates
 - cached ChatGPT tab candidates only if already available
@@ -149,11 +150,17 @@ Use the same reference for UI/design, image, architecture, repository, product/d
 
 ## Review Package
 
-Write the outbound package to `<repo-root>/review-package.md` unless the user
-names another path. If that file already exists, preserve it and request
-overwrite approval or use an explicitly selected alternate path. The artifact
-must be complete enough for the user to copy or upload manually without hidden
-conversation context.
+Write the outbound package to
+`<repo-root>/.codex/reviews/<review-id>/review-package.md` unless the user names
+another path. Use a stable filesystem-safe review ID, normally
+`YYYY-MM-DD-<short-topic>`, and keep all related package parts, response logs,
+ledgers, and attachments in the same directory. Before writing, verify that the
+directory is ignored. If it is not ignored, use an existing ignored local
+workspace or request authorization to add the ignore rule; do not silently edit
+tracked ignore policy. If any artifact-set member already exists, preserve the
+set and request overwrite approval or use an explicitly selected alternate
+review ID. The artifact must be complete enough for the user to copy or upload
+manually without hidden conversation context.
 
 Include only in-scope evidence:
 
@@ -220,7 +227,11 @@ Request acknowledgements in the form `PART <order>/<count> RECEIVED: <filename>;
 
 ## Review Artifact
 
-Write external ChatGPT responses to `<repo-root>/review.md` unless the user names another path. Do not use it for the outbound package and do not create it in Package-only mode unless explicitly requested. Preserve previous useful passes by appending a dated pass.
+Write external ChatGPT responses to
+`<repo-root>/.codex/reviews/<review-id>/review.md` unless the user names another
+path. Use the same review directory and ID as the outbound package. Do not use
+it for the outbound package and do not create it in Package-only mode unless
+explicitly requested. Preserve previous useful passes by appending a dated pass.
 
 Each pass should record:
 
@@ -243,3 +254,9 @@ Choose and record one mode before writing or delivering `review.md`:
 - `repository-sanitized`: required for public or visibility-unknown repositories. Replace the conversation URL with a one-way fingerprint or final eight identifier characters, reduce workspace identity to `personal`, `organization`, or `Not verified`, and remove display names, email fragments, profile paths, and account notes.
 
 External review authorization does not authorize committing `review.md`. Route any requested delivery through `repo-delivery`, scan the staged artifact for full ChatGPT conversation URLs and concrete workspace display names, and preserve the local-private source outside Git when a sanitized repository copy is needed.
+
+Raw packages, responses, ledgers, and attachments belong in the ignored
+`.codex/reviews/<review-id>/` workspace. When durable repository evidence is
+explicitly requested, create a separate sanitized copy under the repository's
+approved `docs/history/reviews/` or `docs/quality/` structure; never stage the
+raw local workspace.

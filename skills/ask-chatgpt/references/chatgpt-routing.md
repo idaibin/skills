@@ -30,7 +30,8 @@
 
 Do not resolve or open a browser route for requests that only say prepare,
 build, draft, package, or create review material. Generate
-`<repo-root>/review-package.md` and stop. Continue below only when the user
+`<repo-root>/.codex/reviews/<review-id>/review-package.md` in a verified ignored
+workspace and stop. Continue below only when the user
 explicitly authorizes an external send, use of ChatGPT now, or a bounded number
 of external review rounds.
 
@@ -140,13 +141,13 @@ If no browser session, tab identity, account state, upload state, or response co
 
 ## Text And File Input
 
-Use `<repo-root>/review-package.md` as the canonical durable outbound artifact unless the user names another path. A compact review, research, architecture, UI, or image request may use inspected composer text without creating a file. Use file/pasted attachments when size, structure, source assets, or multipart integrity matters. If pasted content becomes an attachment, treat it as the single intended upload for that send action, verify the composer state, and do not paste or upload again unless the first attempt is removed or clearly failed. Never upload secrets, `.env`, private registry tokens, local keychains, browser profile data, unrelated dirty files, or unapproved source images.
+Use `<repo-root>/.codex/reviews/<review-id>/review-package.md` as the canonical durable outbound artifact unless the user names another path. Keep its response log and related files in the same ignored review directory. A compact review, research, architecture, UI, or image request may use inspected composer text without creating a file. Use file/pasted attachments when size, structure, source assets, or multipart integrity matters. If pasted content becomes an attachment, treat it as the single intended upload for that send action, verify the composer state, and do not paste or upload again unless the first attempt is removed or clearly failed. Never upload secrets, `.env`, private registry tokens, local keychains, browser profile data, unrelated dirty files, or unapproved source images.
 
 For a multipart artifact set, verify the manifest counts and SHA-256 values before browser work. Send the manifest with a wait-for-final instruction, then exactly one part per message in order. Verify each attachment and acknowledgement, retry only an inspected failed part, and send `FINAL PART` plus the review prompt only after the complete set matches the manifest. Treat early reviewer analysis, a missing acknowledgement, or any count/order/hash mismatch as an incomplete round.
 
 ## Output Capture
 
-Capture external ChatGPT text into `<repo-root>/review.md` by direct page extraction, download, or selected response text. Capture generated reports or images at an explicit task-owned path and record that path plus the submitted prompt and operation attribution in `review.md`; do not put the outbound package in this file. Screenshots are supporting evidence only. Keep artifacts local-private and untracked by default; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and sanitize public or visibility-unknown output before staging.
+Capture external ChatGPT text into `<repo-root>/.codex/reviews/<review-id>/review.md` by direct page extraction, download, or selected response text. Use the same review ID as the outbound package. Capture generated reports or images in that task-owned directory and record their paths plus the submitted prompt and operation attribution in `review.md`; do not put the outbound package in this file. Screenshots are supporting evidence only. Keep the raw directory local-private and ignored; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and create a separate sanitized durable copy before staging.
 
 For live-browser review, also capture the declared target URL, reviewer browser surface, viewport when relevant, screenshot/source or observed-state evidence, actions taken, confirmation points, and `Not verified` gaps. Do not treat transport-browser screenshots of the ChatGPT UI as proof of the target page.
 
