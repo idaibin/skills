@@ -17,9 +17,7 @@ Implement Rust changes against the repository's real toolchain, project class, c
 4. Inspect the relevant `Cargo.toml`, lockfile, toolchain, formatter, lint, command source, modules, tests, architecture docs, and API/interface docs.
 5. Consume a current `repo-map` inventory or perform the same targeted search across route registration, handlers, services, repositories, traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous features.
 6. Start with the **Baseline** validation contract, then select every applicable risk overlay. Overlays are composable, not severity levels:
-   - **Protocol automation:** an existing OpenAPI/generated-client pipeline or an
-     explicitly requested contract migration. Ordinary HTTP/API changes keep the
-     repository-native route/DTO/client/test boundary under Baseline.
+   - **Protocol automation:** an existing OpenAPI/generated-client pipeline or an explicitly requested contract migration. Ordinary HTTP/API changes keep the repository-native route/DTO/client/test boundary under Baseline.
    - **Concurrency/runtime:** Tokio tasks, channels, locks, cancellation, blocking work, overload, or shutdown.
    - **Persistence/SQLite:** migrations, transactions, schema/query changes, durable compatibility, backup, or recovery.
    - **Unsafe/FFI:** unsafe, ABI/layout, raw pointers, callbacks, allocators, native handles, or cross-language resource ownership.
@@ -57,9 +55,7 @@ Implement Rust changes against the repository's real toolchain, project class, c
 - Follow repository-pinned Rust, edition, resolver, formatter, lint, dependency, and command contracts. Do not upgrade them during unrelated feature work.
 - Keep directories consistent with the identified project class. Do not copy a Web/Rust, Tauri, CLI, library, or multi-process layout into another class without an explicit migration requirement.
 - Do not create an endpoint, handler, service, repository, trait, DTO/type family, error model, or shared module before reading relevant docs and checking the existing interface chain. Reuse or extend first; follow the nearest feature's placement and naming when a new contract is justified.
-- Do not introduce OpenAPI or a generated client solely because a REST endpoint
-  changes. When Protocol automation applies, discover the real toolchain, preserve
-  one code-first or contract-first authority, and keep generated artifacts derived.
+- Do not introduce OpenAPI or a generated client solely because a REST endpoint changes. When Protocol automation applies, discover the real toolchain, preserve one code-first or contract-first authority, and keep generated artifacts derived.
 - Preserve dependency direction. Entry modules stay thin; workflows belong in the established service/engine owner; deterministic domain logic avoids IO; persistence stays behind repository or storage boundaries when the project defines them.
 - Prefer typed errors and `Result` propagation. Do not add runtime `unwrap`, `expect`, `panic!`, silent error swallowing, or fallback behavior unless the contract explicitly requires it.
 - Do not add `unsafe`, broad feature flags, global mutable state, blocking work in async paths, or new dependencies without proving the need and validation.
@@ -76,9 +72,7 @@ Implement Rust changes against the repository's real toolchain, project class, c
 
 - **Baseline:** repository-defined format/check plus focused behavior tests; Clippy only when it is part of the repository baseline.
 - **Selected overlays:** add only the contract, concurrency/runtime, persistence/SQLite, unsafe/FFI, porting/parity, and target/platform evidence required by the changed surface. Combine overlays when risks interact; do not let one overlay erase another.
-- **Protocol-automation overlay:** only when selected, validate/rebuild the OpenAPI
-  artifact, check clean idempotence and compatibility, regenerate owned clients, and
-  run applicable backend conformance. Otherwise use repository-native API tests.
+- **Protocol-automation overlay:** only when selected, validate/rebuild the OpenAPI artifact, check clean idempotence and compatibility, regenerate owned clients, and run applicable backend conformance. Otherwise use repository-native API tests.
 - **Optional heavy tools:** Miri, sanitizers, fuzzing, stress, leak, and repeated-operation gates are never inherited merely from a target-specific change. Run them only when supported and relevant, or record why they were excluded.
 
 Do not claim Baseline or an overlay passed when a required tool, target, runtime, dataset, or external dependency was unavailable; mark the exact gap `Not verified`.

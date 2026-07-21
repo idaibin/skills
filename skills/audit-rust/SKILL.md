@@ -84,17 +84,14 @@ Start with selected profiles and severity-ranked findings. For each finding, rep
 
 ## References
 
-- Read [architecture-and-modules.md](references/architecture-and-modules.md) for workspace, crate, module, binary, domain, trait, and dependency boundaries.
-- Read [project-baseline-and-lifecycle.md](references/project-baseline-and-lifecycle.md) for baseline classification, legacy policy, reuse-first discovery, and structural lifecycle.
-- Read [ownership-and-resources.md](references/ownership-and-resources.md) for ownership, clone, `Arc`, resources, buffers, caches, and lifecycle.
-- Read [errors-and-api-design.md](references/errors-and-api-design.md) for invariants, API types, errors, panic, retry, logging, and boundary translation.
+Load each linked reference independently when its named surface applies; grouping links does not require paired loading.
+
+- Read [architecture-and-modules.md](references/architecture-and-modules.md) for structural boundaries and [project-baseline-and-lifecycle.md](references/project-baseline-and-lifecycle.md) for baseline classification, legacy policy, reuse, and lifecycle.
+- Read [ownership-and-resources.md](references/ownership-and-resources.md) for ownership, clone, `Arc`, buffers, and caches and [errors-and-api-design.md](references/errors-and-api-design.md) for invariants, panic, retry, logging, and boundary translation.
 - Read [async-and-concurrency.md](references/async-and-concurrency.md) for runtime, blocking work, tasks, channels, locks, timeouts, cancellation, shutdown, and Loom.
-- Read [performance.md](references/performance.md) for workloads, baselines, CPU, allocation, I/O, binary, compile-time, and benchmark decisions.
-- Read [memory.md](references/memory.md) for RSS, allocation, retention, caches, mmap, SQLite pages, and leak classification.
+- Read [performance.md](references/performance.md) for workloads, CPU, I/O, binary/compile cost, and measurement and [memory.md](references/memory.md) for allocation, retention, RSS, caches, mmap, and leak classification.
 - Read [sqlite.md](references/sqlite.md) for linkage, connections, transactions, WAL, migrations, schema, indexes, plans, maintenance, backup, and recovery.
-- Read [testing-and-quality.md](references/testing-and-quality.md) for risk-based tests, Cargo gates, Clippy, docs, release builds, Miri, audit, coverage, and benchmarks.
-- Read [unsafe-and-security.md](references/unsafe-and-security.md) for unsafe invariants, FFI, native resources, dependencies, secrets, and security checks.
-- Read [review-checklist.md](references/review-checklist.md) for common gates and profile-scoped checks.
-- Read [anti-patterns.md](references/anti-patterns.md) for detectable failure patterns and corrective decisions.
+- Read [testing-and-quality.md](references/testing-and-quality.md) for Cargo, Clippy, Miri, coverage, benchmarks, and risk-based gates and [unsafe-and-security.md](references/unsafe-and-security.md) for unsafe, FFI, native-resource, dependency, and security checks.
+- Read [review-checklist.md](references/review-checklist.md) for profile-scoped gates and [anti-patterns.md](references/anti-patterns.md) for detectable failure patterns.
 - Read [reference-corpus.md](references/reference-corpus.md) for official source evidence, adopted rules, and rejected cargo-cult choices.
 - Read [usage.md](references/usage.md) and [eval-cases.md](references/eval-cases.md) for routing/reporting/evals; load [codebase-design.md](references/codebase-design.md) only for a selected public-module, seam, abstraction, locality, or testability audit.
