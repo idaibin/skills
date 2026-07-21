@@ -601,5 +601,72 @@
     "output": "为了消除无主语短句，把日志原文改成 ‘You do not need a configuration file’。",
     "must_contain": ["No configuration file needed", "只修改周围分析", "作为证据"],
     "must_not_match": ["把日志原文改成"]
+  },
+  {
+    "id": "english-first-chinese-final-pass",
+    "expected_pass": true,
+    "output": "英文只作为私有结构草稿；中文终稿仍对照原始记录，保留‘可能’、命令、指标范围和来源，不展示英文中间稿。",
+    "must_contain": ["私有结构草稿", "对照原始记录", "保留‘可能’", "指标范围", "来源", "不展示英文中间稿"]
+  },
+  {
+    "id": "english-first-chinese-final-reject",
+    "expected_pass": false,
+    "output": "英文中间稿把‘可能采用’写成‘已经上线’，中文终稿逐句翻译并附上英文草稿。",
+    "must_contain": ["私有结构草稿", "对照原始记录", "保留‘可能’", "不展示英文中间稿"],
+    "must_not_match": ["已经上线", "逐句翻译", "附上英文草稿"]
+  },
+  {
+    "id": "english-first-concrete-fidelity-pass",
+    "expected_pass": true,
+    "output": "据 Alice 的记录，团队可能采用 parser_v2；验证命令为 cargo test -p api --release，p95 目标仍为 10–20 ms，当前状态是候选方案。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"]
+  },
+  {
+    "id": "english-first-concrete-fidelity-reject",
+    "expected_pass": false,
+    "output": "团队已经采用新版解析器；验证命令为 cargo test -p api，p95 约为 10 ms，功能已经上线。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"],
+    "must_not_match": ["已经采用", "cargo test -p api，", "约为 10 ms", "已经上线"]
+  },
+  {
+    "id": "english-first-attribution-only-reject",
+    "expected_pass": false,
+    "output": "团队可能采用 parser_v2；验证命令为 cargo test -p api --release，p95 目标仍为 10–20 ms，当前状态是候选方案。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"]
+  },
+  {
+    "id": "english-first-modality-only-reject",
+    "expected_pass": false,
+    "output": "据 Alice 的记录，团队已经采用 parser_v2；验证命令为 cargo test -p api --release，p95 目标仍为 10–20 ms，当前状态是候选方案。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"],
+    "must_not_match": ["已经采用"]
+  },
+  {
+    "id": "english-first-identifier-only-reject",
+    "expected_pass": false,
+    "output": "据 Alice 的记录，团队可能采用 parser_v3；验证命令为 cargo test -p api --release，p95 目标仍为 10–20 ms，当前状态是候选方案。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"],
+    "must_not_match": ["parser_v3"]
+  },
+  {
+    "id": "english-first-command-only-reject",
+    "expected_pass": false,
+    "output": "据 Alice 的记录，团队可能采用 parser_v2；验证命令为 cargo test -p api，p95 目标仍为 10–20 ms，当前状态是候选方案。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"],
+    "must_not_match": ["cargo test -p api，"]
+  },
+  {
+    "id": "english-first-range-only-reject",
+    "expected_pass": false,
+    "output": "据 Alice 的记录，团队可能采用 parser_v2；验证命令为 cargo test -p api --release，p95 目标仍为 10 ms，当前状态是候选方案。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"],
+    "must_not_match": ["目标仍为 10 ms"]
+  },
+  {
+    "id": "english-first-status-only-reject",
+    "expected_pass": false,
+    "output": "据 Alice 的记录，团队可能采用 parser_v2；验证命令为 cargo test -p api --release，p95 目标仍为 10–20 ms，当前状态是已上线。",
+    "must_contain": ["据 Alice 的记录", "可能采用", "parser_v2", "cargo test -p api --release", "10–20 ms", "候选方案"],
+    "must_not_match": ["已上线"]
   }
 ]

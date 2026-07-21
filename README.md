@@ -86,7 +86,7 @@ not a Stable or Verified designation.
 | Skill | Use when |
 | --- | --- |
 | `ask-chatgpt` | Codex needs to ask ChatGPT for a local request package or an explicitly authorized independent review, research result, visual exploration, or decision challenge. |
-| `human-writing` | Source-grounded prose must be drafted or revised while preserving facts, voice, and disclosure boundaries. |
+| `human-writing` | Source-grounded writing must be drafted, rewritten, diagnosed, or adapted in the requested final language while preserving facts, voice, attribution, and disclosures; English-first support for a Chinese final is optional. |
 
 ## Composition
 

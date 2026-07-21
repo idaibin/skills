@@ -39,7 +39,7 @@ Framework-specific or domain-specific checks should stay as profiles when these 
 | `ops-browser` | browser session/page state and bounded platform operation | authorized browser actions | browser evidence and state-change report |
 | `ops-client` | real desktop client process/window | authorized client actions | process/window/runtime evidence |
 | `ask-chatgpt` | local ChatGPT request package or independently required ChatGPT web collaboration | local artifact write or authorized external action | bounded request, attributed response/artifact, and locally verified implications |
-| `human-writing` | supplied technical draft | text transformation | edited publication-ready text |
+| `human-writing` | source-grounded drafting, rewriting, diagnosis, or platform adaptation | owned writing transformation; not literal translation-only | publication-ready text or bounded diagnostic findings in the requested final language |
 
 ## Engineering Lifecycle
 

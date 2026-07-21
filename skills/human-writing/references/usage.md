@@ -7,6 +7,7 @@ Use `human-writing` when the main job is to turn supplied facts, notes, or a dra
 - [Trigger Examples](#trigger-examples)
 - [Non-Trigger Examples](#non-trigger-examples)
 - [Mode Selection](#mode-selection)
+- [Language Strategy](#language-strategy)
 - [Required Context](#required-context)
 - [Editing Priority](#editing-priority)
 - [Output Behavior](#output-behavior)
@@ -23,6 +24,7 @@ Use `human-writing` when the main job is to turn supplied facts, notes, or a dra
 - `把这篇文章改成知乎回答，先直接回答问题，再展开理由。`
 - `把这段产品介绍改成公众号文章，但不要标题党和强行升华。`
 - `把这篇复盘改成 Reddit / Hacker News 风格的英文帖子。`
+- `先用英文理清这组开发记录的论点和结构，再写成自然的中文终稿；英文中间稿不用给我。`
 - `找出这篇文章里的 AI 模板、事实风险和口吻漂移。`
 
 ## Non-Trigger Examples
@@ -31,6 +33,7 @@ Use `human-writing` when the main job is to turn supplied facts, notes, or a dra
 - `核对这篇新闻里的事实是否准确。`
 - `把合同改得更严谨。`
 - `统一论文引用格式。`
+- `把这篇英文逐句翻成中文，不需要调整结构、语气或平台表达。`
 - `模仿某位在世作家的文风写一篇新文章。`
 - `帮我骗过 AI 检测器。`
 
@@ -54,11 +57,19 @@ A request has one primary operation. Genre, language, platform, disclosure, and 
 | --- | --- |
 | Primary operation | One per artifact: Diagnose, Rewrite, Draft from source, or Platform adaptation; a bounded secondary operation may directly support it |
 | Genre | One primary profile per artifact when material; bounded secondary elements may support it without blending incompatible contracts |
-| Language | Preserve source language unless the user requests another; translation-only work routes elsewhere |
+| Language | Preserve source language unless another final language is requested; an English-first intermediate may support a Chinese final, while translation-only work routes elsewhere |
 | Platform | Zero or one named target; load calibration only for explicit adaptation |
 | Evidence state | Complete, safely partial, conflicting, or blocked |
 | Claim state | Observed past, current state, committed plan, candidate direction, or unresolved question |
 | Conditional modules | Load disclosure and published-revision rules only when applicable |
+
+## Language Strategy
+
+- Prefer direct editing when the source is already a usable Chinese draft or the user supplied a strong Chinese voice sample.
+- For a requested Chinese final built from notes, logs, or mixed-language evidence, prefer a private English claim-and-structure pass when it makes reasoning or organization clearer.
+- Treat English as a provisional composition layer, not as evidence. Translate editorially rather than sentence by sentence, then verify the Chinese final against the original source ledger.
+- Keep exact commands, identifiers, quotations, metrics, attribution, modality, and claim scope stable across the language boundary.
+- Return only the requested final language unless the user asks to inspect the intermediate.
 
 Load only what the request needs:
 
@@ -82,6 +93,7 @@ The useful context fields are:
 - purpose
 - platform
 - desired length
+- final language and whether an intermediate should be exposed
 - author sample
 - protected text
 - desired action
@@ -132,6 +144,7 @@ The outline may organize evidence but cannot upgrade it. A blank evidence slot s
 - Do not announce the workflow.
 - Do not explain that the text was "humanized."
 - Do not expose the source ledger, inspection process, prompt interpretation, or editorial analysis unless requested.
+- Do not expose an English intermediate when only a Chinese final was requested.
 - Do not append a change log, score, or offer unless requested.
 - Preserve repository frontmatter, links, code fences, and headings when editing a content file.
 - When the user asks for multiple variants, make each variant solve a distinct editorial goal rather than swapping synonyms.

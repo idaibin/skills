@@ -1,4 +1,4 @@
 interface:
   display_name: "Human Writing"
-  short_description: "Draft and refine source-grounded human-quality writing"
-  default_prompt: "Use $human-writing to draft or refine source-grounded writing while preserving claim status, attribution, actor authority, uncertainty, voice, and disclosure boundaries through supported reasoning and explicit limits."
+  short_description: "Draft, rewrite, diagnose, or adapt writing; not translation-only"
+  default_prompt: "Use $human-writing to draft, rewrite, diagnose, or adapt prose while preserving language, facts, attribution, and uncertainty; exclude translation-only, and use a private English outline for Chinese only when helpful."

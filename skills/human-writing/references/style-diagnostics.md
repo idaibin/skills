@@ -10,6 +10,7 @@ Load this reference only when voice, rhythm, or template residue materially affe
 - [Protected And Secondhand Text](#protected-and-secondhand-text)
 - [Research-Process Leakage](#research-process-leakage)
 - [Iterative-Edit Seams](#iterative-edit-seams)
+- [English-First Chinese Final](#english-first-chinese-final)
 - [Chinese Technical Prose](#chinese-technical-prose)
 - [Human Signals Worth Preserving](#human-signals-worth-preserving)
 - [Stop Rule](#stop-rule)
@@ -93,6 +94,17 @@ Do not ban source names mechanically. A Git postmortem, release history, investi
 Follow-up edits can leave visible seams even when every paragraph is individually sound. Treat a late section as a seam only when its information logically belongs earlier, repeats a claim, changes a role or commitment without updating related passages, or leaves the conclusion inconsistent. Reintegrate the point at the decision or transition it explains, then reread the surrounding section and ending.
 
 Do not remove every additive transition mechanically. Keep it when the chronology or argument genuinely adds a second point. The defect is structural afterthought, not the word itself.
+
+## English-First Chinese Final
+
+Use this path for a requested Chinese final only when a private English claim-and-structure pass makes new composition clearer. Skip it for an existing Chinese draft or a stronger Chinese author sample unless the user requests the intermediate.
+
+- Keep the source ledger language-neutral; English wording does not create claim authority.
+- Translate the argument and relationships, not sentence shapes. Rebuild natural Chinese paragraphs around the same subject, action, condition, evidence, and consequence.
+- Preserve exact commands, identifiers, quotations, numbers, attribution, modality, status, and scope.
+- Check the Chinese final against the original sources, not only against the English intermediate.
+- Remove translation artifacts such as repeated subjects, imported abstractions, unnatural connective density, and literal English cadence only when meaning remains unchanged.
+- Return the Chinese final alone unless the user explicitly requests both versions.
 
 ## Chinese Technical Prose
 
