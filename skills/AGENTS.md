@@ -39,11 +39,15 @@ into self-contained published packages with
 Skill-specific validation thresholds and cross-artifact term contracts belong in
 [`../contracts/skill-validation.json`](../contracts/skill-validation.json), not
 as new prose literals in the validator.
-Package maintenance rules belong here and in the repository standards, not in a
-runtime `SKILL.md` Maintenance section.
+Repository package-maintenance rules and generic source-validation commands
+belong only here. Repository standards and root documentation must link here
+instead of copying commands. Do not repeat them in published package files or
+`skills.sh.json`; the latter is display metadata only.
 Keep execution economical: one primary owner by default, selected references and
 profiles only, the smallest decisive evidence set, focused checks before broader
 gates, and no task, review, or handoff expansion without a required outcome.
+
+## Validation
 
 Validation is risk-tiered:
 

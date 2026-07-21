@@ -75,7 +75,7 @@ structure rules, validation expectations, or metadata.
 | Composable validation | Starts with Baseline, selects every applicable independent overlay, maps evidence to each overlay, and uses Miri, sanitizer/leak, fuzz, stress, or repeated-operation gates only when supported and relevant. | Chooses one "highest" profile, drops one side of a mixed FFI/SQLite risk, runs only `cargo check` for a selected high-risk invariant, or applies heavy tools to target-only/routine work without relevance. |
 | Structural lifecycle | Updates manifests, exports, commands, tests, CI/deploy paths, docs, indexes, and stale references for add/move/delete work. | Changes directories or crates while leaving ownership records stale. |
 | Validation | Runs repository-defined format/check/test/Clippy gates that match the change or records exact gaps. | Invents commands or claims success without evidence. |
-| Publish readiness | Keeps the package self-contained, updates metadata and eval cases, and validates with `python3 scripts/validate-skills.py`. | Depends on repository-local prompts or skips source validation. |
+| Publish readiness | Keeps the package self-contained, updates metadata and eval cases, and runs the repository-authoritative source validation. | Depends on repository-local prompts or skips source validation. |
 
 ## Scoring
 

@@ -70,10 +70,3 @@ Examples of valid selection:
 - target-specific adapter only: Baseline + Target/platform. Do not add Miri,
   sanitizers, fuzzing, stress, leak, or repeated-operation checks unless another
   selected overlay makes them relevant and the repository supports them.
-
-## Maintenance
-
-Keep this file, `references/checklist.md`, `references/eval-cases.md`,
-`references/best-practices.md`, `references/bun-production-patterns.md`,
-`SKILL.md`, and `agents/openai.yaml` synchronized. Validate with
-`python3 scripts/validate-skills.py`.

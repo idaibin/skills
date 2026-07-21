@@ -131,14 +131,9 @@ do not ship as hidden runtime dependencies.
 
 ## Validate
 
-```bash
-python3 scripts/sync-shared-protocols.py --check
-python3 scripts/validate-skills.py
-python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/eval-skill-contracts.py --validate-only
-python3 scripts/measure-skill-footprint.py --baseline-ref HEAD
-git diff --check
-```
+Use the authoritative targeted/full command matrix in
+[`skills/AGENTS.md`](skills/AGENTS.md#validation); do not copy it into package
+files or other repository documentation.
 
 The validator checks package structure, local references, catalog consistency,
 nearest-neighbor routing coverage, and static evaluation contracts. Passing

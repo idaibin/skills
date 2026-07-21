@@ -50,16 +50,10 @@ machine-readable contract remains authoritative for its Skill boundaries.
 
 ### Structure Suite
 
-Run from the repository root:
-
-```bash
-python3 scripts/sync-shared-protocols.py --check
-python3 scripts/validate-skills.py
-python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/eval-skill-contracts.py --validate-only
-python3 scripts/measure-skill-footprint.py --baseline-ref <comparison-ref>
-git diff --check
-```
+Run the authoritative full matrix in
+[`skills/AGENTS.md`](../../skills/AGENTS.md#validation) from the repository root.
+For a formal comparison, replace the footprint baseline with the campaign's
+preregistered comparison ref; do not copy the matrix into this plan.
 
 This layer proves package shape, metadata, references, routing inventory,
 dataset schemas, shared-protocol synchronization, and validator regressions.

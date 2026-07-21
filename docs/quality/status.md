@@ -64,15 +64,9 @@ knowledge, tooling, or authority separation to justify permanent Skill routing.
 
 ## Structure Evidence
 
-Run from the repository root:
-
-```bash
-python3 scripts/sync-shared-protocols.py --check
-python3 scripts/validate-skills.py
-python3 -m unittest discover -s scripts -p 'test_*.py'
-python3 scripts/eval-skill-contracts.py --validate-only
-git diff --check
-```
+Current structure evidence uses the authoritative full matrix in
+[`skills/AGENTS.md`](../../skills/AGENTS.md#validation). This status records the
+result and evidence boundary; it does not redefine the commands.
 
 Current structure evidence covers package shape, metadata, local references,
 repository indexes, routing-graph consistency, documented static eval coverage,

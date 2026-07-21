@@ -41,7 +41,3 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
 ## Output
 
 Report the delivery target, branch/upstream, semantic categories, staged scope and hash for each commit, explicit single-commit reason when applicable, branch-integration strategy and rationale, validation, pushed refs, cleanup action, final status, final remote evidence, and any `Not verified` items.
-
-## Maintenance
-
-Use `references/eval-cases.md` for trigger and quality checks. In this catalog, validate with `python3 scripts/validate-skills.py`; end-user installs use `npx skills add https://github.com/idaibin/skills`, and end-user updates use `npx skills update`.

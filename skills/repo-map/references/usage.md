@@ -35,7 +35,3 @@ Do not use for generic implementation, local dirty-tree review, immutable reposi
 ## Output
 
 Expect an updated repo-map path plus a compact summary of initial working scope, map root, discovered Git roots and containment, `versioned` or `local-unversioned` persistence, scope level, changed sections, shortest task routes, verified reuse entries and decisions, mapped protocol authority/derived-consumer chain when requested, semantic/path repairs, preserved sections, validation, and `Not found` or `Not verified` gaps. Partial work also reports its stop reason, completed evidence, unresolved boundary, artifact state, and follow-up.
-
-## Maintenance
-
-Use `references/eval-cases.md` for trigger and quality checks. In this catalog, validate with `python3 scripts/validate-skills.py --skill repo-map`.

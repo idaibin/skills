@@ -64,7 +64,3 @@ error states, remove the touched duplicate DTO, and verify loading/success/error
 ## Output
 
 Report branch, frontend project class, detected framework profile and toolchain, existing implementations checked, direct reuse or reference candidate, new-file justification when applicable, files and UI surface touched, structural lifecycle updates, state/reactivity/store ownership, component/injection/router/keep-alive contracts, cleanup and cancellation behavior, layout and outer-spacing owners, Flex/Grid choice, adaptive-child behavior, DOM/CSS simplification choices, contracts preserved, validation run, failed commands, visual/client verification status, and `Not verified` areas.
-
-## Maintenance
-
-Use `references/eval-cases.md` for trigger and quality checks. In this catalog, validate with `python3 scripts/validate-skills.py`.

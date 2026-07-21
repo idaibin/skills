@@ -57,7 +57,3 @@ Do not use for general repository onboarding, future task planning, API contract
 ## Output
 
 Expect severity-ordered security findings with audit mode, selected profiles, scoped assets and trust boundaries, file/endpoint/config evidence, impact, recommendation, validation, excluded surfaces, and `Not verified` gaps. Specialist output must state the delegated path/diff boundary and return to `repo-review` without editing or taking coordinator/Git ownership. A scoped threat sketch must list abuse cases and existing controls while saying it is not a whole-system threat model.
-
-## Maintenance
-
-Use `references/eval-cases.md` for trigger and quality checks. In this catalog, validate with `python3 scripts/validate-skills.py --skill audit-security`; end-user installs use `npx skills add https://github.com/idaibin/skills`, and end-user updates use `npx skills update`.

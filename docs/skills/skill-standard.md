@@ -86,8 +86,8 @@ Examples:
 - References: direct links to reference files that may be loaded only when needed.
 
 Keep detailed examples, checklists, templates, and evals in `references/`.
-Keep package-maintenance instructions in `skills/AGENTS.md` and repository
-standards rather than loading them during every Skill invocation.
+Keep package-maintenance instructions only in `skills/AGENTS.md`; repository
+standards should link to that authority rather than repeat its commands.
 
 ## Execution Economy
 
