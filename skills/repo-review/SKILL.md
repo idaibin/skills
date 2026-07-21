@@ -53,7 +53,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Future implementation planning; use the host's built-in planning.
 - Business-domain modeling without a change basis; use `domain-modeling`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
-- A bounded security-only audit when the target surface is already known; use `audit-security`.
+- A direct bounded frontend-only, Rust-only, or security-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. When such a basis exists, keep `repo-review` as coordinator and delegate only the bounded specialist surface when needed.
 - Implementing accepted fixes; use the matching `dev-*` skill.
 - Staging, commits, pushes, squash, cleanup, or other Git mutation; use `repo-delivery` after explicit authorization.
 - External ChatGPT sending or browser/client operation; use the matching operations skill.
