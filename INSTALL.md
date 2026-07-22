@@ -95,14 +95,11 @@ npx skills@latest add idaibin/skills \
   --skill repo-map domain-modeling repo-review
 ```
 
-Product definition candidate:
+Product definition:
 
 ```bash
 npx skills@latest add idaibin/skills --skill product-spec
 ```
-
-This installs an experimental candidate; behavior and workflow remain
-`not_verified` until live evidence is recorded.
 
 Frontend design and implementation:
 

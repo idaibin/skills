@@ -37,27 +37,17 @@ under the repository's established `docs/` structure.
 ## Project Structure
 
 - `skills/` contains publishable or reusable skill packages.
-- `scripts/validate-skills.py` validates source skill packages for repository development.
-- `scripts/test_*.py` contains validator, runner, and comparison regressions.
-- `scripts/run-skill-routing-eval.py` plans reproducible routing trials and
-  requires explicit `--execute` before it calls a model host.
-- `scripts/create-skill-routing-campaign.py` creates and self-validates the
-  committed preregistration file for formal held-out trials without calling a
-  model host.
-- `scripts/compare-skill-evals.py` replays matched candidate, previous, and
-  no-Skill evidence from one preregistered campaign.
-- `contracts/skill-validation.json` is the machine-readable authority for
-  package limits, behavior-eval coverage and score gates, result schemas, and
-  official-source review freshness.
+- `scripts/validate-skills.py` checks portable package structure, OpenAI metadata,
+  local links, representative eval sections, distribution hygiene, and catalog parity.
+- `scripts/sync-shared-protocols.py` keeps identical self-contained package protocols
+  synchronized from `protocols/`.
+- `scripts/test_*.py` contains focused validator regressions.
 
 When editing or adding skill packages under `skills/`, also read `skills/AGENTS.md`, `docs/skills/skill-standard.md`, and `docs/standards/skill-routing.md`.
-When a provider format or official baseline changes, update the contract,
-validator fixtures, tests, and `docs/quality/official-skill-alignment.md`
-together; do not preserve stale checks only because old fixtures pass.
+When a provider format changes, update the standard, validator, focused tests, and
+`docs/quality/official-skill-alignment.md` together.
 
 ## Skill Validation
 
-Use the risk-tiered validation matrix in `skills/AGENTS.md`. Routing, package-set,
-shared-protocol, validator/contract, multi-Skill, review, commit, and publish changes
-require its full suite; a bounded prose/reference correction may use the targeted
-tier. Always run `git diff --check` and report unverified runtime/external behavior.
+Use the validation matrix in `skills/AGENTS.md`. Always run `git diff --check` and
+report any runtime or external behavior that was not exercised.

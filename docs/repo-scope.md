@@ -8,8 +8,7 @@ for software-engineering work.
 - publishable packages under `skills/<name>/`;
 - package-local references, scripts, assets, and provider metadata;
 - catalog and installation documentation;
-- deterministic validation, routing contracts, shared-protocol sources, and
-  retained quality evidence needed to maintain the published packages;
+- concise deterministic validation and shared-protocol sources;
 - contributor guidance for adding, changing, renaming, or removing a Skill.
 
 ## Does Not Own
@@ -23,8 +22,8 @@ for software-engineering work.
 ## Runtime Boundary
 
 A published Skill may load only files inside its own package. Repository-level
-`docs/`, `contracts/`, `evals/`, `protocols/`, and `scripts/` are maintainer
-infrastructure and must never be required by an installed package at runtime.
+`docs/`, `protocols/`, and `scripts/` are maintainer surfaces and must never be
+required by an installed package at runtime.
 
 Cross-Skill relationships are optional composition or explicit handoffs. A
 package must still complete its basic responsibility when installed alone.

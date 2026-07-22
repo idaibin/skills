@@ -53,15 +53,11 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 | `repo-review` | Current Worktree/index, a fixed SHA/range (including resolved PR base/head), or a verified review package needs independent read-only review; Release is conditional. |
 | `repo-delivery` | Reviewed changes need categorized commits, an explicit single commit, push/sync, evidence-based branch integration, or cleanup. |
 
-### Product Definition (Experimental)
+### Product Definition
 
 | Skill | Use when |
 | --- | --- |
 | `product-spec` | Product behavior, scope, rules, states, or acceptance must become one implementation-ready feature/foundation spec or an authorized product-fact update. |
-
-`product-spec` is an available candidate for live evaluation. Its structure may
-be validated, but behavior and end-to-end workflow remain `not_verified`; this is
-not a Stable or Verified designation.
 
 ### Design and Implementation
 
@@ -121,25 +117,18 @@ skills/<name>/
 ```
 
 Packages add `assets/` or `scripts/` only when the capability needs them. A
-published package may reference files inside its own directory; it must not
-require `docs/`, `contracts/`, `evals/`, `protocols/`, another Skill, or an
-absolute local path at runtime.
+published package may depend only on files inside its own directory and must not
+require another Skill or an absolute local path at runtime.
 
-The repository-level `docs/`, `contracts/`, `evals/`, `protocols/`, and
-`scripts/` directories are maintainer-facing validation infrastructure. They
-do not ship as hidden runtime dependencies.
+Repository-level `docs/`, `protocols/`, and `scripts/` are maintainer surfaces;
+published packages do not depend on them at runtime.
 
 ## Validate
 
-Use the authoritative targeted/full command matrix in
-[`skills/AGENTS.md`](skills/AGENTS.md#validation); do not copy it into package
-files or other repository documentation.
-
-The validator checks package structure, local references, catalog consistency,
-nearest-neighbor routing coverage, and static evaluation contracts. Passing
-these checks proves repository structure, not live model behavior or end-to-end
-workflow success; current evidence is recorded in
-[docs/quality/status.md](docs/quality/status.md).
+Use the concise command matrix in [`skills/AGENTS.md`](skills/AGENTS.md#validation).
+The validator checks the portable Agent Skills package, OpenAI metadata, direct
+references, representative eval sections, and catalog consistency. Exercise behavior
+changes on a few representative tasks.
 
 ## Design Principles
 

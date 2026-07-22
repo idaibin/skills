@@ -257,6 +257,5 @@ External review authorization does not authorize committing `review.md`. Route a
 
 Raw packages, responses, ledgers, and attachments belong in the ignored
 `.codex/reviews/<review-id>/` workspace. When durable repository evidence is
-explicitly requested, create a separate sanitized copy under the repository's
-approved `docs/history/reviews/` or `docs/quality/` structure; never stage the
-raw local workspace.
+explicitly requested, create a separate sanitized copy only in a user-approved
+tracked documentation path; never stage the raw local workspace.

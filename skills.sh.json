@@ -20,8 +20,8 @@
       ]
     },
     {
-      "title": "Product Definition (Experimental)",
-      "description": "Candidate Skill for implementation-ready product specifications and authorized product-fact updates; behavior and workflow are not verified.",
+      "title": "Product Definition",
+      "description": "Skill for implementation-ready product specifications and authorized product-fact updates.",
       "skills": [
         "product-spec"
       ]
