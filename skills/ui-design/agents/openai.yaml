@@ -1,4 +1,0 @@
-interface:
-  display_name: "UI Design"
-  short_description: "Design feature UI and conditional shared systems"
-  default_prompt: "Use $ui-design to design this page or flow from verified product facts, activating the Design System profile only for shared tokens, semantics, variants, or visual-language changes."

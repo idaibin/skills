@@ -41,7 +41,7 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 - Future implementation planning or subagent task splitting; use the host's built-in planning.
 - Existing local diff review, ownership classification, mixed-hunk analysis, or commit grouping before delivery scope is clear; use `repo-review`.
 - Review-only requests that do not authorize Git mutation; use `repo-review`.
-- Security-only audit; use `audit-security`.
+- Security-only change review; use `repo-review`, which routes professional security work to Codex Security when available.
 - Browser or desktop-client runtime evidence; use `ops-browser` or `ops-client`.
 - Branch publishing that explicitly includes creating a draft or ready pull request; use the available GitHub publishing workflow.
 

@@ -24,6 +24,10 @@ writes. Keep technical design and source mutation with their existing owners.
      redefinition of the product boundary.
    - **Artifact Update**: update only an existing, explicitly named product fact
      source after write authorization.
+   When an existing Foundation Spec already fixes the product boundary and passes
+   its applicable Ready gate, preserve it. For a requested downstream implementation,
+   select the smallest source-proven feature gap and write only its Feature Spec;
+   do not reopen product positioning without contradictory evidence.
 3. Clarify internally before synthesis. Search discoverable repository facts first,
    then ask one decision-changing question at a time with a recommendation and
    trade-offs. Do not expose Discovery or grilling as a mode and do not implement.
@@ -36,7 +40,7 @@ writes. Keep technical design and source mutation with their existing owners.
    could change user behavior, business rules, permission or security boundaries,
    failure semantics, or acceptance results.
 7. Hand off only the unresolved owner that must act now: deep cross-context domain
-   work to `domain-modeling`, shared visual-system changes to `ui-design`, source
+   work to `domain-modeling`, shared visual-system contracts to `ui-spec`, source
    changes to the matching `dev-*`, and review to `repo-review` when requested.
 8. Preview product-document changes before writing unless the user explicitly
    requested implementation of the document edit. Validate links and repository
@@ -50,8 +54,8 @@ writes. Keep technical design and source mutation with their existing owners.
   or `dev-rust`.
 - Business language, shared lifecycle, invariants, complex state machines, or
   multiple bounded contexts as the primary object; use `domain-modeling`.
-- Shared tokens, component semantics, visual profiles, or ui-design ownership;
-  use `ui-design`.
+- Selected-source UI specifications, shared tokens, component semantics, visual
+  profiles, or `ui-spec` ownership; use `ui-spec`.
 - Repository mapping or component inventory; use `repo-map`.
 - Reviewing an existing change basis; use `repo-review`.
 

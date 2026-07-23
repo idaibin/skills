@@ -1,0 +1,31 @@
+version: 1
+artifact:
+  id: project-surface-specification
+  revision: 1
+source:
+  repository: repository-name
+  ref: branch-or-commit
+  visual_source_id: selected-source-id
+  visual_source_revision: selected-source-revision
+inputs:
+  profile_revision: 1
+  task_revision: 1
+  reference_revision: 1
+  rubric_revision: 1
+outputs:
+  profile: .codex/artifacts/surface-specification/profile.yaml
+  references: .codex/artifacts/surface-specification/references.yaml
+  task: .codex/artifacts/surface-specification/task.yaml
+  tokens: .codex/artifacts/surface-specification/design-tokens.json
+  component_map: .codex/artifacts/surface-specification/component-map.json
+  evaluation: .codex/artifacts/surface-specification/evaluation.yaml
+evaluation:
+  score: null
+  status: not-verified
+approval:
+  approved_by: null
+  approved_at: null
+effort:
+  duration_minutes: 0
+rollback:
+  accepted_revision: null

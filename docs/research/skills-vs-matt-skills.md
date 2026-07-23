@@ -8,7 +8,7 @@
 | `to-spec` | `product-spec` | own product behavior, scope, states, acceptance, and Ready-for-slice; interface topology stays with `repo-map` |
 | `to-tickets` | host planning | keep technical slices, owners, dependencies, and validation in built-in planning |
 | `domain-modeling` | `domain-modeling` | retain the distinct public owner |
-| `prototype` | `ui-design` plus conditional host experiments | absorb UI comparison only; keep logic experiments with the owning decision and never auto-commit/push |
+| `prototype` | Codex Product Design plus conditional host experiments | keep visual/prototype exploration outside `ui-spec`; never auto-promote it into product source |
 | `writing-great-skills` | catalog standards | prune context/cognitive load, use checkable steps, single-source protocols, branch disclosure, and leading words |
 | `diagnosing-bugs` | Global diagnosis rules | require a run red-capable command before hypotheses; do not restore a public diagnosis Skill |
 | `tdd` | `dev-frontend`, `dev-rust` | add opt-in behavior-first vertical-slice references |
@@ -23,7 +23,8 @@
 Discovery: repo-map when repository truth is unknown
   -> Domain: domain-modeling when language, lifecycle, or business rules are unclear
   -> Product: product-spec when product behavior or acceptance is unresolved
-  -> UI: ui-design when one page/flow needs visual or interaction decisions
+  -> Visual: Codex Product Design when a direction or prototype must be explored
+  -> UI contract: ui-spec when a selected source must become implementation-ready
   -> Design: host planning for technical design and executable tasks
   -> Implementation: dev-frontend or dev-rust
   -> Quality: repo-review with bounded audit specialists

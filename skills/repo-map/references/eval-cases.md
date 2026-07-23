@@ -29,7 +29,7 @@
 | `Find why the build fails.` | Do not trigger this Skill; use the host's built-in diagnosis under effective instructions. | Concrete failure. |
 | `Split this migration into tasks.` | Do not trigger this Skill; use the host's built-in planning. | Future work planning. |
 | `Define the entities, relationships, lifecycle, invariants, and bounded contexts for this product domain.` | Prefer `domain-modeling`. | Business model, not repository semantics. |
-| `Audit this endpoint for authorization risk.` | Prefer `audit-security`. | Bounded security audit. |
+| `Review this endpoint diff for authorization risk.` | Prefer `repo-review`, routing professional security work to Codex Security when available. | Security-only change review. |
 | `Turn these verified project notes into a technical article.` | Prefer `human-writing`. | Source-grounded writing, not repository mapping. |
 | `Specify the user flows, permission rules, user-visible states, and acceptance for this new feature.` | Prefer `product-spec`. | Product behavior, not repository navigation. |
 | `Regenerate OpenAPI and migrate the React caller to the generated client.` | Prefer the matching `dev-*` owner. | Source implementation, not a durable map deliverable. |

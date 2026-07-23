@@ -1,4 +1,0 @@
-interface:
-  display_name: "Security Audit"
-  short_description: "Audit scoped security with framework-aware evidence"
-  default_prompt: "Use $audit-security to run a bounded, read-only security audit of a known surface and report evidence-backed findings and verification gaps."

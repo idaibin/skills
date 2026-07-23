@@ -41,12 +41,12 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 ## Do Not Use For
 
 - Real Tauri, Electron, or native desktop-client runtime/window proof; use `ops-client`.
-- Frontend code changes, component architecture, ui-design decisions, or UI implementation; use `dev-frontend`.
+- Frontend code changes, component architecture, or UI implementation; use `dev-frontend`. UI specification decisions belong to `ui-spec`.
 - Cross-system root-cause coordination for intermittent or unexplained failures; use the host's built-in diagnosis, which may delegate bounded browser reproduction and evidence collection here.
 - Repository onboarding or map discovery; use `repo-map`.
 - Future implementation planning; use the host's built-in planning.
 - Local dirty-tree review or commit readiness; use `repo-review`.
-- Security-only review; use `audit-security`.
+- Security-only change review; use `repo-review`, which routes professional security work to Codex Security when available. A repository/path scan with no diff basis belongs directly to Codex Security.
 - Browser-only evidence when the user explicitly requested a real desktop app window.
 - ChatGPT collaboration orchestration, package construction, send authorization, round counting, conversation attribution, or response archiving; use `ask-chatgpt`. This skill may perform only the low-level browser actions that its coordinator explicitly routes.
 

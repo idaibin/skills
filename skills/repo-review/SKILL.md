@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when current Worktree changes or a fixed snapshot/range, including a resolved pull request, need read-only findings; add commit-readiness only when requested and release checks only as a conditional profile."
+description: "Use when current Worktree changes or a fixed snapshot/range, including a resolved pull request, need read-only findings or security-sensitive change routing; add commit-readiness only when requested and release checks only as a conditional profile."
 ---
 
 # Repository Review
@@ -33,7 +33,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
    If no trustworthy spec exists, mark Spec `Not verified`; do not infer one from the diff.
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
-8. Select only applicable profiles. Delegate a bounded specialist audit only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator; otherwise apply the profile internally. Retain integration, deduplication, severity, and final ownership.
+8. Select only applicable profiles. Delegate bounded frontend or Rust specialist work only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator. For professional security work, use the Security Routing rules below instead of recreating a scanner. Retain integration, deduplication, severity, and final ownership for the review basis.
 9. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
 10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
 11. Run only non-mutating repository checks needed for the selected basis and risk.
@@ -47,13 +47,25 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - **Review-package assessment:** package integrity and evidence coverage before findings.
 - **Release profile (conditional):** for explicit release readiness, add compatibility, migrations, generated artifacts, packaging, CI, deployment, rollback, and security-sensitive configuration to a fixed basis.
 
+## Security Routing
+
+Identify security-sensitive changes only to choose the professional workflow: authentication, authorization, tenant or ownership checks, tokens or secrets, untrusted input, injection or DOM sinks, uploads/downloads and paths, native IPC or shell access, SQL/data exposure, dependencies, and production security configuration.
+
+- For a Worktree/index, explicit commit-as-change-set, branch/range, pull request, or other immutable diff security review, route the fixed change basis to an available `codex-security:security-diff-scan` workflow.
+- For a complete fixed-SHA snapshot, materialize that tree read-only outside the reviewed checkout and route the whole materialized target to `codex-security:security-scan`. If safe materialization is unavailable, mark complete-snapshot security coverage `Not verified`; scanning only `SHA^..SHA` is not equivalent.
+- For a repository or scoped current-source path with no diff basis, route directly to `codex-security:security-scan` rather than widening `repo-review`. If that capability is unavailable, name the workflow and requested scope, mark the professional security result `Not verified`, and stop without an internal substitute.
+- Route explicit deep, threat-model, candidate-validation, or remediation requests to the matching Codex Security workflow.
+- If the required Codex Security capability is unavailable, do not reproduce its scanner or claim equivalent coverage. Continue the ordinary repository review only when separately requested and mark the professional security result `Not verified`, naming the unavailable workflow and excluded security scope.
+
+Treat Codex Security output as specialist evidence: verify that its finding basis matches this review, reject stale or unreachable candidates, deduplicate them with other findings, and retain `repo-review` severity and readiness ownership for the selected change basis.
+
 ## Do Not Use For
 
 - Repository mapping or repo-map maintenance; use `repo-map`.
 - Future implementation planning; use the host's built-in planning.
 - Business-domain modeling without a change basis; use `domain-modeling`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
-- A direct bounded frontend-only, Rust-only, or security-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. When such a basis exists, keep `repo-review` as coordinator and delegate only the bounded specialist surface when needed.
+- A direct bounded frontend-only or Rust-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. A security-only repository/path scan with no diff basis belongs directly to Codex Security. When a review basis exists, keep `repo-review` as coordinator.
 - Implementing accepted fixes; use the matching `dev-*` skill.
 - Staging, commits, pushes, squash, cleanup, or other Git mutation; use `repo-delivery` after explicit authorization.
 - External ChatGPT sending or browser/client operation; use the matching operations skill.
@@ -67,6 +79,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Mark mixed files `mixed-hunk`; never recommend whole-file staging unless every hunk belongs to the group.
 - Do not recommend `git add .`, `git add -A`, directory-wide adds, or broad wildcards unless explicitly approved.
 - Do not claim whole-repository, PR, release, or package coverage from partial evidence.
+- Do not claim Codex Security coverage unless the matching workflow actually ran against the selected basis; plugin absence remains `Not verified` rather than an internal fallback scan.
 - Do not report findings without reachable evidence and concrete impact.
 - Do not approve structural add/reuse/move/rename/delete work while manifests, exports, commands, tests, CI/deploy, docs, indexes, migrations, generated files, consumers, or stale references disagree.
 - Treat runtime, CI, deployment, external services, branch policy, and package completeness as `Not verified` unless directly evidenced.
@@ -77,7 +90,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the verdict, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
+Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. Name any Codex Security workflow used, its exact basis, and unverified security coverage. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the verdict, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
 
 ## References
 

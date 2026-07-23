@@ -28,7 +28,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 
 - Repository-only code review without browser execution.
 - Pure API inspection that does not require a browser session.
-- Frontend implementation, component refactors, or ui-design choices; use `dev-frontend`.
+- Frontend implementation or component refactors use `dev-frontend`; UI specification choices use `ui-spec`.
 - Desktop client verification that must inspect a real app window; use `ops-client`.
 - Ongoing account goals, voice, editorial calendars, audience strategy, or engagement policy; the caller must supply those decisions before browser execution.
 

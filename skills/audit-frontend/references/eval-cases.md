@@ -7,7 +7,7 @@
 | `Audit a TanStack Router Console feature for architecture/reuse and query-state contracts; leave accessibility out of scope.` | Trigger `audit-frontend` with Architecture/Reuse and State/Data/Contracts profiles. |
 | `Audit a Vue 3 feature for reactivity loss, watcher loops, composable lifetime, Pinia ownership, and Router contracts.` | Trigger State/Data/Contracts with the Vue Composition API framework profile. |
 | `Under repo-review, perform a read-only specialist audit of only the changed Vue SFCs for state, lifecycle, accessibility, and performance.` | Trigger bounded `audit-frontend`; keep `repo-review` as local Git-change review owner. |
-| `Under repo-review, inspect only the changed frontend paths for ui-design duplication and accessibility.` | Trigger bounded `audit-frontend`; keep `repo-review` as repository/range review owner. |
+| `Under repo-review, inspect only the changed frontend paths for ui-spec drift and accessibility.` | Trigger bounded `audit-frontend`; keep `repo-review` as repository/range review owner. |
 | `Audit the Tauri frontend/Rust boundary for progress, cancellation, errors, menus, and shortcuts.` | Trigger Desktop Boundary plus applicable State/Data/Contracts. |
 | `Audit this frontend design system for duplicated primitives, variants, tokens, spacing, and scroll ownership.` | Trigger Component/Layout/Design System. |
 | `Audit this React and Tailwind table for scale drift, class conflicts, responsive behavior, and duplicated spacing ownership.` | Trigger React plus Tailwind with Component/Layout/Design System; add Performance only when evidence warrants it. |
@@ -25,7 +25,7 @@
 | `Review the whole local dirty tree and prepare exact staging.` | Prefer `repo-review`. |
 | `Review this entire repository range and coordinate frontend, Rust, security, CI, and docs.` | Prefer `repo-review`, which may delegate bounded frontend paths. |
 | `Stage and commit the accepted frontend fix.` | Prefer `repo-delivery`. |
-| `Create a new UI profile, scoped reference registry, tokens, and task brief before implementation.` | Prefer `ui-design`. |
+| `Turn this selected visual source into a UI profile, scoped reference registry, tokens, mappings, and task specification before implementation.` | Prefer `ui-spec`. |
 
 ## Scenario Eval
 

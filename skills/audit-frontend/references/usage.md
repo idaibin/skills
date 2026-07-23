@@ -2,7 +2,7 @@
 
 ## Summary
 
-Use `audit-frontend` as one read-only frontend audit entrypoint. Detect the actual framework and local API style, then select only the profiles required by the request. React, Vue, UI/ui-design, accessibility, performance, and Tauri concerns are internal profiles rather than separate public skills because they share the same evidence basis, ownership model, mutation boundary, and final report contract.
+Use `audit-frontend` as one read-only frontend audit entrypoint. Detect the actual framework and local API style, then select only the profiles required by the request. React, Vue, UI/`ui-spec`, accessibility, performance, and Tauri concerns are internal profiles rather than separate public skills because they share the same evidence basis, ownership model, mutation boundary, and final report contract.
 
 ## Profiles
 

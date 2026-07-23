@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:idaibin:skills:schemas:ui-spec-package:v1",
+  "title": "Repository UI specification package",
+  "type": "object",
+  "$defs": {
+    "visualSource": {
+      "type": "object",
+      "required": ["id", "revision", "status", "source", "rights_status", "use", "ignore"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "revision": {"type": ["string", "integer"], "minLength": 1},
+        "status": {"enum": ["selected", "accepted"]},
+        "source": {"type": "string", "minLength": 1},
+        "rights_status": {"type": "string", "minLength": 1},
+        "use": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "ignore": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "required": [
+    "profile.yaml",
+    "references.yaml",
+    "task.yaml",
+    "design-tokens.json",
+    "component-map.json",
+    "evaluation.yaml",
+    "artifact-manifest.yaml"
+  ],
+  "properties": {
+    "profile.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "visual_source", "product", "layout", "surface", "implementation"],
+      "properties": {
+        "visual_source": {"$ref": "#/$defs/visualSource"}
+      }
+    },
+    "references.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "references"],
+      "properties": {
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "source", "rights_status", "use", "ignore"]
+          }
+        }
+      }
+    },
+    "task.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "visual_source", "task", "scope", "facts", "validation", "budget"],
+      "properties": {
+        "visual_source": {"$ref": "#/$defs/visualSource"}
+      }
+    },
+    "design-tokens.json": {
+      "type": "object",
+      "required": ["version", "revision", "source"]
+    },
+    "component-map.json": {
+      "type": "object",
+      "required": ["version", "revision", "components"]
+    },
+    "evaluation.yaml": {
+      "type": "object",
+      "required": ["version", "revision", "deterministic", "hard_blockers", "scores", "total", "decision"]
+    },
+    "artifact-manifest.yaml": {
+      "type": "object",
+      "required": ["version", "artifact", "source", "inputs", "outputs", "evaluation", "approval", "rollback"],
+      "properties": {
+        "source": {
+          "type": "object",
+          "required": ["repository", "ref", "visual_source_id", "visual_source_revision"]
+        },
+        "approval": {
+          "type": "object",
+          "required": ["approved_by", "approved_at"],
+          "properties": {
+            "approved_by": {"type": ["string", "null"], "minLength": 1},
+            "approved_at": {"type": ["string", "null"], "format": "date-time"}
+          }
+        }
+      }
+    }
+  }
+}

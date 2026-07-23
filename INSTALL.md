@@ -16,12 +16,11 @@ domain-modeling
 product-spec
 repo-review
 repo-delivery
-ui-design
+ui-spec
 dev-frontend
 dev-rust
 audit-frontend
 audit-rust
-audit-security
 ops-browser
 ops-client
 ask-chatgpt
@@ -35,12 +34,11 @@ The publishable source directories are:
 - `skills/product-spec`
 - `skills/repo-review`
 - `skills/repo-delivery`
-- `skills/ui-design`
+- `skills/ui-spec`
 - `skills/dev-frontend`
 - `skills/dev-rust`
 - `skills/audit-frontend`
 - `skills/audit-rust`
-- `skills/audit-security`
 - `skills/ops-browser`
 - `skills/ops-client`
 - `skills/ask-chatgpt`
@@ -101,11 +99,11 @@ Product definition:
 npx skills@latest add idaibin/skills --skill product-spec
 ```
 
-Frontend design and implementation:
+Frontend specification and implementation:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill ui-design dev-frontend audit-frontend ops-browser repo-review
+  --skill ui-spec dev-frontend audit-frontend ops-browser repo-review
 ```
 
 Rust implementation and audit:

@@ -82,7 +82,10 @@ When docs or commands reference a missing path:
 
 - [ ] Use `audit-frontend` only for a bounded frontend surface.
 - [ ] Use `audit-rust` only for selected Rust profiles.
-- [ ] Use `audit-security` only for a known security-sensitive surface.
+- [ ] Identify security-sensitive change surfaces only to select the matching Codex Security workflow; do not recreate a security scanner inside `repo-review`.
+- [ ] Use `codex-security:security-diff-scan` for a Worktree or immutable change set; use `codex-security:security-scan` for a repository/path target or a read-only materialized complete snapshot.
+- [ ] Never substitute `SHA^..SHA` diff coverage for a requested complete-tree snapshot scan.
+- [ ] If the required Codex Security workflow is unavailable or not run, record its exact scope as `Not verified`.
 - [ ] Give every specialist exact paths, diff/range, questions, exclusions, and return contract.
 - [ ] Keep final scope, cross-domain integration, duplicate removal, severity, and report ownership in `repo-review`.
 - [ ] Reject specialist findings that cannot be verified against the fixed basis.

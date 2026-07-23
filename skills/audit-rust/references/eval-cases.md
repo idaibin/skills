@@ -33,7 +33,7 @@
 | `Review my dirty tree and prepare exact commits.` | Prefer `repo-review`; it coordinates the local read-only Git-change review and may request a bounded Rust specialist subreview. |
 | `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `repo-review` as the local read-only review coordinator; do not auto-route to delivery. |
 | `Review this immutable branch range and coordinate Rust, frontend, security, CI, and docs.` | Prefer `repo-review`; it may delegate bounded Rust paths here. |
-| `Audit only authentication and secret handling after the module is known.` | Prefer `audit-security`. |
+| `Run a professional security scan of this known Rust module with no diff basis.` | Prefer `codex-security:security-scan`. |
 
 ## Profile Selection Eval
 

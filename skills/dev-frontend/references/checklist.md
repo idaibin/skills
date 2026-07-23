@@ -79,7 +79,7 @@ Use this checklist when implementing or reviewing frontend changes.
 - Prefer browser inheritance and cascade for font, color, line-height, and spacing context when the parent or design system already defines them.
 - Consolidate repeated CSS declarations into the nearest owning class, component prop, token, variant, or shared style only when that does not broaden side effects.
 - Keep one declaration source for each visual responsibility. Do not repeat the same spacing, sizing, alignment, typography, color, border, or overflow declaration in base styles, component styles, utilities, and late overrides.
-- Remove duplicate class definitions and late CSS overrides after moving responsibility to the correct owner; do not leave stale patch rules that shadow ui-design declarations.
+- Remove duplicate class definitions and late CSS overrides after moving responsibility to the correct owner; do not leave stale patch rules that shadow `ui-spec` declarations.
 - Apply only detected rules from `styling-systems.md`, including Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, or shadcn/ui when present.
 - Use one named layout class, token, or CSS variable for business-specific geometry such as split-pane widths, toolbar offsets, or complex loader anatomy.
 - Do not introduce a new UI kit, theme provider, global reset, styling configuration, token system, icon library, or visual scale for a local change.
@@ -100,7 +100,16 @@ Use this checklist when implementing or reviewing frontend changes.
 - Remove touched hand-maintained DTOs only when the generated client owns the same
   contract and all consumers are migrated; do not leave competing type families.
 - Keep form validation, controlled state, table pagination, sorting, filtering, modal lifecycle, and drawer lifecycle aligned with existing local patterns.
+- Distinguish pending, failed, successful-empty, populated, and background-refresh
+  states before defaulting async data to an empty collection. When cached successful
+  data remains valid during a refresh failure, keep it visible and report the refresh
+  problem without replacing it with a false initial-error or empty state.
 - Use semantic controls: buttons for actions, links for navigation, labels for fields, and visible focus states.
+- Inside a form, give retry, cancel, reveal, menu, and other non-submit buttons an
+  explicit `type="button"` (or the framework-native equivalent).
+- Keep unrelated async owners in separate state and feedback regions. Do not
+  conditionally replace a primary task's status with updater, telemetry, account,
+  or other secondary-domain errors unless an approved precedence contract requires it.
 - Do not silently change date, currency, locale, enum, or status-display semantics.
 - For Tauri/Electron UI, keep shell, file, platform, and native API access behind existing IPC/command wrappers and surface command errors in the UI.
 

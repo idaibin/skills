@@ -45,13 +45,13 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 ## Do Not Use For
 
 - Plain browser pages, web previews, form workflows, downloads, or browser console/network checks; use `ops-browser`.
-- Frontend implementation, desktop webview architecture, IPC layering, or ui-design work; use `dev-frontend`.
+- Frontend implementation, desktop webview architecture, or IPC layering; use `dev-frontend`. UI specification work belongs to `ui-spec`.
 - Ordinary repository discovery unless the user asks for client launch review, real-window verification, or browser-preview invalidation.
 - Browser preview evidence when the task requires proof from a Tauri, Electron, or native desktop runtime.
 - Repository onboarding or map discovery; use `repo-map`.
 - Future implementation planning; use the host's built-in planning.
 - Local dirty-tree review or commit readiness; use `repo-review`.
-- Security-only review; use `audit-security`.
+- Security-only change review; use `repo-review`, which routes professional security work to Codex Security when available. A repository/path scan with no diff basis belongs directly to Codex Security.
 - Cross-system root-cause coordination for a frozen, stale, non-responsive, or dev-versus-release failure; use the host's built-in diagnosis, which may delegate real-client evidence collection here.
 
 ## Hard Rules

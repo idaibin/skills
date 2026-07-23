@@ -27,7 +27,7 @@ Brief, or Standard as additional modes.
 | Product behavior and acceptance are unresolved | `product-spec` |
 | Technical tasks for already-decided behavior | Host planning |
 | Multiple contexts, shared lifecycle, invariants, or domain language | `domain-modeling` |
-| Shared visual tokens, component semantics, or visual system | `ui-design` |
+| Selected-source UI contract, shared visual tokens, component semantics, or visual system | `ui-spec` |
 | Durable repository/component reuse map | `repo-map` |
 | Current implementation-interface ownership, topology, or consumers | `repo-map` |
 | Approved source change | matching `dev-*` |

@@ -12,7 +12,7 @@ This file defines how AI agents should work on this repository. It is not the pr
 - Use the host's built-in planning for requirement readiness, technical design, task decomposition, acceptance criteria, and validation gates.
 - For concrete failures, follow the effective personal or repository diagnosis rules before permanent remediation; use the matching implementation skill only when a source change is requested.
 - Use `dev-frontend` or `dev-rust` for requested code changes.
-- Use `audit-frontend`, `audit-rust`, or `audit-security` for bounded read-only domain audits.
+- Use `audit-frontend` or `audit-rust` for bounded read-only domain audits. For security-sensitive change review, keep `repo-review` as coordinator and route professional scanning to Codex Security when available; use Codex Security directly for repository/path scans with no diff basis. If the required Codex Security workflow is unavailable, name it and the requested scope, mark that professional result `Not verified`, and do not substitute an internal scanner.
 - Use `repo-review` for read-only review of the current Worktree/index, a fixed immutable SHA/range, or a verified review package. Resolve pull requests to fixed base/head SHAs; apply Release only as a conditional profile over a fixed basis.
 - Use `ask-chatgpt` for local ChatGPT packages or explicitly authorized ChatGPT review, research, visual exploration, and decision challenge after the Codex-first gate; use `ops-browser` only for delegated low-level browser operations.
 - Use `repo-delivery` for categorized commits by default, explicit single commits, pushes, evidence-based branch integration, cleanup, and other Git mutations.

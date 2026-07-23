@@ -6,11 +6,11 @@ deterministic:
 hard_blockers: []
 scores:
   product_truth: 0
-  user_task: 0
+  source_fidelity: 0
   information_architecture: 0
-  visual_coherence: 0
-  components_layout: 0
   interaction_states: 0
+  responsive_accessibility: 0
+  component_token_mapping: 0
   engineering_fit: 0
   evidence: 0
 total: 0

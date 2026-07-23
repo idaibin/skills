@@ -47,7 +47,7 @@ Implement Rust changes against the repository's real toolchain, project class, c
 - Diagnosis-only requests without authorized Rust source changes; use the host's built-in diagnosis under effective instructions.
 - Dirty-tree ownership, staging plans, or commit grouping; use `repo-review`. Use `repo-delivery` for actual staging or commits after review.
 - Systematic Rust architecture, performance, memory, concurrency, SQLite, unsafe, or FFI audit without requested edits; use `audit-rust`.
-- Security-only audit after the Rust surface is mapped; use `audit-security`.
+- Security-only change review; use `repo-review`, which routes professional security work to Codex Security when available. A repository/path scan with no diff basis belongs directly to Codex Security.
 - Frontend or webview UI changes; use `dev-frontend`.
 
 ## Hard Rules

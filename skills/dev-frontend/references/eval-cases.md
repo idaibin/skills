@@ -2,6 +2,14 @@
 
 Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ownership rules, validation expectations, or metadata.
 
+## Contents
+
+- Trigger Eval
+- Non-Trigger Eval
+- Independent Review Outlet Eval
+- Quality Eval
+- Scoring
+
 ## Trigger Eval
 
 | User prompt | Expected result | Why |
@@ -30,6 +38,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Use the nearest existing component as a reference and justify any new file.` | Should trigger `dev-frontend`. | Reference-first component development. |
 | `Migrate this React feature to the generated OpenAPI client, preserve nullability, auth, loading/success/error, and remove its touched duplicate DTO.` | Should trigger `dev-frontend`. | Protocol client consumption is frontend source work. |
 | `Update this page's existing native API wrapper and types; the repository has no generated contract pipeline.` | Should trigger `dev-frontend` and mark protocol automation `Not applicable`. | Frontend API work does not itself require OpenAPI. |
+| `Fix this role picker so loading, failed, successful-empty, cached refresh failure, and populated states stay distinct; retry is inside the form.` | Should trigger `dev-frontend`. | Async state semantics and form-button behavior require source implementation. |
+| `Show updater failure without replacing the archive task's current status; keep both domains independently actionable.` | Should trigger `dev-frontend`. | Independent async state owners need separate feedback composition. |
 
 ## Non-Trigger Eval
 
@@ -43,7 +53,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Verify this page in the browser and check console/network.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Capture the real Electron app window with platform-specific window evidence.` | Should prefer `ops-client`. | Desktop-client evidence. |
 | `These frontend changes are reviewed; stage, commit, and push them.` | Should prefer `repo-delivery`. | Authorized Git mutation after review. |
-| `Create the UI direction, project profile, reference responsibilities, task tokens, and rubric, but do not edit product source.` | Should prefer `ui-design`. | UI design asset ownership. |
+| `Translate this selected visual source into the UI specification, component/token mapping, state contract, and rubric, but do not edit product source.` | Should prefer `ui-spec`. | UI specification ownership. |
 | `Define the product behavior, permission rules, user-visible states, and acceptance before anyone edits source.` | Should prefer `product-spec`. | Product decisions are unresolved. |
 
 ## Independent Review Outlet Eval
@@ -85,6 +95,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | Tailwind scale discipline | Uses project scale utilities for routine sizing and spacing, and named owners for real product geometry. | Leaves routine sizes as arbitrary pixel utilities without justification. |
 | Styling profile selection | Detects Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, shadcn/ui, or local styling ownership and applies only present profiles. | Assumes Tailwind or introduces another styling system because it is familiar. |
 | Contract preservation | Traces and preserves route, query, payload, response, permission, loading, and error behavior. | Changes data contracts silently. |
+| Async query-state integrity | Distinguishes initial pending/error from successful empty/populated data, preserves valid cached data during background refresh failure when supported, and uses explicit non-submit button types inside forms. | Defaults unknown data to empty before classifying state, hides valid cached data behind a refresh error, or lets retry submit the form. |
+| Independent feedback ownership | Keeps primary-task and secondary-domain state owners separate unless an approved precedence contract combines them. | Multiplexes unrelated errors through one conditional status string and hides the user's current task state. |
 | Protocol activation | Uses generated-client rules only for an existing pipeline or explicit migration/trial; otherwise preserves the repository-native API wrapper and DTO owner and reports `Not applicable`. | Introduces OpenAPI from REST usage alone. |
 | Protocol client authority | When active, consumes one normalized OpenAPI-derived generated client regardless of backend language, records generator/version/command, and does not create a frontend authority. | Hand-maintains endpoint paths or a second DTO family alongside an active generated client. |
 | Protocol semantics | Preserves nullability, optionality, enum, ID, date, money, pagination, auth, success, validation/business error, and compatibility semantics. | Treats successful typecheck as semantic or backend-conformance proof. |

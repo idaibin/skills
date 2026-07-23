@@ -25,7 +25,7 @@ Never rewrite a working local structure merely to match this skill or an externa
 ## Workflow
 
 1. Read repository guidance, run `git status --short`, and identify the target app, project class, framework, package manager, scripts, documented architecture, and coordinating review owner when delegated.
-2. Consume current `repo-map` output or perform a targeted inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. When a `ui-design` package is in scope, verify its accepted revision and use it as the declared design contract, not as runtime proof.
+2. Consume current `repo-map` output or perform a targeted inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. When a `ui-spec` package is in scope, verify its selected source and accepted revision and use it as the declared UI contract, not as runtime proof.
 3. Classify the product surface as Web, high-density Console, or Tauri Desktop. Select exactly one framework profile per audited boundary: **React**, **Vue Composition**, **Vue Options**, or **Repository-native Other**. Select only styling profiles present in scope: **Tailwind**, **CSS Modules**, **Sass/Less**, **CSS-in-JS**, **Ant Design**, **shadcn/ui**, or a documented local system.
 4. Select one or more audit profiles; explicitly mark the rest `Out of scope`:
    - **Architecture/reuse:** routes, features, shared layers, dependency direction, reuse, abstractions, structural lifecycle, and docs.
@@ -69,7 +69,7 @@ Never rewrite a working local structure merely to match this skill or an externa
 
 - Repository orientation, commands, reuse inventory, or docs/code alignment without an audit request; use `repo-map`.
 - Frontend implementation, modification, or refactoring; use `dev-frontend`.
-- Creating UI direction, project profiles, reference registries, tokens, or task design assets; use `ui-design`.
+- Creating selected-source UI specifications, project profiles, reference registries, tokens, mappings, or task contracts; use `ui-spec`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
 - Owning Worktree readiness or immutable repository/range/PR/release coordination; use `repo-review`, which may delegate a bounded frontend surface here.
 - Actual staging, commit, rebase/squash, push, or delivery; use `repo-delivery`.

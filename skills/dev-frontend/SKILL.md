@@ -13,7 +13,7 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions.
-3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When an accepted `ui-design` package exists, verify its revisions and consume its fact boundary, tokens, component map, and acceptance contract.
+3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When an accepted `ui-spec` package exists, verify its revisions and consume its selected-source identity, fact boundary, tokens, component map, state contract, and acceptance checks.
 4. Read the approved requirement/specification when one exists. Confirm acceptance criteria, non-goals, affected contracts/files, and validation seams; for complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
 5. Consume a current `repo-map` inventory or perform a targeted search for existing routes, UI, state, services, tests, and analogous implementations. For API callers, follow the repository's existing client/type authority. Load the protocol-contract profile only when an OpenAPI/generated-client chain already exists or the task explicitly introduces one.
 6. Decide in order: directly reuse, adapt the nearest reference, or create new. Record why existing candidates are insufficient before adding a file or abstraction.
@@ -39,7 +39,7 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 - First-pass repository discovery, real commands, or entry points; use `repo-map`.
 - Planning-only requests without authorized frontend source changes; use the host's built-in planning.
 - Shared cross-functional business language/rule or lifecycle conflicts; use `domain-modeling`. Route feature-local behavior, states, and acceptance to `product-spec`.
-- UI direction, project profiles, reference responsibilities, task briefs, tokens, or evaluation contracts without source edits; use `ui-design`.
+- UI specification, selected-source translation, shared visual contracts, task briefs, tokens, mappings, or acceptance rules without source edits; use `ui-spec`.
 - Dirty-tree ownership, mixed-hunk review, staging plans, or commit readiness; use `repo-review`.
 - Actual staging, commit creation, rebase/squash, push, or delivery; use `repo-delivery` after review.
 - Systematic frontend architecture, reuse, state/data, accessibility, performance, or Tauri-boundary audit without requested edits; use `audit-frontend`.
@@ -62,6 +62,10 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 - Prefer semantic HTML, existing components, component props, natural document flow, cascade, and inheritance over redundant wrappers and one-off overrides.
 - Use project scale utilities for ordinary sizing and spacing; put real product geometry into named classes, tokens, variants, or CSS variables.
 - Preserve route paths, query parameters, payload shapes, response unwrapping, loading states, permission-hidden entries, and accessibility behavior unless the task requires changes.
+- Keep asynchronous query states distinct before applying empty defaults. Preserve
+  last successful data during background refresh failures when the repository's
+  cache contract does so, and make non-submit actions inside forms explicitly
+  `type="button"` or the framework-native equivalent.
 - Preserve the repository's API authority and nullability, optionality, enums, IDs,
   dates, money, pagination, auth, success, and error semantics. When an existing or
   explicitly requested OpenAPI/generated-client profile applies, use its generator

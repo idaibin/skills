@@ -1,5 +1,17 @@
 version: 1
 revision: 1
+visual_source:
+  id: selected-source-id
+  revision: selected-source-revision
+  status: accepted
+  source: local-path-or-product-design-result
+  rights_status: approved-for-project-use
+  use:
+    - visual-hierarchy
+    - layout-direction
+  ignore:
+    - unverified-product-behavior
+    - inferred-exact-token-values
 product:
   name: project-name
   type: product-type
@@ -8,7 +20,7 @@ product:
     - primary-user
   primary_job: Complete the target workflow.
 principles:
-  - factual-over-decorative
+  - selected-source-with-explicit-evidence
 layout:
   shell: repository-native
   content_owner: page-root

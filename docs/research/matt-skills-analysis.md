@@ -17,7 +17,7 @@ The reviewed skills.sh page reported 55 published Skills and the install command
 | --- | --- | --- |
 | `grill-me`, `grill-with-docs`, `to-spec` | Resolve requirements and decisions before implementation; separate synthesis from interviewing. | `product-spec` internal clarification and Ready-for-slice contract |
 | `domain-modeling` | Ubiquitous language, scenario stress tests, state/rule clarification, sparse decision records. | Existing `domain-modeling` owner |
-| `prototype` | One explicit question, materially different comparable variants, finite budget, and throwaway evidence. | UI branch in `ui-design`; conditional logic experiment under the relevant product/domain/technical owner |
+| `prototype` | One explicit question, materially different comparable variants, finite budget, and throwaway evidence. | Codex Product Design for visual/prototype exploration; keep `ui-spec` specification-only and logic experiments with the relevant decision owner |
 | `writing-great-skills` | Context/cognitive load, checkable completion criteria, single-source rules, branch disclosure, pruning, and leading words. | Skill standard and affected entrypoints |
 | `to-tickets` | Tracer-bullet vertical slices and explicit blocking edges. | Host planning under effective repository instructions |
 | `diagnosing-bugs` | Tight red-capable loop, minimization, falsifiable hypotheses, one-variable probes, regression seam. | Global diagnosis instructions; no public diagnosis Skill |

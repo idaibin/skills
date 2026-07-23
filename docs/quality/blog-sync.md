@@ -2,6 +2,13 @@
 
 Date: 2026-07-21
 
+## Current drift
+
+On 2026-07-22, AICraft renamed `ui-design` to `ui-spec` and narrowed it to
+selected-source specification. The Blog files listed below have not been
+reverified or resynchronized for that rename in the current task. Blog sync and
+publication therefore remain `Not verified`.
+
 ## Applied scope
 
 The public explanation in `/Users/daibin/Projects/repo-github/blog` was updated
@@ -14,10 +21,11 @@ in the bilingual catalog and catalog-evolution articles:
 
 ## Verified AICraft facts to synchronize
 
-- The catalog has 15 public packages after the current source validation.
-- `ui-design` owns Feature UI for one page or flow by default; shared tokens,
-  component semantics, variants, or an overall visual language activate the
-  conditional Design System profile.
+- The catalog has 14 public packages after the current source validation.
+- `ui-spec` translates a selected visual source into a Feature Spec for one page or
+  flow by default; shared tokens, component semantics, variants, or shared visual
+  rules activate the conditional Design System Spec profile. Visual exploration,
+  image generation, critique, and prototypes belong to Codex Product Design.
 - `domain-modeling` defaults to shared business terms, ambiguity, rules, and
   boundary scenarios. Lifecycle and bounded-context work are conditional; API,
   database, frontend, and backend structure remain outside its ownership.

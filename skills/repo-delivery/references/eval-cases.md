@@ -28,7 +28,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | `Split this future feature into tasks and owners.` | Should not trigger this Skill; use the host's built-in planning. | Forward planning. |
 | `Review all dirty changes and propose commit groups.` | Should prefer `repo-review`. | Pre-delivery review scope is not clear. |
 | `Review this diff and give me a commit message, but do not change Git state.` | Should prefer `repo-review`. | Review-only request without delivery authorization. |
-| `Check this endpoint for authorization risk.` | Should prefer `audit-security` after scope is clear. | Security-only audit. |
+| `Review this endpoint diff for authorization risk.` | Should prefer `repo-review`, routing professional security work to Codex Security when available. | Security-only change review. |
 | `Verify this web page in the browser before release.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Commit this branch, push it, and open a draft PR.` | Should prefer the GitHub publishing workflow. | PR creation is outside Git-only delivery. |
 | `Send this branch to ChatGPT for five independent review rounds before delivery.` | Should prefer `ask-chatgpt`; delivery begins only after the review loop is accepted. | External review orchestration is not Git mutation. |

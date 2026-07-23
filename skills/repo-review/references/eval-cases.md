@@ -13,7 +13,10 @@
 | `Review PR 42 but do not post comments.` | Resolve the PR base/head SHAs, then trigger Fixed-basis review and keep GitHub state unchanged. |
 | `Review this release candidate for migrations, CI, packaging, and rollback.` | Trigger Fixed-basis review with the conditional Release profile. |
 | `Validate this multipart review package, then review it.` | Trigger Review-package basis only after integrity verification. |
-| `Coordinate frontend, Rust, and security review where relevant.` | Trigger `repo-review` with bounded specialist profiles. |
+| `Coordinate frontend, Rust, and professional security review where relevant.` | Trigger `repo-review`; use bounded frontend/Rust specialists and route security evidence to Codex Security when available. |
+| `Review this auth diff and run the professional security checks that apply.` | Trigger `repo-review`; fix the change basis and route security work to `codex-security:security-diff-scan` when available. |
+| `Security-review commit X as a change set against its parent.` | Trigger Fixed-basis `repo-review` and route the explicit commit diff to `codex-security:security-diff-scan`. |
+| `Security-scan the complete repository snapshot at commit X.` | Trigger Fixed-snapshot `repo-review`; safely materialize the full tree and route it to `codex-security:security-scan`, or mark snapshot security coverage `Not verified`. |
 | `Review this branch against both repository standards and the originating specification.` | Trigger two-axis `repo-review`. |
 | `Review this fixed range's OpenAPI authority, compatibility diff, generated client, backend conformance, consumer states, and clean CI.` | Trigger `repo-review` with protocol-contract profile. |
 | `Review this REST change against its native route, DTO, client, consumers, and tests; no generated schema pipeline exists.` | Trigger ordinary `repo-review`; mark the OpenAPI profile `Not applicable`. |
@@ -24,7 +27,7 @@
 | --- | --- |
 | `Map the repository architecture and reusable contracts into docs/repo-map/README.md.` | Prefer `repo-map`. |
 | `Find why this test fails.` | Do not trigger this Skill; use the host's built-in diagnosis under effective instructions. |
-| `Audit only this endpoint for token leakage.` | Prefer `audit-security`. |
+| `Scan this current-source endpoint path for token leakage; there is no diff to review.` | Prefer `codex-security:security-scan`. |
 | `Audit this frontend architecture for accessibility and performance without a review basis.` | Prefer `audit-frontend`. |
 | `Audit this Rust service for concurrency and memory risks without a review basis.` | Prefer `audit-rust`. |
 | `Apply the accepted frontend findings.` | Prefer `dev-frontend`. |
@@ -51,6 +54,10 @@
 | Branch names move during range review | Resolve base/head SHAs before findings. | Reviews moving names. |
 | Current worktree differs from reviewed SHA | Treat worktree content as contamination. | Uses it to clear a finding. |
 | Range touches React, Rust, docs, and CI | Delegate bounded specialist surfaces and consolidate root causes. | Runs every profile globally or concatenates reports. |
+| Fixed diff changes authentication or tenant authorization | Route professional security evidence to `codex-security:security-diff-scan`, then verify basis and consolidate findings in `repo-review`. | Reimplements a generic scanner, silently skips security, or treats plugin output as automatically valid. |
+| Fixed commit request means complete snapshot | Materialize the exact full tree read-only and use `codex-security:security-scan`; preserve the original checkout. | Scans only the commit diff or mutates the reviewed checkout. |
+| Required Codex Security workflow is unavailable | Continue only the requested ordinary review and mark the named security scope `Not verified`. | Claims equivalent internal coverage or blocks unrelated review evidence. |
+| Direct repository/path scan and Codex Security is unavailable | Name `codex-security:security-scan`, mark the requested path `Not verified`, and stop that scan. | Routes to a deleted local Skill or silently performs an internal approximation. |
 | Review package is incomplete | Stop package-based conclusions. | Treats partial evidence as complete. |
 | Repo-map path is stale | Search from nearest existing ancestor at the basis and route map repair to `repo-map`. | Trusts the map or edits it. |
 | Review request contains no Git mutation authorization | Keep files, Git, GitHub, and remotes unchanged. | Stages, commits, comments, or pushes. |
@@ -67,11 +74,11 @@
 | Ownership and mixed hunks | In commit-readiness, classifies all ownership and requires safe hunk handling; findings-only preserves unrelated state without exhaustive commit grouping. | Uses whole-file staging for mixed content or forces commit grouping on a bounded findings request. |
 | Evidence isolation | Keeps current-worktree content out of another SHA basis. | Clears immutable findings with local files. |
 | Context collaboration | Uses repo maps only for navigation and verifies facts at the basis. | Trusts or edits the map. |
-| Specialist composition | Delegates bounded paths to audit skills and retains final scope, integration, severity, and report ownership. | Hands off the whole review or concatenates reports. |
+| Specialist composition | Delegates bounded frontend/Rust paths when needed, routes professional security work to Codex Security, and retains final scope, integration, severity, and report ownership for the review basis. | Hands off the whole review, recreates a security scanner, or concatenates reports. |
 | Standards axis | Checks applicable repository guidance, architecture, correctness, security, performance, and maintainability with cited evidence. | Treats generic preferences as hard repository violations. |
 | Spec axis | Checks requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and scope creep; marks the axis `Not verified` when no trustworthy spec exists. | Infers a spec from the diff or claims compliance without a source. |
 | Axis independence | Collects Standards and Spec evidence independently, optionally in bounded parallel read-only passes, then verifies, deduplicates, labels, and severity-ranks findings centrally. | Lets one axis mask the other or concatenates unverified subagent output. |
-| Necessary handoff | Emits an audit-skill handoff only when that specialist must actually inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or security-sensitive code. |
+| Necessary handoff | Emits a frontend/Rust audit handoff or Codex Security route only when that specialist must inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or security-sensitive code. |
 | Contract completeness | Traces manifests, exports, callers, types, migrations, generated files, tests, CI/deploy, docs, indexes, and stale references when applicable. | Reviews isolated source lines only. |
 | Protocol activation | Selects the generated-contract profile only for an existing pipeline or explicit gate; otherwise reviews native route/DTO/client/test ownership and reports `Not applicable`. | Requires OpenAPI because the change uses REST. |
 | Protocol contract basis and gate | When active, fixes Git basis, authority and generator details, baseline/candidate artifacts, then requires applicable generation, compatibility, client, conformance, consumer, and CI evidence or marks gaps `Not verified`. | Reviews a moving basis, treats an edited generated artifact as authority, or accepts static checks as live proof. |

@@ -36,7 +36,7 @@ Install one Skill:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill ui-design \
+  --skill ui-spec \
   --global --agent codex
 ```
 
@@ -63,8 +63,8 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 
 | Skill | Use when |
 | --- | --- |
-| `ui-design` | A concrete page or flow needs visual/interaction design, or shared tokens, component semantics, variants, or visual language must change. |
-| `dev-frontend` | A requested frontend feature, component, page, or accepted UI design must be implemented and validated. |
+| `ui-spec` | A selected visual source or accepted UI surface must become an implementation-ready layout, state, interaction, responsive/accessibility, component/token, and acceptance contract. |
+| `dev-frontend` | A requested frontend feature, component, page, or accepted UI specification must be implemented and validated. |
 | `dev-rust` | A requested Rust feature, refactor, or port must be implemented with ownership and behavior evidence. |
 
 ### Audit and Operations
@@ -73,7 +73,6 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 | --- | --- |
 | `audit-frontend` | A known frontend surface needs a bounded read-only architecture, accessibility, performance, state, or design audit. |
 | `audit-rust` | A Rust workspace or surface needs a bounded ownership, concurrency, SQLite, unsafe/FFI, performance, or memory audit. |
-| `audit-security` | A known security-sensitive code or configuration surface needs a bounded read-only assessment. |
 | `ops-browser` | A browser page or bounded platform action must be operated or verified with capability, identity, authorization, and before/after evidence. |
 | `ops-client` | A Tauri, Electron, or native desktop client must be verified against its real process and window. |
 
@@ -95,8 +94,10 @@ unclear product     -> product-spec
 complex change      -> host planning and repository instructions
 known failure       -> evidence-driven diagnosis under effective instructions
 source work         -> dev-frontend / dev-rust
-UI design           -> ui-design (Feature UI; Design System when shared) -> dev-frontend
-review              -> repo-review (with bounded audit-* specialists when needed)
+visual exploration  -> Codex Product Design -> selected visual source
+UI specification    -> ui-spec (Feature Spec; Design System Spec when shared) -> dev-frontend
+review              -> repo-review (with bounded frontend/Rust specialists when needed)
+security review     -> repo-review -> Codex Security when available
 delivery            -> repo-delivery
 ```
 
@@ -104,6 +105,11 @@ The nearest applicable owner may start directly. Cross-Skill handoffs transfer
 bounded evidence, never implicit authorization. Use one owner by default, load only
 the selected references, reuse unchanged evidence, and add tasks or review rounds only
 when they produce a required independent result.
+
+Professional security scanning is an optional host capability, not a bundled public
+Skill dependency. When the matching Codex Security workflow is unavailable, name the
+missing workflow and requested scope, mark the professional security result
+`Not verified`, and stop that scan without claiming an internal substitute.
 
 ## Package Contract
 

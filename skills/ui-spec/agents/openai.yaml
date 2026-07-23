@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI Specification"
+  short_description: "Specify selected UI for frontend implementation"
+  default_prompt: "Use $ui-spec to turn this selected visual source and verified product facts into an implementation-ready UI specification without generating images or editing source."

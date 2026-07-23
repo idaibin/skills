@@ -26,7 +26,7 @@ structure rules, validation expectations, or metadata.
 | `Find why cargo test is failing before making changes.` | Should not trigger this Skill; use the host's built-in diagnosis under effective instructions. | Root cause unknown. |
 | `Review all dirty changes and split commits.` | Should prefer `repo-review`. | Dirty-tree review. |
 | `Audit this Tokio and SQLite architecture for task leaks, contention, WAL growth, and query-plan risks.` | Should prefer `audit-rust`. | Read-only domain audit. |
-| `Audit this mapped Axum endpoint for authorization and token exposure.` | Should prefer `audit-security`. | Security-only audit. |
+| `Review this Axum endpoint diff for authorization and token exposure.` | Should prefer `repo-review`, routing professional security work to Codex Security when available. | Security-only change review. |
 | `Fix the React UI inside this Tauri app.` | Should prefer `dev-frontend`. | Frontend implementation. |
 | `Define the product behavior, permission rules, user-visible outcomes, and acceptance before writing the endpoint.` | Should prefer `product-spec`. | Product decisions are unresolved. |
 

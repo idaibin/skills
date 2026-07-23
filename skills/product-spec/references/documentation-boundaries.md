@@ -19,7 +19,7 @@ RFC, feature, requirements, or product directory already owns the fact.
 - ADR: only for a long-lived technical or product decision when the repository
   uses ADRs and the decision owner authorizes it.
 - UI evidence/prompt: only when the feature needs visual or state evidence; shared
-  visual-system ownership belongs to `ui-design`.
+  selected-source and visual-system specification ownership belongs to `ui-spec`.
 - Handoff: only for unfinished cross-session continuation. Follow repository
   convention, such as `.codex/handoffs/<task-id>.md` for local task/worktree state
   or a repository-approved docs location for explicitly requested team-shared
@@ -31,6 +31,6 @@ RFC, feature, requirements, or product directory already owns the fact.
 ## Authority
 
 `product-spec` may update product documents only after explicit authorization. It
-does not own source, Git, technical interface definitions, ui-design assets,
+does not own source, Git, technical interface definitions, `ui-spec` artifacts,
 domain models, or runtime evidence. Route current implementation mapping to
 `repo-map`; link other authoritative artifacts rather than copying them.

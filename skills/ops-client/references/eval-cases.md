@@ -28,7 +28,7 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | `Open the dev server page and check its console errors.` | Should prefer `ops-browser`. | Browser-preview behavior without desktop proof. |
 | `Review current git changes and split commits.` | Should prefer `repo-review`. | Dirty-tree review. |
 | `Understand this repository's directories and commands first.` | Should prefer `repo-map`. | Repository map task. |
-| `Audit only this Tauri IPC path for authorization risk.` | Should prefer `audit-security`; `ops-client` may supply runtime evidence only when delegated. | Security review is not client-operation ownership. |
+| `Review this Tauri IPC diff for authorization risk.` | Should prefer `repo-review`, routing professional security work to Codex Security when available; `ops-client` may supply runtime evidence only when delegated. | Security review is not client-operation ownership. |
 | `Why does the release app button not respond? Find the root cause.` | Should not trigger this Skill as the primary owner; host diagnosis may delegate Client Debug Evidence to `ops-client`. | The cause may cross UI, IPC, Rust, or platform boundaries. |
 | `Why does dev work while the release client freezes or shows the old UI?` | Should use host diagnosis with bounded `ops-client` evidence. | Build-source proof is evidence, not final root-cause ownership. |
 

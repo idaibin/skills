@@ -75,7 +75,7 @@ Do not rewrite a working local design merely to resemble an external project.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
 - Owning Worktree readiness or immutable repository/range/PR/release coordination; use `repo-review`, which may delegate a bounded Rust surface here.
 - Commit, push, squash, branch cleanup, or remote proof; use `repo-delivery` only when the user explicitly requests delivery.
-- Security-only audit after the Rust surface is mapped; use `audit-security`.
+- Security-only change review; use `repo-review`, which routes professional security work to Codex Security when available. A repository/path scan with no diff basis belongs directly to Codex Security.
 - A frontend-only change with no Rust or SQLite boundary.
 
 ## Output Contract

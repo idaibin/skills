@@ -28,9 +28,9 @@
     },
     {
       "title": "Design",
-      "description": "Skill for designing concrete Feature UI and, only when shared tokens, component semantics, variants, or visual language change, maintaining a repository-owned Design System profile.",
+      "description": "Skill for translating a selected visual source into an implementation-ready Feature Spec and, only when shared semantics or contracts change, maintaining a repository-owned Design System Spec.",
       "skills": [
-        "ui-design"
+        "ui-spec"
       ]
     },
     {
@@ -43,11 +43,10 @@
     },
     {
       "title": "Specialist Audit",
-      "description": "Read-only specialist skills for frontend, Rust, and scoped security assessment.",
+      "description": "Read-only specialist skills for bounded frontend and Rust assessment.",
       "skills": [
         "audit-frontend",
-        "audit-rust",
-        "audit-security"
+        "audit-rust"
       ]
     },
     {

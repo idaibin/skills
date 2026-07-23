@@ -8,6 +8,16 @@
 3. Separate confirmed current behavior from proposals and assumptions.
 4. Ask only questions whose answers can change the selected slice.
 
+If an existing Foundation Spec already establishes the product boundary, treat it
+as an input rather than a template to rewrite. A source-proven behavior gap may
+become one Feature Spec when the user requested downstream implementation and no
+material product choice is missing. Keep contradictory or unsupported behavior as
+an Open Question instead of silently resolving it from code.
+
+Product positioning may be split across an existing vision, README, product map,
+and current policy manifest. Use the smallest consistent verified set as evidence;
+do not create or rewrite a Foundation Spec merely to consolidate those sources.
+
 ## Internal Clarification
 
 Ask one key question at a time. Include a recommended answer, the reason, and the
@@ -44,6 +54,6 @@ declare `Ready for <slice>`.
 - Stop clarification when the slice passes the Ready gate.
 - Stop Artifact Update if the requested source is absent or write authorization is
   missing; return a preview or `Not found` instead of creating a replacement.
-- Stop and route deep domain or ui-design ownership to the proper Skill.
+- Stop and route deep domain or `ui-spec` ownership to the proper Skill.
 - Stop before implementation, Git mutation, runtime verification, or technical
   interface definition. Route current interface mapping separately to `repo-map`.

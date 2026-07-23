@@ -17,7 +17,7 @@
 | `Implement the approved React form and tests now.` | Prefer `dev-frontend`. |
 | `Implement the approved Rust change and tests now.` | Prefer `dev-rust`. |
 | `Resolve conflicting shared business language and rules across three product areas, including lifecycle or context depth only where material.` | Prefer `domain-modeling`. |
-| `Create shared tokens, component semantics, variants, and visual evaluation rules.` | Prefer `ui-design`. |
+| `Create the selected-source UI contract, shared tokens, component semantics, variants, and evaluation rules.` | Prefer `ui-spec`. |
 | `Map existing components, owners, exports, consumers, and reuse boundaries.` | Prefer `repo-map`. |
 | `Map the current implementation interface, owner, callers, and consumers.` | Prefer `repo-map`; repository topology is outside `product-spec`. |
 | `Review this feature branch against the approved spec.` | Prefer `repo-review`. |
@@ -36,13 +36,15 @@
 | --- | --- | --- |
 | One feature affects several product surfaces | Use one Feature Spec and include only relevant user-visible states and dependencies. | Exposes Brief/Standard as modes or splits files by default. |
 | New module inside an existing product | Use Feature Spec unless the product boundary is being redefined. | Uses Foundation merely because work is large. |
+| Existing Foundation Spec is Ready and source exposes one bounded completion gap | Preserve the foundation and produce one Feature Spec for that gap when downstream implementation was requested. | Rewrites product positioning, invents a roadmap, or treats current code as authority for an unresolved product choice. |
+| Existing positioning is consistently split across a README, product map, and policy manifest | Use the smallest verified source set as Feature Spec evidence. | Creates a new Foundation Spec only to consolidate documents or ignores a conflicting authority. |
 | Repository already has an RFC convention | Use the RFC location and shape. | Creates `docs/product` in parallel. |
 | No spec convention exists | Preview one fallback only after explicit write authorization. | Creates a tree, glossary, ADR, and handoff automatically. |
 | Discoverable answer exists in source/docs | Read it before asking. | Interviews the user about current repository facts. |
 | Missing decision affects only an internal naming choice | Mark Assumption or Deferred and declare Ready for the slice. | Blocks implementation ceremony without behavioral impact. |
 | Missing decision changes permission or error behavior | Keep the slice not ready and ask one decision question. | Lets implementation invent the behavior. |
 | Feature spans several bounded contexts | Route the shared language/lifecycle/invariants to `domain-modeling`. | Builds a complete domain model inside the spec. |
-| Feature changes shared component semantics/tokens | Route the shared system to `ui-design`; keep feature states in the spec. | Duplicates a design system. |
+| Feature changes shared component semantics/tokens | Route the shared contract to `ui-spec`; keep product behavior in the product spec. | Duplicates a design system. |
 | Request asks for current implementation-interface facts | Route that mapping separately to `repo-map`; keep the product spec behavioral. | Adds technical interface definitions to the product spec. |
 
 ## Quality Eval
@@ -58,7 +60,7 @@
 | Conditional artifacts | Creates glossary, ADR, UI evidence, or handoff only when separately justified. | Treats them as minimum output. |
 | Local handoff visibility | Writes an unfinished local continuation to a verified ignored `.codex/handoffs/<task-id>.md`; uses a repository-approved docs location only for explicitly requested team-shared continuation. | Tracks a local-private handoff, silently edits ignore policy, or treats a handoff as durable product authority. |
 | Domain boundary | Keeps slice-local rules and routes deep shared modeling. | Absorbs `domain-modeling`. |
-| Design boundary | Keeps feature UI states and routes shared visual-system ownership. | Absorbs `ui-design`. |
+| UI contract boundary | Keeps product behavior and routes selected-source/shared visual-system specification ownership. | Absorbs `ui-spec`. |
 | Planning boundary | Leaves technical decomposition to host planning when product behavior is decided. | Captures every planning request. |
 | Implementation boundary | Stops before source and Git mutation. | Edits code, stages, commits, or runs implementation. |
 | Interface boundary | Contains no technical interface definitions or references and routes current topology mapping to `repo-map`. | Defines or references a technical interface. |

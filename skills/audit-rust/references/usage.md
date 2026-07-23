@@ -21,8 +21,9 @@
 - Use `dev-rust` for a change whose module,
   contracts, and validation are already established.
 - Use the host's built-in diagnosis under effective instructions when the root cause of a failure or regression is unknown.
-- Use `audit-security` for a security-only audit after the relevant Rust boundary
-  is mapped.
+- Use `repo-review` for a security-only change review; it routes professional
+  security work to Codex Security when available. Use Codex Security directly for
+  a repository/path scan with no diff basis.
 - Use `repo-review` for local dirty-tree review, full-diff and contract-chain
   completeness, staging plans, and commit grouping. It may delegate a bounded changed
   Rust surface to `audit-rust` for a read-only specialist subreview; the audit

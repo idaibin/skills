@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Review"
-  short_description: "Review changes, specs, and protocol contract drift"
-  default_prompt: "Use $repo-review to review a fixed local or immutable basis read-only across Standards, Spec, and applicable protocol-contract evidence, then return consolidated P0-P3 findings."
+  short_description: "Review changes and route security-sensitive evidence"
+  default_prompt: "Use $repo-review to review a fixed local or immutable basis read-only across Standards and Spec, route professional security work to Codex Security when applicable, and return consolidated P0-P3 findings."

@@ -1,10 +1,22 @@
 version: 1
 revision: 1
+visual_source:
+  id: selected-source-id
+  revision: selected-source-revision
+  status: accepted
+  source: local-path-or-product-design-result
+  rights_status: approved-for-project-use
+  use:
+    - visual-hierarchy
+    - layout-direction
+  ignore:
+    - unverified-product-behavior
+    - inferred-exact-token-values
 task:
-  id: surface-redesign
+  id: surface-specification
   project: project-name
   surface: route-or-window
-  goal: Complete the primary user job with the accepted UI direction.
+  goal: Specify the selected UI direction for implementation.
 scope:
   include:
     - target-ui-surface
@@ -30,11 +42,8 @@ validation:
     - no-console-errors
 acceptance: []
 budget:
-  max_variants: 4
-  max_generation_rounds: 3
-  max_runtime_runs: 5
+  max_revision_rounds: 3
   max_duration_minutes: 40
-  max_cost_usd: 3
   max_artifact_storage_mb: 200
 recovery:
   preserve_last_accepted_revision: true
