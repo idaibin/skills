@@ -17,6 +17,9 @@ Reject when any applicable blocker is present:
 10. an update to an existing shared visual authority lacks lint/diff evidence or has an unresolved regression;
 11. implementation/runtimes are claimed without owning evidence;
 12. a required tooling call is blocked but the affected slice is marked `Ready`.
+13. critical actions, scroll/overlay ownership, state geometry, or long-content and
+    intermediate-width behavior can materially affect task completion but lack an
+    acceptance rule or justified exclusion.
 
 ## Weighted Score
 

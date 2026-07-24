@@ -55,6 +55,12 @@ Translate the selected source into implementable decisions:
 - state transitions, action ownership, feedback placement, and precedence between independent async domains;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
 
+For the primary task, specify only applicable task-completion geometry: critical
+actions, scroll and overlay ownership, intermediate-width behavior, state geometry,
+long content/localization, and focus/zoom/touch behavior. Treat exact measurements as
+verified only when an accepted authority provides them; otherwise mark them proposed
+or `Not verified`.
+
 Do not infer exact CSS values or behavior from pixels alone. Trace exact values to live source or an accepted contract; otherwise label them proposed and require acceptance before implementation.
 
 ## Artifact Pass

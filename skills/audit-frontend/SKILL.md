@@ -29,7 +29,7 @@ Never rewrite a working local structure merely to match this skill or an externa
    app, project class, framework, package manager, scripts, documented
    architecture, and coordinating review owner when delegated. This inspection
    snapshot does not turn the audit into change attribution.
-2. Consume current `repo-map` output or perform a targeted inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. When UI contracts are in scope, read the repository-root `DESIGN.md` as shared visual authority and the relevant `docs/ui/<slice-id>/spec.md` before source checks; never infer another contract authority from generated metadata.
+2. Consume current `repo-map` output or perform a targeted inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. Load `references/specification-authorities.md` when a selected profile depends on product or UI contracts; resolve them by meaning rather than filename, consume existing contracts directly, and hand off only unresolved decisions required by the audit outcome.
 3. Classify the product surface as Web, high-density Console, or Tauri Desktop. Select exactly one framework profile per audited boundary: **React**, **Vue Composition**, **Vue Options**, or **Repository-native Other**. Select only styling profiles present in scope: **Tailwind**, **CSS Modules**, **Sass/Less**, **CSS-in-JS**, **Ant Design**, **shadcn/ui**, or a documented local system.
 4. Select one or more audit profiles; explicitly mark the rest `Out of scope`:
    - **Architecture/reuse:** routes, features, shared layers, dependency direction, reuse, abstractions, structural lifecycle, and docs.
@@ -42,7 +42,7 @@ Never rewrite a working local structure merely to match this skill or an externa
      output, SSR/library, and deployment contracts.
    - **Desktop boundary:** frontend adapter, Tauri/native commands, DTO/errors, progress, cancellation, window/menu/shortcut behavior, and real-client evidence.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
-6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system.
+6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, and trace only the applicable task-completion seam.
 7. Trace only selected profiles without changing the repository. Do not perform shallow checks for excluded profiles merely to imply coverage. When code-quality concerns materially apply, load the shared code-quality reference with audit semantics and the selected framework/build reachability rules.
 8. Audit applicable loading, empty, error, partial, retry, optimistic, stale, cancellation, keyboard, focus, and long-task behavior within the selected profiles.
 9. Use non-mutating repository checks and request browser or real-client evidence only when a selected claim cannot be proven statically.
@@ -65,6 +65,10 @@ Never rewrite a working local structure merely to match this skill or an externa
   coverage.
 - Require reachable source evidence for ownership and reuse, and direct runtime or
   measurement evidence when the selected claim cannot be established statically.
+- Do not report spacing, density, fixed geometry, nested scrolling, or overlay
+  behavior from taste or pattern matching alone. Require a contract violation,
+  competing ownership, measured inconsistency, or concrete user impact; otherwise
+  record the visual judgment as `Not verified`.
 - Do not refactor unrelated legacy code. File length alone never justifies splitting.
 - Do not call code dead from text-search absence alone or prescribe one
   component per file, named exports, memoization, or a bundler migration as a
@@ -89,6 +93,11 @@ Start with the inspection snapshot, selected product, framework, styling, and au
 ## References
 
 - Read [architecture-and-ownership.md](references/architecture-and-ownership.md) for discovery, directories, routes, pages, and file responsibility.
+- Read [specification-authorities.md](references/specification-authorities.md) when
+  product requirements, root `DESIGN.md`, slice UI contracts, or their drift are in
+  the selected audit scope.
+- Read [frontend-layout-governance.md](references/frontend-layout-governance.md)
+  for evidence and false-positive rules when Component/Layout is selected.
 - Read [framework-profiles.md](references/framework-profiles.md) for React, Vue Composition, Vue Options, and repository-native audit rules.
 - Read [component-system.md](references/component-system.md) for primitives, feature components, composition, variants, and reuse decisions.
 - Read [state-data-and-forms.md](references/state-data-and-forms.md) for state classes, requests, caching, feedback states, services, schemas, and forms.

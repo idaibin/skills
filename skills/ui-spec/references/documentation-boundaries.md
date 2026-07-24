@@ -22,10 +22,11 @@ responsive/accessibility rules, and UI acceptance.
 
 To implement one UI slice, read in order:
 
-1. `DESIGN.md` (required shared visual authority);
-2. `docs/ui/index.md` when the request has several UI slices;
-3. `docs/prd/<slice-id>/spec.md`;
-4. `docs/ui/<slice-id>/spec.md`.
+1. effective repository guidance and its declared authority paths or exceptions;
+2. applicable product foundation/index facts and `docs/prd/<slice-id>/spec.md`;
+3. `DESIGN.md` (required shared visual authority);
+4. `docs/ui/index.md` when the request has several UI slices;
+5. `docs/ui/<slice-id>/spec.md`.
 
 Do not require sibling PRD or UI contracts. Keep unfinished task-local work under the
 repository's ignored task workspace, such as `.codex/artifacts/<task-id>/`, until

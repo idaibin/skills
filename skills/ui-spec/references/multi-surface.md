@@ -37,9 +37,11 @@ Each slice contract must include:
 
 Read only this order when implementing one slice:
 
-1. root `DESIGN.md`
-2. shared UI index (for multi-slice tasks only)
-3. target slice contract
+1. effective repository guidance and declared authority paths or exceptions
+2. applicable product foundation/index facts and target product slice
+3. root `DESIGN.md`
+4. shared UI index (for multi-slice tasks only)
+5. target UI slice contract
 
 Do not require sibling slice contracts for implementation.
 

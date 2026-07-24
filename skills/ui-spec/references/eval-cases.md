@@ -11,6 +11,7 @@
 | `The selected source has an unknown heading in DESIGN.md input.` | Keep the unknown heading preserved, report it in the notes, and do not fail parser behavior. |
 | `A duplicate section appears in DESIGN.md while updating shared semantics.` | Use official diff/lint flow and treat duplicate section as an immediate error condition until resolved by source owner. |
 | `Run lint before export and share the derived design output.` | Run lint first, require success without error, and treat export as explicit derived output only after shared authority is accepted. |
+| `Specify this approved dialog so long localized content, intermediate widths, its critical action, inner scroll, and overlay behavior remain usable.` | Trigger `ui-spec` Feature Spec and add only the applicable task-completion geometry and acceptance rules. |
 
 ## Non-Trigger Eval
 
@@ -20,6 +21,7 @@
 | `Implement this slice in code now.` | Route to `dev-frontend`; consume implementation-ready `ui-spec` artifact. |
 | `Critique this interface and redesign it.` | Route to Product Design or audit owner; do not do redesign in `ui-spec`. |
 | `Collect runtime screenshots and network logs for the accepted surface.` | Route to `ops-browser` or `ops-client`; do not claim runtime evidence in `ui-spec`. |
+| `DESIGN.md and the matching UI slice already exist; identify their file types before implementation.` | Let the consumer classify and read them directly; do not trigger `ui-spec` merely for recognition. |
 
 ## Scenario Eval
 

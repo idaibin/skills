@@ -46,6 +46,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Update this page's existing native API wrapper and types; the repository has no generated contract pipeline.` | Should trigger `dev-frontend` and mark protocol automation `Not applicable`. | Frontend API work does not itself require OpenAPI. |
 | `Fix this role picker so loading, failed, successful-empty, cached refresh failure, and populated states stay distinct; retry is inside the form.` | Should trigger `dev-frontend`. | Async state semantics and form-button behavior require source implementation. |
 | `Show updater failure without replacing the archive task's current status; keep both domains independently actionable.` | Should trigger `dev-frontend`. | Independent async state owners need separate feedback composition. |
+| `Implement the approved account slice using this repository's requirements source, root DESIGN.md, and matching UI contract.` | Should trigger `dev-frontend`, resolve authorities by meaning, and consume them directly. | Existing product and UI contracts guide authorized source work without another specification pass. |
+| `A longer localized label now wraps beside the primary action; keep intermediate widths usable and verify the rendered geometry.` | Should trigger `dev-frontend` and load layout governance with proportional runtime evidence. | A small copy change can affect task completion through wrapping and state geometry. |
 
 ## Non-Trigger Eval
 
@@ -61,7 +63,9 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Capture the real Electron app window with platform-specific window evidence.` | Should prefer `ops-client`. | Desktop-client evidence. |
 | `These frontend changes are reviewed; stage, commit, and push them.` | Should prefer `repo-delivery`. | Authorized Git mutation after review. |
 | `Translate this selected visual source into a docs/ui/<slice-id>/spec.md page/flow contract against the root DESIGN.md, but do not edit product source.` | Should prefer `ui-spec`. | UI specification ownership. |
+| `Change one tooltip sentence where the existing container has ample adaptive space.` | Should trigger `dev-frontend` for the source edit but should not force the layout-governance profile without reachable geometry risk. | Layout validation is proportional, not universal ceremony. |
 | `Define the product behavior, permission rules, user-visible states, and acceptance before anyone edits source.` | Should prefer `product-spec`. | Product decisions are unresolved. |
+| `Identify whether this existing Markdown file is a PRD or UI contract, but do not change source or specifications.` | Should not invoke `product-spec` or `ui-spec`; classify it from declared authority, path, content, links, and approval. | File recognition alone is not specification or implementation work. |
 
 ## Independent Review Outlet Eval
 
@@ -75,6 +79,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
 | Stack detection | Reads manifests/config/imports and reports actual framework and stack before choosing libraries or conventions. | Assumes a library or framework pattern is available because the user named it. |
+| Specification authority | Reads only applicable declared product/shared visual/slice UI authorities, classifies them by meaning rather than filename, and invokes an owner only for a required unresolved decision. | Treats root `PRD.md` as universal, loads sibling specs, or invokes `ui-spec` merely because `DESIGN.md` exists. |
 | Framework-native implementation | Preserves React hooks/effects or Vue SFC/API/composable/store/router conventions according to the detected project. | Applies React concepts to Vue, rewrites Vue API style incidentally, or imposes one framework pattern universally. |
 | Evidence-gated cleanup | Avoids duplicate authorities and speculative layers, and removes only code made obsolete by the authorized change after framework/build reachability checks. | Broadly deletes text-search-or-lint “unused” code or refactors unrelated legacy smells. |
 | Vite/Rolldown boundary | Detects actual versions; keeps Rolldown inside Vite for normal apps; treats Vite-major, `rolldown-vite`, option/plugin, SSR/library and output changes as explicit migrations with applicable build/runtime evidence. | Adds standalone Rolldown/config or labels an unaffected app a Vite 8 migration by default. |

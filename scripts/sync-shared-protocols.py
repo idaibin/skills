@@ -9,6 +9,14 @@ from pathlib import Path
 
 
 PROTOCOLS = {
+    Path("protocols/frontend-layout-governance-v1.md"): (
+        Path("skills/dev-frontend/references/frontend-layout-governance.md"),
+        Path("skills/audit-frontend/references/frontend-layout-governance.md"),
+    ),
+    Path("protocols/specification-authorities-v1.md"): (
+        Path("skills/dev-frontend/references/specification-authorities.md"),
+        Path("skills/audit-frontend/references/specification-authorities.md"),
+    ),
     Path("protocols/browser-operation-v1.md"): (
         Path("skills/ask-chatgpt/references/browser-operation-protocol.md"),
         Path("skills/ops-browser/references/browser-operation-protocol.md"),

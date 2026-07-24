@@ -2,6 +2,9 @@
 
 ## Location Order
 
+`PRD` names the product-fact authority in this catalog. It does not require a
+repository-root `PRD.md` and is not presented as a universal Markdown schema.
+
 1. Use the repository's existing authoritative product fact source.
 2. Use the repository's established feature/spec convention.
 3. Only when neither exists and the user explicitly authorizes a new fallback,

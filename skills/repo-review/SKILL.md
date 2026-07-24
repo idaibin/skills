@@ -73,7 +73,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Do not report findings without reachable evidence and concrete impact.
 - Do not turn unchanged repository debt, optional lint advice, code size, or a
   language/framework signal into a finding against the selected basis. Prove
-  whether the basis introduces, expands, exposes, or directly depends on it.
+  whether the basis introduces, expands, exposes, or directly depends on it. Label
+  the relationship as `introduced`, `expanded`, `exposed`, `pre-existing but
+  blocking`, or `Not verified`; do not attribute nearby debt to the basis.
 - Do not approve structural add/reuse/move/rename/delete work while manifests, exports, commands, tests, CI/deploy, docs, indexes, migrations, generated files, consumers, or stale references disagree.
 - Treat runtime, CI, deployment, external services, branch policy, and package completeness as `Not verified` unless directly evidenced.
 - Do not require OpenAPI for ordinary REST changes. When the protocol-contract

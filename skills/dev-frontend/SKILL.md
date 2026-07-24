@@ -13,12 +13,12 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions.
-3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. Read the repository-root `DESIGN.md` first, then the target `docs/ui/<slice-id>/spec.md` when present; consume their selected-source, product-fact, shared visual, and acceptance boundaries without creating another visual authority.
-4. Read the approved requirement/specification when one exists. Confirm acceptance criteria, non-goals, affected contracts/files, and validation seams; for complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
+3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. Load `references/specification-authorities.md`, resolve applicable product and UI authorities by meaning rather than filename, and read only the shared facts/indexes and target slice contracts needed for this change.
+4. Confirm acceptance criteria, non-goals, affected contracts/files, and validation seams from usable approved requirements. Consume existing contracts directly; hand unresolved product decisions to `product-spec` or required selected-source/shared visual decisions to `ui-spec` without treating either Skill as a file detector. For complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
 5. Consume a current `repo-map` inventory or perform a targeted search for existing routes, UI, state, services, tests, and analogous implementations. For API callers, follow the repository's existing client/type authority. Load the protocol-contract profile only when an OpenAPI/generated-client chain already exists or the task explicitly introduces one.
 6. Decide in order: directly reuse, adapt the nearest reference, or create new. Record why existing candidates are insufficient before adding a file or abstraction.
 7. Inspect only the selected target and reference files needed for the requested change.
-8. Classify the existing UI system and layout model: product surface, framework, component library, state/data stack, styling system, shell/content/page boundaries, panels, and scroll regions.
+8. Classify the existing UI system and layout model: product surface, framework, component library, state/data stack, styling system, shell/content/page boundaries, panels, and scroll regions. When layout geometry, spacing, sizing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the affected owners and task-completion seam.
 9. Select exactly one framework profile per edited boundary: **React**, **Vue Composition**, **Vue Options**, or **Repository-native Other**. Select only styling profiles actually present, such as **Tailwind**, **CSS Modules**, **Sass/Less**, **CSS-in-JS**, **Ant Design**, or **shadcn/ui**.
 10. Preserve typography, spacing, density, routing, state, API contracts, accessibility, and visual system unless the task explicitly changes them. Do not duplicate a DTO or endpoint already owned by the repository's client/type authority.
 11. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory visuals, generated code, or behavior without an honest seam.
@@ -77,6 +77,12 @@ Report the branch, detected project class/stack and selected profiles, existing 
 
 - See [references/usage.md](references/usage.md) for trigger guidance and examples.
 - See [references/checklist.md](references/checklist.md) for implementation and review checks.
+- See [references/specification-authorities.md](references/specification-authorities.md)
+  when resolving product requirements, root `DESIGN.md`, slice UI contracts, and
+  owner handoffs before implementation.
+- See [references/frontend-layout-governance.md](references/frontend-layout-governance.md)
+  when geometry, spacing, sizing, overflow, scrolling, layering, or responsive
+  behavior is material to the change.
 - See [references/protocol-contracts.md](references/protocol-contracts.md) only for an existing or explicitly requested OpenAPI/generated-client chain.
 - See [references/behavior-first.md](references/behavior-first.md) when a stable public seam supports vertical red-green slices.
 - See [references/codebase-design.md](references/codebase-design.md) only when the change materially affects a public module/interface, seam, cross-caller abstraction, or testability.

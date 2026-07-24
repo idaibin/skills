@@ -63,6 +63,7 @@
 | No actionable finding exists | Say `No actionable findings` and report residual gaps. | Invents low-value findings. |
 | Diff adds a wrapper around one implementation | Inspect current responsibility, consumers, policy, lifecycle, and verification seam. Report only if the new layer lacks a current role and creates concrete cost. | Calls every single-implementation abstraction over-design. |
 | Clippy or ESLint reports an unused declaration outside the changed path | Classify it as pre-existing and exclude it from the verdict unless the basis directly depends on it; verify language/framework reachability. | Attributes whole-repository lint debt to the diff. |
+| A one-line label change wraps at an intermediate width and hides a critical action | Attribute the reachable regression to the basis and require proportional runtime proof; distinguish it from unrelated pre-existing layout debt. | Dismisses the impact because the diff is small or reports all nearby layout debt as introduced. |
 
 ## Quality Eval
 
