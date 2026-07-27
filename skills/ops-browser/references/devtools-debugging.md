@@ -39,8 +39,9 @@ database root cause.
 
 Use the host-provided Codex in-app Browser as the default non-interrupting
 browser surface when it can reach the target and the task does not require a
-Chrome extension or Chrome-owned profile state. Non-interrupting is a product
-surface classification, not proof that DevTools-like inspection is available.
+Chrome extension or Chrome-owned profile state. Non-interrupting is this catalog's
+host-surface classification, not an official public browser API guarantee or proof
+that DevTools-like inspection is available.
 
 Build the smallest debug plan from capabilities the active Browser actually
 exposes:
@@ -96,7 +97,8 @@ When this task starts a local runtime, create a small task ledger before launch:
 - exact bound port or socket, when observable;
 - task-specific browser profile and evidence/artifact paths.
 
-The host-provided Codex in-app Browser is non-interrupting by product contract.
+The host-provided Codex in-app Browser is catalog-classified non-interrupting; do
+not present that classification as an official public API guarantee.
 For controlled Chrome, Computer Use, system accessibility/coordinate automation,
 or another visible/user-owned route, do not claim background safety from
 headless terminology alone: require direct `background_safe` evidence or use

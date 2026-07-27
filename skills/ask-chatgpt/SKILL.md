@@ -27,10 +27,12 @@ Ask ChatGPT for one independently useful external result without replacing work 
 8. For authorized external action, load [chatgpt-routing.md](references/chatgpt-routing.md)
    and follow its transport, identity, capability, model/reasoning, completion, and
    fallback gates. Treat an explicit user transport, surface, or URL as a hard route
-   constraint unless the current request separately authorizes fallback; otherwise prefer the Codex
-   App-native Project/thread transport, then the desktop built-in browser, then
-   Package-only. Use the browser handoff below only when a browser route is selected.
-   Stored preferences never prove current selection or authorize a fallback.
+   constraint unless the current request separately authorizes fallback; otherwise
+   apply the versioned durable transport record, or prefer Codex App-native then the
+   desktop built-in browser when no record exists. Preserve legacy routing until an
+   explicitly authorized migration. Use the browser handoff below only when a browser
+   route is selected. Stored preferences never prove current selection or authorize a
+   fallback.
 9. Capture attributed responses and generated artifacts with their prompt, capability, operation IDs, and gaps. Codex verifies factual claims, research implications, repository findings, and artifact compliance against the fixed basis before accepting downstream work.
    For a browser route, use bounded same-page recovery only to reconcile an abnormal post-submit state. For App-native, use the bounded thread reads and completion overlay. Never resend the prompt, regenerate the response, or create a replacement conversation.
 10. Review/research-only requests stop after locally confirmed/rejected claims. Route fixes, design decisions, source edits, publication, or Git mutation only when separately authorized. After authorized uncommitted fixes, freeze a new Worktree fingerprint and use Worktree `repo-review`; use immutable fixed-basis review only after a commit/SHA exists. Another ChatGPT round requires exact authorization and an independently required result.
@@ -40,8 +42,8 @@ Ask ChatGPT for one independently useful external result without replacing work 
 This skill owns authorization, transport selection, Project/conversation, Chat/Work
 interface, model/reasoning requirement, round scope, `round_id`, unique
 `operation_id`, operation ledger, retry, and attribution. On the App-native route,
-use only the host Project/thread capabilities and the lifecycle in
-[chatgpt-routing.md](references/chatgpt-routing.md). On a browser route,
+use only the host Project/thread capabilities and
+[app-native-thread-protocol.md](references/app-native-thread-protocol.md). On a browser route,
 `ops-browser` owns measured capability, verified selection, and
 before/action/side-effect/after evidence. Before each browser state-changing action,
 write a `browser-operation/v1` Handoff Request and accept only the matching Handoff
@@ -66,7 +68,7 @@ proven `failed-before-submit`.
 - Package-only never authorizes navigation, conversation creation, upload, or send. External authorization is exact in route, artifact, and round scope.
 - If an explicitly requested transport, surface, Project, conversation, or URL is unavailable or cannot be verified, perform no external send unless the current request explicitly authorizes a fallback route. Otherwise stop or return to Package-only.
 - A stored Project, Chat/Work interface, model, or reasoning preference never proves current availability or selection. For an explicit model/reasoning requirement, require direct host metadata or active-UI evidence before submit; try only an authorized fallback route, otherwise stop. An unexposed stored preference may continue as `Not verified`.
-- Treat Codex App-native Project/thread transport and the desktop built-in browser as non-interrupting product surfaces. Chrome, Computer Use, Accessibility/coordinate automation, and other system UI routes still require direct background-safety evidence when the user forbids focus, pointer, or keyboard takeover.
+- Treat Codex App-native Project/thread transport and the desktop built-in browser as catalog-classified non-interrupting host surfaces. This is a routing classification, not an official public API claim. Chrome, Computer Use, Accessibility/coordinate automation, and other system UI routes still require direct background-safety evidence when the user forbids focus, pointer, or keyboard takeover.
 - Never send secrets, credentials, customer data, browser-profile data, or unrelated dirty-tree content.
 - On a browser route, classify the current ChatGPT page as clearly authenticated and normal, clearly unauthenticated, or abnormal/indeterminate. Only the third state permits one same-URL refresh; never enter a refresh loop.
 - A post-submit refresh is reconciliation, not retry authorization: refresh only the same submitted conversation once, then inspect it without resending, regenerating, or creating another chat.
@@ -92,6 +94,7 @@ locally confirmed/rejected claims, downstream owner, blockers, and gaps.
 
 - [usage.md](references/usage.md): gates, combined loop, package and response artifacts.
 - [chatgpt-routing.md](references/chatgpt-routing.md): Project/Standard Chat routing and prompt contract.
+- [app-native-thread-protocol.md](references/app-native-thread-protocol.md): App-native ledger, legal transitions, reconciliation, and completion.
 - [github-branch-loop.md](references/github-branch-loop.md): fixed-basis branch loop and delivery boundary.
 - [github-repository-review.md](references/github-repository-review.md): authorized repository-wide GitHub evidence, partitioning, coverage, and citations.
 - [research-profiles.md](references/research-profiles.md): Codex-first collaboration gate, theme profiles, capability selection, prompt strategy, research, and visual contracts.

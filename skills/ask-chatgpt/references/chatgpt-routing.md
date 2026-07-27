@@ -46,14 +46,14 @@ of external review rounds.
    route constraint. If it is unavailable or cannot be verified, use another route
    only when the current request explicitly authorizes that fallback; otherwise make
    no external send and stop or return to Package-only.
-3. With no current-request route constraint, apply the durable
-   `default_transport_mode` preference: try `codex-app-native` or
-   `desktop-built-in-browser` first as configured, or stop for current route selection
-   when it is `manual`.
-4. Without a durable transport preference, use the Codex App-native Project/thread
-   route first. Between App-native and the desktop built-in browser, try the other
-   non-interrupting route only when the preferred route is unavailable or insufficient
-   and the current authorization is not route-specific.
+3. With no current-request route constraint, read the versioned durable record. For
+   `ask-chatgpt-defaults/v2`, apply `default_transport_mode`. For a legacy record,
+   preserve its previous `default_browser_mode` route meaning. A manual value stops
+   for current route selection.
+4. Without a durable record, use the Codex App-native Project/thread route first.
+   Between App-native and the desktop built-in browser, try the other
+   catalog-classified non-interrupting route only when the preferred route is
+   unavailable or insufficient and the current authorization is not route-specific.
 5. Use Current Chrome or standalone Playwright only when explicitly selected in
    the current request and controllable.
 6. Use Package-only when no authorized route proves the required capability.
@@ -74,14 +74,19 @@ If generic ChatGPT is used, report that the review is not project-bound.
 ## Default Configuration
 
 Read explicit per-request settings first, then the durable local record described in
-[browser-profile.md](browser-profile.md). New records prefer `codex-app-native`;
-`desktop-built-in-browser` tries that route before App-native, while `manual` stops
-before external action for a current selection. Legacy `capability-auto` resolves
-App-native first and never silently selects Current Chrome or standalone Playwright.
-A legacy `default_browser_mode` selects only the browser fallback and does not
-override App-native-first transport selection. Changing defaults requires explicit instruction.
-Availability is not authorization, and stored values are not current identity,
-capability, model, or reasoning evidence.
+[browser-profile.md](browser-profile.md). A valid v2 record requires
+`default_transport_mode`: `codex-app-native` or `desktop-built-in-browser` tries that
+route first, while `manual` stops before external action for a current selection. New
+v2 records explicitly write App-native. Missing or unknown v2 values fail closed. A
+record without `schema_version` is legacy: missing mode,
+`desktop-built-in-browser`, and `capability-auto` retain built-in-first behavior rather
+than being silently reinterpreted. Stored Chrome/standalone values never authorize
+those routes and otherwise fall back built-in-first; legacy `chatgpt-cloud-browser` or
+an unknown value requires explicit migration. An unversioned record that already
+contains `default_transport_mode`, or an unknown schema version, is ambiguous and
+blocks external action until explicitly repaired or migrated. Changing or migrating
+defaults requires explicit instruction. Availability is not authorization, and stored
+values are not current identity, capability, model, or reasoning evidence.
 
 An explicit current-request route is a requirement, not a preference. Durable defaults
 remain preferences and may follow the normal fallback order unless the current request
@@ -90,24 +95,23 @@ makes one mandatory.
 ## Codex App-Native Project And Thread Route
 
 Use this route for Standard Chat or Project collaboration when the Codex App exposes
-the required host operations. It is a non-interrupting product surface and does not
-need browser focus, pointer, or keyboard evidence.
+the required host operations. This catalog classifies it as a non-interrupting host
+surface; that classification is not a claim about an official public ChatGPT API.
+
+Follow [app-native-thread-protocol.md](app-native-thread-protocol.md) as the sole
+authority for ledger fields, legal transitions, uncertain-return reconciliation,
+completion state, retry rules, and round completion.
 
 - `list_projects` discovers candidate Projects and their stable host identifiers. It
   does not authorize sending or prove account/workspace ownership.
-- Before `create_thread`, generate the `round_id` and `operation_id` and persist a
-  `prepared` ledger entry containing the selected Project ID, prompt fingerprint,
-  attempt number, and bounded creation-start window. This must precede the possible
-  external state change.
 - `create_thread` creates exactly one task/conversation and submits its initial prompt
-  exactly once after authorization. On return, add the `clientThreadId` and mark the
-  same operation `submitted`. If the call may have submitted but returns no usable
-  result or the client is interrupted, keep the original operation identity and
-  reconcile it with `list_threads`; never create a replacement operation or thread.
+  exactly once after authorization. Persist `prepared`, then persist `invoking` before
+  the call. On return, record its client identity and transition the same operation
+  according to the App-native protocol.
 - `list_threads` resolves a pending client identity to a real conversation identity.
   Accept only one candidate bound to the same Project and matching a direct
   `clientThreadId` link when exposed. Otherwise require a unique match from the
-  recorded creation window plus prompt/task fingerprint; multiple or absent matches
+  recorded call window plus prompt/task fingerprint; multiple or absent matches
   remain `Not verified`.
 - `read_thread` reads the resolved conversation and captures attributed assistant
   output. Decide a read-count or deadline bound before the first read; do not poll
@@ -116,18 +120,11 @@ need browser focus, pointer, or keyboard evidence.
   resolved conversation. Never use it to retry or reconstruct the initial prompt.
 
 `create_thread` is both conversation creation and initial submission on this route.
-Keep the App-native ledger operation at `submitted` and track completion separately:
-
-```text
-completion_overlay: response-pending | captured | completion-not-verified
-```
-
-If the initial prompt is visible but no assistant response exists, keep
-`submitted + response-pending`. After the bounded reads expire, record
+Missing return data or a client interruption enters read-only reconciliation and never
+permits another call. If the initial prompt is visible but no assistant response exists,
+keep `submitted + response-pending`. After the bounded reads expire, record
 `submitted + completion-not-verified`; do not resend, create a replacement thread, or
-switch transport. Resolve a later response only in the original conversation. If the
-client identity cannot be associated uniquely, stop with conversation identity and
-completion `Not verified`.
+switch transport. Resolve a later response only in the original conversation.
 
 The App-native route is preferred for repository URL/branch/SHA handoff, compact text,
 and continuing Project context. Use a browser instead when the required capability

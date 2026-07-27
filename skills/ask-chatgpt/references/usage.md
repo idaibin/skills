@@ -103,8 +103,12 @@ The screenshot-style permission prompt is produced by the local execution permis
 
 - Use a verified Project for durable repository context and Standard Chat for a
   one-off pass; verify account/workspace identity separately.
-- Follow `chatgpt-routing.md` for the App-native-first transport order, thread
-  lifecycle, model/reasoning evidence, browser fallback, and completion overlay.
+- Follow `chatgpt-routing.md` for explicit routing, versioned durable preferences,
+  model/reasoning evidence, and browser fallback. When no durable record exists, use
+  App-native first. Preserve a legacy built-in-first record until an explicitly
+  authorized v2 migration.
+- Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
+  transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.
 - A Project supplies context, not evidence: every pass still fixes its basis and sends a self-contained package.
 - Let `ask-chatgpt` own the package, send authorization, transport, surface, round

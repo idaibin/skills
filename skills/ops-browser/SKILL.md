@@ -7,7 +7,7 @@ description: "Use when directly operating or verifying a specified page, or gath
 
 ## Overview
 
-Operate browser pages and collect evidence without conflating browser surfaces. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. The host-provided Codex in-app Browser is a non-interrupting surface by product contract; this says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
+Operate browser pages and collect evidence without conflating browser surfaces. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. This catalog classifies the host-provided Codex in-app Browser as a non-interrupting host surface; that classification is not an official public browser API guarantee and says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
 
 ## Workflow
 
@@ -58,7 +58,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
   and recovery contract instead of restating or overriding it. Revalidate the exact
   target and identity before any state-changing action.
 - For browser debug evidence, establish exact URL, steps, expected symptom, observed symptom, and red/green evidence before testing a browser-layer hypothesis.
-- Treat the host-provided Codex in-app Browser as non-interrupting by product contract. Do not extend that classification to controlled Chrome, Computer Use, system accessibility/coordinate automation, or other visible/user-owned routes; those require direct background-safety evidence when the user forbids window, mouse, or keyboard interruption.
+- Treat the host-provided Codex in-app Browser as catalog-classified non-interrupting. Do not present that classification as an official public API guarantee or extend it to controlled Chrome, Computer Use, system accessibility/coordinate automation, or other visible/user-owned routes; those require direct background-safety evidence when the user forbids window, mouse, or keyboard interruption.
 - Treat readiness and product behavior as separate assertions. Retry only a bounded readiness probe when direct evidence shows setup is not ready and the probe has no external side effect; never retry a behavior assertion merely because it failed.
 - Test one browser hypothesis at a time. Do not bundle refresh, cache clearing, account switch, viewport changes, and code edits.
 - Confirm only direct browser facts such as the active URL, missing cookie, absent DOM control, console error, network response, or browser-enforced CORS failure. Return cross-system evidence to the caller; do not claim a final frontend-to-API-to-backend-to-database root cause or decide a permanent code fix.
