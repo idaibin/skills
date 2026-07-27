@@ -32,6 +32,12 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
    If no trustworthy spec exists, mark Spec `Not verified`; do not infer one from the diff.
+   When the change involves frontend visual or UI-contract behavior, add the
+   conditional frontend design-compliance subflow: product requirements or product
+   Feature Spec -> selected-source UI Feature Spec -> root `DESIGN.md` ->
+   implementation adapters/config -> runtime/browser evidence.
+   Use `repo-map` only to navigate, not as review proof; mark absent trusted spec
+   authorities and absent runtime evidence separately `Not verified`.
    When maintainability, duplication, dead/unused code, abstraction, or coupling
    materially applies, load the shared code-quality reference and apply its
    fixed-basis attribution rules inside the Standards axis.
@@ -78,6 +84,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
   blocking`, or `Not verified`; do not attribute nearby debt to the basis.
 - Do not approve structural add/reuse/move/rename/delete work while manifests, exports, commands, tests, CI/deploy, docs, indexes, migrations, generated files, consumers, or stale references disagree.
 - Treat runtime, CI, deployment, external services, branch policy, and package completeness as `Not verified` unless directly evidenced.
+- Do not activate frontend design compliance merely because a repository contains
+  frontend files. It is conditional on visual or UI-contract change scope, does not
+  create another review profile, and does not require `audit-frontend`.
 - Do not require OpenAPI for ordinary REST changes. When the protocol-contract
   profile applies, fix its Git/authority/artifact basis and replay write-mode
   generation only in an isolated copy; otherwise review the repository-native

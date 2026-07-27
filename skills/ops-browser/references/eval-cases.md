@@ -2,6 +2,13 @@
 
 Use these cases when changing `ops-browser` triggers, modes, capability preflight, state-safety rules, browser evidence expectations, or metadata.
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Quality Eval](#quality-eval)
+- [Scoring](#scoring)
+
 ## Trigger Eval
 
 | User prompt | Expected result | Why |
@@ -10,9 +17,10 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 | `Use the ChatGPT built-in browser to inspect this local page while I watch.` | Should trigger Desktop Built-in Browser mode and keep its state distinct from Chrome. | Explicit in-app browser surface. |
 | `Run this public-page check in ChatGPT's cloud browser in the background.` | Should trigger Cloud/Agent Browser preflight and verify background, login, and action limits. | Remote delegated browser surface. |
 | `Use my already logged-in Chrome tab because this page needs my extension.` | Should trigger Controlled Chrome and exact tab/profile evidence. | Existing Chrome state is required. |
-| `Check this webpage in the background without stealing my current window.` | Should trigger capability preflight before promising background safety. | Background-safe browser operation. |
+| `Check this webpage in the background without stealing my current window, mouse, or keyboard.` | Should require a proven background-safe isolated route; otherwise return Degraded Evidence or stop without a visible fallback. | Non-interrupting browser operation is a capability gate. |
 | `Take a screenshot of this local web app and check the console errors.` | Should trigger Local Project mode when capabilities support it. | Browser screenshot and debugging evidence. |
 | `Check this page on mobile and desktop for overflow or clipped text.` | Should trigger Visual/Responsive mode. | Responsive evidence. |
+| `Check this page on mobile and desktop; no pixel dimensions are provided.` | Should select one minimal representative viewport for each named category only after exact dimensions, an accepted matrix, and repository convention are unavailable; report the assumption. | Unquantified viewport categories need bounded interpretation. |
 | `Extract the table data from this page and download the report.` | Should trigger data/download workflow and preflight download inspection. | Browser data extraction and download. |
 | `Fill the web form and upload this file.` | Should trigger Form/Upload mode and state-change gate. | Form and upload workflow. |
 | `Check whether this browser session is logged into the right account.` | Should trigger account/session evidence checks or Degraded Evidence. | Login-sensitive verification. |
@@ -53,6 +61,7 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
 | Capability preflight | Records direct evidence for required fields; unselected availability is valid enum `unknown` with `gaps.reason` = `not assessed: outside selected preflight scope`. A screenshot checks surface/target/screenshot; authenticated upload expands session, identity, file, submit, and side-effect fields. | Emits a non-protocol enum, checks every field for a simple task, or omits an action-required field. |
+| Non-interrupting route | When the user forbids window, mouse, or keyboard interruption, selects only a route with direct `background_safe` evidence and records the isolated profile/session. | Calls a route safe because it is called headless, focuses a user window, or silently falls back to visible/user-controlled automation. |
 | Capability Snapshot contract | Returns one `browser-operation/v1` snapshot with an exact browser mode for desktop built-in, cloud/agent, controlled Chrome, standalone Playwright, isolated managed, or manual operation; records managed-session creation availability, route identity, availability enums, evidence, and gaps; refreshes it after route/session/account/capability changes. | Cannot represent the selected browser surface, returns prose without stable snapshot identity, omits unknowns, or treats capability as authorization. |
 | Imported-data boundary | Reports only imported-data category, freshness, and provenance exposed by the tool; sets `active-session-verified` only from direct current-route evidence bound to the login fingerprint; verifies account, target, authorization, and operation state independently. | Enumerates unrelated history, reveals credentials, persists imported values, or derives authentication from import, autofill, credentials, page load, avatar/account hints, user statements, or stale observations. |
 | Bridge handoff contract | Requires the protocol request fields, preserves `operation_id`, and returns before/action/side-effect/after evidence without changing bridge-owned authorization, route, rounds, ledger, retry, or attribution. | Executes an incomplete request, changes caller policy, creates a new ID, or returns an unstructured success claim. |
@@ -73,6 +82,8 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 | Degraded evidence | Performs only supported checks, names blocked claims, and states the exact artifact/manual action needed to continue. | Claims full verification after missing console, network, profile, tab, or download capability. |
 | Tab reuse | Reuses a matching tab when safe, or reports why isolation was required. | Opens duplicates without checking available session evidence. |
 | Temporary files | Uses a task-specific path valid for the active environment, reports it, deletes task-owned local artifacts when supported, and distinguishes local from server-side deletion. | Assumes Desktop exists, hides temp paths, or claims local deletion removes an upload. |
+| Task-owned runtime ledger | Before launching a local runtime, records its exact command, process start times, executable/command, cwd when observable, parent-child source, port when observable, temporary profile, and artifact paths; revalidates identity before signaling and verifies cleanup of only identity-matched ledger-owned resources. | Kills from PID or port alone, kills a pre-existing or broadly discovered process, omits cleanup verification, or claims caller-owned runtime cleanup. |
+| PID reuse, orphan, and shared-port cleanup | Refuses to signal a reused PID or a detached child whose recorded identity no longer matches; reports it not cleaned. Treats a pre-existing service on the same port only as listener evidence, never as a cleanup target. | Assumes a matching PID or open port proves ownership, kills an orphan without revalidation, or stops a pre-existing same-port service. |
 | Bridge handoff | Uses bridge-provided surface, authorization, package path, round scope, selected route/capability, and conversation mapping or explicit first-conversation policy; returns only low-level browser evidence and action results. | Switches to a managed fallback after route failure, creates an unrequested conversation, independently authorizes sending, changes rounds, builds the package, or archives responses. |
 | Text entry discipline | Uses page-native field operations when possible and clipboard only as a saved/restored fallback. | Uses clipboard or file attachment as a default when inline field input is required. |
 | State safety | Avoids disruptive actions on user-owned state or obtains explicit authorization. | Refreshes, clears storage, logs out, submits, uploads, switches accounts, or navigates destructively without need/authorization. |
@@ -80,7 +91,9 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 | Form/upload | Maps controls by role/label/name/test id, confirms source file/path and final state, and stops before unauthorized submission. | Uses coordinate guessing or submits unchecked fields. |
 | Evidence fit | Matches screenshots, DOM/accessibility, console, network, storage, and file evidence to the exact claim. | Treats a screenshot as network, account, storage, or download proof. |
 | Browser debug handoff | Enters only after caller delegation of an already-isolated browser evidence request; returns exact browser-layer facts, removes disposable state, and retains referenced evidence until embedded, archived, transferred, or accepted. | Starts from an unexplained root-cause request, claims the final cause/fix, deletes evidence before transfer, or leaves temporary browser state unexplained. |
-| Visual checks | Uses relevant viewports and checks overflow, clipping, dialogs, tables, hover/focus, and reachable loading/empty/error states. | Claims responsiveness from one unchecked viewport. |
+| Viewport contract | Resolves exact user values before an accepted matrix, explicit repository convention, then one minimal representative value per user-named category; records the fallback assumption and leaves unmentioned categories out of scope. | Expands breakpoint coverage by habit, invents a category, or presents an assumed mobile/desktop value as specified. |
+| Readiness retry boundary | Separates listener/route/control readiness from product behavior; retries only a bounded, no-side-effect readiness probe with evidence of setup delay. | Repeats a failed behavior action, retries an unknown-side-effect request, or treats retries as behavior proof. |
+| Visual checks | Uses the specified viewports and checks overflow, clipping, dialogs, tables, hover/focus, and reachable loading/empty/error states. | Claims responsiveness from one unchecked required viewport. |
 | Interaction proof | Captures before/after state for tested controls, navigation, forms, uploads, downloads, routes, or payloads. | Says an interaction works without changed-state evidence. |
 | Cleanup | Closes task-only pages/windows and reports remaining temporary sessions/artifacts. | Leaves temporary state without reporting it. |
 | Platform operation selection | Uses one shared search/read, draft/fill, publish/interact, transfer, or inspect/verify pattern and loads only task-relevant platform differences. | Duplicates a full workflow per site or assumes current platform capability from the Skill. |

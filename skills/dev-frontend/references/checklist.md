@@ -116,7 +116,9 @@ Use this checklist when implementing or reviewing frontend changes.
 ## Validation
 
 - Run project-defined type, lint, test, build, formatter, or route checks that match the change.
-- Keep validation commands non-mutating. Use explicit fix/write commands only when rewrites are in scope.
+- Prefer non-mutating validation and use explicit fix/write commands only when rewrites are in scope.
+- Snapshot branch-aware Worktree state before a validation command that may generate or rewrite files, then compare status and diff afterward. Classify new changes as requested source, expected task-owned generated output, validation side effect, or unrelated/user-owned work.
+- Do not assume `build`, `check`, `dev`, or another read-like command preserved the checkout. Run a known writer in an isolated copy when practical. Never stage or retain validation drift merely because the command exited successfully; restore it only when the exact pre-state is known and the complete current diff is proven task-owned with no concurrent or mixed hunk. Otherwise preserve the diff and stop for `repo-review` ownership reconciliation.
 - Use `ops-browser` when visual layout, interaction, responsive behavior, console errors, network payloads, or route behavior need web evidence.
 - Use `ops-client` when the task requires proof from a real Tauri, Electron, or native desktop window.
 - Mark unchecked runtime, visual, responsive, console, network, accessibility, or permission behavior as `Not verified`.
@@ -132,4 +134,5 @@ Use this checklist when implementing or reviewing frontend changes.
 - For added, reused, moved, renamed, or deleted routes, components, features, packages, or shared directories, verify manifests, exports, route generation, scripts, tests, CI/build/deploy paths, architecture/project-map docs, indexes, and stale references.
 - Compare before/after DOM and CSS ownership: if a wrapper or rule disappeared, confirm its old responsibility moved to the correct owner or was truly unnecessary.
 - Check that every changed line belongs to the requested frontend change.
+- Check that post-validation status matches the reviewed task scope and that every validation side effect is safely restored only after exclusive attribution, or preserved and reported unresolved when concurrent or mixed ownership cannot be ruled out.
 - Route final dirty-tree review, staging plan, specialist coordination, and commit readiness to `repo-review`; route actual staging, commit, rebase/squash, push, and delivery to `repo-delivery`.

@@ -7,8 +7,9 @@
 3. UI contract challenge
 4. Profile gate
 5. Specification pass
-6. Artifact pass
-7. Evaluation and handoff
+6. Viewport acceptance matrix
+7. Artifact pass
+8. Evaluation and handoff
 
 ## Visual Source Gate
 
@@ -63,6 +64,43 @@ or `Not verified`.
 
 Do not infer exact CSS values or behavior from pixels alone. Trace exact values to live source or an accepted contract; otherwise label them proposed and require acceptance before implementation.
 
+## Viewport Acceptance Matrix
+
+When a slice has responsive behavior or an explicitly bounded visual acceptance
+scope, define one matrix in that slice's Feature Spec. A viewport entry is not
+coverage by size alone: it pairs a size with the environment, UI state, assertions,
+and source that authorizes the acceptance requirement. If viewport-specific
+acceptance does not apply, record `Not applicable` and why.
+
+| Tier | Size and orientation | Environment | State or fixture | Acceptance assertions | Evidence source and status |
+| --- | --- | --- | --- | --- | --- |
+| `required` | exact CSS viewport, orientation when material | browser/client, platform, zoom, theme, locale, or other material condition | named route plus loading/error/populated/permission or interaction state | observable layout, overflow, focus, interaction, and visual assertions | user requirement, accepted product/UI contract, or verified source; mark `verified`, `extracted`, `proposed`, or `Not verified` |
+| `optional` | same fields as required | same fields as required | same fields as required | useful additional confidence, not a readiness gate | same evidence requirement as required |
+| `excluded` | size/range and orientation if material | relevant known environment | state if exclusion is state-specific | why this is outside the acceptance scope | authority that excludes it and status; never write this as an unsupported-device claim |
+
+Rules:
+
+- Current explicit user viewport requirements override older specifications. Record
+  conflicts instead of silently broadening or narrowing them.
+- `required` entries are acceptance gates: implementation must preserve their
+  contract, and `ops-browser` or `ops-client` must exercise them when runtime
+  verification is authorized. A missing required run remains `Not verified`; it is
+  not silently satisfied by a screenshot at another size.
+- `optional` entries are exercised only when the task's agreed budget permits. State
+  whether each was run, skipped, or not authorized; skipping does not block readiness
+  unless another accepted contract makes it required.
+- `excluded` means only that this Feature Spec does not accept or reject the viewport.
+  It does not permit a deliberate regression and does not claim the product lacks
+  support there.
+- Keep the matrix local to the affected slice. Do not hard-code a project's desktop
+  sizes as a universal rule or duplicate this schema in `dev-frontend`,
+  `audit-frontend`, `ops-browser`, or `ops-client`; those consumers receive this
+  matrix in the handoff and apply their own stage responsibilities.
+
+For example, an Admin surface may require `1920x1080`, make `1440x900` optional, and
+exclude mobile from this acceptance slice when the current user request says so. That
+is an Admin-specific contract example, not a default for other products or slices.
+
 ## Artifact Pass
 
 | Profile | Primary artifact | Optional dependencies |
@@ -87,9 +125,10 @@ keep the readiness result `Not Ready`.
 ## Evaluation And Handoff
 
 Run source identity, product truth, rights, required-state, mapping, responsive,
-accessibility, overflow, approval, and implementation-budget gates per slice. Then
-compare source fidelity, task completion, information structure, interaction
-completeness, engineering fit, and evidence completeness. Emit one readiness verdict
-per slice and mark an incomplete multi-surface result `Partial`. Hand accepted
-artifacts and unresolved gaps to `dev-frontend`; request runtime evidence from
-`ops-browser` or `ops-client` after implementation.
+viewport-matrix, accessibility, overflow, approval, and implementation-budget gates
+per slice. Then compare source fidelity, task completion, information structure,
+interaction completeness, engineering fit, and evidence completeness. Emit one
+readiness verdict per slice and mark an incomplete multi-surface result `Partial`.
+Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved gaps
+to `dev-frontend`, `audit-frontend`, and `ops-browser`/`ops-client`; request runtime
+evidence from the operations owner after implementation.

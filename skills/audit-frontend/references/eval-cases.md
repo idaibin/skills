@@ -1,5 +1,13 @@
 # Eval Cases
 
+## Contents
+
+- Trigger Eval
+- Non-Trigger Eval
+- Scenario Eval
+- Quality Eval
+- Scoring
+
 ## Trigger Eval
 
 | Prompt | Expected |
@@ -8,6 +16,8 @@
 | `Audit a Vue 3 feature for reactivity loss, watcher loops, composable lifetime, Pinia ownership, and Router contracts.` | Trigger State/Data/Contracts with the Vue Composition API framework profile. |
 | `Under repo-review, perform a read-only specialist audit of only the changed Vue SFCs for state, lifecycle, accessibility, and performance.` | Trigger bounded `audit-frontend`; keep `repo-review` as local Git-change review owner. |
 | `Under repo-review, inspect only the changed frontend paths for root DESIGN.md plus docs/ui/<slice-id>/spec.md drift and accessibility.` | Trigger bounded `audit-frontend`; keep `repo-review` as repository/range review owner. |
+| `Audit this DESIGN.md-bound table for token/component reuse, density, scroll, responsive, and accessibility drift.` | Trigger Component/Layout with the bounded DESIGN.md evidence chain; require runtime evidence for rendered claims. |
+| `Root DESIGN.md specifies radius 8, but the live component-library adapter emits radius 12.` | Report implementation drift with the contract and adapter evidence; do not excuse it because current code/config differs. |
 | `Audit the Tauri frontend/Rust boundary for progress, cancellation, errors, menus, and shortcuts.` | Trigger Desktop Boundary plus applicable State/Data/Contracts. |
 | `Audit this frontend design system for duplicated primitives, variants, tokens, spacing, and scroll ownership.` | Trigger Component/Layout/Design System. |
 | `Audit this React and Tailwind table for scale drift, class conflicts, responsive behavior, and duplicated spacing ownership.` | Trigger React plus Tailwind with Component/Layout/Design System; add Performance only when evidence warrants it. |
@@ -65,6 +75,9 @@ Each scenario must produce the listed investigation, decision, rejection, and re
 | 25 | Tailwind v4 app has no `tailwind.config.ts`, dynamic class fragments, and shadcn components | Tailwind plus shadcn; installed major, CSS-first `@theme`/sources, `components.json`, aliases, complete class detection, local primitive edits/consumers | accept CSS-first config, flag only unreachable utilities or ownership drift with build/render evidence | require v3 config, rerun generators, or ban all arbitrary values/`@apply` | version/config owners, class and component evidence, rendered gap |
 | 26 | ESLint-to-Oxlint migration claims parity after generated config | Build/Tooling; pinned Oxlint and `oxlint-tsgolint`, effective type-aware enablement, TypeScript/`tsconfig` compatibility, plugins/rules, unsupported coverage, ignores/generated paths, severities, CI/editor and representative old/new diagnostics | retain ESLint for unsupported rules and keep `tsc` replacement as a separate decision until parity is proved | accept generator success, missing type-aware support, or a syntax-only clean run as parity | versions/configs/commands compared, remaining rules, representative diagnostics, mutating/non-mutating behavior |
 | 27 | Legacy `.eslintrc.js` plus `.eslintignore` is converted to flat config | Build/Tooling; actual linted set for ordinary/nested/dot/generated files, glob bases, override or processor, globals, and removed/replaced CLI flags | preserve the file set and representative effective config before retiring legacy config | verify only that flat config loads or conflate the conversion with Oxlint adoption | before/after file set, effective configs, processors/overrides, flags and remaining gaps |
+| 28 | Console Feature Spec requires 1920×1080, permits 1440-wide evidence, and excludes mobile; the route has icon-only buttons and an active nav item | Accessibility; specified viewport matrix, DOM/AX names, `aria-current`, headings, landmarks, keyboard/focus evidence | verify 1920×1080, optionally 1440, preserve mobile exclusion, and report semantic evidence separately from screenshots | expand the audit to mobile, approve from pixels, or accept empty icon-button names | required/optional/excluded viewports, DOM/AX evidence, semantic findings/gaps |
+| 29 | Responsive CSS hides button text on a narrow required viewport; the screenshot looks correct | Accessibility; rendered DOM/AX name after the visibility change, focusability and control purpose | require an accessible name that survives the hidden text | infer accessibility from the desktop label or screenshot | viewport, control location, DOM/AX name, runtime gap |
+| 30 | A route renders correctly but `/favicon.ico` fails in Network | selected runtime/resource evidence; request URL, status, route/resource ownership, user impact | report the resource failure under runtime/resource evidence and route to its owner; assess accessibility only if impact is shown | silently ignore it or misclassify every failed asset as accessibility | route, request/status, owner, impact, accessibility relation or absence |
 
 ## Quality Eval
 
@@ -72,6 +85,8 @@ Each scenario must produce the listed investigation, decision, rejection, and re
 | --- | --- | --- |
 | Grounding | reads guidance/status and inventories only evidence needed for selected profiles | starts from a universal template or scans everything |
 | Specification authority | reads only applicable product/shared visual/slice UI contracts, classifies by meaning rather than filename, and reports required owner handoffs without editing | assumes root `PRD.md`, loads sibling contracts, or invokes `ui-spec` merely to recognize `DESIGN.md` |
+| DESIGN.md consistency | traces contract token/component/layout/pattern to adapter/config, live component/consumer, and static/runtime evidence; labels unexercised rendered behavior `Not verified` | infers exact values from pixels, treats config as the semantic authority, or upgrades this bounded check into a new audit entry point |
+| Contract priority | applies declared product/UI contracts to semantics and acceptance, treats code/config as implementation facts, and reports conflicts as drift | lets the current adapter override root DESIGN.md or a selected-source UI Feature Spec |
 | Profile selection | declares selected Architecture/Reuse, State/Data/Contracts, Component/Layout/Design System, Accessibility, Performance, Build/Tooling, or Desktop profiles and marks others Out of scope | implies every frontend dimension was reviewed or omits Build/Tooling from selection when auditing bundler/config behavior |
 | Framework profile | identifies React, Vue Composition, Vue Options, or repository-native concepts before framework rules | applies React semantics to Vue or assumes framework behavior |
 | Build/tooling profile | detects the effective framework/bundler version and checks only applicable script, plugin, env, resolution, output, SSR/library and deploy contracts | prescribes Vite 8, standalone Rolldown, chunk splitting, or config keys without repository need and evidence |
@@ -86,7 +101,8 @@ Each scenario must produce the listed investigation, decision, rejection, and re
 | Vue API-style fidelity | audits Composition with refs/watchers/scopes and Options with data/computed/watch/this.$watch and native lifecycle/guards without forced conversion | requires Composition imports in Options code or mechanically translates APIs |
 | Layout/design system | under Component/Layout, uses tokens, one spacing/scroll owner, minimal DOM/CSS, and centralized breakpoints | margin patches, duplicate CSS, or parallel styling system |
 | Performance | under Performance, traces and measures render/reactivity/data/request/bundle/IPC paths | default memoization/computed/cache advice or file-size claims |
-| Accessibility | under Accessibility, verifies keyboard, focus, labels, non-color and async status with runtime evidence or gaps | visual-only approval or unselected shallow checklist |
+| Accessibility | under Accessibility, verifies keyboard, focus, headings, landmarks, labels/names after responsive visibility changes, active navigation, non-color and async status with DOM/AX runtime evidence or explicit gaps; consumes required/optional/excluded viewport scope | visual-only approval, invented viewport coverage, or unselected shallow checklist |
+| Runtime/resource evidence | checks selected routes for relevant resource failures separately from accessibility semantics and reports their owner/impact | treats screenshots as Network proof or misclassifies a resource failure without an accessibility impact |
 | Desktop | under Desktop, verifies adapter-command-domain and long-task lifecycle | direct page invokes, blocking work, leaked Rust internals, or browser-only proof |
 | Lifecycle | under Architecture/Reuse, identifies route/export/generated/test/doc/index drift and complete remediation scope | structural code and docs disagree without a finding |
 | Coordinator boundary | keeps Worktree and immutable basis ownership inside `repo-review` while the specialist remains path-bounded | lets specialist take over whole review, staging, or final cross-domain severity |

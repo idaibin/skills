@@ -19,10 +19,10 @@ Turn a selected visual source and verified product facts into an implementation-
 5. Select one profile:
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
    - **Design System Spec (conditional):** only when shared tokens, reusable component meaning/variants, state vocabulary, or cross-surface visual rules must change.
-6. In Design System Spec, make the repository-root `DESIGN.md` the only durable shared output.
+6. In Design System Spec, make the repository-root `DESIGN.md` the only durable shared output. Feature Specs reference shared visual semantics by exact path/anchor or semantic name; they do not repeat shared colors, spacing scales, global typography, radius, or shared-component semantics.
    - `DESIGN.md` is the only accepted shared product visual output.
    - Feature Spec never copies token values or component semantics from shared systems into its own artifacts.
-7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Mark each decision `verified`, `extracted`, `proposed`, or `Not verified`. Do not infer exact values from pixels.
+7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Mark each decision `verified`, `extracted`, `proposed`, or `Not verified`. When responsive or viewport-specific acceptance applies, define one per-slice viewport acceptance matrix using [references/workflow.md](references/workflow.md): required, optional, and excluded entries record size, environment, state, and acceptance-evidence source. Do not infer exact values from pixels.
 8. For every slice and multi-slice task, add one `Ready for dev-frontend <slice>` verdict or one blocker verdict; mark partial multi-surface tasks clearly.
 9. Before finalizing:
    - run official lint with `npx -p @google/design.md@0.3.0 designmd lint --format json DESIGN.md`;
@@ -58,10 +58,19 @@ Turn a selected visual source and verified product facts into an implementation-
 - Do not activate Design System Spec merely because a feature reuses existing tokens or components.
 - Do not create a parallel component library or token system when the project already has an owner.
 - Do not author or rely on another structured UI package as shared visual authority.
+- Keep Feature Specs page-local: they map the selected source to layout, states,
+  interaction, components, and acceptance, but never restate the shared visual
+  system already owned by root `DESIGN.md`.
 - Treat the repository-root `DESIGN.md` as the single human-readable visual-semantic authority.
 - Require named human approval before treating a newly created or changed `DESIGN.md` as accepted.
 - Treat duplicate H2 headings as hard blockers in Design System Spec contracts, regardless of CLI warning wording or exit code.
 - Require applicable loading, empty, error, populated, permission, focus, responsive, overflow, localization, and reduced-motion rules; justify exclusions.
+- When responsive or viewport-specific acceptance applies, give every affected slice a
+  viewport acceptance matrix. Required entries are mandatory downstream checks,
+  optional entries are checked only when budget permits, and excluded entries define
+  acceptance scope only; they never claim the UI is unsupported at that viewport.
+- Treat the user's current viewport requirement as higher priority than an older
+  specification. Do not turn one surface's viewport matrix into a catalog-wide rule.
 - Do not merge independent business domains into one omnibus contract. Author only
   confirmed slice contracts, keep unconfirmed slices visible in the shared index,
   and mark the overall multi-surface result `Partial` until every requested slice has
@@ -82,6 +91,10 @@ copy, shared-system changes or `None`, evaluation gates, one `Ready for dev-fron
 - lint command and result
 - diff command and regression verdict, or `Not applicable` when a Feature Spec leaves `DESIGN.md` unchanged or the authority is created for the first time
 - per-slice spec IDs and readiness
+- per-slice viewport acceptance matrix or a justified `Not applicable` verdict,
+  including required/optional/excluded entries, size, environment, state, and
+  acceptance-evidence source; hand the same matrix to `dev-frontend`,
+  `audit-frontend`, and `ops-browser`/`ops-client` without redefining its schema
 
 Never present a source image or specification as implemented or runtime-verified UI.
 

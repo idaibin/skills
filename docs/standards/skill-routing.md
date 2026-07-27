@@ -74,6 +74,17 @@ This is not mandatory ceremony. A known Rust implementation can start directly w
 maintainability together on its selected basis. Security risk does not create a
 separate routing path or external scanning dependency.
 
+For a frontend surface with applicable contracts, `dev-frontend` reads the effective
+instructions, product requirements or product Feature Spec, selected-source UI
+Feature Spec, root `DESIGN.md`, any existing repo-map only for navigation, then live
+source/config before editing. The two Feature Spec types have separate authorities;
+when both apply they are both read, while missing optional artifacts remain separate
+`Not verified` gaps only when they affect behavior or acceptance. Root `DESIGN.md`
+owns shared visual semantics; themes and component libraries are implementation adapters. A
+Component/Layout `audit-frontend` profile may trace that contract to adapters,
+components/consumers, and runtime evidence. `repo-review` keeps the sole
+change-basis gateway and adds this check only for visual or UI-contract changes.
+
 ## Review Checklist
 
 - The description clearly says what the Skill owns and when it triggers; when a real

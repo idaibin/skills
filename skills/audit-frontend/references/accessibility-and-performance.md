@@ -11,11 +11,15 @@ Check:
 
 - native interactive elements and complete keyboard operation;
 - visible focus and logical focus order;
+- one page-purpose `h1`, a logical heading sequence, and landmarks that make
+  the main content and repeated navigation discoverable;
 - Dialog/Popover/Menu initial focus, containment, Escape behavior, close
   control, and focus restoration;
 - labels, descriptions, validation errors, required state, and submitting state;
-- accessible names for icon-only buttons;
+- accessible names for icon-only buttons and controls whose visible text is
+  removed at a selected responsive viewport;
 - expanded/selected/pressed state where semantics require it;
+- `aria-current="page"` (or the applicable current state) on active navigation;
 - status not communicated by color alone;
 - loading, async completion, progress, and errors announced without excessive
   live-region noise;
@@ -25,6 +29,23 @@ Check:
 
 Prefer tested accessible primitives over rebuilding focus management locally.
 ARIA does not repair the wrong native element.
+
+## Runtime Evidence Boundaries
+
+Use the user- or Feature-Spec-defined viewport matrix: verify every `required`
+viewport, include `optional` viewports only when useful, and do not invent
+coverage for `excluded` viewports. A screenshot can support visual review, but
+does not prove DOM semantics, the accessibility tree, keyboard behavior, or
+resource success.
+
+For rendered accessibility claims, capture DOM or accessibility-tree evidence
+for headings, landmarks, active navigation, and accessible names after
+responsive visibility changes. Separately inspect the selected route's Network
+or route-resource evidence for failed resources that affect the UI (for
+example, a missing favicon). Report such failures under runtime/resource
+evidence, not as accessibility findings unless they directly cause an
+accessibility impact. If browser evidence is unavailable, state the exact gap
+instead of approving from a screenshot.
 
 ## Performance Review Order
 

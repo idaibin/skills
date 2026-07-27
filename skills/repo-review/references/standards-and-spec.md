@@ -33,6 +33,28 @@ Check:
 
 If no trustworthy source exists, report `Spec Compliance: Not verified (no spec source)` and continue the Standards axis. Do not reconstruct intent from code and then claim compliance.
 
+## Conditional Frontend Design Compliance
+
+Use this subflow only when the fixed change basis affects frontend visual behavior or
+a UI contract. Trace the smallest relevant chain in order:
+
+```text
+product requirements or product Feature Spec
+  -> selected-source UI Feature Spec
+  -> root DESIGN.md
+  -> implementation adapter/config
+  -> runtime/browser evidence
+```
+
+`repo-map` may shorten navigation but never proves compliance. Check shared token and
+component semantics, layout/pattern use, and the reachable consumer only to the
+extent the change requires. The two Feature Spec types do not substitute for one
+another: when both apply, read each. Missing optional artifacts do not add ceremony,
+but a missing product authority or UI authority that affects behavior or acceptance is
+separately `Not verified`; missing runtime/browser evidence is a distinct
+rendered-behavior `Not verified`. Do not infer exact visual values from pixels, make
+this a mandatory `audit-frontend` handoff, or open a parallel review entry point.
+
 ## Independence and Integration
 
 Keep evidence collection independent so standards quality cannot hide a requirement miss and requirement coverage cannot excuse unsafe code. Parallel read-only passes are optional, not mandatory. The `repo-review` coordinator verifies both reports, removes duplicates, assigns one P0-P3 severity from concrete impact, and labels each finding with its contributing axis.

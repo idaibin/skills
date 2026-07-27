@@ -1,5 +1,14 @@
 # Eval Cases
 
+## Contents
+
+- Trigger Eval
+- Non-Trigger Eval
+- Independent Review Outlet Eval
+- Scenario Eval
+- Quality Eval
+- Scoring
+
 ## Trigger Eval
 
 | Prompt | Expected |
@@ -20,6 +29,7 @@
 | `Review this fixed range's OpenAPI authority, compatibility diff, generated client, backend conformance, consumer states, and clean CI.` | Trigger `repo-review` with protocol-contract profile. |
 | `Review this REST change against its native route, DTO, client, consumers, and tests; no generated schema pipeline exists.` | Trigger ordinary `repo-review`; mark the OpenAPI profile `Not applicable`. |
 | `Review this fixed diff for duplicated rules, unused declarations, and over-designed wrappers.` | Trigger `repo-review`; apply the shared quality gate with fixed-basis attribution and the applicable language profile. |
+| `Review this fixed frontend visual diff against its product Feature Spec, selected-source UI Feature Spec, and root DESIGN.md.` | Trigger `repo-review` with the conditional frontend design-compliance subflow; use the map only for navigation and report authority/runtime gaps separately. |
 
 ## Non-Trigger Eval
 
@@ -60,10 +70,12 @@
 | Repo-map path is stale | Search from nearest existing ancestor at the basis and route map repair to `repo-map`. | Trusts the map or edits it. |
 | Review request contains no Git mutation authorization | Keep files, Git, GitHub, and remotes unchanged. | Stages, commits, comments, or pushes. |
 | Protocol generator writes files | Consume retained evidence or replay only in a disposable isolated copy and prove the reviewed worktree/index/hashes unchanged; otherwise mark regeneration `Not verified`. | Runs a write-mode generator in the reviewed checkout. |
+| A validation command rewrites a tracked generated file after the candidate scope was fixed | Refresh full Worktree/index evidence, classify the new diff as candidate-owned, validation side effect, or unrelated contamination, and do not clear commit readiness until the basis and intended scope agree. | Silently includes the generated drift, reviews the stale pre-validation basis, or discards user-owned content. |
 | No actionable finding exists | Say `No actionable findings` and report residual gaps. | Invents low-value findings. |
 | Diff adds a wrapper around one implementation | Inspect current responsibility, consumers, policy, lifecycle, and verification seam. Report only if the new layer lacks a current role and creates concrete cost. | Calls every single-implementation abstraction over-design. |
 | Clippy or ESLint reports an unused declaration outside the changed path | Classify it as pre-existing and exclude it from the verdict unless the basis directly depends on it; verify language/framework reachability. | Attributes whole-repository lint debt to the diff. |
 | A one-line label change wraps at an intermediate width and hides a critical action | Attribute the reachable regression to the basis and require proportional runtime proof; distinguish it from unrelated pre-existing layout debt. | Dismisses the impact because the diff is small or reports all nearby layout debt as introduced. |
+| A visual diff has root DESIGN.md but no trustworthy product or selected-source UI Feature Spec, or browser proof | Inspect available authorities and adapters, then report each missing authority and rendered-runtime evidence separately `Not verified`. | Treats DESIGN.md alone as feature acceptance, uses one Feature Spec for both owners, uses a repo-map row as proof, or requires an audit-frontend handoff by default. |
 
 ## Quality Eval
 
@@ -79,6 +91,7 @@
 | Standards axis | Checks applicable repository guidance, architecture, correctness, security, performance, and maintainability with cited evidence. | Treats generic preferences as hard repository violations. |
 | Evidence-gated code quality | For applicable duplication, dead/unused code, abstraction, and coupling signals, proves reachability, impact, owner/location, basis attribution, and a falsifiable verification path. | Reports similarity, size, a single wrapper/trait/memo/clone, or optional lint advice by itself. |
 | Spec axis | Checks requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and scope creep; marks the axis `Not verified` when no trustworthy spec exists. | Infers a spec from the diff or claims compliance without a source. |
+| Frontend design compliance | Only for visual/UI-contract changes, separately traces product requirements/product Feature Spec, selected-source UI Feature Spec, root DESIGN.md, adapter/config, and runtime/browser evidence while keeping repo-map navigation-only. | Creates a parallel review gateway, requires audit-frontend, lets Feature Spec types substitute for each other, or collapses authority and runtime gaps into one claim. |
 | Axis independence | Collects Standards and Spec evidence independently, optionally in bounded parallel read-only passes, then verifies, deduplicates, labels, and severity-ranks findings centrally. | Lets one axis mask the other or concatenates unverified subagent output. |
 | Necessary handoff | Emits a frontend/Rust audit handoff only when that specialist must inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or authentication code. |
 | Contract completeness | Traces manifests, exports, callers, types, migrations, generated files, tests, CI/deploy, docs, indexes, and stale references when applicable. | Reviews isolated source lines only. |

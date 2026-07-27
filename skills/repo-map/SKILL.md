@@ -32,7 +32,11 @@ Map stable workspace or repository semantics into a concise navigation layer roo
    For reusable UI components, record the product/design term, visual cue or
    semantic job, canonical path and symbol, export/registration path, owning
    provider root, representative consumers, states/variants, reuse boundary,
-   and current-source evidence. Keep this a high-value index, not a catalog.
+   and current-source evidence. When the repository adopts root `DESIGN.md`,
+   also record its exact map-root-relative path plus anchor or semantic binding;
+   do not copy token values or design rules. Keep this a high-value index, not a
+   catalog. Load `references/frontend-inventory.md` only for a requested frontend
+   inventory or code-context index.
    For a requested HTTP API inventory, use `references/api-contract-map.md`. Record
    the repository-native authority/consumer chain and only existing or explicitly
    requested generated artifacts; do not introduce or copy schemas.
@@ -48,6 +52,10 @@ Map stable workspace or repository semantics into a concise navigation layer roo
 - **Repo map:** create the smallest useful workspace, repository, or scoped navigation artifact.
 - **Targeted update:** add or refresh one architecture, command, ownership, component, or interface area.
 - **Reuse inventory:** map the shortest chain to existing reusable or reference implementations before new development.
+- **Frontend inventory profile (on demand):** index only the routes/pages,
+  components, hooks/state, API, styles, and design bindings that materially guide
+  a requested frontend surface. It is a reference for later work, not a required
+  implementation phase.
 - **API Contract Map profile:** record a bounded native or generated authority/consumer chain and its available checks.
 - **Navigation repair:** recover stale documented paths by ascending to the nearest existing ancestor and repairing only affected entries.
 
@@ -73,6 +81,9 @@ Map stable workspace or repository semantics into a concise navigation layer roo
 - Treat the reuse index as high-value navigation, not an exhaustive symbol catalog. Include explicit shared contracts or proven reusable candidates; keep leaf-local details in source.
 - Prefer verified existing components during implementation, but do not make a
   repo map or Component Map a mandatory implementation prerequisite.
+- A frontend inventory or code-context index is selective navigation. Its absence
+  or a map miss never proves that a route, component, style, hook, state owner,
+  API client, or design binding does not exist; perform bounded live discovery.
 - Never treat a map miss as proof that no implementation exists. Record the live search scope before allowing a new declaration.
 - Say `Not found` for missing items and `Not verified` for unchecked or runtime claims.
 - Keep current truth separate from history, plans, and aspirational architecture.
@@ -94,6 +105,8 @@ Report the repo-map path, initial working scope, scope class, map root, discover
 - See [references/usage.md](references/usage.md) for routing and examples.
 - See [references/checklist.md](references/checklist.md) for evidence and incremental repair details.
 - See [references/reuse-index.md](references/reuse-index.md) when mapping components, functions, types, or APIs and deciding whether a new declaration is justified.
+- See [references/frontend-inventory.md](references/frontend-inventory.md) only
+  for a requested frontend inventory or code-context index.
 - See [references/api-contract-map.md](references/api-contract-map.md) only for a requested HTTP authority/consumer map.
 - See [references/prompt-templates.md](references/prompt-templates.md) for the repo-map structure.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

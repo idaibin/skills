@@ -61,7 +61,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - If the recorded tab was closed, replaced, logged out, or navigated away, report the session break and ask whether to recover the original session or start a fresh one.
 - Prefer selectors, roles, labels, DOM state, console, network, and storage evidence.
 - Match evidence to the claim: use screenshots for visual/layout state, DOM or accessibility data for selectors and rendered text, console logs for client errors, network records for request/response behavior, storage/auth state for account/session claims, and file checks for downloads.
-- For visible UI verification, check relevant viewports, overflow, clipped text, table/dialog layout, hover/focus behavior, and reachable loading/empty/error states.
+- For visible UI verification, resolve viewports in this order: exact user dimensions; an accepted viewport matrix; an explicit repository convention; then one minimal representative value per user-named category. Mark the final fallback as an assumption, do not add unmentioned categories, and check overflow, clipped text, table/dialog layout, hover/focus behavior, and reachable loading/empty/error states.
 - For interactive verification, capture or report before/after state for controls, navigation, forms, uploads, downloads, route changes, and generated payloads when relevant.
 - Do not force a fixed number of issues; report observed issues, residual risk, and `Not verified` gaps.
 - Stop before login, MFA, consent, account switch, purchase, permission grant, destructive submit, or irreversible state changes unless the user explicitly authorized that action.
@@ -74,5 +74,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 ## Browser Debug Evidence
 
 - Use [devtools-debugging.md](devtools-debugging.md) only after the request fixes the URL, steps, expected behavior, observed symptom, and browser evidence needed for a red/green decision.
+- For a task-started local runtime, record command, process identity (including start time, command/executable, cwd, and parent-child source), observable port, and temporary paths. Revalidate that identity before cleanup; a PID or port alone is never authority to kill. Return caller-owned runtime cleanup instead of stopping it.
+- Separate readiness probes from product behavior. Retry only bounded, no-side-effect readiness checks with direct evidence of setup delay; report failed behavior as evidence rather than retrying it blindly.
 - Route unexplained or cross-system symptoms back to the caller before browser operation. Return direct browser facts and unresolved gaps; keep permanent source remediation with its owning workflow.
 - Retain referenced screenshots, traces, logs, and downloads until the caller accepts or archives them, then report cleanup separately.

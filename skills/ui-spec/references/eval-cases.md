@@ -8,10 +8,12 @@
 | `Our accepted shared Button and spacing conventions changed across dashboard and settings; update the shared contract.` | Trigger `ui-spec` Design System Spec. Update repository-root `DESIGN.md`, then report lint and diff gates. |
 | `Build a contract for this selected page in a new repo with no DESIGN.md yet.` | Trigger `ui-spec` and define how the root `DESIGN.md` is first established before readying any slice. |
 | `Create a contract for one flow but do not copy tokens/component semantics from the shared source.` | Trigger `ui-spec` Feature Spec. Reference root `DESIGN.md` and reuse owner mapping instead of duplicating shared values in the slice artifact. |
+| `Specify this settings page using its selected source; keep shared colors, spacing scale, global typography, radius, and Button semantics in root DESIGN.md.` | Trigger `ui-spec` Feature Spec with page-level layout/state/interaction/component mapping only. |
 | `The selected source has an unknown heading in DESIGN.md input.` | Keep the unknown heading preserved, report it in the notes, and do not fail parser behavior. |
 | `A duplicate section appears in DESIGN.md while updating shared semantics.` | Use official diff/lint flow and treat duplicate section as an immediate error condition until resolved by source owner. |
 | `Run lint before export and share the derived design output.` | Run lint first, require success without error, and treat export as explicit derived output only after shared authority is accepted. |
 | `Specify this approved dialog so long localized content, intermediate widths, its critical action, inner scroll, and overlay behavior remain usable.` | Trigger `ui-spec` Feature Spec and add only the applicable task-completion geometry and acceptance rules. |
+| `Admin only needs 1920x1080 verified; 1440x900 is useful if time permits, and mobile is outside this request.` | Trigger `ui-spec` Feature Spec with an Admin-local viewport matrix: `1920x1080` required, `1440x900` optional, mobile excluded with the user's request as evidence. Hand the unchanged matrix to implementation, audit, and runtime verification; do not make this a global default. |
 
 ## Non-Trigger Eval
 
@@ -29,10 +31,12 @@
 | --- | --- | --- |
 | New repo has no root design authority and one selected slice exists | Copy the bundled template, fill only verified values, obtain named human approval, lint root `DESIGN.md`, record diff `Not applicable`, then proceed with slice readiness gates. | Invents token values, starts Feature Spec without an approved and linted root `DESIGN.md`, or fabricates a diff baseline. |
 | Feature Spec only reuses accepted shared visuals | Reference root `DESIGN.md` semantics and avoid copying token/component values into slice file. | Copies shared token map or component semantics into the slice. |
+| Page contract maps a selected source | Keeps page layout, states, interaction, responsive/accessibility behavior, and component mapping in the Feature Spec while linking shared colors/spacing/typography/radius/component meaning to root DESIGN.md. | Turns the Feature Spec into a parallel design-system document or omits page-level implementation mapping. |
 | Shared visual semantics change for multiple domains | Update root `DESIGN.md`, run official lint and diff, report regression status, then gate readiness. | Treats change as local page styling only or skips lint/diff gate. |
 | DESIGN.md has unknown section heading during review | Preserve the unknown section and continue with known ordered content. | Removes it silently or errors on unknown headings. |
 | DESIGN.md has duplicate section heading | Reject with hard blocker until resolved. | Continues and marks Ready. |
 | DESIGN.md lint or diff command cannot run due to missing permissions/network | Mark checks as `Not verified` and do not mark slice `Ready`. | Claims success without evidence and issues `Ready`. |
+| A desktop-only Admin acceptance request names one mandatory and one budgeted viewport | Matrix records viewport size/orientation, environment, state/fixture, assertions, and evidence source. `1920x1080` is required, `1440x900` is optional, and mobile is excluded only from this slice's acceptance scope. | Treats a skipped optional check as a failure, treats excluded mobile as an unsupported-device claim, or applies Admin sizes to unrelated surfaces. |
 
 ## Quality Eval
 
@@ -44,6 +48,7 @@
 | Evidence precision | marks verified/extracted/proposed/`Not verified` and includes lint/diff outcomes | treats unknown values as verified facts |
 | Design-system gate | shared changes require `@google/design.md@0.3.0` lint + diff and regression review | emits Ready without lint/diff or unresolved regression |
 | Accessibility and responsive contract | defines focus, overflow, reduced-motion, localization, and acceptance for each slice | skips accessibility/responsive rules in contracts |
+| Viewport acceptance scope | every applicable slice has required/optional/excluded entries with size, environment, state, assertions, and evidence source; current user requirements override older specs | calls one screenshot full coverage, omits the evidence source or state, or treats an excluded viewport as unsupported |
 | Multi-surface gating | per-slice readiness plus shared index and explicit partial/complete status | uses one omnibus contract or one package-wide readiness only |
 | Handoff | per-slice artifact and readiness delivered to dev-frontend with remaining gaps | omits per-slice readiness or unresolved blockers |
 
