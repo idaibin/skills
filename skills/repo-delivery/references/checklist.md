@@ -12,6 +12,7 @@ Use this checklist when committing, pushing, syncing, squashing, or cleaning up 
 - Confirm the requested delivery target, path scope, and whether one commit was explicitly required.
 - Confirm the user authorized the exact staging, commit, push, sync, branch-integration, or cleanup action being performed.
 - Confirm review status or run `repo-review` first when ownership, mixed hunks, or commit groups are unclear.
+- For review publication, confirm explicit commit and push authorization, a GitHub remote, a non-default/non-protected branch, and the exact fixed SHA the reviewer will receive.
 - Run task-matching validation or report why it was skipped.
 - Inspect staged diff before every commit.
 - Verify final local and remote state after delivery.
@@ -46,6 +47,14 @@ Use this checklist when committing, pushing, syncing, squashing, or cleaning up 
 - Do not rebase, merge, force-push, or change upstream unless the delivery target requires it.
 - Use `--force-with-lease` only when rewrite delivery is explicitly requested and repo guidance permits it.
 - Verify remote refs after push with `git ls-remote`, `git status --short --branch`, or an equivalent repo-defined command.
+
+## Review Publication
+
+- Use only when the external review explicitly needs a repository URL, branch, and fixed SHA.
+- Require local review and validation before committing or pushing the review basis.
+- Publish only the authorized current feature branch; never `main`, another default/protected branch, a pull request, or a force-pushed rewrite.
+- Return the canonical GitHub repository URL, branch, base/head SHA, and remote-ref proof to the calling review owner.
+- When the remote is not GitHub, the branch is default/protected, authorization is incomplete, or publication cannot be proved safe, do not mutate Git; let the caller provide the minimum necessary files or review package instead.
 
 ## Branch Integration Strategy
 

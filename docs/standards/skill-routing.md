@@ -17,7 +17,7 @@ and output.
 | `dev-rust` | requested Rust implementation | source files |
 | `audit-frontend` | bounded frontend audit profiles | read-only |
 | `audit-rust` | bounded Rust audit profiles | read-only |
-| `repo-delivery` | staging, commit, integration, push, and cleanup | Git |
+| `repo-delivery` | staging, commit, review-branch publication, integration, push, and cleanup | Git |
 | `ops-browser` | authorized browser operations and evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
 | `ask-chatgpt` | local request packages and authorized ChatGPT collaboration | local artifact or authorized external action |
@@ -68,6 +68,14 @@ Common sequence, when needed:
 ```text
 repo-map -> domain-modeling/product-spec -> ui-spec/dev-* -> repo-review -> repo-delivery
 ```
+
+When an explicitly authorized external review needs a GitHub repository URL, branch,
+and immutable SHA, `ask-chatgpt` may hand a locally reviewed basis to
+`repo-delivery` for review publication. This exception is limited to a verified
+GitHub-backed non-default, non-protected branch and separately authorized commit and
+push actions. Without those conditions, the external-review owner supplies only the
+necessary files or review package. Review publication never creates a pull request,
+updates `main`, force-pushes, or counts as reviewer approval.
 
 This is not mandatory ceremony. A known Rust implementation can start directly with
 `dev-rust`. `repo-review` evaluates correctness, security, performance, and

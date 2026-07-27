@@ -53,6 +53,7 @@
 | --- | --- |
 | `Review this fixed range locally, then explicitly prepare one independent ChatGPT architecture challenge against the same basis.` | Keep `repo-review` as owner and emit one lightweight `ask-chatgpt` handoff. |
 | `Review this fixed range locally; no external reviewer was requested.` | Emit no `ask-chatgpt` handoff. |
+| `The ChatGPT review request was submitted, but no attributed response arrived.` | Preserve the local findings and verdict; report the external review axis `Not verified` without creating or clearing a finding. |
 
 ## Scenario Eval
 
@@ -72,6 +73,7 @@
 | Protocol generator writes files | Consume retained evidence or replay only in a disposable isolated copy and prove the reviewed worktree/index/hashes unchanged; otherwise mark regeneration `Not verified`. | Runs a write-mode generator in the reviewed checkout. |
 | A validation command rewrites a tracked generated file after the candidate scope was fixed | Refresh full Worktree/index evidence, classify the new diff as candidate-owned, validation side effect, or unrelated contamination, and do not clear commit readiness until the basis and intended scope agree. | Silently includes the generated drift, reviews the stale pre-validation basis, or discards user-owned content. |
 | No actionable finding exists | Say `No actionable findings` and report residual gaps. | Invents low-value findings. |
+| External review is still pending or returned no response | Keep the local verdict unchanged and report only the external completion gap. | Treats waiting as approval, blocks a locally complete verdict, or invents external findings. |
 | Diff adds a wrapper around one implementation | Inspect current responsibility, consumers, policy, lifecycle, and verification seam. Report only if the new layer lacks a current role and creates concrete cost. | Calls every single-implementation abstraction over-design. |
 | Clippy or ESLint reports an unused declaration outside the changed path | Classify it as pre-existing and exclude it from the verdict unless the basis directly depends on it; verify language/framework reachability. | Attributes whole-repository lint debt to the diff. |
 | A one-line label change wraps at an intermediate width and hides a critical action | Attribute the reachable regression to the basis and require proportional runtime proof; distinguish it from unrelated pre-existing layout debt. | Dismisses the impact because the diff is small or reports all nearby layout debt as introduced. |
@@ -93,6 +95,7 @@
 | Spec axis | Checks requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and scope creep; marks the axis `Not verified` when no trustworthy spec exists. | Infers a spec from the diff or claims compliance without a source. |
 | Frontend design compliance | Only for visual/UI-contract changes, separately traces product requirements/product Feature Spec, selected-source UI Feature Spec, root DESIGN.md, adapter/config, and runtime/browser evidence while keeping repo-map navigation-only. | Creates a parallel review gateway, requires audit-frontend, lets Feature Spec types substitute for each other, or collapses authority and runtime gaps into one claim. |
 | Axis independence | Collects Standards and Spec evidence independently, optionally in bounded parallel read-only passes, then verifies, deduplicates, labels, and severity-ranks findings centrally. | Lets one axis mask the other or concatenates unverified subagent output. |
+| External-review independence | Uses only attributed, captured, locally verified external output; a submitted, pending, timed-out, empty, or missing response remains a separate `Not verified` status and cannot change the local verdict. | Treats submission or elapsed time as reviewer approval/rejection, or lets a missing response create/clear a finding. |
 | Necessary handoff | Emits a frontend/Rust audit handoff only when that specialist must inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or authentication code. |
 | Contract completeness | Traces manifests, exports, callers, types, migrations, generated files, tests, CI/deploy, docs, indexes, and stale references when applicable. | Reviews isolated source lines only. |
 | Protocol activation | Selects the generated-contract profile only for an existing pipeline or explicit gate; otherwise reviews native route/DTO/client/test ownership and reports `Not applicable`. | Requires OpenAPI because the change uses REST. |

@@ -9,6 +9,7 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
 - Categorized local commits after review scope is approved.
 - One commit only when explicitly requested or when the approved scope is one indivisible intent.
 - Push only the current branch after validation, without creating a PR.
+- Publish an explicitly authorized fixed commit on a GitHub-backed feature branch so an external reviewer can inspect the repository URL, branch, and SHA.
 - Sync the current branch with its upstream.
 - Integrate a completed branch by preserving useful semantic commits or squashing noisy/single-outcome history when repository guidance and evidence support it.
 - Delete temporary branches after final state is verified.
@@ -18,6 +19,7 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
 
 - `Review the staged scope, commit, and push this branch.`
 - `Push only the current branch after checking the diff; do not open a PR.`
+- `Commit and push this reviewed non-main branch so ChatGPT can review its GitHub URL and fixed SHA; do not open a PR.`
 - `Squash this completed branch into main and push main.`
 - `Sync this branch to remote; do not switch branches.`
 - `Commit these reviewed changes and show the final remote ref.`
@@ -38,6 +40,7 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
   or input risks; use `repo-review`.
 - Browser or desktop-client evidence collection; use `ops-browser` or `ops-client`.
 - A full GitHub publish flow that explicitly includes creating a draft or ready pull request; use the available GitHub publishing workflow.
+- Preparing files or a review package when GitHub publication is unavailable or unauthorized; the calling review workflow owns that artifact.
 
 ## Output
 

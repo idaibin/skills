@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Browser"
   short_description: "Operate browser surfaces with verified state and actions"
-  default_prompt: "Use $ops-browser to select the smallest browser or DevTools operation, verify capability, identity, target, and authorization, then return before/after evidence."
+  default_prompt: "Use $ops-browser to prefer the non-interrupting Codex in-app Browser when suitable, select only exposed browser or DevTools evidence, verify identity, target, and authorization, and return before/after evidence with unsupported claims marked Not verified."

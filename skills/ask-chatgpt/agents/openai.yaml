@@ -1,4 +1,4 @@
 interface:
   display_name: "Ask ChatGPT"
-  short_description: "Ask ChatGPT for bounded external input"
-  default_prompt: "Use $ask-chatgpt for requested ChatGPT input: infer the outcome, choose one theme and verified route, honor model preferences, send only with exact authorization, and verify the result locally."
+  short_description: "Coordinate bounded ChatGPT collaboration"
+  default_prompt: "Use $ask-chatgpt for requested ChatGPT input: infer the outcome, prefer the Codex App-native Project/thread route unless I specify a surface, send only with exact authorization, preserve idempotency and attribution, and verify the result locally."

@@ -28,6 +28,21 @@ Codex is strongest at exact code, call-chain, generated-artifact, CI, and compat
 
 ## Delivery Handoff
 
+For `review-publication`, use a GitHub branch as the reviewer input only when all of
+these are true:
+
+- the user explicitly authorized publishing the review basis;
+- a verified GitHub remote exists;
+- the current branch is not `main`, the default branch, or a protected branch;
+- the exact review commit can be created and pushed without force.
+
+Hand the exact paths, commit requirement, target remote/branch, and validation evidence
+to `repo-delivery`. After it reports a successful push, record the canonical
+repository URL, branch, and full SHA as the immutable ChatGPT basis. This skill never
+stages, commits, pushes, opens a PR, merges, or force-pushes. If any condition is
+missing, send or package only the necessary files and bounded plan instead; do not
+expand Git authority to make repository review possible.
+
 Before handing off to `repo-delivery`:
 
 - inspect changed paths and diff stat

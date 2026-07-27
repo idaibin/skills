@@ -1,20 +1,20 @@
 ---
 name: repo-delivery
-description: "Use when reviewed changes need authorized Git mutation: categorized commits, push or sync, branch integration, temporary-branch cleanup, or ref proof; owns Git delivery and stops before pull-request creation."
+description: "Use when reviewed changes need authorized Git mutation, or when an explicitly authorized fixed non-default branch must be published for external review: categorized commits, push or sync, branch integration, cleanup, or ref proof; stops before pull-request creation."
 ---
 
 # Repository Delivery
 
 ## Overview
 
-Deliver reviewed repository changes from a local worktree to the requested Git state. This is the sole owner of staging, categorized commits, pushes, branch integration, and other Git mutations after review acceptance. Verify branch policy, divergence, permissions, commit grouping, and staged content before mutation; never open a pull request.
+Deliver reviewed repository changes from a local worktree to the requested Git state. This is the sole owner of staging, categorized commits, pushes, branch integration, and other Git mutations after review acceptance, plus explicitly authorized publication of a fixed non-default branch for external review. Verify branch policy, divergence, permissions, commit grouping, and staged content before mutation; never open a pull request.
 
 ## Workflow
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Run `git status --short --branch` and identify branch, upstream, staged files, dirty files, and unrelated local work.
 3. Inspect existing local refs. Fetch or otherwise refresh remote state only for an explicitly authorized push, sync, branch-integration, or remote-refresh target; a local-commit-only request leaves remote state `Not verified`.
-4. Confirm each separately authorized target: categorized local commits, an explicitly requested single commit, push current branch, sync, branch integration, cleanup, or conflict resolution. Commit authorization never implies push or another target.
+4. Confirm each separately authorized target: categorized local commits, an explicitly requested single commit, review publication, push current branch, sync, branch integration, cleanup, or conflict resolution. Commit authorization never implies push or another target.
 5. Confirm branch policy and permissions: protected/default branch, force-push restrictions, required checks, branch naming, and whether direct updates are allowed or `Not verified`.
 6. Ensure review is complete. Use `repo-review` first when ownership, mixed hunks, contract chains, or commit grouping are not already clear.
 7. Run or reuse task-appropriate validation before staging unless the user explicitly requests delivery without further checks.
@@ -29,6 +29,7 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 - **Categorized local commits:** classify reviewed changes and create one commit per independent intent without pushing.
 - **Explicit single commit:** create exactly one commit only when requested or when the reviewed scope has one indivisible intent.
 - **Current-branch push:** push the already reviewed current branch after upstream/divergence checks; do not stage or commit unless separately authorized.
+- **Review publication:** after local review and validation, create and/or push the explicitly authorized fixed commit on a GitHub-backed non-default, non-protected branch so an external reviewer can use repository URL, branch, and SHA. Stop before PR creation or target-branch integration.
 - **Branch sync:** pull, fetch, rebase, merge, or fast-forward only according to repo guidance, current divergence, and the user's requested target.
 - **Branch integration:** integrate a fixed reviewed source range into the target by preserving coherent semantic commits or squashing noisy/single-outcome history according to explicit intent, repository policy, and evidence.
 - **Squash-to-main:** a conditional branch-integration strategy that moves reviewed branch work into `main` as exactly one final commit only when repo guidance and explicit user intent permit direct `main` updates.
@@ -51,12 +52,14 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 - Do not infer staging or commit authorization from a review-only request.
 - Do not infer push, sync, branch-integration, cleanup, conflict-resolution, or branch-deletion authorization from a local commit request.
 - Do not infer that `main` is writable merely because local checkout permits a commit.
+- Review publication requires explicit commit and push authorization, a verified GitHub remote, a non-default and non-protected current branch, a fixed locally reviewed basis, and remote-ref proof. If any condition is absent, return the necessary files or review package to the caller instead of publishing.
 - Do not stage unrelated local changes.
 - Do not use `git add .`, `git add -A`, directory-wide adds, or wildcard adds unless the user explicitly approves that exact scope.
 - Do not commit when unrelated staged files are present.
 - Do not collapse multiple independent categories into one commit unless the user explicitly requests one commit.
 - Do not split one indivisible contract change merely to increase commit count.
 - Do not rewrite, force-push, squash, delete branches, change remotes, or alter upstream tracking unless the user requested it or repo guidance requires it for the delivery target.
+- Never use review publication to update `main`, another default/protected branch, create a pull request, force-push, or imply external reviewer approval.
 - Never use force push as an automatic response to non-fast-forward rejection. Re-read remote state and report the divergence first.
 - Do not rebase or merge over a dirty worktree without an explicit safe plan for local changes.
 - Preserve user-provided commit text verbatim.

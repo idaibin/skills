@@ -1,15 +1,26 @@
-# Browser Profile Management
+# Transport And Browser Profile
 
 ## Purpose
 
-A review profile record maps a repository or task to browser routing metadata. It is not permission to mutate or delete real browser data.
+A review profile record stores transport preferences and browser-specific metadata.
+Routing behavior belongs to `chatgpt-routing.md`; this record is never authorization
+or current-state evidence.
 
 ## Record Fields
 
 - `name`
 - `repo_path`
-- `default_browser_mode`: `capability-auto`, `desktop-built-in-browser`, `chatgpt-cloud-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
+- `default_transport_mode`: `codex-app-native`, `desktop-built-in-browser`, or
+  `manual`. Current Chrome and standalone Playwright require a current-request
+  selection and are not durable transport defaults.
+- `default_browser_mode`: legacy browser-fallback preference; it does not override
+  App-native-first transport selection. `capability-auto` also means App-native first.
 - `chatgpt_surface`: `standard-chat` or `project`
+- `chatgpt_project_name`: secondary discovery hint only
+- `chatgpt_interface`: `chat` or `work`
+- `chatgpt_model`
+- `chatgpt_reasoning_mode`
+- `chatgpt_reasoning_fallbacks`
 - `account_workspace_note`
 - `browser`
 - `profile_path`
@@ -21,64 +32,30 @@ A review profile record maps a repository or task to browser routing metadata. I
 
 Never store secrets, cookies, tokens, or browser storage. These fields are local bridge records, not repository-safe review metadata. When review evidence is committed, reduce workspace identity to its category and replace a full ChatGPT URL with a sanitized conversation reference unless verified repository privacy and explicit user authorization permit the full values.
 
-## Mode Resolution
+Store durable records at `~/.agents/config/ask-chatgpt/defaults.yaml`, never inside
+the installed package. Explicit request values override this record. A stored Project
+name, URL, conversation identifier, model, reasoning mode, browser tab, or profile
+does not prove current availability or selection.
 
-Resolve modes only after external-send authorization and capability preflight:
+Only `default_transport_mode` changes the durable transport preference. Its
+`codex-app-native` and `desktop-built-in-browser` values change which of those two
+non-interrupting routes is tried first; `manual` stops before external action until
+the current request selects a route. Preserve an existing `default_browser_mode` as
+the browser choice used after the selected transport is unavailable or insufficient;
+do not silently migrate it into a transport override. Legacy Chrome or standalone
+values remain hints only and never authorize those routes without current confirmation.
 
-1. An explicit browser mode selected in the current request whose required capability is available.
-2. The desktop built-in browser with the verified session, repository, or user Project URL.
-3. The desktop built-in browser with a verified standard chat.
-4. Current Chrome or standalone Playwright only when explicitly selected in the current request and controllable.
-5. Package-only when the built-in route cannot be proven and no explicit user-browser override exists.
+Browser fields apply only to browser routes. Keep built-in, cloud/agent reviewer,
+Chrome, and standalone profile identities separate; do not transfer cookies, login,
+tabs, or capability evidence between them. A profile path is `Not verified` unless
+the active control surface exposes it. Detailed mode selection and operation rules
+belong to `chatgpt-routing.md`.
 
-## Desktop Built-In Browser Mode
+## Reset
 
-Use only when the active environment exposes and successfully preflights the ChatGPT desktop built-in browser.
-
-- Use `ops-browser` for low-level session, tab, composer, upload, and response-state operations; the bridge retains external authorization, package, round, conversation-attribution, and archive ownership.
-- Reuse a verified project/conversation tab when available.
-- Keep its independent cookies, login, tabs, downloads, extensions, and browser state distinct from Chrome and cloud/agent browsing.
-- Ask the user to sign in inside the built-in browser when authentication is required; credentials stay in the browser, not chat.
-- If no built-in Browser capability is exposed, do not invent or install one; resolve another explicitly allowed route or return to Package-only.
-
-## ChatGPT Cloud Browser Mode
-
-Use only when the active ChatGPT review surface exposes cloud/agent browsing and the target fits its verified limits.
-
-- Prefer it for public-page, remote, or background-capable reviewer-side checks.
-- Re-check sign-in, file, download, and consequential-action support; do not inherit desktop built-in or Chrome state.
-- Record it as the reviewer browser when Codex uses another browser to transport the review package.
-
-## Current Chrome Mode
-
-Use when the user wants an already-open Chrome tab.
-
-- Enumerate tabs only after the user chooses this route.
-- Present ChatGPT tabs by title, URL, and project-bound status.
-- Claim only the selected tab.
-- Mark profile path `Not verified` unless tooling exposes it.
-- Do not call this a Playwright-launched profile; Playwright is only the control surface for a claimed tab.
-
-## Standalone Playwright Local Profile Mode
-
-Use when the user chooses a local profile or profile path.
-
-- Ask for the profile before launch/attach.
-- Report profile path, directory, channel, and lock status when verified.
-- If attach is blocked, ask whether to close the conflict, choose another profile, or switch modes.
-- Do not copy, delete, or mutate profile directories except through ordinary browser use needed for the confirmed review.
-
-## Defaults
-
-Use `desktop-built-in-browser` as the default transport preference. Legacy
-`capability-auto` records resolve to the same built-in-first behavior and never
-select Current Chrome or standalone Playwright without a current explicit user
-request. Prefer `project` when a verified Project URL exists and `standard-chat`
-otherwise. Verify the active account workspace separately. Update durable
-defaults only after explicit instruction. A successfully controlled tab proves
-task-local control, not durable ownership or workspace identity.
-
-Reset clears bridge defaults such as `default_browser_mode`, `chatgpt_surface`, profile record, URL, active conversation id, tab handle, account/workspace note, and verification timestamp.
+Update durable defaults only after explicit instruction. Reset clears bridge records
+such as transport mode, ChatGPT surface, profile record, URL, active conversation ID,
+tab handle, account/workspace note, and verification timestamp.
 
 Reset does not remove real Chrome profiles, cookies, local storage, history, downloads, extensions, ChatGPT conversations, review artifacts, commits, or code changes.
 

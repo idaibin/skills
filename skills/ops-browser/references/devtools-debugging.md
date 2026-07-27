@@ -3,6 +3,7 @@
 ## Contents
 
 - [Request Readiness](#request-readiness)
+- [Codex In-App Browser Debug Profile](#codex-in-app-browser-debug-profile)
 - [Capability And Evidence Selection](#capability-and-evidence-selection)
 - [Runtime Ownership And Non-Interrupting Operation](#runtime-ownership-and-non-interrupting-operation)
 - [Readiness Then Red/Green Loop](#readiness-then-redgreen-loop)
@@ -34,6 +35,36 @@ Route an unexplained or cross-system symptom back to the host diagnosis flow.
 Do not use exploratory browser activity to invent a frontend, API, backend, or
 database root cause.
 
+## Codex In-App Browser Debug Profile
+
+Use the host-provided Codex in-app Browser as the default non-interrupting
+browser surface when it can reach the target and the task does not require a
+Chrome extension or Chrome-owned profile state. Non-interrupting is a product
+surface classification, not proof that DevTools-like inspection is available.
+
+Build the smallest debug plan from capabilities the active Browser actually
+exposes:
+
+1. establish the exact URL, route, viewport, and settled-page readiness state;
+2. capture a before state using any exposed screenshot, DOM/accessibility, or
+   route evidence;
+3. inspect only the requested surfaces: DOM/accessibility; computed CSS, box
+   geometry, layout, overflow, and clipping; Console; Network and loaded or
+   failed resources; route/navigation; redacted cookies or storage/auth
+   presence and scope; screenshot and viewport;
+4. perform the exact authorized interaction once and capture the corresponding
+   after state;
+5. state one falsifiable hypothesis, run one deterministic observation or one
+   separately authorized safe variable change, and classify the result red,
+   green, persistent red, or inconclusive.
+
+If the active Browser does not expose a requested surface, do not replace it
+with a screenshot or inference. Mark the claim `Not verified`, record the
+missing capability, and name the smallest additional evidence needed. Do not
+switch to controlled Chrome, Computer Use, or system accessibility/coordinate
+automation merely to fill a gap; those are distinct routes with separate state
+and non-interruption requirements.
+
 ## Capability And Evidence Selection
 
 Preflight only the surfaces needed by the request:
@@ -44,7 +75,7 @@ Preflight only the surfaces needed by the request:
 | CSS/layout | computed styles, box geometry, stacking, clipping, and responsive state |
 | Console | client exceptions, warnings, logs, and browser policy errors |
 | Network | request URL/method/status/timing, exposed headers, payload, response, and initiator |
-| Cookies/storage | browser-visible cookie and local/session storage presence, scope, and changes without exposing secrets |
+| Cookies/storage/auth | browser-visible cookie and local/session storage presence, scope, and changes without exposing secrets; current auth only when directly bound to the active target |
 | Route/resources/cache | navigation, redirects, loaded or failed assets, cache behavior, and browser-enforced CORS |
 | Screenshot/viewport | visible state at the recorded viewport and time |
 | Upload/download | selected source or resulting artifact and browser-visible transfer state |
@@ -65,11 +96,12 @@ When this task starts a local runtime, create a small task ledger before launch:
 - exact bound port or socket, when observable;
 - task-specific browser profile and evidence/artifact paths.
 
-Do not claim background safety from headless terminology alone. When the user
-requires no window, mouse, or keyboard interruption, use an isolated route only
-after the active tool proves `background_safe`; otherwise use supported
-non-browser evidence or stop. Do not focus, move, resize, or reuse a user-owned
-window as a fallback.
+The host-provided Codex in-app Browser is non-interrupting by product contract.
+For controlled Chrome, Computer Use, system accessibility/coordinate automation,
+or another visible/user-owned route, do not claim background safety from
+headless terminology alone: require direct `background_safe` evidence or use
+supported non-browser evidence and stop. Do not focus, move, resize, or reuse a
+user-owned window as a fallback.
 
 Before sending a signal, re-observe every candidate process and compare its PID,
 start time, executable or command, working directory, and recorded parent-child
@@ -99,10 +131,12 @@ Then run the red/green loop:
 
 1. Reproduce the symptom without changing unrelated state.
 2. Wait for the relevant hydrated, loaded, or settled page state.
-3. Capture the smallest evidence set that proves the red condition.
+3. Capture the smallest evidence set that proves the red condition, including
+   the before state for any interaction under test.
 4. State one falsifiable browser hypothesis.
 5. Change one safe variable or run one deterministic observation.
-6. Repeat the same steps and capture green, persistent red, or inconclusive evidence.
+6. Repeat the same steps and capture the corresponding after state plus green,
+   persistent red, or inconclusive evidence.
 7. Return direct browser facts, inference labels, missing evidence, and the next owner.
 
 Prefer deterministic DOM, Console, or Network checks and a short repeatable

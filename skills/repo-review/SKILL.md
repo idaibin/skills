@@ -47,7 +47,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
 11. Run only non-mutating repository checks needed for the selected basis and risk.
 12. Produce semantic groups, commit messages, and exact staging guidance only when the Worktree commit-readiness profile was requested. Add the Release profile only for an explicit release candidate/readiness question.
-13. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap.
+13. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap. Keep an authorized external-review status separate from the local verdict: a submitted request with no attributed response neither creates nor clears a finding.
 
 ## Modes
 
@@ -84,6 +84,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
   blocking`, or `Not verified`; do not attribute nearby debt to the basis.
 - Do not approve structural add/reuse/move/rename/delete work while manifests, exports, commands, tests, CI/deploy, docs, indexes, migrations, generated files, consumers, or stale references disagree.
 - Treat runtime, CI, deployment, external services, branch policy, and package completeness as `Not verified` unless directly evidenced.
+- Do not treat an external review request, pending response, timeout, or missing response as approval or rejection. Preserve the locally evidenced verdict and report the external review axis separately `Not verified` until an attributed response is captured and verified.
 - Do not activate frontend design compliance merely because a repository contains
   frontend files. It is conditional on visual or UI-contract change scope, does not
   create another review profile, and does not require `audit-frontend`.
@@ -94,7 +95,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the verdict, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
+Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
 
 ## References
 

@@ -7,7 +7,7 @@
 - [Local Collection](#local-collection)
 - [External Action Gate](#external-action-gate)
 - [Local Codex Gate](#local-codex-gate)
-- [Standard Chat, Project, And Codex](#standard-chat-project-and-codex)
+- [Project Collaboration And Codex](#project-collaboration-and-codex)
 - [GitHub Repository Review](#github-repository-review)
 - [Combined Review Loop](#combined-review-loop)
 - [Review Package](#review-package)
@@ -22,7 +22,7 @@
 - `Use my ChatGPT Project for an independent review while Codex reviews the fixed basis; verify both locally and avoid extra rounds.`
 - `Use Chat for a one-off independent review and save review.md.`
 - `Use my Chrome profile and ChatGPT project for this repo review.`
-- `Default to the ChatGPT desktop built-in browser and open the ChatGPT project for this repo review.`
+- `Use the default ChatGPT transport and open the Project for this repo review.`
 - `Ask ChatGPT to review this branch and use its built-in browser to verify the deployed pages.`
 - `Have ChatGPT inspect these public URLs in its cloud browser while reviewing the package.`
 - `Use ChatGPT now with my authorized GitHub connection to review this entire repository at the specified commit, with path citations and a coverage manifest.`
@@ -99,27 +99,35 @@ option, so it must appear before `exec`; do not emit
 
 The screenshot-style permission prompt is produced by the local execution permission layer. This skill controls the choice gate and command parameters, not the system prompt UI.
 
-## Standard Chat, Project, And Codex
+## Project Collaboration And Codex
 
-- Use a verified Project for durable repository context and Standard Chat for a one-off pass; verify the account workspace separately.
-- Resolve explicit request settings before durable defaults from `~/.agents/config/ask-chatgpt/defaults.yaml`; verify the Project URL/rendered identity, Chat/Work interface, model, and reasoning selection on the active page before every submit.
-- Treat the configured reasoning mode as preferred and use only the ordered authorized fallbacks when it is unavailable; stored labels never prove current capability or selection.
+- Use a verified Project for durable repository context and Standard Chat for a
+  one-off pass; verify account/workspace identity separately.
+- Follow `chatgpt-routing.md` for the App-native-first transport order, thread
+  lifecycle, model/reasoning evidence, browser fallback, and completion overlay.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.
 - A Project supplies context, not evidence: every pass still fixes its basis and sends a self-contained package.
-- Let `ask-chatgpt` own the package, send authorization, surface, round count, conversation mapping, and response archive. Use `ops-browser` only for low-level browser actions and evidence on the route the review coordinator selected.
-- Exchange browser capability and action state only through `browser-operation/v1`: `ops-browser` returns one Capability Snapshot, the bridge creates a Handoff Request and operation-ledger entry before each state-changing action, and the browser returns the same `operation_id` in its Handoff Result.
-- Treat imported bookmarks/history as target-discovery hints and saved credentials as user-login assistance only. They do not establish an authenticated session, correct account/workspace, conversation identity, send authorization, or operation completion. Require fresh direct evidence for each of those claims and avoid reading unrelated imported data.
+- Let `ask-chatgpt` own the package, send authorization, transport, surface, round
+  count, conversation mapping, and response archive. Use `ops-browser` only when a
+  browser route needs low-level browser actions and evidence.
 - Treat `operation_id` as idempotency scope, not a correlation label. Never create a replacement ID after an interruption or ambiguous submit; reconcile the original target and expected postcondition first.
-- Use one `round_id` for the external review round and a distinct `operation_id` for conversation creation, each attachment/send action, the final marker, and response capture. The round is complete only after all required operation IDs complete.
+- Use one `round_id` for the external review round and distinct operation IDs for
+  independent state changes. App-native `create_thread` combines conversation
+  creation with the initial submit in one operation; browser creation and submit
+  remain separate operations when the surface exposes them separately.
 - Distinguish the transport browser from the reviewer browser. The transport browser submits/captures the ChatGPT review; the reviewer browser is ChatGPT's desktop built-in or cloud/agent browser for target-page checks. Load `live-browser-review.md` whenever the latter is requested.
 
-For a verified Project with no mapped conversation, an explicit external send
-authorizes creation of one conversation. Open the Project, create one
-conversation, verify its stable URL/ID and empty composer state before send when
-the surface exposes them, record it, and then send. If identity is assigned only
-on first submit, record pre-send Project/account evidence and verify/store the
-URL/ID immediately after the authorized submit before accepting the response.
-Do not create conversations during Package-only work.
+An explicit external send authorizes one initial conversation submission on the
+selected route. Do not create conversations during Package-only work. Never interpret
+an unresolved client identity, missing assistant response, or expired completion wait
+as permission to send the initial prompt again.
+
+On browser routes, exchange capability and action state only through
+`browser-operation/v1`: `ops-browser` returns one Capability Snapshot, the bridge
+creates a Handoff Request and ledger entry before each state-changing action, and the
+browser returns the same `operation_id`. Treat imported bookmarks/history only as
+target-discovery hints and saved credentials only as login assistance; neither proves
+session, workspace, conversation, authorization, or completion.
 
 ## GitHub Repository Review
 

@@ -7,6 +7,8 @@
 - [Routing Order](#routing-order)
 - [Surface Resolution](#surface-resolution)
 - [Default Configuration](#default-configuration)
+- [Codex App-Native Project And Thread Route](#codex-app-native-project-and-thread-route)
+- [Model And Reasoning Evidence](#model-and-reasoning-evidence)
 - [Current Chrome Routing](#current-chrome-routing)
 - [Browser Capability Routing](#browser-capability-routing)
 - [Standalone Playwright Routing](#standalone-playwright-routing)
@@ -29,7 +31,7 @@
 
 ## Authorization Before Routing
 
-Do not resolve or open a browser route for requests that only say prepare,
+Do not resolve or open an external route for requests that only say prepare,
 build, draft, package, or create review material. Generate
 `<repo-root>/.codex/reviews/<review-id>/review-package.md` in a verified ignored
 workspace and stop. Continue below only when the user
@@ -38,72 +40,115 @@ of external review rounds.
 
 ## Routing Order
 
-1. Required ChatGPT capability selected from the requested outcome: Standard Chat, Search, Deep Research, Images, or reviewer browser.
-2. Explicit user surface or URL and any browser mode explicitly selected in the current request.
-3. Session, repository, or user `chatgpt_default_url` through the desktop built-in browser.
-4. A standard chat through the desktop built-in browser at `https://chatgpt.com/` when no specialized capability is required.
-5. Current Chrome or standalone Playwright only when explicitly selected in the current request and controllable.
-6. Package-only when the required capability or route cannot be proven and no authorized fallback satisfies the outcome.
+1. Select the required ChatGPT capability from the outcome: Standard Chat,
+   Search, Deep Research, Images, or reviewer browser.
+2. Treat an explicit user transport, surface, Project/conversation, or URL as a hard
+   route constraint. If it is unavailable or cannot be verified, use another route
+   only when the current request explicitly authorizes that fallback; otherwise make
+   no external send and stop or return to Package-only.
+3. With no current-request route constraint, apply the durable
+   `default_transport_mode` preference: try `codex-app-native` or
+   `desktop-built-in-browser` first as configured, or stop for current route selection
+   when it is `manual`.
+4. Without a durable transport preference, use the Codex App-native Project/thread
+   route first. Between App-native and the desktop built-in browser, try the other
+   non-interrupting route only when the preferred route is unavailable or insufficient
+   and the current authorization is not route-specific.
+5. Use Current Chrome or standalone Playwright only when explicitly selected in
+   the current request and controllable.
+6. Use Package-only when no authorized route proves the required capability.
 
 If generic ChatGPT is used, report that the review is not project-bound.
 
 ## Surface Resolution
 
-- Resolve `project` for repository-bound, persistent, or multi-round review when a verified Project URL exists.
+- Resolve `project` for repository-bound, persistent, or multi-round review when a verified stable Project ID or Project URL exists.
 - Resolve `standard-chat` for one-off review or when no durable Project route exists.
 - Resolve `search`, `deep-research`, or `images` only when the selected collaboration capability is verified on the active surface. These are capability routes, not content themes.
 - Resolve `codex` only as the executor or as an explicitly requested separate-agent review. Never count self-review as an independent ChatGPT pass.
-- Treat UI labels as presentation details. Route by verified capability and URL so a label change does not silently change behavior.
+- Treat UI labels as presentation details. Route by verified capability plus stable Project/conversation identity or URL so a label change does not silently change behavior.
 - Verify and record the active account workspace independently. A Project is
   available across plan types, and its URL does not establish personal or
   organization workspace membership.
 
 ## Default Configuration
 
-Default new review records to `desktop-built-in-browser`. Legacy
-`capability-auto` means built-in-first and must not silently select Current
-Chrome or standalone Playwright. Availability is not proof of authorization.
+Read explicit per-request settings first, then the durable local record described in
+[browser-profile.md](browser-profile.md). New records prefer `codex-app-native`;
+`desktop-built-in-browser` tries that route before App-native, while `manual` stops
+before external action for a current selection. Legacy `capability-auto` resolves
+App-native first and never silently selects Current Chrome or standalone Playwright.
+A legacy `default_browser_mode` selects only the browser fallback and does not
+override App-native-first transport selection. Changing defaults requires explicit instruction.
+Availability is not authorization, and stored values are not current identity,
+capability, model, or reasoning evidence.
 
-Runtime defaults may come from a durable local config file:
+An explicit current-request route is a requirement, not a preference. Durable defaults
+remain preferences and may follow the normal fallback order unless the current request
+makes one mandatory.
+
+## Codex App-Native Project And Thread Route
+
+Use this route for Standard Chat or Project collaboration when the Codex App exposes
+the required host operations. It is a non-interrupting product surface and does not
+need browser focus, pointer, or keyboard evidence.
+
+- `list_projects` discovers candidate Projects and their stable host identifiers. It
+  does not authorize sending or prove account/workspace ownership.
+- Before `create_thread`, generate the `round_id` and `operation_id` and persist a
+  `prepared` ledger entry containing the selected Project ID, prompt fingerprint,
+  attempt number, and bounded creation-start window. This must precede the possible
+  external state change.
+- `create_thread` creates exactly one task/conversation and submits its initial prompt
+  exactly once after authorization. On return, add the `clientThreadId` and mark the
+  same operation `submitted`. If the call may have submitted but returns no usable
+  result or the client is interrupted, keep the original operation identity and
+  reconcile it with `list_threads`; never create a replacement operation or thread.
+- `list_threads` resolves a pending client identity to a real conversation identity.
+  Accept only one candidate bound to the same Project and matching a direct
+  `clientThreadId` link when exposed. Otherwise require a unique match from the
+  recorded creation window plus prompt/task fingerprint; multiple or absent matches
+  remain `Not verified`.
+- `read_thread` reads the resolved conversation and captures attributed assistant
+  output. Decide a read-count or deadline bound before the first read; do not poll
+  indefinitely.
+- `send_message_to_thread` sends only an explicitly authorized follow-up to an already
+  resolved conversation. Never use it to retry or reconstruct the initial prompt.
+
+`create_thread` is both conversation creation and initial submission on this route.
+Keep the App-native ledger operation at `submitted` and track completion separately:
 
 ```text
-~/.agents/config/ask-chatgpt/defaults.yaml
+completion_overlay: response-pending | captured | completion-not-verified
 ```
 
-Read that file after explicit per-request settings and before falling back to the generic ChatGPT URL. Surface, Project, interface, model, and reasoning defaults may be reused only after verification on the active page. A stored Current Chrome or standalone mode never replaces a current explicit request to use the user's browser. Do not store machine-specific defaults inside the installed skill package because package updates may overwrite them.
+If the initial prompt is visible but no assistant response exists, keep
+`submitted + response-pending`. After the bounded reads expire, record
+`submitted + completion-not-verified`; do not resend, create a replacement thread, or
+switch transport. Resolve a later response only in the original conversation. If the
+client identity cannot be associated uniquely, stop with conversation identity and
+completion `Not verified`.
 
-Supported fields:
+The App-native route is preferred for repository URL/branch/SHA handoff, compact text,
+and continuing Project context. Use a browser instead when the required capability
+depends on visible UI controls, upload state, Search, Deep Research, Images, or
+reviewer-browser behavior not exposed by the host operations.
 
-- `default_browser_mode`: `capability-auto`, `desktop-built-in-browser`, `chatgpt-cloud-browser`, `current-chrome-explicit`, `standalone-playwright-explicit`, or `manual`
-- `chatgpt_surface`: `standard-chat` or `project`
-- `chatgpt_project_name`: expected Project display name used only as secondary identity evidence
-- `chatgpt_interface`: `chat` or `work`
-- `chatgpt_model`: expected model label or stable identifier
-- `chatgpt_reasoning_mode`: preferred reasoning/profile label
-- `chatgpt_reasoning_fallbacks`: ordered list of authorized fallback labels
-- `account_workspace_note`
-- `chatgpt_default_url`
-- `profile_record_name`
-- `profile_path`
-- `repo_path`
-- `branch_scope`
+## Model And Reasoning Evidence
 
-Example:
+Classify requested model/reasoning values before selecting a route:
 
-```yaml
-default_browser_mode: desktop-built-in-browser
-chatgpt_surface: project
-chatgpt_project_name: <project-name>
-chatgpt_interface: chat
-chatgpt_model: <model-label-or-id>
-chatgpt_reasoning_mode: <preferred-reasoning-label>
-chatgpt_reasoning_fallbacks:
-  - <authorized-fallback-label>
-account_workspace_note: Not verified
-chatgpt_default_url: https://chatgpt.com/g/<project-id>/project
-```
-
-Changing defaults is a persistent bridge-default change and requires explicit instruction. Project name is never sufficient identity evidence; verify the configured URL plus current rendered Project state. Model and reasoning labels are presentation-sensitive preferences, not capability claims. Match the active UI semantically (for example, localized `极高` for `xhigh`), prove the selected state before submit, and use a fallback only in the configured order when the preferred option is unavailable.
+- An explicit per-request model, plan/profile, or reasoning level is a hard
+  requirement. Accept it only from direct App-native thread metadata or verified
+  active-UI selection evidence. If App-native cannot expose that evidence, try an
+  otherwise authorized desktop built-in browser route; if no permitted route proves
+  it, stop before submit.
+- A durable config value is a preference. If the active route does not expose it,
+  continue only when the user's current request did not make it mandatory, record the
+  value and evidence as `Not verified`, and never claim it was selected.
+- Use a configured fallback only in its recorded order and only when the current
+  request authorizes fallback. UI labels are presentation-sensitive; match them
+  semantically and record the evidence source.
 
 ## Current Chrome Routing
 
@@ -132,7 +177,8 @@ After an external send is explicitly authorized:
 When ChatGPT itself will browse a target page, record that as a separate reviewer-browser route. Do not infer its cookies, account, tabs, or action permissions from the transport browser that opened the ChatGPT conversation. Load and follow `live-browser-review.md` for target and evidence contracts.
 
 If the environment lacks the required control or evidence capability, do not load
-or claim an unbundled browser helper. Return to Package-only.
+or claim an unbundled browser helper. Use App-native only if it proves the required
+capability; otherwise return to Package-only.
 
 ## Standalone Playwright Routing
 
@@ -148,13 +194,13 @@ For a multipart artifact set, verify the manifest counts and SHA-256 values befo
 
 ## Output Capture
 
-Capture external ChatGPT text into `<repo-root>/.codex/reviews/<review-id>/review.md` by direct page extraction, download, or selected response text. Use the same review ID as the outbound package. Capture generated reports or images in that task-owned directory and record their paths plus the submitted prompt and operation attribution in `review.md`; do not put the outbound package in this file. Screenshots are supporting evidence only. Keep the raw directory local-private and ignored; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and create a separate sanitized durable copy before staging.
+Capture external ChatGPT text into `<repo-root>/.codex/reviews/<review-id>/review.md` by attributed App-native `read_thread` extraction, direct page extraction, download, or selected response text. Use the same review ID as the outbound package. Capture generated reports or images in that task-owned directory and record their paths plus the submitted prompt and operation attribution in `review.md`; do not put the outbound package in this file. Screenshots are supporting evidence only. Keep the raw directory local-private and ignored; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and create a separate sanitized durable copy before staging.
 
 For live-browser review, also capture the declared target URL, reviewer browser surface, viewport when relevant, screenshot/source or observed-state evidence, actions taken, confirmation points, and `Not verified` gaps. Do not treat transport-browser screenshots of the ChatGPT UI as proof of the target page.
 
 Accept a response only when it can be tied to:
 
-- intended and final URL
+- intended and final route identity: stable Project/conversation IDs for App-native, or URL for browser routes
 - branch/commit/diff basis
 - submitted input or attachment names/counts
 - completion signal or `Not verified`

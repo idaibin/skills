@@ -11,6 +11,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | `Classify all reviewed changes by intent and create one local commit per category.` | Should trigger Categorized local commits mode. | Default multi-intent delivery. |
 | `Commit all approved changes as exactly one commit.` | Should trigger Explicit single commit mode while still verifying the complete classified scope. | Explicit exception to categorized commits. |
 | `Push only the current branch after checking the diff; do not open a PR.` | Should trigger `repo-delivery`. | Current-branch delivery without PR publishing. |
+| `Commit and push this reviewed GitHub feature branch so ChatGPT can review its URL and fixed SHA; do not open a PR or touch main.` | Trigger Review publication after verifying separate commit/push authorization, GitHub remote, non-default branch, review, validation, and remote proof. | External review needs a fixed remotely reachable basis. |
 | `This branch was rejected as non-fast-forward; inspect divergence and tell me the safe delivery path.` | Should trigger branch-state handling. | Remote divergence before mutation. |
 | `Squash this completed branch into main and push main.` | Should trigger only after branch policy and explicit direct-main permission are verified. | High-risk target-branch delivery. |
 | `Sync this branch to remote; do not switch branches.` | Should trigger `repo-delivery`. | Branch-specific remote sync. |
@@ -31,7 +32,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | `Review this endpoint diff for authorization risk.` | Should prefer `repo-review`. | Fixed-basis review, not Git mutation. |
 | `Verify this web page in the browser before release.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Commit this branch, push it, and open a draft PR.` | Should prefer the GitHub publishing workflow. | PR creation is outside Git-only delivery. |
-| `Send this branch to ChatGPT for five independent review rounds before delivery.` | Should prefer `ask-chatgpt`; delivery begins only after the review loop is accepted. | External review orchestration is not Git mutation. |
+| `Send this branch to ChatGPT for five independent review rounds; do not commit or push anything.` | Should prefer `ask-chatgpt`; no review-publication handoff is authorized. | External review orchestration is not Git mutation, and review wording alone does not authorize Git changes. |
 
 ## Quality Eval
 
@@ -50,6 +51,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | Single-commit exception | Uses one commit only for an explicit one-commit request or one indivisible reviewed intent, while still recording the category analysis. | Collapses independent categories for convenience or splits one contract artificially. |
 | Commit/push separation | Stops after authorized local commits unless push was separately requested. | Treats commit permission as push permission. |
 | Push and remote proof | Pushes only requested refs and verifies the final remote commit/ref, not just command exit. | Claims push success without remote evidence. |
+| Review publication | With explicit commit/push authority, local review, validation, a verified GitHub remote, and a non-default/non-protected branch, publishes one fixed review basis and returns repository URL, branch, SHA, and remote proof; otherwise performs no Git mutation and lets the caller send necessary files or a package. | Publishes from review-only wording, touches main/default/protected refs, creates a PR, force-pushes, or claims external approval. |
 | Squash-to-main | Requires explicit user intent and verified policy, refreshes target, produces the required final commit shape, and verifies `origin/main`. | Mutates main because local operations allow it or skips final proof. |
 | Branch history strategy | Fixes source/target, preserves coherent meaningful commits, squashes noisy or single-outcome history, and records the rationale. Partial integration accounts for every omitted commit. | Always squashes, blindly preserves WIP/fixup commits, or silently drops source commits. |
 | Dirty sync safety | Does not rebase/merge over a dirty worktree without an explicit preservation plan. | Risks overwriting local work during sync. |

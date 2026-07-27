@@ -7,7 +7,7 @@ description: "Use when directly operating or verifying a specified page, or gath
 
 ## Overview
 
-Operate browser pages and collect evidence without conflating browser surfaces. The ChatGPT desktop built-in browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. Select from capabilities proven in the active environment; leave frontend code changes to `dev-frontend`.
+Operate browser pages and collect evidence without conflating browser surfaces. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. The host-provided Codex in-app Browser is a non-interrupting surface by product contract; this says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
 
 ## Workflow
 
@@ -15,11 +15,12 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work.
 3. Enumerate browser sessions and existing tabs only when the available tool exposes them; never invent missing tab/window identity.
    Imported bookmarks, history, and saved credentials may accelerate target discovery or user login, but do not prove an active session, account/workspace identity, conversation ownership, authorization, or operation state.
-4. When called by `ask-chatgpt`, validate the Handoff Request fields,
+4. When `ask-chatgpt` delegates a browser route, validate the Handoff Request fields,
    reuse or refresh the named Capability Snapshot, and return a Handoff Result
-   with the same `operation_id`; do not reconstruct bridge policy locally.
+   with the same `operation_id`; do not reconstruct bridge policy locally. App-native
+   ChatGPT Project/Thread operations never enter this Skill.
 5. Choose the surface mode and evidence plan based on capability and state ownership. For social, publishing, design-collaboration, development-collaboration, or admin sites, also select one generic operation pattern from `references/platform-operations.md`; load platform-specific detail only when it changes the action or proof boundary. For an already-isolated browser-layer failure, load `references/devtools-debugging.md`; route unexplained or cross-system root-cause requests back to the caller for diagnosis before browser operation.
-6. Reuse the evidence-bearing session and target tab when it can be identified safely. If the user requires no window, mouse, or keyboard interruption, use only a proven background-safe isolated/headless route; otherwise return Degraded Evidence or stop. Otherwise open an isolated managed page only when the task does not depend on unavailable user-profile state.
+6. Reuse the evidence-bearing session and target tab when it can be identified safely. If the user requires no window, mouse, or keyboard interruption, prefer the host-provided Codex in-app Browser, which is classified as non-interrupting. For controlled Chrome, Computer Use, system accessibility/coordinate automation, or another visible/user-owned surface, require direct background-safety capability evidence; otherwise return Degraded Evidence or stop. Open an isolated managed page only when the task does not depend on unavailable user-profile state.
 7. Prefer browser/tool APIs, DOM inspection, roles, labels, test ids, and deterministic actions over manual guessing.
 8. Gather only evidence the tool can actually expose: UI state, DOM/accessibility, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads.
 9. Distinguish direct evidence from inference; mark unavailable or unchecked claims `Not verified`.
@@ -30,7 +31,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - **Inspect/Verify:** confirm page, environment, rendered state, account/session evidence, and requested behavior.
 - **Visual/Responsive:** check only the resolved viewport set for overflow, clipping, dialogs, tables, hover/focus, and reachable feedback states.
 - **Form/Upload:** map controls semantically, verify source file/path and final state, and stop before unauthorized submission.
-- **Browser Debug Evidence:** for an already-isolated browser-layer evidence request, use `references/devtools-debugging.md` to run one repeatable red/green loop and return direct browser evidence to the caller.
+- **Browser Debug Evidence:** for an already-isolated browser-layer evidence request, use the Codex in-app Browser debug profile in `references/devtools-debugging.md` when available; select only exposed DOM/accessibility, CSS/layout, Console, Network/resource, route, storage/auth, screenshot, viewport, and interaction evidence, then run one repeatable red/green loop.
 - **Degraded evidence:** when required browser capabilities are missing, perform only supported checks, state the blocked claims, and provide the exact artifact or manual action needed to continue.
 
 ## Do Not Use For
@@ -43,7 +44,8 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - Local dirty-tree review or commit readiness; use `repo-review`.
 - Review of a fixed browser-facing code change, including token or authorization risks; use `repo-review`.
 - Browser-only evidence when the user explicitly requested a real desktop app window.
-- ChatGPT collaboration orchestration, package construction, send authorization, round counting, conversation attribution, or response archiving; use `ask-chatgpt`. This skill may perform only the low-level browser actions that its coordinator explicitly routes.
+- App-native ChatGPT Project/Thread discovery, creation, messaging, response reads, lifecycle tracking, or model-evidence policy; use `ask-chatgpt`. This is not browser operation.
+- ChatGPT collaboration orchestration, package construction, send authorization, round counting, conversation attribution, or response archiving; use `ask-chatgpt`. This skill may perform only the low-level webpage actions that its coordinator explicitly routes to a browser.
 
 ## Hard Rules
 
@@ -56,7 +58,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
   and recovery contract instead of restating or overriding it. Revalidate the exact
   target and identity before any state-changing action.
 - For browser debug evidence, establish exact URL, steps, expected symptom, observed symptom, and red/green evidence before testing a browser-layer hypothesis.
-- When the user requires no window, mouse, or keyboard interruption, do not promise or use a visible or user-controlled route. Proceed only after the active tool proves the selected route is background-safe; otherwise return Degraded Evidence or stop.
+- Treat the host-provided Codex in-app Browser as non-interrupting by product contract. Do not extend that classification to controlled Chrome, Computer Use, system accessibility/coordinate automation, or other visible/user-owned routes; those require direct background-safety evidence when the user forbids window, mouse, or keyboard interruption.
 - Treat readiness and product behavior as separate assertions. Retry only a bounded readiness probe when direct evidence shows setup is not ready and the probe has no external side effect; never retry a behavior assertion merely because it failed.
 - Test one browser hypothesis at a time. Do not bundle refresh, cache clearing, account switch, viewport changes, and code edits.
 - Confirm only direct browser facts such as the active URL, missing cookie, absent DOM control, console error, network response, or browser-enforced CORS failure. Return cross-system evidence to the caller; do not claim a final frontend-to-API-to-backend-to-database root cause or decide a permanent code fix.
