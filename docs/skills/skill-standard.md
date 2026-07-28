@@ -95,6 +95,10 @@ Skill when the result is genuinely uncertain or when making an improvement claim
 Repeated campaigns, preregistration, global evidence manifests, token thresholds, and
 directory-wide certification are not required for publishing.
 
+Feed a real failure back into the narrowest owning rule and existing eval file that
+would have caught it. Do not create a public Skill, shared regression framework, or
+cross-catalog reference solely to document the iteration method.
+
 Keep raw runs under ignored `eval-results/` or `.codex/reviews/`. Commit only a
 sanitized summary whose fixed Skill revision, host/model, scenarios, result, failures,
 and coverage limits remain useful. Old raw runs never prove current behavior.

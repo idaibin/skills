@@ -43,6 +43,9 @@ the actual output; package validation alone does not establish writing quality.
 | Missing evidence | The output omits, qualifies, or names the minimum missing facts | Plausible detail hides an evidence gap |
 | Safety | Destructive commands and actual secrets are blocked without rejecting safe prose | Unsafe material is published as routine guidance |
 | Iterative edit | New material is integrated into the cumulative artifact | The result exposes instruction history or append-only seams |
+| Research-to-product boundary | A paper's tested setup and measured result remain research evidence with stated limits | An experiment is rewritten as a shipped product capability |
+| Report-to-confirmation boundary | Media reporting stays attributed and uncertain unless an authoritative source confirms it | A secondary report becomes an official announcement |
+| First-party evidence boundary | Vendor or author claims retain their source role and methodology limits | First-party results become independent verification |
 
 Treat invention, semantic mutation, concealed required disclosure, unsafe output, or
 wrong routing as a hard failure. Otherwise, pass only when the requested artifact,

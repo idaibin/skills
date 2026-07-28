@@ -66,6 +66,12 @@ Implement Rust changes against the repository's real toolchain, project class, c
 - Keep product-specific behavior in the product repository. Move code to a shared crate only after real reuse, stable API, named ownership, and consumer validation are established.
 - When adding, reusing, moving, renaming, or deleting a crate, module, feature, binary, migration, or shared surface, update every owning manifest, export, command, test, doc, CI/deploy path, generated output, and index in the same task.
 - Preserve unrelated local changes and generated files not owned by the task.
+- When implementing destructive cleanup or deletion behavior, discover candidates
+  first, prove ownership and bounded scope, preserve a recovery path when the
+  product contract allows it, require the applicable user confirmation or policy
+  authorization, perform only the accepted action, and rescan to reconcile the
+  actual result. This governs the Rust implementation; it does not authorize the
+  agent to delete user data during development.
 - Do not add speculative traits, generic layers, managers, repositories, or
   configuration switches for hypothetical consumers. Do not delete apparently
   unused items until public API, features, targets, `cfg`, macros, derives,
