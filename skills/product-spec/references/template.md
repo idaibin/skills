@@ -16,6 +16,7 @@ Use repository conventions before these shapes. Omit inapplicable sections.
 ## UI states and evidence (if applicable)
 ## User-visible data effects (if applicable)
 ## Affected product surfaces and dependencies (if applicable)
+## Product fact trace (if facts materially change scope or acceptance)
 ## Acceptance criteria
 ## Assumptions, open questions, rejected and deferred decisions
 ## Ready for <implementation slice>
@@ -35,6 +36,18 @@ For several independent features, add a short index before the slice documents:
 
 Each linked slice uses the Feature Spec template. Do not repeat UI colors, typography,
 components, tokens, or page geometry; link the target UI contract instead.
+
+Use the product fact trace only for facts that materially affect a slice or its
+acceptance. Keep it behavioral rather than technical:
+
+| Product fact | Acceptance impact |
+| --- | --- |
+| `<already classified and evidenced fact or ID>` | `<affected slice and observable acceptance consequence; data-risk consequence when applicable>` |
+
+Do not turn this table into an implementation plan, interface map, or exhaustive fact
+inventory. Omit it when the existing sections already make the fact-to-acceptance
+relationship obvious. Keep the fact's state and evidence in the existing decision
+record instead of duplicating them in this table.
 
 ## Foundation Spec
 

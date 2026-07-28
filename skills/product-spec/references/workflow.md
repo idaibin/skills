@@ -6,7 +6,10 @@
 2. Search named requirements, current product facts, UI states, and representative
    consumers only as far as needed to resolve product choices.
 3. Separate confirmed current behavior from proposals and assumptions.
-4. Ask only questions whose answers can change the selected slice.
+4. For a fact that materially changes scope, user outcome, data risk, or acceptance,
+   trace its state and evidence to the affected slice and observable acceptance
+   consequence. Do not add technical design or interface definitions.
+5. Ask only questions whose answers can change the selected slice.
 
 If an existing Foundation Spec already establishes the product boundary, treat it
 as an input rather than a template to rewrite. A source-proven behavior gap may

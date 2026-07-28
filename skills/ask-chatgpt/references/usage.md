@@ -101,12 +101,15 @@ The screenshot-style permission prompt is produced by the local execution permis
 
 ## Project Collaboration And Codex
 
-- Use a verified Project for durable repository context and Standard Chat for a
-  one-off pass; verify account/workspace identity separately.
+- Use a verified Project for durable repository context, explicit Quick Chat for a
+  projectless Native cloud task, and Standard Chat for a generic one-off pass; verify
+  account/workspace identity separately. The current Native target maps only the
+  first two surfaces. Generic Standard Chat uses a browser route or Package-only.
 - Follow `chatgpt-routing.md` for explicit routing, versioned durable preferences,
-  model/reasoning evidence, and browser fallback. When no durable record exists, use
-  App-native first. Preserve a legacy built-in-first record until an explicitly
-  authorized v2 migration.
+  capability/source preflight, exact target mapping, model/reasoning evidence, and
+  browser fallback. When no durable record exists, try App-native first only when the
+  verified Project/Quick Chat mapping passes. Preserve a legacy built-in-first record
+  until an explicitly authorized v2 migration.
 - Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.

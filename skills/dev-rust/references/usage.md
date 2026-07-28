@@ -53,12 +53,13 @@ regenerate normalized OpenAPI and the TS client, and prove compatibility and err
 
 ## Output
 
-Report detected project class, Baseline evidence, selected risk overlays,
-toolchain, Cargo and command sources, existing docs/interfaces checked,
-reuse/extension/reference decision, new-interface justification, changed
-contract and crate/module ownership, Rust best-practice decisions, structural
-documentation updates, validation mapped to each overlay, failures, excluded
-optional checks with reasons, and `Not verified` areas.
+Follow `SKILL.md`'s common implementation report: scope, detected project,
+crate/module, toolchain, and ownership boundaries, applicable authorities and
+existing owners, selected Rust risk overlays, reuse/extension/reference decision,
+changed files and contract chain, Baseline/overlay validation, Worktree drift,
+excluded work and optional checks, and `Not found` or `Not verified` gaps. Add new
+interface, manifest/docs lifecycle, failure, persistence, FFI, porting, and
+target/runtime evidence only when those risks materially apply.
 
 Examples of valid selection:
 

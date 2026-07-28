@@ -3,7 +3,9 @@
 ## Contents
 
 - [Scope](#scope)
+- [Capability Preflight](#capability-preflight)
 - [Ledger Schema](#ledger-schema)
+- [Prompt Fingerprint And Readback](#prompt-fingerprint-and-readback)
 - [Operation State Machine](#operation-state-machine)
 - [Completion State Machine](#completion-state-machine)
 - [Identity Reconciliation](#identity-reconciliation)
@@ -13,10 +15,19 @@
 
 ## Scope
 
-Use `app-native-thread-operation/v1` only for host-exposed ChatGPT Project/thread
-operations. It is independent from `browser-operation/v1`, which remains the sole
-protocol for browser actions. Persist one ledger under the task's ignored review
-directory before any App-native state change.
+Use `app-native-thread-operation/v2` only for host-exposed ChatGPT Project/Quick Chat
+operations whose capability preflight has passed. It is independent from
+`browser-operation/v1`, which remains the sole protocol for browser actions. Persist
+one ledger under the task's ignored review directory before any App-native state
+change.
+
+Existing `app-native-thread-operation/v1` ledgers remain valid only for read-only
+recovery. Resume the same operation ID, `call.count`, prompt hash, call window,
+Project/Quick Chat scope, submission state, and candidate evidence. Never migrate a
+v1 uncertain operation into a new v2 state-changing operation and never resend it.
+A recovery implementation may attach v2 preflight/read-bound evidence as an extension
+to the same ledger, but must preserve `schema_version: app-native-thread-operation/v1`
+and the original idempotency identity.
 
 The supported operation types are:
 
@@ -28,16 +39,60 @@ The supported operation types are:
 Never model response reads as external state changes. Record bounded `read_thread`
 evidence in the same ledger's completion fields.
 
+## Capability Preflight
+
+Before `prepared`, record a fresh read-only capability snapshot from the exact host:
+
+- required operations and exact `create_thread.target` variants from live schemas;
+- sanitized `list_projects` and `list_threads` evidence, including the explicit
+  `unavailableSources` value;
+- ChatGPT source state: `active`, `activation-required`, `inconsistent`, or
+  `Not verified`;
+- requested surface: `project`, `quick-chat`, or `standard-chat`;
+- exact target mapping or `none`;
+- browser fallback state before submission.
+- the maximum complete user-message content that `read_thread` can return, plus a
+  bounded list/page/candidate/read plan for reconciliation.
+
+Only `active` plus a legal mapping may advance to `prepared`. A verified ChatGPT
+Project requires `projectKind: chatgpt` and maps to `chatgptWorkCloud` with its exact
+`projectId`. Quick Chat requires an explicit current request and maps to
+`chatgptWorkCloud` without `projectId`. Generic Standard Chat has no mapping on the
+current host schema. `project` and `projectless` are Codex targets and never satisfy
+this protocol.
+
+If the exact canonical prompt cannot be fully returned by `read_thread` within the
+live per-item limit, App-native cannot safely reconcile an identity-less create.
+Before submission, use an authorized browser route that can prove the conversation
+identity or stop at Package-only. Do not truncate the prompt merely to make Native
+reconciliation pass.
+
+When the ChatGPT source is absent or `unavailableSources` contains `chatgpt`, require
+the user to open or switch to ChatGPT/Quick Chat once, then rerun both read-only list
+calls. Do not create a ledger operation or submit while activation is pending.
+
 ## Ledger Schema
 
 ```yaml
-schema_version: app-native-thread-operation/v1
+schema_version: app-native-thread-operation/v2
 review_id: <stable local review id>
 round_id: <one authorized external round>
 operation_id: <unique intended state change>
 operation_type: <create-and-initial-submit|follow-up-message>
 attempt: <positive integer>
 state: <prepared|invoking|submitted|submission-uncertain|blocked>
+preflight:
+  observed_at: <timestamp>
+  host_schema_fingerprint: <opaque hash>
+  required_operations: <verified|missing>
+  chatgpt_source: <active|activation-required|inconsistent|Not verified>
+  source_evidence: <sanitized direct evidence>
+  requested_surface: <project|quick-chat|standard-chat>
+  target:
+    type: <chatgptWorkCloud|null>
+    project_id: <stable ChatGPT Project id|null>
+  mapping_evidence: <sanitized direct evidence or Not verified>
+  browser_fallback: <available|unavailable|Not verified>
 call:
   tool: <create_thread|send_message_to_thread>
   count: <0|1>
@@ -45,7 +100,7 @@ call:
     started_at: <timestamp>
     ended_at: <timestamp|null>
 project:
-  id: <stable host Project id>
+  id: <stable ChatGPT Project id|null for Quick Chat>
   identity_evidence: <sanitized direct evidence or Not verified>
 conversation:
   client_thread_id: <id|null>
@@ -54,8 +109,13 @@ identity:
   state: <not-started|client-pending|resolved|identity-not-verified>
   evidence: <direct sanitized evidence or Not verified>
 prompt:
+  hash_scheme: prompt-text/v1
   sha256: <sha256>
+  utf8_bytes: <non-negative integer>
+  characters: <non-negative integer>
   path: <ignored local path or inline-inspected>
+  readback_limit_characters: <positive integer>
+  complete_readback_possible: <true|false>
 before:
   observed_at: <timestamp|null>
   last_message_id: <id|null>
@@ -67,6 +127,14 @@ completion:
   response_evidence: <attributed evidence or Not verified>
 reconciliation:
   status: <not-needed|pending|unique-match|no-match|multiple-matches|Not verified>
+  list_page_bound: <positive integer>
+  list_pages_used: <non-negative integer>
+  list_bound_exhausted: <true|false|Not verified>
+  candidate_bound: <positive integer>
+  candidate_read_bound: <positive integer>
+  candidate_reads_used: <non-negative integer>
+  candidate_bound_exhausted: <true|false|Not verified>
+  truncation_seen: <true|false|Not verified>
   evidence: <direct sanitized evidence>
 model_reasoning_evidence: <direct metadata or Not verified>
 updated_at: <timestamp>
@@ -75,6 +143,25 @@ updated_at: <timestamp>
 For `follow-up-message`, require `conversation.thread_id` before `invoking`, set
 `call.tool: send_message_to_thread`, capture the latest exposed message ID or
 message/turn count in `before`, and do not reuse the initial-submit operation ID.
+
+## Prompt Fingerprint And Readback
+
+`prompt-text/v1` canonicalizes only line endings: replace CRLF and bare CR with LF.
+Preserve every other Unicode code point, whitespace character, and final newline.
+Encode that canonical string as UTF-8 without a byte-order mark, send that exact
+canonical string as the host tool's `prompt`, and record SHA-256, UTF-8 byte length,
+and Unicode character count before `invoking`.
+
+Use the same scheme for initial and follow-up prompts. Never hash a path, title,
+summary, truncated preview, JSON wrapper, or a differently normalized copy.
+Reconciliation accepts content only when the complete returned user message has the
+same scheme, hash, byte length, and character count. A missing/truncated content flag,
+content length beyond the recorded readback limit, or an inability to request the
+complete message prevents a match and keeps the operation uncertain.
+
+Persist the list/page, candidate, and candidate-read bounds before the first
+reconciliation read. Reaching any bound ends that bounded attempt as `no-match` or
+`Not verified`; it never grants retry permission.
 
 ## Operation State Machine
 
@@ -92,6 +179,11 @@ Before the selected state-changing call, persist `prepared`, then persist `invok
 and set `call.count: 1`. A process that resumes from `invoking` must treat submission
 as `submission-uncertain` and enter reconciliation; it must not call the state-changing
 tool again.
+
+`prepared` is illegal when `preflight.chatgpt_source` is not `active`, the requested
+surface has no exact Native mapping, or the mapped target does not match the recorded
+live schema. A later activation or schema change requires a fresh preflight snapshot;
+it does not repair or authorize a previously started operation.
 
 `submission-uncertain` stops the bounded execution without proving failure. Later
 read-only evidence may resolve the same operation to `submitted`; it never authorizes
@@ -126,16 +218,35 @@ the external operation's submission. It never grants retry permission.
 
 ## Identity Reconciliation
 
-Resolve `client_thread_id` to one real conversation using, in order:
+Resolve `client_thread_id`, or a missing identity after an uncertain create return, to
+one real conversation using, in order:
 
 1. a direct host link between client and conversation identifiers;
-2. one unique candidate in the same Project matching the persisted call window
-   and prompt/task fingerprint.
+2. a bounded candidate set from `kind: chatgpt`, the same Project when applicable,
+   the persisted call window, and prompt/task discovery hints, followed by read-only
+   `read_thread` inspection using the initial user-message timestamp rather than the
+   thread's later activity timestamp;
+3. exactly one candidate whose complete initial user message hash matches
+   the full `prompt-text/v1` fingerprint and whose timestamp falls inside the
+   persisted call window.
 
-Title alone is insufficient. Zero or multiple candidates set identity to
+Title, summary, recency, screenshot presence, or Project membership alone is
+insufficient. Zero or multiple content-confirmed candidates set identity to
 `identity-not-verified` without changing a confirmed `submitted` operation. Preserve
-the original Project, operation ID, prompt hash, call window, and candidate evidence
-for a later read-only reconciliation.
+the original Project or projectless Quick Chat scope, operation ID, prompt hash, call
+window, and candidate evidence for a later read-only reconciliation.
+
+Candidate scope is exact: Project reconciliation accepts only the recorded
+`projectId`; projectless Quick Chat accepts only candidates whose `projectId` is
+absent/null. A missing or non-boolean content-completeness/truncation flag is
+`Not verified`, never equivalent to `truncated: false`. Any in-scope truncated or
+completeness-unknown candidate prevents a uniqueness claim for that bounded read.
+
+An HTML attestation/challenge response from `create_thread` is a result-less,
+possibly-side-effecting return. Record `submission-uncertain`; do not classify it as
+failed-before-submit. If the ChatGPT source is unavailable, a later user activation
+may restore only the read-only list/read reconciliation path. It never permits resend,
+a replacement operation ID, or a browser-created replacement conversation.
 
 ## Follow-Up Reconciliation
 
@@ -144,8 +255,8 @@ resolved original conversation. Accept submission only from:
 
 1. a direct host operation/message identifier tied to this operation; or
 2. exactly one new user message after the persisted `before` marker whose complete
-   normalized content hash matches `prompt.sha256` and whose timestamp falls inside the
-   persisted call window.
+   `prompt-text/v1` fingerprint matches the ledger and whose timestamp falls inside
+   the persisted call window.
 
 If the host omits complete message content, timestamps, or a stable before/after marker,
 or if zero or multiple messages match, keep the operation `submission-uncertain` and
@@ -164,8 +275,14 @@ never retry permission.
 - Missing return data, disconnect, timeout, client restart, or absent assistant output
   never proves that submission failed.
 - Resume `invoking`, `submission-uncertain`, `client-pending`, or
-  `identity-not-verified` by inspecting the original Project only; never call
-  `create_thread` or resend the prompt.
+  `identity-not-verified` by inspecting only the original Project or projectless
+  Quick Chat candidate scope; never call `create_thread` or resend the prompt.
+- Resume a v1 uncertain ledger under its original schema and operation identity.
+  Missing v2 preflight fields restrict recovery to bounded read-only inspection; they
+  never authorize a v2 replacement operation.
+- Browser fallback is legal only before a state-changing App-native call, or for
+  read-only inspection of the same proven conversation after an uncertain call. It
+  never authorizes resubmission or replacement.
 - Retry from `blocked` only when no state-changing call began, the same authorization
   remains valid, changed evidence removes the blocker, and `attempt` is incremented.
 - A follow-up requires its own authorization and operation ID. Never use it to repair

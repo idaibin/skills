@@ -4,9 +4,9 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:df5f730b58d9004dff6fa8d9a2e8e7be4bc7c79cddc3f693a1c664281ef00096`
-- Host release: Codex CLI `0.145.0`; model: `gpt-5.6-sol`; ephemeral,
-  read-only model sessions.
+- Package digest: `sha256:3abec9f36ff0c019e817f8822129f8ebf942202563553bdeafddfa6dcc5e70b9`
+- Host environment: Codex desktop task; local CLI check: `0.145.0`; model:
+  `gpt-5.6-terra`; fresh, read-only explorer sessions.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -25,9 +25,9 @@ behavior certification and does not replace target-environment runtime validatio
 | Isolated project-local install | Pass | The five scoped packages were copied into a disposable project without a global install. |
 | Installed-copy parity | Pass | Recursive comparison found no difference between each installed package and its source package. |
 | Installed package-local validator | Pass | All five installed validators ran with isolated standard-library Python against the installed synthetic fixture. |
-| Explicit host invocation | Pass | A new ephemeral model session explicitly loaded all five installed packages and summarized each package's owner boundary correctly. |
-| Implicit routing | Pass | A separate ephemeral session routed five generic requests to `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and `ops-browser` respectively, without naming those Skills in the requests. |
-| Browser capability stop gate | Pass | A separate ephemeral session selected `ops-browser`, inspected active capabilities, found no actual browser automation, returned `Not verified`, and made no screenshot, geometry, computed-style, or visual-completion claim. |
+| Explicit host invocation | Pass | A fresh read-only explorer session loaded all five scoped packages and summarized each package's owner boundary correctly. |
+| Implicit routing | Pass | A separate fresh read-only explorer session routed five generic requests to `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and `ops-browser` respectively, without naming those Skills in the requests. |
+| Browser capability stop gate | Pass | A separate fresh read-only explorer session selected `ops-browser`, inspected active capabilities, found no actual browser automation, returned `Not verified`, and made no screenshot, geometry, computed-style, or visual-completion claim. |
 | Browser two-pass visual closure | Not verified | The canary host exposed no browser automation supporting local navigation, viewport control, screenshots, DOM geometry, and computed styles. Same-state pass 1 and pass 2 evidence therefore was not produced. |
 
 ## Sanitized Scenario Ledger
@@ -44,7 +44,7 @@ behavior certification and does not replace target-environment runtime validatio
 
 This ledger is intentionally semantic rather than a transcript. It retains no raw
 prompt, response, path, account, session identifier, or connector payload. Re-run the
-ledger when the package digest, host release, model, enabled catalog, or browser
+ledger when the package digest, host environment, model, enabled catalog, or browser
 capability changes.
 
 ## Required Behavior Scenarios

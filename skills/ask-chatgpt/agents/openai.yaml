@@ -1,4 +1,4 @@
 interface:
   display_name: "Ask ChatGPT"
   short_description: "Coordinate bounded ChatGPT collaboration"
-  default_prompt: "Use $ask-chatgpt for requested ChatGPT input: infer the outcome, honor explicit and versioned durable transport choices, otherwise prefer Codex App-native Project/thread, send only with exact authorization, preserve idempotency and attribution, and verify the result locally."
+  default_prompt: "Use $ask-chatgpt for requested ChatGPT input: infer the outcome, honor explicit and versioned durable transport choices, preflight ChatGPT source activation and exact Project/Quick Chat targets before App-native use, send only with exact authorization, preserve idempotency and attribution, and verify the result locally."

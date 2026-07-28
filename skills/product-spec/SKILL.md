@@ -40,7 +40,10 @@ writes. Keep technical design and source mutation with their existing owners.
    resolve only the target slices' load-bearing decision tree. Do not expose
    Discovery or grilling as a public mode and do not implement.
 5. Classify material statements as Confirmed, Assumption, Open Question, Rejected,
-   or Deferred. Never silently convert an assumption into product behavior.
+   or Deferred. Never silently convert an assumption into product behavior. When a
+   fact materially changes scope, user outcome, data risk, or acceptance, trace it to
+   the affected slice and observable acceptance consequence without defining a
+   technical interface.
 6. Produce one main feature or foundation document by default, or a short index plus
    slice documents for a proven multi-feature request. Follow repository convention
    first; use the fallback locations in `references/documentation-boundaries.md` only

@@ -17,7 +17,7 @@ or current-state evidence.
   selection and are not durable transport defaults.
 - `default_browser_mode`: browser preference and legacy transport field; its meaning
   depends on the record version below
-- `chatgpt_surface`: `standard-chat` or `project`
+- `chatgpt_surface`: `standard-chat`, `quick-chat`, or `project`
 - `chatgpt_project_name`: secondary discovery hint only
 - `chatgpt_interface`: `chat` or `work`
 - `chatgpt_model`

@@ -63,4 +63,9 @@ error states, remove the touched duplicate DTO, and verify loading/success/error
 
 ## Output
 
-Report branch, frontend project class, detected framework profile and toolchain, existing implementations checked, direct reuse or reference candidate, new-file justification when applicable, files and UI surface touched, structural lifecycle updates, state/reactivity/store ownership, component/injection/router/keep-alive contracts, cleanup and cancellation behavior, layout and outer-spacing owners, Flex/Grid choice, adaptive-child behavior, DOM/CSS simplification choices, contracts preserved, validation run, failed commands, visual/client verification status, and `Not verified` areas.
+Follow `SKILL.md`'s common implementation report: scope, detected project/stack and
+ownership boundaries, applicable authorities and existing owners, selected frontend
+risks, reuse or new-surface decision, changed files/contracts, validation, Worktree
+drift, excluded work, and `Not verified` gaps. Add layout, state/lifecycle, desktop,
+selected-source mapping, visual passes, and browser/client evidence only when those
+risks materially apply.

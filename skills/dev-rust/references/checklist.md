@@ -184,7 +184,7 @@ binary, migration, or shared surface, check:
   tests, rustdoc, comments, and lints follow `references/best-practices.md`.
 - Confirm Baseline plus every selected overlay was validated independently, and
   that excluded optional checks have a concrete unsupported-or-irrelevant reason.
-- For FFI, unsafe, native resources, or language ports, confirm the applicable
-  source-backed checks in `references/bun-production-patterns.md` without
-  copying Bun-specific toolchain or architecture choices.
+- When an applicable Porting/parity or Unsafe/FFI question benefits from a
+  source-derived challenge, load `references/bun-production-patterns.md`; do not
+  make it a mandatory gate or copy Bun-specific toolchain and architecture choices.
 - Route final dirty-tree ownership and commit grouping to `repo-review`.

@@ -82,7 +82,7 @@ Do not claim Baseline or an overlay passed when a required tool, target, runtime
 
 ## Output Contract
 
-Report project class, Baseline evidence, selected risk overlays, toolchain and command sources, existing docs/interfaces checked, reuse/extension/reference decision, new-interface justification, changed ownership and contract chain, manifests/docs updated, validation mapped to each selected overlay, failures, excluded optional checks with reasons, and `Not found` or `Not verified` gaps. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-chatgpt`; never send implicitly.
+Report scope; detected project, crate/module, toolchain, and ownership boundaries; applicable authorities and existing owners; selected Rust risk overlays; reuse/extension/reference decision; changed files and contract chain; validation mapped to Baseline and each selected overlay; Worktree drift; excluded work and optional checks; and `Not found` or `Not verified` gaps. Add new-interface justification, manifest/docs lifecycle, failures, and target/runtime evidence only when applicable. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-chatgpt`; never send implicitly.
 
 ## References
 
@@ -95,5 +95,5 @@ Report project class, Baseline evidence, selected risk overlays, toolchain and c
 - See [references/code-quality.md](references/code-quality.md) when the requested
   change materially involves duplication, dead/unused code, abstraction
   quality, hidden coupling, or maintainability.
-- See [references/bun-production-patterns.md](references/bun-production-patterns.md) for source-backed migration, FFI, unsafe, resource-lifetime, lint, and validation patterns derived from Bun's production Rust rewrite.
+- See [references/bun-production-patterns.md](references/bun-production-patterns.md) only when Porting/parity or Unsafe/FFI needs source-derived prompts for cross-language semantics, resource lifetime, or local invariant enforcement.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

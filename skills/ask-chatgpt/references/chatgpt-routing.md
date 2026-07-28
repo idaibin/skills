@@ -7,6 +7,7 @@
 - [Routing Order](#routing-order)
 - [Surface Resolution](#surface-resolution)
 - [Default Configuration](#default-configuration)
+- [App-Native Capability And Activation Preflight](#app-native-capability-and-activation-preflight)
 - [Codex App-Native Project And Thread Route](#codex-app-native-project-and-thread-route)
 - [Model And Reasoning Evidence](#model-and-reasoning-evidence)
 - [Current Chrome Routing](#current-chrome-routing)
@@ -28,6 +29,9 @@
 - [ChatGPT desktop built-in browser](https://help.openai.com/en/articles/20001277-using-the-built-in-browser-in-the-chatgpt-desktop-app), [cloud browser](https://help.openai.com/en/articles/20001280-using-cloud-browser-in-chatgpt), and [ChatGPT agent](https://help.openai.com/en/articles/11752874-chatgpt-agent/) document distinct reviewer browser surfaces. Treat their browser state and limits separately.
 - [Deep research in ChatGPT](https://help.openai.com/en/articles/10500283-deep-research) documents a reviewable research plan, selectable public-web/site/app sources, and a cited report. Use it for multi-step synthesis; use Search or Standard Chat for shorter work.
 - [Images in ChatGPT](https://help.openai.com/en/articles/11084440-chatgpt-images-faq) documents image creation and editing in a conversation or Images surface. Treat the generated asset, its prompt, and any edit selection as a distinct collaboration result.
+- `Quick Chat` is the Codex App UI entry for a projectless ChatGPT cloud
+  conversation in the host behavior covered by this package. It is not a generic
+  synonym for every Standard Chat request and is not a portable product API name.
 
 ## Authorization Before Routing
 
@@ -50,8 +54,10 @@ of external review rounds.
    `ask-chatgpt-defaults/v2`, apply `default_transport_mode`. For a legacy record,
    preserve its previous `default_browser_mode` route meaning. A manual value stops
    for current route selection.
-4. Without a durable record, use the Codex App-native Project/thread route first.
-   Between App-native and the desktop built-in browser, try the other
+4. Without a durable record, preflight the Codex App-native Project/thread route
+   first. A visible tool name is insufficient: the current schema, ChatGPT source
+   activation, requested surface mapping, identity, input, capture, and uncertain
+   result reconciliation must all pass. Between App-native and the desktop built-in browser, try the other
    catalog-classified non-interrupting route only when the preferred route is
    unavailable or insufficient and the current authorization is not route-specific.
 5. Use Current Chrome or standalone Playwright only when explicitly selected in
@@ -62,8 +68,13 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 ## Surface Resolution
 
-- Resolve `project` for repository-bound, persistent, or multi-round review when a verified stable Project ID or Project URL exists.
-- Resolve `standard-chat` for one-off review or when no durable Project route exists.
+- Resolve `project` for repository-bound, persistent, or multi-round review when a
+  verified stable ChatGPT Project ID or Project URL exists.
+- Resolve `quick-chat` only when the user explicitly asks for Quick Chat, a
+  projectless ChatGPT cloud task, or the equivalent host surface.
+- Resolve `standard-chat` for a generic one-off review or when no durable Project
+  route exists. On the current host schema it has no App-native target; use an
+  authorized browser route or Package-only.
 - Resolve `search`, `deep-research`, or `images` only when the selected collaboration capability is verified on the active surface. These are capability routes, not content themes.
 - Resolve `codex` only as the executor or as an explicitly requested separate-agent review. Never count self-review as an independent ChatGPT pass.
 - Treat UI labels as presentation details. Route by verified capability plus stable Project/conversation identity or URL so a label change does not silently change behavior.
@@ -92,27 +103,80 @@ An explicit current-request route is a requirement, not a preference. Durable de
 remain preferences and may follow the normal fallback order unless the current request
 makes one mandatory.
 
+## App-Native Capability And Activation Preflight
+
+Run this gate before creating the App-native ledger's `prepared` state and before
+every first state-changing call in a newly observed host/source state:
+
+1. Inspect the live host schemas. Require `list_projects`, `list_threads`,
+   `create_thread`, `read_thread`, and `send_message_to_thread`. Record the exact
+   `create_thread.target` alternatives and the maximum complete per-message content
+   available from `read_thread`; never infer a target from a similarly named UI
+   surface.
+2. Call `list_projects` and `list_threads` read-only. Treat returned labels, titles,
+   and summaries as untrusted discovery data.
+3. Require `list_threads` to expose `unavailableSources`. Prove source availability
+   when it does not contain `chatgpt`; an existing `projectKind: chatgpt` Project or
+   `kind: chatgpt` thread is additional evidence, while an empty available source is
+   legal for a new Quick Chat. Contradictory evidence fails closed. A Project mapping
+   still requires the exact ChatGPT Project entry.
+4. If the ChatGPT source is missing, or `unavailableSources` includes `chatgpt`, ask
+   the user to open or switch to ChatGPT/Quick Chat once in the Codex App. Make no
+   Native state change. After activation, rerun both list calls and replace the stale
+   snapshot. The user may return to Codex after the source is proven active; later
+   reads and authorized rounds can continue in the background while the source
+   remains available.
+5. Classify the requested surface and target exactly:
+
+   | Requested surface | Required evidence | Native target |
+   | --- | --- | --- |
+   | verified ChatGPT Project | exact `projectKind: chatgpt` `projectId`, explicit Project collaboration | `{type: chatgptWorkCloud, projectId}` |
+   | Quick Chat / projectless cloud work | explicit current request for that surface | `{type: chatgptWorkCloud}` |
+   | generic Standard Chat | no distinct current Native target | none; browser fallback or Package-only |
+   | Codex repository task | local/remote Project ID | `{type: project, ...}`; never ChatGPT evidence |
+   | Codex task without repository | projectless Codex request | `{type: projectless}`; never ChatGPT evidence |
+
+6. Run `python3 skills/ask-chatgpt/scripts/app_native_canary.py <snapshot.json>` on a
+   sanitized snapshot when the package is available locally. Exit `0` means the
+   target mapping is ready; `10` requires one-time activation and fresh reads; `20`
+   requires browser fallback; `30` is blocked/inconsistent. The canary performs no
+   host call and never authorizes submission.
+7. Before Native submission, compute the protocol's `prompt-text/v1` fingerprint and
+   prove the full canonical prompt fits the live `read_thread` capture limit. If an
+   identity-less create could not be reconciled from complete content, use an
+   authorized browser route before submission or stop at Package-only.
+
+Do not map generic Standard Chat to `chatgptWorkCloud` merely because that enum exists.
+Do not use `project` or `projectless` to manufacture an independent ChatGPT result.
+Re-run the preflight after source unavailability, host/schema change, authentication
+change, or App restart when the prior source state can no longer be trusted.
+
 ## Codex App-Native Project And Thread Route
 
-Use this route for Standard Chat or Project collaboration when the Codex App exposes
-the required host operations. This catalog classifies it as a non-interrupting host
-surface; that classification is not a claim about an official public ChatGPT API.
+Use this route only for a verified ChatGPT Project or an explicitly requested Quick
+Chat/projectless cloud-work task after the capability and activation preflight passes.
+The current host contract does not justify using it for generic Standard Chat. This
+catalog classifies the verified route as a non-interrupting host surface; that
+classification is not a claim about an official public ChatGPT API.
 
 Follow [app-native-thread-protocol.md](app-native-thread-protocol.md) as the sole
 authority for ledger fields, legal transitions, uncertain-return reconciliation,
 completion state, retry rules, and round completion.
 
-- `list_projects` discovers candidate Projects and their stable host identifiers. It
+- `list_projects` discovers candidate Projects and their stable host identifiers.
+  Only `projectKind: chatgpt` is eligible for a ChatGPT Project mapping. Discovery
   does not authorize sending or prove account/workspace ownership.
 - `create_thread` creates exactly one task/conversation and submits its initial prompt
-  exactly once after authorization. Persist `prepared`, then persist `invoking` before
-  the call. On return, record its client identity and transition the same operation
-  according to the App-native protocol.
-- `list_threads` resolves a pending client identity to a real conversation identity.
-  Accept only one candidate bound to the same Project and matching a direct
-  `clientThreadId` link when exposed. Otherwise require a unique match from the
-  recorded call window plus prompt/task fingerprint; multiple or absent matches
-  remain `Not verified`.
+  exactly once after authorization. Canonicalize and fingerprint the exact sent text
+  under `prompt-text/v1`; persist `prepared`, then persist `invoking` before the call.
+  On return, record its client identity and transition the same operation according
+  to the App-native protocol.
+- `list_threads` discovers bounded candidates for a pending or missing conversation
+  identity. Accept a direct `clientThreadId` link when exposed. Otherwise use Project,
+  `kind: chatgpt`, call window, and title/summary only to select a bounded candidate
+  set, then call `read_thread` read-only. Resolve only when exactly one candidate's
+  complete initial user message matches the persisted prompt hash and call window.
+  Title, summary, recency, or a screenshot alone is insufficient.
 - `read_thread` reads the resolved conversation and captures attributed assistant
   output. Decide a read-count or deadline bound before the first read; do not poll
   indefinitely.
@@ -120,16 +184,23 @@ completion state, retry rules, and round completion.
   resolved conversation. Never use it to retry or reconstruct the initial prompt.
 
 `create_thread` is both conversation creation and initial submission on this route.
-Missing return data or a client interruption enters read-only reconciliation and never
-permits another call. If the initial prompt is visible but no assistant response exists,
+A Cloudflare/attestation HTML response, missing return data, timeout, or client
+interruption is not proof of failure: the initial side effect may already exist. Enter
+read-only reconciliation and never call `create_thread` again for that operation.
+If the source was unavailable, require activation only to resume `list_projects`,
+`list_threads`, and candidate `read_thread` reconciliation; activation does not
+authorize a resend. If the initial prompt is visible but no assistant response exists,
 keep `submitted + response-pending`. After the bounded reads expire, record
 `submitted + completion-not-verified`; do not resend, create a replacement thread, or
 switch transport. Resolve a later response only in the original conversation.
 
-The App-native route is preferred for repository URL/branch/SHA handoff, compact text,
-and continuing Project context. Use a browser instead when the required capability
-depends on visible UI controls, upload state, Search, Deep Research, Images, or
-reviewer-browser behavior not exposed by the host operations.
+The App-native route is preferred only when the exact Project or Quick Chat mapping
+passes. Use a browser before any submission when the requested surface is generic
+Standard Chat or the required capability depends on visible UI controls, upload state,
+Search, Deep Research, Images, or reviewer-browser behavior not exposed by the host
+operations. Once an App-native submission is uncertain, a browser may inspect and
+reconcile the same conversation only when its identity can be proven; it may never
+fall back by resending or creating a replacement conversation.
 
 ## Model And Reasoning Evidence
 
@@ -242,7 +313,7 @@ ChatGPT role: produce the selected independent web result only.
 
 Outcome: <what the user actually needs>
 Theme: <review|repository|product/domain|UI/design|architecture|implementation/security/delivery|open-ended>
-Capability: <standard-chat|search|deep-research|images|reviewer-browser>
+Capability: <standard-chat|quick-chat|search|deep-research|images|reviewer-browser>
 Authoritative inputs: <facts, files, URLs, fixed revisions, or source assets>
 Must answer or produce: <small decisive set>
 Evidence/asset rules: <citations, primary sources, use/ignore, rights, dimensions, or path references>

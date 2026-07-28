@@ -49,6 +49,8 @@
 | Related PRD and UI contracts exist for one slice | Use the same stable slice ID and cross-link `docs/prd/<slice-id>/spec.md` with `docs/ui/<slice-id>/spec.md` without duplicating authority. | Uses unrelated IDs or copies visual details into PRD. |
 | Repository calls an approved RFC its product requirements authority | Preserve the RFC authority and do not create or require root `PRD.md`. | Classifies authority from filename alone or introduces a parallel PRD tree. |
 | Discoverable answer exists in source/docs | Read it before asking. | Interviews the user about current repository facts. |
+| A confirmed product fact changes one slice's user-visible result and data risk | Add one bounded two-column row linking the already classified/evidenced fact to that slice's observable acceptance consequence. | Duplicates decision state/evidence columns, builds an exhaustive fact inventory, defines a technical interface, or lets the fact silently change acceptance. |
+| A confirmed product fact changes one slice's scope or acceptance but creates no data risk | Trace only the affected slice and observable acceptance consequence; omit any data-risk phrase rather than inventing one. | Adds a fictional risk, forces `N/A` ceremony, or omits the material acceptance impact. |
 | Two material decisions remain and the second depends on the first | Ask the prerequisite decision first with a recommendation, trade-off, and affected slices; recompute the frontier after the answer. | Asks both questions together or guesses the dependent answer. |
 | A vague request contains many conceivable branches but only permissions and recovery can change the selected slice | Pressure-test only permissions and recovery, then stop at the slice Ready gate. | Exhaustively interviews every preference or unrelated future branch. |
 | The user stops before resolving a material decision for one of several slices | Preserve that decision as Open and keep only the affected slice not Ready; allow unrelated confirmed slices to proceed. | Invents confirmation, claims shared understanding, or blocks every slice. |
@@ -71,6 +73,7 @@
 | Documentation fallback | Uses repository convention first; otherwise writes directly under `docs/prd/`, adding its index only for multiple independent slices and never adding `docs/specs/`. | Creates a competing tree, an unnecessary index, or another wrapper layer. |
 | Visual-detail boundary | Links UI contracts without duplicating colors, typography, components, tokens, or geometry. | Turns product facts into a visual specification. |
 | Evidence states | Separates Confirmed, Assumption, Open, Rejected, and Deferred. | Hides assumptions as requirements. |
+| Fact-to-acceptance trace | Adds the optional two-column trace only when a classified/evidenced fact materially affects scope, user outcome, data risk, or acceptance; links it to the affected slice and observable consequence. | Requires the table for every feature, duplicates the decision record, inventories harmless facts, or crosses into implementation/interface design. |
 | Artifact authority | Uses existing convention and writes only explicitly authorized product facts. | Overwrites or invents an authority. |
 | Conditional artifacts | Creates glossary, ADR, UI evidence, or handoff only when separately justified. | Treats them as minimum output. |
 | Local handoff visibility | Writes an unfinished local continuation to a verified ignored `.codex/handoffs/<task-id>.md`; uses a repository-approved docs location only for explicitly requested team-shared continuation. | Tracks a local-private handoff, silently edits ignore policy, or treats a handoff as durable product authority. |
@@ -78,7 +81,7 @@
 | UI contract boundary | Keeps product behavior and routes selected-source/shared visual-system specification ownership. | Absorbs `ui-spec`. |
 | Planning boundary | Leaves technical decomposition to host planning when product behavior is decided. | Captures every planning request. |
 | Implementation boundary | Stops before source and Git mutation. | Edits code, stages, commits, or runs implementation. |
-| Interface boundary | Contains no technical interface definitions or references and routes current topology mapping to `repo-map`. | Defines or references a technical interface. |
+| Interface boundary | Defines no technical interface; cites a verified existing interface fact only when the implementation handoff would otherwise be ambiguous, and routes current topology mapping to `repo-map`. | Designs a new interface, inventories implementation topology, or cites an interface without a handoff need. |
 | Verification honesty | Marks behavior/workflow/live gates `Not verified` without direct evidence. | Treats static validation as live proof. |
 | Output | Reports evidence, decisions, slice, artifact, readiness, blockers, handoffs, validation, and gaps. | Omits material open decisions or claims runtime success. |
 

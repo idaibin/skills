@@ -25,7 +25,22 @@ Ask ChatGPT for one independently useful external result without replacing work 
    A theme defines content boundaries; a capability defines the web interaction. Do not infer either from the other.
 6. Let Codex create the smallest self-contained request from the user's words and verified context. For broad research, prefer Deep Research's reviewable proposed plan; use a separate prompt-drafting chat only when it adds an independently useful result and its additional send is authorized. Never require the user to write a formal prompt.
 7. Build a redacted `.codex/reviews/<review-id>/review-package.md` when durable or multipart context is needed, with the matching response log at `.codex/reviews/<review-id>/review.md`; a user-named path overrides this convention and compact requests may be sent as inspected text. Verify that the local review workspace is already ignored before writing. Do not change tracked or local ignore configuration without explicit authorization; when no approved ignored path exists, stop and report the gate. State facts, questions, selected theme/capability, evidence, exclusions, response contract, and Worktree/Git fingerprint or decision-basis identity without seeding conclusions. Package-only stops here.
-8. Before any authorized external action, inventory the current host's exposed Project/thread and browser transports and verify that the selected route can identify the target, accept the intended input, submit exactly once, attribute the response, and reconcile an uncertain result. Capability names in this package are conditional routes, not guarantees that every host implements them. If no route satisfies the request and authorization, perform no external action; return the inspected package or stop with the missing capability `Not found`/`Not verified`.
+8. Before any authorized external action, inventory the current host's exposed
+   Project/thread and browser transports and verify that the selected route can
+   identify the target, accept the intended input, submit exactly once, attribute the
+   response, and reconcile an uncertain result. For App-native, inspect the current
+   tool schemas, then call `list_projects` and `list_threads` read-only. If
+   `unavailableSources` contains `chatgpt`, or that source-status field is missing or
+   unverifiable, make no state-changing call: ask the user to open or switch to
+   ChatGPT/Quick Chat once, then rerun both reads. Empty ChatGPT Project/thread lists
+   with `unavailableSources: []` are valid for an explicitly requested new Quick Chat;
+   a Project route still requires its exact ChatGPT Project entry. The user does not
+   need to stay on that surface after fresh evidence proves the source active. Use the read-only
+   [App-native canary](scripts/app_native_canary.py) to classify a sanitized snapshot.
+   Capability names in this package are conditional routes, not guarantees that every
+   host implements them. If no route satisfies the request and authorization, perform
+   no external action; return the inspected package or stop with the missing
+   capability `Not found`/`Not verified`.
 9. For authorized external action, load [chatgpt-routing.md](references/chatgpt-routing.md)
    and follow its transport, identity, capability, model/reasoning, completion, and
    fallback gates. Treat an explicit user transport, surface, or URL as a hard route
@@ -70,6 +85,14 @@ proven `failed-before-submit`.
 - Package-only never authorizes navigation, conversation creation, upload, or send. External authorization is exact in route, artifact, and round scope.
 - Portable package discovery does not prove external transport support. Never fabricate Project/thread, browser, identity, send, response, or recovery capability when the current host does not expose it.
 - An unavailable external route degrades only to an inspected Package-only result or a clear stop. It never silently switches transport, asks the user to assume a send occurred, or reports external completion.
+- `project` and `projectless` create Codex tasks. They never count as an independent
+  ChatGPT result. On the current host contract, a verified ChatGPT Project maps to
+  `chatgptWorkCloud` with its `projectId`; an explicitly requested Quick Chat maps to
+  `chatgptWorkCloud` without `projectId`. Generic Standard Chat has no such mapping:
+  never relabel it as cloud work merely because `chatgptWorkCloud` exists.
+- ChatGPT source activation is a pre-submit capability gate, not authorization and not
+  a retry. When the source is lazy/unavailable, require one user activation and fresh
+  read-only evidence before App-native submission.
 - If an explicitly requested transport, surface, Project, conversation, or URL is unavailable or cannot be verified, perform no external send unless the current request explicitly authorizes a fallback route. Otherwise stop or return to Package-only.
 - A stored Project, Chat/Work interface, model, or reasoning preference never proves current availability or selection. For an explicit model/reasoning requirement, require direct host metadata or active-UI evidence before submit; try only an authorized fallback route, otherwise stop. An unexposed stored preference may continue as `Not verified`.
 - Treat Codex App-native Project/thread transport and the desktop built-in browser as catalog-classified non-interrupting host surfaces. This is a routing classification, not an official public API claim. Chrome, Computer Use, Accessibility/coordinate automation, and other system UI routes still require direct background-safety evidence when the user forbids focus, pointer, or keyboard takeover.
@@ -97,8 +120,11 @@ locally confirmed/rejected claims, downstream owner, blockers, and gaps.
 ## References
 
 - [usage.md](references/usage.md): gates, combined loop, package and response artifacts.
-- [chatgpt-routing.md](references/chatgpt-routing.md): Project/Standard Chat routing and prompt contract.
+- [chatgpt-routing.md](references/chatgpt-routing.md): Project, Quick Chat, Standard Chat, activation, fallback, and prompt routing.
 - [app-native-thread-protocol.md](references/app-native-thread-protocol.md): App-native ledger, legal transitions, reconciliation, and completion.
+- [app-native-canary.md](references/app-native-canary.md) and
+  [app_native_canary.py](scripts/app_native_canary.py): capture contract and executable
+  read-only capability/target-mapping canary.
 - [github-branch-loop.md](references/github-branch-loop.md): fixed-basis branch loop and delivery boundary.
 - [github-repository-review.md](references/github-repository-review.md): authorized repository-wide GitHub evidence, partitioning, coverage, and citations.
 - [research-profiles.md](references/research-profiles.md): Codex-first collaboration gate, theme profiles, capability selection, prompt strategy, research, and visual contracts.

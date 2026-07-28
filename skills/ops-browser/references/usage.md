@@ -1,5 +1,14 @@
 # Ops Browser Usage
 
+## Contents
+
+- [Summary](#summary)
+- [Trigger Examples](#trigger-examples)
+- [Non-Triggers](#non-triggers)
+- [Operation Notes](#operation-notes)
+- [Repeatable Capture Manifest](#repeatable-capture-manifest)
+- [Browser Debug Evidence](#browser-debug-evidence)
+
 ## Summary
 
 Use `ops-browser` for browser-based operations where existing tabs, sessions, state, visual evidence, or artifacts matter. It covers inspection, visual/responsive verification, browser DevTools evidence, form filling, upload/download, and browser evidence collection. Prefer the non-interrupting Codex in-app Browser when it can satisfy the task; capability-check every requested evidence surface. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for code changes.
@@ -12,6 +21,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - `Check the mobile and desktop layout for overflow or clipped text.`
 - `Capture the selected design and implementation at the same viewport/state, create an overlay, and return computed font, contrast, geometry, and alignment evidence for pass 1.`
 - `Extract the table data from this page.`
+- `Capture these routes and required element states repeatedly at one fixed viewport, preserving screenshot and geometry evidence IDs.`
 - `Fill this form in a background page without disturbing my current tabs.`
 - `Upload this file and confirm the page state afterward.`
 - `Download the generated report and confirm the file exists.`
@@ -74,6 +84,44 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - Close pages/windows opened only for the task.
 - Restore user-owned tabs to the recorded viewport, zoom, and scroll when possible; leave only an explicitly requested delivery state inspectable and report any state that could not be restored.
 - If the browser tool exposes only partial tab or window metadata, report the available URL/title/session evidence and mark missing identity as `Not verified` instead of inferring it.
+
+## Repeatable Capture Manifest
+
+Use this optional manifest only when a task needs several deterministic page or
+element captures across routes, states, or repeated runs. Do not require it for one
+screenshot, an ordinary inspection, or selected-source comparison already governed by
+`frontend-visual-evidence/v1`.
+
+```yaml
+defaults:
+  environment: <local|test|production|Not verified>
+  account_scope: <sanitized category or Not verified>
+  viewport: <width x height and zoom>
+captures:
+  - id: <stable capture id>
+    route: <exact route>
+    state: <named rendered or interaction state>
+    readiness:
+      required: [<selector, font, data, or settled-state signal>]
+      optional: [<non-blocking signal>]
+    targets:
+      full_page: <yes|no>
+      elements: [<stable semantic target>]
+      interaction_states: [<authorized state transition to capture>]
+    computed_checks: [<geometry, style, accessibility, console, or network claim>]
+cleanup:
+  tabs: <restore or close plan>
+  runtime: <caller-owned or task-owned exact ledger>
+  artifacts: <retain or remove plan>
+```
+
+Stop before capture when a required readiness signal is missing. An optional signal
+may degrade to `Not verified` only when it does not invalidate the requested state.
+Use one capture ID to connect each screenshot with its geometry or computed evidence,
+and do not treat network idleness alone as proof that product data, fonts, or the
+requested interaction state is ready. The manifest describes capture evidence; it
+does not authorize an interaction, external write, account change, or production
+mutation that was not already authorized.
 
 ## Browser Debug Evidence
 
