@@ -48,6 +48,10 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
   `Do Not Use For` section in always-loaded metadata.
 - Optional portable `license`, `compatibility`, `metadata`, and `allowed-tools` fields
   are allowed only when they carry real package requirements and match the specification.
+- Portable package shape does not imply identical runtime capability on every host. A
+  Skill whose external workflow depends on documented host operations declares that
+  requirement in `compatibility` and must degrade to a safe local result or stop when
+  the current host does not expose an equivalent capability; it never simulates success.
 - `agents/openai.yaml` contains `display_name`, `short_description`, and a
   `default_prompt` that routes through `$<skill-name>`; `short_description` stays
   within OpenAI's 25-64 character UI range.

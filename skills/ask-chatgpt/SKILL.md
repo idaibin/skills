@@ -1,13 +1,14 @@
 ---
 name: ask-chatgpt
 description: "Use when the user requests a local ChatGPT request package or explicitly authorizes an independent ChatGPT review, research result, visual exploration, or decision challenge; do not use when Codex or an available host tool can complete the result directly."
+compatibility: "Package-only works on portable Agent Skills hosts. External collaboration requires exposed OpenAI Codex Project/thread operations or a supported browser transport; otherwise stop or return the package without claiming a send."
 ---
 
 # Ask ChatGPT
 
 ## Overview
 
-Ask ChatGPT for one independently useful external result without replacing work Codex or another local owner can complete directly. Codex interprets the user's natural request, fixes the relevant basis or decision, selects the smallest useful theme and ChatGPT capability, supplies boundaries instead of requiring a user-authored prompt, and verifies returned claims or artifacts before downstream use.
+Ask ChatGPT for one independently useful external result without replacing work Codex or another local owner can complete directly. Package-only preparation is portable; navigation, conversation creation, upload, send, response capture, and recovery are conditional on capabilities exposed by the current host. Codex interprets the user's natural request, fixes the relevant basis or decision, selects the smallest useful theme and ChatGPT capability, supplies boundaries instead of requiring a user-authored prompt, and verifies returned claims or artifacts before downstream use.
 
 ## Workflow
 
@@ -24,7 +25,8 @@ Ask ChatGPT for one independently useful external result without replacing work 
    A theme defines content boundaries; a capability defines the web interaction. Do not infer either from the other.
 6. Let Codex create the smallest self-contained request from the user's words and verified context. For broad research, prefer Deep Research's reviewable proposed plan; use a separate prompt-drafting chat only when it adds an independently useful result and its additional send is authorized. Never require the user to write a formal prompt.
 7. Build a redacted `.codex/reviews/<review-id>/review-package.md` when durable or multipart context is needed, with the matching response log at `.codex/reviews/<review-id>/review.md`; a user-named path overrides this convention and compact requests may be sent as inspected text. Verify that the local review workspace is already ignored before writing. Do not change tracked or local ignore configuration without explicit authorization; when no approved ignored path exists, stop and report the gate. State facts, questions, selected theme/capability, evidence, exclusions, response contract, and Worktree/Git fingerprint or decision-basis identity without seeding conclusions. Package-only stops here.
-8. For authorized external action, load [chatgpt-routing.md](references/chatgpt-routing.md)
+8. Before any authorized external action, inventory the current host's exposed Project/thread and browser transports and verify that the selected route can identify the target, accept the intended input, submit exactly once, attribute the response, and reconcile an uncertain result. Capability names in this package are conditional routes, not guarantees that every host implements them. If no route satisfies the request and authorization, perform no external action; return the inspected package or stop with the missing capability `Not found`/`Not verified`.
+9. For authorized external action, load [chatgpt-routing.md](references/chatgpt-routing.md)
    and follow its transport, identity, capability, model/reasoning, completion, and
    fallback gates. Treat an explicit user transport, surface, or URL as a hard route
    constraint unless the current request separately authorizes fallback; otherwise
@@ -33,9 +35,9 @@ Ask ChatGPT for one independently useful external result without replacing work 
    explicitly authorized migration. Use the browser handoff below only when a browser
    route is selected. Stored preferences never prove current selection or authorize a
    fallback.
-9. Capture attributed responses and generated artifacts with their prompt, capability, operation IDs, and gaps. Codex verifies factual claims, research implications, repository findings, and artifact compliance against the fixed basis before accepting downstream work.
+10. Capture attributed responses and generated artifacts with their prompt, capability, operation IDs, and gaps. Codex verifies factual claims, research implications, repository findings, and artifact compliance against the fixed basis before accepting downstream work.
    For a browser route, use bounded same-page recovery only to reconcile an abnormal post-submit state. For App-native, use the bounded thread reads and completion overlay. Never resend the prompt, regenerate the response, or create a replacement conversation.
-10. Review/research-only requests stop after locally confirmed/rejected claims. Route fixes, design decisions, source edits, publication, or Git mutation only when separately authorized. After authorized uncommitted fixes, freeze a new Worktree fingerprint and use Worktree `repo-review`; use immutable fixed-basis review only after a commit/SHA exists. Another ChatGPT round requires exact authorization and an independently required result.
+11. Review/research-only requests stop after locally confirmed/rejected claims. Route fixes, design decisions, source edits, publication, or Git mutation only when separately authorized. After authorized uncommitted fixes, freeze a new Worktree fingerprint and use Worktree `repo-review`; use immutable fixed-basis review only after a commit/SHA exists. Another ChatGPT round requires exact authorization and an independently required result.
 
 ## External Transport Handoff
 
@@ -66,6 +68,8 @@ proven `failed-before-submit`.
 - Keep Codex as intent interpreter, local evidence owner, verifier, and executor; ChatGPT supplies only the independently required web result.
 - Translate natural user language into a bounded ChatGPT request internally. Do not require a user-authored research, review, UI, architecture, or image prompt.
 - Package-only never authorizes navigation, conversation creation, upload, or send. External authorization is exact in route, artifact, and round scope.
+- Portable package discovery does not prove external transport support. Never fabricate Project/thread, browser, identity, send, response, or recovery capability when the current host does not expose it.
+- An unavailable external route degrades only to an inspected Package-only result or a clear stop. It never silently switches transport, asks the user to assume a send occurred, or reports external completion.
 - If an explicitly requested transport, surface, Project, conversation, or URL is unavailable or cannot be verified, perform no external send unless the current request explicitly authorizes a fallback route. Otherwise stop or return to Package-only.
 - A stored Project, Chat/Work interface, model, or reasoning preference never proves current availability or selection. For an explicit model/reasoning requirement, require direct host metadata or active-UI evidence before submit; try only an authorized fallback route, otherwise stop. An unexposed stored preference may continue as `Not verified`.
 - Treat Codex App-native Project/thread transport and the desktop built-in browser as catalog-classified non-interrupting host surfaces. This is a routing classification, not an official public API claim. Chrome, Computer Use, Accessibility/coordinate automation, and other system UI routes still require direct background-safety evidence when the user forbids focus, pointer, or keyboard takeover.
