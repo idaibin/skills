@@ -1,16 +1,34 @@
 # Delivery Checklist
 
-Use this checklist when committing, pushing, syncing, squashing, or cleaning up branches.
+## Contents
 
-`repo-delivery` owns Git mutation after review acceptance. A review-only request does not authorize staging or committing.
+- [Required Evidence](#required-evidence)
+- [Staging And Commit](#staging-and-commit)
+- [Execution Durability](#execution-durability)
+- [Final History Normalization](#final-history-normalization)
+- [Merge Or Rebase Conflicts](#merge-or-rebase-conflicts)
+- [Push And Sync](#push-and-sync)
+- [Review Publication](#review-publication)
+- [Branch Integration Strategy](#branch-integration-strategy)
+- [Squash-To-Main](#squash-to-main)
+- [Do Not Deliver](#do-not-deliver)
+- [Final Report](#final-report)
+
+Use this checklist when preserving task progress, committing, normalizing history,
+pushing, syncing, squashing, or cleaning up branches.
+
+`repo-delivery` owns Git mutation. Final delivery follows accepted review evidence;
+execution durability may commit an explicitly authorized task slice earlier but never
+claims final review or merge readiness. A review-only or implementation-only request
+does not authorize staging or committing.
 
 ## Required Evidence
 
 - Read relevant repo guidance before delivery.
 - Run `git status --short --branch`.
 - Identify branch, upstream, staged files, unstaged files, untracked files, and unrelated local work.
-- Confirm the requested delivery target, path scope, and whether one commit was explicitly required.
-- Confirm the user authorized the exact staging, commit, push, sync, branch-integration, or cleanup action being performed.
+- Confirm Execution Durability or Final Delivery, the exact target/path scope, and whether milestone, fixup, checkpoint, normalization, categorized commits, or one commit was requested.
+- Confirm the user authorized the exact staging, commit, rewrite, push, sync, branch-integration, or cleanup action being performed.
 - Confirm review status or run `repo-review` first when ownership, mixed hunks, or commit groups are unclear.
 - For review publication, confirm explicit commit and push authorization, a GitHub remote, a non-default/non-protected branch, and the exact fixed SHA the reviewer will receive.
 - Run task-matching validation or report why it was skipped.
@@ -31,6 +49,38 @@ Use this checklist when committing, pushing, syncing, squashing, or cleaning up 
 - Record the resulting commit hash.
 - Recheck the remaining dirty tree after every category so later commits cannot absorb already delivered or unrelated content.
 - Stop after a local commit unless push or another Git target was separately authorized.
+
+## Execution Durability
+
+- Require a non-default task branch and either exact local-commit authorization or a
+  still-valid bounded task plan.
+- For a standing plan, verify branch, owned scope, allowed commit types, semantic
+  triggers, validation floor, message policy, and push policy; matching commits do not
+  require repeated confirmation.
+- Stop and refresh authority when the branch, scope, commit type, validation floor,
+  remote action, or named risk no longer matches the plan.
+- Prefer one completed semantic milestone. Use a fixup only for one reachable owner
+  commit and a checkpoint only for a concrete loss/recovery risk.
+- Record focused validation and mark the result `slice-validated` or `checkpoint-only`,
+  never final-reviewed or merge-ready.
+- A checkpoint identifies incomplete scope and must be split, absorbed, or removed
+  before integration.
+- Recheck staged, unstaged, untracked, and unrelated content after the commit.
+- Report local-only durability unless a separate push was authorized and proved.
+
+## Final History Normalization
+
+- Require completed implementation and exact history-rewrite authorization.
+- Use a clean task worktree or an isolated worktree with every remaining item
+  fingerprinted outside the rewrite basis.
+- Record base, source range, pre-rewrite SHA, and before tree.
+- Do not rewrite default/protected branches or branches whose collaboration/review use
+  makes exclusive rewrite ownership unproven.
+- Fold fixups into one owner and absorb/split/drop checkpoints from final history.
+- Verify after tree and complete expected scope against the before state; separately
+  recheck untracked and preserved dirty content.
+- Freeze the normalized base/head and obtain final fixed-basis review evidence before
+  push or integration. Any later history/tree change invalidates that evidence.
 
 ## Merge Or Rebase Conflicts
 

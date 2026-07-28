@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Delivery"
-  short_description: "Classify, commit, and deliver reviewed Git changes"
-  default_prompt: "Use $repo-delivery to classify reviewed Git changes by intent, deliver authorized commits or a fixed feature branch for external review, choose branch integration from evidence, and prove final refs."
+  short_description: "Preserve progress and deliver authorized Git changes"
+  default_prompt: "Use $repo-delivery to preserve explicitly authorized task progress with semantic commits, normalize completed task-branch history safely, deliver reviewed Git changes, and prove final local and remote state."

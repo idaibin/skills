@@ -1,33 +1,37 @@
 ---
 name: repo-delivery
-description: "Use when reviewed changes need authorized Git mutation, or when an explicitly authorized fixed non-default branch must be published for external review: categorized commits, push or sync, branch integration, cleanup, or ref proof; stops before pull-request creation."
+description: "Use when authorized Git mutation must preserve a large task through semantic milestone, targeted fixup, or exceptional checkpoint commits, normalize task-branch history, or deliver reviewed changes through commit, push, integration, cleanup, or ref proof; stops before pull-request creation."
 ---
 
 # Repository Delivery
 
 ## Overview
 
-Deliver reviewed repository changes from a local worktree to the requested Git state. This is the sole owner of staging, categorized commits, pushes, branch integration, and other Git mutations after review acceptance, plus explicitly authorized publication of a fixed non-default branch for external review. Verify branch policy, divergence, permissions, commit grouping, and staged content before mutation; never open a pull request.
+Own two separately authorized Git lifecycles: **Execution Durability** preserves large-task progress on a task branch through semantic milestones, targeted fixups, and exceptional safety checkpoints; **Final Delivery** normalizes the completed branch when requested, fixes the final review basis, and performs reviewed commits, pushes, integration, or cleanup. Execution commits preserve work but never imply final review, merge readiness, or remote durability. Verify branch policy, sharing/rewrite safety, permissions, commit grouping, and staged content before mutation; never open a pull request.
 
 ## Workflow
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Run `git status --short --branch` and identify branch, upstream, staged files, dirty files, and unrelated local work.
-3. Inspect existing local refs. Fetch or otherwise refresh remote state only for an explicitly authorized push, sync, branch-integration, or remote-refresh target; a local-commit-only request leaves remote state `Not verified`.
-4. Confirm each separately authorized target: categorized local commits, an explicitly requested single commit, review publication, push current branch, sync, branch integration, cleanup, or conflict resolution. Commit authorization never implies push or another target.
-5. Confirm branch policy and permissions: protected/default branch, force-push restrictions, required checks, branch naming, and whether direct updates are allowed or `Not verified`.
-6. Ensure review is complete. Use `repo-review` first when ownership, mixed hunks, contract chains, or commit grouping are not already clear.
-7. Run or reuse task-appropriate validation before staging unless the user explicitly requests delivery without further checks.
-8. Dispatch only to the authorized target workflow. Do not pass a push-only, sync-only, cleanup-only, or resolve-only request through staging or commit steps.
-9. For authorized local commits, classify every approved path or hunk by semantic intent and dependency order. Default to one commit per independent category. Use one commit only when the user explicitly requests it or the classification proves the complete scope is one indivisible intent. For each commit, stage only its exact paths/hunks, inspect `git diff --cached --stat`, `git diff --cached --name-status`, and the full cached diff, commit with the supplied text or a concise repository-conforming message, then recheck the remaining dirty tree.
-10. For branch integration, fix the source range and target tip before choosing the history shape. Preserve coherent, reviewed, meaningful commits when their order and boundaries remain useful; squash noisy, fixup-heavy, or single-outcome history when policy or explicit intent calls for one commit. Selecting only some source commits requires an explicit partial-integration scope and proof that omitted content is intentional.
+3. Select **Execution Durability** or **Final Delivery** from the requested outcome. Implementation-only wording never authorizes either lifecycle.
+4. Inspect existing local refs. Fetch or otherwise refresh remote state only for an explicitly authorized push, sync, branch-integration, history-rewrite assessment, or remote-refresh target; a local-commit-only request leaves remote state `Not verified`.
+5. Confirm each target through either exact per-action authorization or a bounded task-level execution-durability plan. A standing plan records the task branch, owned scope, allowed milestone/fixup/checkpoint types, event triggers, validation floor, message policy, and push policy; matching commits may proceed without asking again. Scope expansion, a new commit type, failed safety gates, rewrite, push, integration, or cleanup requires fresh authority.
+6. Confirm branch policy and permissions: task/default/protected status, upstream and known sharing/review state, force-push restrictions, required checks, branch naming, and every unknown that changes safety.
+7. For **Execution Durability**, require exact per-action authority or a still-valid bounded task plan plus an exact separable scope. Classify it as a completed semantic milestone, a correction owned by one reachable milestone, or an exceptional checkpoint permitted by the plan before a concrete loss/recovery risk. Reuse implementation evidence, run focused validation when possible, stage only exact paths/hunks, inspect the complete cached diff, commit, then report remaining and unrelated Worktree content. Continue under the same plan only while its branch, scope, triggers, and safety gates still match; push remains separately authorized.
+8. For ordinary reviewed local commits, ensure the accepted review basis and ownership are clear, then classify every approved path or hunk by semantic intent and dependency order. Default to one commit per independent category. Use one commit only when explicitly requested or the complete scope is one indivisible intent. Inspect cached stat, name-status, and full diff before each commit.
+9. For **Final History Normalization**, require completed implementation, exact rewrite authorization, and either a clean task worktree or an isolated worktree with every remaining staged/unstaged/untracked item fingerprinted outside the rewrite basis. Record the source range, before HEAD/tree, and recoverable pre-rewrite SHA; do not rewrite a default, protected, shared, or active-review branch when safe ownership is not proven. After normalization, require the expected tree and scope to match, freeze the new immutable basis, and obtain final fixed-basis review evidence. Any later history or tree change invalidates that evidence.
+10. For branch integration, fix the source range and target tip before choosing the history shape. Preserve coherent, reviewed, meaningful commits when their order and boundaries remain useful; squash noisy, fixup-heavy, checkpoint-bearing, or single-outcome history when policy or explicit intent calls for one commit. Selecting only some source commits requires explicit partial-integration scope and proof that omitted content is intentional.
 11. For push, sync, cleanup, or conflict resolution, execute only that target's authorized mutations. Conflict authorization separately covers file resolution, staging, merge/rebase continuation or commit, and push; an omitted action remains forbidden.
-12. After a local commit, stop by default. Verify the requested final local and remote state with branch, status, log, and remote ref evidence.
+12. Verify the requested final local and remote state with branch, status, log, tree, remaining Worktree content, and remote ref evidence. A local-only durability commit reports remote protection as absent, not implied.
 
 ## Modes
 
 - **Categorized local commits:** classify reviewed changes and create one commit per independent intent without pushing.
 - **Explicit single commit:** create exactly one commit only when requested or when the reviewed scope has one indivisible intent.
+- **Semantic milestone:** preserve one completed, separable, focused-validated task slice on a non-default task branch; mark it `slice-validated`, not final-reviewed.
+- **Targeted fixup:** commit a correction that belongs to exactly one reachable milestone and mark its normalization target; use a normal semantic correction when that ownership is not singular or rewrite is not planned.
+- **Safety checkpoint (exceptional):** preserve incomplete task-owned work only before a concrete loss/recovery risk; record why it exists and require split, absorption, or removal before final integration.
+- **Final history normalization:** with exact rewrite authorization, normalize completed task-branch history while preserving the expected tree, then freeze a new final review basis.
 - **Current-branch push:** push the already reviewed current branch after upstream/divergence checks; do not stage or commit unless separately authorized.
 - **Review publication:** after local review and validation, create and/or push the explicitly authorized fixed commit on a GitHub-backed non-default, non-protected branch so an external reviewer can use repository URL, branch, and SHA. Stop before PR creation or target-branch integration.
 - **Branch sync:** pull, fetch, rebase, merge, or fast-forward only according to repo guidance, current divergence, and the user's requested target.
@@ -40,6 +44,7 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 
 - First-pass repository discovery, real commands, or docs alignment; use `repo-map`.
 - Future implementation planning or subagent task splitting; use the host's built-in planning.
+- Implementation or validation requests that do not explicitly authorize a local commit or other Git mutation; use the implementation owner and leave Git unchanged.
 - Existing local diff review, ownership classification, mixed-hunk analysis, or commit grouping before delivery scope is clear; use `repo-review`.
 - Review-only requests that do not authorize Git mutation; use `repo-review`.
 - Review of a fixed change basis, including authorization or token risks; use `repo-review`.
@@ -50,6 +55,7 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 
 - Do not make ordinary task changes directly on protected or default branches when repo guidance forbids it.
 - Do not infer staging or commit authorization from a review-only request.
+- Do not infer milestone, fixup, or checkpoint authorization merely from a large, long-running, or risky implementation request. Git preservation may use exact per-action authority or one explicit bounded task-level plan; do not ask again for commits already covered by that plan.
 - Do not infer push, sync, branch-integration, cleanup, conflict-resolution, or branch-deletion authorization from a local commit request.
 - Do not infer that `main` is writable merely because local checkout permits a commit.
 - Review publication requires explicit commit and push authorization, a verified GitHub remote, a non-default and non-protected current branch, a fixed locally reviewed basis, and remote-ref proof. If any condition is absent, return the necessary files or review package to the caller instead of publishing.
@@ -59,6 +65,15 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 - Do not collapse multiple independent categories into one commit unless the user explicitly requests one commit.
 - Do not split one indivisible contract change merely to increase commit count.
 - Do not rewrite, force-push, squash, delete branches, change remotes, or alter upstream tracking unless the user requested it or repo guidance requires it for the delivery target.
+- Never treat a milestone, fixup, or checkpoint as final review, merge readiness, release evidence, or remote backup.
+- Do not create time-based or automatic WIP commits. Prefer a semantic milestone; use a checkpoint only for a named loss/recovery risk and never on a default or protected branch.
+- A standing execution-durability plan is authorization, not automation: trigger only on verified semantic events inside its branch and owned scope. Stop and refresh authority when scope, branch, commit type, validation floor, or risk materially changes.
+- Every checkpoint must identify incomplete scope and a final disposition of split, absorb, or drop. Do not carry checkpoint-only history into final integration by accident.
+- Do not bind one fixup to multiple independent milestones or use fixup syntax when no later normalization is intended.
+- Before history normalization, require a clean task worktree or isolate and fingerprint all remaining content. A tree SHA does not cover untracked or unrelated dirty files.
+- Record before and after tree SHAs and compare the complete expected task scope after normalization. Stop on any unexplained mismatch.
+- Do not rewrite a default, protected, shared, remotely consumed, or active-review branch unless exact ownership, rewrite, and remote-update authority are proven. Prefer merge-time squash or a clean integration branch when sharing is unknown.
+- Final review evidence applies only to the normalized immutable basis. Any later history or tree change requires a new fixed basis and review.
 - Never use review publication to update `main`, another default/protected branch, create a pull request, force-push, or imply external reviewer approval.
 - Never use force push as an automatic response to non-fast-forward rejection. Re-read remote state and report the divergence first.
 - Do not rebase or merge over a dirty worktree without an explicit safe plan for local changes.
@@ -75,11 +90,13 @@ Deliver reviewed repository changes from a local worktree to the requested Git s
 
 ## Output Contract
 
-Return a compact Delivery Report with `Completed`, `Changed Files`, `Verification`, `Known Issues`, `Next Steps`, and `Git Status`. Include delivery target, branch/upstream, branch policy, ahead/behind/diverged state, dirty-tree risks, semantic categories and dependency order, each staged scope and commit hash, explicit single-commit reason when used, branch-integration strategy and rationale, push/merge/rebase/squash/cherry-pick/cleanup actions, final local and remote ref evidence, rejected unsafe operations, and every `Not verified` item. Reference existing specs, plans, reviews, commits, and artifacts instead of duplicating them; redact secrets and unrelated personal data.
+Return a compact Delivery Report with `Completed`, `Changed Files`, `Verification`, `Known Issues`, `Next Steps`, and `Git Status`. Include lifecycle and mode, per-action or bounded-plan authorization basis, delivery target, branch/upstream, branch policy, ahead/behind/diverged state, dirty-tree risks, semantic categories and dependency order, each staged scope and commit hash, validation and review state, local-only versus pushed durability, remaining uncommitted content, required checkpoint/fixup disposition, before/after tree proof for normalization, branch-integration strategy and rationale, authorized Git actions, final local and remote ref evidence, rejected unsafe operations, and every `Not verified` item. Reference existing artifacts instead of duplicating them; redact secrets and unrelated personal data.
 
 ## References
 
 - See [references/usage.md](references/usage.md) for trigger guidance and mode examples.
+- See [references/execution-durability.md](references/execution-durability.md) for milestone, fixup, and exceptional checkpoint gates.
+- See [references/history-normalization.md](references/history-normalization.md) for rewrite safety, tree proof, and final-basis review.
 - See [references/checklist.md](references/checklist.md) for delivery and verification details.
 - See [references/delivery-report.md](references/delivery-report.md) for the compact handoff/report template.
 - See [references/resolving-merge-conflicts.md](references/resolving-merge-conflicts.md) only for an authorized in-progress merge/rebase conflict.

@@ -2,11 +2,21 @@
 
 ## Summary
 
-Use `repo-delivery` when the user wants reviewed repository changes moved to a final local or remote Git state without opening a pull request. It is for delivery actions that stop before PR creation, not for first-pass discovery or broad implementation.
+Use `repo-delivery` when the user explicitly authorizes Git mutation to preserve a
+large task on a task branch or move reviewed changes to a final local or remote Git
+state without opening a pull request. Execution durability and final delivery are
+separate lifecycles; neither implementation wording nor a review request authorizes a
+commit.
 
 ## Best For
 
 - Categorized local commits after review scope is approved.
+- A completed semantic milestone during a large task when local commit is explicit.
+- Repeated semantic milestones covered by one bounded task-level commit plan, without
+  re-prompting for every matching slice.
+- One targeted fixup owned by a reachable milestone and scheduled for normalization.
+- An exceptional checkpoint before a concrete loss/recovery risk.
+- Final task-branch history normalization with rewrite authority and tree proof.
 - One commit only when explicitly requested or when the approved scope is one indivisible intent.
 - Push only the current branch after validation, without creating a PR.
 - Publish an explicitly authorized fixed commit on a GitHub-backed feature branch so an external reviewer can inspect the repository URL, branch, and SHA.
@@ -18,6 +28,11 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
 ## Trigger Examples
 
 - `Review the staged scope, commit, and push this branch.`
+- `This completed task slice is focused-tested; commit it locally so I can continue, but do not push.`
+- `For this task branch, commit each completed focused-tested feature slice locally as a semantic milestone; fixups may target those milestones, checkpoints only before named high-risk rewrites, and never push.`
+- `Commit this correction as a fixup of the named milestone; normalize it only at final delivery.`
+- `Before this generator rewrites the module, checkpoint these exact incomplete paths locally; do not push.`
+- `The branch is complete; normalize its fixups/checkpoint without changing the tree, then freeze the final review basis.`
 - `Push only the current branch after checking the diff; do not open a PR.`
 - `Commit and push this reviewed non-main branch so ChatGPT can review its GitHub URL and fixed SHA; do not open a PR.`
 - `Squash this completed branch into main and push main.`
@@ -34,6 +49,7 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
 
 - Repository onboarding, command discovery, or docs/code alignment; use `repo-map`.
 - Future implementation planning; use the host's built-in planning.
+- Large-task implementation or risky operations without explicit Git-mutation authority; continue with the implementation owner and do not checkpoint automatically.
 - Dirty-tree ownership, mixed-hunk review, or commit grouping before delivery scope is clear; use `repo-review`.
 - Review-only requests with no staging, commit, push, sync, or cleanup authorization; use `repo-review`.
 - Review of a fixed change basis, including authentication, authorization, token,
@@ -44,4 +60,7 @@ Use `repo-delivery` when the user wants reviewed repository changes moved to a f
 
 ## Output
 
-Report the delivery target, branch/upstream, semantic categories, staged scope and hash for each commit, explicit single-commit reason when applicable, branch-integration strategy and rationale, validation, pushed refs, cleanup action, final status, final remote evidence, and any `Not verified` items.
+Report lifecycle/mode, delivery target, branch/upstream, semantic categories, staged
+scope and SHA, validation and review state, remaining Worktree content, local-only or
+pushed durability, normalization disposition and tree proof when applicable,
+integration rationale, final refs, and every `Not verified` item.
