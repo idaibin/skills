@@ -1,6 +1,6 @@
 ---
 name: audit-frontend
-description: "Use when a known frontend surface needs a scoped, read-only audit of selected architecture, reuse, data/UI contract, build/tooling, accessibility, performance, or desktop-boundary profiles; use repo-review when a Worktree or immutable change basis needs coordination."
+description: "Use when a known frontend surface needs a scoped, read-only audit of selected architecture, reuse, data/UI contract, build/tooling, accessibility, performance, selected-source visual fidelity, or desktop-boundary profiles; use repo-review when a Worktree or immutable change basis needs coordination."
 ---
 
 # Frontend Audit
@@ -41,6 +41,7 @@ owner; do not invent one.
    - **Architecture/reuse:** routes, features, shared layers, dependency direction, reuse, abstractions, structural lifecycle, and docs.
    - **State/data/contracts:** server/cache, URL, form, shared business, local UI, reactivity, stores, schemas, requests, errors, cancellation, and native IPC contracts.
    - **Component/layout/design system:** primitives, variants, tokens, density, DOM/CSS, spacing/scroll ownership, responsive behavior, and duplicated systems.
+   - **Selected-source visual fidelity:** source identity/evidence, traceable targets versus current runtime, assets, typography, final contrast, geometry, section alignment, states, breakpoints, and comparison evidence.
    - **Accessibility:** semantics, keyboard, focus, labels, dialogs/popovers, errors, status communication, and async feedback.
    - **Performance:** render/reactivity/data paths, request duplication, fan-out, bundle/runtime/IPC cost, long tasks, and measurement quality.
    - **Build/tooling:** package/runtime pins, scripts, Vite/Rolldown, Webpack,
@@ -48,7 +49,7 @@ owner; do not invent one.
      output, SSR/library, and deployment contracts.
    - **Desktop boundary:** frontend adapter, Tauri/native commands, DTO/errors, progress, cancellation, window/menu/shortcut behavior, and real-client evidence.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
-6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, and trace only the applicable task-completion seam. When a root `DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain.
+6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, and trace only the applicable task-completion seam. When a root `DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
 7. Trace only selected profiles without changing the repository. Do not perform shallow checks for excluded profiles merely to imply coverage. When code-quality concerns materially apply, load the shared code-quality reference with audit semantics and the selected framework/build reachability rules.
 8. Audit applicable loading, empty, error, partial, retry, optimistic, stale, cancellation, keyboard, focus, and long-task behavior within the selected profiles.
 9. Use non-mutating repository checks and request browser or real-client evidence only when a selected claim cannot be proven statically.
@@ -84,6 +85,7 @@ owner; do not invent one.
   component per file, named exports, memoization, or a bundler migration as a
   universal React rule.
 - Do not edit, stage, commit, post review comments, or deliver code in audit mode. `repo-review` owns Worktree and immutable review coordination; `repo-delivery` alone owns Git mutation. Route accepted remediation to `dev-frontend`.
+- Do not treat build/lint success, source CSS, current-runtime similarity, or a single screenshot as selected-source visual acceptance. Lead with P0-P3 visual findings and mark missing desktop/breakpoint/state evidence `Not verified`.
 
 ## Do Not Use For
 
@@ -98,7 +100,7 @@ owner; do not invent one.
 
 ## Output Contract
 
-Start with the inspection snapshot, selected product, framework, styling, and audit profiles; explicitly excluded audit profiles; coordinating owner when delegated; and severity-ranked findings. For each finding, report impact, exact location, profile-specific evidence, recommended remediation owner/direction, and validation gap. Then summarize inspected rules/files, existing candidates, ownership map, selected state/data/layout/accessibility/performance/build/desktop evidence, component/injection/router/lifetime contracts, Google `DESIGN.md` token/prose consistency, official lint evidence, implementation drift from source, commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
+Start with the inspection snapshot, selected product, framework, styling, and audit profiles; explicitly excluded audit profiles; coordinating owner when delegated; and severity-ranked findings. For Selected-source visual fidelity, state the source/revision/approval, evidence levels, target viewport/state, comparison passes available, and whether the `frontend-visual-evidence/v1` artifact validates. For each finding, report impact, exact location, profile-specific evidence, recommended remediation owner/direction, and validation gap. Then summarize inspected rules/files, existing candidates, ownership map, selected state/data/layout/accessibility/performance/build/desktop evidence, component/injection/router/lifetime contracts, Google `DESIGN.md` token/prose consistency, official lint evidence, implementation drift from source, commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
 
 ## References
 
@@ -110,6 +112,7 @@ Start with the inspection snapshot, selected product, framework, styling, and au
   for evidence and false-positive rules when Component/Layout is selected.
 - Read [design-md-compliance.md](references/design-md-compliance.md) only when an
   applicable Component/Layout audit includes root `DESIGN.md` consistency.
+- Read [frontend-visual-evidence.md](references/frontend-visual-evidence.md) when a selected source or visual-completion claim is in scope; validate staged evidence offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
 - Read [framework-profiles.md](references/framework-profiles.md) for React, Vue Composition, Vue Options, and repository-native audit rules.
 - Read [component-system.md](references/component-system.md) for primitives, feature components, composition, variants, and reuse decisions.
 - Read [state-data-and-forms.md](references/state-data-and-forms.md) for state classes, requests, caching, feedback states, services, schemas, and forms.

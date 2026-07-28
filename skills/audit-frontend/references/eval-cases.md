@@ -2,11 +2,11 @@
 
 ## Contents
 
-- Trigger Eval
-- Non-Trigger Eval
-- Scenario Eval
-- Quality Eval
-- Scoring
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Scenario Eval](#scenario-eval)
+- [Quality Eval](#quality-eval)
+- [Scoring](#scoring)
 
 ## Trigger Eval
 
@@ -66,6 +66,7 @@ Each scenario must produce the listed investigation, decision, rejection, and re
 | 16 | Pure Options API component uses data, computed, watch options, dynamic this.$watch, keep-alive, and component guards | State/Data; local API convention, unwatch handle, lifecycle, guards, cancellation | audit native Options semantics and retain API style | require Composition helpers or incidental conversion | Options owners, cleanup, guard/request lifetime, runtime gap |
 | 17 | `repo-review` delegates a frontend range while Rust and CI are reviewed elsewhere | delegated immutable range/paths, selected profiles, cross-domain interfaces | return bounded frontend findings and gaps to `repo-review` | take final P0-P3 integration ownership or review unrelated backend paths | coordinator, range/path boundary, selected/excluded profiles, findings |
 | 18 | User asks only for accessibility audit of a stable page | Accessibility evidence, semantics, keyboard/focus, forms/status, browser capability | select Accessibility only and request runtime proof where needed | perform architecture/state/performance audit without evidence | selected Accessibility, excluded profiles, static/runtime gaps |
+| 28 | Selected design inspect panel conflicts with the current page's computed grid | Selected-Source Visual Fidelity; source revision, inspect evidence, runtime geometry, delta and comparison artifacts | keep source target and runtime separate, report the concrete drift, and require two-pass closure | calls the runtime value already aligned or estimates exact targets from a screenshot | evidence levels, exact source/runtime rows, findings, runtime gaps |
 | 19 | React table uses Tailwind with repeated arbitrary widths and conflicting responsive utilities | React plus Tailwind; Component/Layout; configured scale, class helpers, breakpoints, parent/child spacing, rendered evidence | use existing scale or named geometry owner and remove conflicting ownership | global Tailwind config expansion or performance claims without evidence | framework/styling profiles, exact class evidence, layout owner, runtime gap |
 | 20 | A virtualized data region intentionally scrolls inside a page while a popover escapes its bounds | Component/Layout; explicit axis, overlay host, clipping, focus, and task-continuity evidence | preserve intentional nested ownership when boundaries and user benefit are proven | flags every nested scroll or portal as a defect | owner map, runtime/measurement evidence, unresolved gaps |
 | 21 | Vue Options form uses Ant Design and local Less overrides | Vue Options plus Ant Design and Less; State/Data and Component/Layout; native watchers/lifecycle, form contracts, tokens, selector specificity | preserve Options API and AntD ownership; prefer tokens/props over brittle overrides | Composition conversion, shadcn replacement, or deeper generated-class selectors | API/style profiles, form and styling owners, exact overrides, verification gap |
@@ -100,6 +101,7 @@ Each scenario must produce the listed investigation, decision, rejection, and re
 | State/reactivity | under State/Data, separates state classes and verifies framework-native reactivity, lifetime, cleanup, cancellation, Router and component contracts | duplicates truth, loses reactivity, cross-applies API styles, or leaves stale work |
 | Vue API-style fidelity | audits Composition with refs/watchers/scopes and Options with data/computed/watch/this.$watch and native lifecycle/guards without forced conversion | requires Composition imports in Options code or mechanically translates APIs |
 | Layout/design system | under Component/Layout, uses tokens, one spacing/scroll owner, minimal DOM/CSS, and centralized breakpoints | margin patches, duplicate CSS, or parallel styling system |
+| Selected-source fidelity | uses inspect-panel values before screenshot estimates, separates source/current/target, checks assets/font/final contrast/alignment/states/breakpoints, and requires reviewable comparison evidence | treats build/lint, SCSS, current similarity, one screenshot, or generic fallback assets as visual acceptance |
 | Performance | under Performance, traces and measures render/reactivity/data/request/bundle/IPC paths | default memoization/computed/cache advice or file-size claims |
 | Accessibility | under Accessibility, verifies keyboard, focus, headings, landmarks, labels/names after responsive visibility changes, active navigation, non-color and async status with DOM/AX runtime evidence or explicit gaps; consumes required/optional/excluded viewport scope | visual-only approval, invented viewport coverage, or unselected shallow checklist |
 | Runtime/resource evidence | checks selected routes for relevant resource failures separately from accessibility semantics and reports their owner/impact | treats screenshots as Network proof or misclassifies a resource failure without an accessibility impact |

@@ -1,0 +1,496 @@
+{
+  "schema_version": "frontend-visual-evidence/v1",
+  "stage": "final",
+  "task_id": "fixture-generic-catalog-visual-alignment",
+  "selected_source": {
+    "identity": "Approved desktop visual reference",
+    "revision": "source-revision-001",
+    "approval": {
+      "status": "approved",
+      "approved_by": "authorized reviewer",
+      "approved_at": "2030-01-01T00:00:00+08:00"
+    },
+    "rights": {
+      "allowed_use": "Authorized example use only",
+      "redistribution": "Not verified"
+    },
+    "use": ["Catalog page hierarchy, geometry, visible copy, and item asset roles"],
+    "ignore": ["Sample data, unshown service behavior, and uninspected exact values"],
+    "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+    "state": "desktop populated home at scroll top",
+    "limitations": [
+      "Original source export was unavailable; visible capture and local export were used with stated limits",
+      "Fixture pass-2 artifacts are illustrative and are not proof that the external system was fixed"
+    ]
+  },
+  "evidence": [
+    {
+      "id": "SRC-GRID-INSPECT",
+      "level": "source-extracted",
+      "claim": "First card x=180; grid is 360+24+360+24+360+48+300=1476; ranking x=1336 and width=300",
+      "source": "Selected-source element inspect panel",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Exact only for inspected elements and derived arithmetic"
+    },
+    {
+      "id": "SRC-PRIMARY-CARD-INSPECT",
+      "level": "source-extracted",
+      "claim": "Primary card x=180 y=280 size=360x112 radius=8",
+      "source": "Selected-source element inspect panel",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Icon size was not selected and remains Not verified"
+    },
+    {
+      "id": "SRC-SECONDARY-CARD-INSPECT",
+      "level": "source-extracted",
+      "claim": "Secondary card x=180 y=620 size=360x112 radius=8",
+      "source": "Selected-source element inspect panel",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Icon size was not selected and remains Not verified"
+    },
+    {
+      "id": "SRC-VISIBLE-200",
+      "level": "visually-inferred",
+      "claim": "Cards use distinct per-item images and the secondary row presents item name plus metadata",
+      "source": "Selected-source canvas reviewed at 200%",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 2 },
+      "state": "desktop populated home",
+      "limitation": "Visual confirmation only; no exact asset or icon dimension is claimed"
+    },
+    {
+      "id": "RUNTIME-DESKTOP-GEOMETRY",
+      "level": "browser-computed",
+      "claim": "Current runtime uses a 1440 container, about 352px cards, 280px sidebar, 24px main/sidebar gap, and 10px card radius",
+      "source": "Rendered DOM geometry and computed styles at the current catalog page",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Current runtime only; these values are not selected-source targets"
+    },
+    {
+      "id": "RUNTIME-ASSET-TYPE",
+      "level": "browser-computed",
+      "claim": "Primary, secondary, and ranking items render the same generic placeholder icon role",
+      "source": "Rendered DOM and asset/component inspection",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home",
+      "limitation": "Does not prove availability of approved replacement assets"
+    },
+    {
+      "id": "RUNTIME-FONT-CONTRAST",
+      "level": "browser-computed",
+      "claim": "Native primary-card button resolves to an unintended fallback font; auxiliary text composites near #aaa on white at about 2.32:1",
+      "source": "Computed font family and final foreground/background calculation",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home",
+      "limitation": "Applies to the captured state only"
+    },
+    {
+      "id": "RUNTIME-SECTION-ALIGNMENT",
+      "level": "browser-computed",
+      "claim": "Second ranking heading is about 96px above its corresponding application-catalog heading",
+      "source": "Rendered bounding rectangles",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home lower section",
+      "limitation": "Applies to the captured state only"
+    },
+    {
+      "id": "SRC-EXPORT-HERO",
+      "level": "source-extracted",
+      "claim": "Hero title is 36px, subtitle is 16px, and search control height is 48px",
+      "source": "Local source export element styles",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Exact only for the extracted source properties"
+    },
+    {
+      "id": "SRC-EXPORT-COPY",
+      "level": "source-extracted",
+      "claim": "Section headings are Featured catalog, Popular items, and Search trends",
+      "source": "Local source export visible text",
+      "viewport": "not-applicable",
+      "state": "desktop populated home",
+      "limitation": "Copy only; does not prove layout or behavior"
+    },
+    {
+      "id": "RUNTIME-HERO-COPY",
+      "level": "browser-computed",
+      "claim": "Current Hero title is 30px, search height is 40px, and section copy differs from the selected source",
+      "source": "Rendered DOM, computed styles, and visible text",
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Current runtime only"
+    },
+    {
+      "id": "TARGET-TYPOGRAPHY",
+      "level": "proposed",
+      "claim": "Page-local card title 16/24, description 14/22, inherited application font, and normal text contrast at least 4.5:1",
+      "source": "Accepted page-local UI contract",
+      "viewport": "not-applicable",
+      "state": "all populated card states",
+      "limitation": "Page-local adaptation; no shared DESIGN.md token change"
+    },
+    {
+      "id": "TARGET-ASSET-FALLBACK",
+      "level": "proposed",
+      "claim": "Use each approved item asset and isolate fallback to one failed item",
+      "source": "Accepted page-local UI contract",
+      "viewport": "not-applicable",
+      "state": "all populated item states",
+      "limitation": "Proposed asset behavior approved for this synthetic contract"
+    },
+    {
+      "id": "TARGET-SECTION-ALIGNMENT",
+      "level": "proposed",
+      "claim": "Corresponding section heading top offset is at most 2px",
+      "source": "Accepted page-local UI contract",
+      "viewport": "not-applicable",
+      "state": "paired populated and empty sections",
+      "limitation": "Proposed alignment tolerance approved for this synthetic contract"
+    },
+    {
+      "id": "ICON-SIZE-UNKNOWN",
+      "level": "Not verified",
+      "claim": "Selected-source item icon size",
+      "source": "No selected-element inspect evidence exists in this synthetic example",
+      "viewport": "not-applicable",
+      "state": "desktop populated home",
+      "limitation": "Do not copy current runtime values into the target"
+    },
+    {
+      "id": "FIXTURE-PASS-1-RUNTIME",
+      "level": "browser-computed",
+      "claim": "Fixture pass 1 captures the incorrect grid, generic assets, font, contrast, and section alignment",
+      "source": "Synthetic browser-computed fixture for protocol evaluation only",
+      "review_pass": 1,
+      "categories": ["card_dimensions", "real_assets", "font_fallback", "contrast", "section_alignment"],
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Not evidence from the external system"
+    },
+    {
+      "id": "FIXTURE-PASS-2-GEOMETRY",
+      "level": "browser-computed",
+      "claim": "Fixture pass 2 matches the selected grid and card geometry",
+      "source": "Synthetic browser-computed fixture for protocol evaluation only",
+      "review_pass": 2,
+      "categories": ["card_dimensions"],
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Not evidence from the external system"
+    },
+    {
+      "id": "FIXTURE-PASS-2-ASSETS",
+      "level": "browser-computed",
+      "claim": "Fixture pass 2 renders per-item assets and isolates one failed-item fallback",
+      "source": "Synthetic browser-computed fixture for protocol evaluation only",
+      "review_pass": 2,
+      "categories": ["real_assets"],
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Not evidence from the external system"
+    },
+    {
+      "id": "FIXTURE-PASS-2-FONT",
+      "level": "browser-computed",
+      "claim": "Fixture pass 2 native controls inherit the application font",
+      "source": "Synthetic browser-computed fixture for protocol evaluation only",
+      "review_pass": 2,
+      "categories": ["font_fallback"],
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Not evidence from the external system"
+    },
+    {
+      "id": "FIXTURE-PASS-2-CONTRAST",
+      "level": "browser-computed",
+      "claim": "Fixture pass 2 final composited auxiliary text contrast is at least 4.5:1",
+      "source": "Synthetic browser-computed fixture for protocol evaluation only",
+      "review_pass": 2,
+      "categories": ["contrast"],
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Not evidence from the external system"
+    },
+    {
+      "id": "FIXTURE-PASS-2-ALIGNMENT",
+      "level": "browser-computed",
+      "claim": "Fixture pass 2 corresponding section heading offset is at most 2px",
+      "source": "Synthetic browser-computed fixture for protocol evaluation only",
+      "review_pass": 2,
+      "categories": ["section_alignment"],
+      "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+      "state": "desktop populated home at scroll top",
+      "limitation": "Not evidence from the external system"
+    }
+  ],
+  "delta_table": [
+    {
+      "acceptance_id": "AS-GRID-001",
+      "area": "Desktop content grid",
+      "selected_source": { "value": "x=180; width=1476; 360/24/360/24/360/48/300; ranking x=1336", "evidence_level": "source-extracted", "evidence_ids": ["SRC-GRID-INSPECT"] },
+      "current_runtime": { "value": "x=196; width=1440; about 352px cards; 24px gap; 280px sidebar", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-DESKTOP-GEOMETRY"] },
+      "target_contract": { "value": "Use the selected-source grid at the 1920 target viewport", "evidence_level": "source-extracted", "evidence_ids": ["SRC-GRID-INSPECT"] },
+      "priority": "P1",
+      "owner": "CatalogPage page-local grid",
+      "validation": "Bounding rectangles at 1920x1200 plus overlay against the source"
+    },
+    {
+      "acceptance_id": "AS-PRIMARY-CARD-002",
+      "area": "Primary content card",
+      "selected_source": { "value": "first card x=180 y=280 size=360x112 radius=8", "evidence_level": "source-extracted", "evidence_ids": ["SRC-PRIMARY-CARD-INSPECT"] },
+      "current_runtime": { "value": "about 352x112 radius=10; generic gradient icon", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-DESKTOP-GEOMETRY", "RUNTIME-ASSET-TYPE"] },
+      "target_contract": { "value": "360x112 radius=8 at inspected position; icon size remains Not verified", "evidence_level": "source-extracted", "evidence_ids": ["SRC-PRIMARY-CARD-INSPECT", "ICON-SIZE-UNKNOWN"] },
+      "priority": "P1",
+      "owner": "CatalogPage primary-card styles",
+      "validation": "Bounding rectangle, computed radius, item asset role, and source overlay"
+    },
+    {
+      "acceptance_id": "AS-SECONDARY-CARD-003",
+      "area": "Secondary content card semantics and geometry",
+      "selected_source": { "value": "first card x=180 y=620 size=360x112 radius=8; item name plus metadata", "evidence_level": "source-extracted", "evidence_ids": ["SRC-SECONDARY-CARD-INSPECT", "SRC-VISIBLE-200"] },
+      "current_runtime": { "value": "about 352x96 radius=10; category plus a generic action label", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-DESKTOP-GEOMETRY"] },
+      "target_contract": { "value": "360x112 radius=8; distinct image, name, and metadata; one primary action", "evidence_level": "source-extracted", "evidence_ids": ["SRC-SECONDARY-CARD-INSPECT", "SRC-VISIBLE-200"] },
+      "priority": "P1",
+      "owner": "CatalogPage secondary content card",
+      "validation": "DOM semantics, text, geometry, asset role, keyboard focus, and overlay"
+    },
+    {
+      "acceptance_id": "AS-ASSETS-004",
+      "area": "Per-item assets",
+      "selected_source": { "value": "distinct per-item images", "evidence_level": "visually-inferred", "evidence_ids": ["SRC-VISIBLE-200"] },
+      "current_runtime": { "value": "generic placeholder icon for all primary, secondary, and ranking items", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-ASSET-TYPE"] },
+      "target_contract": { "value": "consume each approved item asset; use generic fallback only for the individual missing/failed item", "evidence_level": "proposed", "evidence_ids": ["TARGET-ASSET-FALLBACK"], "approval": "Accepted in the local UI contract" },
+      "priority": "P1",
+      "owner": "Catalog-page fixture/API asset mapping and per-item image fallback",
+      "validation": "Inspect normal assets and force one isolated image failure"
+    },
+    {
+      "acceptance_id": "AS-TYPE-005",
+      "area": "Font inheritance and contrast",
+      "selected_source": { "value": "Application typography with readable auxiliary text", "evidence_level": "visually-inferred", "evidence_ids": ["SRC-VISIBLE-200"] },
+      "current_runtime": { "value": "button uses an unintended fallback font; auxiliary text is about 2.32:1", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-FONT-CONTRAST"] },
+      "target_contract": { "value": "font: inherit; title 16/24; description 14/22; contrast >=4.5:1", "evidence_level": "proposed", "evidence_ids": ["TARGET-TYPOGRAPHY"], "approval": "Accepted as a page-local accessibility contract" },
+      "priority": "P1",
+      "owner": "CatalogPage primary-card typography",
+      "validation": "Computed font family, size/line height, final composited colors, and contrast calculation"
+    },
+    {
+      "acceptance_id": "AS-ALIGN-006",
+      "area": "Main/sidebar section alignment",
+      "selected_source": { "value": "Second ranking section aligns with its corresponding application catalog", "evidence_level": "visually-inferred", "evidence_ids": ["SRC-VISIBLE-200"] },
+      "current_runtime": { "value": "about 96px vertical mismatch", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-SECTION-ALIGNMENT"] },
+      "target_contract": { "value": "corresponding section heading top offset <=2px", "evidence_level": "proposed", "evidence_ids": ["TARGET-SECTION-ALIGNMENT"], "approval": "Accepted as page-local alignment tolerance" },
+      "priority": "P1",
+      "owner": "CatalogPage paired section grid",
+      "validation": "Compare heading bounding rectangles in populated and empty states"
+    },
+    {
+      "acceptance_id": "AS-HERO-007",
+      "area": "Hero title scale and grid alignment",
+      "selected_source": { "value": "title 36px; subtitle 16px", "evidence_level": "source-extracted", "evidence_ids": ["SRC-EXPORT-HERO"] },
+      "current_runtime": { "value": "title 30px; title left edge does not align with the selected-source content grid", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-HERO-COPY", "RUNTIME-DESKTOP-GEOMETRY"] },
+      "target_contract": { "value": "title 36px and aligned with x=180 content grid; subtitle 16px", "evidence_level": "source-extracted", "evidence_ids": ["SRC-EXPORT-HERO", "SRC-GRID-INSPECT"] },
+      "priority": "P1",
+      "owner": "CatalogPage Hero",
+      "validation": "Computed typography and left-edge bounding rectangle at 1920"
+    },
+    {
+      "acceptance_id": "AS-SEARCH-008",
+      "area": "Hero search control",
+      "selected_source": { "value": "height 48px", "evidence_level": "source-extracted", "evidence_ids": ["SRC-EXPORT-HERO"] },
+      "current_runtime": { "value": "height 40px", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-HERO-COPY"] },
+      "target_contract": { "value": "height 48px with accessible name and visible focus", "evidence_level": "source-extracted", "evidence_ids": ["SRC-EXPORT-HERO"] },
+      "priority": "P1",
+      "owner": "CatalogPage search control",
+      "validation": "Computed control height plus keyboard focus capture"
+    },
+    {
+      "acceptance_id": "AS-COPY-009",
+      "area": "Section copy",
+      "selected_source": { "value": "Featured catalog / Popular items / Search trends", "evidence_level": "source-extracted", "evidence_ids": ["SRC-EXPORT-COPY"] },
+      "current_runtime": { "value": "Catalog / Popular / Trends", "evidence_level": "browser-computed", "evidence_ids": ["RUNTIME-HERO-COPY"] },
+      "target_contract": { "value": "Featured catalog / Popular items / Search trends", "evidence_level": "source-extracted", "evidence_ids": ["SRC-EXPORT-COPY"] },
+      "priority": "P1",
+      "owner": "CatalogPage section headings",
+      "validation": "Rendered text assertion and screenshot comparison"
+    }
+  ],
+  "implementation_mapping": [
+    {
+      "acceptance_id": "AS-GRID-001",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "CatalogPage desktop grid",
+      "decision": "extend",
+      "asset_or_data_owner": "not-applicable",
+      "rationale": "Preserve the existing three-column structure and replace only incorrect desktop geometry",
+      "verification_methods": ["computed bounding rectangles at 1920x1200", "source/runtime overlay"]
+    },
+    {
+      "acceptance_id": "AS-PRIMARY-CARD-002",
+      "owner_file": "src/pages/catalog-page.css",
+      "component": "primary-card",
+      "decision": "extend",
+      "asset_or_data_owner": "CatalogPage primary-item sample-data mapping",
+      "rationale": "Keep the current card owner while correcting size, radius, typography, and asset consumption",
+      "verification_methods": ["computed size/radius/font", "real asset plus one failed-item fallback", "hover and keyboard focus"]
+    },
+    {
+      "acceptance_id": "AS-SECONDARY-CARD-003",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "secondary content card",
+      "decision": "extend",
+      "asset_or_data_owner": "CatalogPage secondary-item sample-data mapping",
+      "rationale": "The home-page card has incorrect semantics; reuse the page owner without creating a parallel shared card",
+      "verification_methods": ["rendered name/metadata text", "computed geometry", "one-primary-action keyboard check"]
+    },
+    {
+      "acceptance_id": "AS-ASSETS-004",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "per-item asset renderer",
+      "decision": "wrap",
+      "asset_or_data_owner": "Catalog-page sample-data asset fields",
+      "rationale": "Consume real item assets and wrap only each failed image with the existing fallback",
+      "verification_methods": ["normal asset DOM/resource inspection", "isolated broken-image case"]
+    },
+    {
+      "acceptance_id": "AS-TYPE-005",
+      "owner_file": "src/pages/catalog-page.css",
+      "component": "primary-card and secondary-card typography",
+      "decision": "extend",
+      "asset_or_data_owner": "application font and theme text roles",
+      "rationale": "Use inheritance and page-local roles without changing global DESIGN.md tokens",
+      "verification_methods": ["computed font chain", "final composited contrast", "native button focus"]
+    },
+    {
+      "acceptance_id": "AS-ALIGN-006",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "paired content/ranking sections",
+      "decision": "extend",
+      "asset_or_data_owner": "not-applicable",
+      "rationale": "Pair corresponding main and sidebar sections instead of independently stacking two columns",
+      "verification_methods": ["heading top-offset <=2px", "populated and empty section captures"]
+    },
+    {
+      "acceptance_id": "AS-HERO-007",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "Hero title block",
+      "decision": "extend",
+      "asset_or_data_owner": "existing Hero background asset",
+      "rationale": "Preserve the correct Hero background and height while correcting local title scale and alignment",
+      "verification_methods": ["computed title/subtitle styles", "left-edge geometry at 1920"]
+    },
+    {
+      "acceptance_id": "AS-SEARCH-008",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "Hero search control",
+      "decision": "extend",
+      "asset_or_data_owner": "existing search behavior",
+      "rationale": "Keep the existing control and behavior while applying the extracted height and focus contract",
+      "verification_methods": ["computed height", "accessible name", "keyboard focus capture"]
+    },
+    {
+      "acceptance_id": "AS-COPY-009",
+      "owner_file": "src/pages/CatalogPage.vue",
+      "component": "section headings",
+      "decision": "reuse",
+      "asset_or_data_owner": "accepted interface copy",
+      "rationale": "Update only the drifted visible labels without changing section ownership",
+      "verification_methods": ["rendered text assertion", "same-state screenshot comparison"]
+    }
+  ],
+  "visual_reviews": [
+    {
+      "pass": 1,
+      "design_capture": {
+        "artifact": "fixture://generic-catalog/pass-1-source-normalized",
+        "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+        "state": "desktop populated home at scroll top",
+        "scroll": "top",
+        "captured_at": "2030-01-01T00:00:00+08:00"
+      },
+      "runtime_capture": {
+        "artifact": "fixture://generic-catalog/pass-1-runtime-normalized",
+        "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+        "state": "desktop populated home at scroll top",
+        "scroll": "top",
+        "captured_at": "2030-01-01T00:00:00+08:00"
+      },
+      "same_viewport": true,
+      "same_state": true,
+      "comparison": { "mode": "side-by-side", "artifact": "fixture://generic-catalog/pass-1-side-by-side" },
+      "computed_checks": [
+        { "category": "card_dimensions", "evidence_ids": ["FIXTURE-PASS-1-RUNTIME"] },
+        { "category": "real_assets", "evidence_ids": ["FIXTURE-PASS-1-RUNTIME"] },
+        { "category": "font_fallback", "evidence_ids": ["FIXTURE-PASS-1-RUNTIME"] },
+        { "category": "contrast", "evidence_ids": ["FIXTURE-PASS-1-RUNTIME"] },
+        { "category": "section_alignment", "evidence_ids": ["FIXTURE-PASS-1-RUNTIME"] }
+      ],
+      "findings": [
+        { "severity": "P1", "acceptance_id": "AS-GRID-001", "evidence_ids": ["SRC-GRID-INSPECT", "FIXTURE-PASS-1-RUNTIME"], "status": "open", "summary": "Runtime geometry was incorrectly treated as already aligned despite conflicting inspect-panel targets" },
+        { "severity": "P1", "acceptance_id": "AS-ASSETS-004", "evidence_ids": ["SRC-VISIBLE-200", "FIXTURE-PASS-1-RUNTIME"], "status": "open", "summary": "Generic fallback icons replace all item identities" },
+        { "severity": "P1", "acceptance_id": "AS-TYPE-005", "evidence_ids": ["FIXTURE-PASS-1-RUNTIME"], "status": "open", "summary": "Native button font and auxiliary contrast fail the accepted contract" }
+      ],
+      "verdict": "fail"
+    },
+    {
+      "pass": 2,
+      "design_capture": {
+        "artifact": "fixture://generic-catalog/source-reused-for-pass-2",
+        "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+        "state": "desktop populated home at scroll top",
+        "scroll": "top",
+        "captured_at": "2030-01-01T00:10:00+08:00"
+      },
+      "runtime_capture": {
+        "artifact": "fixture://generic-catalog/illustrative-post-fix-runtime",
+        "viewport": { "width": 1920, "height": 1200, "zoom": 1 },
+        "state": "desktop populated home at scroll top",
+        "scroll": "top",
+        "captured_at": "2030-01-01T00:10:00+08:00"
+      },
+      "same_viewport": true,
+      "same_state": true,
+      "comparison": { "mode": "overlay", "artifact": "fixture://generic-catalog/pass-2-overlay" },
+      "computed_checks": [
+        { "category": "card_dimensions", "evidence_ids": ["FIXTURE-PASS-2-GEOMETRY"] },
+        { "category": "real_assets", "evidence_ids": ["FIXTURE-PASS-2-ASSETS"] },
+        { "category": "font_fallback", "evidence_ids": ["FIXTURE-PASS-2-FONT"] },
+        { "category": "contrast", "evidence_ids": ["FIXTURE-PASS-2-CONTRAST"] },
+        { "category": "section_alignment", "evidence_ids": ["FIXTURE-PASS-2-ALIGNMENT"] }
+      ],
+      "findings": [
+        { "severity": "P1", "acceptance_id": "AS-GRID-001", "evidence_ids": ["FIXTURE-PASS-2-GEOMETRY"], "status": "fixed", "summary": "Fixture demonstrates closing the desktop geometry finding after a recapture" },
+        { "severity": "P1", "acceptance_id": "AS-ASSETS-004", "evidence_ids": ["FIXTURE-PASS-2-ASSETS"], "status": "fixed", "summary": "Fixture demonstrates per-item assets with isolated fallback" },
+        { "severity": "P1", "acceptance_id": "AS-TYPE-005", "evidence_ids": ["FIXTURE-PASS-2-FONT", "FIXTURE-PASS-2-CONTRAST"], "status": "fixed", "summary": "Fixture demonstrates re-reading computed font and contrast after fixes" }
+      ],
+      "verdict": "pass"
+    }
+  ],
+  "readiness": {
+    "status": "Ready",
+    "blockers": []
+  },
+  "runtime_coverage": {
+    "real_assets": { "status": "verified", "evidence_ids": ["FIXTURE-PASS-2-ASSETS"], "reason": "Illustrative fixture covers normal assets and one isolated fallback" },
+    "font_fallback": { "status": "verified", "evidence_ids": ["FIXTURE-PASS-2-FONT"], "reason": "Illustrative pass 2 re-reads the computed font chain" },
+    "text_truncation": { "status": "Not verified", "evidence_ids": [], "reason": "Long and localized content was not exercised in the synthetic example" },
+    "contrast": { "status": "verified", "evidence_ids": ["FIXTURE-PASS-2-CONTRAST"], "reason": "Illustrative pass 2 recalculates final composited contrast" },
+    "section_alignment": { "status": "verified", "evidence_ids": ["FIXTURE-PASS-2-ALIGNMENT"], "reason": "Illustrative pass 2 checks paired section offsets" },
+    "card_dimensions": { "status": "verified", "evidence_ids": ["SRC-PRIMARY-CARD-INSPECT", "SRC-SECONDARY-CARD-INSPECT", "FIXTURE-PASS-2-GEOMETRY"], "reason": "Inspect-panel targets are compared with illustrative post-fix DOM geometry" },
+    "hover_focus": { "status": "Not verified", "evidence_ids": [], "reason": "Complete keyboard order and focus visuals were not exercised in the synthetic example" },
+    "loading_empty_error": { "status": "Not verified", "evidence_ids": [], "reason": "Loading, empty, and error visual states were not captured" },
+    "responsive_breakpoints": { "status": "Not verified", "evidence_ids": [], "reason": "The specified <=980px and <=768px breakpoints were not captured" }
+  },
+  "final_verdict": {
+    "status": "Partial",
+    "fixed_items": ["Illustrative desktop geometry", "Illustrative per-item assets", "Illustrative font/contrast and section alignment"],
+    "remaining_gaps": ["Independent runtime pass 2 is not evidenced by this package fixture"],
+    "not_verified": ["Selected-source icon size", "Long-text truncation", "Complete keyboard/focus", "Loading/empty/error", "<=980px and <=768px runtime"],
+    "changed_files": ["src/pages/CatalogPage.vue", "src/pages/catalog-page.css"],
+    "validation": ["JSON Schema fixture validation only", "External runtime implementation and visual completion are not claimed"],
+    "git_state": "example-only; no external system Git state is asserted"
+  }
+}

@@ -34,6 +34,7 @@ Select at least one profile and mark every other profile `Out of scope`:
 - Architecture/Reuse
 - State/Data/Contracts
 - Component/Layout/Design System
+- Selected-Source Visual Fidelity
 - Accessibility
 - Performance
 - Build/Tooling
@@ -68,6 +69,14 @@ Do not perform token checks, memoization advice, generic accessibility scanning,
 - No copied component system, duplicated token scale, repeated margin patch, or competing CSS mechanism exists in scope.
 - Apply only the detected rules from `styling-systems.md`, including Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, or shadcn/ui when present.
 - Runtime visual/responsive evidence is requested through `ops-browser` or `ops-client` when static evidence is insufficient.
+
+When Selected-Source Visual Fidelity is selected:
+
+- Freeze source identity/revision/approval, viewport/state, rights/use limits, and evidence levels.
+- Keep selected-source targets, browser-computed current runtime, and accepted target contracts separate; prefer design inspect-panel values over screenshot estimates.
+- Require a reviewable side-by-side/overlay/diff and computed evidence for exact runtime geometry, font, final color/contrast, and alignment claims.
+- Check real per-item assets and isolated fallback, truncation, hover/focus, applicable feedback states, desktop target, and specified breakpoints.
+- Report P0-P3 findings before the verdict; missing two-pass evidence remains `Not verified` and cannot be replaced by build/lint success.
 
 ## 6. Accessibility Profile
 

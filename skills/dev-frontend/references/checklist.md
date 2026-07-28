@@ -22,6 +22,12 @@ Use this checklist when implementing or reviewing frontend changes.
 - Identify the frontend project class, pinned runtime/package manager, lockfile, dependency policy, script contract, directory/naming standard, and documented exceptions.
 - Inspect only target page, component, route, service, hook or composable, store, type, style, shared UI, and layout owner files needed for the request.
 - Check existing imports and nearby patterns before adding libraries, aliases, icons, helpers, or components.
+- For selected-source work, read the current product/UI slice, root `DESIGN.md`,
+  selected-source evidence, delta rows, and readiness. Stop on unavailable source,
+  `Partial`/`Not Ready`, unresolved target viewport/state, or missing P1 asset owner.
+- Map every applicable acceptance ID to owner file/component,
+  reuse/extend/wrap/new, asset/data owner, and static/runtime verification before
+  editing. Do not copy browser-computed current values into the source target.
 
 ## Reuse-First Gate
 
@@ -114,6 +120,16 @@ Use this checklist when implementing or reviewing frontend changes.
 - For Tauri/Electron UI, keep shell, file, platform, and native API access behind existing IPC/command wrappers and surface command errors in the UI.
 
 ## Validation
+
+- For selected-source visual work, run two same-viewport/state comparison passes:
+  capture and compare, read computed geometry/style, fix confirmed findings, then
+  recapture and reinspect.
+- Independently inspect real assets and per-item fallback, font fallback including
+  native controls, truncation, final contrast, section alignment, card dimensions,
+  hover/focus, applicable loading/empty/error states, desktop target, and every key
+  breakpoint named by the spec.
+- Keep build/lint/typecheck and visual acceptance separate. Missing runtime coverage
+  remains `Not verified` and prevents a visual-complete verdict.
 
 - Run project-defined type, lint, test, build, formatter, or route checks that match the change.
 - Prefer non-mutating validation and use explicit fix/write commands only when rewrites are in scope.

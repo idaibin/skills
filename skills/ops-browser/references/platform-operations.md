@@ -26,7 +26,7 @@ not bulk-engage or bypass platform limits.
 
 - **Content communities** such as X, Xiaohongshu, Reddit, or Juejin: search/read,
   draft, publish, comment/reply/message, and inspect visible metrics.
-- **Design collaboration** such as Lanhu or Figma: open a project, switch pages,
+- **Design collaboration**: open an authorized source, switch views,
   inspect annotations, comment, and download authorized assets.
 - **Development collaboration** such as GitHub or GitLab: inspect issues, reviews,
   and checks; fill or submit authorized comments and forms.

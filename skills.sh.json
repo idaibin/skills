@@ -28,14 +28,14 @@
     },
     {
       "title": "Design",
-      "description": "Skill for translating a selected visual source into an implementation-ready Feature Spec and, only when shared semantics or contracts change, maintaining a repository-owned Design System Spec.",
+      "description": "Skill for translating a selected visual source into a traceable implementation-ready Feature Spec, separating source targets from current runtime, and maintaining shared DESIGN.md semantics only when they truly change.",
       "skills": [
         "ui-spec"
       ]
     },
     {
       "title": "Implementation",
-      "description": "Skills that own requested source-code implementation and refactoring within their domains.",
+      "description": "Skills that own requested source-code implementation and refactoring, including two-pass runtime visual closure for selected-source frontend work.",
       "skills": [
         "dev-frontend",
         "dev-rust"
@@ -43,7 +43,7 @@
     },
     {
       "title": "Specialist Audit",
-      "description": "Read-only specialist skills for bounded frontend and Rust assessment.",
+      "description": "Read-only specialist skills for bounded frontend and Rust assessment, including selected-source visual fidelity findings.",
       "skills": [
         "audit-frontend",
         "audit-rust"
@@ -51,7 +51,7 @@
     },
     {
       "title": "Runtime Operations",
-      "description": "Skills for browser and desktop-client operation with state-safe evidence collection.",
+      "description": "Skills for browser and desktop-client operation with state-safe evidence collection, visual comparison, and runtime geometry/style proof.",
       "skills": [
         "ops-browser",
         "ops-client"

@@ -1,4 +1,4 @@
 interface:
   display_name: "UI Specification"
-  short_description: "Specify UI with Google DESIGN.md authority"
-  default_prompt: "Use $ui-spec to select the applicable profile: write an implementation-ready Feature Spec under docs/ui/ that references the repository-root Google DESIGN.md, or update root DESIGN.md only when shared visual semantics change."
+  short_description: "Specify traceable UI targets and visual evidence"
+  default_prompt: "Use $ui-spec to freeze the selected source, separate source targets from current runtime, write traceable Feature Spec deltas, and update root DESIGN.md only when shared visual semantics change."

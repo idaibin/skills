@@ -1,4 +1,4 @@
 interface:
   display_name: "Frontend Implementation"
-  short_description: "Implement frontend and build/tooling changes safely"
-  default_prompt: "Use $dev-frontend to make scoped frontend or build/tooling changes with reuse-first discovery, repository-native conventions, quality guardrails, and generated OpenAPI client consumption when applicable."
+  short_description: "Implement frontend with traceable visual closure"
+  default_prompt: "Use $dev-frontend to map accepted requirements to source owners, implement scoped frontend changes, and run two-pass same-state visual comparison when a selected source controls acceptance."

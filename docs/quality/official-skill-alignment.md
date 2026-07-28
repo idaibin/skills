@@ -46,11 +46,11 @@ It is a practice comparison, not an additional compatibility contract.
 
 | Repository and revision | Useful practice | Catalog decision |
 | --- | --- | --- |
-| `mattpocock/skills@ed37663` | concise writing guidance, concrete reusable procedures, direct reference links | keep entries operational and avoid forcing one authoring style across every package |
-| `anthropics/skills@1f630fd` | progressive disclosure, bundled deterministic helpers, representative with-Skill evaluation | retain one-level references and behavior canaries; add scripts only for repeated deterministic work |
-| `vercel-labs/skills@e173b8c` | repository discovery, installation, and distribution validation | keep distribution/tooling checks separate from each Skill's runtime workflow |
-| `openai/skills@49f948f` | compact core loops, provider metadata separated from portable `SKILL.md`, bundled wrappers for tool reliability | retain `agents/openai.yaml` as an adapter and keep portable instructions authoritative |
-| `google/skills@0ea2cd7` | explicit nearest-neighbor rerouting where ambiguity is real, scored failure-sample iteration | add one short metadata negative only for genuine routing collisions; refine from live failures rather than prose growth |
+| Reference catalog A | concise writing guidance, concrete reusable procedures, direct reference links | keep entries operational and avoid forcing one authoring style across every package |
+| Reference catalog B | progressive disclosure, bundled deterministic helpers, representative with-Skill evaluation | retain one-level references and behavior canaries; add scripts only for repeated deterministic work |
+| Reference catalog C | repository discovery, installation, and distribution validation | keep distribution/tooling checks separate from each Skill's runtime workflow |
+| Reference catalog D | compact core loops, provider metadata separated from portable `SKILL.md`, bundled wrappers for tool reliability | retain provider metadata as an adapter and keep portable instructions authoritative |
+| Reference catalog E | explicit nearest-neighbor rerouting where ambiguity is real, scored failure-sample iteration | add one short metadata negative only for genuine routing collisions; refine from live failures rather than prose growth |
 
 Across the five repositories, negative metadata is not universal and large entrypoints are
 not evidence of better behavior. This catalog therefore does not impose a minimum entry

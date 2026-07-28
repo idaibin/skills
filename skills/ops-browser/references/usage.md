@@ -10,6 +10,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - `Open the page in the background and verify it without stealing focus.`
 - `Take a screenshot of this local web app and check the console errors.`
 - `Check the mobile and desktop layout for overflow or clipped text.`
+- `Capture the selected design and implementation at the same viewport/state, create an overlay, and return computed font, contrast, geometry, and alignment evidence for pass 1.`
 - `Extract the table data from this page.`
 - `Fill this form in a background page without disturbing my current tabs.`
 - `Upload this file and confirm the page state afterward.`
@@ -20,7 +21,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - `Check notifications and topic results on the verified X account, but do not post or interact.`
 - `Prepare a Xiaohongshu post in the verified account and stop before publishing.`
 - `Publish this approved Juejin draft once, then prove the resulting post state.`
-- `Open the named Lanhu project, inspect its annotations, and download the authorized asset.`
+- `Open the named design source, inspect its annotations, and download the authorized asset.`
 - `At this localhost URL, reproduce these exact steps and collect DOM, Console, and Network evidence for the observed browser failure.`
 - `Inspect this authorized production page with DevTools, but do not reload, clear storage, or change data.`
 
@@ -63,6 +64,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - Prefer selectors, roles, labels, DOM state, console, network, and storage evidence.
 - Match evidence to the claim: use screenshots for visual/layout state, DOM or accessibility data for selectors and rendered text, console logs for client errors, network records for request/response behavior, storage/auth state for account/session claims, and file checks for downloads.
 - For visible UI verification, resolve viewports in this order: exact user dimensions; an accepted viewport matrix; an explicit repository convention; then one minimal representative value per user-named category. Mark the final fallback as an assumption, do not add unmentioned categories, and check overflow, clipped text, table/dialog layout, hover/focus behavior, and reachable loading/empty/error states.
+- For selected-source comparison, accept the caller's source ID, target viewport/state, pass number, capture targets, requested computed checks, and restoration plan. Retain independent source/runtime captures plus a side-by-side, overlay, or diff. Design inspect-panel values are source-extracted; a 200% screenshot check remains visually inferred; browser computed values prove only the runtime.
 - For interactive verification, capture or report before/after state for controls, navigation, forms, uploads, downloads, route changes, and generated payloads when relevant.
 - Do not force a fixed number of issues; report observed issues, residual risk, and `Not verified` gaps.
 - Stop before login, MFA, consent, account switch, purchase, permission grant, destructive submit, or irreversible state changes unless the user explicitly authorized that action.
@@ -70,6 +72,7 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - Treat form submit, upload, cache clearing, logout, refresh, and destructive navigation as state-changing actions.
 - Use temporary pages for account/cache isolation, destructive checks, or when the existing tab is user-owned; avoid creating several temporary pages for the same purpose.
 - Close pages/windows opened only for the task.
+- Restore user-owned tabs to the recorded viewport, zoom, and scroll when possible; leave only an explicitly requested delivery state inspectable and report any state that could not be restored.
 - If the browser tool exposes only partial tab or window metadata, report the available URL/title/session evidence and mark missing identity as `Not verified` instead of inferring it.
 
 ## Browser Debug Evidence

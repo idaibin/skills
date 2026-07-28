@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when current Worktree changes or a fixed snapshot/range, including a resolved pull request, need coordinated read-only Standards and Spec findings; use audit-* for a bounded domain audit with no change basis."
+description: "Use when current Worktree changes or a fixed snapshot/range, including a resolved pull request, need coordinated read-only Standards and Spec findings or a selected-source visual-completion claim reviewed; use audit-* for a bounded domain audit with no change basis."
 ---
 
 # Repository Review
@@ -27,7 +27,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    - for fixed-basis review, resolve full SHAs and complete changed-file evidence; for a package, verify its manifest and hashes.
 3. Build the smallest complete read set from changed or explicitly owned paths. A `repo-map` artifact may guide navigation but is never review proof.
 4. In Worktree mode, inventory full status but deeply classify only the requested scope and necessary interface closure. Classify every changed file and mixed hunk only for requested commit-readiness.
-5. Trace relevant interfaces through registrations, callers, types, data shaping, persistence, generated artifacts, runtime config, tests, docs, CI/deploy, and stale references. Activate the protocol-contract profile only for an existing OpenAPI/generated-client pipeline or an explicitly requested contract gate.
+5. Trace relevant interfaces through registrations, callers, types, data shaping, persistence, generated artifacts, runtime config, tests, docs, CI/deploy, and stale references. Activate the protocol-contract profile only for an existing OpenAPI/generated-client pipeline or an explicitly requested contract gate. Activate the visual-completion profile only when the basis implements a selected visual source or claims visual completion; then load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), require and validate the appropriate staged handoff (`final` for completion), and inspect its cited artifacts and reachable source.
 6. Evaluate two independent axes:
    - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
@@ -88,6 +88,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Do not activate frontend design compliance merely because a repository contains
   frontend files. It is conditional on visual or UI-contract change scope, does not
   create another review profile, and does not require `audit-frontend`.
+- Do not approve a selected-source visual-completion claim from build/lint/typecheck, source CSS, current-runtime similarity, or one screenshot. Require traceable source targets, complete implementation mapping, two same-viewport/state comparison passes, computed runtime evidence, and every specified breakpoint/state required by the contract; otherwise report `Partial` or `Not Ready`.
 - Do not require OpenAPI for ordinary REST changes. When the protocol-contract
   profile applies, fix its Git/authority/artifact basis and replay write-mode
   generation only in an isolated copy; otherwise review the repository-native
@@ -95,7 +96,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
+Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. For the visual-completion profile, report schema validation, source/revision/approval, evidence coverage, both comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether the completion claim is supported. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
 
 ## References
 
@@ -104,6 +105,7 @@ Lead with mode/profile, basis, scope, exclusions, and validation, then severity-
 - See [references/checklist.md](references/checklist.md) for immutable basis, severity, and release review.
 - See [references/protocol-contracts.md](references/protocol-contracts.md) only for an existing or explicitly requested OpenAPI/generated-client review gate.
 - See [references/standards-and-spec.md](references/standards-and-spec.md) for independent Standards and Spec review axes.
+- Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for the conditional visual-completion profile; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
 - Read [references/code-quality.md](references/code-quality.md) when the basis
   materially involves duplication, dead or unused code, abstractions, hidden
   coupling, or maintainability.

@@ -14,6 +14,7 @@
 | `Run lint before export and share the derived design output.` | Run lint first, require success without error, and treat export as explicit derived output only after shared authority is accepted. |
 | `Specify this approved dialog so long localized content, intermediate widths, its critical action, inner scroll, and overlay behavior remain usable.` | Trigger `ui-spec` Feature Spec and add only the applicable task-completion geometry and acceptance rules. |
 | `Admin only needs 1920x1080 verified; 1440x900 is useful if time permits, and mobile is outside this request.` | Trigger `ui-spec` Feature Spec with an Admin-local viewport matrix: `1920x1080` required, `1440x900` optional, mobile excluded with the user's request as evidence. Hand the unchanged matrix to implementation, audit, and runtime verification; do not make this a global default. |
+| `The current runtime geometry differs from exact values in the approved source inspect panel.` | Keep source target and browser-computed runtime in separate delta columns; use inspect-panel values as `source-extracted` and do not call current geometry already aligned. |
 
 ## Non-Trigger Eval
 
@@ -37,6 +38,8 @@
 | DESIGN.md has duplicate section heading | Reject with hard blocker until resolved. | Continues and marks Ready. |
 | DESIGN.md lint or diff command cannot run due to missing permissions/network | Mark checks as `Not verified` and do not mark slice `Ready`. | Claims success without evidence and issues `Ready`. |
 | A desktop-only Admin acceptance request names one mandatory and one budgeted viewport | Matrix records viewport size/orientation, environment, state/fixture, assertions, and evidence source. `1920x1080` is required, `1440x900` is optional, and mobile is excluded only from this slice's acceptance scope. | Treats a skipped optional check as a failure, treats excluded mobile as an unsupported-device claim, or applies Admin sizes to unrelated surfaces. |
+| Design tool cannot select an icon, but the screenshot can be viewed at 200% | Use the zoomed image only for `visually-inferred` comparison; keep exact icon size `proposed` or `Not verified`. | Copies the current runtime icon size or a pixel estimate into the target as verified. |
+| Every product currently uses one generic gradient icon | Specify real per-item asset ownership and only an isolated failed-item fallback. | Treats the current fallback as a normal visual asset strategy. |
 
 ## Quality Eval
 
@@ -45,7 +48,8 @@
 | Source gate | selected/accepted source recorded with identity, revision, approval, rights, `use`, `ignore` | starts without source identity or selected-source approval |
 | Product truth | product goals, actions, states, and failures grounded and separated from design | invents product logic from mockup appearance |
 | Design authority | root `DESIGN.md` is the sole shared semantic authority | introduces another shared design authority |
-| Evidence precision | marks verified/extracted/proposed/`Not verified` and includes lint/diff outcomes | treats unknown values as verified facts |
+| Evidence precision | marks `source-extracted`/`browser-computed`/`visually-inferred`/`proposed`/`Not verified` and includes lint/diff outcomes | treats unknown values as verified facts |
+| Delta traceability | keeps source target, current runtime, and accepted contract separate with evidence IDs and uses design inspect values before screenshot estimates | promotes runtime computed values into source targets or summarizes them as safe-to-preserve design values |
 | Design-system gate | shared changes require `@google/design.md@0.3.0` lint + diff and regression review | emits Ready without lint/diff or unresolved regression |
 | Accessibility and responsive contract | defines focus, overflow, reduced-motion, localization, and acceptance for each slice | skips accessibility/responsive rules in contracts |
 | Viewport acceptance scope | every applicable slice has required/optional/excluded entries with size, environment, state, assertions, and evidence source; current user requirements override older specs | calls one screenshot full coverage, omits the evidence source or state, or treats an excluded viewport as unsupported |

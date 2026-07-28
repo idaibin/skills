@@ -19,7 +19,7 @@ A visual source proves appearance only. It does not prove exact tokens, componen
 
 ## Evidence Boundary
 
-Record confirmed product facts, available data/actions/states, current component and token owners, explicit exclusions, unresolved questions, and the source revision. Mark each specification decision `verified`, `extracted`, `proposed`, or `Not verified`.
+Record confirmed product facts, available data/actions/states, current component and token owners, explicit exclusions, unresolved questions, and the source revision. Mark each specification decision `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, or `Not verified`. Keep the selected-source target, current runtime, and accepted target contract in separate fields.
 
 ## UI Contract Challenge
 
@@ -101,6 +101,12 @@ For example, an Admin surface may require `1920x1080`, make `1440x900` optional,
 exclude mobile from this acceptance slice when the current user request says so. That
 is an Admin-specific contract example, not a default for other products or slices.
 
+For every material visual difference, add an acceptance-ID delta row with
+selected-source value/evidence, current-runtime value/evidence, target contract,
+priority, shared-or-local owner, and runtime verification. An inspect-panel design
+value outranks screenshot estimation; a browser-computed runtime value never becomes
+the source target. Define product-asset ownership and isolated fallback behavior.
+
 ## Artifact Pass
 
 | Profile | Primary artifact | Optional dependencies |
@@ -130,5 +136,6 @@ per slice. Then compare source fidelity, task completion, information structure,
 interaction completeness, engineering fit, and evidence completeness. Emit one
 readiness verdict per slice and mark an incomplete multi-surface result `Partial`.
 Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved gaps
-to `dev-frontend`, `audit-frontend`, and `ops-browser`/`ops-client`; request runtime
-evidence from the operations owner after implementation.
+to `dev-frontend`, `audit-frontend`, and `ops-browser`/`ops-client`; include traceability
+and asset gates, and request runtime evidence from the operations owner after
+implementation.

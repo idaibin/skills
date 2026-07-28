@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Review"
   short_description: "Review fixed changes across Standards and Spec"
-  default_prompt: "Use $repo-review to review a fixed local or immutable basis read-only across Standards and Spec and return consolidated P0-P3 findings."
+  default_prompt: "Use $repo-review to review a fixed local or immutable basis read-only across Standards and Spec, activate visual-completion evidence checks when claimed, and return consolidated P0-P3 findings."

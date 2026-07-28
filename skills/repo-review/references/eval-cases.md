@@ -2,12 +2,12 @@
 
 ## Contents
 
-- Trigger Eval
-- Non-Trigger Eval
-- Independent Review Outlet Eval
-- Scenario Eval
-- Quality Eval
-- Scoring
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Independent Review Outlet Eval](#independent-review-outlet-eval)
+- [Scenario Eval](#scenario-eval)
+- [Quality Eval](#quality-eval)
+- [Scoring](#scoring)
 
 ## Trigger Eval
 
@@ -26,6 +26,7 @@
 | `Review this auth diff for authorization bypasses and token exposure.` | Trigger `repo-review`; fix the change basis and assess the risks in the Standards axis. |
 | `Security-review commit X as a change set against its parent.` | Trigger Fixed-basis `repo-review` and inspect the immutable commit diff as an ordinary Standards review. |
 | `Review this branch against both repository standards and the originating specification.` | Trigger two-axis `repo-review`. |
+| `Review this selected-source frontend change and verify whether its visual-complete claim is supported.` | Trigger `repo-review` with the conditional visual-completion profile and require the structured evidence plus cited runtime artifacts. |
 | `Review this fixed range's OpenAPI authority, compatibility diff, generated client, backend conformance, consumer states, and clean CI.` | Trigger `repo-review` with protocol-contract profile. |
 | `Review this REST change against its native route, DTO, client, consumers, and tests; no generated schema pipeline exists.` | Trigger ordinary `repo-review`; mark the OpenAPI profile `Not applicable`. |
 | `Review this fixed diff for duplicated rules, unused declarations, and over-designed wrappers.` | Trigger `repo-review`; apply the shared quality gate with fixed-basis attribution and the applicable language profile. |
@@ -78,6 +79,8 @@
 | Clippy or ESLint reports an unused declaration outside the changed path | Classify it as pre-existing and exclude it from the verdict unless the basis directly depends on it; verify language/framework reachability. | Attributes whole-repository lint debt to the diff. |
 | A one-line label change wraps at an intermediate width and hides a critical action | Attribute the reachable regression to the basis and require proportional runtime proof; distinguish it from unrelated pre-existing layout debt. | Dismisses the impact because the diff is small or reports all nearby layout debt as introduced. |
 | A visual diff has root DESIGN.md but no trustworthy product or selected-source UI Feature Spec, or browser proof | Inspect available authorities and adapters, then report each missing authority and rendered-runtime evidence separately `Not verified`. | Treats DESIGN.md alone as feature acceptance, uses one Feature Spec for both owners, uses a repo-map row as proof, or requires an audit-frontend handoff by default. |
+| Frontend diff builds cleanly but has one screenshot and no computed checks or breakpoint captures | Reject visual completion, report the evidence gap against the basis, and keep static validation separate. | Treats build/lint or source CSS as visual proof. |
+| Runtime grid values were copied into the spec before later design inspect-panel evidence contradicted them | Use the selected-source inspect values as the Spec target, runtime values as current evidence, and report the false alignment claim. | Lets current runtime define its own acceptance target. |
 
 ## Quality Eval
 
@@ -94,6 +97,7 @@
 | Evidence-gated code quality | For applicable duplication, dead/unused code, abstraction, and coupling signals, proves reachability, impact, owner/location, basis attribution, and a falsifiable verification path. | Reports similarity, size, a single wrapper/trait/memo/clone, or optional lint advice by itself. |
 | Spec axis | Checks requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and scope creep; marks the axis `Not verified` when no trustworthy spec exists. | Infers a spec from the diff or claims compliance without a source. |
 | Frontend design compliance | Only for visual/UI-contract changes, separately traces product requirements/product Feature Spec, selected-source UI Feature Spec, root DESIGN.md, adapter/config, and runtime/browser evidence while keeping repo-map navigation-only. | Creates a parallel review gateway, requires audit-frontend, lets Feature Spec types substitute for each other, or collapses authority and runtime gaps into one claim. |
+| Visual-completion profile | Validates the handoff shape, inspects source/revision/approval, separate source/current/target rows, mapping, two same-viewport/state passes, computed checks, real assets/fallback, states and specified breakpoints before supporting completion. | Approves from current similarity, a single screenshot, static checks, or generic fallback assets. |
 | Axis independence | Collects Standards and Spec evidence independently, optionally in bounded parallel read-only passes, then verifies, deduplicates, labels, and severity-ranks findings centrally. | Lets one axis mask the other or concatenates unverified subagent output. |
 | External-review independence | Uses only attributed, captured, locally verified external output; a submitted, pending, timed-out, empty, or missing response remains a separate `Not verified` status and cannot change the local verdict. | Treats submission or elapsed time as reviewer approval/rejection, or lets a missing response create/clear a finding. |
 | Necessary handoff | Emits a frontend/Rust audit handoff only when that specialist must inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or authentication code. |

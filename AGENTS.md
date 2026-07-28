@@ -5,7 +5,7 @@ This file defines how AI agents should work on this repository. It is not the pr
 ## Task Routing
 
 - For repository development, documentation edits, prompt edits, skill package edits, reviews, or commits, follow the repository work rules below.
-- Only when the user explicitly asks to install skills from `https://github.com/idaibin/skills`, read `INSTALL.md` and follow that installation flow.
+- Only when the user explicitly asks to install Skills from this catalog's published source, read `INSTALL.md` and follow that installation flow.
 - Do not switch into installation mode just because this repository contains `skills/`.
 - Use `repo-map` for separate repository mapping, reuse inventory, or docs/code alignment.
 - Use `domain-modeling` when shared cross-functional business language or rules conflict; load lifecycle or bounded-context depth only when that shared ambiguity requires it. Route feature-local behavior and acceptance to `product-spec`.

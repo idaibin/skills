@@ -1,7 +1,8 @@
 # Repository Scope
 
-`idaibin/skills` is a public catalog of independently installable Agent Skills
-for software-engineering work.
+This repository is a public catalog of independently installable Agent Skills for
+software-engineering work. Its documentation does not depend on a personal account
+or local checkout identity.
 
 ## Owns
 

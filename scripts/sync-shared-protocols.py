@@ -9,6 +9,27 @@ from pathlib import Path
 
 
 PROTOCOLS = {
+    Path("protocols/frontend-visual-evidence-v1.md"): (
+        Path("skills/ui-spec/references/frontend-visual-evidence.md"),
+        Path("skills/dev-frontend/references/frontend-visual-evidence.md"),
+        Path("skills/audit-frontend/references/frontend-visual-evidence.md"),
+        Path("skills/repo-review/references/frontend-visual-evidence.md"),
+        Path("skills/ops-browser/references/frontend-visual-evidence.md"),
+    ),
+    Path("protocols/frontend-visual-evidence-v1.schema.json"): (
+        Path("skills/ui-spec/assets/frontend-visual-evidence.schema.json"),
+        Path("skills/dev-frontend/assets/frontend-visual-evidence.schema.json"),
+        Path("skills/audit-frontend/assets/frontend-visual-evidence.schema.json"),
+        Path("skills/repo-review/assets/frontend-visual-evidence.schema.json"),
+        Path("skills/ops-browser/assets/frontend-visual-evidence.schema.json"),
+    ),
+    Path("scripts/validate-frontend-visual-evidence.py"): (
+        Path("skills/ui-spec/scripts/validate-frontend-visual-evidence.py"),
+        Path("skills/dev-frontend/scripts/validate-frontend-visual-evidence.py"),
+        Path("skills/audit-frontend/scripts/validate-frontend-visual-evidence.py"),
+        Path("skills/repo-review/scripts/validate-frontend-visual-evidence.py"),
+        Path("skills/ops-browser/scripts/validate-frontend-visual-evidence.py"),
+    ),
     Path("protocols/frontend-layout-governance-v1.md"): (
         Path("skills/dev-frontend/references/frontend-layout-governance.md"),
         Path("skills/audit-frontend/references/frontend-layout-governance.md"),

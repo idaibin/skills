@@ -11,14 +11,14 @@ and output.
 | `repo-map` | repository boundaries, commands, reuse, and durable maps | named map artifact only |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
-| `ui-spec` | implementation-ready UI specification from a selected visual source, with Google DESIGN.md at the repository root as the sole shared visual authority and per-slice Feature Specs | specification artifacts only |
-| `repo-review` | current Worktree/index or fixed revision review | read-only |
-| `dev-frontend` | requested frontend implementation | source files |
+| `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
+| `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion | read-only |
+| `dev-frontend` | requested frontend implementation plus selected-source mapping and two-pass visual closure | source files |
 | `dev-rust` | requested Rust implementation | source files |
-| `audit-frontend` | bounded frontend audit profiles | read-only |
+| `audit-frontend` | bounded frontend audit profiles, including selected-source visual fidelity | read-only |
 | `audit-rust` | bounded Rust audit profiles | read-only |
 | `repo-delivery` | staging, commit, review-branch publication, integration, push, and cleanup | Git |
-| `ops-browser` | authorized browser operations and evidence | browser state |
+| `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
 | `ask-chatgpt` | local request packages and authorized ChatGPT collaboration | local artifact or authorized external action |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
