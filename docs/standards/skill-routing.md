@@ -69,6 +69,15 @@ Common sequence, when needed:
 repo-map -> domain-modeling/product-spec -> ui-spec/dev-* -> repo-review -> repo-delivery
 ```
 
+For design-collaboration sources, keep extraction and specification authority
+separate. `ops-browser` inventories a fixed Axure version's pages, requirements,
+interactions, states, and coverage before `product-spec` classifies product facts and
+writes an authorized product artifact. `ops-browser` extracts selected-element Lanhu
+measurements and assets before `ui-spec` preserves raw evidence, applies any accepted
+spacing normalization, and writes the visual contract. Axure visual styling may also
+feed `ui-spec`, but product documents never absorb colors, typography, spacing, or
+geometry merely because the prototype displays them.
+
 For a large task, exact per-action authority or one bounded task-level commit plan may
 temporarily hand completed semantic slices, targeted fixups, or permitted exceptional
 safety checkpoints from the implementation owner to `repo-delivery` before final

@@ -35,6 +35,10 @@ writes. Keep technical design and source mutation with their existing owners.
    slice per confirmed feature; never default home, tasks, contacts, and profile into
    one omnibus Feature Spec.
 4. Clarify internally before synthesis. Search discoverable repository facts first.
+   When Axure is a named product source, load
+   [references/prototype-evidence.md](references/prototype-evidence.md), consume a
+   coverage-ledger handoff from `ops-browser`, and keep prototype coverage separate
+   from product readiness.
    When material product decisions remain, load
    [references/decision-pressure-test.md](references/decision-pressure-test.md) and
    resolve only the target slices' load-bearing decision tree. Do not expose
@@ -80,6 +84,8 @@ writes. Keep technical design and source mutation with their existing owners.
 - Do not require every implementation task to pass through this Skill.
 - Do not invent users, rules, metrics, permissions, UI states, compatibility, or
   failure behavior. Keep unresolved material decisions visible.
+- Do not infer complete product behavior from prototype screenshots, visited page
+  titles, static export alone, or an interaction set whose coverage is unknown.
 - Keep one main document unless a repository convention or proven complexity needs
   a split. Independent features are proven complexity: use a short index and separate
   slice facts, not one large specification. Glossaries, ADRs, UI evidence, and
@@ -106,7 +112,8 @@ decisions, user flows and failure states, scope/non-goals, user-visible UI/data
 effects that are actually applicable, acceptance criteria, one Ready verdict and
 blockers per slice,
 conditional artifacts created or skipped, handoffs, validation, and every `Not found`
-or `Not verified` gap. When the user explicitly requests an independent external
+or `Not verified` gap. For a prototype source, also report fixed source identity,
+coverage verdict/totals, conflicts, and affected slices. When the user explicitly requests an independent external
 challenge or primary-source research, hand one fixed question/basis to
 `ask-chatgpt`; never send implicitly.
 
@@ -119,4 +126,5 @@ challenge or primary-source research, hand one fixed question/basis to
   requests a product stress test.
 - See [references/template.md](references/template.md) for progressive document templates.
 - See [references/documentation-boundaries.md](references/documentation-boundaries.md) for artifact ownership and fallback locations.
+- Read [references/prototype-evidence.md](references/prototype-evidence.md) when Axure supplies product facts.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

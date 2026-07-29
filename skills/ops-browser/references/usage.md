@@ -73,7 +73,21 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - If the recorded tab was closed, replaced, logged out, or navigated away, report the session break and ask whether to recover the original session or start a fresh one.
 - Prefer selectors, roles, labels, DOM state, console, network, and storage evidence.
 - Match evidence to the claim: use screenshots for visual/layout state, DOM or accessibility data for selectors and rendered text, console logs for client errors, network records for request/response behavior, storage/auth state for account/session claims, and file checks for downloads.
-- For visible UI verification, resolve viewports in this order: exact user dimensions; an accepted viewport matrix; an explicit repository convention; then one minimal representative value per user-named category. Mark the final fallback as an assumption, do not add unmentioned categories, and check overflow, clipped text, table/dialog layout, hover/focus behavior, and reachable loading/empty/error states.
+- For an ordinary desktop browser operation with no requested viewport, responsive
+  category, accepted matrix, or explicit repository convention, use the package
+  default `1920 x 1080` CSS pixels. When the task supplies viewport context, resolve
+  it in this order: exact user dimensions; an accepted viewport matrix; an explicit
+  repository convention; then one minimal representative value per user-named
+  category. The package desktop default must not stand in for a named mobile or
+  tablet category. Mark the final category fallback as an assumption, do not add
+  unmentioned categories, and check overflow, clipped text, table/dialog layout,
+  hover/focus behavior, and reachable loading/empty/error states.
+- After applying a viewport, read the effective page viewport (for example,
+  `window.innerWidth` and `window.innerHeight`) and record it with the evidence.
+  Some browser surfaces apply an override only to newly controlled tabs and do not
+  resize an already-open user tab. In that case, do not claim the existing tab was
+  resized. Preserve it; use a new task-owned tab only when required session state is
+  not lost, otherwise report the viewport gap as `Not verified`.
 - For selected-source comparison, accept the caller's source ID, target viewport/state, pass number, capture targets, requested computed checks, and restoration plan. Retain independent source/runtime captures plus a side-by-side, overlay, or diff. Design inspect-panel values are source-extracted; a 200% screenshot check remains visually inferred; browser computed values prove only the runtime.
 - For interactive verification, capture or report before/after state for controls, navigation, forms, uploads, downloads, route changes, and generated payloads when relevant.
 - Do not force a fixed number of issues; report observed issues, residual risk, and `Not verified` gaps.

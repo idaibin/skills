@@ -22,7 +22,7 @@ Turn a selected visual source and verified product facts into an implementation-
 6. In Design System Spec, make the repository-root `DESIGN.md` the only durable shared output. Feature Specs reference shared visual semantics by exact path/anchor or semantic name; they do not repeat shared colors, spacing scales, global typography, radius, or shared-component semantics.
    - `DESIGN.md` is the only accepted shared product visual output.
    - Feature Spec never copies token values or component semantics from shared systems into its own artifacts.
-7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Prefer design-tool selected-element/inspect-panel values for design targets; current runtime computed styles prove only the runtime column. A 200% screenshot check remains `visually-inferred` and cannot supply an exact verified value. When responsive or viewport-specific acceptance applies, define one per-slice viewport acceptance matrix using [references/workflow.md](references/workflow.md): required, optional, and excluded entries record size, environment, state, and acceptance-evidence source.
+7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Prefer design-tool selected-element/inspect-panel values for design targets; current runtime computed styles prove only the runtime column. A 200% screenshot check remains `visually-inferred` and cannot supply an exact verified value. When a Lanhu or equivalent design-tool handoff contains repeated spacing measurements, load [references/measurement-normalization.md](references/measurement-normalization.md), preserve every raw value, and apply its bounded even-grid rule only to qualifying semantic spacing clusters. When responsive or viewport-specific acceptance applies, define one per-slice viewport acceptance matrix using [references/workflow.md](references/workflow.md): required, optional, and excluded entries record size, environment, state, and acceptance-evidence source.
 8. Add a traceable delta table for every material visual difference: acceptance ID, selected-source target, current runtime, target contract, priority, shared-or-local owner, evidence IDs, and verification. Keep source and runtime columns separate. Define real per-item asset ownership and an isolated failure fallback; never accept one generic placeholder as the normal asset for every product.
 9. For every slice and multi-slice task, add one `Ready for dev-frontend <slice>`, `Partial`, or `Not Ready` verdict. Do not issue `Ready` when the selected source is unavailable or unapproved, rights/use are insufficient, target viewport/state is uncertain, a P1 asset has no accepted owner/fallback, or an exact proposed value lacks owner approval.
 10. Before finalizing:
@@ -56,6 +56,9 @@ Turn a selected visual source and verified product facts into an implementation-
 - Do not generate or edit images, build prototype code, or edit product source.
 - Do not invent metrics, features, routes, permissions, states, backend behavior, or runtime evidence.
 - Do not treat pixels as proof of exact tokens, component ownership, behavior, accessibility, or implementation feasibility.
+- Do not overwrite raw selected-source measurements during normalization or apply the
+  default even-grid rule to element size, position, typography, border, radius,
+  icons, or assets.
 - Do not use current runtime computed geometry as the selected-source target or call it already aligned without independent source evidence.
 - Do not activate Design System Spec merely because a feature reuses existing tokens or components.
 - Do not create a parallel component library or token system when the project already has an owner.
@@ -95,6 +98,8 @@ or `Not Ready`, and every
 - lint command and result
 - diff command and regression verdict, or `Not applicable` when a Feature Spec leaves `DESIGN.md` unchanged or the authority is created for the first time
 - per-slice spec IDs and readiness
+- raw selected-source measurement evidence and the normalization record for every
+  applicable repeated spacing cluster
 - per-slice viewport acceptance matrix or a justified `Not applicable` verdict,
   including required/optional/excluded entries, size, environment, state, and
   acceptance-evidence source; hand the same matrix to `dev-frontend`,
@@ -107,6 +112,7 @@ Never present a source image or specification as implemented or runtime-verified
 - See [references/usage.md](references/usage.md) for routing and artifact examples.
 - See [references/workflow.md](references/workflow.md) for profile-specific specification and handoff details.
 - See [references/visual-source.md](references/visual-source.md) when qualifying and translating the selected visual source.
+- Read [references/measurement-normalization.md](references/measurement-normalization.md) when selected-element evidence contains repeated spacing measurements or an even-grid policy applies.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) when a selected source controls exact visual acceptance or a current runtime must be compared; validate each stage offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
 - See [references/multi-surface.md](references/multi-surface.md) when a request covers more than one page, flow, or business domain.
 - See [references/documentation-boundaries.md](references/documentation-boundaries.md) for durable UI locations, PRD links, and consumer reads.

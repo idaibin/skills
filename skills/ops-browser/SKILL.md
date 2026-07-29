@@ -11,7 +11,12 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 
 ## Workflow
 
-1. Identify the target hostname, path, environment, account/session, and task goal. Resolve the viewport set with the precedence in `references/usage.md`; do not add a category the user did not request.
+1. Identify the target hostname, path, environment, account/session, and task goal.
+   For an ordinary desktop operation with no requested viewport or matrix, use the
+   package default `1920 x 1080` CSS pixels. Otherwise resolve the viewport set with
+   the precedence and exceptions in `references/usage.md`; do not add a category the
+   user did not request. Verify the effective page viewport rather than treating a
+   successful resize call as proof.
 2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work.
 3. Enumerate browser sessions and existing tabs only when the available tool exposes them; never invent missing tab/window identity.
    Imported bookmarks, history, and saved credentials may accelerate target discovery or user login, but do not prove an active session, account/workspace identity, conversation ownership, authorization, or operation state.
@@ -19,7 +24,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    reuse or refresh the named Capability Snapshot, and return a Handoff Result
    with the same `operation_id`; do not reconstruct bridge policy locally. App-native
    ChatGPT Project/Thread operations never enter this Skill.
-5. Choose the surface mode and evidence plan based on capability and state ownership. For social, publishing, design-collaboration, development-collaboration, or admin sites, also select one generic operation pattern from `references/platform-operations.md`; load platform-specific detail only when it changes the action or proof boundary. For repeatable multi-route/state or element capture, load the optional manifest in [references/usage.md](references/usage.md); do not impose it on one-off inspection. For selected-source visual capture/comparison, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and require caller-provided source identity, viewport/state, pass number, capture targets, computed checks, and state-restoration plan. For an already-isolated browser-layer failure, load `references/devtools-debugging.md`; route unexplained or cross-system root-cause requests back to the caller for diagnosis before browser operation.
+5. Choose the surface mode and evidence plan based on capability and state ownership. For social, publishing, design-collaboration, development-collaboration, or admin sites, also select one generic operation pattern from `references/platform-operations.md`; load platform-specific detail only when it changes the action or proof boundary. For an Axure product-source inventory, load [references/axure-product-evidence.md](references/axure-product-evidence.md); for Lanhu selected-element measurements, load [references/lanhu-ui-evidence.md](references/lanhu-ui-evidence.md). For repeatable multi-route/state or element capture, load the optional manifest in [references/usage.md](references/usage.md); do not impose it on one-off inspection. For selected-source visual capture/comparison, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and require caller-provided source identity, viewport/state, pass number, capture targets, computed checks, and state-restoration plan. For an already-isolated browser-layer failure, load `references/devtools-debugging.md`; route unexplained or cross-system root-cause requests back to the caller for diagnosis before browser operation.
 6. Reuse the evidence-bearing session and target tab when it can be identified safely. If the user requires no window, mouse, or keyboard interruption, prefer the host-provided Codex in-app Browser, which is classified as non-interrupting. For controlled Chrome, Computer Use, system accessibility/coordinate automation, or another visible/user-owned surface, require direct background-safety capability evidence; otherwise return Degraded Evidence or stop. Open an isolated managed page only when the task does not depend on unavailable user-profile state.
 7. Prefer browser/tool APIs, DOM inspection, roles, labels, test ids, and deterministic actions over manual guessing.
 8. Gather only evidence the tool can actually expose: UI state, DOM/accessibility, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads. For visual comparison, independently retain design and runtime captures, produce side-by-side/overlay/diff evidence, and read applicable computed font, final color/contrast, geometry, alignment, truncation, hover/focus, state, and breakpoint facts.
@@ -82,11 +87,15 @@ By default, report the selected surface/mode, target and identity evidence, dire
 observations, actions, validation, cleanup, and `Not verified` gaps. For delegated,
 state-changing, transfer, debug, or selected-source comparison work, also return the Capability Snapshot, matching
 `operation_id`, before/action/side-effect/after evidence, protocol state, retained
-artifacts, and blocked or ambiguous claims required by the selected reference.
+artifacts, and blocked or ambiguous claims required by the selected reference. For
+Axure or Lanhu extraction, also return the named evidence handoff and its coverage
+ledger without making product or UI-contract decisions.
 
 ## References
 - See [references/usage.md](references/usage.md) for routing, workflow, and the optional repeatable-capture manifest; see [references/eval-cases.md](references/eval-cases.md) for evals.
 - See [references/platform-operations.md](references/platform-operations.md) for reusable operation patterns, external-write gates, and thin platform adapters.
+- Read [references/axure-product-evidence.md](references/axure-product-evidence.md) for bounded Axure page/requirement/interaction coverage and the product evidence handoff.
+- Read [references/lanhu-ui-evidence.md](references/lanhu-ui-evidence.md) for Lanhu selected-element measurements, assets, and spacing-normalization candidates.
 - See [references/devtools-debugging.md](references/devtools-debugging.md) for localhost, test, and authorized production browser debugging.
 - See [references/browser-operation-protocol.md](references/browser-operation-protocol.md) for the shared Capability Snapshot, handoff schema, operation state machine, and degraded mode.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for same-viewport/state capture, evidence levels, pass-scoped computed checks, and tab restoration; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).

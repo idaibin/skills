@@ -9,6 +9,7 @@
 | `Update only our existing PRODUCT.md with these confirmed product decisions.` | Trigger Artifact Update after authorization and path verification. |
 | `Clarify the one unresolved decision that changes subscription cancellation behavior, then produce the smallest feature spec.` | Trigger internal clarification within Feature Spec. |
 | `Stress-test the permission, recovery, and acceptance decisions for this product slice before writing its spec.` | Trigger the internal decision pressure test, resolve the load-bearing frontier one question at a time, then synthesize only the selected slice. |
+| `Use this fixed Axure version and its complete browser evidence to write implementation-ready product slices.` | Trigger Feature Spec composition after consuming the Axure coverage ledger; keep prototype coverage, product decisions, and UI-spec ownership distinct. |
 
 ## Non-Trigger Eval
 
@@ -40,6 +41,7 @@
 | Home, tasks, contacts, and profile are requested together | Produce one short product index plus independently readable Feature Specs for confirmed slices. | Merges independent behavior into one omnibus Feature Spec. |
 | Some requested features are confirmed and others remain open | Author confirmed slice facts and give each its own Ready verdict; keep open slices and blockers in the index. | Lets one open feature block all slices or invents unconfirmed behavior. |
 | UI direction already exists | Link the applicable UI contract and keep only behavior, user-visible meaning, and acceptance. | Repeats colors, typography, components, tokens, or page geometry. |
+| Axure pages, requirements, and named flows are the product source | Consume `axure-product-evidence/v1`, group evidence by user job, trace behavior to evidence IDs, and report prototype coverage separately from per-slice Ready. | Treats screenshots/page titles as complete, copies visual geometry into PRD, or hides inaccessible branches. |
 | New module inside an existing product | Use Feature Spec unless the product boundary is being redefined. | Uses Foundation merely because work is large. |
 | Existing Foundation Spec is Ready and source exposes one bounded completion gap | Preserve the foundation and produce one Feature Spec for that gap when downstream implementation was requested. | Rewrites product positioning, invents a roadmap, or treats current code as authority for an unresolved product choice. |
 | Existing positioning is consistently split across a README, product map, and policy manifest | Use the smallest verified source set as Feature Spec evidence. | Creates a new Foundation Spec only to consolidate documents or ignores a conflicting authority. |
@@ -83,6 +85,7 @@
 | Implementation boundary | Stops before source and Git mutation. | Edits code, stages, commits, or runs implementation. |
 | Interface boundary | Defines no technical interface; cites a verified existing interface fact only when the implementation handoff would otherwise be ambiguous, and routes current topology mapping to `repo-map`. | Designs a new interface, inventories implementation topology, or cites an interface without a handoff need. |
 | Verification honesty | Marks behavior/workflow/live gates `Not verified` without direct evidence. | Treats static validation as live proof. |
+| Prototype evidence coverage | Requires fixed source/revision, page and requirement ledgers, interaction evidence, conflicts, and coverage totals; blocks only affected slices when required evidence is missing. | Declares complete coverage with unknown hotspots, unvisited pages, static-only behavior, or missing required states. |
 | Output | Reports evidence, decisions, slice, artifact, readiness, blockers, handoffs, validation, and gaps. | Omits material open decisions or claims runtime success. |
 
 ## Scoring
