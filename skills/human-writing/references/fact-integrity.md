@@ -7,6 +7,7 @@ Good prose cannot repair unsupported content. Build a source ledger before draft
 - [Source Ledger](#source-ledger)
 - [Source Precedence](#source-precedence)
 - [Claim Trace](#claim-trace)
+- [Research-To-Draft Loop](#research-to-draft-loop)
 - [Rewrite Rules](#rewrite-rules)
 - [Drafting From Sparse Notes](#drafting-from-sparse-notes)
 - [Soft-Copy Integrity](#soft-copy-integrity)
@@ -163,6 +164,17 @@ Prefer evidence according to the claim type:
 A first-party source is often authoritative about what it released, documented, measured, or announced. It is not automatically independent proof that its product is faster, better, safer, more reliable, or more widely adopted.
 
 Do not collapse these statuses. `The documentation says`, `the vendor reports`, `I tested`, `an independent test found`, and `I infer` are different claims.
+
+## Research-To-Draft Loop
+
+Use this loop only when the user requests research, citations, or current external support, or when a material claim cannot be completed safely from supplied evidence. Do not expand a bounded rewrite into open-ended research.
+
+1. Freeze the research question, intended artifact, permitted source boundary, freshness needs, and stop condition.
+2. Build the claim skeleton from supplied material first. Mark only missing evidence that could change the argument, scope, or reader decision as a research gap.
+3. Research those gaps in priority order: primary or official evidence for specifications and first-party facts, then independent evidence for comparison, performance, impact, or contested interpretation. Record source interest, date, scope, and verification status as part of the existing claim trace.
+4. Attach each accepted source to the exact claim and outline role it supports. Keep research notes and discarded leads out of publishable prose unless the method or visible provenance is part of the requested artifact.
+5. Draft after material gaps are closed, explicitly qualified, or removed. Put citations close to the supported wording and keep quotation, number, baseline, actor, and modality within the source's actual scope.
+6. Audit the finished artifact once: every material external claim has direct support; every citation supports the nearby wording; no secondary summary launders a first-party claim into independent proof; unused research does not broaden the conclusion. Stop when the defined question is answered and further collection would only add background or duplicate support.
 
 ## Rewrite Rules
 

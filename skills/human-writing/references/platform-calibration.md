@@ -186,9 +186,14 @@ Use:
 - a direct first sentence
 - one contrast or observation
 - a natural final line
+- a single post for one self-contained claim; a thread only when ordered steps, dependent claims, or a necessary evidence chain cannot remain clear in one post
+- a short teaser pointing to durable long-form when compression would remove the argument's conditions, evidence, or limitations
 - a plain ownership or sponsorship disclosure when the post recommends an interested product
 - a link only when the post remains understandable without it
 - exact technical nouns, metric qualifiers, and source attribution even when space is tight
+- current verification of material character, media, link, and disclosure constraints only when the user needs publication-ready compliance; otherwise treat requested length as an editorial brief
+
+Return a draft unless the user separately authorizes publication or scheduling through an available external-action owner. Approval of wording alone does not authorize posting.
 
 Avoid:
 

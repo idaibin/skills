@@ -15,6 +15,7 @@ the actual output; package validation alone does not establish writing quality.
 | `先用英文理清这些 notes，再给我自然的中文终稿，不要展示英文稿。` | Use a private English-first pass and return Chinese only |
 | `找出这篇文章为什么像 AI 写的。` | Diagnose concrete prose problems |
 | `当前草稿写 PostgreSQL，旧对话写 SQLite。以当前草稿为准。` | Apply explicit source precedence and preserve PostgreSQL |
+| `基于这些资料和最新官方文档写一篇带引用的技术文章，只研究会影响结论的缺口。` | Freeze a bounded research question, close material evidence gaps, and audit claim-to-citation support |
 
 ## Non-Trigger Eval
 
@@ -39,6 +40,8 @@ the actual output; package validation alone does not establish writing quality.
 | Edit restraint | Every change has a concrete reader benefit; already effective prose remains intact | The result performs synonym churn or house-style normalization |
 | Long-form structure | Repetition and structural defects are mapped before sections move or disappear | A single-pass rewrite silently discards unique facts or author phrasing |
 | Platform adaptation | Shape and density change while claims and disclosures remain stable | Platform stereotypes alter the substance |
+| Social container selection | One claim stays a single post; dependent reasoning uses a thread or durable long-form without losing scope | Engagement formulas or arbitrary splitting replace content structure |
+| Research loop | Research is limited to material gaps and every cited source directly supports the nearby claim | Decorative collection, citation laundering, or unsupported synthesis broadens the conclusion |
 | English-first Chinese final | English is private scaffolding and Chinese is checked against the source | The intermediate becomes evidence or appears unrequested |
 | Missing evidence | The output omits, qualifies, or names the minimum missing facts | Plausible detail hides an evidence gap |
 | Safety | Destructive commands and actual secrets are blocked without rejecting safe prose | Unsafe material is published as routine guidance |

@@ -22,7 +22,7 @@ description: "Use when drafting, rewriting, proofreading, diagnosing, or adaptin
 
 ## Workflow
 
-1. **Lock the source.** Identify authoritative facts, judgments, unknowns, protected text, visibility limits, and claim status across the whole artifact. Apply `references/fact-integrity.md` when the task contains multiple sources, technical claims, external facts, attribution, or disclosures.
+1. **Lock the source.** Identify authoritative facts, judgments, unknowns, protected text, visibility limits, and claim status across the whole artifact. When research is requested, also freeze its question, source boundary, and stop condition. Apply `references/fact-integrity.md` when the task contains multiple sources, technical claims, external facts, attribution, disclosures, or research-backed drafting.
 2. **Set the target.** Infer the primary operation, reader, purpose, language, length, platform, and genre from the request and source. Ask only about missing information that would materially change the result.
 3. **Calibrate voice.** Prefer a supplied author sample, then the stance and confidence visible in the source, then a neutral precise voice. Never manufacture first-person experience or quirks.
 4. **Choose the smallest useful structure.** Use a private outline for new long-form or multi-claim work. For an existing long artifact, map sections and repetition before restructuring. Skip planning ceremony for short or local edits.
@@ -62,7 +62,7 @@ Hard requirements:
 
 ## Reference Loading
 
-- Load [fact-integrity.md](references/fact-integrity.md) for source precedence, claim status, attribution, disclosures, external claims, or technical preservation.
+- Load [fact-integrity.md](references/fact-integrity.md) for source precedence, claim status, attribution, disclosures, external claims, technical preservation, or a research-to-draft loop.
 - Load [content-modes.md](references/content-modes.md) only when a genre changes the structure materially.
 - Load [platform-calibration.md](references/platform-calibration.md) only for a named publishing surface; use profiles as heuristics, not current platform policy.
 - Load [style-diagnostics.md](references/style-diagnostics.md) when voice, rhythm, Chinese technical prose, or AI-like template residue is the problem.
