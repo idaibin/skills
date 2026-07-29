@@ -55,6 +55,10 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
 - `agents/openai.yaml` contains `display_name`, `short_description`, and a
   `default_prompt` that routes through `$<skill-name>`; `short_description` stays
   within OpenAI's 25-64 character UI range.
+- Portable `description` remains required even when a provider should expose the Skill
+  only for explicit use. For OpenAI, express that provider-specific choice with
+  `policy.allow_implicit_invocation: false`; never copy invocation-control fields from
+  another provider into portable `SKILL.md` frontmatter.
 
 ## Instructions And References
 
@@ -64,8 +68,31 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
   references loaded on demand.
 - Keep references one level deep and link every reference directly from `SKILL.md`.
 - Add a `## Contents` section to references longer than 100 lines.
-- Avoid duplicated guidance. One behavior has one authoritative source.
+- Give each ordered step a checkable transition or completion criterion. Prefer an
+  observable state, exhausted bounded set, or named stop condition over vague verbs
+  such as understand, improve, or finish.
+- Inline what every execution branch needs; disclose branch-specific reference behind
+  a direct, condition-worded pointer. Co-locate a concept's rule, exception, and stop
+  condition instead of scattering fragments across the entrypoint and references.
+- Avoid duplicated guidance. One behavior has one authoritative source; repeat a short,
+  stable term only when it intentionally anchors routing or execution.
 - A package may not require another Skill or repository-root file to perform its job.
+
+## Maintenance And Pruning
+
+For every Skill revision, inspect each touched sentence against four questions:
+
+1. Does it change routing, execution, safety, evidence, output, or a completion gate?
+2. Is it still true for the supported hosts and current owner boundary?
+3. Is the same meaning already authoritative elsewhere?
+4. Does a conditional branch belong behind an existing reference pointer?
+
+Delete no-op, stale, or duplicated prose instead of rephrasing it. Prefer positive
+target behavior; retain prohibitions for real safety or authority guardrails and pair
+them with the permitted action or stop path. Do not split a workflow merely because it
+is long: first sharpen completion criteria and disclose conditional reference, then
+split only when an independently useful invocation or a proven sequence failure needs
+a separate context boundary.
 
 ## Skill Boundaries
 

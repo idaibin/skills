@@ -8,6 +8,12 @@ Select exactly one profile from repository evidence before applying framework-sp
 - Keep state close to its owner unless an established context, store, route loader, query, or feature hook owns it.
 - Preserve hook ordering, effect dependencies, subscription cleanup, error boundaries, suspense/loading behavior, and repository lint rules.
 - Preserve React Router, Next.js, or TanStack Router paths, params, search, loaders/actions, layouts, and navigation contracts.
+- When several boolean props encode mutually exclusive modes or create invalid
+  combinations, replace the mode axis with an established variant, explicit component,
+  slot, or compound composition. Keep genuinely independent booleans as booleans.
+- Use compound components or context only when related consumers share a stable owner
+  and coordinated state or structure; preserve a simple prop API when composition would
+  add indirection without removing a real invalid state or repeated assembly.
 - Add memoization only for an evidenced render or calculation boundary; do not use it as decoration.
 
 ## Vue Composition

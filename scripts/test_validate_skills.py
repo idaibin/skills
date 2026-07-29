@@ -138,6 +138,45 @@ class ValidatorTests(unittest.TestCase):
         metadata.write_text(metadata.read_text().replace("Process representative samples", "Too short"))
         self.assertTrue(any("25-64 characters" in error for error in VALIDATOR.validate(root)))
 
+    def test_openai_explicit_only_policy_is_valid(self) -> None:
+        root = self.make_repo()
+        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
+        metadata.write_text(
+            metadata.read_text() + "policy:\n  allow_implicit_invocation: false\n",
+            encoding="utf-8",
+        )
+        self.assertEqual([], VALIDATOR.validate(root))
+
+    def test_openai_invocation_policy_requires_boolean(self) -> None:
+        root = self.make_repo()
+        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
+        metadata.write_text(
+            metadata.read_text() + 'policy:\n  allow_implicit_invocation: "false"\n',
+            encoding="utf-8",
+        )
+        self.assertTrue(
+            any("allow_implicit_invocation must be a boolean" in error for error in VALIDATOR.validate(root))
+        )
+
+    def test_openai_invocation_policy_rejects_null_value(self) -> None:
+        root = self.make_repo()
+        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
+        metadata.write_text(
+            metadata.read_text() + "policy:\n  allow_implicit_invocation:\n",
+            encoding="utf-8",
+        )
+        self.assertTrue(
+            any("allow_implicit_invocation must be a boolean" in error for error in VALIDATOR.validate(root))
+        )
+
+    def test_openai_invocation_policy_rejects_null_mapping(self) -> None:
+        root = self.make_repo()
+        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
+        metadata.write_text(metadata.read_text() + "policy:\n", encoding="utf-8")
+        self.assertTrue(
+            any("top-level policy must be a mapping" in error for error in VALIDATOR.validate(root))
+        )
+
     def test_unknown_frontmatter_field_fails(self) -> None:
         root = self.make_repo()
         skill = root / "skills" / "sample-skill" / "SKILL.md"

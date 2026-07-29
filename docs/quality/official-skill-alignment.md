@@ -17,6 +17,9 @@ This catalog uses four current primary baselines:
 - Keep references one level deep and load them only when needed.
 - Require `agents/openai.yaml` because OpenAI is a supported catalog target; do not
   present it as portable or Claude-specific metadata.
+- Keep portable `description` metadata for every package. When an OpenAI Skill is
+  explicit-only, set `policy.allow_implicit_invocation: false` in `agents/openai.yaml`
+  rather than importing another provider's invocation-control frontmatter.
 - Do not add `agents/anthropic.yaml` or speculative vendor mirrors. Add a provider
   adapter only for a documented contract and an intentionally supported distribution
   target; keep plugin/marketplace manifests at their provider-defined distribution

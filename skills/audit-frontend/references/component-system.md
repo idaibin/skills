@@ -19,6 +19,13 @@ Before creating a component:
      reference but has different business ownership;
    - new component only with an explicit gap.
 
+For React, inspect boolean props as an API state space rather than flagging their count.
+Report a composition problem only when mutually exclusive flags permit invalid states,
+callers repeatedly assemble the same coordinated structure, or a child must reach
+through unrelated props to control shared state. Prefer an established variant, slot,
+explicit component, or compound composition that makes valid states clear. Preserve
+independent booleans and simple prop APIs when composition would only add indirection.
+
 Do not clone a component for a minor style change. Do not force unrelated
 business cases into one abstraction merely because their JSX resembles each
 other.
@@ -59,6 +66,8 @@ external black box:
 - treat generator output as project-owned source: compare local edits and
   consumers before updating rather than assuming regeneration is harmless;
 - keep compound component hierarchy valid;
+- keep compound context scoped to the owning composition and fail clearly when a
+  required child is rendered outside it;
 - use `asChild`/slot composition only when element semantics and refs remain
   correct;
 - retain dialog/menu/popover focus and labeling behavior supplied by the

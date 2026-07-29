@@ -54,6 +54,26 @@ def openai_interface(path: Path) -> dict[str, str]:
     }
 
 
+def openai_invocation_policy(path: Path) -> bool | None:
+    try:
+        payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    except yaml.YAMLError as error:
+        raise ValueError(f"invalid YAML: {error}") from error
+    if not isinstance(payload, dict):
+        raise ValueError("top-level mapping is required")
+    if "policy" not in payload:
+        return None
+    policy = payload["policy"]
+    if not isinstance(policy, dict):
+        raise ValueError("top-level policy must be a mapping")
+    if "allow_implicit_invocation" not in policy:
+        return None
+    value = policy["allow_implicit_invocation"]
+    if not isinstance(value, bool):
+        raise ValueError("policy.allow_implicit_invocation must be a boolean")
+    return value
+
+
 def section_has_content(text: str, heading: str) -> bool:
     lines = text.splitlines()
     in_code_fence = False
@@ -247,6 +267,7 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
     else:
         try:
             interface = openai_interface(openai_file)
+            openai_invocation_policy(openai_file)
         except (OSError, UnicodeDecodeError, ValueError) as error:
             errors.append(f"{package.name}: openai.yaml {error}")
             interface = {}
