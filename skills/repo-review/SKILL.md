@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when current Worktree changes or a fixed snapshot/range, including a resolved pull request, need coordinated read-only Standards and Spec findings or a selected-source visual-completion claim reviewed; use audit-* for a bounded domain audit with no change basis."
+description: "Use when current Worktree changes or a fixed snapshot/range, including security-sensitive changes, need coordinated read-only Standards and Spec findings or completed provider evidence integrated; also reviews selected-source visual-completion claims. Use audit-* for a bounded domain audit and a host security workflow for a security-only review or scan."
 ---
 
 # Repository Review
@@ -32,6 +32,10 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
    If no trustworthy spec exists, mark Spec `Not verified`; do not infer one from the diff.
+   When a security claim is material, apply the Security Evidence rules in
+   [references/standards-and-spec.md](references/standards-and-spec.md): keep
+   evidence status separate from P0-P3 severity and never promote a pattern or
+   dangerous API to a validated vulnerability.
    When the change involves frontend visual or UI-contract behavior, add the
    conditional frontend design-compliance subflow: product requirements or product
    Feature Spec -> selected-source UI Feature Spec -> root `DESIGN.md` ->
@@ -42,7 +46,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    materially applies, load the shared code-quality reference and apply its
    fixed-basis attribution rules inside the Standards axis.
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
-8. Select only applicable profiles. Delegate bounded frontend or Rust specialist work only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator. Retain integration, deduplication, severity, and final ownership for the review basis.
+8. Select only applicable profiles. Delegate bounded frontend or Rust specialist work only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator. Route a security-only change review, vulnerability scan, or validation to an available host security workflow; do not collapse its execution into this Skill. When completed provider evidence is part of a broader review, verify and integrate it while retaining this review's basis, deduplication, evidence status, severity, and verdict.
 9. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
 10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
 11. Run only non-mutating repository checks needed for the selected basis and risk.
@@ -63,6 +67,12 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Business-domain modeling without a change basis; use `domain-modeling`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
 - A direct bounded frontend-only or Rust-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. When a review basis exists, keep `repo-review` as coordinator.
+- A repository/path vulnerability scan with no change basis; use the host's
+  security-scan capability when available. A bounded Rust or frontend domain
+  audit remains with the matching `audit-*` Skill.
+- A security-only review or scan of a Git-backed change set; use the host's security
+  diff-scan capability. Use this Skill when security is one axis of a broader change
+  review or to integrate completed scan evidence into its Standards and Spec verdict.
 - Implementing accepted fixes; use the matching `dev-*` skill.
 - Staging, commits, pushes, squash, cleanup, or other Git mutation; use `repo-delivery` after explicit authorization.
 - External ChatGPT sending or browser/client operation; use the matching operations skill.
@@ -77,6 +87,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Do not recommend `git add .`, `git add -A`, directory-wide adds, or broad wildcards unless explicitly approved.
 - Do not claim whole-repository, PR, release, or package coverage from partial evidence.
 - Do not report findings without reachable evidence and concrete impact.
+- Treat scanner matches, dangerous APIs, dependency presence, and incomplete
+  source-to-sink paths as candidates, not validated vulnerabilities. Verify any
+  provider result against this review basis before it affects the verdict.
 - Do not turn unchanged repository debt, optional lint advice, code size, or a
   language/framework signal into a finding against the selected basis. Prove
   whether the basis introduces, expands, exposes, or directly depends on it. Label
@@ -96,7 +109,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. For the visual-completion profile, report schema validation, source/revision/approval, evidence coverage, both comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether the completion claim is supported. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
+Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Security findings also state evidence status, proof gaps, and any provider/method used; `fixed` requires a new reviewed basis and replay of the original validation path. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. For the visual-completion profile, report schema validation, source/revision/approval, evidence coverage, both comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether the completion claim is supported. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-chatgpt`; it never implies sending.
 
 ## References
 

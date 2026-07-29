@@ -24,7 +24,10 @@
 | `Validate this multipart review package, then review it.` | Trigger Review-package basis only after integrity verification. |
 | `Coordinate frontend and Rust review where relevant, including authorization risks.` | Trigger `repo-review`; use bounded frontend/Rust specialists only when their evidence is independently necessary. |
 | `Review this auth diff for authorization bypasses and token exposure.` | Trigger `repo-review`; fix the change basis and assess the risks in the Standards axis. |
-| `Security-review commit X as a change set against its parent.` | Trigger Fixed-basis `repo-review` and inspect the immutable commit diff as an ordinary Standards review. |
+| `Review commit X against its parent across repository standards and requirements, including security risks.` | Trigger Fixed-basis `repo-review`; security remains one Standards axis of the broader review. |
+| `Security-review commit X as a change set against its parent.` | Prefer the available host security diff-scan workflow; this is a security-only Git-backed review. |
+| `Run a professional security diff scan for this fixed range.` | Prefer the available host security diff-scan workflow; do not collapse its scan phases into `repo-review`. |
+| `Integrate this completed security-provider report into the broader review of the same fixed range.` | Trigger `repo-review`; verify report attribution, basis, native evidence, and proof gaps before mapping status or affecting the broader verdict. |
 | `Review this branch against both repository standards and the originating specification.` | Trigger two-axis `repo-review`. |
 | `Review this selected-source frontend change and verify whether its visual-complete claim is supported.` | Trigger `repo-review` with the conditional visual-completion profile and require the structured evidence plus cited runtime artifacts. |
 | `Review this fixed range's OpenAPI authority, compatibility diff, generated client, backend conformance, consumer states, and clean CI.` | Trigger `repo-review` with protocol-contract profile. |
@@ -39,6 +42,7 @@
 | `Map the repository architecture and reusable contracts into docs/repo-map/README.md.` | Prefer `repo-map`. |
 | `Find why this test fails.` | Do not trigger this Skill; use the host's built-in diagnosis under effective instructions. |
 | `Audit this current Rust endpoint path for token leakage; there is no diff to review.` | Prefer `audit-rust`. |
+| `Scan this current repository for vulnerabilities; there is no change basis.` | Prefer an available host security-scan capability; do not widen `repo-review` or recreate a scanner. |
 | `Audit this frontend architecture for accessibility and performance without a review basis.` | Prefer `audit-frontend`. |
 | `Audit this Rust service for concurrency and memory risks without a review basis.` | Prefer `audit-rust`. |
 | `Find all duplicate and dead code currently in this React app; there is no change basis.` | Prefer `audit-frontend` with a bounded scope, not `repo-review`. |
@@ -68,6 +72,10 @@
 | Current worktree differs from reviewed SHA | Treat worktree content as contamination. | Uses it to clear a finding. |
 | Range touches React, Rust, docs, and CI | Delegate bounded specialist surfaces and consolidate root causes. | Runs every profile globally or concatenates reports. |
 | Fixed diff changes authentication or tenant authorization | Inspect the reachable source, control, boundary, tests, and consumers in the ordinary Standards pass. | Skips the risk because no separate scanner was requested or available. |
+| A scanner flags a dangerous API but attacker reachability and the trust boundary are incomplete | Record `suspected`, counterevidence, proof gaps, and the minimum next check; do not let P0-P3 severity imply confidence. | Calls the pattern a validated vulnerability or suppresses it without checking the cited path. |
+| Static evidence proves source, missing control, sink, supported boundary, preconditions, and impact but no runtime check ran | Record `likely`, the static confidence basis, and the exact validation gap. | Calls it `validated` because the bug class is severe or the call chain looks complete. |
+| A bounded test or realistic local interface reproduces the original security consequence | Record `validated` with the method, artifact/evidence, basis, and remaining limits. | Claims whole-system coverage or omits how the original path was exercised. |
+| A patch exists and a new test passes, but the original vulnerable path was not replayed on the new basis | Do not record `fixed`; require the new fixed basis plus original-path replay and focused regression evidence. | Treats code presence, review approval, or a green unrelated test as fix validation. |
 | Review package is incomplete | Stop package-based conclusions. | Treats partial evidence as complete. |
 | Repo-map path is stale | Search from nearest existing ancestor at the basis and route map repair to `repo-map`. | Trusts the map or edits it. |
 | Review request contains no Git mutation authorization | Keep files, Git, GitHub, and remotes unchanged. | Stages, commits, comments, or pushes. |
@@ -94,6 +102,7 @@
 | Context collaboration | Uses repo maps only for navigation and verifies facts at the basis. | Trusts or edits the map. |
 | Specialist composition | Delegates bounded frontend/Rust paths when needed and retains final scope, integration, severity, and report ownership for the review basis. | Hands off the whole review or concatenates reports. |
 | Standards axis | Checks applicable repository guidance, architecture, correctness, security, performance, and maintainability with cited evidence. | Treats generic preferences as hard repository violations. |
+| Security evidence | Keeps `suspected`, `likely`, `validated`, and `fixed` separate from P0-P3; records source/control/sink/path/boundary, counterevidence, proof gaps, confidence, method, and basis; verifies provider output before integration. | Promotes a scanner match or dangerous API directly, treats static confidence as runtime validation, or calls a patch fixed without replay. |
 | Evidence-gated code quality | For applicable duplication, dead/unused code, abstraction, and coupling signals, proves reachability, impact, owner/location, basis attribution, and a falsifiable verification path. | Reports similarity, size, a single wrapper/trait/memo/clone, or optional lint advice by itself. |
 | Spec axis | Checks requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and scope creep; marks the axis `Not verified` when no trustworthy spec exists. | Infers a spec from the diff or claims compliance without a source. |
 | Frontend design compliance | Only for visual/UI-contract changes, separately traces product requirements/product Feature Spec, selected-source UI Feature Spec, root DESIGN.md, adapter/config, and runtime/browser evidence while keeping repo-map navigation-only. | Creates a parallel review gateway, requires audit-frontend, lets Feature Spec types substitute for each other, or collapses authority and runtime gaps into one claim. |

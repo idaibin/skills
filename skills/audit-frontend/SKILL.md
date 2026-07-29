@@ -86,6 +86,11 @@ owner; do not invent one.
   universal React rule.
 - Do not edit, stage, commit, post review comments, or deliver code in audit mode. `repo-review` owns Worktree and immutable review coordination; `repo-delivery` alone owns Git mutation. Route accepted remediation to `dev-frontend`.
 - Do not treat build/lint success, source CSS, current-runtime similarity, or a single screenshot as selected-source visual acceptance. Lead with P0-P3 visual findings and mark missing desktop/breakpoint/state evidence `Not verified`.
+- When a selected frontend profile exposes a security-relevant condition, return
+  the browser/build/IPC evidence, authoritative control boundary,
+  counterevidence, and proof gap without claiming exploit validation or fix
+  completion. Route an explicit vulnerability scan, attack-path, or PoC-validation
+  request to an available host security workflow.
 
 ## Do Not Use For
 
@@ -97,6 +102,9 @@ owner; do not invent one.
 - Actual staging, commit, rebase/squash, push, or delivery; use `repo-delivery`.
 - Browser or real desktop runtime operation; use `ops-browser` or `ops-client`.
 - A backend-only Rust implementation or audit; use `dev-rust` or `audit-rust`.
+- A general repository/path vulnerability scan or explicit exploit validation;
+  use an available host security workflow. Keep bounded frontend env, browser
+  storage, redirect/DOM, permission-UX, and desktop-adapter evidence here.
 
 ## Output Contract
 

@@ -13,6 +13,30 @@ affect the review verdict, and a blocking pre-existing issue must be directly
 required by the changed path. Language/framework profiles refine reachability;
 they do not replace the shared finding gate.
 
+## Security Evidence
+
+Apply this only when a security claim is material. Keep status separate from P0-P3:
+
+- **suspected:** scanner match, dangerous primitive, or incomplete trace;
+- **likely:** static evidence establishes input, control, sink, reachable path,
+  supported boundary, preconditions, and impact without material counterevidence;
+- **validated:** a bounded test, PoC, debugger/sanitizer trace, or realistic local
+  interface reproduction confirms the original consequence;
+- **fixed:** a new fixed basis replays the original validation path and focused
+  regression evidence confirms the consequence no longer occurs.
+
+Record source, control, sink or protected operation, path, trust boundary,
+preconditions, supporting and counterevidence, proof gaps, confidence, and next
+validation step. API names, dependency presence, strings, authentication, frontend
+hiding, or a partial chain do not prove exploitability; a patch or new test alone does not prove `fixed`.
+
+Ordinary static review stays self-contained. Route explicit security execution to
+the matching host workflow: Git change set -> diff scan; current repository or path
+-> standard scan; named candidate -> validation. Do not collapse that workflow into
+this review. When integrating completed results, preserve provider-native artifacts,
+verify their basis and evidence before mapping status, and expose missing runtime
+proof. Dynamic checks require an authorized safe target and avoid destructive production use.
+
 ## Spec Axis
 
 Locate the originating requirement in this order when available:

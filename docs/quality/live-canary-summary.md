@@ -4,9 +4,9 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:3abec9f36ff0c019e817f8822129f8ebf942202563553bdeafddfa6dcc5e70b9`
+- Package digest: `sha256:4f6b1241742cb40e46688328d978d35eede86010bc28b5f68ac5d6ef55d2eb77`
 - Host environment: Codex desktop task; local CLI check: `0.145.0`; model:
-  `gpt-5.6-terra`; fresh, read-only explorer sessions.
+  `gpt-5.6-terra`; fresh, ephemeral, read-only CLI sessions.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -25,9 +25,9 @@ behavior certification and does not replace target-environment runtime validatio
 | Isolated project-local install | Pass | The five scoped packages were copied into a disposable project without a global install. |
 | Installed-copy parity | Pass | Recursive comparison found no difference between each installed package and its source package. |
 | Installed package-local validator | Pass | All five installed validators ran with isolated standard-library Python against the installed synthetic fixture. |
-| Explicit host invocation | Pass | A fresh read-only explorer session loaded all five scoped packages and summarized each package's owner boundary correctly. |
-| Implicit routing | Pass | A separate fresh read-only explorer session routed five generic requests to `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and `ops-browser` respectively, without naming those Skills in the requests. |
-| Browser capability stop gate | Pass | A separate fresh read-only explorer session selected `ops-browser`, inspected active capabilities, found no actual browser automation, returned `Not verified`, and made no screenshot, geometry, computed-style, or visual-completion claim. |
+| Explicit host invocation | Pass | Fresh read-only sessions loaded the five scoped packages; the final changed `repo-review` copy was reloaded separately and correctly stated its ordinary-review, explicit-scan, completed-provider-evidence, and stop boundaries. |
+| Implicit routing | Pass | A separate fresh read-only session routed five generic requests to `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and `ops-browser` respectively, without naming those Skills in the requests. |
+| Browser capability stop gate | Pass | Implicit routing selected `ops-browser`; a separate fresh read-only session found no actual browser automation, returned `Not verified`, and made no screenshot, geometry, computed-style, or visual-completion claim. |
 | Browser two-pass visual closure | Not verified | The canary host exposed no browser automation supporting local navigation, viewport control, screenshots, DOM geometry, and computed styles. Same-state pass 1 and pass 2 evidence therefore was not produced. |
 
 ## Sanitized Scenario Ledger
@@ -69,6 +69,21 @@ host catalog changes; disable unrelated packages when routing precision matters.
 The host also reported an authentication warning from an unrelated optional
 connector. It did not affect package discovery, loading, routing, or the browser
 capability stop gate and is not evidence about these Skills.
+
+## External Security Provider Compatibility
+
+This is a separate compatibility probe, not part of the five-package digest. Static
+contract inspection confirms the intended split: ordinary security-sensitive change
+review stays in `repo-review`; a security-only Git diff review/scan, repository/path
+scan, or named-finding validation belongs to the matching host security workflow;
+completed provider evidence may return to `repo-review` for a broader verdict.
+
+Implicit provider routing was not stable with the full host catalog enabled because
+the host shortened Skill descriptions to fit its context budget and did not expose
+the same provider set in every fresh session. Treat automatic provider discovery in
+large catalogs as `Not verified`; explicitly invoke or verify the selected provider
+before claiming scan coverage. Do not compensate by embedding a partial scanner in
+`repo-review`, `audit-frontend`, or `audit-rust`.
 
 ## Verdict
 

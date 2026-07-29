@@ -73,6 +73,11 @@ Do not rewrite a working local design merely to resemble an external project.
 - Apply stricter templates to new projects only when adopted. Migrate established projects incrementally at real change boundaries; never rename mechanically for visual consistency.
 - Do not edit, stage, commit, post review comments, or deliver code in audit mode. Route approved remediation to `dev-rust`. `repo-review` owns Worktree and immutable review coordination; `repo-delivery` alone owns Git mutation.
 - Do not claim profiles were reviewed when their workload, runtime, target, dataset, or tool support was unavailable. Mark the exact gap `Not verified`.
+- When a selected Rust profile exposes a security-relevant condition, return the
+  domain evidence—input, control, sink or protected operation, reachable path,
+  trust boundary, counterevidence, and proof gap—without claiming exploit
+  validation or fix completion. Route an explicit vulnerability scan, attack-path,
+  or PoC-validation request to an available host security workflow.
 
 ## Do Not Use For
 
@@ -82,6 +87,9 @@ Do not rewrite a working local design merely to resemble an external project.
 - Owning Worktree readiness or immutable repository/range/PR/release coordination; use `repo-review`, which may delegate a bounded Rust surface here.
 - Commit, push, squash, branch cleanup, or remote proof; use `repo-delivery` only when the user explicitly requests delivery.
 - Review of a fixed Worktree or immutable change basis, including authorization or token risks; use `repo-review`.
+- A general repository/path vulnerability scan or explicit exploit validation;
+  use an available host security workflow. Keep bounded Rust ownership, Axum,
+  Tauri, SQLite, unsafe, and FFI audits here.
 - A frontend-only change with no Rust or SQLite boundary.
 
 ## Output Contract

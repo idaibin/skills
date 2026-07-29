@@ -88,8 +88,23 @@ updates `main`, force-pushes, or counts as reviewer approval.
 
 This is not mandatory ceremony. A known Rust implementation can start directly with
 `dev-rust`. `repo-review` evaluates correctness, security, performance, and
-maintainability together on its selected basis. Security risk does not create a
-separate routing path or external scanning dependency.
+maintainability together on its selected basis. Security risk does not create a new
+catalog Skill or mandatory external dependency.
+
+For security-sensitive review, keep three levels distinct:
+
+- ordinary change review stays inside `repo-review`;
+- `audit-rust` or `audit-frontend` supplies bounded domain evidence only when its
+  language/framework semantics are independently necessary;
+- a security-only Git-backed review, vulnerability scan, complete security coverage,
+  attack-path analysis, or PoC validation uses an available host security provider.
+
+The provider owns scan execution and its native artifacts; do not embed or partially
+recreate that workflow inside `repo-review`. When a broader review consumes a completed
+provider result, `repo-review` verifies its basis, maps evidence status, deduplicates
+findings, and owns only the broader review's P0-P3 readiness verdict. Provider absence
+or an unrun dynamic check is a named proof gap, not permission to claim equivalent
+coverage.
 
 For a frontend surface with applicable contracts, `dev-frontend` reads the effective
 instructions, product requirements or product Feature Spec, selected-source UI
