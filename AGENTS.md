@@ -17,7 +17,7 @@ This file defines how AI agents should work on this repository. It is not the pr
   involving authentication, authorization, secrets, untrusted input, or other
   security risks; assess those risks as part of the ordinary Standards axis.
 - Use `repo-review` for read-only review of the current Worktree/index, a fixed immutable SHA/range, or a verified review package. Resolve pull requests to fixed base/head SHAs; apply Release only as a conditional profile over a fixed basis.
-- Use `ask-chatgpt` for local ChatGPT packages or explicitly authorized ChatGPT review, research, visual exploration, and decision challenge after the Codex-first gate; use `ops-browser` only for delegated low-level browser operations.
+- Use `ask-ai` for local external-AI packages or explicitly authorized review, research, visual exploration, and decision challenge with ChatGPT, Gemini, DeepSeek, Kimi, or another named provider after the Codex-first gate; use `ops-browser` only for delegated low-level browser operations.
 - Use `repo-delivery` for categorized commits by default, explicit single commits, pushes, evidence-based branch integration, cleanup, and other Git mutations.
 
 Use `.codex/` as the local task workspace. Store temporary files directly under one

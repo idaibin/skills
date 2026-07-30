@@ -1,6 +1,6 @@
 ---
 name: ops-browser
-description: "Use when directly operating or verifying a specified page, capturing same-state selected-source/runtime visual and computed evidence, or gathering evidence for an isolated browser-layer failure; require an available browser, verified target, and proven capability, not ChatGPT orchestration, desktop-client proof, or cross-system diagnosis."
+description: "Use when directly operating or verifying a specified page, capturing same-state selected-source/runtime visual and computed evidence, or gathering evidence for an isolated browser-layer failure; require an available browser, verified target, and proven capability, not external-AI orchestration, desktop-client proof, or cross-system diagnosis."
 ---
 
 # Ops Browser
@@ -20,7 +20,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work.
 3. Enumerate browser sessions and existing tabs only when the available tool exposes them; never invent missing tab/window identity.
    Imported bookmarks, history, and saved credentials may accelerate target discovery or user login, but do not prove an active session, account/workspace identity, conversation ownership, authorization, or operation state.
-4. When `ask-chatgpt` delegates a browser route, validate the Handoff Request fields,
+4. When `ask-ai` delegates a browser route, validate the Handoff Request fields,
    reuse or refresh the named Capability Snapshot, and return a Handoff Result
    with the same `operation_id`; do not reconstruct bridge policy locally. App-native
    ChatGPT Project/Thread operations never enter this Skill.
@@ -50,14 +50,14 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - Local dirty-tree review or commit readiness; use `repo-review`.
 - Review of a fixed browser-facing code change, including token or authorization risks; use `repo-review`.
 - Browser-only evidence when the user explicitly requested a real desktop app window.
-- App-native ChatGPT Project/Thread discovery, creation, messaging, response reads, lifecycle tracking, or model-evidence policy; use `ask-chatgpt`. This is not browser operation.
-- ChatGPT collaboration orchestration, package construction, send authorization, round counting, conversation attribution, or response archiving; use `ask-chatgpt`. This skill may perform only the low-level webpage actions that its coordinator explicitly routes to a browser.
+- App-native ChatGPT Project/Thread discovery, creation, messaging, response reads, lifecycle tracking, or model-evidence policy; use `ask-ai`. This is not browser operation.
+- External-AI collaboration orchestration, provider selection, package construction, send authorization, round counting, conversation attribution, or response archiving; use `ask-ai`. This skill may perform only the low-level webpage actions that its coordinator explicitly routes to a browser.
 
 ## Hard Rules
 
 - Do not claim a capability from the skill text. Capability exists only when the active tool exposes and successfully performs it.
 - Name the selected browser surface. Never call desktop built-in state, cloud/agent state, Chrome profile state, and an isolated managed session interchangeable.
-- When called by `ask-chatgpt`, require its provided surface, authorization state, package path, round scope, selected browser route/capability, conversation mapping or explicit first-conversation policy, Chat/Work interface, model/reasoning preference, and ordered authorized fallbacks. Verify the rendered selections before submit and follow only that route and fallback order. If capability, identity, or selection evidence fails, return the blocked state to the coordinator; do not switch sessions, models, reasoning modes, or create a managed fallback independently.
+- When called by `ask-ai`, require its provider, recipient, surface, authorization state, package path, round scope, selected browser route/capability, context/conversation mapping or explicit first-conversation policy, interface, model/reasoning preference, and ordered authorized same-provider fallbacks. Verify rendered selections before submit and follow only that route and fallback order. If capability, identity, or selection evidence fails, return the blocked state to the coordinator; do not switch providers, sessions, models, reasoning modes, or create a managed fallback independently.
 - For a bridge handoff, require `schema_version`, `operation_id`, authorization, route, target, capability snapshot, preconditions, expected postcondition, and retry policy. Return the same ID and a protocol state; never create or replace the ID.
 - Before a state-changing action, inspect the requested target and prior evidence. If the ID is already submitted/completed or prior side effects are uncertain, return `blocked` or `ambiguous` without acting.
 - Follow the active browser tool's own discovery, tab, locator, visibility, cleanup,

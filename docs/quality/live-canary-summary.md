@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:e411dc8abfd3b0d790eb9ce1a74ed2f1d2fea424b5fdc5cbcd04d321f365db6d`
+- Package digest: `sha256:7d52b87182d2918eef1d34df059e22251631719f911c296b35f47a665643842c`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
   fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are

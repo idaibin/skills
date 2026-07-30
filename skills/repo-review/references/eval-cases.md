@@ -51,15 +51,15 @@
 | `Apply the accepted frontend findings.` | Prefer `dev-frontend`. |
 | `Stage, commit, and push the reviewed files.` | Prefer `repo-delivery`. |
 | `Split this future migration into tasks.` | Do not trigger this Skill; use the host's built-in planning. |
-| `Send the review package to ChatGPT.` | Prefer `ask-chatgpt`. |
+| `Send the review package to ChatGPT.` | Prefer `ask-ai`. |
 | `Define the product behavior, permissions, user-visible errors, and acceptance before implementation.` | Prefer `product-spec`. |
 
 ## Independent Review Outlet Eval
 
 | Prompt | Expected |
 | --- | --- |
-| `Review this fixed range locally, then explicitly prepare one independent ChatGPT architecture challenge against the same basis.` | Keep `repo-review` as owner and emit one lightweight `ask-chatgpt` handoff. |
-| `Review this fixed range locally; no external reviewer was requested.` | Emit no `ask-chatgpt` handoff. |
+| `Review this fixed range locally, then explicitly prepare one independent ChatGPT architecture challenge against the same basis.` | Keep `repo-review` as owner and emit one lightweight `ask-ai` handoff. |
+| `Review this fixed range locally; no external reviewer was requested.` | Emit no `ask-ai` handoff. |
 | `The ChatGPT review request was submitted, but no attributed response arrived.` | Preserve the local findings and verdict; report the external review axis `Not verified` without creating or clearing a finding. |
 
 ## Scenario Eval

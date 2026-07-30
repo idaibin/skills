@@ -79,8 +79,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 
 | User prompt | Expected result |
 | --- | --- |
-| `Implement the React slice, then explicitly prepare an independent ChatGPT implementation challenge without applying its findings.` | Keep `dev-frontend` as owner and emit one lightweight `ask-chatgpt` handoff. |
-| `Implement and validate the React slice locally; no external review was requested.` | Emit no `ask-chatgpt` handoff. |
+| `Implement the React slice, then explicitly prepare an independent ChatGPT implementation challenge without applying its findings.` | Keep `dev-frontend` as owner and emit one lightweight `ask-ai` handoff. |
+| `Implement and validate the React slice locally; no external review was requested.` | Emit no `ask-ai` handoff. |
 
 ## Quality Eval
 

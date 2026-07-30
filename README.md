@@ -89,12 +89,15 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 | `ops-browser` | A browser page or bounded platform action must be operated or verified, including same-viewport/state source/runtime capture and computed visual evidence. |
 | `ops-client` | A Tauri, Electron, or native desktop client must be verified against its real process and window. |
 
-### ChatGPT and Writing Extensions
+### External AI and Writing Extensions
 
 | Skill | Use when |
 | --- | --- |
-| `ask-chatgpt` | Codex needs to ask ChatGPT for a local request package or an explicitly authorized independent review, research result, visual exploration, or decision challenge. |
+| `ask-ai` | Codex needs a local request package or an explicitly authorized independent ChatGPT, Gemini, or other named external-AI review, research result, visual exploration, or decision challenge. |
 | `human-writing` | Source-grounded writing must be drafted, rewritten, diagnosed, or adapted in the requested final language while preserving facts, voice, attribution, and disclosures; English-first support for a Chinese final is optional. |
+
+`ask-chatgpt` was renamed to `ask-ai`. Legacy wording and ChatGPT-only defaults remain
+compatible through `ask-ai`; the old package is not maintained as a second owner.
 
 ## Composition
 

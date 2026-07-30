@@ -88,7 +88,7 @@ Do not claim Baseline or an overlay passed when a required tool, target, runtime
 
 ## Output Contract
 
-Report scope; detected project, crate/module, toolchain, and ownership boundaries; applicable authorities and existing owners; selected Rust risk overlays; reuse/extension/reference decision; changed files and contract chain; validation mapped to Baseline and each selected overlay; Worktree drift; excluded work and optional checks; and `Not found` or `Not verified` gaps. Add new-interface justification, manifest/docs lifecycle, failures, and target/runtime evidence only when applicable. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-chatgpt`; never send implicitly.
+Report scope; detected project, crate/module, toolchain, and ownership boundaries; applicable authorities and existing owners; selected Rust risk overlays; reuse/extension/reference decision; changed files and contract chain; validation mapped to Baseline and each selected overlay; Worktree drift; excluded work and optional checks; and `Not found` or `Not verified` gaps. Add new-interface justification, manifest/docs lifecycle, failures, and target/runtime evidence only when applicable. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-ai`; never send implicitly.
 
 ## References
 

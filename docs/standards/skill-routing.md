@@ -22,7 +22,7 @@ and output.
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
-| `ask-chatgpt` | local request packages and authorized ChatGPT collaboration | local artifact or authorized external action |
+| `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
 
 ## Split Or Profile
@@ -93,7 +93,7 @@ rewrite authority; the normalized immutable basis then returns to fixed-basis re
 before final integration.
 
 When an explicitly authorized external review needs a GitHub repository URL, branch,
-and immutable SHA, `ask-chatgpt` may hand a locally reviewed basis to
+and immutable SHA, `ask-ai` may hand a locally reviewed basis to
 `repo-delivery` for review publication. This exception is limited to a verified
 GitHub-backed non-default, non-protected branch and separately authorized commit and
 push actions. Without those conditions, the external-review owner supplies only the

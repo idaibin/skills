@@ -17,7 +17,7 @@ from pathlib import Path
 from typing import Any
 
 
-SCHEMA_VERSION = "ask-chatgpt-app-native-canary/v1"
+SCHEMA_VERSION = "ask-ai-app-native-canary/v1"
 REQUIRED_OPERATIONS = {
     "list_projects",
     "list_threads",

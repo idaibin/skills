@@ -1,6 +1,6 @@
 # Browser Operation Protocol
 
-This protocol is shared by `ask-chatgpt` and `ops-browser`. Repository authors
+This protocol is shared by `ask-ai` and `ops-browser`. Repository authors
 maintain its canonical source at `protocols/browser-operation-v1.md` and use the
 synchronization script to copy it into each published package, so installed
 skills remain self-contained. Repository validation rejects stale or modified
@@ -25,6 +25,7 @@ schema_version: browser-operation/v1
 snapshot_id: cap-<stable-task-scope>
 captured_at: <ISO-8601 or Not verified>
 route:
+  provider: <chatgpt|gemini|deepseek|kimi|other|not-applicable>
   browser_mode: <desktop-built-in-browser|chatgpt-cloud-browser|current-chrome-explicit|standalone-playwright-explicit|isolated-managed-session|manual>
   browser_id: <stable id or Not verified>
   session_id: <stable id or Not verified>
@@ -108,18 +109,19 @@ schema_version: browser-operation/v1
 operation_id: <task>:<round>:<action>
 round_id: <stable external-review round id>
 attempt: <positive integer; starts at 1>
-caller: ask-chatgpt
+caller: ask-ai
 intent: <inspect|navigate|create-conversation|compose|attach|submit|capture-response|cleanup>
 authorization:
   external_send: <authorized|not-authorized>
   scope: <exact package, round, and action>
 route:
-  surface: <standard-chat|project>
-  project_or_chat_id: <stable id or Not verified>
+  provider: <chatgpt|gemini|deepseek|kimi|other>
+  surface: <standard-chat|project|quick-chat|notebook|conversation|provider-specific>
+  context_id: <stable project, notebook, or conversation id|Not verified>
   account_workspace: <personal|organization|Not verified>
   browser_mode: <verified mode>
-  chatgpt_interface: <chat|work|not-applicable|Not verified>
-  chatgpt_model: <requested label or stable id|not-applicable|Not verified>
+  provider_interface: <chat|work|provider-specific|not-applicable|Not verified>
+  provider_model: <requested label or stable id|not-applicable|Not verified>
   reasoning_mode: <preferred label|not-applicable|Not verified>
   reasoning_fallbacks:
     - <ordered authorized fallback label or none>
@@ -140,10 +142,20 @@ prior_evidence:
   - <evidence from an earlier attempt or none>
 ```
 
-The bridge owns these ChatGPT selection preferences and their fallback order;
-`ops-browser` verifies the rendered controls and returns direct selection evidence.
-Stored labels are not capability proof. If the preferred selection is unavailable,
-use only the first verified configured fallback or return `blocked`.
+`provider: other`, `surface: provider-specific`, and
+`provider_interface: provider-specific` are labels, not capability evidence. When no
+dedicated provider reference exists, the request must name the exact provider and its
+live Capability Snapshot and preconditions must prove current target identity, a clean
+authorized composer, intended input, unique submit control, observable side effect,
+completion signal, and response attribution. A missing or `Not verified` required
+field blocks every state-changing handoff; schema acceptance never makes the provider
+route executable.
+
+The bridge owns provider, recipient, interface, model, reasoning preferences, and
+their authorized fallback order. `ops-browser` verifies rendered controls and
+returns direct selection evidence. Stored labels are not capability proof. If a
+same-provider preference is unavailable, use only the first verified configured
+fallback or return `blocked`. Never change provider as an implicit fallback.
 
 ## Handoff Result
 

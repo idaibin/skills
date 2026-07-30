@@ -13,10 +13,10 @@
       ]
     },
     {
-      "title": "ChatGPT Collaboration",
-      "description": "Ask ChatGPT for an explicitly authorized independent review, research result, visual exploration, or decision challenge.",
+      "title": "External AI Collaboration",
+      "description": "Ask ChatGPT, Gemini, or another named AI for an explicitly authorized independent review, research result, visual exploration, or decision challenge.",
       "skills": [
-        "ask-chatgpt"
+        "ask-ai"
       ]
     },
     {

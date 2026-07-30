@@ -75,7 +75,7 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 
 ## Output Contract
 
-Report scope; detected project, stack, and ownership boundaries; applicable authorities and existing owners; selected frontend risks; reuse or new-surface decision; changed files and contracts; validation; Worktree drift and its disposition; excluded work; and `Not verified` gaps. When applicable, add selected-source readiness, acceptance-to-owner mapping, both visual review passes, and evidence artifacts under selected risks and validation. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-chatgpt`; never send implicitly.
+Report scope; detected project, stack, and ownership boundaries; applicable authorities and existing owners; selected frontend risks; reuse or new-surface decision; changed files and contracts; validation; Worktree drift and its disposition; excluded work; and `Not verified` gaps. When applicable, add selected-source readiness, acceptance-to-owner mapping, both visual review passes, and evidence artifacts under selected risks and validation. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-ai`; never send implicitly.
 
 ## References
 

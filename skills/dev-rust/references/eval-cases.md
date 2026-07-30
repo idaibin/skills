@@ -39,8 +39,8 @@ structure rules, validation expectations, or metadata.
 
 | User prompt | Expected result |
 | --- | --- |
-| `Implement the Rust slice, then explicitly prepare an independent ChatGPT security challenge without applying its findings.` | Keep `dev-rust` as owner and emit one lightweight `ask-chatgpt` handoff. |
-| `Implement and validate the Rust slice locally; no external review was requested.` | Emit no `ask-chatgpt` handoff. |
+| `Implement the Rust slice, then explicitly prepare an independent ChatGPT security challenge without applying its findings.` | Keep `dev-rust` as owner and emit one lightweight `ask-ai` handoff. |
+| `Implement and validate the Rust slice locally; no external review was requested.` | Emit no `ask-ai` handoff. |
 
 ## Overlay Selection Eval
 

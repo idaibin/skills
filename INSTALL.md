@@ -27,7 +27,7 @@ audit-java
 audit-rust
 ops-browser
 ops-client
-ask-chatgpt
+ask-ai
 human-writing
 ```
 
@@ -56,7 +56,7 @@ The publishable source directories are:
 - `skills/audit-rust`
 - `skills/ops-browser`
 - `skills/ops-client`
-- `skills/ask-chatgpt`
+- `skills/ask-ai`
 - `skills/human-writing`
 
 ## Install

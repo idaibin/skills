@@ -39,7 +39,7 @@ PROTOCOLS = {
         Path("skills/audit-frontend/references/specification-authorities.md"),
     ),
     Path("protocols/browser-operation-v1.md"): (
-        Path("skills/ask-chatgpt/references/browser-operation-protocol.md"),
+        Path("skills/ask-ai/references/browser-operation-protocol.md"),
         Path("skills/ops-browser/references/browser-operation-protocol.md"),
     ),
     Path("protocols/behavior-first-v1.md"): (

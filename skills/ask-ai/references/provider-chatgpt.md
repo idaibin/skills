@@ -50,9 +50,9 @@ of external review rounds.
    route constraint. If it is unavailable or cannot be verified, use another route
    only when the current request explicitly authorizes that fallback; otherwise make
    no external send and stop or return to Package-only.
-3. With no current-request route constraint, read the versioned durable record. For
-   `ask-chatgpt-defaults/v2`, apply `default_transport_mode`. For a legacy record,
-   preserve its previous `default_browser_mode` route meaning. A manual value stops
+3. With no current-request route constraint, read the ChatGPT section of a valid
+   Ask AI v1 record. If it is absent, read the ChatGPT-only legacy record described in
+   `browser-profile.md`. Preserve its previous route meaning; a manual value stops
    for current route selection.
 4. Without a durable record, preflight the Codex App-native Project/thread route
    first. A visible tool name is insufficient: the current schema, ChatGPT source
@@ -84,20 +84,14 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 ## Default Configuration
 
-Read explicit per-request settings first, then the durable local record described in
-[browser-profile.md](browser-profile.md). A valid v2 record requires
-`default_transport_mode`: `codex-app-native` or `desktop-built-in-browser` tries that
-route first, while `manual` stops before external action for a current selection. New
-v2 records explicitly write App-native. Missing or unknown v2 values fail closed. A
-record without `schema_version` is legacy: missing mode,
-`desktop-built-in-browser`, and `capability-auto` retain built-in-first behavior rather
-than being silently reinterpreted. Stored Chrome/standalone values never authorize
-those routes and otherwise fall back built-in-first; legacy `chatgpt-cloud-browser` or
-an unknown value requires explicit migration. An unversioned record that already
-contains `default_transport_mode`, or an unknown schema version, is ambiguous and
-blocks external action until explicitly repaired or migrated. Changing or migrating
-defaults requires explicit instruction. Availability is not authorization, and stored
-values are not current identity, capability, model, or reasoning evidence.
+Read explicit per-request settings first, then the ChatGPT section of the provider
+record described in [browser-profile.md](browser-profile.md). A valid Ask AI v1
+ChatGPT section may prefer `codex-app-native`, `desktop-built-in-browser`, or
+`manual`. When absent, preserve the documented `ask-chatgpt-defaults/v2` and
+unversioned ChatGPT-only legacy meanings. Missing, unknown, or ambiguous values fail
+closed. Changing or migrating defaults requires explicit instruction. Availability
+is not authorization, and stored values are not current identity, capability, model,
+or reasoning evidence.
 
 An explicit current-request route is a requirement, not a preference. Durable defaults
 remain preferences and may follow the normal fallback order unless the current request
@@ -136,7 +130,7 @@ every first state-changing call in a newly observed host/source state:
    | Codex repository task | local/remote Project ID | `{type: project, ...}`; never ChatGPT evidence |
    | Codex task without repository | projectless Codex request | `{type: projectless}`; never ChatGPT evidence |
 
-6. Run `python3 skills/ask-chatgpt/scripts/app_native_canary.py <snapshot.json>` on a
+6. Run `python3 skills/ask-ai/scripts/app_native_canary.py <snapshot.json>` on a
    sanitized snapshot when the package is available locally. Exit `0` means the
    target mapping is ready; `10` requires one-time activation and fresh reads; `20`
    requires browser fallback; `30` is blocked/inconsistent. The canary performs no

@@ -32,22 +32,22 @@ local path, repository identity, and article filenames are intentionally omitted
   mutations, groups local commits by semantic intent unless one commit is
   explicitly requested, chooses branch integration from evidence, and does not
   infer push from a commit request.
-- `ask-chatgpt` is the single explicitly authorized ChatGPT collaboration
+- `ask-ai` is the single explicitly authorized external-AI collaboration
   surface for review, research, visual exploration, and decision challenge.
   Codex chooses the theme, route, and boundaries; external advice must be
   verified against local evidence before it changes the implementation.
 - Planning, concrete-failure diagnosis, and task handoff stay in host/global
   instructions rather than becoming new public Skills.
 - Static package validation is evidence of structure only. Real routing,
-  cross-Skill workflow, external ChatGPT, UI prototype, global handoff triggers,
+  cross-Skill workflow, external provider routes, UI prototype, global handoff triggers,
   and Blog publication remain `Not verified` until their applicable Live Gates
   run.
 
 ## Public wording contract
 
-Both languages must identify `ask-chatgpt` as the user-facing action name,
+Both languages must identify `ask-ai` as the user-facing action name,
 cover review, research, visual exploration, and decision challenge, retain the
-Codex-first gate, and state that ChatGPT output is verified against the relevant
+Codex-first gate, and state that external-AI output is verified against the relevant
 local basis. Exact prose may differ between the catalog and the longer article.
 
 ## Validation gate

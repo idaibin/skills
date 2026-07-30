@@ -28,8 +28,8 @@
       "description": "Browser and desktop-client operation with runtime evidence."
     },
     "collaboration": {
-      "title": "ChatGPT Collaboration",
-      "description": "Authorized ChatGPT collaboration or a safe local request package."
+      "title": "External AI Collaboration",
+      "description": "Authorized named external-AI collaboration through a verified provider route, or a safe local request package."
     },
     "writing": {
       "title": "Writing Extension",
@@ -398,14 +398,19 @@
       ]
     },
     {
-      "name": "ask-chatgpt",
+      "name": "ask-ai",
       "category": "collaboration",
       "intents": [
-        "prepare a local request package for ChatGPT",
-        "run an explicitly authorized independent ChatGPT review, research task, visual exploration, or decision challenge"
+        "prepare a local request package for one or more named external AI providers",
+        "coordinate an explicitly authorized independent ChatGPT, Gemini, DeepSeek, Kimi, or other named AI result when its provider route is verified, otherwise stop at a safe local package or Not verified"
       ],
       "keywords": [
+        "ask AI",
         "ask ChatGPT",
+        "ask Gemini",
+        "DeepSeek",
+        "Kimi",
+        "multi-provider review",
         "independent review",
         "decision challenge",
         "research",
@@ -413,10 +418,12 @@
       ],
       "excludes": [
         "tasks Codex can complete directly",
-        "unapproved external communication"
+        "unapproved external communication",
+        "silent provider fallback"
       ],
       "related": [
-        "repo-review"
+        "repo-review",
+        "ops-browser"
       ]
     },
     {

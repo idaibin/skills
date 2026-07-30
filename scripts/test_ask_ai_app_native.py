@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Offline contract regressions for ask-chatgpt App-native routing."""
+"""Offline contract regressions for ask-ai App-native routing."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "skills" / "ask-chatgpt" / "scripts" / "app_native_canary.py"
+SCRIPT = ROOT / "skills" / "ask-ai" / "scripts" / "app_native_canary.py"
 SPEC = importlib.util.spec_from_file_location("app_native_canary", SCRIPT)
 assert SPEC and SPEC.loader
 CANARY = importlib.util.module_from_spec(SPEC)
@@ -77,18 +77,19 @@ def candidate(
 
 
 class AppNativeCanaryTests(unittest.TestCase):
-    def test_core_skill_and_routing_agree_on_empty_available_quick_chat(self) -> None:
-        skill = (ROOT / "skills" / "ask-chatgpt" / "SKILL.md").read_text(
+    def test_core_routes_chatgpt_native_rules_to_provider_reference(self) -> None:
+        skill = (ROOT / "skills" / "ask-ai" / "SKILL.md").read_text(
             encoding="utf-8"
         )
         routing = (
             ROOT
             / "skills"
-            / "ask-chatgpt"
+            / "ask-ai"
             / "references"
-            / "chatgpt-routing.md"
+            / "provider-chatgpt.md"
         ).read_text(encoding="utf-8")
-        self.assertIn("Empty ChatGPT Project/thread lists", skill)
+        self.assertIn("provider-chatgpt.md", skill)
+        self.assertIn("ChatGPT-only", skill)
         self.assertIn("an empty available source is", routing)
         self.assertIn("legal for a new Quick Chat", routing)
 

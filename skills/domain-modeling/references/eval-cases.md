@@ -25,8 +25,8 @@
 
 | User prompt | Expected result |
 | --- | --- |
-| `Resolve the shared rule, then explicitly prepare one independent ChatGPT primary-source domain challenge.` | Keep `domain-modeling` as owner and emit one lightweight `ask-chatgpt` handoff. |
-| `Resolve the shared rule from the supplied evidence only; no external review was requested.` | Emit no `ask-chatgpt` handoff. |
+| `Resolve the shared rule, then explicitly prepare one independent ChatGPT primary-source domain challenge.` | Keep `domain-modeling` as owner and emit one lightweight `ask-ai` handoff. |
+| `Resolve the shared rule from the supplied evidence only; no external review was requested.` | Emit no `ask-ai` handoff. |
 
 ## Quality Eval
 

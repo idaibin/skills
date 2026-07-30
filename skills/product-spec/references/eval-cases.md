@@ -29,8 +29,8 @@
 
 | Prompt | Expected |
 | --- | --- |
-| `Finish the product spec, then prepare the explicitly requested independent ChatGPT product challenge against its fixed facts.` | Keep `product-spec` as owner and emit one lightweight `ask-chatgpt` handoff. |
-| `Finish the product spec from local evidence only; no external review was requested.` | Emit no `ask-chatgpt` handoff. |
+| `Finish the product spec, then prepare the explicitly requested independent ChatGPT product challenge against its fixed facts.` | Keep `product-spec` as owner and emit one lightweight `ask-ai` handoff. |
+| `Finish the product spec from local evidence only; no external review was requested.` | Emit no `ask-ai` handoff. |
 
 ## Scenario Eval
 

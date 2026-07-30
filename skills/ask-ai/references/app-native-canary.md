@@ -14,7 +14,7 @@ evidence and never calls `create_thread`, sends a prompt, or changes App state.
 
 ```json
 {
-  "schema_version": "ask-chatgpt-app-native-canary/v1",
+  "schema_version": "ask-ai-app-native-canary/v1",
   "requested_surface": "project",
   "explicit_quick_chat": false,
   "project_id": "g-p-opaque",
@@ -56,7 +56,7 @@ evidence and never calls `create_thread`, sends a prompt, or changes App state.
 ## Run
 
 ```bash
-python3 skills/ask-chatgpt/scripts/app_native_canary.py snapshot.json
+python3 skills/ask-ai/scripts/app_native_canary.py snapshot.json
 ```
 
 Interpret the exit status:
@@ -78,5 +78,5 @@ Run the offline routing, legacy-ledger, attestation, prompt-fingerprint, candida
 and truncation regressions with:
 
 ```bash
-python3 -m unittest scripts.test_ask_chatgpt_app_native
+python3 -m unittest scripts.test_ask_ai_app_native
 ```

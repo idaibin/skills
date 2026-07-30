@@ -7,7 +7,7 @@
 - [Local Collection](#local-collection)
 - [External Action Gate](#external-action-gate)
 - [Local Codex Gate](#local-codex-gate)
-- [Project Collaboration And Codex](#project-collaboration-and-codex)
+- [Provider Collaboration And Codex](#provider-collaboration-and-codex)
 - [GitHub Repository Review](#github-repository-review)
 - [Combined Review Loop](#combined-review-loop)
 - [Review Package](#review-package)
@@ -16,6 +16,9 @@
 
 ## Trigger Examples
 
+- `Prepare one external-AI review package for ChatGPT and Gemini, but do not send it.`
+- `Send the same fixed package independently to ChatGPT and Gemini, then compare the attributed responses locally.`
+- `Use Gemini now for one architecture challenge; do not fall back to another provider.`
 - `Prepare/build/draft a review package for ChatGPT, but do not send it.`
 - `Use ChatGPT now to review this branch, save review.md, then fix confirmed issues.`
 - `Send this review-package.md to ChatGPT for one review round.`
@@ -37,13 +40,13 @@
 
 ## Non-Triggers
 
-- Local-only code review without ChatGPT Pro.
+- Local-only code review without an independently requested external-AI result.
 - Browser verification without a repository review loop.
 - GitHub-native PR review only.
 - Repository architecture or documentation mapping without an independent ChatGPT pass; use `repo-map`.
-- Security-only audit without ChatGPT as reviewer.
-- A task Codex, another Skill, or an available host tool can complete directly when no independent ChatGPT result was requested.
-- Quick web research or host image generation that does not require a ChatGPT-web artifact.
+- Security-only audit without a named external provider as reviewer.
+- A task Codex, another Skill, or an available host tool can complete directly when no independent external-AI result was requested.
+- Quick web research or host image generation that does not require a named-provider artifact.
 
 ## Local Collection
 
@@ -56,15 +59,15 @@ Before any external action, collect only local read-only context:
 - outbound `<review-id>-package.md` and inbound `<review-id>-response.md` paths inside that parent
 - bridge default record status
 - local Chrome profile directory candidates
-- cached ChatGPT tab candidates only if already available
+- cached provider tab candidates only if already available
 
-First record the Codex-first decision: why the local owner is sufficient, or what independently required ChatGPT result remains. For the latter, derive the theme, capability, authoritative inputs, boundaries, and stop condition from the user's natural request. Do not require the user to supply a standardized prompt or choose an internal profile.
+First record the Codex-first decision: why the local owner is sufficient, or what independently required external-provider result remains. For the latter, resolve the provider, theme, capability, authoritative inputs, boundaries, and stop condition from the user's natural request. Do not require the user to supply a standardized prompt or choose an internal profile.
 
 Do not attach to Chrome, claim tabs, open browser profiles, create ChatGPT sessions, send content, start Codex CLI, or change defaults during this phase. The words prepare, build, draft, package, or create review material authorize only this local phase. Explicit send authorization removes a later duplicate route prompt; it does not skip package preparation, scope checks, or redaction.
 
 ## External Action Gate
 
-Use this gate only when external sending or route selection is not already authorized. Package-only wording never opens the gate and never authorizes a send. An explicit request such as `send/submit/upload this to ChatGPT`, `use ChatGPT now to review`, `ask ChatGPT to review now`, or `外部互审 3 轮` authorizes sending on the safely resolved route for the stated scope and round count; do not ask the same route question again.
+Use this gate only when external sending, provider, or route selection is not already authorized. Package-only wording never opens the gate and never authorizes a send. An explicit request such as `send this to Gemini`, `use ChatGPT now to review`, or `让 ChatGPT 和 Gemini 独立审查` authorizes only the named recipients, stated scope, and round count; do not ask the same provider or route question again.
 
 Option handling:
 
@@ -99,13 +102,13 @@ option, so it must appear before `exec`; do not emit
 
 The screenshot-style permission prompt is produced by the local execution permission layer. This skill controls the choice gate and command parameters, not the system prompt UI.
 
-## Project Collaboration And Codex
+## Provider Collaboration And Codex
 
 - Use a verified Project for durable repository context, explicit Quick Chat for a
   projectless Native cloud task, and Standard Chat for a generic one-off pass; verify
   account/workspace identity separately. The current Native target maps only the
   first two surfaces. Generic Standard Chat uses a browser route or Package-only.
-- Follow `chatgpt-routing.md` for explicit routing, versioned durable preferences,
+- Follow `provider-chatgpt.md` for explicit routing, versioned durable preferences,
   capability/source preflight, exact target mapping, model/reasoning evidence, and
   browser fallback. When no durable record exists, try App-native first only when the
   verified Project/Quick Chat mapping passes. Preserve a legacy built-in-first record
@@ -114,9 +117,9 @@ The screenshot-style permission prompt is produced by the local execution permis
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.
 - A Project supplies context, not evidence: every pass still fixes its basis and sends a self-contained package.
-- Let `ask-chatgpt` own the package, send authorization, transport, surface, round
-  count, conversation mapping, and response archive. Use `ops-browser` only when a
-  browser route needs low-level browser actions and evidence.
+- Let `ask-ai` own provider selection, package, send authorization, transport,
+  surface, round count, context/conversation mapping, and response archive. Use
+  `ops-browser` only when a browser route needs low-level actions and evidence.
 - Treat `operation_id` as idempotency scope, not a correlation label. Never create a replacement ID after an interruption or ambiguous submit; reconcile the original target and expected postcondition first.
 - Use one `round_id` for the external review round and distinct operation IDs for
   independent state changes. App-native `create_thread` combines conversation
@@ -124,10 +127,10 @@ The screenshot-style permission prompt is produced by the local execution permis
   remain separate operations when the surface exposes them separately.
 - Distinguish the transport browser from the reviewer browser. The transport browser submits/captures the ChatGPT review; the reviewer browser is ChatGPT's desktop built-in or cloud/agent browser for target-page checks. Load `live-browser-review.md` whenever the latter is requested.
 
-An explicit external send authorizes one initial conversation submission on the
-selected route. Do not create conversations during Package-only work. Never interpret
-an unresolved client identity, missing assistant response, or expired completion wait
-as permission to send the initial prompt again.
+An explicit external send authorizes one initial conversation submission per named
+provider and authorized round. Do not create conversations during Package-only work.
+Never interpret an unresolved identity, missing response, or expired completion wait
+as permission to send the prompt again or switch provider.
 
 On browser routes, exchange capability and action state only through
 `browser-operation/v1`: `ops-browser` returns one Capability Snapshot, the bridge
@@ -138,8 +141,8 @@ session, workspace, conversation, authorization, or completion.
 
 ## GitHub Repository Review
 
-Use [github-repository-review.md](github-repository-review.md) when ChatGPT should
-read an authorized GitHub repository for repository-scale review or synthesis.
+Use [github-repository-review.md](github-repository-review.md) when a selected provider
+should read an authorized GitHub repository for repository-scale review or synthesis.
 Treat it as an evidence profile, not a new authorization mode: Package-only still
 forbids account connection and sending, while external use requires explicit
 authorization. Fix the repository and full commit SHA, inventory every in-scope
@@ -152,16 +155,16 @@ repository is not proof that the reviewer read the complete scope.
 Use one default loop:
 
 1. fix the Git/Worktree basis and build an unbiased package;
-2. run bounded `repo-review` and ChatGPT review independently, in parallel when safe;
+2. run bounded `repo-review` and the authorized provider review independently;
 3. deduplicate findings and verify each against current repository evidence;
 4. stop with locally confirmed/rejected findings unless the user also requested source fixes;
 5. when fixes are authorized, route them to the matching owner, rerun the failure path and proportionate checks, freeze a new Worktree fingerprint, and run Worktree `repo-review`; use immutable fixed-basis review only after a commit exists.
 
-Codex owns exact code, call-chain, generated-artifact, CI, and compatibility evidence. Ask ChatGPT to challenge product logic, scope, architecture tradeoffs, alternatives, and cross-domain blind spots. Do not expose one reviewer's conclusions to the other before the independent pass. Another ChatGPT round requires both explicit authorization and a confirmed P0/P1, permission/privacy/security, migration/irreversible, public-compatibility, production/release, or equivalent new risk. Keep safe local work moving and collect external-action or permission blockers at the end unless nothing useful can continue.
+Codex owns exact code, call-chain, generated-artifact, CI, and compatibility evidence. Ask each selected provider to challenge product logic, scope, architecture tradeoffs, alternatives, and cross-domain blind spots. Do not expose one reviewer's conclusions to another before independent capture. Another provider round requires explicit authorization and an independently useful result; high-risk follow-up also requires the confirmed risk gate defined by the task. Keep safe local work moving and collect external-action or permission blockers at the end unless nothing useful can continue.
 
 For a conditional research profile, load `research-profiles.md`, freeze one question and its relationship to the basis/decision, require primary-source citations, and locally verify every actionable implication. The profile never bypasses the same external-action gate, round ledger, attribution, or package separation.
 
-Use the same reference for UI/design, image, architecture, repository, product/domain, and open-ended collaboration. Select theme and ChatGPT capability separately. Deep Research may propose a plan for Codex to inspect before start; a separate prompt-refinement chat is optional and must not become a mandatory extra round.
+Use the same reference for UI/design, image, architecture, repository, product/domain, and open-ended collaboration. Select theme, provider, and verified capability separately. A provider research mode may propose a plan for Codex to inspect before start; a separate prompt-refinement chat is optional and must not become a mandatory extra round.
 
 ## Review Package
 
@@ -238,11 +241,11 @@ that changes page state. A retry keeps the same ID and is allowed only when the
 Handoff Result is `failed-before-submit` with direct evidence of no side effect.
 `submitted`, `acknowledged`, `completed`, and `ambiguous` must never be resent.
 
-Request acknowledgements in the form `PART <order>/<count> RECEIVED: <filename>; sha256=<manifest hash>` and compare them with the manifest before continuing. The complete sequence is one review round even though it uses multiple messages. Do not accept or archive substantive reviewer output before the final marker. Missing, duplicate, reordered, hash-mismatched, or unacknowledged parts make the round incomplete. When ChatGPT turns pasted text into an attachment, verify exactly one intended attachment for that send action; do not paste or upload again unless the first attempt is removed or clearly failed.
+Request acknowledgements in the form `PART <order>/<count> RECEIVED: <filename>; sha256=<manifest hash>` and compare them with the manifest before continuing. The complete sequence is one review round even though it uses multiple messages. Do not accept or archive substantive reviewer output before the final marker. Missing, duplicate, reordered, hash-mismatched, or unacknowledged parts make the round incomplete. When a provider turns pasted text into an attachment, verify exactly one intended attachment for that send action; do not paste or upload again unless the first attempt is removed or clearly failed.
 
 ## Review Artifact
 
-Write external ChatGPT responses to
+Write attributed external-provider responses to
 `<repo-root>/.codex/reviews/<review-id>-response.md` unless the user names another
 path. Use the same review ID as the outbound package. Do not use
 it for the outbound package and do not create it in Package-only mode unless
@@ -251,7 +254,7 @@ explicitly requested. Preserve previous useful passes by appending a dated pass.
 Each pass should record:
 
 - repository, branch, base, and commit/diff basis
-- ChatGPT URL or `Not verified`
+- provider plus conversation URL/stable identity or `Not verified`
 - browser/profile route
 - input and output method
 - reviewer findings

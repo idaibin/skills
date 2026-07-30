@@ -44,7 +44,7 @@ Resolve shared business language and rules from authoritative evidence. Default 
 
 ## Output Contract
 
-Return the scope and evidence, resolved glossary, business rules, relevant scenarios, contradictions, decisions, open questions, and `Not verified` gaps. Include lifecycle or bounded contexts only when the selected conditional profile requires them. If an artifact update was authorized, report its exact path, why it is a durable shared fact source, and the preserved Git state. An explicitly requested independent external challenge/research may hand one fixed question to `ask-chatgpt`; it never implies sending.
+Return the scope and evidence, resolved glossary, business rules, relevant scenarios, contradictions, decisions, open questions, and `Not verified` gaps. Include lifecycle or bounded contexts only when the selected conditional profile requires them. If an artifact update was authorized, report its exact path, why it is a durable shared fact source, and the preserved Git state. An explicitly requested independent external challenge/research may hand one fixed question to `ask-ai`; it never implies sending.
 
 ## References
 

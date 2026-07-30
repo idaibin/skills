@@ -115,7 +115,7 @@ conditional artifacts created or skipped, handoffs, validation, and every `Not f
 or `Not verified` gap. For a prototype source, also report fixed source identity,
 coverage verdict/totals, conflicts, and affected slices. When the user explicitly requests an independent external
 challenge or primary-source research, hand one fixed question/basis to
-`ask-chatgpt`; never send implicitly.
+`ask-ai`; never send implicitly.
 
 ## References
 

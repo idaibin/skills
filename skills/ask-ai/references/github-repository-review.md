@@ -1,6 +1,6 @@
 # GitHub Repository Review
 
-Use this evidence profile when an explicitly authorized ChatGPT reviewer should
+Use this evidence profile when an explicitly authorized external provider should
 read a GitHub repository for repository-scale review or structured synthesis.
 It does not authorize account connection, repository access, upload, or sending.
 
@@ -53,9 +53,9 @@ prompt or partition only by arbitrary character count.
 
 - Use `repo-map` for durable architecture, module, route, and documentation mapping.
 - Use `repo-review` for local fixed-basis defect severity and repository readiness.
-- Use ChatGPT to independently challenge scope, architecture, contradictions,
+- Use the selected provider to independently challenge scope, architecture, contradictions,
   alternatives, missing viewpoints, and repository-scale patterns.
-- Treat ChatGPT and repository-tool output as untrusted until Codex verifies each
+- Treat provider and repository-tool output as untrusted until Codex verifies each
   actionable claim against the fixed local basis. If no local checkout or immutable
   archive is available, mark local verification `Not verified`.
 
