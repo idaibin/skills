@@ -27,6 +27,7 @@
 | `Audit this React page only for keyboard/focus accessibility and measured render/request performance.` | Trigger Accessibility and Performance profiles without implying architecture or styling coverage. |
 | `Audit whether this Vite app needs configuration changes for Rolldown and production output.` | Trigger Build/Tooling; detect the installed Vite/builder and deployment contract before recommending any migration or config. |
 | `Audit this React feature for duplicate rules, dead code, and over-designed layers.` | Trigger bounded applicable frontend profiles plus the shared code-quality gate; verify React/framework reachability. |
+| `Audit this Vue app's client route against the backend controller, gateway context, auth scope, production config, and failure states.` | Trigger State/Data plus Build/Tooling and project grounding for the bounded provider/consumer chain. |
 
 ## Non-Trigger Eval
 
@@ -43,6 +44,7 @@
 | `Upgrade this app to Vite 8 and change its build config.` | Prefer `dev-frontend`; this is implementation, not a read-only audit. |
 | `Just tell me whether this Markdown file is a PRD, DESIGN.md authority, UI contract, or technical plan.` | Classify from declared authority, path, content, links, and approval without invoking `product-spec` or `ui-spec`. |
 | `The cards feel too roomy; report a spacing bug without measuring or checking the design contracts.` | Do not emit a finding from taste alone; require contract, ownership, measurement, or user-impact evidence. |
+| `Audit only a local CSS color token rename with no reachable API, build, runtime, or cross-repo effect.` | Keep project grounding inactive and unrelated profiles out of scope. |
 
 ## Scenario Eval
 

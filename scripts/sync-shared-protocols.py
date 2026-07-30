@@ -69,6 +69,14 @@ PROTOCOLS = {
         Path("skills/dev-java/references/java-engineering.md"),
         Path("skills/audit-java/references/java-engineering.md"),
     ),
+    Path("protocols/project-grounding-v1.md"): (
+        Path("skills/repo-map/references/project-grounding.md"),
+        Path("skills/dev-java/references/project-grounding.md"),
+        Path("skills/dev-frontend/references/project-grounding.md"),
+        Path("skills/audit-java/references/project-grounding.md"),
+        Path("skills/audit-frontend/references/project-grounding.md"),
+        Path("skills/repo-review/references/project-grounding.md"),
+    ),
 }
 
 

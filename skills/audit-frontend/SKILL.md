@@ -48,6 +48,11 @@ owner; do not invent one.
      Rspack, Next/Turbopack, plugins, resolution, environment, proxy, base,
      output, SSR/library, and deployment contracts.
    - **Desktop boundary:** frontend adapter, Tauri/native commands, DTO/errors, progress, cancellation, window/menu/shortcut behavior, and real-client evidence.
+   When a selected profile reaches API/gateway/auth, environment/build/deploy,
+   durable state, replacement compatibility, desktop/native integration, or another
+   repository, load [project grounding](references/project-grounding.md) and bound
+   the audit through its signal-to-evidence chain. Do not activate it from frontend
+   directories, framework presence, or literals alone.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
 6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, and trace only the applicable task-completion seam. When a root `DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
 7. Trace only selected profiles without changing the repository. Do not perform shallow checks for excluded profiles merely to imply coverage. When code-quality concerns materially apply, load the shared code-quality reference with audit semantics and the selected framework/build reachability rules.
@@ -72,6 +77,9 @@ owner; do not invent one.
   coverage.
 - Require reachable source evidence for ownership and reuse, and direct runtime or
   measurement evidence when the selected claim cannot be established statically.
+- A dev proxy, mock, local build, source config, or client route does not prove the
+  production gateway, authorization, persistence, packaging, or target runtime.
+  Report the exact gap as `Not verified`; do not convert it into a generic defect.
 - Do not report spacing, density, fixed geometry, nested scrolling, or overlay
   behavior from taste or pattern matching alone. Require a contract violation,
   competing ownership, measured inconsistency, or concrete user impact; otherwise
@@ -140,3 +148,6 @@ Start with the inspection snapshot, selected product, framework, styling, and au
 - Read [usage.md](references/usage.md) for trigger, routing, and profile examples.
 - Read [eval-cases.md](references/eval-cases.md) for trigger, non-trigger, scenario, quality, and scoring evals.
 - See [references/codebase-design.md](references/codebase-design.md) only for a selected public-module, seam, abstraction, locality, or testability audit.
+- Read [references/project-grounding.md](references/project-grounding.md) when a
+  selected frontend audit crosses runtime/config, API/auth, durable state,
+  compatibility, desktop/native, or cross-repository boundaries.

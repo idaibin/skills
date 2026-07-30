@@ -39,6 +39,11 @@ never outranks a working local contract.
      allocation/serialization, caches, remote calls, metrics, health, and failure modes.
    - **Migration/compatibility:** JDK, Spring Boot, `javax`/`jakarta`, build tool,
      dependency, database, packaging, or configuration-generation transitions.
+   Activate [project grounding](references/project-grounding.md) only for semantic
+   signals involving runtime/config precedence, packaged artifacts, public contracts,
+   durable data, legacy replacement, auth/security, or cross-repository delivery.
+   Use the grounding chain to bound adjacent evidence; do not scan every profile or
+   repository merely because corresponding files exist.
 4. Load [Java engineering](references/java-engineering.md) for every audit. Load
    [codebase design](references/codebase-design.md) for module/API/testability analysis
    and [code quality](references/code-quality.md) only when maintainability is in scope.
@@ -78,6 +83,12 @@ never outranks a working local contract.
   MyBatis choices, or utility base classes. Use them only as comparative questions.
 - Do not label every large service, annotation, field injection, missing interface,
   `@Transactional`, cache, executor, or SQL query as a finding. Prove reachability and impact.
+- Treat annotations, exclusions, dependencies, credential-shaped values, file size,
+  and scanner matches as signals, not verdicts. Prove ownership, reachability, impact,
+  and counterevidence; redact sensitive values from output.
+- Treat source configuration, packaged configuration, and effective runtime as
+  separate evidence. A local boot or compilation cannot clear a target-profile,
+  service-registration, migration, or external-integration gap.
 - Verify route and method authorization together, including tenant/data scope and
   negative tests. Treat CSRF/session/token decisions according to the actual client
   and trust model rather than universal slogans.
@@ -120,4 +131,7 @@ readiness verdict.
   Spring, persistence, integration, testing, and comparative open-source lessons.
 - Read [codebase design](references/codebase-design.md) for module/API/testability audits.
 - Read [code quality](references/code-quality.md) for material maintainability audits.
+- Read [project grounding](references/project-grounding.md) when the selected audit
+  activates runtime/config, packaging, public contract, durable data, replacement,
+  auth/security, or cross-repository risks.
 - See [eval cases](references/eval-cases.md) for routing and finding-quality scenarios.

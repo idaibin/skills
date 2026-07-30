@@ -28,10 +28,19 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 3. Build the smallest complete read set from changed or explicitly owned paths. A `repo-map` artifact may guide navigation but is never review proof.
 4. In Worktree mode, inventory full status but deeply classify only the requested scope and necessary interface closure. Classify every changed file and mixed hunk only for requested commit-readiness.
 5. Trace relevant interfaces through registrations, callers, types, data shaping, persistence, generated artifacts, runtime config, tests, docs, CI/deploy, and stale references. Activate the protocol-contract profile only for an existing OpenAPI/generated-client pipeline or an explicitly requested contract gate. Activate the visual-completion profile only when the basis implements a selected visual source or claims visual completion; then load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), require and validate the appropriate staged handoff (`final` for completion), and inspect its cited artifacts and reachable source.
+   When the basis activates runtime/configuration, packaging, public integration,
+   persistence, legacy replacement, auth/security, or cross-repository delivery risk,
+   load [project grounding](references/project-grounding.md). Bind every grounding fact
+   to this review basis and close `signal -> invariant -> owner/authority -> evidence
+   -> status -> next action`; do not expand into unrelated repositories or profiles.
 6. Evaluate two independent axes:
    - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
    If no trustworthy spec exists, mark Spec `Not verified`; do not infer one from the diff.
+   A requirement, ADR, schema, test, or acceptance artifact added by the reviewed
+   basis is intent evidence unless an independent authority or prior approved contract
+   establishes it. It cannot by itself clear replacement, compatibility, migration,
+   rollout, or rollback risk.
    When a security claim is material, apply the Security Evidence rules in
    [references/standards-and-spec.md](references/standards-and-spec.md): keep
    evidence status separate from P0-P3 severity and never promote a pattern or
@@ -91,6 +100,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Do not recommend `git add .`, `git add -A`, directory-wide adds, or broad wildcards unless explicitly approved.
 - Do not claim whole-repository, PR, release, or package coverage from partial evidence.
 - Do not report findings without reachable evidence and concrete impact.
+- Do not block or approve from diff size, framework annotations, configuration file
+  names, literals, or scanner matches alone. Use them to activate bounded evidence
+  checks, then attribute reachable impact to the selected basis.
 - Treat scanner matches, dangerous APIs, dependency presence, and incomplete
   source-to-sink paths as candidates, not validated vulnerabilities. Verify any
   provider result against this review basis before it affects the verdict.
@@ -130,5 +142,8 @@ Lead with mode/profile, basis, scope, exclusions, and validation, then severity-
   materially involves duplication, dead or unused code, abstractions, hidden
   coupling, or maintainability.
 - See [references/codebase-design.md](references/codebase-design.md) only when the fixed change basis materially affects a public module/interface, seam, abstraction, locality, or testability.
+- Read [references/project-grounding.md](references/project-grounding.md) when the
+  review basis activates runtime/config, packaging, public integration, durable data,
+  replacement, auth/security, or cross-repository delivery risk.
 - See [references/worktree-examples.md](references/worktree-examples.md) for commit grouping examples.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger, boundary, scenario, and quality evals.

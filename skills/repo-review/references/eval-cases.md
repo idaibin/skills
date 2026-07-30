@@ -35,6 +35,7 @@
 | `Review this fixed diff for duplicated rules, unused declarations, and over-designed wrappers.` | Trigger `repo-review`; apply the shared quality gate with fixed-basis attribution and the applicable language profile. |
 | `Review this fixed frontend visual diff against its product Feature Spec, selected-source UI Feature Spec, and root DESIGN.md.` | Trigger `repo-review` with the conditional frontend design-compliance subflow; use the map only for navigation and report authority/runtime gaps separately. |
 | `Review this fixed UI diff that changes table-row transition timing, keyboard navigation feedback, and reduced-motion behavior.` | Trigger the existing frontend design-compliance subflow plus interaction/motion review; retain the fixed basis, evidence gates, and P0-P3 output. |
+| `Review this fixed range that adds requirements, schema, implementation, tests, and a replacement route together.` | Trigger project grounding; treat same-basis artifacts as intent and require independent compatibility/migration evidence before readiness. |
 
 ## Non-Trigger Eval
 
@@ -53,6 +54,7 @@
 | `Split this future migration into tasks.` | Do not trigger this Skill; use the host's built-in planning. |
 | `Send the review package to ChatGPT.` | Prefer `ask-ai`. |
 | `Define the product behavior, permissions, user-visible errors, and acceptance before implementation.` | Prefer `product-spec`. |
+| `Review this Markdown typo-only range; no executable contract changed.` | Keep runtime, schema, integration, and migration grounding `Not applicable`; do not inflate the review. |
 
 ## Independent Review Outlet Eval
 

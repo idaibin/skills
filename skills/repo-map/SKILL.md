@@ -17,6 +17,11 @@ Map stable workspace or repository semantics into either a concise navigation la
 4. For repo-map artifacts, apply the creation gate: create or expand a map only when it will reduce wrong-root routing, repeated semantic discovery, duplicate implementation, or cross-boundary inference. If one directory listing or manifest answers the need, read it directly and keep the map absent or smaller.
 5. Select workspace, repository, or scoped level from real ownership, build, deploy, or runtime boundaries; never split from directory names alone.
 6. Define the questions the map must answer: real boundaries and owners, architecture, command sources, shortest task routes, reusable contracts, cross-boundary relationships, and validation entry points. When product positioning changes task routing, link the smallest verified product-fact authority set without restating or deciding product behavior. Treat canonical owner as the definition or contract owner; record build/deploy, runtime/operations, or data/schema ownership only when it changes routing. When the user supplies an external project or framework as a design reference, use it to identify candidate architecture, documentation, and validation questions, then retain only conclusions verified against the target repository; never turn the reference into a target-repository authority or a framework-specific execution branch.
+   When the request is explicitly to understand project execution, configuration,
+   compatibility, integration, or delivery rather than navigation alone, load
+   [project grounding](references/project-grounding.md). Persist only stable routing,
+   authority, contract-edge, and verification-entry facts; keep task-time evidence,
+   freshness, and operational status in the consuming implementation or review.
 7. Search before opening files. Start with manifests/config, entry points, exports/registrations, and the nearest representative implementation. Read only evidence that can change the map. When Maven, Gradle, or JVM source-set evidence appears, load `references/java-build-and-dependency-map.md` and resolve the owning build root, JDK source, module graph, and critical dependency routes without dumping the full dependency tree.
 8. For monorepos or multi-repo workspaces, map the routing boundary first, then only the owning child repository or package needed. Do not scan every child by default.
 9. Write or update the repo-map artifact with:
@@ -114,6 +119,9 @@ Map stable workspace or repository semantics into either a concise navigation la
   historical definitions and consumers do not prove current reusability.
 - Preserve unrelated local changes.
 - Do not produce P0-P3 findings or claim review approval.
+- Do not present a directory/command map as complete project understanding. Runtime
+  precedence, packaged artifacts, data compatibility, cross-repository integration,
+  and target-environment behavior remain separate evidence claims.
 
 ## Output Contract
 
@@ -129,5 +137,8 @@ Report every created or updated repo-map or guidance path, initial working scope
 - See [references/api-contract-map.md](references/api-contract-map.md) only for a requested HTTP authority/consumer map.
 - Read [references/java-build-and-dependency-map.md](references/java-build-and-dependency-map.md) when Maven, Gradle, or JVM source-set evidence appears.
 - See [references/project-guidance.md](references/project-guidance.md) only for explicitly requested root or layered subproject `AGENTS.md` creation or repair.
+- Read [references/project-grounding.md](references/project-grounding.md) when the
+  requested artifact must route stable runtime, configuration, data, compatibility,
+  integration, or verification authorities beyond ordinary navigation.
 - See [references/prompt-templates.md](references/prompt-templates.md) for the repo-map structure.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

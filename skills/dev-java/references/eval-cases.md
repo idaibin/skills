@@ -5,6 +5,7 @@
 | Request | Expected behavior |
 | --- | --- |
 | `Implement this Spring service transaction and tests.` | Trigger `dev-java`; resolve build/JDK and select Persistence/transaction. |
+| `Make local startup work by changing service discovery and packaged profile behavior; production must remain registered.` | Trigger Runtime/config grounding, resolve precedence and artifact/target boundaries, and block a global workaround until its scope is proven. |
 
 ## Non-Trigger Eval
 
@@ -14,6 +15,7 @@
 | `Audit the current Java service without changes.` | Route to `audit-java`. |
 | `Review and commit this Java Worktree.` | Route fixed-basis review to `repo-review`, then authorized Git mutation to `repo-delivery`. |
 | `Implement this Kotlin service in a mixed JVM monorepo.` | Do not trigger from JVM/build-tool proximity alone; route to a Kotlin-capable owner. |
+| `Change only a Java comment; no behavior, build, config, or contract changes.` | Keep project-grounding risk classes `Not applicable`; do not run environment or migration checks. |
 
 ## Quality Eval
 

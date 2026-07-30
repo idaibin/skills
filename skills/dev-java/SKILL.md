@@ -29,6 +29,12 @@ template that overrides current source.
 4. Read the approved behavior/specification when one exists. Confirm compatibility,
    affected modules and public seams, data/security impact, non-goals, and validation
    expectations.
+   When runtime/configuration, packaging, API/integration, persistence, legacy
+   replacement, auth/security, or cross-repository delivery signals apply, load
+   [project grounding](references/project-grounding.md) and close each activated
+   `signal -> invariant -> owner/authority -> evidence -> status -> next action`
+   chain before edits. A spec, schema, and tests added with the implementation prove
+   intent and selected behavior, not independent approval or migration safety.
 5. Inspect only the relevant manifests, entry points, configuration ownership,
    routes/controllers, DTOs, application services, domain rules, repositories,
    entities/mappers, migrations, clients, security chain, tests, and analogous feature.
@@ -99,6 +105,10 @@ template that overrides current source.
   identifiers in source, examples, tests, logs, or reports.
 - Preserve unrelated changes. Do not stage, commit, push, or open a pull request;
   route Git mutation to `repo-delivery`.
+- Do not hide a local startup workaround in a global entry point, tracked shared
+  profile, or packaging rule without proving its intended environment boundary and
+  target-runtime effect. A framework annotation or exclusion is a signal, not an
+  automatic defect; decide from effective precedence, reachability, and contract.
 
 ## Validation Model
 
@@ -140,4 +150,7 @@ only for a searched-for repository fact that is absent.
 - Read [behavior-first](references/behavior-first.md) when a stable public seam exists.
 - Read [codebase design](references/codebase-design.md) for public design/testability changes.
 - Read [code quality](references/code-quality.md) for material maintainability work.
+- Read [project grounding](references/project-grounding.md) when a change activates
+  runtime/config, packaging, public contract, durable data, replacement,
+  auth/security, or cross-repository risks.
 - See [eval cases](references/eval-cases.md) for routing and quality scenarios.

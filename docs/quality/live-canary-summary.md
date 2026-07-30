@@ -4,9 +4,10 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:7d52b87182d2918eef1d34df059e22251631719f911c296b35f47a665643842c`
+- Package digest: `sha256:aef6800ad0643a13ed639d8592aff393f463deafca0fa19c67d111e494ca6bef`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
-  fresh external model sessions were not authorized for this digest.
+  independent external design review was authorized for project-grounding, but fresh
+  host-routing canary invocation was not run for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -25,9 +26,9 @@ behavior certification and does not replace target-environment runtime validatio
 | Isolated project-local install | Not verified | The five scoped packages were not installed into a disposable project for this digest. |
 | Installed-copy parity | Not verified | No installed-copy comparison was accepted for this digest. |
 | Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |
-| Explicit host invocation | Not verified | External model invocation was not authorized for this digest. |
-| Implicit routing | Not verified | External model invocation was not authorized for this digest. |
-| Critical stop routing | Not verified | External model invocation was not authorized for this digest. |
+| Explicit host invocation | Not verified | No fresh host-routing model invocation was run for this digest. |
+| Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
+| Critical stop routing | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Browser capability stop gate | Not verified | No fresh host invocation was run for this digest. |
 | Browser two-pass visual closure | Not verified | No fresh browser visual canary was run for this digest. |
 
@@ -51,7 +52,7 @@ capability changes.
 
 ## Required Behavior Scenarios
 
-When host invocation is authorized, run each scoped Skill on:
+When fresh host-routing invocation is authorized and selected, run each scoped Skill on:
 
 1. a normal trigger;
 2. its nearest non-trigger or owner boundary;
@@ -63,8 +64,9 @@ must demonstrate source approval, complete acceptance mapping, two same-viewport
 passes, computed runtime evidence, browser-state restoration, and an honest
 `Partial`/`Not Ready` verdict whenever required evidence is absent.
 
-No fresh model sessions were accepted for this digest. Re-run explicit and implicit
-routing after authorization, host catalog changes, or global installation updates.
+No fresh host-routing model canary was run for this digest. Re-run explicit and
+implicit routing after authorization, host catalog changes, or global installation
+updates.
 
 ## External Security Provider Compatibility
 

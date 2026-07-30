@@ -5,6 +5,7 @@
 | Request | Expected behavior |
 | --- | --- |
 | `Audit this Java service's current transaction and Redis consistency.` | Trigger `audit-java` with Persistence and Integration profiles. |
+| `Audit whether source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.` | Trigger Build/Migration plus project grounding; keep source, artifact, and runtime evidence distinct. |
 
 ## Non-Trigger Eval
 
@@ -14,6 +15,7 @@
 | `Review this exact commit for merge readiness.` | Route to `repo-review`, optionally delegating bounded Java evidence. |
 | `Prove this dependency is exploitable.` | Route to an available security validation workflow. |
 | `Audit this Kotlin Spring coroutine service.` | Do not claim Kotlin semantics; route to a language-capable workflow unless the request explicitly limits scope to Java-owned Spring/build configuration. |
+| `Audit this Java DTO naming only; no runtime, persistence, public contract, or cross-repo behavior is in scope.` | Keep project grounding inactive; do not scan profiles, schemas, or sibling repositories. |
 
 ## Quality Eval
 
