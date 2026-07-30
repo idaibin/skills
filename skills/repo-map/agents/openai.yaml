@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Map"
-  short_description: "Map project truth, reuse, and protocol authority routes"
-  default_prompt: "Use $repo-map to resolve real roots and maintain the smallest semantic map of boundaries, commands, task routes, verified reuse, and requested protocol-authority chains with owner-bounded stale repair."
+  short_description: "Map project truth, guidance, reuse, and authority routes"
+  default_prompt: "Use $repo-map to resolve real roots and maintain the smallest semantic map or explicitly requested layered AGENTS.md guidance, including justified subproject files, verified reuse, and owner-bounded stale repair."

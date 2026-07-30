@@ -1,0 +1,385 @@
+{
+  "$schema": "./docs/skills/skills-index.schema.json",
+  "version": 1,
+  "description": "Repository-level discovery index. Portable Skill activation remains authoritative in each SKILL.md description.",
+  "categories": {
+    "repository-engineering": {
+      "title": "Core Engineering",
+      "description": "Repository truth, shared language, change review, and Git delivery."
+    },
+    "product-definition": {
+      "title": "Product Definition",
+      "description": "Product behavior, scope, states, and acceptance."
+    },
+    "design": {
+      "title": "Design",
+      "description": "Traceable selected-source UI specification and shared visual contracts."
+    },
+    "implementation": {
+      "title": "Implementation",
+      "description": "Authorized frontend and Rust source changes."
+    },
+    "specialist-audit": {
+      "title": "Specialist Audit",
+      "description": "Bounded read-only frontend and Rust assessment."
+    },
+    "runtime-operations": {
+      "title": "Runtime Operations",
+      "description": "Browser and desktop-client operation with runtime evidence."
+    },
+    "collaboration": {
+      "title": "ChatGPT Collaboration",
+      "description": "Authorized ChatGPT collaboration or a safe local request package."
+    },
+    "writing": {
+      "title": "Writing Extension",
+      "description": "Source-grounded drafting, rewriting, diagnosis, and adaptation."
+    }
+  },
+  "skills": [
+    {
+      "name": "repo-map",
+      "category": "repository-engineering",
+      "intents": [
+        "map repository boundaries, architecture, commands, and task routes",
+        "bootstrap layered repository guidance in root and owned subprojects",
+        "find reusable contracts and repair durable navigation"
+      ],
+      "keywords": [
+        "repository map",
+        "AGENTS.md",
+        "monorepo",
+        "frontend",
+        "backend",
+        "architecture",
+        "commands",
+        "reuse"
+      ],
+      "excludes": [
+        "task-local implementation",
+        "fixed-basis change review"
+      ],
+      "related": [
+        "domain-modeling",
+        "repo-review"
+      ]
+    },
+    {
+      "name": "domain-modeling",
+      "category": "repository-engineering",
+      "intents": [
+        "resolve shared business vocabulary and meaning",
+        "define lifecycle rules and bounded contexts"
+      ],
+      "keywords": [
+        "domain model",
+        "ubiquitous language",
+        "business rules",
+        "lifecycle",
+        "bounded context"
+      ],
+      "excludes": [
+        "feature-local acceptance criteria",
+        "repository source mapping"
+      ],
+      "related": [
+        "product-spec",
+        "repo-map"
+      ]
+    },
+    {
+      "name": "repo-review",
+      "category": "repository-engineering",
+      "intents": [
+        "review current Worktree or index changes",
+        "review a fixed commit, range, or verified package",
+        "coordinate correctness, security, performance, and maintainability findings"
+      ],
+      "keywords": [
+        "code review",
+        "pull request review",
+        "release gate",
+        "regression risk",
+        "worktree",
+        "fixed SHA"
+      ],
+      "excludes": [
+        "source implementation",
+        "Git mutation",
+        "unbounded domain audit"
+      ],
+      "related": [
+        "audit-frontend",
+        "audit-rust",
+        "repo-delivery"
+      ]
+    },
+    {
+      "name": "repo-delivery",
+      "category": "repository-engineering",
+      "intents": [
+        "create categorized or explicitly requested commits",
+        "push or integrate a reviewed branch",
+        "preserve authorized milestones and clean up Git state"
+      ],
+      "keywords": [
+        "commit",
+        "push",
+        "branch integration",
+        "Git delivery",
+        "history normalization",
+        "cleanup"
+      ],
+      "excludes": [
+        "source implementation",
+        "read-only review",
+        "pull request creation"
+      ],
+      "related": [
+        "repo-review"
+      ]
+    },
+    {
+      "name": "product-spec",
+      "category": "product-definition",
+      "intents": [
+        "turn an ambiguous feature into an implementation-ready specification",
+        "define product behavior, states, rules, and acceptance"
+      ],
+      "keywords": [
+        "product spec",
+        "feature requirements",
+        "acceptance criteria",
+        "user flow",
+        "product behavior"
+      ],
+      "excludes": [
+        "visual design specification",
+        "source implementation"
+      ],
+      "related": [
+        "domain-modeling",
+        "ui-spec"
+      ]
+    },
+    {
+      "name": "ui-spec",
+      "category": "design",
+      "intents": [
+        "translate a selected visual source into an implementation-ready UI contract",
+        "maintain traceable feature UI specs and shared DESIGN.md semantics"
+      ],
+      "keywords": [
+        "UI spec",
+        "design source",
+        "visual contract",
+        "DESIGN.md",
+        "responsive",
+        "accessibility"
+      ],
+      "excludes": [
+        "visual exploration",
+        "browser operation",
+        "frontend source edits"
+      ],
+      "related": [
+        "product-spec",
+        "dev-frontend",
+        "ops-browser"
+      ]
+    },
+    {
+      "name": "dev-frontend",
+      "category": "implementation",
+      "intents": [
+        "implement or refactor frontend source",
+        "close selected-source UI differences with runtime validation",
+        "change frontend state, data, styling, accessibility, performance, or tooling"
+      ],
+      "keywords": [
+        "frontend implementation",
+        "React",
+        "Vue",
+        "UI component",
+        "CSS",
+        "state management",
+        "build tooling"
+      ],
+      "excludes": [
+        "read-only frontend audit",
+        "UI specification",
+        "Git delivery"
+      ],
+      "related": [
+        "ui-spec",
+        "audit-frontend",
+        "ops-browser"
+      ]
+    },
+    {
+      "name": "dev-rust",
+      "category": "implementation",
+      "intents": [
+        "implement, port, or refactor Rust source",
+        "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI"
+      ],
+      "keywords": [
+        "Rust implementation",
+        "Cargo",
+        "async",
+        "SQLite",
+        "CLI",
+        "unsafe",
+        "FFI"
+      ],
+      "excludes": [
+        "read-only Rust audit",
+        "fixed-basis review",
+        "Git delivery"
+      ],
+      "related": [
+        "audit-rust",
+        "repo-review"
+      ]
+    },
+    {
+      "name": "audit-frontend",
+      "category": "specialist-audit",
+      "intents": [
+        "audit a bounded frontend surface without editing",
+        "assess frontend architecture, accessibility, performance, state, tooling, or visual fidelity"
+      ],
+      "keywords": [
+        "frontend audit",
+        "accessibility audit",
+        "performance audit",
+        "visual fidelity",
+        "architecture audit"
+      ],
+      "excludes": [
+        "frontend implementation",
+        "fixed-basis change review"
+      ],
+      "related": [
+        "dev-frontend",
+        "repo-review"
+      ]
+    },
+    {
+      "name": "audit-rust",
+      "category": "specialist-audit",
+      "intents": [
+        "audit a bounded Rust workspace or subsystem without editing",
+        "assess ownership, concurrency, persistence, performance, or unsafe boundaries"
+      ],
+      "keywords": [
+        "Rust audit",
+        "concurrency audit",
+        "unsafe audit",
+        "performance audit",
+        "ownership"
+      ],
+      "excludes": [
+        "Rust implementation",
+        "fixed-basis change review"
+      ],
+      "related": [
+        "dev-rust",
+        "repo-review"
+      ]
+    },
+    {
+      "name": "ops-browser",
+      "category": "runtime-operations",
+      "intents": [
+        "operate or verify a specified browser page",
+        "capture same-state visual and computed browser evidence"
+      ],
+      "keywords": [
+        "browser operation",
+        "runtime verification",
+        "screenshot",
+        "computed style",
+        "viewport",
+        "web page"
+      ],
+      "excludes": [
+        "desktop-client verification",
+        "frontend source implementation",
+        "ChatGPT orchestration"
+      ],
+      "related": [
+        "ops-client",
+        "ui-spec",
+        "dev-frontend"
+      ]
+    },
+    {
+      "name": "ops-client",
+      "category": "runtime-operations",
+      "intents": [
+        "operate or verify a real desktop client",
+        "capture process and window evidence for Tauri, Electron, or native applications"
+      ],
+      "keywords": [
+        "desktop client",
+        "Tauri",
+        "Electron",
+        "native app",
+        "process",
+        "window verification"
+      ],
+      "excludes": [
+        "browser-page verification",
+        "desktop source implementation"
+      ],
+      "related": [
+        "ops-browser"
+      ]
+    },
+    {
+      "name": "ask-chatgpt",
+      "category": "collaboration",
+      "intents": [
+        "prepare a local request package for ChatGPT",
+        "run an explicitly authorized independent ChatGPT review, research task, visual exploration, or decision challenge"
+      ],
+      "keywords": [
+        "ask ChatGPT",
+        "independent review",
+        "decision challenge",
+        "research",
+        "visual exploration"
+      ],
+      "excludes": [
+        "tasks Codex can complete directly",
+        "unapproved external communication"
+      ],
+      "related": [
+        "repo-review"
+      ]
+    },
+    {
+      "name": "human-writing",
+      "category": "writing",
+      "intents": [
+        "draft, rewrite, proofread, diagnose, or adapt source-grounded prose",
+        "preserve facts, attribution, uncertainty, voice, and meaning"
+      ],
+      "keywords": [
+        "technical writing",
+        "rewrite",
+        "proofread",
+        "article",
+        "documentation",
+        "source-grounded"
+      ],
+      "excludes": [
+        "translation-only requests",
+        "fiction",
+        "AI-detection evasion"
+      ],
+      "related": []
+    }
+  ]
+}

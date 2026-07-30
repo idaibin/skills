@@ -20,6 +20,7 @@ PUBLIC_ROOTS = [
     ROOT / "AGENTS.md",
     ROOT / "README.md",
     ROOT / "INSTALL.md",
+    ROOT / "skills-index.json",
     ROOT / "skills.sh.json",
     ROOT / "docs",
     ROOT / "protocols",

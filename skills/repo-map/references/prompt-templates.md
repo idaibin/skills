@@ -6,41 +6,18 @@ publishing. Do not resolve templates outside this package at runtime.
 ## Contents
 
 - [Template Selection](#template-selection)
-- [Repository Guidance Bootstrap](#repository-guidance-bootstrap-template)
 - [Repo Map Bootstrap](#repo-map-bootstrap-template)
 - [Doc/Code Alignment Review](#doccode-alignment-review-template)
 - [Task-Start Context](#task-start-context-template)
 
 ## Template Selection
 
-- Missing effective repository guidance: use the repository-guidance bootstrap template for the host-supported file.
+- Missing effective repository guidance: load the directly linked layered repository-guidance profile from `SKILL.md` when the user explicitly requests creating or repairing it.
 - Missing `docs/repo-map/README.md`: apply the creation gate, then use the repo-map bootstrap template when justified.
 - Existing docs present: use the doc/code alignment review template.
 - New task before edits: use the task-start context template.
 
 Templates provide structure only. Repository files, configs, commands, and code are the source of truth.
-
-## Repository Guidance Bootstrap Template
-
-Use after reading real project files. Preview the draft unless the user already explicitly requested creating or updating the file.
-
-Required sections:
-
-- Repository purpose
-- Directory structure
-- Working rules
-- Code change constraints
-- Required checks after changes
-- Final report format
-- Disallowed actions
-
-Hard requirements:
-
-- Use real paths and real command names.
-- Write `Not found` for missing layers or commands.
-- Keep rules specific to the repository.
-- Do not include generic best-practice filler.
-- Do not write after an unapproved preview unless the user already explicitly requested implementation.
 
 ## Repo Map Bootstrap Template
 

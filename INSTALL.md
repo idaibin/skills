@@ -29,6 +29,15 @@ ask-chatgpt
 human-writing
 ```
 
+From a source checkout, search the semantic catalog without installing:
+
+```bash
+python3 scripts/search-skills.py "map a monorepo and create layered AGENTS.md"
+```
+
+This repository helper reads `skills-index.json`; installed Agent runtimes continue
+to discover packages from their portable `SKILL.md` metadata.
+
 The publishable source directories are:
 
 - `skills/repo-map`
@@ -148,7 +157,10 @@ metadata.
 Before publishing, verify source discovery from the repository root:
 
 ```bash
-npx skills@latest add . --list
+npx skills@latest add ./skills --list
 ```
+
+Target the publishable directory so ignored project-local developer Skills under other
+client discovery roots do not appear in the catalog check.
 
 Then run the repository validation commands documented in [README.md](README.md).

@@ -7,6 +7,8 @@ Create or maintain a durable semantic repo map from current source truth. It sho
 ## Best For
 
 - Initial `docs/repo-map/README.md` or repository-equivalent creation
+- Explicitly requested root and subproject `AGENTS.md` bootstrapping from proven
+  workspace, frontend, backend, desktop, CLI, worker, or nested-repository boundaries
 - Workspace routing across multiple child Git roots
 - Ordinary non-Git directory projects with no containing or child Git repository
 - Directory ownership and technical architecture mapping
@@ -28,10 +30,11 @@ Create or maintain a durable semantic repo map from current source truth. It sho
 - `Verify and record this service's single OpenAPI authority, generation chain, frontend consumers, and duplicate-DTO boundary.`
 - `The documented directory is missing; scan locally from the nearest existing ancestor and repair the map.`
 - `Create or update docs/repo-map/README.md from current repository truth.`
+- `Create root guidance and nearer AGENTS.md files for independently built frontend and backend subprojects.`
 - `The current directory is not a Git repository; check for child repositories, or map it as an ordinary project if none exist.`
 
 Do not use for generic implementation, local dirty-tree review, immutable repository/range/PR review, or defect diagnosis. Use the matching Worktree or immutable basis mode in `repo-review` for review.
 
 ## Output
 
-Expect an updated repo-map path plus a compact summary of initial working scope, map root, discovered Git roots and containment, `versioned` or `local-unversioned` persistence, scope level, changed sections, shortest task routes, verified reuse entries and decisions, mapped protocol authority/derived-consumer chain when requested, semantic/path repairs, preserved sections, validation, and `Not found` or `Not verified` gaps. Partial work also reports its stop reason, completed evidence, unresolved boundary, artifact state, and follow-up.
+Expect updated repo-map or guidance paths plus a compact summary of initial working scope, map root, discovered Git roots and containment, `versioned` or `local-unversioned` persistence, scope level, changed sections, shortest task routes, verified reuse entries and decisions, mapped protocol authority/derived-consumer chain when requested, root/subproject guidance placement decisions, semantic/path repairs, preserved sections, validation, and `Not found` or `Not verified` gaps. Partial work also reports its stop reason, completed evidence, unresolved boundary, artifact state, and follow-up.

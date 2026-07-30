@@ -60,6 +60,20 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
   `policy.allow_implicit_invocation: false`; never copy invocation-control fields from
   another provider into portable `SKILL.md` frontmatter.
 
+## Repository Discovery Index
+
+`skills-index.json` is the catalog's provider-neutral repository discovery source. It
+records logical categories, user intents, search keywords, exclusions, and related
+owners for browsing and `scripts/search-skills.py`. It is not portable Skill
+frontmatter, does not override `SKILL.md`, and must not be presented as if every Agent
+client loads it automatically.
+
+Keep runtime trigger keywords in the portable `description`. Do not add custom top-level
+fields such as `routing`, `triggers`, or `related` to `SKILL.md`; the portable spec's
+optional `metadata` remains string-to-string provider/client metadata, not this
+catalog's nested routing registry. Keep package set, names, relations, categories, and
+index shape validator-backed.
+
 ## Instructions And References
 
 - Keep the `SKILL.md` body under 500 lines and include only the core workflow,
@@ -133,14 +147,16 @@ and coverage limits remain useful. Old raw runs never prove current behavior.
 ## Distribution
 
 Installation and update commands live only in `README.md` and `INSTALL.md`. Published
-packages contain no `npx skills` maintenance instructions. `skills.sh.json` is display
-metadata and must list the same package set as the root catalog.
+packages contain no `npx skills` maintenance instructions. `skills.sh.json` is
+distribution display metadata; `skills-index.json` is semantic discovery metadata.
+Both must list the same package set as the root catalog.
 
 ## Validation
 
 Use the command matrix in [`../../skills/AGENTS.md`](../../skills/AGENTS.md). The
 validator checks portable metadata, OpenAI metadata, package-local links, progressive
-disclosure, representative eval sections, distribution hygiene, and catalog parity.
+disclosure, representative eval sections, semantic-index integrity, distribution
+hygiene, and catalog parity.
 Focused regression tests are run by local `bash scripts/check-skills.sh`.
 The validator does not claim that a model will
 behave identically on every host or task.

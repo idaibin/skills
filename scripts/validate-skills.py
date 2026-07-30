@@ -9,6 +9,7 @@ import re
 import sys
 from pathlib import Path
 
+import jsonschema
 import yaml
 
 
@@ -319,11 +320,94 @@ def catalog_errors(root: Path, names: set[str]) -> list[str]:
     return errors
 
 
+def skill_index_errors(root: Path, names: set[str]) -> list[str]:
+    errors: list[str] = []
+    index_path = root / "skills-index.json"
+    schema_path = root / "docs" / "skills" / "skills-index.schema.json"
+    try:
+        payload = json.loads(index_path.read_text(encoding="utf-8"))
+        schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
+        return [f"skills-index.json: cannot load index and schema: {error}"]
+
+    schema_errors = sorted(
+        jsonschema.Draft202012Validator(schema).iter_errors(payload),
+        key=lambda error: [str(part) for part in error.absolute_path],
+    )
+    for error in schema_errors:
+        location = ".".join(str(part) for part in error.absolute_path) or "<root>"
+        errors.append(f"skills-index.json: {location}: {error.message}")
+    if schema_errors:
+        return errors
+
+    entries = payload["skills"]
+    indexed_names = [entry["name"] for entry in entries]
+    if len(indexed_names) != len(set(indexed_names)):
+        errors.append("skills-index.json: duplicate Skill names")
+    if set(indexed_names) != names:
+        errors.append(
+            "skills-index.json package set differs: "
+            f"expected {sorted(names)}, found {sorted(set(indexed_names))}"
+        )
+
+    categories = set(payload["categories"])
+    used_categories: set[str] = set()
+    for entry in entries:
+        name = entry["name"]
+        category = entry["category"]
+        used_categories.add(category)
+        if category not in categories:
+            errors.append(f"skills-index.json: {name} references unknown category {category}")
+        related = set(entry["related"])
+        if name in related:
+            errors.append(f"skills-index.json: {name} cannot relate to itself")
+        unknown_related = related - names
+        if unknown_related:
+            errors.append(
+                f"skills-index.json: {name} references unknown related Skills "
+                f"{sorted(unknown_related)}"
+            )
+    unused_categories = categories - used_categories
+    if unused_categories:
+        errors.append(f"skills-index.json: unused categories {sorted(unused_categories)}")
+
+    try:
+        distribution = json.loads((root / "skills.sh.json").read_text(encoding="utf-8"))
+        groupings = distribution["groupings"]
+        grouped_by_title = {grouping["title"]: set(grouping["skills"]) for grouping in groupings}
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, KeyError, TypeError) as error:
+        errors.append(f"skills-index.json: cannot compare distribution groups: {error}")
+        return errors
+
+    category_titles = {
+        category: details["title"] for category, details in payload["categories"].items()
+    }
+    if len(grouped_by_title) != len(groupings):
+        errors.append("skills.sh.json: duplicate grouping titles")
+    if len(set(category_titles.values())) != len(category_titles):
+        errors.append("skills-index.json: duplicate category titles")
+    if set(category_titles.values()) != set(grouped_by_title):
+        errors.append(
+            "skills-index.json category titles differ from skills.sh.json groups: "
+            f"expected {sorted(grouped_by_title)}, found {sorted(category_titles.values())}"
+        )
+    for category, title in category_titles.items():
+        expected = {entry["name"] for entry in entries if entry["category"] == category}
+        found = grouped_by_title.get(title)
+        if found is not None and found != expected:
+            errors.append(
+                f"skills-index.json category {category} differs from distribution group "
+                f"{title}: expected {sorted(expected)}, found {sorted(found)}"
+            )
+    return errors
+
+
 def validate(root: Path) -> list[str]:
     skills = root / "skills"
     packages = sorted(path for path in skills.iterdir() if path.is_dir() and (path / "SKILL.md").is_file())
     names = {path.name for path in packages}
     errors = catalog_errors(root, names)
+    errors.extend(skill_index_errors(root, names))
     for package in packages:
         errors.extend(package_errors(package, names))
     if not packages:

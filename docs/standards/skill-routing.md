@@ -8,7 +8,7 @@ and output.
 
 | Skill | Owns | Mutation |
 | --- | --- | --- |
-| `repo-map` | repository boundaries, commands, reuse, and durable maps | named map artifact only |
+| `repo-map` | repository boundaries, commands, reuse, durable maps, and explicitly requested layered root/subproject guidance | named map or guidance artifacts only |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
@@ -131,6 +131,9 @@ change-basis gateway and adds this check only for visual or UI-contract changes.
 - The description clearly says what the Skill owns and when it triggers; when a real
   nearest neighbor is ambiguous, it also names the shortest negative or rerouting
   condition without copying the full non-trigger list.
+- `skills-index.json` reflects the same owner, user intents, capability keywords,
+  exclusions, and nearest related owners without replacing portable description-based
+  activation.
 - The nearest similar request is routed elsewhere in `Do Not Use For` or eval cases.
 - OpenAI metadata matches the same owner and action boundary.
 - References are loaded selectively and linked directly from `SKILL.md`.

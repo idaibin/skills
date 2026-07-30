@@ -1,20 +1,20 @@
 ---
 name: repo-map
-description: "Use when current Git or non-Git workspace truth needs a durable map of roots, ownership, architecture, commands, task routes, and reusable contracts, or an existing map needs evidence-based repair; do not use for ordinary task-local discovery or change review."
+description: "Use when current Git or non-Git workspace truth needs a durable map of roots, ownership, architecture, commands, task routes, reusable contracts, or layered AGENTS.md guidance at real root and subproject boundaries, or when an existing map or guidance file needs evidence-based repair; do not use for ordinary task-local discovery or change review."
 ---
 
 # Repository Map
 
 ## Overview
 
-Map stable workspace or repository semantics into a concise navigation layer rooted at `<map-root>/docs/repo-map/README.md`, unless the project already defines an equivalent. The map should let later work reach the correct working root, Git root when present, canonical owner, reusable contract, protocol authority, generated consumer, and verification source without rediscovering the project. Source remains proof; the map is a verified index, not a copied directory tree or substitute for task-time checks. It does not judge changes for defects or declare review readiness.
+Map stable workspace or repository semantics into either a concise navigation layer rooted at `<map-root>/docs/repo-map/README.md`, unless the project already defines an equivalent, or explicitly requested layered repository guidance in `AGENTS.md`. A map should let later work reach the correct working root, Git root when present, canonical owner, reusable contract, protocol authority, generated consumer, and verification source without rediscovering the project. Layered guidance should put shared rules at the map root and narrower commands or constraints at independently owned subproject boundaries. Source remains proof; neither artifact substitutes for task-time checks or judges changes for defects.
 
 ## Workflow
 
 1. Resolve the requested scope, containing Git root, child/nested Git roots, map root, and `versioned` or `local-unversioned` persistence before reading broadly. Keep the deepest Git root as file owner unless current manifests prove otherwise; non-Git projects remain valid map targets. Use the root-resolution procedure in `references/checklist.md` only when boundaries are ambiguous.
 2. Read effective repository guidance from the map root and each child Git root actually opened, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present. Run `git status --short` in every applicable Git root before editing a document there; do not run Git commands as if a non-Git container were a repository.
-3. Locate the existing repo-map artifact. Prefer a project-defined equivalent; otherwise consider `<map-root>/docs/repo-map/README.md`. If multiple current or legacy candidates exist, inspect their ownership and references, select one authoritative root index, record any migration, and stop for clarification when evidence cannot choose safely; never silently overwrite or create a competing map. Treat verified specialist maps for UI, APIs, deployment, or another bounded owner as federated authorities: link and summarize their routing boundary from the root map instead of copying their detailed inventory. If the target artifact is inside Git and already modified, inspect its staged and unstaged diff, preserve unrelated hunks, and stop on an unsafe overlap.
-4. Apply the creation gate: create or expand a map only when it will reduce wrong-root routing, repeated semantic discovery, duplicate implementation, or cross-boundary inference. If one directory listing or manifest answers the need, read it directly and keep the map absent or smaller.
+3. Select the requested artifact. For a repo map, locate the existing project-defined equivalent or consider `<map-root>/docs/repo-map/README.md`; reconcile competing candidates and federated specialist maps without copying their detail. For explicitly requested repository-guidance creation or repair, load `references/project-guidance.md`, follow its placement gate and workflow through artifact validation, then resume at step 15; do not also create a repo map unless requested. If any target artifact is already modified, inspect its staged and unstaged diff, preserve unrelated hunks, and stop on an unsafe overlap.
+4. For repo-map artifacts, apply the creation gate: create or expand a map only when it will reduce wrong-root routing, repeated semantic discovery, duplicate implementation, or cross-boundary inference. If one directory listing or manifest answers the need, read it directly and keep the map absent or smaller.
 5. Select workspace, repository, or scoped level from real ownership, build, deploy, or runtime boundaries; never split from directory names alone.
 6. Define the questions the map must answer: real boundaries and owners, architecture, command sources, shortest task routes, reusable contracts, cross-boundary relationships, and validation entry points. When product positioning changes task routing, link the smallest verified product-fact authority set without restating or deciding product behavior. Treat canonical owner as the definition or contract owner; record build/deploy, runtime/operations, or data/schema ownership only when it changes routing.
 7. Search before opening files. Start with manifests/config, entry points, exports/registrations, and the nearest representative implementation. Read only evidence that can change the map.
@@ -50,6 +50,7 @@ Map stable workspace or repository semantics into a concise navigation layer roo
 ## Modes
 
 - **Repo map:** create the smallest useful workspace, repository, or scoped navigation artifact.
+- **Project guidance baseline:** create or repair explicitly requested layered `AGENTS.md` files at the map root and at independently owned frontend, backend, desktop, CLI, worker, or other subproject boundaries; load `references/project-guidance.md`.
 - **Targeted update:** add or refresh one architecture, command, ownership, component, or interface area.
 - **Reuse inventory:** map the shortest chain to existing reusable or reference implementations before new development.
 - **Frontend inventory profile (on demand):** index only the routes/pages,
@@ -64,6 +65,7 @@ Map stable workspace or repository semantics into a concise navigation layer roo
 - Ordinary implementation when no separate repo-map deliverable was requested; implementation skills perform their own bounded discovery and live reuse search.
 - Local diff readiness or fixed immutable review; use `repo-review` with Worktree/index, resolved SHA/range (including PR base/head), or verified package basis, plus the conditional Release profile when applicable.
 - Future implementation planning; use the host's built-in planning.
+- Generic policy generation with no current repository evidence or no explicit request to create or update repository guidance.
 - Root-cause investigation of a concrete failure; use the host's built-in diagnosis under effective instructions.
 
 ## Hard Rules
@@ -74,6 +76,14 @@ Map stable workspace or repository semantics into a concise navigation layer roo
 - Keep one root navigation authority while allowing verified specialist maps to own
   bounded detail. Do not duplicate their rows, tokens, schemas, or component
   inventories into the root map.
+- Keep root and subproject guidance layered: root `AGENTS.md` owns shared rules and
+  task routing; a nearer file owns only commands, paths, checks, and constraints that
+  differ for its proven boundary. Do not duplicate the root file into every directory.
+- Do not infer a subproject boundary from names such as `frontend`, `backend`, `src`,
+  or `apps` alone. Require evidence such as an independent manifest, build/start/test
+  surface, deploy/runtime unit, nested Git root, or explicit ownership boundary.
+- Never overwrite an existing guidance file wholesale. Preserve its effective rules,
+  inspect local diffs, and patch only evidence-backed gaps or stale statements.
 - Do not mirror the source directory structure, enumerate every leaf file/function/API, or store transient branch, dirty-tree, local-environment, or runtime status.
 - Do not generate or copy an executable API schema into the map. Record authority,
   paths, symbols, commands, consumers, and evidence references only.
@@ -98,7 +108,7 @@ Map stable workspace or repository semantics into a concise navigation layer roo
 
 ## Output Contract
 
-Report the repo-map path, initial working scope, scope class, map root, discovered Git roots and containment, persistence state, relevant worktree state, sections created or updated, and validation performed. Summarize task routes, reuse decisions and canonical entries, duplicate-declaration risks avoided, semantic or path repairs, preserved sections, and remaining `Not found` or `Not verified` gaps. For stopped or partial execution, also report the stop reason, completed evidence chain, unresolved boundary, artifact state, and required follow-up. Do not duplicate the full map in chat.
+Report every created or updated repo-map or guidance path, initial working scope, scope class, map root, discovered Git roots and containment, persistence state, relevant worktree state, sections created or updated, and validation performed. For layered guidance, include the placement decision for each root/subproject candidate and why a nearer file was created or skipped. Summarize task routes, reuse decisions and canonical entries, duplicate-declaration risks avoided, semantic or path repairs, preserved sections, and remaining `Not found` or `Not verified` gaps. For stopped or partial execution, also report the stop reason, completed evidence chain, unresolved boundary, artifact state, and required follow-up. Do not duplicate full artifacts in chat.
 
 ## References
 
@@ -108,5 +118,6 @@ Report the repo-map path, initial working scope, scope class, map root, discover
 - See [references/frontend-inventory.md](references/frontend-inventory.md) only
   for a requested frontend inventory or code-context index.
 - See [references/api-contract-map.md](references/api-contract-map.md) only for a requested HTTP authority/consumer map.
+- See [references/project-guidance.md](references/project-guidance.md) only for explicitly requested root or layered subproject `AGENTS.md` creation or repair.
 - See [references/prompt-templates.md](references/prompt-templates.md) for the repo-map structure.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

@@ -25,6 +25,16 @@ List the catalog without installing:
 npx skills@latest add "$CATALOG_SOURCE" --list
 ```
 
+Search this checkout by task, capability, stack, or boundary before installing:
+
+```bash
+python3 scripts/search-skills.py "create AGENTS.md for frontend and backend"
+python3 scripts/search-skills.py "review release risk" --json
+```
+
+The search reads [`skills-index.json`](skills-index.json). Each package's portable
+`SKILL.md` description remains the runtime activation authority.
+
 Install selected Skills globally for Codex:
 
 ```bash
@@ -49,7 +59,7 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 
 | Skill | Use when |
 | --- | --- |
-| `repo-map` | Current repository boundaries, commands, task routes, reusable owners, or a bounded native/optionally-generated protocol chain need a verified map. |
+| `repo-map` | Current repository boundaries, commands, task routes, reusable owners, a bounded protocol chain, or explicitly requested layered root/subproject `AGENTS.md` guidance needs evidence-based creation or repair. |
 | `domain-modeling` | Shared business terms, rules, lifecycle conflicts, or domain boundaries are ambiguous across product work. |
 | `repo-review` | Current Worktree/index, a fixed SHA/range (including resolved PR base/head), or a verified review package needs independent read-only review; Release and selected-source visual completion are conditional profiles. |
 | `repo-delivery` | Reviewed changes need categorized commits, an explicit single commit, push/sync, evidence-based branch integration, or cleanup. |
@@ -134,12 +144,16 @@ copies of the Skill instructions.
 Repository-level `docs/`, `protocols/`, and `scripts/` are maintainer surfaces;
 published packages do not depend on them at runtime.
 
+`skills-index.json` is the repository-level semantic discovery source for local search
+and catalog consistency. It records categories, intents, keywords, exclusions, and
+related owners without adding unsupported fields to portable Skill frontmatter.
+
 ## Validate
 
 Use the concise command matrix in [`skills/AGENTS.md`](skills/AGENTS.md#validation).
 The validator checks the portable Agent Skills package, OpenAI metadata, direct
-references, representative eval sections, and catalog consistency. Exercise behavior
-changes on a few representative tasks.
+references, representative eval sections, semantic-index integrity, and catalog
+consistency. Exercise behavior changes on a few representative tasks.
 
 ```bash
 bash scripts/check-skills.sh

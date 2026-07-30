@@ -1,6 +1,6 @@
 # Official Skill Alignment
 
-Reviewed: 2026-07-23
+Reviewed: 2026-07-30
 
 This catalog uses four current primary baselines:
 
@@ -25,6 +25,9 @@ This catalog uses four current primary baselines:
   target; keep plugin/marketplace manifests at their provider-defined distribution
   scope rather than duplicating Skill instructions.
 - Keep packages self-contained and free of repository maintenance/install guidance.
+- Keep cross-package discovery in the repository-level `skills-index.json`; do not
+  add unsupported nested routing fields to portable frontmatter or claim that clients
+  automatically consume the repository index.
 - Use a few realistic trigger, non-trigger, and edge scenarios for iteration.
 - Keep safety and mutation boundaries that prevent accidental writes or external
   actions; these are functional requirements of the engineering Skills.

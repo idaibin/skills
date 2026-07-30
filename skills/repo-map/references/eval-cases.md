@@ -20,6 +20,8 @@
 | `Record this native REST operation's route, DTO, client, real consumer, and test entry point; the repository has no schema-generation pipeline.` | Trigger a bounded API Contract Map and record generated artifacts as `Not applicable`. | Native contract navigation is still valuable without OpenAPI. |
 | `Update the root map, but keep the existing verified UI component and token maps as the detailed authorities.` | Trigger Targeted Update with federated specialist-map routing. | The root should route to bounded authorities without copying them. |
 | `Record where each product's positioning facts live in this monorepo, but do not rewrite or decide the positioning.` | Trigger Targeted Update for product-fact routing only. | The map should reach product authority without absorbing `product-spec`. |
+| `Create a root AGENTS.md plus nearer guidance for the independently built web frontend and API backend; keep shared rules at the root.` | Trigger Project Guidance Baseline mode. | Explicit layered repository guidance is requested and the boundaries are evidence-checkable. |
+| `This monorepo has apps/web, services/api, and packages/shared. Decide from manifests and commands which directories need their own AGENTS.md, then create only the justified files.` | Trigger Project Guidance Baseline mode. | Placement must follow real owner/build/runtime boundaries rather than directory names. |
 
 ## Non-Trigger Eval
 
@@ -37,6 +39,7 @@
 | `Specify the user flows, permission rules, user-visible states, and acceptance for this new feature.` | Prefer `product-spec`. | Product behavior, not repository navigation. |
 | `Regenerate OpenAPI and migrate the React caller to the generated client.` | Prefer the matching `dev-*` owner. | Source implementation, not a durable map deliverable. |
 | `Review this feature range for dual authority, breaking API changes, and runtime gaps.` | Prefer `repo-review`. | Defect and readiness judgment against a fixed basis. |
+| `Implement changes in both the frontend and backend.` | Prefer the matching implementation owners; read existing guidance but do not create it implicitly. | Source work alone does not authorize new `AGENTS.md` files. |
 
 ## Quality Eval
 
@@ -81,6 +84,8 @@
 | Output contract | Reports document path, map/Git roots, persistence, changed sections, shortest paths, reuse entries, repairs, validation, and gaps. | Repeats the entire document in chat or hides unchecked areas. |
 | Partial execution report | Reports stop reason, completed evidence chain, unresolved boundary, artifact state, and follow-up when dirty overlap, missing providers, or ownership ambiguity prevents completion. | Claims success, hides partial writes, or omits the next action after stopping. |
 | Publish readiness | Updates metadata/references and passes repository validation. | Leaves routing or eval artifacts stale. |
+| Layered guidance placement | Keeps shared routing and safety at the root, creates nearer `AGENTS.md` only for proven independent Git/ownership/build/runtime/command boundaries, and records skipped candidates. | Copies the root file into every directory, treats names such as frontend/backend as proof, or omits a justified child boundary. |
+| Guidance precedence | Re-reads one representative task through the root-to-leaf chain and keeps child files to local deltas without contradiction. | Duplicates or contradicts parent rules, or leaves the effective command/root ambiguous. |
 
 ## Scoring
 

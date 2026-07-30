@@ -24,8 +24,10 @@ effective repository instructions.
 Shared package protocols are authored under `protocols/` and synchronized with
 `python3 scripts/sync-shared-protocols.py`; do not hand-edit generated copies.
 
-When adding, renaming, or removing a package, update `README.md`, `INSTALL.md`, and
-`skills.sh.json` in the same change.
+When adding, renaming, or removing a package, update `README.md`, `INSTALL.md`,
+`skills.sh.json`, and `skills-index.json` in the same change. When routing meaning,
+nearest neighbors, or capability keywords change, update the semantic index even when
+the package set stays the same.
 
 ## Validation
 

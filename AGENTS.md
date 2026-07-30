@@ -40,8 +40,11 @@ under the repository's established `docs/` structure.
 ## Project Structure
 
 - `skills/` contains publishable or reusable skill packages.
+- `skills-index.json` is the repository-level semantic discovery source used by
+  `scripts/search-skills.py`; portable runtime activation remains in `SKILL.md`.
 - `scripts/validate-skills.py` checks portable package structure, OpenAI metadata,
-  local links, representative eval sections, distribution hygiene, and catalog parity.
+  local links, representative eval sections, semantic-index integrity, distribution
+  hygiene, and catalog parity.
 - `scripts/sync-shared-protocols.py` keeps identical self-contained package protocols
   synchronized from `protocols/`.
 - `scripts/test_*.py` contains focused validator regressions.

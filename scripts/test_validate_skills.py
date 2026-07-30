@@ -11,6 +11,7 @@ from pathlib import Path
 
 
 SCRIPT = Path(__file__).with_name("validate-skills.py")
+INDEX_SCHEMA = SCRIPT.parent.parent / "docs" / "skills" / "skills-index.schema.json"
 SPEC = importlib.util.spec_from_file_location("validate_skills", SCRIPT)
 assert SPEC and SPEC.loader
 VALIDATOR = importlib.util.module_from_spec(SPEC)
@@ -44,12 +45,43 @@ class ValidatorTests(unittest.TestCase):
             encoding="utf-8",
         )
         (root / "skills.sh.json").write_text(
-            json.dumps({"groupings": [{"skills": ["sample-skill"]}]}), encoding="utf-8"
+            json.dumps({"groupings": [{"title": "Samples", "skills": ["sample-skill"]}]}),
+            encoding="utf-8",
         )
         (root / "README.md").write_text(
             "| Skill | Use when |\n| --- | --- |\n| `sample-skill` | sample |\n", encoding="utf-8"
         )
         (root / "INSTALL.md").write_text("- `skills/sample-skill`\n", encoding="utf-8")
+        index_schema = json.loads(INDEX_SCHEMA.read_text(encoding="utf-8"))
+        (root / "docs" / "skills").mkdir(parents=True)
+        (root / "docs" / "skills" / "skills-index.schema.json").write_text(
+            json.dumps(index_schema), encoding="utf-8"
+        )
+        (root / "skills-index.json").write_text(
+            json.dumps(
+                {
+                    "version": 1,
+                    "description": "Fixture discovery index.",
+                    "categories": {
+                        "samples": {
+                            "title": "Samples",
+                            "description": "Sample processing.",
+                        }
+                    },
+                    "skills": [
+                        {
+                            "name": "sample-skill",
+                            "category": "samples",
+                            "intents": ["process a sample"],
+                            "keywords": ["sample"],
+                            "excludes": ["unrelated work"],
+                            "related": [],
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
         return root
 
     def test_valid_repository(self) -> None:
@@ -125,6 +157,56 @@ class ValidatorTests(unittest.TestCase):
         root = self.make_repo()
         (root / "skills.sh.json").write_text(json.dumps({"groupings": []}))
         self.assertTrue(any("skills.sh.json package set differs" in error for error in VALIDATOR.validate(root)))
+
+    def test_skill_index_set_must_match(self) -> None:
+        root = self.make_repo()
+        index = json.loads((root / "skills-index.json").read_text())
+        index["skills"] = []
+        (root / "skills-index.json").write_text(json.dumps(index))
+        self.assertTrue(any("skills-index.json" in error for error in VALIDATOR.validate(root)))
+
+    def test_skill_index_related_skill_must_exist(self) -> None:
+        root = self.make_repo()
+        index = json.loads((root / "skills-index.json").read_text())
+        index["skills"][0]["related"] = ["missing-skill"]
+        (root / "skills-index.json").write_text(json.dumps(index))
+        self.assertTrue(any("unknown related Skills" in error for error in VALIDATOR.validate(root)))
+
+    def test_skill_index_category_must_exist(self) -> None:
+        root = self.make_repo()
+        index = json.loads((root / "skills-index.json").read_text())
+        index["skills"][0]["category"] = "missing-category"
+        (root / "skills-index.json").write_text(json.dumps(index))
+        self.assertTrue(any("unknown category" in error for error in VALIDATOR.validate(root)))
+
+    def test_skill_index_rejects_self_relation(self) -> None:
+        root = self.make_repo()
+        index = json.loads((root / "skills-index.json").read_text())
+        index["skills"][0]["related"] = ["sample-skill"]
+        (root / "skills-index.json").write_text(json.dumps(index))
+        self.assertTrue(any("cannot relate to itself" in error for error in VALIDATOR.validate(root)))
+
+    def test_skill_index_category_must_match_distribution_group(self) -> None:
+        root = self.make_repo()
+        distribution = json.loads((root / "skills.sh.json").read_text())
+        distribution["groupings"][0]["title"] = "Different Group"
+        (root / "skills.sh.json").write_text(json.dumps(distribution))
+        self.assertTrue(
+            any("category titles differ" in error for error in VALIDATOR.validate(root))
+        )
+
+    def test_skill_index_rejects_duplicate_category_titles(self) -> None:
+        root = self.make_repo()
+        index = json.loads((root / "skills-index.json").read_text())
+        index["categories"]["other"] = {
+            "title": "Samples",
+            "description": "Another category.",
+        }
+        index["skills"][0]["category"] = "other"
+        (root / "skills-index.json").write_text(json.dumps(index))
+        self.assertTrue(
+            any("duplicate category titles" in error for error in VALIDATOR.validate(root))
+        )
 
     def test_openai_metadata_requires_interface_root(self) -> None:
         root = self.make_repo()
