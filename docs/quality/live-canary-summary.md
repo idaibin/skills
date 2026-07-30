@@ -4,8 +4,8 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:9f6b2b9c14c0e5d0343c31b56892957a70f29c0cb5334d8040ced333c22af72c`
-- Host environment: Codex desktop task; local CLI check: `0.145.0`; model:
+- Package digest: `sha256:086d684cbe002eebbad7934269d005d2d57f93b224c6d9f62c179b2df3160e54`
+- Host environment: Codex desktop task; local CLI check: `0.146.0`; model:
   `gpt-5.6-terra`; fresh, ephemeral, read-only CLI sessions.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
@@ -25,9 +25,10 @@ behavior certification and does not replace target-environment runtime validatio
 | Isolated project-local install | Pass | The five scoped packages were copied into a disposable project without a global install. |
 | Installed-copy parity | Pass | Recursive comparison found no difference between each installed package and its source package. |
 | Installed package-local validator | Pass | All five installed validators ran with isolated standard-library Python against the installed synthetic fixture. |
-| Explicit host invocation | Pass | A fresh ephemeral read-only CLI session loaded only the five project-installed copies, read every `SKILL.md`, and distinguished normal triggers, nearest non-triggers, neighboring owners, and critical stop verdicts. |
-| Implicit routing | Pass | A separate fresh ephemeral read-only CLI session classified normal, neighboring-owner, and critical-stop requests without Skill names. It kept specification, implementation, bounded audit, fixed-basis review, direct browser evidence, built-in diagnosis, visual exploration, and unavailable Git delivery distinct. |
-| Browser capability stop gate | Pass | A separate fresh ephemeral read-only CLI session selected `ops-browser` for a 1920 x 1080 two-pass capture request, found no actual browser automation, returned `Not verified`, and made no viewport, screenshot, geometry, computed-style, or visual-completion claim. |
+| Explicit host invocation | Pass | A fresh ephemeral read-only CLI session resolved explicit mentions against only the five project-installed copies and distinguished normal triggers, nearest non-triggers, neighboring owners, mutation boundaries, and critical stops. |
+| Implicit routing | Pass | A separate fresh ephemeral read-only no-tool CLI session classified normal and neighboring-owner requests without Skill names. It kept specification, implementation, bounded audit, fixed-basis review, direct browser evidence, unresolved product behavior, and unavailable Git delivery distinct. |
+| Critical stop routing | Pass | A separate fresh ephemeral read-only no-tool CLI session refused an unapproved visual contract, unresolved selected-source implementation, a review verdict without a fixed basis, and visual-completion evidence without browser capability. |
+| Browser capability stop gate | Pass | A separate fresh ephemeral read-only no-tool CLI session selected `ops-browser` for a same-viewport/state two-pass request, returned `Not verified`, and explicitly withheld viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion. |
 | Browser two-pass visual closure | Not verified | The canary host exposed no browser automation supporting local navigation, viewport control, screenshots, DOM geometry, and computed styles. Same-state pass 1 and pass 2 evidence therefore was not produced. |
 
 ## Sanitized Scenario Ledger
@@ -40,8 +41,8 @@ behavior certification and does not replace target-environment runtime validatio
 | `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Pass |
 | `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Pass |
 | `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Pass |
-| `neighbor-owner-01` | Visual exploration, concrete-failure diagnosis, and Git staging/commit. | Host Product Design, built-in diagnosis, and unavailable `repo-delivery`; none of the five scoped Skills overclaims ownership. | Pass |
-| `browser-stop-01` | Request 1920 x 1080 and two same-state passes without an available browser capability. | `ops-browser`; `Not verified`, with no viewport, screenshot, geometry, computed-style, or visual-completion claim. | Pass |
+| `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Pass |
+| `browser-stop-01` | Request two same-viewport/state passes without an available browser capability. | `ops-browser`; exact viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion are `Not verified`. | Pass |
 
 This ledger is intentionally semantic rather than a transcript. It retains no raw
 prompt, response, path, account, session identifier, or connector payload. Re-run the
