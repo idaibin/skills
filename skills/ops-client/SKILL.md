@@ -36,7 +36,11 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 7. Identify the exact real window by process owner, PID, title, bounds, and platform identifier. Do not substitute browser preview evidence.
 8. Capture and inspect the real window using the selected adapter before making visual claims.
 9. Within the explicitly authorized action scope, prefer background-safe Accessibility/control-tree actions on named controls over coordinate clicks. Verification or capture alone never authorizes pressing a control.
-10. Rebuild/restart the intended client instance after relevant UI, bundle, native, or Accessibility changes before re-verifying.
+10. When rebuild/restart is explicitly authorized for the exact client target, apply
+    the startup-safety gate, rebuild/restart after relevant UI, bundle, native, or
+    Accessibility changes, and then re-verify. Without that authorization, preserve
+    the running client, continue independently safe checks, and report new-build
+    runtime verification as `Not verified`.
 11. Report unsupported platform claims explicitly rather than emulating them with a browser page or cropped screenshot.
 12. Use Client Debug Evidence only when the caller supplies an already-isolated client-layer reproduction whose requested output is direct client evidence. Otherwise route unexplained or cross-system root-cause requests back to the caller for diagnosis before operating the client. For an accepted evidence task, verify the real process/window/build source, collect direct client evidence, clean disposable task state, and return the evidence to the caller.
 

@@ -42,7 +42,10 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
 
 - Process and runtime source are part of the evidence, not optional setup.
 - When the task starts from a repository, identify the client app location and startup command before claiming verification.
-- Before starting or restarting the client, confirm the command source and whether it may disturb an existing instance or active user workflow.
+- Before starting or restarting the client, require explicit authorization for the
+  exact target and action, then confirm the command source and whether it may disturb
+  an existing instance or active user workflow. Relevant source changes alone do not
+  authorize rebuild or restart.
 - Treat multiple app instances and stale bundles as common failure modes.
 - For Tauri webviews, make controls semantic and discoverable through DOM and Accessibility surfaces.
 - For code edits that add semantic controls, labels, or stable selectors, use `dev-frontend`; then return here for real-window proof.
