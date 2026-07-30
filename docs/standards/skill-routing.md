@@ -14,8 +14,10 @@ and output.
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and two-pass visual closure | source files |
+| `dev-java` | requested Java/Spring implementation and migration | source files |
 | `dev-rust` | requested Rust implementation | source files |
 | `audit-frontend` | bounded frontend audit profiles, including selected-source visual fidelity | read-only |
+| `audit-java` | bounded Java/Spring audit profiles | read-only |
 | `audit-rust` | bounded Rust audit profiles | read-only |
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
@@ -33,9 +35,12 @@ Create a new Skill only when all are materially distinct:
 4. independently useful output.
 
 Otherwise add a focused reference/profile to the existing owner. React and Vue remain
-inside frontend Skills; Rust subsystem checks remain inside Rust Skills. A future Java
-or Python Skill should appear only after repeated real implementation work shows that
-its workflow and domain knowledge justify an independently maintained package.
+inside frontend Skills; Java/Spring and Rust subsystem checks remain inside their
+language Skills. A future Python Skill should appear only after repeated real
+implementation work shows that its workflow and domain knowledge justify an
+independently maintained package. Java reached that threshold through repeated Maven
+and Gradle work across legacy Java 8/Spring Boot 2 and modern Java 17+/Spring Boot 3+
+services with distinct security, transaction, persistence, integration, and migration gates.
 
 ## Shared Code Quality Model
 
@@ -46,13 +51,13 @@ reachability and semantics; owner Skills apply the stage meaning:
 | Owner | Quality question |
 | --- | --- |
 | `repo-review` | Did the fixed basis introduce, expand, expose, or directly depend on the issue? |
-| `audit-frontend` / `audit-rust` | What currently exists inside the declared profile and path scope? |
-| `dev-frontend` / `dev-rust` | How does the authorized change avoid the issue and remove only what it makes obsolete? |
+| `audit-frontend` / `audit-java` / `audit-rust` | What currently exists inside the declared profile and path scope? |
+| `dev-frontend` / `dev-java` / `dev-rust` | How does the authorized change avoid the issue and remove only what it makes obsolete? |
 
 Duplication, dead/unused code, over-design, pass-through layers, and hidden
 coupling are findings only after reachability, concrete impact, precise owner,
 stage attribution, and falsifiable verification are established. React, Vue,
-Vite/Rolldown, Rust/Clippy, async, FFI, and similar details stay in their domain
+Vite/Rolldown, Java/Spring/Maven/Gradle, Rust/Clippy, async, FFI, and similar details stay in their domain
 profiles. They do not create a new public Skill or an unconstrained whole-repo
 scan inside `repo-review`.
 
@@ -95,15 +100,15 @@ push actions. Without those conditions, the external-review owner supplies only 
 necessary files or review package. Review publication never creates a pull request,
 updates `main`, force-pushes, or counts as reviewer approval.
 
-This is not mandatory ceremony. A known Rust implementation can start directly with
-`dev-rust`. `repo-review` evaluates correctness, security, performance, and
+This is not mandatory ceremony. A known Java or Rust implementation can start directly
+with `dev-java` or `dev-rust`. `repo-review` evaluates correctness, security, performance, and
 maintainability together on its selected basis. Security risk does not create a new
 catalog Skill or mandatory external dependency.
 
 For security-sensitive review, keep three levels distinct:
 
 - ordinary change review stays inside `repo-review`;
-- `audit-rust` or `audit-frontend` supplies bounded domain evidence only when its
+- `audit-java`, `audit-rust`, or `audit-frontend` supplies bounded domain evidence only when its
   language/framework semantics are independently necessary;
 - a security-only Git-backed review, vulnerability scan, complete security coverage,
   attack-path analysis, or PoC validation uses an available host security provider.

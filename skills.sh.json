@@ -38,14 +38,16 @@
       "description": "Skills that own requested source-code implementation and refactoring, including two-pass runtime visual closure for selected-source frontend work.",
       "skills": [
         "dev-frontend",
+        "dev-java",
         "dev-rust"
       ]
     },
     {
       "title": "Specialist Audit",
-      "description": "Read-only specialist skills for bounded frontend and Rust assessment, including selected-source visual fidelity findings.",
+      "description": "Read-only specialist skills for bounded frontend, Java, and Rust assessment, including selected-source visual fidelity findings.",
       "skills": [
         "audit-frontend",
+        "audit-java",
         "audit-rust"
       ]
     },

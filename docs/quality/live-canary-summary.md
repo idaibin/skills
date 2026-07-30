@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:82f9402e84646adbecfbdab0c78696e058b8a912c89ee645ebbb64d6ed037075`
+- Package digest: `sha256:e411dc8abfd3b0d790eb9ce1a74ed2f1d2fea424b5fdc5cbcd04d321f365db6d`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
   fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
@@ -21,9 +21,9 @@ behavior certification and does not replace target-environment runtime validatio
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
-| Catalog discovery | Not verified | The standard Skill CLI was not rerun for this digest; repository validation still checks the 14-package catalog structure. |
-| Isolated project-local install | Pass | The five scoped packages were copied into a disposable project without a global install. |
-| Installed-copy parity | Pass | Recursive comparison found no difference between each installed package and its source package. |
+| Catalog discovery | Pass | `npx skills@latest add ./skills --list` validated the local publishable source and found exactly 16 packages. |
+| Isolated project-local install | Not verified | The five scoped packages were not installed into a disposable project for this digest. |
+| Installed-copy parity | Not verified | No installed-copy comparison was accepted for this digest. |
 | Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |
 | Explicit host invocation | Not verified | External model invocation was not authorized for this digest. |
 | Implicit routing | Not verified | External model invocation was not authorized for this digest. |
@@ -78,10 +78,10 @@ Live provider routing was intentionally excluded from this isolated five-package
 Treat automatic provider discovery in a larger host catalog as `Not verified` for
 this basis; explicitly invoke or verify the selected provider before claiming scan
 coverage. Do not compensate by embedding a partial scanner in `repo-review`,
-`audit-frontend`, or `audit-rust`.
+`audit-frontend`, `audit-java`, or `audit-rust`.
 
 ## Verdict
 
-Repository validation and isolated-copy parity pass. Catalog discovery, installed
-package validators, model routing, and browser behavior remain `Not verified` for this
-digest; the overall live behavior verdict is `Not verified`.
+Repository validation and local catalog discovery pass. Isolated installation,
+installed-copy parity and validators, model routing, and browser behavior remain
+`Not verified` for this digest; the overall live behavior verdict is `Not verified`.

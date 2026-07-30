@@ -11,8 +11,8 @@ This file defines how AI agents should work on this repository. It is not the pr
 - Use `domain-modeling` when shared cross-functional business language or rules conflict; load lifecycle or bounded-context depth only when that shared ambiguity requires it. Route feature-local behavior and acceptance to `product-spec`.
 - Use the host's built-in planning for requirement readiness, technical design, task decomposition, acceptance criteria, and validation gates.
 - For concrete failures, follow the effective personal or repository diagnosis rules before permanent remediation; use the matching implementation skill only when a source change is requested.
-- Use `dev-frontend` or `dev-rust` for requested code changes.
-- Use `audit-frontend` or `audit-rust` for bounded read-only domain audits. Use
+- Use `dev-frontend`, `dev-java`, or `dev-rust` for requested code changes.
+- Use `audit-frontend`, `audit-java`, or `audit-rust` for bounded read-only domain audits. Use
   `repo-review` for a fixed Worktree or immutable change basis, including changes
   involving authentication, authorization, secrets, untrusted input, or other
   security risks; assess those risks as part of the ordinary Standards axis.

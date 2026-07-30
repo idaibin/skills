@@ -20,8 +20,10 @@ repo-review
 repo-delivery
 ui-spec
 dev-frontend
+dev-java
 dev-rust
 audit-frontend
+audit-java
 audit-rust
 ops-browser
 ops-client
@@ -47,8 +49,10 @@ The publishable source directories are:
 - `skills/repo-delivery`
 - `skills/ui-spec`
 - `skills/dev-frontend`
+- `skills/dev-java`
 - `skills/dev-rust`
 - `skills/audit-frontend`
+- `skills/audit-java`
 - `skills/audit-rust`
 - `skills/ops-browser`
 - `skills/ops-client`
@@ -127,6 +131,13 @@ Rust implementation and audit:
 ```bash
 npx skills@latest add "$CATALOG_SOURCE" \
   --skill dev-rust audit-rust repo-review
+```
+
+Java implementation and audit:
+
+```bash
+npx skills@latest add "$CATALOG_SOURCE" \
+  --skill dev-java audit-java repo-review
 ```
 
 These are documentation shortcuts, not custom CLI bundles or quality claims.

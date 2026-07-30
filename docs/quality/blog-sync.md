@@ -13,7 +13,8 @@ local path, repository identity, and article filenames are intentionally omitted
 
 ## Verified catalog facts to synchronize
 
-- The catalog has 14 public packages after the current source validation.
+- The catalog has 16 public packages after the current source validation, including
+  `dev-java` and `audit-java` as separate implementation and read-only audit owners.
 - `ui-spec` requires Google DESIGN.md at the repository root as the sole shared
   visual authority. It translates a selected visual source into a Feature Spec for
   one page or flow by default; shared tokens, component semantics, variants, or

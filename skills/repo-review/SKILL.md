@@ -50,7 +50,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    materially applies, load the shared code-quality reference and apply its
    fixed-basis attribution rules inside the Standards axis.
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
-8. Select only applicable profiles. Delegate bounded frontend or Rust specialist work only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator. Route a security-only change review, vulnerability scan, or validation to an available host security workflow; do not collapse its execution into this Skill. When completed provider evidence is part of a broader review, verify and integrate it while retaining this review's basis, deduplication, evidence status, severity, and verdict.
+8. Select only applicable profiles. Delegate bounded frontend, Java, or Rust specialist work only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator. Route a security-only change review, vulnerability scan, or validation to an available host security workflow; do not collapse its execution into this Skill. When completed provider evidence is part of a broader review, verify and integrate it while retaining this review's basis, deduplication, evidence status, severity, and verdict.
 9. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
 10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
 11. Run only non-mutating repository checks needed for the selected basis and risk.
@@ -70,9 +70,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Future implementation planning; use the host's built-in planning.
 - Business-domain modeling without a change basis; use `domain-modeling`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
-- A direct bounded frontend-only or Rust-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. When a review basis exists, keep `repo-review` as coordinator.
+- A direct bounded frontend-only, Java-only, or Rust-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. When a review basis exists, keep `repo-review` as coordinator.
 - A repository/path vulnerability scan with no change basis; use the host's
-  security-scan capability when available. A bounded Rust or frontend domain
+  security-scan capability when available. A bounded frontend, Java, or Rust domain
   audit remains with the matching `audit-*` Skill.
 - A security-only review or scan of a Git-backed change set; use the host's security
   diff-scan capability. Use this Skill when security is one axis of a broader change

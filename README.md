@@ -76,6 +76,7 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 | --- | --- |
 | `ui-spec` | A selected visual source or accepted UI surface must become a traceable implementation-ready contract; keep source targets separate from current runtime and use root DESIGN.md only for shared visual authority. |
 | `dev-frontend` | A requested frontend feature, component, page, build/tooling migration, or accepted UI specification must be implemented and validated, including two-pass runtime comparison for selected-source visual work. |
+| `dev-java` | A requested Java source or Java-owned Spring/build change must be implemented against the repository's JDK, Maven/Gradle, security, transaction, and runtime contracts. |
 | `dev-rust` | A requested Rust feature, refactor, or port must be implemented with ownership and behavior evidence. |
 
 ### Audit and Operations
@@ -83,6 +84,7 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 | Skill | Use when |
 | --- | --- |
 | `audit-frontend` | A known frontend surface needs a bounded read-only architecture, build/tooling, accessibility, performance, state, or selected-source visual fidelity audit. |
+| `audit-java` | A known Java source or Java-owned Spring/build configuration surface needs a bounded read-only architecture, API/security, transaction, persistence, integration, performance, or migration audit. |
 | `audit-rust` | A Rust workspace or surface needs a bounded ownership, concurrency, SQLite, unsafe/FFI, performance, or memory audit. |
 | `ops-browser` | A browser page or bounded platform action must be operated or verified, including same-viewport/state source/runtime capture and computed visual evidence. |
 | `ops-client` | A Tauri, Electron, or native desktop client must be verified against its real process and window. |
@@ -104,7 +106,7 @@ unclear domain      -> domain-modeling
 unclear product     -> product-spec
 complex change      -> host planning and repository instructions
 known failure       -> evidence-driven diagnosis under effective instructions
-source work         -> dev-frontend / dev-rust
+source work         -> dev-frontend / dev-java / dev-rust
 visual exploration  -> Codex Product Design -> selected visual source
 UI specification    -> ui-spec (source/runtime delta + per-slice Feature Spec) -> dev-frontend
 visual evidence     -> ops-browser (same viewport/state + computed evidence per pass)

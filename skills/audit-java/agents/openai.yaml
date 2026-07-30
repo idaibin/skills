@@ -1,0 +1,4 @@
+interface:
+  display_name: "Java Audit"
+  short_description: "Audit selected Java and Spring risk profiles"
+  default_prompt: "Use $audit-java to run a read-only, profile-selected Java source or Java-owned Spring configuration audit and return evidence-ranked findings without editing code."

@@ -44,21 +44,30 @@ PROTOCOLS = {
     ),
     Path("protocols/behavior-first-v1.md"): (
         Path("skills/dev-frontend/references/behavior-first.md"),
+        Path("skills/dev-java/references/behavior-first.md"),
         Path("skills/dev-rust/references/behavior-first.md"),
     ),
     Path("protocols/codebase-design-v1.md"): (
         Path("skills/dev-frontend/references/codebase-design.md"),
+        Path("skills/dev-java/references/codebase-design.md"),
         Path("skills/dev-rust/references/codebase-design.md"),
         Path("skills/audit-frontend/references/codebase-design.md"),
+        Path("skills/audit-java/references/codebase-design.md"),
         Path("skills/audit-rust/references/codebase-design.md"),
         Path("skills/repo-review/references/codebase-design.md"),
     ),
     Path("protocols/code-quality-v1.md"): (
         Path("skills/dev-frontend/references/code-quality.md"),
+        Path("skills/dev-java/references/code-quality.md"),
         Path("skills/dev-rust/references/code-quality.md"),
         Path("skills/audit-frontend/references/code-quality.md"),
+        Path("skills/audit-java/references/code-quality.md"),
         Path("skills/audit-rust/references/code-quality.md"),
         Path("skills/repo-review/references/code-quality.md"),
+    ),
+    Path("protocols/java-engineering-v1.md"): (
+        Path("skills/dev-java/references/java-engineering.md"),
+        Path("skills/audit-java/references/java-engineering.md"),
     ),
 }
 

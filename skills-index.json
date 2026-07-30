@@ -17,11 +17,11 @@
     },
     "implementation": {
       "title": "Implementation",
-      "description": "Authorized frontend and Rust source changes."
+      "description": "Authorized frontend, Java, and Rust source changes."
     },
     "specialist-audit": {
       "title": "Specialist Audit",
-      "description": "Bounded read-only frontend and Rust assessment."
+      "description": "Bounded read-only frontend, Java, and Rust assessment."
     },
     "runtime-operations": {
       "title": "Runtime Operations",
@@ -114,6 +114,7 @@
       ],
       "related": [
         "audit-frontend",
+        "audit-java",
         "audit-rust",
         "repo-delivery"
       ]
@@ -221,6 +222,34 @@
       ]
     },
     {
+      "name": "dev-java",
+      "category": "implementation",
+      "intents": [
+        "implement, migrate, or refactor Java source and Java-owned Spring configuration",
+        "change Maven or Gradle builds, APIs, security, transactions, persistence, integrations, or runtime behavior"
+      ],
+      "keywords": [
+        "Java implementation",
+        "Spring Boot",
+        "Maven",
+        "Gradle",
+        "JPA",
+        "transaction",
+        "Spring Security",
+        "migration"
+      ],
+      "excludes": [
+        "read-only Java audit",
+        "fixed-basis review",
+        "Git delivery"
+      ],
+      "related": [
+        "audit-java",
+        "repo-map",
+        "repo-review"
+      ]
+    },
+    {
       "name": "dev-rust",
       "category": "implementation",
       "intents": [
@@ -266,6 +295,33 @@
       ],
       "related": [
         "dev-frontend",
+        "repo-review"
+      ]
+    },
+    {
+      "name": "audit-java",
+      "category": "specialist-audit",
+      "intents": [
+        "audit a bounded Java source or Java-owned Spring/build configuration surface without editing",
+        "assess build, architecture, API security, transactions, persistence, integrations, performance, or migration risks"
+      ],
+      "keywords": [
+        "Java audit",
+        "Spring audit",
+        "transaction audit",
+        "JPA audit",
+        "Spring Security audit",
+        "Maven",
+        "Gradle",
+        "migration audit"
+      ],
+      "excludes": [
+        "Java implementation",
+        "fixed-basis change review",
+        "vulnerability scan"
+      ],
+      "related": [
+        "dev-java",
         "repo-review"
       ]
     },

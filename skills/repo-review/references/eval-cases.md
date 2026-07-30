@@ -22,7 +22,7 @@
 | `Review PR 42 but do not post comments.` | Resolve the PR base/head SHAs, then trigger Fixed-basis review and keep GitHub state unchanged. |
 | `Review this release candidate for migrations, CI, packaging, and rollback.` | Trigger Fixed-basis review with the conditional Release profile. |
 | `Validate this multipart review package, then review it.` | Trigger Review-package basis only after integrity verification. |
-| `Coordinate frontend and Rust review where relevant, including authorization risks.` | Trigger `repo-review`; use bounded frontend/Rust specialists only when their evidence is independently necessary. |
+| `Coordinate frontend, Java, and Rust review where relevant, including authorization risks.` | Trigger `repo-review`; use bounded language specialists only when their evidence is independently necessary. |
 | `Review this auth diff for authorization bypasses and token exposure.` | Trigger `repo-review`; fix the change basis and assess the risks in the Standards axis. |
 | `Review commit X against its parent across repository standards and requirements, including security risks.` | Trigger Fixed-basis `repo-review`; security remains one Standards axis of the broader review. |
 | `Security-review commit X as a change set against its parent.` | Prefer the available host security diff-scan workflow; this is a security-only Git-backed review. |
@@ -45,6 +45,7 @@
 | `Audit this current Rust endpoint path for token leakage; there is no diff to review.` | Prefer `audit-rust`. |
 | `Scan this current repository for vulnerabilities; there is no change basis.` | Prefer an available host security-scan capability; do not widen `repo-review` or recreate a scanner. |
 | `Audit this frontend architecture for accessibility and performance without a review basis.` | Prefer `audit-frontend`. |
+| `Audit this Java service for transaction and Spring Security risks without a review basis.` | Prefer `audit-java`. |
 | `Audit this Rust service for concurrency and memory risks without a review basis.` | Prefer `audit-rust`. |
 | `Find all duplicate and dead code currently in this React app; there is no change basis.` | Prefer `audit-frontend` with a bounded scope, not `repo-review`. |
 | `Apply the accepted frontend findings.` | Prefer `dev-frontend`. |
@@ -103,7 +104,7 @@
 | Ownership and mixed hunks | In commit-readiness, classifies all ownership and requires safe hunk handling; findings-only preserves unrelated state without exhaustive commit grouping. | Uses whole-file staging for mixed content or forces commit grouping on a bounded findings request. |
 | Evidence isolation | Keeps current-worktree content out of another SHA basis. | Clears immutable findings with local files. |
 | Context collaboration | Uses repo maps only for navigation and verifies facts at the basis. | Trusts or edits the map. |
-| Specialist composition | Delegates bounded frontend/Rust paths when needed and retains final scope, integration, severity, and report ownership for the review basis. | Hands off the whole review or concatenates reports. |
+| Specialist composition | Delegates bounded frontend/Java/Rust paths when needed and retains final scope, integration, severity, and report ownership for the review basis. | Hands off the whole review or concatenates reports. |
 | Standards axis | Checks applicable repository guidance, architecture, correctness, security, performance, and maintainability with cited evidence. | Treats generic preferences as hard repository violations. |
 | Security evidence | Keeps `suspected`, `likely`, `validated`, and `fixed` separate from P0-P3; records source/control/sink/path/boundary, counterevidence, proof gaps, confidence, method, and basis; verifies provider output before integration. | Promotes a scanner match or dangerous API directly, treats static confidence as runtime validation, or calls a patch fixed without replay. |
 | Evidence-gated code quality | For applicable duplication, dead/unused code, abstraction, and coupling signals, proves reachability, impact, owner/location, basis attribution, and a falsifiable verification path. | Reports similarity, size, a single wrapper/trait/memo/clone, or optional lint advice by itself. |
@@ -113,7 +114,7 @@
 | Visual-completion profile | Validates the handoff shape, inspects source/revision/approval, separate source/current/target rows, mapping, two same-viewport/state passes, computed checks, real assets/fallback, states and specified breakpoints before supporting completion. | Approves from current similarity, a single screenshot, static checks, or generic fallback assets. |
 | Axis independence | Collects Standards and Spec evidence independently, optionally in bounded parallel read-only passes, then verifies, deduplicates, labels, and severity-ranks findings centrally. | Lets one axis mask the other or concatenates unverified subagent output. |
 | External-review independence | Uses only attributed, captured, locally verified external output; a submitted, pending, timed-out, empty, or missing response remains a separate `Not verified` status and cannot change the local verdict. | Treats submission or elapsed time as reviewer approval/rejection, or lets a missing response create/clear a finding. |
-| Necessary handoff | Emits a frontend/Rust audit handoff only when that specialist must inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Rust, or authentication code. |
+| Necessary handoff | Emits a frontend/Java/Rust audit handoff only when that specialist must inspect a bounded part of the current review; otherwise keeps the optional profile internal and returns no handoff. | Lists specialists merely because a repository contains frontend, Java, Rust, or authentication code. |
 | Contract completeness | Traces manifests, exports, callers, types, migrations, generated files, tests, CI/deploy, docs, indexes, and stale references when applicable. | Reviews isolated source lines only. |
 | Protocol activation | Selects the generated-contract profile only for an existing pipeline or explicit gate; otherwise reviews native route/DTO/client/test ownership and reports `Not applicable`. | Requires OpenAPI because the change uses REST. |
 | Protocol contract basis and gate | When active, fixes Git basis, authority and generator details, baseline/candidate artifacts, then requires applicable generation, compatibility, client, conformance, consumer, and CI evidence or marks gaps `Not verified`. | Reviews a moving basis, treats an edited generated artifact as authority, or accepts static checks as live proof. |

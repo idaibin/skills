@@ -8,7 +8,7 @@
 - reviewing a fixed commit or `base..head`, including a branch or PR normalized to immutable SHAs;
 - reviewing a verified review package;
 - adding release-readiness evidence only when that conditional profile is explicitly requested;
-- coordinating bounded frontend/Rust specialist findings for a fixed change basis.
+- coordinating bounded frontend/Java/Rust specialist findings for a fixed change basis.
 - reviewing a fixed-basis HTTP REST contract change across authority, normalized
   OpenAPI, backend conformance, generated client, consumer, and CI.
 
@@ -20,7 +20,7 @@
 | Review any local or immutable repository change basis | `repo-review` |
 | Define unresolved product behavior or API business intent | `product-spec` |
 | Review authentication, authorization, token, input, or other security risks on a fixed change basis | `repo-review` Standards axis |
-| Audit a bounded frontend or Rust source path with no change basis | matching `audit-*` Skill |
+| Audit a bounded frontend, Java, or Rust source path with no change basis | matching `audit-*` Skill |
 | Diagnose a concrete failure | Host diagnosis under effective instructions |
 | Apply accepted fixes | matching `dev-*` |
 | Stage, commit, push, squash, or clean branches | `repo-delivery` |
