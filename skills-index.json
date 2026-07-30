@@ -41,7 +41,7 @@
       "name": "repo-map",
       "category": "repository-engineering",
       "intents": [
-        "map repository boundaries, architecture, commands, and task routes",
+        "map repository boundaries, architecture, commands, dependencies, and task routes",
         "bootstrap layered repository guidance in root and owned subprojects",
         "find reusable contracts and repair durable navigation"
       ],
@@ -53,6 +53,10 @@
         "backend",
         "architecture",
         "commands",
+        "dependency map",
+        "java",
+        "maven",
+        "gradle",
         "reuse"
       ],
       "excludes": [

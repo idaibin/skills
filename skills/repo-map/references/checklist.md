@@ -18,6 +18,9 @@
 - Repository purpose and real project boundaries
 - Directory structure with ownership, not an exhaustive file tree
 - Technical architecture and runtime/deployment boundaries
+- Build and dependency authorities: owning manifests, runtime/toolchain source,
+  internal module edges, and routing-relevant direct external dependencies; for a
+  Java/JVM project, apply `java-build-and-dependency-map.md`
 - Runtime and package-manager requirements
 - Install, start, test, lint, typecheck, and build commands
 - Effective repository conventions and source documents
@@ -41,7 +44,9 @@
 - Naming/placement patterns and the gate for creating new files or contracts
 - Frequent edit areas, protected/high-risk areas, exceptions, and `Not verified` gaps
 
-Do not include content obtainable from one directory listing, an exhaustive symbol catalog, or transient Git/local/runtime status.
+Do not include content obtainable from one directory listing, an exhaustive symbol or
+dependency catalog, configuration values, credentials, or transient Git/local/runtime
+status.
 Do not flatten specialist maps into the root index. If a UI component map, API
 contract map, deployment map, or similar artifact already owns bounded detail,
 verify it, link it, and keep the root entry to authority, purpose, and reading order.

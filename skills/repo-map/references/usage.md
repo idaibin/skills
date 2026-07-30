@@ -12,6 +12,8 @@ Create or maintain a durable semantic repo map from current source truth. It sho
 - Workspace routing across multiple child Git roots
 - Ordinary non-Git directory projects with no containing or child Git repository
 - Directory ownership and technical architecture mapping
+- Maven/Gradle build roots, Java runtime/toolchain evidence, module roles, and bounded
+  dependency routing
 - Real command, runtime, and repository-convention documentation
 - Shortest reading paths for common frontend, API, backend, CLI, or worker tasks
 - Verified component, function, service, API client, route, handler, trait, type, or DTO reuse inventories
@@ -24,6 +26,7 @@ Create or maintain a durable semantic repo map from current source truth. It sho
 ## Triggers
 
 - `Map the current project's directory structure and technical architecture into the repo map.`
+- `Map this Java workspace's Maven and Gradle roots, JDK requirements, module roles, critical dependency routes, and executable services without copying full dependency trees.`
 - `Organize the real commands, standards, components, and interface entry points into navigation for later development.`
 - `Identify the shortest set of directories and components to read before developing this page.`
 - `Update the APIs and reusable components in the repo map.`

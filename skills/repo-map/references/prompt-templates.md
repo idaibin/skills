@@ -31,6 +31,8 @@ Required sections:
 - Tech stack
 - Install, start, test, lint, typecheck, and build commands
 - Runtime and package manager requirements
+- Build authority, runtime/toolchain source, internal module edges, and critical
+  direct dependency routes
 - Directory structure
 - Typical file chain for page, API, backend, CLI, or worker changes
 - Components, services, state, styles, tests, and config locations
@@ -44,6 +46,13 @@ Required sections:
 - Recommended reading order for new tasks
 
 For each common task type, prefer a short ordered reading path over a broad inventory. Point to the owning manifest/config, entry or registration, reusable contract, representative caller, and matching test only when each hop is useful.
+
+When Maven, Gradle, or JVM source sets are present, apply
+`java-build-and-dependency-map.md`. Record the owning build root, Wrapper or verified
+command source, JDK evidence, module roles and declared internal edges, dependency
+management authority, executable entry points, configuration ownership, and only the
+external dependencies that change routing. Do not copy dependency trees or
+configuration values.
 
 Stop when each mapped common task reaches the correct working/Git root through the minimum decisive chain, normally 1-8 unique entries per task. Reuse shared entries; exceed eight only for distinct required boundaries and record the reason. Omit any section that merely repeats a directory listing or manifest.
 

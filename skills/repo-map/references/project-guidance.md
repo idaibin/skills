@@ -16,8 +16,9 @@ Start with the requested scope and map root. Build a placement matrix before wri
 | Package/crate/module | It has durable local rules that materially differ from its parent and repeatedly change task execution. | The difference is task-local, obvious from one manifest, or better kept in source documentation. |
 
 A directory name is never enough evidence. Confirm boundaries from files such as
-workspace manifests, `package.json`, `Cargo.toml`, build/task files, deployment config,
-entry points, CI paths, or current ownership documentation. A single repository may
+workspace manifests, `package.json`, `Cargo.toml`, `pom.xml`, Maven Wrapper,
+`settings.gradle[.kts]`, `build.gradle[.kts]`, Gradle Wrapper, build/task files,
+deployment config, entry points, CI paths, or current ownership documentation. A single repository may
 therefore have root guidance plus nearer files such as `apps/web/AGENTS.md` and
 `services/api/AGENTS.md`; a simple repository may need only the root file.
 

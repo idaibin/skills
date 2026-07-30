@@ -1,5 +1,12 @@
 # Repository Map Eval Cases
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Quality Eval](#quality-eval)
+- [Scoring](#scoring)
+
 ## Trigger Eval
 
 | User prompt | Expected result | Why |
@@ -22,6 +29,9 @@
 | `Record where each product's positioning facts live in this monorepo, but do not rewrite or decide the positioning.` | Trigger Targeted Update for product-fact routing only. | The map should reach product authority without absorbing `product-spec`. |
 | `Create a root AGENTS.md plus nearer guidance for the independently built web frontend and API backend; keep shared rules at the root.` | Trigger Project Guidance Baseline mode. | Explicit layered repository guidance is requested and the boundaries are evidence-checkable. |
 | `This monorepo has apps/web, services/api, and packages/shared. Decide from manifests and commands which directories need their own AGENTS.md, then create only the justified files.` | Trigger Project Guidance Baseline mode. | Placement must follow real owner/build/runtime boundaries rather than directory names. |
+| `Map this non-Git workspace containing independent Maven repositories; record each child Git/build root, JDK source, aggregator and executable modules, BOM ownership, and critical cross-repository SDK edges.` | Trigger Repo Map mode with the Java build and dependency profile. | The container/root and Maven module boundaries must remain distinct. |
+| `Map this Gradle Java repository where each backend service has its own settings, Wrapper, build, and runtime configuration; do not dump every dependency.` | Trigger Repo Map mode with the Java build and dependency profile. | Independent build/runtime boundaries and bounded dependencies are requested. |
+| `Use this open-source Java framework as a design and documentation reference, but generate the target repo map only from our current manifests, entry points, commands, and module dependencies.` | Trigger Targeted Update with the Java build and dependency profile. | The reference supplies comparison questions, while the target repository remains authoritative. |
 
 ## Non-Trigger Eval
 
@@ -40,6 +50,7 @@
 | `Regenerate OpenAPI and migrate the React caller to the generated client.` | Prefer the matching `dev-*` owner. | Source implementation, not a durable map deliverable. |
 | `Review this feature range for dual authority, breaking API changes, and runtime gaps.` | Prefer `repo-review`. | Defect and readiness judgment against a fixed basis. |
 | `Implement changes in both the frontend and backend.` | Prefer the matching implementation owners; read existing guidance but do not create it implicitly. | Source work alone does not authorize new `AGENTS.md` files. |
+| `Upgrade this Maven project to a new JDK and replace its Spring dependencies.` | Prefer the matching implementation owner or host planning before source changes. | A build/runtime migration is implementation, not a durable map deliverable. |
 
 ## Quality Eval
 
@@ -86,6 +97,11 @@
 | Publish readiness | Updates metadata/references and passes repository validation. | Leaves routing or eval artifacts stale. |
 | Layered guidance placement | Keeps shared routing and safety at the root, creates nearer `AGENTS.md` only for proven independent Git/ownership/build/runtime/command boundaries, and records skipped candidates. | Copies the root file into every directory, treats names such as frontend/backend as proof, or omits a justified child boundary. |
 | Guidance precedence | Re-reads one representative task through the root-to-leaf chain and keeps child files to local deltas without contradiction. | Duplicates or contradicts parent rules, or leaves the effective command/root ambiguous. |
+| Java build-root recognition | Resolves Maven parent/aggregator/module roots or Gradle settings/included-build roots from manifests and Wrapper evidence while preserving child Git ownership. | Chooses a root from `src/main/java`, directory names, or the first manifest found. |
+| Java runtime evidence | Records JDK and build-tool requirements from compiler/toolchain, Wrapper, CI/image, or version-manager sources and preserves conflicts as `Not verified`. | Infers the JDK from framework convention, the local machine, or stale prose. |
+| Java dependency topology | Records declared internal edges, BOM/platform/version authority, executable/library roles, and only routing-relevant external dependencies with manifest evidence. | Copies a full dependency tree/effective model, treats declaration as successful resolution/runtime use, or omits the dependency owner. |
+| Java configuration hygiene | Records configuration and profile ownership without copying values and keeps remote/deployed configuration `Not verified` without direct evidence. | Persists credentials, endpoints, connection strings, tokens, or inferred active profiles. |
+| External architecture reference | Extracts useful documentation and architecture questions from the reference, verifies adopted facts against target manifests/source, and keeps unadopted patterns separate from current truth. | Creates a framework-specific branch, labels the target from similarity, or copies the reference layout, commands, dependencies, and conventions as target facts. |
 
 ## Scoring
 

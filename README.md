@@ -59,7 +59,7 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 
 | Skill | Use when |
 | --- | --- |
-| `repo-map` | Current repository boundaries, commands, task routes, reusable owners, a bounded protocol chain, or explicitly requested layered root/subproject `AGENTS.md` guidance needs evidence-based creation or repair. |
+| `repo-map` | Current repository boundaries, architecture, commands, critical dependency routes—including Maven/Gradle Java boundaries—reusable owners, or explicitly requested layered root/subproject `AGENTS.md` guidance needs evidence-based creation or repair. |
 | `domain-modeling` | Shared business terms, rules, lifecycle conflicts, or domain boundaries are ambiguous across product work. |
 | `repo-review` | Current Worktree/index, a fixed SHA/range (including resolved PR base/head), or a verified review package needs independent read-only review; Release and selected-source visual completion are conditional profiles. |
 | `repo-delivery` | Reviewed changes need categorized commits, an explicit single commit, push/sync, evidence-based branch integration, or cleanup. |
