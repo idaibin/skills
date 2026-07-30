@@ -25,7 +25,7 @@ A task with an already selected visual source may start directly with `ui-spec`.
 
 ## Artifact Locations
 
-Keep unfinished specifications under `.codex/artifacts/<task-id>/`. For explicitly approved durable publication, follow [the UI documentation boundaries](documentation-boundaries.md): keep shared visual semantics only in the repository-root `DESIGN.md`, write Feature Specs to `docs/ui/<slice-id>/spec.md`, use the same slice ID as related `docs/prd/` facts, and never add a `docs/specs/` wrapper or another shared visual authority.
+Keep unfinished specifications directly under `.codex/artifacts/` as `ui-<YYYYMMDD-HHmmss>-<slice-id>.md`; do not create nested task directories. For explicitly approved durable publication, follow [the UI documentation boundaries](documentation-boundaries.md): keep shared visual semantics only in the repository-root `DESIGN.md`, write Feature Specs to `docs/ui/<slice-id>/spec.md`, use the same slice ID as related `docs/prd/` facts, and never add a `docs/specs/` wrapper or another shared visual authority.
 
 ## Handoff Examples
 

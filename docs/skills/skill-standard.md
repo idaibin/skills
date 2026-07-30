@@ -92,6 +92,17 @@ index shape validator-backed.
   stable term only when it intentionally anchors routing or execution.
 - A package may not require another Skill or repository-root file to perform its job.
 
+## Task-Local Output
+
+Follow active repository instructions before writing task-local files. With no more
+specific rule, store temporary reports, reviews, handoffs, evidence, and helper files
+as `.codex/<category>/<type>-<YYYYMMDD-HHmmss>.<ext>` using local time. Use exactly
+one category parent under `.codex`—normally `artifacts`, `reviews`, `handoffs`, or
+`tmp`—and do not create task, type, or date subdirectories by default. Related files
+share a timestamped filename prefix instead of a directory. Durable user-requested
+project documentation and final deliverables remain in their authoritative repository
+or output location.
+
 ## Maintenance And Pruning
 
 For every Skill revision, inspect each touched sentence against four questions:
@@ -140,7 +151,8 @@ Feed a real failure back into the narrowest owning rule and existing eval file t
 would have caught it. Do not create a public Skill, shared regression framework, or
 cross-catalog reference solely to document the iteration method.
 
-Keep raw runs under ignored `eval-results/` or `.codex/reviews/`. Commit only a
+Keep raw runs directly under ignored `eval-results/` or `.codex/reviews/` with
+timestamped filenames. Commit only a
 sanitized summary whose fixed Skill revision, host/model, scenarios, result, failures,
 and coverage limits remain useful. Old raw runs never prove current behavior.
 

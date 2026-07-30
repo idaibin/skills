@@ -4,9 +4,9 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:086d684cbe002eebbad7934269d005d2d57f93b224c6d9f62c179b2df3160e54`
-- Host environment: Codex desktop task; local CLI check: `0.146.0`; model:
-  `gpt-5.6-terra`; fresh, ephemeral, read-only CLI sessions.
+- Package digest: `sha256:82f9402e84646adbecfbdab0c78696e058b8a912c89ee645ebbb64d6ed037075`
+- Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
+  fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -21,28 +21,28 @@ behavior certification and does not replace target-environment runtime validatio
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
-| Catalog discovery | Pass | The standard Skill CLI validated the publishable `skills/` source and listed exactly 14 packages. Repository-root discovery additionally saw one local workspace-only `.agents` Skill, so that broader result is not used as publishable catalog evidence. |
+| Catalog discovery | Not verified | The standard Skill CLI was not rerun for this digest; repository validation still checks the 14-package catalog structure. |
 | Isolated project-local install | Pass | The five scoped packages were copied into a disposable project without a global install. |
 | Installed-copy parity | Pass | Recursive comparison found no difference between each installed package and its source package. |
-| Installed package-local validator | Pass | All five installed validators ran with isolated standard-library Python against the installed synthetic fixture. |
-| Explicit host invocation | Pass | A fresh ephemeral read-only CLI session resolved explicit mentions against only the five project-installed copies and distinguished normal triggers, nearest non-triggers, neighboring owners, mutation boundaries, and critical stops. |
-| Implicit routing | Pass | A separate fresh ephemeral read-only no-tool CLI session classified normal and neighboring-owner requests without Skill names. It kept specification, implementation, bounded audit, fixed-basis review, direct browser evidence, unresolved product behavior, and unavailable Git delivery distinct. |
-| Critical stop routing | Pass | A separate fresh ephemeral read-only no-tool CLI session refused an unapproved visual contract, unresolved selected-source implementation, a review verdict without a fixed basis, and visual-completion evidence without browser capability. |
-| Browser capability stop gate | Pass | A separate fresh ephemeral read-only no-tool CLI session selected `ops-browser` for a same-viewport/state two-pass request, returned `Not verified`, and explicitly withheld viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion. |
-| Browser two-pass visual closure | Not verified | The canary host exposed no browser automation supporting local navigation, viewport control, screenshots, DOM geometry, and computed styles. Same-state pass 1 and pass 2 evidence therefore was not produced. |
+| Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |
+| Explicit host invocation | Not verified | External model invocation was not authorized for this digest. |
+| Implicit routing | Not verified | External model invocation was not authorized for this digest. |
+| Critical stop routing | Not verified | External model invocation was not authorized for this digest. |
+| Browser capability stop gate | Not verified | No fresh host invocation was run for this digest. |
+| Browser two-pass visual closure | Not verified | No fresh browser visual canary was run for this digest. |
 
 ## Sanitized Scenario Ledger
 
 | Case | Trigger shape | Expected owner or stop | Result |
 | --- | --- | --- | --- |
-| `explicit-owner-01` | Explicitly load the five scoped packages and state each boundary. | All five owners visible and distinct. | Pass |
-| `implicit-spec-01` | Approved visual source to implementation-ready contract, no code edit; unapproved-source stop variant. | `ui-spec`; unapproved source is `Not Ready`. | Pass |
-| `implicit-dev-01` | Implement an accepted frontend contract; unresolved `spec-ready` and viewport stop variant. | `dev-frontend`; unresolved evidence stops before editing as `Partial` / `Not Ready`. | Pass |
-| `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Pass |
-| `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Pass |
-| `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Pass |
-| `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Pass |
-| `browser-stop-01` | Request two same-viewport/state passes without an available browser capability. | `ops-browser`; exact viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion are `Not verified`. | Pass |
+| `explicit-owner-01` | Explicitly load the five scoped packages and state each boundary. | All five owners visible and distinct. | Not verified |
+| `implicit-spec-01` | Approved visual source to implementation-ready contract, no code edit; unapproved-source stop variant. | `ui-spec`; unapproved source is `Not Ready`. | Not verified |
+| `implicit-dev-01` | Implement an accepted frontend contract; unresolved `spec-ready` and viewport stop variant. | `dev-frontend`; unresolved evidence stops before editing as `Partial` / `Not Ready`. | Not verified |
+| `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Not verified |
+| `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Not verified |
+| `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Not verified |
+| `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Not verified |
+| `browser-stop-01` | Request two same-viewport/state passes without an available browser capability. | `ops-browser`; exact viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion are `Not verified`. | Not verified |
 
 This ledger is intentionally semantic rather than a transcript. It retains no raw
 prompt, response, path, account, session identifier, or connector payload. Re-run the
@@ -63,11 +63,8 @@ must demonstrate source approval, complete acceptance mapping, two same-viewport
 passes, computed runtime evidence, browser-state restoration, and an honest
 `Partial`/`Not Ready` verdict whenever required evidence is absent.
 
-The valid sessions disabled unrelated plugins and apps and path-disabled user-global
-copies of the catalog Skills, leaving the five project-installed copies as the only
-catalog candidates. A preliminary session that read user-global copies was rejected
-as invalid and is not included in the results. Re-run implicit routing after host
-catalog changes or global installation updates.
+No fresh model sessions were accepted for this digest. Re-run explicit and implicit
+routing after authorization, host catalog changes, or global installation updates.
 
 ## External Security Provider Compatibility
 
@@ -85,6 +82,6 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Distribution, installed package self-containment, explicit loading, implicit routing,
-and honest browser capability degradation pass. Actual two-pass browser visual closure
-remains `Not verified`; the overall live behavior verdict is `Partial`.
+Repository validation and isolated-copy parity pass. Catalog discovery, installed
+package validators, model routing, and browser behavior remain `Not verified` for this
+digest; the overall live behavior verdict is `Not verified`.

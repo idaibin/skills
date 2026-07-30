@@ -8,17 +8,17 @@ Confirm:
 - branch, upstream, base, and remote
 - dirty state and unrelated changes
 - allowed files and validation commands
-- ignored review directory, normally `.codex/reviews/<review-id>/`
-- outbound `review-package.md` and inbound external-response `review.md` paths inside it, plus whether an existing artifact set may be replaced
+- ignored review parent, normally `.codex/reviews/`
+- outbound `<review-id>-package.md` and inbound `<review-id>-response.md` paths inside it, plus whether an existing artifact set may be replaced
 
 Use local `git` first. Use `gh` or GitHub tooling only when PR, CI, compare URL, or remote metadata is needed. Mark unchecked remote metadata `Not verified`.
 
 ## Combined Loop
 
-1. Fix the branch/commit/diff basis and write an unbiased `review-package.md`.
+1. Fix the branch/commit/diff basis and write an unbiased `<review-id>-package.md`.
 2. Stop for package-only requests.
 3. Run a bounded `repo-review` and, only when authorized, an independent ChatGPT review. Neither receives the other's conclusions before reporting.
-4. Append attributed ChatGPT output to `review.md`; locally verify and deduplicate both finding sets.
+4. Append attributed ChatGPT output to `<review-id>-response.md`; locally verify and deduplicate both finding sets.
 5. Stop with locally confirmed/rejected findings unless the user also requested source fixes.
 6. When fixes are authorized, route confirmed issues to the matching owner, rerun the original failure path and proportionate validation, freeze a new Worktree fingerprint, and run Worktree `repo-review`; use immutable fixed-basis review only after a commit exists.
 7. Repeat ChatGPT only with explicit authorization plus a confirmed P0/P1, permission/privacy/security, migration/irreversible, public-compatibility, production/release, or equivalent new risk.
@@ -57,13 +57,13 @@ repository's commit convention.
 
 ## Artifacts
 
-`.codex/reviews/<review-id>/review-package.md` is the outbound, manually sendable package. It contains the
+`.codex/reviews/<review-id>-package.md` is the outbound, manually sendable package. It contains the
 task/scope, repository/branch/base/commit basis, review focus, selected evidence,
 validation, exclusions/redactions, and requested response format.
 
-The matching `.codex/reviews/<review-id>/review.md` is inbound only: external ChatGPT responses plus Codex verification
+The matching `.codex/reviews/<review-id>-response.md` is inbound only: external ChatGPT responses plus Codex verification
 notes. Do not create it in Package-only mode unless the user explicitly requests
-an empty response log. Keep the whole review directory local-private and ignored.
+an empty response log. Keep the whole prefixed artifact set local-private and ignored.
 Repository delivery requires explicit authorization and a separate sanitized
 durable copy under the repository's approved documentation structure.
 

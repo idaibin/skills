@@ -52,8 +52,8 @@ Before any external action, collect only local read-only context:
 - repository path, branch, and dirty state
 - review package scope and approximate size
 - validation commands already run and results
-- canonical review directory, normally `<repo-root>/.codex/reviews/<review-id>/`
-- outbound `review-package.md` and inbound `review.md` paths inside that directory
+- canonical review parent, normally `<repo-root>/.codex/reviews/`
+- outbound `<review-id>-package.md` and inbound `<review-id>-response.md` paths inside that parent
 - bridge default record status
 - local Chrome profile directory candidates
 - cached ChatGPT tab candidates only if already available
@@ -166,11 +166,11 @@ Use the same reference for UI/design, image, architecture, repository, product/d
 ## Review Package
 
 Write the outbound package to
-`<repo-root>/.codex/reviews/<review-id>/review-package.md` unless the user names
+`<repo-root>/.codex/reviews/<review-id>-package.md` unless the user names
 another path. Use a stable filesystem-safe review ID, normally
-`YYYY-MM-DD-<short-topic>`, and keep all related package parts, response logs,
-ledgers, and attachments in the same directory. Before writing, verify that the
-directory is ignored. If it is not ignored, use an existing ignored local
+`ask-<YYYYMMDD-HHmmss>` in local time, and keep all related package parts, response logs,
+ledgers, and attachments directly in `.codex/reviews/` with the same review-ID prefix. Do not create a nested review directory. Before writing, verify that the
+parent is ignored. If it is not ignored, use an existing ignored local
 workspace or request authorization to add the ignore rule; do not silently edit
 tracked ignore policy. If any artifact-set member already exists, preserve the
 set and request overwrite approval or use an explicitly selected alternate
@@ -205,15 +205,15 @@ file being hashed. Validate basis fingerprint and artifact hash separately.
 
 For live-browser review, also include exact target URLs, environment/account boundary, expected state, allowed and forbidden actions, required screenshot/source or state evidence, and an independent verification seam. Never include credentials, tokens, connection strings, signed secret URLs, or unrelated authenticated surfaces.
 
-Prefer text input under 20,000 characters and a file/pasted attachment for 20,000-80,000 characters. Above 80,000 characters, 20 files, or 1 MB, keep `review-package.md` as the manifest and shared review contract, and write ordered sibling parts as `review-package.part-001.md`, `review-package.part-002.md`, and so on. The manifest must list the part count and, for every part, its byte and character count, SHA-256, covered paths or evidence, exclusions, order, and whether it is the final part. For a user-supplied path such as `custom.md`, use `custom.part-001.md`. Treat the manifest and every part as one artifact set: do not overwrite any existing member without authorization, and do not send a partial set as a complete package.
+Prefer text input under 20,000 characters and a file/pasted attachment for 20,000-80,000 characters. Above 80,000 characters, 20 files, or 1 MB, keep `<review-id>-package.md` as the manifest and shared review contract, and write ordered siblings as `<review-id>-package.part-001.md`, `<review-id>-package.part-002.md`, and so on. The manifest must list the part count and, for every part, its byte and character count, SHA-256, covered paths or evidence, exclusions, order, and whether it is the final part. For a user-supplied path such as `custom.md`, use `custom.part-001.md`. Treat the manifest and every part as one artifact set: do not overwrite any existing member without authorization, and do not send a partial set as a complete package.
 
 Use this manifest table shape so the sequence is mechanically inspectable:
 
 ```md
 | Order | File | Bytes | Characters | SHA-256 | Covered paths/evidence | Final |
 | ---: | --- | ---: | ---: | --- | --- | --- |
-| 1 | review-package.part-001.md | ... | ... | ... | ... | no |
-| N | review-package.part-00N.md | ... | ... | ... | ... | yes |
+| 1 | ask-20260730-150931-package.part-001.md | ... | ... | ... | ... | no |
+| N | ask-20260730-150931-package.part-00N.md | ... | ... | ... | ... | yes |
 ```
 
 Generate and re-check the recorded values with available local read-only tools such as `wc -c`, `wc -m`, and `shasum -a 256` (or repository-defined equivalents). Do not substitute estimated sizes or hashes.
@@ -243,8 +243,8 @@ Request acknowledgements in the form `PART <order>/<count> RECEIVED: <filename>;
 ## Review Artifact
 
 Write external ChatGPT responses to
-`<repo-root>/.codex/reviews/<review-id>/review.md` unless the user names another
-path. Use the same review directory and ID as the outbound package. Do not use
+`<repo-root>/.codex/reviews/<review-id>-response.md` unless the user names another
+path. Use the same review ID as the outbound package. Do not use
 it for the outbound package and do not create it in Package-only mode unless
 explicitly requested. Preserve previous useful passes by appending a dated pass.
 
@@ -262,7 +262,7 @@ Each pass should record:
 
 ## Review Artifact Visibility
 
-Choose and record one mode before writing or delivering `review.md`:
+Choose and record one mode before writing or delivering the response file:
 
 - `local-private` (default): keep the file untracked. A full conversation URL and verified workspace note may be retained locally when needed for attribution.
 - `repository-private`: use only after the user explicitly authorizes committing the artifact and repository privacy is verified. Confirm whether full identifiers are allowed; otherwise sanitize.
@@ -270,7 +270,7 @@ Choose and record one mode before writing or delivering `review.md`:
 
 External review authorization does not authorize committing `review.md`. Route any requested delivery through `repo-delivery`, scan the staged artifact for full ChatGPT conversation URLs and concrete workspace display names, and preserve the local-private source outside Git when a sanitized repository copy is needed.
 
-Raw packages, responses, ledgers, and attachments belong in the ignored
-`.codex/reviews/<review-id>/` workspace. When durable repository evidence is
+Raw packages, responses, ledgers, and attachments belong directly in the ignored
+`.codex/reviews/` parent and share one review-ID prefix. When durable repository evidence is
 explicitly requested, create a separate sanitized copy only in a user-approved
 tracked documentation path; never stage the raw local workspace.

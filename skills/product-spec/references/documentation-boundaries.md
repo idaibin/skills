@@ -36,7 +36,7 @@ sibling specification.
 - UI evidence/prompt: only when the feature needs visual or state evidence; shared
   selected-source and visual-system specification ownership belongs to `ui-spec`.
 - Handoff: only for unfinished cross-session continuation. Follow repository
-  convention, such as `.codex/handoffs/<task-id>.md` for local task/worktree state
+  convention, such as `.codex/handoffs/product-<YYYYMMDD-HHmmss>.md` for local task/worktree state
   or a repository-approved docs location for explicitly requested team-shared
   continuation. Before writing a local handoff, verify that its directory is ignored;
   use an existing ignored workspace or request authorization to add the ignore rule

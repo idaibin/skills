@@ -29,5 +29,5 @@ To implement one UI slice, read in order:
 5. `docs/ui/<slice-id>/spec.md`.
 
 Do not require sibling PRD or UI contracts. Keep unfinished task-local work under the
-repository's ignored task workspace, such as `.codex/artifacts/<task-id>/`, until
+repository's ignored task workspace, such as `.codex/artifacts/ui-<YYYYMMDD-HHmmss>-<slice-id>.md`, until
 durable publication is explicitly approved.
