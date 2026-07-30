@@ -32,6 +32,10 @@ does not authorize staging or committing.
 - Confirm review status or run `repo-review` first when ownership, mixed hunks, or commit groups are unclear.
 - For review publication, confirm explicit commit and push authorization, a GitHub remote, a non-default/non-protected branch, and the exact fixed SHA the reviewer will receive.
 - Run task-matching validation or report why it was skipped.
+- When the approved delivery outcome depends on selected-source visual completion,
+  require the applicable final review verdict and its referenced final visual-evidence
+  artifact. Consume the evidence; do not capture screenshots, operate a browser/client,
+  or issue a new visual verdict.
 - Inspect staged diff before every commit.
 - Verify final local and remote state after delivery.
 

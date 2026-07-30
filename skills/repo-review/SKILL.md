@@ -40,6 +40,10 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    conditional frontend design-compliance subflow: product requirements or product
    Feature Spec -> selected-source UI Feature Spec -> root `DESIGN.md` ->
    implementation adapters/config -> runtime/browser evidence.
+   When that basis specifically adds or changes motion, gesture behavior, transition
+   ownership, or user-visible interaction feedback, also load
+   [references/interaction-motion-review.md](references/interaction-motion-review.md);
+   never activate it from file extensions or frontend directories alone.
    Use `repo-map` only to navigate, not as review proof; mark absent trusted spec
    authorities and absent runtime evidence separately `Not verified`.
    When maintainability, duplication, dead/unused code, abstraction, or coupling
@@ -118,6 +122,9 @@ Lead with mode/profile, basis, scope, exclusions, and validation, then severity-
 - See [references/checklist.md](references/checklist.md) for immutable basis, severity, and release review.
 - See [references/protocol-contracts.md](references/protocol-contracts.md) only for an existing or explicitly requested OpenAPI/generated-client review gate.
 - See [references/standards-and-spec.md](references/standards-and-spec.md) for independent Standards and Spec review axes.
+- Read [references/interaction-motion-review.md](references/interaction-motion-review.md)
+  only when the selected basis adds or changes motion, gesture behavior, transition
+  ownership, or user-visible interaction feedback.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for the conditional visual-completion profile; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
 - Read [references/code-quality.md](references/code-quality.md) when the basis
   materially involves duplication, dead or unused code, abstractions, hidden

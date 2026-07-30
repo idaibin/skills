@@ -27,12 +27,17 @@ decision instead of interviewing the user about it.
    permissions, failure semantics, and acceptance over local preferences.
 4. Ask one bounded question and wait for its answer. Include:
    - why the decision is material now;
+   - the user need and verified product constraints or evidence that bound it;
    - the recommended answer and reason;
    - the principal trade-off;
+   - the materially different alternative being rejected, when one exists;
    - the affected product slices.
 5. Record the answer using the workflow's Confirmed, Assumption, Open Question,
-   Rejected, or Deferred state. Recompute only the affected branches, then select the
-   next frontier decision.
+   Rejected, or Deferred state. For a confirmed material choice, retain its context,
+   evidence or constraints, reason, principal trade-off, rejected alternative when
+   applicable, and affected slice or acceptance result. Link visual authority when
+   relevant; do not define visual style, tokens, layout, or motion here. Recompute only
+   the affected branches, then select the next frontier decision.
 6. Checkpoint a coherent decision group before synthesizing or updating an artifact;
    do not rewrite the specification after every answer.
 

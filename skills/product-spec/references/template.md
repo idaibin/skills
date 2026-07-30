@@ -9,7 +9,7 @@ Use repository conventions before these shapes. Omit inapplicable sections.
 
 ## Goal and implementation slice
 ## Users and scenarios
-## Confirmed decisions
+## Confirmed decisions and rationale
 ## Scope and non-goals
 ## Main and failure flows
 ## Business rules and permissions
@@ -37,6 +37,17 @@ For several independent features, add a short index before the slice documents:
 Each linked slice uses the Feature Spec template. Do not repeat UI colors, typography,
 components, tokens, or page geometry; link the target UI contract instead.
 
+For each material product choice, record only the fields needed to preserve why the
+slice is implementable. Omit this structure for settled or low-impact facts:
+
+| Decision | User need and context | Constraints or evidence | Reason | Principal trade-off | Rejected alternative | Affected slice or acceptance |
+| --- | --- | --- | --- | --- | --- | --- |
+| `<confirmed product behavior or scope>` | `<why it matters now>` | `<verified facts or explicit constraints>` | `<why this option>` | `<cost or limitation>` | `<material alternative and reason, or omitted>` | `<slice and observable consequence>` |
+
+When a visual decision is relevant, link the applicable UI contract or root
+`DESIGN.md` in the surrounding section. Do not use this table to choose UI style,
+tokens, components, geometry, motion values, libraries, or implementation details.
+
 Use the product fact trace only for facts that materially affect a slice or its
 acceptance. Keep it behavioral rather than technical:
 
@@ -61,7 +72,7 @@ record instead of duplicating them in this table.
 ## Product language required for this boundary
 ## MVP and non-goals
 ## Success signals
-## Confirmed, assumed, open, rejected, and deferred decisions
+## Confirmed decisions and rationale; assumed, open, rejected, and deferred decisions
 ## Ready for <first implementation slice>
 ```
 

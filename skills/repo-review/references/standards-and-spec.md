@@ -1,5 +1,14 @@
 # Standards and Spec Review
 
+## Contents
+
+- [Standards Axis](#standards-axis)
+- [Security Evidence](#security-evidence)
+- [Spec Axis](#spec-axis)
+- [Conditional Frontend Design Compliance](#conditional-frontend-design-compliance)
+- [Independence and Integration](#independence-and-integration)
+- [Verdict](#verdict)
+
 ## Standards Axis
 
 Build the standard set from effective repository/host guidance, contribution and architecture docs, language/framework conventions selected by the changed surface, and enforced tool output. Check correctness, architecture, security, performance, maintainability, compatibility, and structural lifecycle only where evidence makes them applicable.
@@ -78,6 +87,11 @@ but a missing product authority or UI authority that affects behavior or accepta
 separately `Not verified`; missing runtime/browser evidence is a distinct
 rendered-behavior `Not verified`. Do not infer exact visual values from pixels, make
 this a mandatory `audit-frontend` handoff, or open a parallel review entry point.
+
+When the basis adds or changes motion, gesture behavior, transition ownership, or
+user-visible interaction feedback, load `interaction-motion-review.md` inside this
+same subflow. Do not infer that branch from `.tsx`, `.vue`, `.css`, component paths,
+or a frontend dependency alone.
 
 ## Independence and Integration
 
