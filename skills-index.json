@@ -403,6 +403,7 @@
       "intents": [
         "prepare a local request package for one or more named external AI providers",
         "define or invoke a user-owned bounded external AI review instruction",
+        "coordinate a bounded sequential cross-review that relays attributed responses between explicitly configured AI providers",
         "prepare or route an image review, generation, edit, or bounded visual exploration with explicit provider and asset boundaries",
         "coordinate an explicitly authorized independent ChatGPT, Gemini, Claude, DeepSeek, Kimi, Qwen, GLM, Grok, or other named AI result when its provider route is verified, otherwise stop at a safe local package or Not verified"
       ],
@@ -428,6 +429,9 @@
         "自定义会审指令",
         "进行三方会审",
         "三方会审",
+        "互审",
+        "AI 互审",
+        "cross review",
         "custom review instruction",
         "前端设计审查",
         "后端设计审查",

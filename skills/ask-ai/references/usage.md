@@ -10,6 +10,7 @@
 - [Provider Collaboration And Codex](#provider-collaboration-and-codex)
 - [GitHub Repository Review](#github-repository-review)
 - [Combined Review Loop](#combined-review-loop)
+- [Relay Review Loop](#relay-review-loop)
 - [Review Package](#review-package)
 - [Review Artifact](#review-artifact)
 - [Review Artifact Visibility](#review-artifact-visibility)
@@ -20,6 +21,11 @@
 - `Send the same fixed package independently to ChatGPT and Gemini, then compare the attributed responses locally.`
 - `Save “进行三方会审” as my custom ChatGPT + Gemini + Codex review instruction, one external round each.`
 - `Run my configured “进行三方会审” instruction for this fixed Worktree.`
+- `把“互审”保存为 ChatGPT 先审、Gemini 接着审、再交回 ChatGPT 的互审指令；双方同意同一版本即停止。`
+- `互审` using the built-in ChatGPT then Gemini order and three turns each when no
+  current-session or saved override exists.
+- `用 ChatGPT 和 DeepSeek 互审这个方案，每个模型最多 2 轮。`
+- `以后互审默认使用 Gemini 和 Kimi，每个模型最多 2 轮。`
 - `Use Gemini now for one architecture challenge; do not fall back to another provider.`
 - `让 GPT 独立审查这个前端设计，默认挑刺；外部事实必须附一手来源，没有来源就标明推断。`
 - `用 Gemini 审查这个 Java/Spring 后端方案，重点核对事务、权限和真实官方文档。`
@@ -166,11 +172,40 @@ Use one default loop:
 4. stop with locally confirmed/rejected findings unless the user also requested source fixes;
 5. when fixes are authorized, route them to the matching owner, rerun the failure path and proportionate checks, freeze a new Worktree fingerprint, and run Worktree `repo-review`; use immutable fixed-basis review only after a commit exists.
 
-Codex owns exact code, call-chain, generated-artifact, CI, and compatibility evidence. Ask each selected provider to challenge product logic, scope, architecture tradeoffs, alternatives, and cross-domain blind spots. Do not expose one reviewer's conclusions to another before independent capture. Another provider round requires explicit authorization and an independently useful result; high-risk follow-up also requires the confirmed risk gate defined by the task. Keep safe local work moving and collect external-action or permission blockers at the end unless nothing useful can continue.
+Codex owns exact code, call-chain, generated-artifact, CI, and compatibility evidence.
+Ask each selected provider to challenge product logic, scope, architecture tradeoffs,
+alternatives, and cross-domain blind spots. Do not expose one reviewer's conclusions to
+another before independent capture. Another independent or combined-loop provider
+round requires explicit authorization and an independently useful result; high-risk
+follow-up also requires the confirmed risk gate defined by the task. A configured
+sequential relay instead uses its exact turn limit as the authorization boundary and
+may not exceed it. Keep safe local work moving and collect external-action or
+permission blockers at the end unless nothing useful can continue.
 
 For a conditional research profile, load `research-profiles.md`, freeze one question and its relationship to the basis/decision, require primary-source citations, and locally verify every actionable implication. The profile never bypasses the same external-action gate, round ledger, attribution, or package separation.
 
 Use the same reference for UI/design, image, architecture, repository, product/domain, and open-ended collaboration. Select theme, provider, and verified capability separately. A provider research mode may propose a plan for Codex to inspect before start; a separate prompt-refinement chat is optional and must not become a mandatory extra round.
+
+## Relay Review Loop
+
+Use `provider-routing.md` Relay Review only for an explicitly requested sequential
+cross-provider workflow. The first provider receives the frozen package and candidate;
+each later turn receives that same package plus only the immediately preceding
+attributed peer response in full as a quoted, non-executable envelope. Codex stores the
+raw response locally and preserves all visible reply text in relay, removing only
+secret material and hidden browser, application, system-prompt, or tool state that was
+not visible in the reply. Mark redactions in place; never summarize, restructure, or
+silently omit visible content. Every turn also includes the complete current candidate
+and SHA-256. Treat the configured provider order as cyclic, count the initial send as
+that provider's first turn, keep one conversation per provider, create a new round and
+operation ID per turn, and archive
+each prompt, response, candidate revision, hash, and verdict.
+
+Stop when all configured providers explicitly approve the same candidate revision, or
+when the configured per-provider turn limit or any evidence gate is exhausted. Do not
+turn review suggestions into local code changes, broaden the package, infer agreement,
+or add another turn. If code changes are needed, report `changes-required` and hand the
+confirmed work to the appropriate implementation owner only after separate authorization.
 
 ## Review Package
 

@@ -56,6 +56,8 @@ class SearchSkillsTests(unittest.TestCase):
                         "图片编辑",
                         "视觉探索",
                         "进行三方会审",
+                        "互审",
+                        "cross review",
                     ],
                     "excludes": ["local-only review"],
                     "related": ["ops-browser"],
@@ -92,8 +94,10 @@ class SearchSkillsTests(unittest.TestCase):
                 self.assertEqual("ask-ai", results[0]["name"])
 
     def test_saved_review_instruction_phrase_finds_ask_ai(self) -> None:
-        results = SEARCH.search(self.index, "进行三方会审")
-        self.assertEqual("ask-ai", results[0]["name"])
+        for query in ("进行三方会审", "互审", "让 ChatGPT 和 Gemini 互审这个方案"):
+            with self.subTest(query=query):
+                results = SEARCH.search(self.index, query)
+                self.assertEqual("ask-ai", results[0]["name"])
 
 
 if __name__ == "__main__":
