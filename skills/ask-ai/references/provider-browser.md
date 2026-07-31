@@ -101,6 +101,13 @@ explicitly selected chat. Search, deep research, thinking/reasoning, file upload
 images, video, voice, code, agents, presentations, data analysis, connectors,
 projects, notebooks, and model selection are separate capabilities.
 
+When the provider-neutral review-context preference is configured, inspect for one
+true persistent Project/notebook/space/collection with that name before opening the
+ordinary chat. Reuse it only with live container and stable-identity evidence. If the
+provider does not support it or verification fails, open a clean new ordinary chat for
+the authorized review. History groups and renamed conversations do not satisfy this
+preference, and the preference never authorizes container creation.
+
 Select a non-default capability only when the current request explicitly authorizes it
 and live UI evidence proves that it is active before submit. Provider defaults never
 upgrade ordinary text review into search, media, upload, agent, external-tool, code, or

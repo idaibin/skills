@@ -72,10 +72,15 @@ Use schema_version ask-ai-defaults/v1 with:
 - default_provider: one provider name or manual;
 - provider-specific sections for transport, surface, project/notebook hint, model,
   reasoning, browser preference, and ordered fallbacks;
+- an optional provider-neutral review_context name with
+  prefer-verified-persistent/new-standard-chat behavior;
 - last_verified_at as informational evidence only.
 
 Explicit current-request values override defaults. Stored provider, project/notebook,
 conversation, model, browser, or account hints never prove current selection.
+The review-context preference is evaluated separately for each selected provider: reuse
+only a live verified persistent container of the configured name; otherwise use a clean
+new Standard Chat without claiming that the provider supports a persistent container.
 
 The old path ~/.agents/config/ask-chatgpt/defaults.yaml and schemas without an Ask AI
 schema remain ChatGPT-only legacy input. Read them only when ChatGPT is selected or

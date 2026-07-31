@@ -91,6 +91,9 @@ index shape validator-backed.
 - Avoid duplicated guidance. One behavior has one authoritative source; repeat a short,
   stable term only when it intentionally anchors routing or execution.
 - A package may not require another Skill or repository-root file to perform its job.
+- Provider-specific local-default schemas belong in a focused package reference and
+  must be validated as runtime contracts; they are preferences and discovery hints,
+  not portable frontmatter, current capability proof, or external-action authority.
 
 ## Task-Local Output
 

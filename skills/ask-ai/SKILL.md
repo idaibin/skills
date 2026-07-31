@@ -73,6 +73,10 @@ not maintain a second public collaboration owner.
    Require an explicit target plus live identity, input, submit, completion, and
    attribution evidence. If no route proves the requested capability, perform no
    external action and return Package-only or Not found/Not verified.
+   For an authorized web review, apply the provider-neutral `review_context` preference
+   from [browser-profile.md](references/browser-profile.md): reuse the uniquely verified
+   persistent container when supported, otherwise open a clean new Standard Chat.
+   Never treat a conversation title or stored name as container proof.
 9. Create a distinct round_id per independent provider result and a unique operation_id
    per external side effect. When a browser route is selected, delegate low-level
    actions through [browser-operation-protocol.md](references/browser-operation-protocol.md)

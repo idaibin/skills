@@ -24,6 +24,12 @@ HEADING_RE = re.compile(r"^(?P<indent>[ ]{0,3})##\s+(?P<title>.*?)\s*$")
 FORBIDDEN_PACKAGE_FILES = {"README.md", "INSTALL.md", "INSTALLATION_GUIDE.md", "CHANGELOG.md"}
 PORTABLE_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 LONG_REFERENCE_LINES = 100
+ASK_AI_DEFAULT_TOKENS = (
+    "review_context:",
+    "name: <user-editable default persistent context name>",
+    "policy: prefer-verified-persistent",
+    "fallback: new-standard-chat",
+)
 
 
 def frontmatter(path: Path) -> tuple[dict[str, object], str]:
@@ -172,6 +178,21 @@ def local_link_errors(markdown: Path, package: Path) -> list[str]:
     return errors
 
 
+def ask_ai_defaults_errors(package: Path) -> list[str]:
+    """Keep the provider-neutral persistent-context fallback contract intact."""
+    if package.name != "ask-ai":
+        return []
+    profile = package / "references" / "browser-profile.md"
+    if not profile.is_file():
+        return ["ask-ai: missing references/browser-profile.md"]
+    text = profile.read_text(encoding="utf-8")
+    return [
+        f"ask-ai: browser-profile.md missing defaults token: {token}"
+        for token in ASK_AI_DEFAULT_TOKENS
+        if token not in text
+    ]
+
+
 def package_errors(package: Path, all_names: set[str]) -> list[str]:
     errors: list[str] = []
     skill_file = package / "SKILL.md"
@@ -250,6 +271,8 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
                 )
     else:
         errors.append(f"{package.name}: missing references directory")
+
+    errors.extend(ask_ai_defaults_errors(package))
 
     eval_file = references / "eval-cases.md"
     if not eval_file.is_file():

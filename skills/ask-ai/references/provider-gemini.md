@@ -27,8 +27,11 @@ Before composing:
 1. Select the authorized browser surface and enumerate existing tabs only when exposed.
 2. Verify the final gemini.google.com route, authenticated/unauthenticated state, and
    minimal non-PII account category evidence.
-3. Resolve Standard Chat by default. Treat a user-named notebook or existing
-   conversation as a hard target and verify its stable URL/identity before action.
+3. Apply an explicit target first. Otherwise, when the provider-neutral review-context
+   preference is configured, reuse the uniquely verified notebook with that name; if it
+   is absent, unavailable, or not tied to the active Gemini account, resolve a clean
+   Standard Chat. Treat any user-named notebook or existing conversation as a hard
+   target and verify its stable URL/identity before action.
 4. Verify the current model or mode only when exposed. A stored or visible label is a
    preference unless active selection evidence proves it; a hard model requirement
    blocks submission when unverified.

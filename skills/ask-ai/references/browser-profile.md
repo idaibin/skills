@@ -1,5 +1,13 @@
 # Provider And Transport Defaults
 
+## Contents
+
+- [Purpose](#purpose)
+- [Ask AI Record](#ask-ai-record)
+- [ChatGPT Legacy Record](#chatgpt-legacy-record)
+- [Route Evidence](#route-evidence)
+- [Reset](#reset)
+
 ## Purpose
 
 A local defaults record stores provider and route preferences. It is never send
@@ -12,6 +20,10 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
 
     schema_version: ask-ai-defaults/v1
     default_provider: chatgpt | gemini | manual
+    review_context:
+      name: <user-editable default persistent context name>
+      policy: prefer-verified-persistent
+      fallback: new-standard-chat
     providers:
       chatgpt:
         default_transport_mode: codex-app-native | desktop-built-in-browser | manual
@@ -38,6 +50,24 @@ current-request selection and are not durable authorization.
 Never store secrets, cookies, tokens, browser storage, email addresses, display names,
 or raw profile data. A Project/notebook name, URL, conversation identifier, model,
 reasoning mode, tab, or timestamp is a hint until reverified.
+
+`review_context` is a provider-neutral selection preference, not a claim that every
+provider supports Projects, notebooks, spaces, or collections. For each authorized web
+review, first look for one live, uniquely identified persistent container with the
+configured name. Reuse it only after provider, account class, container type, and stable
+identity are verified. If the provider does not expose such a container, the container
+is unavailable, or its identity cannot be verified, use a clean new Standard Chat for
+that review. A history group or ordinary conversation title is not a persistent
+container. The record does not authorize creating a container, sending content, or
+changing accounts; those remain current-request actions.
+
+`review_context.name` is the single provider-neutral default name. Users may change
+that one field at any time; all provider routes inherit the new value on their next
+authorized review. Provider-specific `project_name` or `notebook_name` fields are
+optional explicit overrides, not required mirrors of the global name. A stored URL is
+eligible only when its live container name still matches the currently resolved name;
+otherwise ignore it and rediscover by name. The example placeholder is not a built-in
+name restriction.
 
 ## ChatGPT Legacy Record
 

@@ -70,6 +70,10 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 - Resolve `project` for repository-bound, persistent, or multi-round review when a
   verified stable ChatGPT Project ID or Project URL exists.
+- When the provider-neutral review-context preference is configured, first resolve the
+  uniquely verified Project with that name. If it is absent, unavailable, or cannot be
+  tied to the active ChatGPT workspace, resolve a clean `standard-chat`; never infer a
+  Project from the saved label or create one without current authorization.
 - Resolve `quick-chat` only when the user explicitly asks for Quick Chat, a
   projectless ChatGPT cloud task, or the equivalent host surface.
 - Resolve `standard-chat` for a generic one-off review or when no durable Project

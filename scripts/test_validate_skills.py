@@ -87,6 +87,25 @@ class ValidatorTests(unittest.TestCase):
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
 
+    def test_ask_ai_defaults_require_persistent_context_fallback_contract(self) -> None:
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        package = Path(temporary.name) / "ask-ai"
+        (package / "references").mkdir(parents=True)
+        profile = package / "references" / "browser-profile.md"
+        profile.write_text(
+            "review_context:\n  name: <user-editable default persistent context name>\n"
+            "  policy: prefer-verified-persistent\n"
+            "  fallback: new-standard-chat\n",
+            encoding="utf-8",
+        )
+        self.assertEqual([], VALIDATOR.ask_ai_defaults_errors(package))
+        profile.write_text("review_context:\n", encoding="utf-8")
+        errors = VALIDATOR.ask_ai_defaults_errors(package)
+        self.assertTrue(any("user-editable default" in error for error in errors))
+        self.assertTrue(any("prefer-verified-persistent" in error for error in errors))
+        self.assertTrue(any("new-standard-chat" in error for error in errors))
+
     def test_name_must_match_directory(self) -> None:
         root = self.make_repo()
         skill = root / "skills" / "sample-skill" / "SKILL.md"

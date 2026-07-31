@@ -31,6 +31,9 @@ This catalog uses four current primary baselines:
 - Use a few realistic trigger, non-trigger, and edge scenarios for iteration.
 - Keep safety and mutation boundaries that prevent accidental writes or external
   actions; these are functional requirements of the engineering Skills.
+- Keep provider-neutral runtime preferences, such as a preferred persistent review
+  context with a Standard Chat fallback, inside package references and focused
+  validation. Do not encode provider capability claims in portable metadata.
 
 Raw evaluation output stays ignored and outside the published catalog. A durable
 summary is eligible for `docs/quality/` only when it records a fixed current basis,
