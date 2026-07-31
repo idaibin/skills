@@ -48,10 +48,11 @@ Create the browser-operation ledger before each side effect. Require:
 
 - provider Gemini, Standard Chat/notebook/conversation target, browser surface, and
   stable URL;
-- exact authorization, round_id, operation_id, package path/hash, and intended input;
+- exact authorization, round_id, and (for sequential relay) relay_turn_id; one
+  operation_id for this exact side effect, package path/hash, and intended input;
 - a clean unique composer and semantic verification of the filled prompt;
 - a unique enabled send control from a fresh page snapshot;
-- no submitted or ambiguous prior operation for the same round.
+- no submitted or ambiguous prior operation for the same side effect.
 
 Fill the bounded prompt without using the system clipboard when a direct field action
 is available. After submission, accept only direct evidence such as a new conversation

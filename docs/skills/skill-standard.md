@@ -94,6 +94,12 @@ index shape validator-backed.
 - Provider-specific local-default schemas belong in a focused package reference and
   must be validated as runtime contracts; they are preferences and discovery hints,
   not portable frontmatter, current capability proof, or external-action authority.
+- A synchronized cross-package operation protocol must keep grouping identifiers and
+  side-effect idempotency distinct: one stable review round may group relay turns, each
+  relay turn may group operations, and every actual create, attach, submit, and capture
+  action has its own operation ID. A provider's later relay turn reuses its verified
+  conversation and has no fictional create operation; reconcile interrupted creation
+  under its original ID. Author the contract once and regenerate package copies.
 
 ## Task-Local Output
 

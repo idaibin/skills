@@ -11,6 +11,7 @@ from pathlib import Path
 
 
 SCRIPT = Path(__file__).with_name("validate-skills.py")
+ROOT = SCRIPT.parent.parent
 INDEX_SCHEMA = SCRIPT.parent.parent / "docs" / "skills" / "skills-index.schema.json"
 SPEC = importlib.util.spec_from_file_location("validate_skills", SCRIPT)
 assert SPEC and SPEC.loader
@@ -105,6 +106,113 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("user-editable default" in error for error in errors))
         self.assertTrue(any("prefer-verified-persistent" in error for error in errors))
         self.assertTrue(any("new-standard-chat" in error for error in errors))
+
+    def test_ask_ai_mutual_review_requires_bounded_relay_contract(self) -> None:
+        package = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_mutual_review_errors(package))
+
+    def test_ask_ai_relay_instruction_normalizes_only_two_provider_legacy_stop(self) -> None:
+        two_provider = {
+            "workflow": "sequential-relay",
+            "external_providers": ["chatgpt", "gemini"],
+            "initial_provider": "chatgpt",
+            "relay_order": ["chatgpt", "gemini"],
+            "max_turns_per_provider": 2,
+            "stop_after": "dual-approval-same-candidate",
+        }
+        normalized, errors = VALIDATOR.normalize_relay_instruction(two_provider)
+        self.assertEqual([], errors)
+        self.assertIsNotNone(normalized)
+        self.assertEqual("all-providers-approve-same-candidate", normalized["stop_after"])
+        three_provider = {**two_provider, "external_providers": ["chatgpt", "gemini", "kimi"], "relay_order": ["chatgpt", "gemini", "kimi"]}
+        errors = VALIDATOR.relay_instruction_errors(three_provider)
+        self.assertTrue(any("exactly two providers" in error for error in errors))
+
+    def test_ask_ai_relay_instruction_requires_sequential_workflow_and_positive_turn_cap(self) -> None:
+        instruction = {
+            "workflow": "sequential-relay",
+            "external_providers": ["chatgpt", "gemini"],
+            "initial_provider": "chatgpt",
+            "relay_order": ["chatgpt", "gemini"],
+            "max_turns_per_provider": 1,
+            "stop_after": "all-providers-approve-same-candidate",
+        }
+        self.assertEqual([], VALIDATOR.relay_instruction_errors(instruction))
+        three_provider = {
+            **instruction,
+            "external_providers": ["chatgpt", "gemini", "kimi"],
+            "relay_order": ["chatgpt", "gemini", "kimi"],
+        }
+        self.assertEqual([], VALIDATOR.relay_instruction_errors(three_provider))
+        instruction["workflow"] = "independent"
+        self.assertTrue(any("workflow" in error for error in VALIDATOR.relay_instruction_errors(instruction)))
+        instruction["workflow"] = "sequential-relay"
+        for invalid_cap in (None, 0, -1, True, "1"):
+            with self.subTest(invalid_cap=invalid_cap):
+                if invalid_cap is None:
+                    instruction.pop("max_turns_per_provider", None)
+                else:
+                    instruction["max_turns_per_provider"] = invalid_cap
+                errors = VALIDATOR.relay_instruction_errors(instruction)
+                self.assertTrue(any("max_turns_per_provider" in error for error in errors))
+
+    def test_ask_ai_relay_instruction_rejects_invalid_promotion_and_roster(self) -> None:
+        instruction = {
+            "workflow": "sequential-relay",
+            "external_providers": ["chatgpt", "gemini"],
+            "initial_provider": "chatgpt",
+            "relay_order": ["chatgpt", "gemini"],
+            "max_turns_per_provider": 1,
+            "candidate_promotion": "automatic",
+            "stop_after": "all-providers-approve-same-candidate",
+        }
+        self.assertTrue(any("candidate_promotion" in error for error in VALIDATOR.relay_instruction_errors(instruction)))
+        instruction["external_providers"] = ["chatgpt"]
+        instruction["relay_order"] = ["chatgpt"]
+        self.assertTrue(any("two or more" in error for error in VALIDATOR.relay_instruction_errors(instruction)))
+
+    def test_ask_ai_relay_instruction_rejects_non_string_or_invalid_relay_order_entries(self) -> None:
+        instruction = {
+            "workflow": "sequential-relay",
+            "external_providers": ["chatgpt", "gemini"],
+            "initial_provider": "chatgpt",
+            "relay_order": ["chatgpt", "gemini"],
+            "max_turns_per_provider": 1,
+            "stop_after": "all-providers-approve-same-candidate",
+        }
+        invalid_orders = (
+            [["chatgpt"], "gemini"],
+            [{"provider": "chatgpt"}, "gemini"],
+            ["", "gemini"],
+            ["chatgpt", "chatgpt"],
+            ["chatgpt", "kimi"],
+            ["chatgpt", 7],
+        )
+        for relay_order in invalid_orders:
+            with self.subTest(relay_order=relay_order):
+                _, errors = VALIDATOR.normalize_relay_instruction(
+                    {**instruction, "relay_order": relay_order}
+                )
+                self.assertTrue(any("relay_order" in error for error in errors))
+
+    def test_browser_operation_protocol_keeps_relay_turn_action_hierarchy(self) -> None:
+        source = ROOT / "protocols" / "browser-operation-v1.md"
+        text = source.read_text(encoding="utf-8")
+        for token in (
+            "relay_turn_id",
+            "conversation creation, attachment, submit,",
+            "response capture, final marker",
+            "one operation ID for multiple actions",
+            "a new session is required",
+            "Later turns for that same provider reuse that verified conversation",
+            "original create operation ID",
+        ):
+            self.assertIn(token, text)
+        for relative in (
+            "skills/ask-ai/references/browser-operation-protocol.md",
+            "skills/ops-browser/references/browser-operation-protocol.md",
+        ):
+            self.assertEqual(text, (ROOT / relative).read_text(encoding="utf-8"))
 
     def test_name_must_match_directory(self) -> None:
         root = self.make_repo()

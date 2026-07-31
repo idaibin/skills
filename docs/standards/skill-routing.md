@@ -74,6 +74,21 @@ Common sequence, when needed:
 repo-map -> domain-modeling/product-spec -> ui-spec/dev-* -> repo-review -> repo-delivery
 ```
 
+For an explicitly authorized `ask-ai` sequential relay, keep the frozen basis and
+external-action boundary intact: all configured providers must approve the same
+candidate for success, `changes-requested` may continue only within the configured
+turn cap, and provider-authored replacement text remains a proposal unless explicit
+promotion authority plus local frozen-constraint verification exists. Route/evidence
+failure, malformed verdicts, basis drift, semantically destructive required redaction,
+and turn exhaustion remain `incomplete`; turn exhaustion occurs only when the next
+required provider has no legal turn, and a simultaneous unauthorized replacement remains
+`changes-required`. Source changes still route to the relevant `dev-*` owner under
+separate authorization. A relay creates a conversation for a provider only when that
+provider's first turn has no authorized verified conversation and a new session is
+required; later turns reuse that verified conversation, with operation IDs only for
+actual attach/submit/capture side effects and original-ID reconciliation after an
+interrupted creation.
+
 For design-collaboration sources, keep extraction and specification authority
 separate. `ops-browser` inventories a fixed Axure version's pages, requirements,
 interactions, states, and coverage before `product-spec` classifies product facts and

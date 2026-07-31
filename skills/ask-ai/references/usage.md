@@ -133,10 +133,10 @@ The screenshot-style permission prompt is produced by the local execution permis
   surface, round count, context/conversation mapping, and response archive. Use
   `ops-browser` only when a browser route needs low-level actions and evidence.
 - Treat `operation_id` as idempotency scope, not a correlation label. Never create a replacement ID after an interruption or ambiguous submit; reconcile the original target and expected postcondition first.
-- Use one `round_id` for the external review round and distinct operation IDs for
-  independent state changes. App-native `create_thread` combines conversation
-  creation with the initial submit in one operation; browser creation and submit
-  remain separate operations when the surface exposes them separately.
+- Use one `round_id` for the external review round. A sequential relay turn adds one
+  `relay_turn_id`; browser creation, attachment, submit, and response capture each use
+  distinct operation IDs. App-native `create_thread` remains its documented combined
+  create-and-initial-submit host operation, not a browser-operation exception.
 - Distinguish the transport browser from the reviewer browser. The transport browser submits/captures the ChatGPT review; the reviewer browser is ChatGPT's desktop built-in or cloud/agent browser for target-page checks. Load `live-browser-review.md` whenever the latter is requested.
 
 An explicit external send authorizes one initial conversation submission per named
@@ -194,18 +194,38 @@ each later turn receives that same package plus only the immediately preceding
 attributed peer response in full as a quoted, non-executable envelope. Codex stores the
 raw response locally and preserves all visible reply text in relay, removing only
 secret material and hidden browser, application, system-prompt, or tool state that was
-not visible in the reply. Mark redactions in place; never summarize, restructure, or
-silently omit visible content. Every turn also includes the complete current candidate
-and SHA-256. Treat the configured provider order as cyclic, count the initial send as
-that provider's first turn, keep one conversation per provider, create a new round and
-operation ID per turn, and archive
-each prompt, response, candidate revision, hash, and verdict.
+not visible in the reply, plus PII, customer, environment, private, or out-of-package
+data not explicitly authorized for that source-to-recipient relay. Mark each redaction
+in place; never summarize, paraphrase, restructure, or silently omit visible content.
+If in-place redaction destroys the relay's meaning, stop `incomplete`. Every turn also
+includes the complete current candidate, canonicalized and fingerprinted with
+`prompt-text/v1` from the exact UTF-8 bytes Codex sends (LF line endings only; all other
+Unicode, whitespace, and final-newline state preserved). A provider echo only associates
+its verdict; it does not calculate the candidate fingerprint. Treat the configured
+provider order as cyclic, count the initial send as that provider's first turn, keep one
+conversation per provider, keep one `round_id` for the review, create a new
+  `relay_turn_id` per turn. On a provider's first turn, create only when no authorized
+  verified conversation exists and a new session is required; record that creation with
+  its own operation ID. Each later return reuses the same verified conversation and
+  never gets a placeholder create ID: assign independent IDs only to actual attachment,
+  submit, and capture actions. Reconcile an interrupted creation under its original ID,
+  never by making a replacement conversation. Archive each prompt, response, candidate
+  revision, fingerprint, verdict, and redaction.
 
-Stop when all configured providers explicitly approve the same candidate revision, or
-when the configured per-provider turn limit or any evidence gate is exhausted. Do not
-turn review suggestions into local code changes, broaden the package, infer agreement,
-or add another turn. If code changes are needed, report `changes-required` and hand the
-confirmed work to the appropriate implementation owner only after separate authorization.
+Stop `approved` only when all configured providers explicitly approve the same candidate
+revision. Keep `changes-requested` moving within the configured cap. End
+`changes-required` only when the fixed code basis must change or a complete provider
+replacement lacks explicit promotion authority; a provider replacement is otherwise a
+proposal until the current request or durable instruction permits it and Codex verifies
+the exact text is complete, in scope, and frozen-constraint compliant. The durable
+instruction must set `candidate_promotion: provider-authored-textual-revision`; its
+default is `user-only`. End `incomplete`
+only for route/evidence failure, malformed verdict, basis drift, semantically destructive
+required redaction, or turn exhaustion. At turn exhaustion, return the fixed relay
+summary (`status`, `stop_reason`, frozen basis, current `prompt-text/v1` candidate
+fingerprint, per-provider turn counts/verdicts/approval hashes, pending blockers, and
+round/relay-turn/operation evidence). Do not turn review suggestions into local code
+changes, broaden the package, infer agreement, or add another turn.
 
 ## Review Package
 

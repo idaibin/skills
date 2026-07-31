@@ -30,6 +30,9 @@ ASK_AI_DEFAULT_TOKENS = (
     "policy: prefer-verified-persistent",
     "fallback: new-standard-chat",
 )
+ASK_AI_CANONICAL_STOP_AFTER = "all-providers-approve-same-candidate"
+ASK_AI_LEGACY_STOP_AFTER = "dual-approval-same-candidate"
+ASK_AI_PROMOTION_VALUES = {"user-only", "provider-authored-textual-revision"}
 
 
 def frontmatter(path: Path) -> tuple[dict[str, object], str]:
@@ -193,6 +196,146 @@ def ask_ai_defaults_errors(package: Path) -> list[str]:
     ]
 
 
+def yaml_fence_mappings(text: str) -> list[dict[str, object]]:
+    """Read only well-formed YAML examples from Markdown fences."""
+    mappings: list[dict[str, object]] = []
+    for match in re.finditer(r"```yaml\s*\n(.*?)\n```", text, re.DOTALL):
+        try:
+            value = yaml.safe_load(match.group(1))
+        except yaml.YAMLError:
+            continue
+        if isinstance(value, dict):
+            mappings.append(value)
+    return mappings
+
+
+def normalize_relay_instruction(instruction: object) -> tuple[dict[str, object] | None, list[str]]:
+    """Decode the narrowly supported legacy stop value into the v1 canonical form."""
+    if not isinstance(instruction, dict):
+        return None, ["relay instruction must be a mapping"]
+    normalized = dict(instruction)
+    if instruction.get("workflow") != "sequential-relay":
+        return None, ["relay instruction workflow must be sequential-relay"]
+    providers = instruction.get("external_providers")
+    if (
+        not isinstance(providers, list)
+        or len(providers) < 2
+        or not all(isinstance(provider, str) and provider for provider in providers)
+        or len(set(providers)) != len(providers)
+    ):
+        return None, ["sequential relay requires two or more distinct external_providers"]
+    relay_order = instruction.get("relay_order")
+    if (
+        not isinstance(relay_order, list)
+        or not relay_order
+        or not all(isinstance(provider, str) and provider for provider in relay_order)
+        or len(relay_order) != len(providers)
+        or len(set(relay_order)) != len(relay_order)
+        or set(relay_order) != set(providers)
+    ):
+        return None, ["sequential relay relay_order must contain every provider exactly once"]
+    initial_provider = instruction.get("initial_provider")
+    if initial_provider not in providers:
+        return None, ["sequential relay initial_provider must be in external_providers"]
+    max_turns = instruction.get("max_turns_per_provider")
+    if isinstance(max_turns, bool) or not isinstance(max_turns, int) or max_turns <= 0:
+        return None, ["sequential relay max_turns_per_provider must be a positive integer"]
+    promotion = instruction.get("candidate_promotion", "user-only")
+    if promotion not in ASK_AI_PROMOTION_VALUES:
+        return None, ["sequential relay candidate_promotion must be user-only or provider-authored-textual-revision"]
+    stop_after = instruction.get("stop_after")
+    if stop_after == ASK_AI_LEGACY_STOP_AFTER:
+        if len(providers) == 2:
+            normalized["stop_after"] = ASK_AI_CANONICAL_STOP_AFTER
+            return normalized, []
+        return None, ["dual-approval-same-candidate is legacy-compatible only with exactly two providers"]
+    if stop_after != ASK_AI_CANONICAL_STOP_AFTER:
+        return None, ["sequential relay stop_after must be all-providers-approve-same-candidate"]
+    return normalized, []
+
+
+def relay_instruction_errors(instruction: object) -> list[str]:
+    """Validate one v1 sequential-relay instruction and its legacy normalization."""
+    _, errors = normalize_relay_instruction(instruction)
+    return errors
+
+
+def ask_ai_mutual_review_errors(package: Path) -> list[str]:
+    """Validate structured mutual-review examples rather than safety words alone."""
+    if package.name != "ask-ai":
+        return []
+    routing = package / "references" / "provider-routing.md"
+    if not routing.is_file():
+        return ["ask-ai: missing references/provider-routing.md"]
+    mappings = yaml_fence_mappings(routing.read_text(encoding="utf-8"))
+    contract = next((item.get("relay_contract") for item in mappings if "relay_contract" in item), None)
+    if not isinstance(contract, dict):
+        return ["ask-ai: provider-routing.md missing structured relay_contract fixture"]
+
+    errors: list[str] = []
+    hierarchy = contract.get("hierarchy")
+    expected_hierarchy = {
+        "review_round": "round_id",
+        "relay_turn": "relay_turn_id",
+        "operation": "operation_id-per-side-effect",
+    }
+    if hierarchy != expected_hierarchy:
+        errors.append("ask-ai: relay_contract hierarchy must be review round -> relay turn -> operation")
+    if set(contract.get("candidate_promotion_values", [])) != ASK_AI_PROMOTION_VALUES:
+        errors.append("ask-ai: relay_contract must enumerate the candidate_promotion values")
+    legacy = contract.get("legacy_stop_after")
+    if not isinstance(legacy, dict) or legacy != {
+        "value": ASK_AI_LEGACY_STOP_AFTER,
+        "normalize_when_external_providers": 2,
+        "otherwise": "reject-or-migrate",
+    }:
+        errors.append("ask-ai: relay_contract must define two-provider legacy stop_after compatibility")
+    exhaustion = contract.get("exhaustion")
+    if not isinstance(exhaustion, dict) or exhaustion != {
+        "only_when": "next-required-provider-has-no-legal-turn",
+        "lower_priority_than": "changes-required",
+    }:
+        errors.append("ask-ai: relay_contract must define exhaustion precedence after changes-required")
+    conversation_reuse = contract.get("conversation_reuse")
+    if not isinstance(conversation_reuse, dict) or conversation_reuse != {
+        "first_provider_turn": {
+            "reuse_verified_conversation": "preferred",
+            "create_when": "no-verified-conversation-and-new-session-is-required",
+            "create_operation": "create-conversation",
+        },
+        "later_provider_turn": {
+            "require_same_verified_conversation": True,
+            "create_operation": "forbidden",
+            "side_effect_operations": ["attach-if-needed", "submit", "capture-response"],
+        },
+        "interruption": {
+            "reconcile_original_create_operation_id": True,
+            "replacement_conversation": "forbidden",
+        },
+    }:
+        errors.append("ask-ai: relay_contract must define per-provider conversation reuse and create reconciliation")
+
+    instructions: list[object] = []
+    for mapping in mappings:
+        if mapping.get("schema_version") != "ask-ai-instructions/v1":
+            continue
+        records = mapping.get("instructions")
+        if isinstance(records, dict):
+            instructions.extend(
+                record for record in records.values()
+                if isinstance(record, dict) and record.get("workflow") == "sequential-relay"
+            )
+    provider_counts: set[int] = set()
+    for instruction in instructions:
+        errors.extend(f"ask-ai: {error}" for error in relay_instruction_errors(instruction))
+        providers = instruction.get("external_providers") if isinstance(instruction, dict) else None
+        if isinstance(providers, list):
+            provider_counts.add(len(providers))
+    if not {2, 3}.issubset(provider_counts):
+        errors.append("ask-ai: provider-routing.md needs valid two- and three-provider relay examples")
+    return errors
+
+
 def package_errors(package: Path, all_names: set[str]) -> list[str]:
     errors: list[str] = []
     skill_file = package / "SKILL.md"
@@ -273,6 +416,7 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
         errors.append(f"{package.name}: missing references directory")
 
     errors.extend(ask_ai_defaults_errors(package))
+    errors.extend(ask_ai_mutual_review_errors(package))
 
     eval_file = references / "eval-cases.md"
     if not eval_file.is_file():
