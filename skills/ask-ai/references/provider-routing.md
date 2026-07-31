@@ -6,8 +6,9 @@
 - [Capability Contract](#capability-contract)
 - [Defaults And Compatibility](#defaults-and-compatibility)
 - [Fallback](#fallback)
+- [User-Defined Review Instructions](#user-defined-review-instructions)
 - [Multi-Provider Independence](#multi-provider-independence)
-- [Unsupported Providers](#unsupported-providers)
+- [Portable Browser Providers](#portable-browser-providers)
 
 ## Selection
 
@@ -22,6 +23,26 @@ Resolve provider recipients before transport:
    response, or whichever route is easiest.
 
 Provider names are external recipients, not interchangeable execution profiles.
+Normalize common provider aliases only inside an external-AI selection context:
+
+| Canonical provider | Recognized aliases |
+| --- | --- |
+| ChatGPT | `GPT`, `Chat GPT` |
+| Gemini | `Google Gemini`; `Google` or `谷歌` only when the request clearly means an AI reviewer rather than Search or another Google product |
+| Claude | `Anthropic Claude` |
+| DeepSeek | `Deep Seek`, `DeepSeek Chat` |
+| Kimi | `Moonshot Kimi` |
+| Qwen | `通义千问`, `千问`, `Qwen Chat`, `Qwen Studio` |
+| GLM | `智谱`, `智谱清言`, `ChatGLM` |
+| Grok | `xAI Grok` |
+| Perplexity | `Perplexity Ask` |
+| Doubao | `豆包` |
+| Mistral Vibe | `Mistral`, `Vibe Chat`, `Le Chat` |
+| Tencent Yuanbao | `腾讯元宝`, `元宝` |
+| ERNIE | `文心一言`, `文心助手`, `文心` |
+
+Provider aliases select only the recipient. They do not imply a model version,
+capability, route, round count, send authorization, or multi-provider workflow.
 
 ## Capability Contract
 
@@ -82,6 +103,60 @@ clean conversation. If the condition or unavailability is not proven, stop at
 Package-only or Not verified. Never activate an alternative after a submitted,
 ambiguous, or unresolved operation for the primary provider.
 
+## User-Defined Review Instructions
+
+Ask AI has no built-in multi-provider roster or phrase such as `三方会审`. A user may
+explicitly create a durable review instruction at:
+
+    ~/.agents/config/ask-ai/instructions.yaml
+
+Use schema `ask-ai-instructions/v1`:
+
+    schema_version: ask-ai-instructions/v1
+    instructions:
+      three-way-review:
+        aliases: [进行三方会审]
+        external_providers: [chatgpt, gemini]
+        local_review: repo-review
+        package_policy: identical-provider-neutral
+        prompt_profiles: [architecture, adversarial, source-check]
+        rounds_per_provider: 1
+        authorization: send-on-exact-invocation
+        stop_after: local-reconciliation
+
+This is an example configuration, not a built-in default. Create, update, rename, or
+delete an instruction only when the user explicitly asks to persist that definition.
+Report the exact alias, participants, send behavior, rounds, and stop condition before
+writing, and verify the complete record after an atomic write. Never infer a roster
+from the instruction name.
+
+`prompt_profiles` may contain only built-in IDs from `review-prompts.md`. Profiles
+change review focus, not recipients, authorization, models, routes, rounds, mutation
+scope, or delivery. Unknown profile IDs block instruction execution without rewriting
+the record.
+
+Resolve only an exact configured alias when the whole current request, after trimming
+surrounding whitespace and normalizing case for Latin text, equals that alias. Do not
+use a prefix, suffix, punctuation extension, substring, fuzzy, semantic, or translated
+match for an executable alias. Provider-name aliases remain normal provider selection
+and do not create a workflow instruction.
+
+`authorization: send-on-exact-invocation` means that the user's current exact alias
+invocation is current-request authorization for the saved recipients and round count;
+the stored file alone never sends anything. `package-only` never sends. Unknown
+authorization values, invalid providers, missing rounds, duplicate aliases, unknown
+schema versions, or conflicting records block external action without rewriting the
+file. Current-request constraints such as `不要发送`, an explicit provider roster, or
+a lower round count override the stored instruction; any expansion of recipients,
+rounds, data, capability, or mutation scope requires fresh explicit authorization.
+
+When an exact instruction is invoked and its subject/basis is unambiguous, freeze one
+package and execute the configured independent reviews without asking again for saved
+recipients or send scope. If the subject/basis is ambiguous, ask once before package
+creation. If a route is blocked, complete safe independent work, mark that participant
+incomplete, and never silently substitute another provider. Codex/local review is not
+an external provider and never receives a browser-operation ledger.
+
 ## Multi-Provider Independence
 
 For an explicitly authorized provider set:
@@ -98,13 +173,15 @@ For an explicitly authorized provider set:
 Parallel execution is optional. Independence comes from input, operation, attribution,
 and evaluation isolation, not from concurrency or an assumed incognito browser.
 
-## Unsupported Providers
+## Portable Browser Providers
 
-DeepSeek, Kimi, or another named provider without a package reference may use a browser
-route only after live preflight proves the exact target, authenticated state, clean
-composer, intended input, submit control, side effect, completion signal, and response
-attribution. Do not assume upload, search, research, image, model, API, MCP, project,
-notebook, or persistent-conversation behavior.
+For Claude, DeepSeek, Kimi, Qwen, GLM, Grok, Perplexity, Doubao, Mistral Vibe,
+Tencent Yuanbao, ERNIE, or another named browser provider, load
+[provider-browser.md](provider-browser.md). Its entry points and observed controls are
+discovery hints, not current capability proof. Live preflight must still prove the
+exact target, login class, clean composer, intended input, submit control, side effect,
+completion signal, and response attribution. Do not assume upload, search, research,
+image, model, API, MCP, project, notebook, or persistent-conversation behavior.
 
 If any required step is unavailable, keep the provider result Package-only or Not
 verified. Do not create speculative metadata or claim support from the provider name.

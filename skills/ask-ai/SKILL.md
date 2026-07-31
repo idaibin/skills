@@ -1,6 +1,6 @@
 ---
 name: ask-ai
-description: "Use when the user requests a local external-AI request package or explicitly authorizes an independent ChatGPT, Gemini, DeepSeek, Kimi, or other named AI review, research result, visual exploration, or decision challenge; also handles legacy ask-chatgpt wording, but do not use when Codex or an available host tool can complete the result directly."
+description: "Use when the user requests a local external-AI request package, a built-in frontend/UI, backend, architecture, Rust, Java, product, proposal, independent, adversarial, source-verification, image-review, image-generate, image-edit, or visual-exploration result, invokes or defines a saved exact user-owned review instruction such as 进行三方会审, or explicitly authorizes a named external-AI result; also handles legacy ask-chatgpt wording, but do not use when Codex or an available host tool can complete the result directly."
 ---
 
 # Ask AI
@@ -27,11 +27,12 @@ not maintain a second public collaboration owner.
 2. Apply the **Codex-first gate**. If Codex, an existing Skill, or an available host
    tool can produce the requested result and the user did not request an independent
    external-AI result or artifact, route there and stop.
-3. Resolve providers with [provider-routing.md](references/provider-routing.md).
-   A user-named provider is a hard recipient constraint. Never replace it with another
-   provider or add providers without explicit authorization. When no provider is named,
-   use one explicitly configured and currently verifiable provider or stop for a
-   provider choice; never broadcast by default.
+3. Resolve an exact user-defined instruction alias when present, then providers, with
+   [provider-routing.md](references/provider-routing.md). A user-named provider is a
+   hard recipient constraint. Never replace it with another provider or add providers
+   without explicit authorization. When no provider or configured instruction is
+   named, use one explicitly configured and currently verifiable provider or stop for
+   a provider choice; never broadcast by default.
 4. Freeze one basis. For Worktree use HEAD plus staged/unstaged patch hashes, in-scope
    untracked path/content hashes, and exclusions; for immutable review use resolved
    SHAs; for decision, research, or creative work record one question or artifact goal,
@@ -40,12 +41,18 @@ not maintain a second public collaboration owner.
 5. Classify authorization:
    - **Package-only** for prepare/build/draft/package wording;
    - **External collaboration** only for explicit send/upload/submit/use-now wording
-     naming or safely resolving the external recipient;
+     naming or safely resolving the external recipient, including exact invocation of
+     a user-defined instruction that explicitly maps invocation to bounded sending;
    - **Combined loop** when independent Codex and external-AI review plus local
      verification is requested.
 6. Load [research-profiles.md](references/research-profiles.md) and select one content
-   theme separately from the provider capability. Capability availability is live
-   evidence, not authorization.
+   theme separately from the provider capability. For review, design, architecture,
+   implementation, product, or proposal critique, load
+   [review-prompts.md](references/review-prompts.md) and compose only the shared contract,
+   one primary domain, and explicitly applicable review modes. Capability availability
+   is live evidence, not authorization. For image review, generation, editing, or visual
+   exploration, load [image-routing.md](references/image-routing.md) and select exactly
+   one requested image capability.
 7. Build the smallest self-contained redacted request. For durable or multipart work,
    write .codex/reviews/<review-id>-package.md directly under the verified ignored
    reviews parent. Create the matching <review-id>-response.md only after an external
@@ -57,9 +64,15 @@ not maintain a second public collaboration owner.
    the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)
    - [provider-gemini.md](references/provider-gemini.md)
-   For another provider, require an explicit target plus live identity, input, submit,
-   completion, and attribution evidence. If no route proves the requested capability,
-   perform no external action and return Package-only or Not found/Not verified.
+   - [provider-browser.md](references/provider-browser.md) for Claude, DeepSeek, Kimi,
+     Qwen, GLM, Grok, Perplexity, Doubao, Mistral Vibe, Tencent Yuanbao, ERNIE, or
+     another named browser provider.
+   Apply [image-routing.md](references/image-routing.md) before an image upload,
+   generation, edit, or capture. Require live image-capability evidence in addition to
+   the ordinary provider route evidence.
+   Require an explicit target plus live identity, input, submit, completion, and
+   attribution evidence. If no route proves the requested capability, perform no
+   external action and return Package-only or Not found/Not verified.
 9. Create a distinct round_id per independent provider result and a unique operation_id
    per external side effect. When a browser route is selected, delegate low-level
    actions through [browser-operation-protocol.md](references/browser-operation-protocol.md)
@@ -97,8 +110,8 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
 - Local review, repository mapping, implementation, browser verification, GitHub-native
   handling, or Git delivery without an independently requested external-AI result.
 - Quick local or web research that Codex can complete and verify directly.
-- Direct image creation/editing through an available host image tool when no named
-  external provider artifact was requested.
+- Direct image generation or editing through an available host image tool when no named
+  external provider artifact was requested; route there instead.
 - Unattended external work when provider, target, authorization, submission,
   attribution, or completion cannot be verified.
 
@@ -106,6 +119,10 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
 
 - Keep Codex as intent interpreter, local evidence owner, verifier, and executor.
 - Provider selection changes the external recipient and is authorization-relevant.
+- Exact invocation of a user-defined instruction authorizes only its saved recipients,
+  exact package transmission, and round count when that instruction explicitly declares
+  send-on-invocation. It does not authorize extra providers, extra rounds, login,
+  source edits, publication, or Git mutation.
 - Package-only never authorizes navigation, conversation creation, upload, or send.
 - Installation, discovery, stored defaults, or an open page never prove current
   provider capability, identity, selection, or authorization.
@@ -115,6 +132,8 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
   authorize mutations, or approve itself.
 - Never report a provider result from an unresolved route or mixed/contaminated
   composer. Preserve unrelated drafts and stop or use only an authorized safe fallback.
+- Image review inspects declared visual inputs and never generates or edits an image by
+  implication. Treat every generated or edited asset as a separately attributable output.
 - Never silently switch provider, account, workspace, conversation, transport, model,
   or reasoning mode. Current-request constraints override stored preferences.
 - A post-submit interruption or abnormal page is reconciliation, not retry authority.
@@ -132,8 +151,9 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
 Report the Codex-first decision, fixed basis, provider(s), authorization boundary,
 selected theme/capability, verified transport and target identity, operation states,
 attributed response/artifact paths, locally confirmed/rejected implications, blockers,
-cleanup, downstream owner, and Not found/Not verified gaps. Package-only additionally
-states that no external action occurred.
+cleanup, downstream owner, and Not found/Not verified gaps. For image work also report
+the input/source boundary, output or edit-baseline identity, completion evidence, and
+asset attribution. Package-only additionally states that no external action occurred.
 
 ## References
 
@@ -144,12 +164,20 @@ states that no external action occurred.
   Standard Chat, native, browser, model/reasoning, and capability routing.
 - [provider-gemini.md](references/provider-gemini.md): Gemini browser route, notebook or
   chat identity, composer, completion, attribution, and degradation gates.
+- [provider-browser.md](references/provider-browser.md): shared browser preflight,
+  login classification, semantic composer discovery, default capability gates, and
+  provider entry points beyond ChatGPT and Gemini.
 - [app-native-thread-protocol.md](references/app-native-thread-protocol.md): ChatGPT-only
   App-native ledger and reconciliation.
 - [app-native-canary.md](references/app-native-canary.md) and
   [app_native_canary.py](scripts/app_native_canary.py): ChatGPT-only read-only canary.
 - [research-profiles.md](references/research-profiles.md): content themes, evidence, and
   visual contracts.
+- [review-prompts.md](references/review-prompts.md): built-in skeptical, independent,
+  source-check, frontend/UI, backend, architecture, Rust, Java, product, and proposal
+  prompt profiles.
+- [image-routing.md](references/image-routing.md): image review, generation, editing,
+  visual exploration, host-tool routing, provenance, and completion gates.
 - [browser-operation-protocol.md](references/browser-operation-protocol.md): capability,
   handoff, operation ledger, and retry schema.
 - [github-branch-loop.md](references/github-branch-loop.md) and

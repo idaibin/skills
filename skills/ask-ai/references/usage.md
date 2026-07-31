@@ -18,7 +18,13 @@
 
 - `Prepare one external-AI review package for ChatGPT and Gemini, but do not send it.`
 - `Send the same fixed package independently to ChatGPT and Gemini, then compare the attributed responses locally.`
+- `Save “进行三方会审” as my custom ChatGPT + Gemini + Codex review instruction, one external round each.`
+- `Run my configured “进行三方会审” instruction for this fixed Worktree.`
 - `Use Gemini now for one architecture challenge; do not fall back to another provider.`
+- `让 GPT 独立审查这个前端设计，默认挑刺；外部事实必须附一手来源，没有来源就标明推断。`
+- `用 Gemini 审查这个 Java/Spring 后端方案，重点核对事务、权限和真实官方文档。`
+- `准备一份 Rust 架构与性能审查包，不要发送。`
+- `反对式评审这个产品方案，核实用户问题、关键假设、替代方案和成功指标。`
 - `Prepare/build/draft a review package for ChatGPT, but do not send it.`
 - `Use ChatGPT now to review this branch, save review.md, then fix confirmed issues.`
 - `Send this review-package.md to ChatGPT for one review round.`

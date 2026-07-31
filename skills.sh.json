@@ -14,7 +14,7 @@
     },
     {
       "title": "External AI Collaboration",
-      "description": "Ask ChatGPT, Gemini, or another named AI for an explicitly authorized independent review, research result, visual exploration, or decision challenge.",
+      "description": "Build bounded external-AI review packages and route explicitly authorized reviews, research, image work, visual exploration, or decision challenges to named providers.",
       "skills": [
         "ask-ai"
       ]
