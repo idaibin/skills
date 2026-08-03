@@ -21,9 +21,11 @@
 - `Send the same fixed package independently to ChatGPT and Gemini, then compare the attributed responses locally.`
 - `Save “进行三方会审” as my custom ChatGPT + Gemini + Codex review instruction, one external round each.`
 - `Run my configured “进行三方会审” instruction for this fixed Worktree.`
-- `把“互审”保存为 ChatGPT 先审、Gemini 接着审、再交回 ChatGPT 的互审指令；双方同意同一版本即停止。`
-- `互审` using the built-in ChatGPT then Gemini order and three turns each when no
-  current-session or saved override exists.
+- `把“我的互审”保存为 Gemini 先审、Kimi 接着审的互审指令；双方同意同一版本即停止。`
+- `互审` uses the built-in ChatGPT then Gemini order and three turns each only when no
+  legacy reserved-alias conflict is present.
+- `帮我互审这个方案` may use a valid saved default; `我的互审` may invoke its exact
+  executable alias.
 - `用 ChatGPT 和 DeepSeek 互审这个方案，每个模型最多 2 轮。`
 - `以后互审默认使用 Gemini 和 Kimi，每个模型最多 2 轮。`
 - `Use Gemini now for one architecture challenge; do not fall back to another provider.`
@@ -83,8 +85,8 @@ Use this gate only when external sending, provider, or route selection is not al
 
 Option handling:
 
-- `1`: authorizes resolving and opening the ChatGPT desktop built-in browser route; stop again before sending unless sending was also explicitly requested.
-- `2`: ask before connecting to current Chrome; enumerate ChatGPT tabs; stop before claiming a tab or sending.
+- `1`: authorizes resolving and opening the Codex in-app browser route; stop again before sending unless sending was also explicitly requested.
+- `2`: ask before connecting to the named user-local browser; enumerate ChatGPT tabs; stop before claiming a tab or sending.
 - `3`: generate/update the local package only.
 - `4`: resolve the user-provided ChatGPT URL or surface; do not persist it unless separately requested.
 - `0`: stop.
@@ -124,7 +126,7 @@ The screenshot-style permission prompt is produced by the local execution permis
   capability/source preflight, exact target mapping, model/reasoning evidence, and
   browser fallback. When no durable record exists, try App-native first only when the
   verified Project/Quick Chat mapping passes. Preserve a legacy built-in-first record
-  until an explicitly authorized v2 migration.
+  until an explicitly authorized `ask-chatgpt-defaults/v2` migration.
 - Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.
@@ -132,11 +134,13 @@ The screenshot-style permission prompt is produced by the local execution permis
 - Let `ask-ai` own provider selection, package, send authorization, transport,
   surface, round count, context/conversation mapping, and response archive. Use
   `ops-browser` only when a browser route needs low-level actions and evidence.
-- Treat `operation_id` as idempotency scope, not a correlation label. Never create a replacement ID after an interruption or ambiguous submit; reconcile the original target and expected postcondition first.
+- Treat each logical `operation_id` as an idempotency scope, not a host-call correlation label. An App-native atomic `create_thread` records distinct create and initial-submit IDs under one host-call correlation; never create a replacement ID after interruption or ambiguous submit.
 - Use one `round_id` for the external review round. A sequential relay turn adds one
   `relay_turn_id`; browser creation, attachment, submit, and response capture each use
-  distinct operation IDs. App-native `create_thread` remains its documented combined
-  create-and-initial-submit host operation, not a browser-operation exception.
+  distinct operation IDs. App-native `create_thread` may remain an atomic host call,
+  but records separate create, initial-submit, and read-only capture logical IDs under
+  one host-call correlation; later turns reuse the conversation with only submit and
+  capture IDs.
 - Distinguish the transport browser from the reviewer browser. The transport browser submits/captures the ChatGPT review; the reviewer browser is ChatGPT's desktop built-in or cloud/agent browser for target-page checks. Load `live-browser-review.md` whenever the latter is requested.
 
 An explicit external send authorizes one initial conversation submission per named

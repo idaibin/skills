@@ -95,6 +95,11 @@ class ValidatorTests(unittest.TestCase):
         (package / "references").mkdir(parents=True)
         profile = package / "references" / "browser-profile.md"
         profile.write_text(
+            "browser_preference:\n"
+            "  primary: codex-in-app-browser | user-local-browser | manual\n"
+            "  local_browser: <user-selected browser name>\n"
+            "  fallback: user-local-browser | codex-in-app-browser | package-only\n"
+            "fallback applies only to the current task.\n"
             "review_context:\n  name: <user-editable default persistent context name>\n"
             "  policy: prefer-verified-persistent\n"
             "  fallback: new-standard-chat\n",
@@ -103,13 +108,189 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual([], VALIDATOR.ask_ai_defaults_errors(package))
         profile.write_text("review_context:\n", encoding="utf-8")
         errors = VALIDATOR.ask_ai_defaults_errors(package)
+        self.assertTrue(any("codex-in-app-browser" in error for error in errors))
+        self.assertTrue(any("user-selected browser" in error for error in errors))
+        self.assertTrue(any("current task" in error for error in errors))
         self.assertTrue(any("user-editable default" in error for error in errors))
         self.assertTrue(any("prefer-verified-persistent" in error for error in errors))
         self.assertTrue(any("new-standard-chat" in error for error in errors))
 
+    def test_ask_ai_browser_preference_is_task_scoped_and_legacy_recoverable(self) -> None:
+        profile = (
+            ROOT / "skills" / "ask-ai" / "references" / "browser-profile.md"
+        ).read_text(encoding="utf-8")
+        chatgpt = (
+            ROOT / "skills" / "ask-ai" / "references" / "provider-chatgpt.md"
+        ).read_text(encoding="utf-8")
+        protocol = (ROOT / "protocols" / "browser-operation-v1.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("fresh capability preflight on every new task", profile)
+        self.assertIn("fallback applies only to the current task", profile)
+        self.assertIn("does not probe Codex in-app first", chatgpt)
+        for mode in (
+            "codex-in-app-browser",
+            "user-local-browser",
+            "desktop-built-in-browser",
+            "current-chrome-explicit",
+        ):
+            self.assertIn(mode, protocol)
+
     def test_ask_ai_mutual_review_requires_bounded_relay_contract(self) -> None:
         package = ROOT / "skills" / "ask-ai"
         self.assertEqual([], VALIDATOR.ask_ai_mutual_review_errors(package))
+
+    def test_ask_ai_bare_mutual_review_precedence_is_not_a_saved_default_alias(self) -> None:
+        routing = (
+            ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md"
+        ).read_text(encoding="utf-8")
+        mappings = VALIDATOR.yaml_fence_mappings(routing)
+        contract = next(item["relay_contract"] for item in mappings if "relay_contract" in item)
+        self.assertEqual(
+            {
+                "package_only": "overrides-send",
+                "legacy_reserved_bare_alias": "fail-closed-require-explicit-migration",
+                "bare_mutual_review": "fixed-chatgpt-gemini-three-turns",
+                "explicit_current_request": "invocation-only-customization",
+                "exact_executable_alias": "custom-instruction",
+                "persisted_default": "non-bare-mutual-review-only",
+            },
+            contract["resolution_precedence"],
+        )
+        self.assertEqual(
+            {"value": "互审", "legacy_action": "fail-closed-require-explicit-migration"},
+            contract["reserved_bare_alias"],
+        )
+        self.assertIn("legacy_reserved_bare_alias", contract["resolution_precedence"])
+        self.assertEqual(
+            [
+                "package_only",
+                "legacy_reserved_bare_alias",
+                "bare_mutual_review",
+                "explicit_current_request",
+                "exact_executable_alias",
+                "persisted_default",
+            ],
+            contract["resolution_order"],
+        )
+        instruction = next(
+            item["instructions"]["mutual-review"]
+            for item in mappings
+            if item.get("schema_version") == "ask-ai-instructions/v1"
+            and "mutual-review" in item.get("instructions", {})
+        )
+        self.assertEqual(["我的互审"], instruction["aliases"])
+        self.assertEqual(["gemini", "kimi"], instruction["external_providers"])
+        self.assertEqual(2, instruction["max_turns_per_provider"])
+
+    def test_ask_ai_rejects_persisted_bare_mutual_review_alias(self) -> None:
+        source = (
+            ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md"
+        ).read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ask-ai"
+            references = package / "references"
+            references.mkdir(parents=True)
+            (references / "provider-routing.md").write_text(
+                source.replace("aliases: [我的互审]", "aliases: [互审]", 1),
+                encoding="utf-8",
+            )
+            errors = VALIDATOR.ask_ai_mutual_review_errors(package)
+        self.assertTrue(any("reserved" in error for error in errors))
+
+    def test_ask_ai_v3_lifecycle_docs_and_discovery_index_are_synced(self) -> None:
+        standard = (ROOT / "docs" / "skills" / "skill-standard.md").read_text(
+            encoding="utf-8"
+        )
+        alignment = (
+            ROOT / "docs" / "quality" / "official-skill-alignment.md"
+        ).read_text(encoding="utf-8")
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
+        self.assertIn("distinct correlated create and submit logical IDs", standard)
+        self.assertIn("distinct correlated\n  create and submit IDs", alignment)
+        self.assertTrue(
+            any("legacy reserved-alias conflict fails closed" in item for item in ask_ai["intents"])
+        )
+
+    def test_ask_ai_bare_mutual_review_text_requires_no_legacy_conflict(self) -> None:
+        sources = [
+            ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md",
+            ROOT / "skills" / "ask-ai" / "references" / "usage.md",
+            ROOT / "skills" / "ask-ai" / "references" / "eval-cases.md",
+        ]
+        text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
+        self.assertNotIn("`互审` always uses", text)
+        self.assertNotIn("| `互审` with an unambiguous review basis | Always", text)
+        self.assertIn("no legacy reserved-alias conflict", text)
+
+    def test_ask_ai_app_native_relay_keeps_atomic_call_and_logical_operations_distinct(self) -> None:
+        package = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_app_native_relay_errors(package))
+        protocol = (
+            package / "references" / "app-native-thread-protocol.md"
+        ).read_text(encoding="utf-8")
+        mappings = VALIDATOR.yaml_fence_mappings(protocol)
+        contract = next(
+            item["app_native_relay_contract"]
+            for item in mappings
+            if "app_native_relay_contract" in item
+        )
+        self.assertEqual(
+            ["create-conversation", "submit-initial", "capture-response"],
+            contract["initial_turn"]["logical_operations"],
+        )
+        self.assertEqual(
+            {
+                "before_host_call": "invoking",
+                "normal_host_return": "submitted",
+                "uncertain_host_return": "submission-uncertain",
+            },
+            contract["initial_turn"]["logical_write_projection"],
+        )
+        self.assertEqual(
+            ["submit-follow-up", "capture-response"],
+            contract["later_turn"]["logical_operations"],
+        )
+        self.assertTrue(contract["capture_response"]["idempotent"])
+
+    def test_ask_ai_app_native_relay_contract_rejects_missing_or_merged_operations(self) -> None:
+        source = (
+            ROOT / "skills" / "ask-ai" / "references" / "app-native-thread-protocol.md"
+        ).read_text(encoding="utf-8")
+        mutations = {
+            "missing-relay-turn": source.replace("    relay_turn: relay_turn_id\n", "", 1),
+            "merged-create-submit": source.replace(
+                "logical_operations: [create-conversation, submit-initial, capture-response]",
+                "logical_operations: [create-and-initial-submit, capture-response]",
+                1,
+            ),
+            "mutable-capture": source.replace("    idempotent: true\n", "    idempotent: false\n", 1),
+        }
+        for name, value in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                package = Path(temporary) / "ask-ai"
+                references = package / "references"
+                references.mkdir(parents=True)
+                (references / "app-native-thread-protocol.md").write_text(
+                    value, encoding="utf-8"
+                )
+                self.assertTrue(VALIDATOR.ask_ai_app_native_relay_errors(package))
+
+    def test_ask_ai_eval_cases_do_not_describe_v2_as_current_or_combined_logical_operation(self) -> None:
+        text = (
+            ROOT / "skills" / "ask-ai" / "references" / "eval-cases.md"
+        ).read_text(encoding="utf-8")
+        for stale in (
+            "app-native-thread-operation/v2` to host thread actions",
+            "optional v2 evidence",
+            "creates a v2 replacement",
+            "one combined create-and-initial-submit operation",
+            "App-native `create_thread` remains combined under its own protocol",
+        ):
+            self.assertNotIn(stale, text)
+        self.assertIn("app-native-thread-operation/v3", text)
+        self.assertIn("correlated but distinct `create-conversation` and `submit-initial`", text)
 
     def test_ask_ai_relay_instruction_normalizes_only_two_provider_legacy_stop(self) -> None:
         two_provider = {
@@ -213,6 +394,11 @@ class ValidatorTests(unittest.TestCase):
             "skills/ops-browser/references/browser-operation-protocol.md",
         ):
             self.assertEqual(text, (ROOT / relative).read_text(encoding="utf-8"))
+
+    def test_app_native_protocol_is_synced_from_the_shared_source(self) -> None:
+        source = ROOT / "protocols" / "app-native-thread-operation-v3.md"
+        target = ROOT / "skills" / "ask-ai" / "references" / "app-native-thread-protocol.md"
+        self.assertEqual(source.read_text(encoding="utf-8"), target.read_text(encoding="utf-8"))
 
     def test_name_must_match_directory(self) -> None:
         root = self.make_repo()

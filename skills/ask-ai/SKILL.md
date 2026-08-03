@@ -44,9 +44,11 @@ not maintain a second public collaboration owner.
      naming or safely resolving the external recipient, including exact invocation of
      a user-defined instruction that explicitly maps invocation to bounded sending;
    - **Relay review** when the user explicitly requests one provider's attributed
-     response to be sent to another provider in a bounded sequence; resolve its
-     providers and turn cap from explicit current-session choices, then the saved
-     mutual-review default, then built-in ChatGPT and Gemini with three turns each;
+     response to be sent to another provider in a bounded sequence. The exact bare
+     command `互审` is the fixed built-in ChatGPT -> Gemini relay with three turns per
+     provider unless a legacy persisted reserved-alias conflict must fail closed;
+     otherwise resolve explicit current-session choices first, then an exact executable
+     alias or the saved mutual-review default;
    - **Combined loop** when independent Codex and external-AI review plus local
      verification is requested.
 6. Load [research-profiles.md](references/research-profiles.md) and select one content
@@ -77,12 +79,14 @@ not maintain a second public collaboration owner.
    Require an explicit target plus live identity, input, submit, completion, and
    attribution evidence. If no route proves the requested capability, perform no
    external action and return Package-only or Not found/Not verified.
-   For an authorized web review, apply the provider-neutral `review_context` preference
-   from [browser-profile.md](references/browser-profile.md): reuse the uniquely verified
-   persistent container when supported, otherwise open a clean new Standard Chat.
+   For an authorized web review, apply the provider-neutral browser preference and
+   `review_context` from [browser-profile.md](references/browser-profile.md). Start each
+   task from the configured primary with fresh preflight; a fallback never changes the
+   next task's default. Reuse a uniquely verified persistent container when supported,
+   otherwise open a clean new Standard Chat.
    Never treat a conversation title or stored name as container proof.
 9. Create one round_id per review round, a new relay_turn_id per sequential provider
-   turn, and a unique operation_id per actual external side effect. On a provider's
+   turn, and a unique logical operation_id per actual create, submit, or capture. On a provider's
    first turn, create only when no authorized verified conversation exists and a new
    session is required; later turns reuse that verified conversation and never invent a
    create operation. A relay turn never shares one operation ID across create, attach,

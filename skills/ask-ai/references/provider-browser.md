@@ -17,6 +17,11 @@ contract in this package. It standardizes live preflight and evidence; it does n
 make product interfaces interchangeable and does not promise that a free, regional,
 account, model, quota, or capability tier is currently available.
 
+Resolve the provider-neutral browser preference from `browser-profile.md` before the
+live provider preflight. Freshly probe the configured primary on every new task. A
+before-submit fallback is task-local and does not demote the next task's primary; an
+explicit or saved named local-browser primary skips the Codex in-app probe.
+
 Use semantic UI evidence discovered through ops-browser. Do not publish or persist
 CSS selectors, generated class names, coordinates, cookies, local storage, account
 identifiers, or other profile data. A canonical product URL is only a discovery entry

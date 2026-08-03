@@ -22,7 +22,12 @@ Gemini review.
 
 ## Target And Identity
 
-Before composing:
+Before composing, resolve the provider-neutral browser preference from
+`browser-profile.md`. A saved or implicit Codex in-app primary is freshly preflighted
+for every task; a task-local fallback never changes the next task's primary. An
+explicit or saved named local-browser primary starts there without probing in-app.
+
+Then:
 
 1. Select the authorized browser surface and enumerate existing tabs only when exposed.
 2. Verify the final gemini.google.com route, authenticated/unauthenticated state, and

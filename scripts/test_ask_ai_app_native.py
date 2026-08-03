@@ -173,8 +173,25 @@ class AppNativeCanaryTests(unittest.TestCase):
         result = CANARY.classify_create_result(
             "<html>/backend-api/ios/attestation_challenge</html>"
         )
-        self.assertEqual("submission-uncertain", result["operation_state"])
+        self.assertEqual(
+            {
+                "create-conversation": "submission-uncertain",
+                "submit-initial": "submission-uncertain",
+            },
+            result["logical_write_states"],
+        )
         self.assertFalse(result["state_change_allowed"])
+
+    def test_atomic_create_result_projects_both_correlated_logical_writes(self) -> None:
+        result = CANARY.classify_create_result({"clientThreadId": "client-1"})
+        self.assertEqual(
+            {
+                "create-conversation": "submitted",
+                "submit-initial": "submitted",
+            },
+            result["logical_write_states"],
+        )
+        self.assertEqual("client-pending", result["identity_state"])
 
     def test_v1_uncertain_ledger_resumes_read_only_with_same_operation(self) -> None:
         result = CANARY.recovery_directive(
@@ -192,6 +209,28 @@ class AppNativeCanaryTests(unittest.TestCase):
         )
         self.assertFalse(result["state_change_allowed"])
         self.assertFalse(result["replacement_operation_allowed"])
+
+    def test_v2_uncertain_ledger_preserves_its_own_schema(self) -> None:
+        result = CANARY.recovery_directive(
+            {
+                "schema_version": "app-native-thread-operation/v2",
+                "operation_id": "round-1-submit",
+                "state": "invoking",
+                "call": {"count": 1},
+            }
+        )
+        self.assertEqual("app-native-thread-operation/v2", result["preserve_schema_version"])
+
+    def test_legacy_v2_recovery_rejects_v3_host_call_shape(self) -> None:
+        with self.assertRaises(CANARY.SnapshotError):
+            CANARY.recovery_directive(
+                {
+                    "schema_version": "app-native-thread-operation/v2",
+                    "operation_id": "round-1-submit",
+                    "state": "invoking",
+                    "host_call": {"count": 1},
+                }
+            )
 
     def test_unique_candidate_uses_versioned_prompt_hash_and_call_window(self) -> None:
         result = CANARY.reconcile_create_candidates(

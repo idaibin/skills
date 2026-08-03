@@ -20,14 +20,17 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
 
     schema_version: ask-ai-defaults/v1
     default_provider: chatgpt | gemini | manual
+    browser_preference:
+      primary: codex-in-app-browser | user-local-browser | manual
+      local_browser: <user-selected browser name>
+      fallback: user-local-browser | codex-in-app-browser | package-only
     review_context:
       name: <user-editable default persistent context name>
       policy: prefer-verified-persistent
       fallback: new-standard-chat
     providers:
       chatgpt:
-        default_transport_mode: codex-app-native | desktop-built-in-browser | manual
-        default_browser_mode: desktop-built-in-browser | capability-auto | manual
+        default_transport_mode: codex-app-native | browser | manual
         surface: standard-chat | quick-chat | project
         project_name: <discovery hint>
         interface: chat | work
@@ -36,16 +39,33 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
         reasoning_fallbacks: [<ordered preferences>]
         default_url: <discovery hint>
       gemini:
-        default_transport_mode: desktop-built-in-browser | manual
+        default_transport_mode: browser | manual
         surface: standard-chat | notebook | conversation
         notebook_name: <discovery hint>
         model: <preference>
         default_url: <discovery hint>
     last_verified_at: <informational timestamp>
 
+`browser_preference` is provider-neutral. When omitted, use
+`primary: codex-in-app-browser` and `fallback: package-only`. A
+`user-local-browser` primary or fallback is valid only with a non-empty
+`local_browser`; store the browser product name, never a profile, tab, executable path,
+or URL. Primary and fallback must differ; `manual` performs no fallback.
+`desktop-built-in-browser` remains a compatible Ask AI v1 alias for
+`browser` plus `codex-in-app-browser` and should be normalized only during an explicitly
+authorized config edit.
+
+The primary route is retried from a fresh capability preflight on every new task. A
+fallback applies only to the current task and never rewrites, demotes, or learns a new
+default. An explicit current-request route skips probing other routes. Thus an explicit
+local-browser request or a saved `user-local-browser` primary starts with that named
+browser, while a built-in-first preference probes Codex in-app again even when the
+previous task fell back locally.
+
 Do not write an unsupported provider, transport, surface, model, or capability merely
-because the schema can represent it. Current Chrome and standalone automation require
-current-request selection and are not durable authorization.
+because the schema can represent it. A durable preference selects order only: external
+send authorization and fresh route, identity, target, and capability evidence remain
+required.
 
 Never store secrets, cookies, tokens, browser storage, email addresses, display names,
 or raw profile data. A Project/notebook name, URL, conversation identifier, model,
@@ -78,7 +98,7 @@ provider is resolved to ChatGPT.
 For ask-chatgpt-defaults/v2, default_transport_mode is required:
 
 - codex-app-native or desktop-built-in-browser selects which verified ChatGPT route
-  is tried first;
+  is tried first; the latter maps to Codex in-app browser, not a user-local browser;
 - manual stops before external action;
 - missing or unknown values block external action pending explicit repair.
 

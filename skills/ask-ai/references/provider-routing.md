@@ -112,17 +112,22 @@ ambiguous, or unresolved operation for the primary provider.
 ## User-Defined Review Instructions
 
 Ask AI has no built-in roster for ordinary independent multi-provider review or a
-phrase such as `三方会审`. Mutual review is the narrow exception: when the user requests
-`互审` without naming providers or a turn cap, use ChatGPT then Gemini in cyclic order,
-with at most three submitted turns per provider and
+phrase such as `三方会审`. Mutual review is the narrow exception: the exact bare command
+`互审` uses ChatGPT then Gemini in cyclic order, with at most three submitted turns per provider, only when no legacy reserved-alias conflict is present, and
 `stop_after: all-providers-approve-same-candidate`.
 
 Resolve mutual-review settings in this order:
 
-1. explicit providers, initial provider, relay order, or turn cap in the current
+1. `不要发送` or another Package-only constraint: construct only the applicable
+   package and do not send;
+2. a legacy v1 persisted `aliases: [互审]` conflict: fail closed for bare `互审` and
+   require explicit migration to another exact alias; do not send;
+3. the exact bare command `互审`: fixed built-in ChatGPT -> Gemini and three turns
+   per provider, when no legacy reserved-alias conflict is present;
+4. explicit providers, initial provider, relay order, or turn cap in the current
    request, for this invocation only;
-2. a valid persisted `mutual-review` instruction;
-3. the built-in ChatGPT then Gemini order and three-turn-per-provider cap.
+5. an exact executable alias, then a valid persisted `mutual-review` instruction;
+6. the built-in ChatGPT -> Gemini order and three-turn-per-provider cap.
 
 A current-request override never rewrites the saved default. It may lower or raise the
 turn cap only to an explicit positive bounded value and may use only explicitly named
@@ -151,21 +156,22 @@ instructions:
     stop_after: local-reconciliation
 
   mutual-review:
-    aliases: [互审]
-    external_providers: [chatgpt, gemini]
+    aliases: [我的互审]
+    external_providers: [gemini, kimi]
     workflow: sequential-relay
-    initial_provider: chatgpt
-    relay_order: [chatgpt, gemini]
+    initial_provider: gemini
+    relay_order: [gemini, kimi]
     package_policy: fixed-basis-with-attributed-peer-response
     candidate_promotion: user-only
     prompt_profiles: [adversarial]
-    max_turns_per_provider: 3
+    max_turns_per_provider: 2
     authorization: send-on-exact-invocation
     stop_after: all-providers-approve-same-candidate
 ```
 
-The independent example is not a built-in roster. The mutual-review record shows the
-built-in values and how a user-owned default override is persisted. Omitted `workflow`
+The independent example is not a built-in roster. The mutual-review record shows a
+user-owned default override: it applies to its exact alias and non-bare mutual-review
+requests, but never replaces the exact bare `互审` contract. Omitted `workflow`
 means `independent`, which requires `rounds_per_provider`; `sequential-relay` requires
 two or more distinct `external_providers`, an initial provider in `relay_order`, a
 complete non-duplicated relay order containing every provider exactly once, and
@@ -180,6 +186,13 @@ drop a provider. When the user persists a sequential relay without a turn cap, s
 report `max_turns_per_provider: 3`; an explicit positive bounded value overrides it.
 Create, update, rename, or delete an instruction only when the user explicitly asks to
 persist that definition.
+
+`互审` is a reserved built-in command, not a valid persisted executable alias. A legacy
+v1 record whose `aliases` contains `互审` must fail closed for that alias and report that
+an explicit migration to a different exact alias is required. It may still be read as a
+non-executable saved default for non-bare natural-language mutual-review requests when
+the rest of the record is valid. Never silently execute its old alias or reinterpret
+bare `互审` with its saved recipients.
 Report the exact alias, participants, send behavior, workflow-specific round or turn
 limit, and stop condition before writing, and verify the complete record after an
 atomic write. Never infer a roster from the instruction name.
@@ -193,8 +206,9 @@ Resolve a user-defined executable alias only when the whole current request, aft
 trimming surrounding whitespace and normalizing case for Latin text, equals that alias.
 Do not use a prefix, suffix, punctuation extension, substring, fuzzy, semantic, or
 translated match to inherit a saved alias's send authority. This exact-match rule does
-not prevent an explicit current-session mutual-review request from using the built-in
-or saved defaults under the precedence above. Provider-name aliases remain normal
+not prevent an explicit current-session mutual-review request from using the fixed
+built-in or saved defaults under the precedence above. The built-in bare `互审` command
+is reserved and is not a customizable persisted alias. Provider-name aliases remain normal
 provider selection and do not create a workflow instruction.
 
 `authorization: send-on-exact-invocation` means that the user's current exact alias
@@ -376,6 +390,17 @@ relay_contract:
     interruption:
       reconcile_original_create_operation_id: true
       replacement_conversation: forbidden
+  resolution_precedence:
+    package_only: overrides-send
+    legacy_reserved_bare_alias: fail-closed-require-explicit-migration
+    bare_mutual_review: fixed-chatgpt-gemini-three-turns
+    explicit_current_request: invocation-only-customization
+    exact_executable_alias: custom-instruction
+    persisted_default: non-bare-mutual-review-only
+  resolution_order: [package_only, legacy_reserved_bare_alias, bare_mutual_review, explicit_current_request, exact_executable_alias, persisted_default]
+  reserved_bare_alias:
+    value: 互审
+    legacy_action: fail-closed-require-explicit-migration
 ```
 
 ```yaml

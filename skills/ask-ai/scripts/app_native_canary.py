@@ -57,26 +57,32 @@ def prompt_fingerprint(prompt: str) -> dict[str, Any]:
 
 
 def classify_create_result(result: Any) -> dict[str, Any]:
-    """Classify return evidence without ever granting a retry."""
+    """Classify one atomic create call into its two correlated logical writes."""
+    def states(state: str) -> dict[str, str]:
+        return {
+            "create-conversation": state,
+            "submit-initial": state,
+        }
+
     if isinstance(result, dict):
         thread_id = result.get("threadId")
         client_thread_id = result.get("clientThreadId")
         if isinstance(thread_id, str) and thread_id:
             return {
-                "operation_state": "submitted",
+                "logical_write_states": states("submitted"),
                 "identity_state": "resolved",
                 "thread_id": thread_id,
                 "state_change_allowed": False,
             }
         if isinstance(client_thread_id, str) and client_thread_id:
             return {
-                "operation_state": "submitted",
+                "logical_write_states": states("submitted"),
                 "identity_state": "client-pending",
                 "client_thread_id": client_thread_id,
                 "state_change_allowed": False,
             }
     return {
-        "operation_state": "submission-uncertain",
+        "logical_write_states": states("submission-uncertain"),
         "identity_state": "identity-not-verified",
         "state_change_allowed": False,
     }

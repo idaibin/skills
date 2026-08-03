@@ -403,7 +403,7 @@
       "intents": [
         "prepare a local request package for one or more named external AI providers",
         "define or invoke a user-owned bounded external AI review instruction",
-        "coordinate a bounded sequential cross-review that relays attributed responses between explicitly configured AI providers",
+        "coordinate a bounded sequential cross-review that relays attributed responses between explicitly configured AI providers, with bare 互审 fixed to ChatGPT then Gemini unless a legacy reserved-alias conflict fails closed",
         "prepare or route an image review, generation, edit, or bounded visual exploration with explicit provider and asset boundaries",
         "coordinate an explicitly authorized independent ChatGPT, Gemini, Claude, DeepSeek, Kimi, Qwen, GLM, Grok, or other named AI result when its provider route is verified, otherwise stop at a safe local package or Not verified"
       ],
@@ -432,6 +432,9 @@
         "互审",
         "AI 互审",
         "cross review",
+        "Codex in-app browser",
+        "local browser fallback",
+        "browser preference",
         "custom review instruction",
         "前端设计审查",
         "后端设计审查",

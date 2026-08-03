@@ -25,6 +25,11 @@ FORBIDDEN_PACKAGE_FILES = {"README.md", "INSTALL.md", "INSTALLATION_GUIDE.md", "
 PORTABLE_FIELDS = {"name", "description", "license", "compatibility", "metadata", "allowed-tools"}
 LONG_REFERENCE_LINES = 100
 ASK_AI_DEFAULT_TOKENS = (
+    "browser_preference:",
+    "primary: codex-in-app-browser | user-local-browser | manual",
+    "local_browser: <user-selected browser name>",
+    "fallback: user-local-browser | codex-in-app-browser | package-only",
+    "fallback applies only to the current task",
     "review_context:",
     "name: <user-editable default persistent context name>",
     "policy: prefer-verified-persistent",
@@ -182,7 +187,7 @@ def local_link_errors(markdown: Path, package: Path) -> list[str]:
 
 
 def ask_ai_defaults_errors(package: Path) -> list[str]:
-    """Keep the provider-neutral persistent-context fallback contract intact."""
+    """Keep provider-neutral browser and persistent-context defaults intact."""
     if package.name != "ask-ai":
         return []
     profile = package / "references" / "browser-profile.md"
@@ -281,6 +286,30 @@ def ask_ai_mutual_review_errors(package: Path) -> list[str]:
     }
     if hierarchy != expected_hierarchy:
         errors.append("ask-ai: relay_contract hierarchy must be review round -> relay turn -> operation")
+    precedence = contract.get("resolution_precedence")
+    if precedence != {
+        "package_only": "overrides-send",
+        "legacy_reserved_bare_alias": "fail-closed-require-explicit-migration",
+        "bare_mutual_review": "fixed-chatgpt-gemini-three-turns",
+        "explicit_current_request": "invocation-only-customization",
+        "exact_executable_alias": "custom-instruction",
+        "persisted_default": "non-bare-mutual-review-only",
+    }:
+        errors.append("ask-ai: relay_contract must keep bare mutual-review fixed while allowing explicit or exact-alias customization")
+    if contract.get("resolution_order") != [
+        "package_only",
+        "legacy_reserved_bare_alias",
+        "bare_mutual_review",
+        "explicit_current_request",
+        "exact_executable_alias",
+        "persisted_default",
+    ]:
+        errors.append("ask-ai: relay_contract must check the legacy reserved bare alias before built-in mutual-review routing")
+    if contract.get("reserved_bare_alias") != {
+        "value": "互审",
+        "legacy_action": "fail-closed-require-explicit-migration",
+    }:
+        errors.append("ask-ai: relay_contract must fail closed for a legacy persisted bare mutual-review alias")
     if set(contract.get("candidate_promotion_values", [])) != ASK_AI_PROMOTION_VALUES:
         errors.append("ask-ai: relay_contract must enumerate the candidate_promotion values")
     legacy = contract.get("legacy_stop_after")
@@ -328,12 +357,61 @@ def ask_ai_mutual_review_errors(package: Path) -> list[str]:
     provider_counts: set[int] = set()
     for instruction in instructions:
         errors.extend(f"ask-ai: {error}" for error in relay_instruction_errors(instruction))
+        aliases = instruction.get("aliases") if isinstance(instruction, dict) else None
+        if isinstance(aliases, list) and "互审" in aliases:
+            errors.append("ask-ai: persisted bare 互审 alias is reserved and requires explicit migration")
         providers = instruction.get("external_providers") if isinstance(instruction, dict) else None
         if isinstance(providers, list):
             provider_counts.add(len(providers))
     if not {2, 3}.issubset(provider_counts):
         errors.append("ask-ai: provider-routing.md needs valid two- and three-provider relay examples")
     return errors
+
+
+def ask_ai_app_native_relay_errors(package: Path) -> list[str]:
+    """Validate that atomic host calls preserve logical relay operations."""
+    if package.name != "ask-ai":
+        return []
+    protocol = package / "references" / "app-native-thread-protocol.md"
+    if not protocol.is_file():
+        return ["ask-ai: missing references/app-native-thread-protocol.md"]
+    mappings = yaml_fence_mappings(protocol.read_text(encoding="utf-8"))
+    contract = next(
+        (item.get("app_native_relay_contract") for item in mappings if "app_native_relay_contract" in item),
+        None,
+    )
+    expected = {
+        "schema_version": "app-native-thread-operation/v3",
+        "hierarchy": {
+            "review_round": "round_id",
+            "relay_turn": "relay_turn_id",
+            "operation": "logical-operation-id",
+        },
+        "initial_turn": {
+            "host_call": "create_thread",
+            "create_submit_atomic": True,
+            "host_call_correlation": "required",
+            "logical_operations": ["create-conversation", "submit-initial", "capture-response"],
+            "logical_write_projection": {
+                "before_host_call": "invoking",
+                "normal_host_return": "submitted",
+                "uncertain_host_return": "submission-uncertain",
+            },
+        },
+        "later_turn": {
+            "require_same_verified_conversation": True,
+            "create_operation": "forbidden",
+            "logical_operations": ["submit-follow-up", "capture-response"],
+        },
+        "capture_response": {
+            "state_change": False,
+            "idempotent": True,
+            "operation_id": "required",
+        },
+    }
+    if contract != expected:
+        return ["ask-ai: App-native relay contract must separate correlated create, submit, and idempotent capture operations"]
+    return []
 
 
 def package_errors(package: Path, all_names: set[str]) -> list[str]:
@@ -417,6 +495,7 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
 
     errors.extend(ask_ai_defaults_errors(package))
     errors.extend(ask_ai_mutual_review_errors(package))
+    errors.extend(ask_ai_app_native_relay_errors(package))
 
     eval_file = references / "eval-cases.md"
     if not eval_file.is_file():

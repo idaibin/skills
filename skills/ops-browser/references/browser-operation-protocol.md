@@ -26,7 +26,8 @@ snapshot_id: cap-<stable-task-scope>
 captured_at: <ISO-8601 or Not verified>
 route:
   provider: <chatgpt|gemini|deepseek|kimi|other|not-applicable>
-  browser_mode: <desktop-built-in-browser|chatgpt-cloud-browser|current-chrome-explicit|standalone-playwright-explicit|isolated-managed-session|manual>
+  browser_mode: <codex-in-app-browser|user-local-browser|desktop-built-in-browser|current-chrome-explicit|chatgpt-cloud-browser|standalone-playwright-explicit|isolated-managed-session|manual>
+  browser_name: <user-selected browser product or not-applicable>
   browser_id: <stable id or Not verified>
   session_id: <stable id or Not verified>
 identity:
@@ -73,6 +74,11 @@ gaps:
 Use `chatgpt-cloud-browser` for the ChatGPT cloud/agent browser surface and
 `isolated-managed-session` for an agent-owned managed session whose state does
 not come from a user browser profile.
+Use `codex-in-app-browser` for the host-controlled Codex browser and
+`user-local-browser` only for the exact browser product resolved by the current
+request or durable preference. Existing `desktop-built-in-browser` and
+`current-chrome-explicit` values remain valid for read-only recovery; normalize them
+to `codex-in-app-browser` or a named `user-local-browser` before a new action.
 
 Reuse a snapshot only while its route, browser/session identity, account and
 workspace evidence, login-state fingerprint, target origin, and required

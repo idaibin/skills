@@ -42,6 +42,9 @@ PROTOCOLS = {
         Path("skills/ask-ai/references/browser-operation-protocol.md"),
         Path("skills/ops-browser/references/browser-operation-protocol.md"),
     ),
+    Path("protocols/app-native-thread-operation-v3.md"): (
+        Path("skills/ask-ai/references/app-native-thread-protocol.md"),
+    ),
     Path("protocols/behavior-first-v1.md"): (
         Path("skills/dev-frontend/references/behavior-first.md"),
         Path("skills/dev-java/references/behavior-first.md"),
