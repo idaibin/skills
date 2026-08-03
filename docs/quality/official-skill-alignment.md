@@ -31,6 +31,24 @@ This catalog uses four current primary baselines:
 - Use a few realistic trigger, non-trigger, and edge scenarios for iteration.
 - Keep safety and mutation boundaries that prevent accidental writes or external
   actions; these are functional requirements of the engineering Skills.
+- Keep provider-neutral runtime preferences, such as a preferred persistent review
+  context with a Standard Chat fallback, inside package references and focused
+  validation. Do not encode provider capability claims in portable metadata.
+- Keep sequential external-AI relay as a bounded, attributed package workflow: one
+  fixed basis and stable review round, one relay-turn ID per submitted provider turn,
+  separate logical IDs for actual side effects, and one verified conversation per provider:
+  create only on that provider's first turn when a new session is actually required,
+  then reuse it on later turns and reconcile an interrupted create under its original
+  ID. An atomic host create-and-initial-submit call still uses distinct correlated
+  create and submit IDs, with capture read-only and idempotent. All configured providers approve the same candidate for success, local
+  verification precedes any provider-authored textual promotion, and explicit
+  redaction rather than summarization applies when cross-provider data sharing is
+  constrained. Legacy two-provider stop values decode to the canonical all-provider
+  condition; `changes-required` takes priority over terminal turn exhaustion.
+- Keep browser routing provider-neutral and activation-scoped: explicit current routes
+  win, otherwise a saved primary is freshly preflighted on every task; a before-submit
+  fallback never demotes the next task's primary. Persist only a local browser product
+  name, never profile, tab, URL, login, identity, or capability evidence.
 
 Raw evaluation output stays ignored and outside the published catalog. A durable
 summary is eligible for `docs/quality/` only when it records a fixed current basis,

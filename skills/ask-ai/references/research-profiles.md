@@ -74,6 +74,11 @@ For multi-provider work, keep the prompt and basis identical, do not expose one
 provider's response to another, capture every response independently, and compare only
 after attribution.
 
+For review, design, architecture, implementation, product, or proposal critique, load
+`review-prompts.md`. Its built-in profiles shape prompt content only; they never select
+a provider or authorize an external action. Compose the shared contract with one
+primary domain and only the applicable independent, adversarial, or source-check mode.
+
 ## Output
 
 Return Codex-first decision, provider, theme, verified capability, prompt strategy,

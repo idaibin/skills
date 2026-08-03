@@ -22,13 +22,21 @@ Gemini review.
 
 ## Target And Identity
 
-Before composing:
+Before composing, resolve the provider-neutral browser preference from
+`browser-profile.md`. A saved or implicit Codex in-app primary is freshly preflighted
+for every task; a task-local fallback never changes the next task's primary. An
+explicit or saved named local-browser primary starts there without probing in-app.
+
+Then:
 
 1. Select the authorized browser surface and enumerate existing tabs only when exposed.
 2. Verify the final gemini.google.com route, authenticated/unauthenticated state, and
    minimal non-PII account category evidence.
-3. Resolve Standard Chat by default. Treat a user-named notebook or existing
-   conversation as a hard target and verify its stable URL/identity before action.
+3. Apply an explicit target first. Otherwise, when the provider-neutral review-context
+   preference is configured, reuse the uniquely verified notebook with that name; if it
+   is absent, unavailable, or not tied to the active Gemini account, resolve a clean
+   Standard Chat. Treat any user-named notebook or existing conversation as a hard
+   target and verify its stable URL/identity before action.
 4. Verify the current model or mode only when exposed. A stored or visible label is a
    preference unless active selection evidence proves it; a hard model requirement
    blocks submission when unverified.
@@ -45,10 +53,11 @@ Create the browser-operation ledger before each side effect. Require:
 
 - provider Gemini, Standard Chat/notebook/conversation target, browser surface, and
   stable URL;
-- exact authorization, round_id, operation_id, package path/hash, and intended input;
+- exact authorization, round_id, and (for sequential relay) relay_turn_id; one
+  operation_id for this exact side effect, package path/hash, and intended input;
 - a clean unique composer and semantic verification of the filled prompt;
 - a unique enabled send control from a fresh page snapshot;
-- no submitted or ambiguous prior operation for the same round.
+- no submitted or ambiguous prior operation for the same side effect.
 
 Fill the bounded prompt without using the system clipboard when a direct field action
 is available. After submission, accept only direct evidence such as a new conversation

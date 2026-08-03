@@ -26,7 +26,8 @@ snapshot_id: cap-<stable-task-scope>
 captured_at: <ISO-8601 or Not verified>
 route:
   provider: <chatgpt|gemini|deepseek|kimi|other|not-applicable>
-  browser_mode: <desktop-built-in-browser|chatgpt-cloud-browser|current-chrome-explicit|standalone-playwright-explicit|isolated-managed-session|manual>
+  browser_mode: <codex-in-app-browser|user-local-browser|desktop-built-in-browser|current-chrome-explicit|chatgpt-cloud-browser|standalone-playwright-explicit|isolated-managed-session|manual>
+  browser_name: <user-selected browser product or not-applicable>
   browser_id: <stable id or Not verified>
   session_id: <stable id or Not verified>
 identity:
@@ -73,6 +74,11 @@ gaps:
 Use `chatgpt-cloud-browser` for the ChatGPT cloud/agent browser surface and
 `isolated-managed-session` for an agent-owned managed session whose state does
 not come from a user browser profile.
+Use `codex-in-app-browser` for the host-controlled Codex browser and
+`user-local-browser` only for the exact browser product resolved by the current
+request or durable preference. Existing `desktop-built-in-browser` and
+`current-chrome-explicit` values remain valid for read-only recovery; normalize them
+to `codex-in-app-browser` or a named `user-local-browser` before a new action.
 
 Reuse a snapshot only while its route, browser/session identity, account and
 workspace evidence, login-state fingerprint, target origin, and required
@@ -100,14 +106,27 @@ minimal direct evidence labels.
 
 ## Handoff Request
 
-The bridge creates the request. `operation_id` identifies one intended
+The bridge creates the request. `operation_id` identifies exactly one intended
 external side effect and must remain unchanged across inspection or a permitted
-retry. A new review round or different submit action requires a new ID.
+retry. `round_id` groups an external review round; `relay_turn_id` groups the
+create, attach, submit, and response-capture operations for one sequential relay
+turn. A new review round, relay turn, or different side effect requires a new ID.
+
+For a sequential relay, resolve the provider's conversation before allocating an
+operation. On that provider's first turn, reuse an already verified conversation when
+one is authorized; create a conversation only when there is no verified conversation
+and a new session is required. That creation has its own `create-conversation`
+operation ID. Later turns for that same provider reuse that verified conversation: do
+not invent or reserve a create operation. Allocate IDs only for actual later side
+effects, such as an attachment when needed, submit, and response capture. If the first
+creation is interrupted or ambiguous, reconcile its original create operation ID and
+target; never create a replacement conversation to continue the same relay.
 
 ```yaml
 schema_version: browser-operation/v1
-operation_id: <task>:<round>:<action>
+operation_id: <task>:<round>:<relay-turn|not-applicable>:<action>
 round_id: <stable external-review round id>
+relay_turn_id: <stable sequential-relay turn id|not-applicable>
 attempt: <positive integer; starts at 1>
 caller: ask-ai
 intent: <inspect|navigate|create-conversation|compose|attach|submit|capture-response|cleanup>
@@ -166,6 +185,7 @@ switch routes, create packages, or decide whether an ambiguous action succeeded.
 schema_version: browser-operation/v1
 operation_id: <same request id>
 round_id: <same request round id>
+relay_turn_id: <same request relay turn id>
 attempt: <same request attempt>
 capability_snapshot_id: <same snapshot id>
 state: <preflighted|ready|created|attached|submitted|acknowledged|captured|cleaned|completed|failed-before-submit|blocked|ambiguous>
@@ -218,7 +238,8 @@ side effect occurred. The bridge keeps an operation ledger keyed by
 
 - create the ledger entry before delegating any state-changing browser action;
 - assign a distinct operation ID to conversation creation, attachment, submit,
-  final marker, and other external side effects;
+  response capture, final marker, and every other external side effect; never use
+  one operation ID for multiple actions merely because they belong to one relay turn;
 - record the latest capability snapshot, request, result, and evidence;
 - never issue a second submit for an ID already marked `submitted`,
   `acknowledged`, or `completed`;
@@ -231,8 +252,10 @@ side effect occurred. The bridge keeps an operation ledger keyed by
   ambiguous or already-submitted operation.
 
 One `round_id` groups the many operation IDs that make up an external review
-round. A round is complete only when every required package/send operation is
-completed and its attributed response-capture operation is completed. Creating
+round. For sequential relay, one `relay_turn_id` nests inside that round and
+groups the distinct create, attach, submit, and capture operations for one
+provider turn. A round is complete only when every required package/send
+operation and its attributed response-capture operation are completed. Creating
 a conversation is a separate state-changing operation; interruption after
 creation is reconciled against the original Project before any new conversation
 can be authorized.

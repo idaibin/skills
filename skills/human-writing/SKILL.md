@@ -67,5 +67,5 @@ Hard requirements:
 - Load [platform-calibration.md](references/platform-calibration.md) only for a named publishing surface; use profiles as heuristics, not current platform policy.
 - Load [style-diagnostics.md](references/style-diagnostics.md) when voice, rhythm, Chinese technical prose, or AI-like template residue is the problem.
 - Load [reasoning-and-explanation.md](references/reasoning-and-explanation.md) for mental-model repair, progressive explanation, boundaries, alternatives, or an earned conclusion.
-- Load [revision-transparency.md](references/revision-transparency.md) only for already-published material with substantive changes.
+- Load [revision-transparency.md](references/revision-transparency.md) only when an already-published artifact may need a visible correction or reader-relevant update note; routine content synchronization should be integrated naturally.
 - Use [quality-rubric.md](references/quality-rubric.md) for final editorial review, [before-after-examples.md](references/before-after-examples.md) when a concrete calibration example helps, and [eval-cases.md](references/eval-cases.md) when changing Skill behavior.

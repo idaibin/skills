@@ -9,7 +9,10 @@ import re
 from pathlib import Path
 
 
-TOKEN_RE = re.compile(r"[a-z0-9][a-z0-9.+#-]*", re.IGNORECASE)
+TOKEN_RE = re.compile(
+    r"(?:[a-z0-9][a-z0-9.+#-]*|[\u3400-\u4dbf\u4e00-\u9fff]+)",
+    re.IGNORECASE,
+)
 STOP_WORDS = {
     "a",
     "an",
@@ -42,6 +45,10 @@ def normalize(value: str) -> str:
     )
 
 
+def contains_cjk(value: str) -> bool:
+    return bool(re.search(r"[\u3400-\u4dbf\u4e00-\u9fff]", value))
+
+
 def score_entry(entry: dict[str, object], query: str) -> tuple[int, list[str]]:
     normalized_query = normalize(query)
     query_tokens = set(normalized_query.split())
@@ -62,7 +69,11 @@ def score_entry(entry: dict[str, object], query: str) -> tuple[int, list[str]]:
         phrase_matches = [
             value
             for value, normalized_value in normalized_values
-            if normalized_query and normalized_query in normalized_value
+            if normalized_query
+            and (
+                normalized_query in normalized_value
+                or (contains_cjk(normalized_value) and normalized_value in normalized_query)
+            )
         ]
         if label == "name" and not phrase_matches:
             field_score = 0

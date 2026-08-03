@@ -4,10 +4,9 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:aef6800ad0643a13ed639d8592aff393f463deafca0fa19c67d111e494ca6bef`
+- Package digest: `sha256:216338fa56639e1606977222a12327d76910c40f5d67705acdee2e0e9467d4f3`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
-  independent external design review was authorized for project-grounding, but fresh
-  host-routing canary invocation was not run for this digest.
+  fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package

@@ -1,4 +1,4 @@
 interface:
   display_name: "Ask AI"
-  short_description: "Coordinate bounded external AI collaboration"
-  default_prompt: "Use $ask-ai for requested external AI input: resolve only authorized providers, freeze one basis, verify provider-specific routes and targets, submit each operation once, preserve independent attribution, and verify all results locally."
+  short_description: "Build and route external AI reviews and visuals"
+  default_prompt: "Use $ask-ai to build an evidence-based external AI review or image request, select only the explicitly authorized provider and capability, prefer an available host image tool when no provider is named, and verify all results locally."

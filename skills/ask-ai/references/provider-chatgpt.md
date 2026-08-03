@@ -10,7 +10,7 @@
 - [App-Native Capability And Activation Preflight](#app-native-capability-and-activation-preflight)
 - [Codex App-Native Project And Thread Route](#codex-app-native-project-and-thread-route)
 - [Model And Reasoning Evidence](#model-and-reasoning-evidence)
-- [Current Chrome Routing](#current-chrome-routing)
+- [User-Local Browser Routing](#user-local-browser-routing)
 - [Browser Capability Routing](#browser-capability-routing)
 - [Standalone Playwright Routing](#standalone-playwright-routing)
 - [Text And File Input](#text-and-file-input)
@@ -50,18 +50,16 @@ of external review rounds.
    route constraint. If it is unavailable or cannot be verified, use another route
    only when the current request explicitly authorizes that fallback; otherwise make
    no external send and stop or return to Package-only.
-3. With no current-request route constraint, read the ChatGPT section of a valid
-   Ask AI v1 record. If it is absent, read the ChatGPT-only legacy record described in
-   `browser-profile.md`. Preserve its previous route meaning; a manual value stops
-   for current route selection.
-4. Without a durable record, preflight the Codex App-native Project/thread route
-   first. A visible tool name is insufficient: the current schema, ChatGPT source
-   activation, requested surface mapping, identity, input, capture, and uncertain
-   result reconciliation must all pass. Between App-native and the desktop built-in browser, try the other
-   catalog-classified non-interrupting route only when the preferred route is
-   unavailable or insufficient and the current authorization is not route-specific.
-5. Use Current Chrome or standalone Playwright only when explicitly selected in
-   the current request and controllable.
+3. With no current-request route constraint, read the ChatGPT section and
+   provider-neutral `browser_preference` of a valid Ask AI v1 record. If absent, read
+   the ChatGPT-only legacy record described in `browser-profile.md`.
+4. Resolve the configured primary freshly for this task. Without a durable route,
+   start with the Codex in-app browser. Use App-native first only when explicitly
+   requested or configured and its Project/Quick Chat preflight passes.
+5. Before any submit, an unavailable primary may use only its configured same-provider
+   fallback. This fallback is task-local: the next task starts again from the stored
+   primary and reruns its preflight. An explicit local-browser request starts directly
+   in that browser and does not probe Codex in-app first.
 6. Use Package-only when no authorized route proves the required capability.
 
 If generic ChatGPT is used, report that the review is not project-bound.
@@ -70,6 +68,10 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 - Resolve `project` for repository-bound, persistent, or multi-round review when a
   verified stable ChatGPT Project ID or Project URL exists.
+- When the provider-neutral review-context preference is configured, first resolve the
+  uniquely verified Project with that name. If it is absent, unavailable, or cannot be
+  tied to the active ChatGPT workspace, resolve a clean `standard-chat`; never infer a
+  Project from the saved label or create one without current authorization.
 - Resolve `quick-chat` only when the user explicitly asks for Quick Chat, a
   projectless ChatGPT cloud task, or the equivalent host surface.
 - Resolve `standard-chat` for a generic one-off review or when no durable Project
@@ -84,10 +86,10 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 ## Default Configuration
 
-Read explicit per-request settings first, then the ChatGPT section of the provider
-record described in [browser-profile.md](browser-profile.md). A valid Ask AI v1
-ChatGPT section may prefer `codex-app-native`, `desktop-built-in-browser`, or
-`manual`. When absent, preserve the documented `ask-chatgpt-defaults/v2` and
+Read explicit per-request settings first, then the ChatGPT section and
+`browser_preference` described in [browser-profile.md](browser-profile.md). A valid
+Ask AI v1 ChatGPT section may prefer `codex-app-native`, `browser`, or `manual`;
+`desktop-built-in-browser` is a compatible built-in-first alias. When absent, preserve the documented `ask-chatgpt-defaults/v2` and
 unversioned ChatGPT-only legacy meanings. Missing, unknown, or ambiguous values fail
 closed. Changing or migrating defaults requires explicit instruction. Availability
 is not authorization, and stored values are not current identity, capability, model,
@@ -143,7 +145,8 @@ every first state-changing call in a newly observed host/source state:
 Do not map generic Standard Chat to `chatgptWorkCloud` merely because that enum exists.
 Do not use `project` or `projectless` to manufacture an independent ChatGPT result.
 Re-run the preflight after source unavailability, host/schema change, authentication
-change, or App restart when the prior source state can no longer be trusted.
+change, or App restart when the prior source state can no longer be trusted. A prior
+task's browser fallback is never persistent App-native failure evidence.
 
 ## Codex App-Native Project And Thread Route
 
@@ -161,35 +164,41 @@ completion state, retry rules, and round completion.
   Only `projectKind: chatgpt` is eligible for a ChatGPT Project mapping. Discovery
   does not authorize sending or prove account/workspace ownership.
 - `create_thread` creates exactly one task/conversation and submits its initial prompt
-  exactly once after authorization. Canonicalize and fingerprint the exact sent text
-  under `prompt-text/v1`; persist `prepared`, then persist `invoking` before the call.
-  On return, record its client identity and transition the same operation according
-  to the App-native protocol.
+  exactly once after authorization. It may be one atomic host call, but its relay-turn
+  ledger records separate logical `create-conversation` and `submit-initial` operation
+  IDs with one persisted host-call correlation ID. Canonicalize and fingerprint the
+  exact sent text under `prompt-text/v1`; persist both logical `prepared` then
+  `invoking` states before the call, and project a normal or uncertain result to both
+  logical write operations. A client-only return leaves only identity `client-pending`.
 - `list_threads` discovers bounded candidates for a pending or missing conversation
   identity. Accept a direct `clientThreadId` link when exposed. Otherwise use Project,
   `kind: chatgpt`, call window, and title/summary only to select a bounded candidate
   set, then call `read_thread` read-only. Resolve only when exactly one candidate's
   complete initial user message matches the persisted prompt hash and call window.
   Title, summary, recency, or a screenshot alone is insufficient.
-- `read_thread` reads the resolved conversation and captures attributed assistant
-  output. Decide a read-count or deadline bound before the first read; do not poll
-  indefinitely.
+- `read_thread` reads the resolved conversation through a separate logical,
+  read-only-idempotent `capture-response` operation. Decide a read-count or deadline
+  bound before the first read; do not poll indefinitely or reuse a submit ID.
 - `send_message_to_thread` sends only an explicitly authorized follow-up to an already
   resolved conversation. Never use it to retry or reconstruct the initial prompt.
 
-`create_thread` is both conversation creation and initial submission on this route.
+`create_thread` is both conversation creation and initial submission on this route,
+but not one logical operation. Later relay turns reuse the verified conversation and
+record only a fresh `submit-follow-up` plus `capture-response` pair; no create ID is
+reserved or invented.
 A Cloudflare/attestation HTML response, missing return data, timeout, or client
 interruption is not proof of failure: the initial side effect may already exist. Enter
 read-only reconciliation and never call `create_thread` again for that operation.
 If the source was unavailable, require activation only to resume `list_projects`,
 `list_threads`, and candidate `read_thread` reconciliation; activation does not
 authorize a resend. If the initial prompt is visible but no assistant response exists,
-keep `submitted + response-pending`. After the bounded reads expire, record
-`submitted + completion-not-verified`; do not resend, create a replacement thread, or
-switch transport. Resolve a later response only in the original conversation.
+keep both writes `submitted` while their distinct capture operation is
+`response-pending`. After the bounded reads expire, record capture
+`completion-not-verified`; do not resend, create a replacement thread, or switch
+transport. Resolve a later response only in the original conversation.
 
-The App-native route is preferred only when the exact Project or Quick Chat mapping
-passes. Use a browser before any submission when the requested surface is generic
+The App-native route is eligible only when explicitly selected or configured and the
+exact Project or Quick Chat mapping passes. Use a browser before any submission when the requested surface is generic
 Standard Chat or the required capability depends on visible UI controls, upload state,
 Search, Deep Research, Images, or reviewer-browser behavior not exposed by the host
 operations. Once an App-native submission is uncertain, a browser may inspect and
@@ -203,7 +212,7 @@ Classify requested model/reasoning values before selecting a route:
 - An explicit per-request model, plan/profile, or reasoning level is a hard
   requirement. Accept it only from direct App-native thread metadata or verified
   active-UI selection evidence. If App-native cannot expose that evidence, try an
-  otherwise authorized desktop built-in browser route; if no permitted route proves
+  otherwise authorized Codex in-app browser route; if no permitted route proves
   it, stop before submit.
 - A durable config value is a preference. If the active route does not expose it,
   continue only when the user's current request did not make it mandatory, record the
@@ -212,16 +221,18 @@ Classify requested model/reasoning values before selecting a route:
   request authorizes fallback. UI labels are presentation-sensitive; match them
   semantically and record the evidence source.
 
-## Current Chrome Routing
+## User-Local Browser Routing
 
-After the user chooses current Chrome mode:
+After the user explicitly chooses a local browser for this request, or a valid durable
+preference selects a named local browser:
 
 1. Enumerate open ChatGPT tabs.
 2. Present candidate tabs and require an explicit tab selection or confirmation.
 3. Claim only the confirmed tab.
 4. Stop before sending unless the current authorization explicitly covers this selected tab, package scope, and round count.
 
-Do not save a selected tab or URL as a default unless separately requested.
+Do not save a selected tab, profile, executable path, or URL as a default. A stored
+browser product name controls route order only and must be freshly preflighted.
 
 ## Browser Capability Routing
 
@@ -244,7 +255,10 @@ capability; otherwise return to Package-only.
 
 ## Standalone Playwright Routing
 
-Use only when explicitly selected and verified for the authorized scope. If the desktop built-in browser is unavailable and standalone was not explicitly selected, return to Package-only instead of switching routes. Ask for a profile only when profile mode is explicit or a profile record exists. Do not install browser binaries merely because the desktop built-in route is available.
+Use only when explicitly selected and verified for the authorized scope. Do not infer
+standalone mode from a configured local browser product. Ask for a profile only when
+profile mode is explicit or a profile record exists, and never install browser binaries
+as an implicit fallback.
 
 If no browser session, tab identity, account state, upload state, or response completion signal can be verified, stop or mark the affected field `Not verified`.
 

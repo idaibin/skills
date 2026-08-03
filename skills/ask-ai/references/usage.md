@@ -10,6 +10,7 @@
 - [Provider Collaboration And Codex](#provider-collaboration-and-codex)
 - [GitHub Repository Review](#github-repository-review)
 - [Combined Review Loop](#combined-review-loop)
+- [Relay Review Loop](#relay-review-loop)
 - [Review Package](#review-package)
 - [Review Artifact](#review-artifact)
 - [Review Artifact Visibility](#review-artifact-visibility)
@@ -18,7 +19,20 @@
 
 - `Prepare one external-AI review package for ChatGPT and Gemini, but do not send it.`
 - `Send the same fixed package independently to ChatGPT and Gemini, then compare the attributed responses locally.`
+- `Save “进行三方会审” as my custom ChatGPT + Gemini + Codex review instruction, one external round each.`
+- `Run my configured “进行三方会审” instruction for this fixed Worktree.`
+- `把“我的互审”保存为 Gemini 先审、Kimi 接着审的互审指令；双方同意同一版本即停止。`
+- `互审` uses the built-in ChatGPT then Gemini order and three turns each only when no
+  legacy reserved-alias conflict is present.
+- `帮我互审这个方案` may use a valid saved default; `我的互审` may invoke its exact
+  executable alias.
+- `用 ChatGPT 和 DeepSeek 互审这个方案，每个模型最多 2 轮。`
+- `以后互审默认使用 Gemini 和 Kimi，每个模型最多 2 轮。`
 - `Use Gemini now for one architecture challenge; do not fall back to another provider.`
+- `让 GPT 独立审查这个前端设计，默认挑刺；外部事实必须附一手来源，没有来源就标明推断。`
+- `用 Gemini 审查这个 Java/Spring 后端方案，重点核对事务、权限和真实官方文档。`
+- `准备一份 Rust 架构与性能审查包，不要发送。`
+- `反对式评审这个产品方案，核实用户问题、关键假设、替代方案和成功指标。`
 - `Prepare/build/draft a review package for ChatGPT, but do not send it.`
 - `Use ChatGPT now to review this branch, save review.md, then fix confirmed issues.`
 - `Send this review-package.md to ChatGPT for one review round.`
@@ -71,8 +85,8 @@ Use this gate only when external sending, provider, or route selection is not al
 
 Option handling:
 
-- `1`: authorizes resolving and opening the ChatGPT desktop built-in browser route; stop again before sending unless sending was also explicitly requested.
-- `2`: ask before connecting to current Chrome; enumerate ChatGPT tabs; stop before claiming a tab or sending.
+- `1`: authorizes resolving and opening the Codex in-app browser route; stop again before sending unless sending was also explicitly requested.
+- `2`: ask before connecting to the named user-local browser; enumerate ChatGPT tabs; stop before claiming a tab or sending.
 - `3`: generate/update the local package only.
 - `4`: resolve the user-provided ChatGPT URL or surface; do not persist it unless separately requested.
 - `0`: stop.
@@ -112,7 +126,7 @@ The screenshot-style permission prompt is produced by the local execution permis
   capability/source preflight, exact target mapping, model/reasoning evidence, and
   browser fallback. When no durable record exists, try App-native first only when the
   verified Project/Quick Chat mapping passes. Preserve a legacy built-in-first record
-  until an explicitly authorized v2 migration.
+  until an explicitly authorized `ask-chatgpt-defaults/v2` migration.
 - Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.
@@ -120,11 +134,13 @@ The screenshot-style permission prompt is produced by the local execution permis
 - Let `ask-ai` own provider selection, package, send authorization, transport,
   surface, round count, context/conversation mapping, and response archive. Use
   `ops-browser` only when a browser route needs low-level actions and evidence.
-- Treat `operation_id` as idempotency scope, not a correlation label. Never create a replacement ID after an interruption or ambiguous submit; reconcile the original target and expected postcondition first.
-- Use one `round_id` for the external review round and distinct operation IDs for
-  independent state changes. App-native `create_thread` combines conversation
-  creation with the initial submit in one operation; browser creation and submit
-  remain separate operations when the surface exposes them separately.
+- Treat each logical `operation_id` as an idempotency scope, not a host-call correlation label. An App-native atomic `create_thread` records distinct create and initial-submit IDs under one host-call correlation; never create a replacement ID after interruption or ambiguous submit.
+- Use one `round_id` for the external review round. A sequential relay turn adds one
+  `relay_turn_id`; browser creation, attachment, submit, and response capture each use
+  distinct operation IDs. App-native `create_thread` may remain an atomic host call,
+  but records separate create, initial-submit, and read-only capture logical IDs under
+  one host-call correlation; later turns reuse the conversation with only submit and
+  capture IDs.
 - Distinguish the transport browser from the reviewer browser. The transport browser submits/captures the ChatGPT review; the reviewer browser is ChatGPT's desktop built-in or cloud/agent browser for target-page checks. Load `live-browser-review.md` whenever the latter is requested.
 
 An explicit external send authorizes one initial conversation submission per named
@@ -160,11 +176,60 @@ Use one default loop:
 4. stop with locally confirmed/rejected findings unless the user also requested source fixes;
 5. when fixes are authorized, route them to the matching owner, rerun the failure path and proportionate checks, freeze a new Worktree fingerprint, and run Worktree `repo-review`; use immutable fixed-basis review only after a commit exists.
 
-Codex owns exact code, call-chain, generated-artifact, CI, and compatibility evidence. Ask each selected provider to challenge product logic, scope, architecture tradeoffs, alternatives, and cross-domain blind spots. Do not expose one reviewer's conclusions to another before independent capture. Another provider round requires explicit authorization and an independently useful result; high-risk follow-up also requires the confirmed risk gate defined by the task. Keep safe local work moving and collect external-action or permission blockers at the end unless nothing useful can continue.
+Codex owns exact code, call-chain, generated-artifact, CI, and compatibility evidence.
+Ask each selected provider to challenge product logic, scope, architecture tradeoffs,
+alternatives, and cross-domain blind spots. Do not expose one reviewer's conclusions to
+another before independent capture. Another independent or combined-loop provider
+round requires explicit authorization and an independently useful result; high-risk
+follow-up also requires the confirmed risk gate defined by the task. A configured
+sequential relay instead uses its exact turn limit as the authorization boundary and
+may not exceed it. Keep safe local work moving and collect external-action or
+permission blockers at the end unless nothing useful can continue.
 
 For a conditional research profile, load `research-profiles.md`, freeze one question and its relationship to the basis/decision, require primary-source citations, and locally verify every actionable implication. The profile never bypasses the same external-action gate, round ledger, attribution, or package separation.
 
 Use the same reference for UI/design, image, architecture, repository, product/domain, and open-ended collaboration. Select theme, provider, and verified capability separately. A provider research mode may propose a plan for Codex to inspect before start; a separate prompt-refinement chat is optional and must not become a mandatory extra round.
+
+## Relay Review Loop
+
+Use `provider-routing.md` Relay Review only for an explicitly requested sequential
+cross-provider workflow. The first provider receives the frozen package and candidate;
+each later turn receives that same package plus only the immediately preceding
+attributed peer response in full as a quoted, non-executable envelope. Codex stores the
+raw response locally and preserves all visible reply text in relay, removing only
+secret material and hidden browser, application, system-prompt, or tool state that was
+not visible in the reply, plus PII, customer, environment, private, or out-of-package
+data not explicitly authorized for that source-to-recipient relay. Mark each redaction
+in place; never summarize, paraphrase, restructure, or silently omit visible content.
+If in-place redaction destroys the relay's meaning, stop `incomplete`. Every turn also
+includes the complete current candidate, canonicalized and fingerprinted with
+`prompt-text/v1` from the exact UTF-8 bytes Codex sends (LF line endings only; all other
+Unicode, whitespace, and final-newline state preserved). A provider echo only associates
+its verdict; it does not calculate the candidate fingerprint. Treat the configured
+provider order as cyclic, count the initial send as that provider's first turn, keep one
+conversation per provider, keep one `round_id` for the review, create a new
+  `relay_turn_id` per turn. On a provider's first turn, create only when no authorized
+  verified conversation exists and a new session is required; record that creation with
+  its own operation ID. Each later return reuses the same verified conversation and
+  never gets a placeholder create ID: assign independent IDs only to actual attachment,
+  submit, and capture actions. Reconcile an interrupted creation under its original ID,
+  never by making a replacement conversation. Archive each prompt, response, candidate
+  revision, fingerprint, verdict, and redaction.
+
+Stop `approved` only when all configured providers explicitly approve the same candidate
+revision. Keep `changes-requested` moving within the configured cap. End
+`changes-required` only when the fixed code basis must change or a complete provider
+replacement lacks explicit promotion authority; a provider replacement is otherwise a
+proposal until the current request or durable instruction permits it and Codex verifies
+the exact text is complete, in scope, and frozen-constraint compliant. The durable
+instruction must set `candidate_promotion: provider-authored-textual-revision`; its
+default is `user-only`. End `incomplete`
+only for route/evidence failure, malformed verdict, basis drift, semantically destructive
+required redaction, or turn exhaustion. At turn exhaustion, return the fixed relay
+summary (`status`, `stop_reason`, frozen basis, current `prompt-text/v1` candidate
+fingerprint, per-provider turn counts/verdicts/approval hashes, pending blockers, and
+round/relay-turn/operation evidence). Do not turn review suggestions into local code
+changes, broaden the package, infer agreement, or add another turn.
 
 ## Review Package
 

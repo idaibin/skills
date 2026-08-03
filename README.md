@@ -93,7 +93,7 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 
 | Skill | Use when |
 | --- | --- |
-| `ask-ai` | Codex needs a local request package or an explicitly authorized independent ChatGPT, Gemini, or other named external-AI review, research result, visual exploration, or decision challenge. |
+| `ask-ai` | Codex needs a local request package, built-in domain review prompt, user-defined review instruction, or another explicitly authorized independent external-AI review, research result, image review/generation/edit, visual exploration, or decision challenge. |
 | `human-writing` | Source-grounded writing must be drafted, rewritten, diagnosed, or adapted in the requested final language while preserving facts, voice, attribution, and disclosures; English-first support for a Chinese final is optional. |
 
 `ask-chatgpt` was renamed to `ask-ai`. Legacy wording and ChatGPT-only defaults remain
