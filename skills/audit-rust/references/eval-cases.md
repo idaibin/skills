@@ -23,6 +23,7 @@
 | `Audit this crate for duplicate authorities, dead declarations, and speculative traits across selected features and targets.` | Trigger bounded `audit-rust` with Architecture/Baseline plus the shared code-quality gate. |
 | `Audit this Axum router for extractor ordering, state, rejection mapping, middleware scope, auth, and service-level tests.` | Trigger `audit-rust` with Ownership/errors and applicable Concurrency/runtime. |
 | `Audit these Tauri commands, capabilities, permissions, scopes, CSP, and frontend-controlled paths.` | Trigger `audit-rust` with Ownership/errors plus independently applicable Unsafe/FFI or target evidence. |
+| `Audit a local agent runtime's Thread/Turn/Operation recovery, typed IPC schema, bounded tasks, approval/policy/sandbox boundaries, and JSONL-to-SQLite projection.` | Trigger `audit-rust` with the Agent Runtime profile, composing Concurrency/runtime, SQLite, Ownership/errors, or Target/platform only for reachable evidence. |
 | `Under repo-review, inspect only the Rust paths in this immutable range.` | Trigger `audit-rust` as a scoped read-only specialist; `repo-review` retains immutable-review coordination. |
 | `Audit this Rust service's packaged configuration, startup registration, durable migration compatibility, and consumer handoff.` | Trigger `audit-rust` with project grounding; keep source, artifact, and runtime evidence distinct. |
 
@@ -35,6 +36,7 @@
 | `Memory grows after each Rust import and nobody knows whether the cause is ownership, allocator retention, or the operating system.` | Use host diagnosis to reproduce the concrete symptom and isolate its cause before auditing a selected remediation surface. |
 | `Map the repository and tell me whether it contains Rust.` | Prefer `repo-map`. |
 | `Audit only a private Rust naming cleanup with no reachable runtime, packaging, API, persistence, or cross-repository effect.` | Keep project grounding inactive and unrelated profiles out of scope. |
+| `Audit a synchronous parser with no agent state, durable operation history, async tasks, approval/policy/sandbox, or cross-process transport.` | Prefer the ordinary Architecture/baseline or no Rust audit as requested; keep the Agent Runtime profile `Out of scope`. |
 | `Review my dirty tree and prepare exact commits.` | Prefer `repo-review`; it coordinates the local read-only Git-change review and may request a bounded Rust specialist subreview. |
 | `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `repo-review` as the local read-only review coordinator; do not auto-route to delivery. |
 | `Review this immutable branch range and coordinate Rust, frontend, security, CI, and docs.` | Prefer `repo-review`; it may delegate bounded Rust paths here. |
@@ -55,6 +57,7 @@
 | `Audit an unsafe call flagged by a pattern scanner without a proven caller or attacker-controlled input.` | Inspect the Rust invariant, real callers, input trust, control, sink, target, counterevidence, and proof gaps; return a bounded domain risk without claiming exploit validation. | Calls `unsafe` itself a vulnerability, invents reachability, or runs a PoC without an explicit validation request and safe target. |
 | `Audit a bounded detached telemetry task whose failures are independently observable.` | Concurrency/runtime; verify bounded work, non-critical outcome, resource lifetime, failure observability, and shutdown expectations. Accept intentional detachment when those facts hold. | Reports a finding only because the `JoinHandle` is dropped or mandates a `JoinSet`/token. |
 | `Audit Tauri authorization where a custom command has no AppManifest entry, one generated permission is assigned only to the main window, one path exceeds scope, and one allowed call violates a business-user policy.` | Ownership/errors plus applicable target/security evidence; report the default app-wide custom command, then distinguish generated-permission/capability denial, scope enforcement by command/plugin, and Rust domain authorization. | Assumes custom commands are capability-gated without generated permissions, duplicates platform ACL in the command body, lets capabilities replace business policy, or calls CSP authorization. |
+| `Audit an agent operation that can time out after a file-mutating IPC request, while a JSONL event and SQLite projection may commit separately.` | Agent Runtime + applicable Concurrency/runtime, SQLite, and Tauri/local IPC evidence: trace correlation IDs, uncertain-result reconciliation, source/projection authority, replay idempotence, approval/policy/sandbox, and target proof gaps. | Treats timeout as failure, retries a non-idempotent write, treats SQLite as a competing source, or claims sandbox/recovery from static code. |
 
 ## Scenario Eval
 
@@ -309,6 +312,16 @@ reduce the score.
 | SQLite | SQLite | verifies applicable runtime/linkage/connections/transactions/WAL/migrations/schema/plans/maintenance/recovery | guesses from SQL or crate version |
 | Unsafe/FFI | Unsafe/FFI | states invariants, ownership, ABI, panic, cleanup, and supported relevant dynamic checks | treats unsafe alone as a vulnerability or claims unsupported dynamic proof |
 | Combined interaction | Two or more selected profiles | preserves every selected profile's obligations and validates cross-boundary failure, cleanup, shutdown/restart, or recovery | lets one profile stand in for another or reports only isolated happy paths |
+| Agent Runtime evidence | Agent Runtime selected | proves the smallest reachable Thread/Turn/Operation lifecycle, one typed protocol authority, uncertain-operation stop/reconciliation, selected async/durable/approval/policy/sandbox/IPC evidence, and exact `Not verified` gaps | copies a large external runtime, requires every feature without a reachable boundary, or treats IDs/schema generation/local compile as runtime or sandbox proof |
+| Agent Runtime critical boundary | A stateful operation crosses a Tauri/local app-server or durable log/projection boundary | reports trust boundary, authorization layers, source/projection consistency, duplicate/restart behavior, and target/client limits with severity and remediation owner | reports a finding from a framework name alone or skips the external side-effect/recovery path |
+
+## Agent Runtime Critical Boundary Eval
+
+| Case | Expected behavior | Reject if |
+| --- | --- | --- |
+| A file-mutating IPC call times out after the host may have applied it. | Inspect the persisted operation identity, classify the result as `uncertain`, require bounded read-only reconciliation under the original ID, and report the retry/authorization gap without claiming exploit or runtime proof. | Treats timeout as failure, recommends blind resend, or creates a replacement operation ID. |
+| A Tauri custom command lacks generated app-command permissions while the frontend supplies a path. | Separate application-wide command registration, generated allow/deny permission, capability/window assignment, configured scope, Rust domain policy, and target-client evidence; report each reachable boundary. | Assumes `invoke_handler`, frontend typing, or CSP provides per-window authorization or sandboxing. |
+| A JSONL event append succeeds but projection commit is interrupted. | Verify the source/projection authority, event/sequence idempotence, watermark replay, duplicate delivery, restart, and backup evidence; mark unsupported failure injection `Not verified`. | Treats one append or one successful restart as recovery proof, makes SQLite a second writer, or deletes the source log. |
 
 ## Scoring
 

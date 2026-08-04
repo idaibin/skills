@@ -23,16 +23,17 @@ Implement Rust changes against the repository's real toolchain, project class, c
    unrelated risk classes `Not applicable` and report unavailable runtime proof as `Not verified`.
 7. Start with the **Baseline** validation contract, then select every applicable risk overlay. Overlays are composable, not severity levels:
    - **Protocol automation:** an existing OpenAPI/generated-client pipeline or an explicitly requested contract migration. Ordinary HTTP/API changes keep the repository-native route/DTO/client/test boundary under Baseline.
+   - **Agent Runtime:** a stateful local-agent workflow, typed agent protocol, durable operation history/recovery, approval/policy/sandbox enforcement, or Tauri/local app-server IPC. A Tauri app, SQLite crate, or async function alone does not activate this profile; load `references/agent-runtime-profile.md` only when the runtime lifecycle is reachable.
    - **Concurrency/runtime:** Tokio tasks, channels, locks, cancellation, blocking work, overload, or shutdown.
    - **Persistence/SQLite:** migrations, transactions, schema/query changes, durable compatibility, backup, or recovery.
    - **Unsafe/FFI:** unsafe, ABI/layout, raw pointers, callbacks, allocators, native handles, or cross-language resource ownership.
    - **Porting/parity:** language port or large rewrite that must preserve observable behavior and release semantics.
    - **Target/platform:** `cfg`, target-specific APIs, packaging, native linkage, or supported-platform behavior.
-   A routine change uses Baseline with no overlays. A mixed FFI plus SQLite change selects both overlays; a target-only change selects Target/platform without inheriting unrelated heavy tools.
+   A routine change uses Baseline with no overlays. An Agent Runtime change composes this profile with Concurrency/runtime, Persistence/SQLite, Protocol automation, and Target/platform only when each boundary is reachable. A mixed FFI plus SQLite change selects both overlays; a target-only change selects Target/platform without inheriting unrelated heavy tools.
 8. Decide in order: directly reuse, extend an existing contract, adapt the nearest reference, or create new. Record why existing interfaces are insufficient before adding an endpoint, trait, type family, or module.
 9. Trace ownership, dependency direction, and the complete interface chain before adding or moving code. If Protocol automation applies, identify one code-first or contract-first authority; otherwise preserve the repository-native API authority without introducing OpenAPI.
 10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory work, generated code, or behavior without an honest seam.
-11. Implement the smallest idiomatic change that follows local ownership, borrowing, module, error, async, persistence, FFI, configuration, logging, documentation, and test patterns. When the task materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only declarations made obsolete by the authorized change after resolving Rust reachability.
+11. Implement the smallest idiomatic change that follows local ownership, borrowing, module, error, async, persistence, FFI, configuration, logging, documentation, and test patterns. When Agent Runtime applies, load `references/agent-runtime-profile.md` and keep the smallest explicit Thread/Turn/Operation, typed protocol, lifecycle, authorization, persistence, and IPC contract that the requested behavior needs. When the task materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only declarations made obsolete by the authorized change after resolving Rust reachability.
 12. Update manifests, module exports, tests, commands, docs, CI/deploy paths, migrations, generated files, and indexes when the structural or public boundary changes.
 13. Run focused checks after each slice, then the repository's baseline gates and every selected overlay. Use Miri, sanitizers, fuzzing, stress, or repeated-operation tools only when both supported by the target repository/environment and relevant to the changed invariant.
 
@@ -57,19 +58,20 @@ Implement Rust changes against the repository's real toolchain, project class, c
 
 ## Hard Rules
 
-- Follow repository-pinned Rust, edition, resolver, formatter, lint, dependency, and command contracts. Do not upgrade them during unrelated feature work.
-- Keep directories consistent with the identified project class. Do not copy a Web/Rust, Tauri, CLI, library, or multi-process layout into another class without an explicit migration requirement.
-- Do not create an endpoint, handler, service, repository, trait, DTO/type family, error model, or shared module before reading relevant docs and checking the existing interface chain. Reuse or extend first; follow the nearest feature's placement and naming when a new contract is justified.
-- Do not introduce OpenAPI or a generated client solely because a REST endpoint changes. When Protocol automation applies, discover the real toolchain, preserve one code-first or contract-first authority, and keep generated artifacts derived.
-- Preserve dependency direction. Entry modules stay thin; workflows belong in the established service/engine owner; deterministic domain logic avoids IO; persistence stays behind repository or storage boundaries when the project defines them.
-- Prefer typed errors and `Result` propagation. Do not add runtime `unwrap`, `expect`, `panic!`, silent error swallowing, or fallback behavior unless the contract explicitly requires it.
-- Load and apply only references for the selected protocol, concurrency, persistence,
-  unsafe/FFI, porting, target/platform, behavior-first, conditional code-quality,
-  or codebase-design overlays. Do not inherit heavy gates from an unselected
-  overlay.
+- Follow repository-pinned toolchain, layout, dependency, lint, and command contracts.
+  Reuse or extend the established interface chain before adding a contract, and do not
+  introduce OpenAPI or copy another project class without an explicit selected overlay.
+- Preserve local ownership, dependency, error, and persistence boundaries. Apply
+  [best practices](references/best-practices.md) through the selected overlays rather
+  than treating generic Rust doctrine as evidence for this change.
+- Load and apply only references for the selected Agent Runtime, protocol,
+  concurrency, persistence, unsafe/FFI, porting, target/platform, behavior-first,
+  conditional code-quality, or codebase-design overlays. Do not inherit heavy
+  gates from an unselected overlay.
 - Treat new warnings in the touched surface as defects. Do not broaden scope to clean unrelated legacy warnings; report them separately. Prefer a local justified `#[expect(...)]` over weakening workspace lints.
-- Keep product-specific behavior in the product repository. Move code to a shared crate only after real reuse, stable API, named ownership, and consumer validation are established.
-- When adding, reusing, moving, renaming, or deleting a crate, module, feature, binary, migration, or shared surface, update every owning manifest, export, command, test, doc, CI/deploy path, generated output, and index in the same task.
+- Move behavior to a shared crate only after real reuse, stable API, named ownership,
+  and consumer validation. Keep every affected manifest, export, command, test, doc,
+  CI/deploy path, generated output, and index synchronized with structural changes.
 - Preserve unrelated local changes and generated files not owned by the task.
 - When implementing destructive cleanup or deletion behavior, discover candidates
   first, prove ownership and bounded scope, preserve a recovery path when the
@@ -77,15 +79,15 @@ Implement Rust changes against the repository's real toolchain, project class, c
   authorization, perform only the accepted action, and rescan to reconcile the
   actual result. This governs the Rust implementation; it does not authorize the
   agent to delete user data during development.
-- Do not add speculative traits, generic layers, managers, repositories, or
-  configuration switches for hypothetical consumers. Do not delete apparently
-  unused items until public API, features, targets, `cfg`, macros, derives,
-  build scripts, examples/benches, FFI exports, and downstream use are resolved.
+- Do not add speculative abstractions. Delete apparently unused items only after
+  resolving public API, feature/target configuration, generated reachability, FFI
+  exports, and downstream use.
 
 ## Validation Model
 
 - **Baseline:** repository-defined format/check plus focused behavior tests; Clippy only when it is part of the repository baseline.
-- **Selected overlays:** add only the contract, concurrency/runtime, persistence/SQLite, unsafe/FFI, porting/parity, and target/platform evidence required by the changed surface. Combine overlays when risks interact; do not let one overlay erase another.
+- **Selected overlays:** add only the Agent Runtime, contract, concurrency/runtime, persistence/SQLite, unsafe/FFI, porting/parity, and target/platform evidence required by the changed surface. Combine overlays when risks interact; do not let one overlay erase another.
+- **Agent Runtime:** when selected, validate the legal state machine and uncertain-operation recovery, the single typed protocol/schema authority, bounded task/channel and cancellation behavior, distinct approval/policy/sandbox decisions, and durable log/projection or IPC gates that are actually in scope. Static types, generated schemas, local compilation, or host declarations do not prove target runtime, sandbox, client, or recovery behavior.
 - **Protocol-automation overlay:** only when selected, validate/rebuild the OpenAPI artifact, check clean idempotence and compatibility, regenerate owned clients, and run applicable backend conformance. Otherwise use repository-native API tests.
 - **Optional heavy tools:** Miri, sanitizers, fuzzing, stress, leak, and repeated-operation gates are never inherited merely from a target-specific change. Run them only when supported and relevant, or record why they were excluded.
 
@@ -109,5 +111,6 @@ Report scope; detected project, crate/module, toolchain, and ownership boundarie
 - See [references/project-grounding.md](references/project-grounding.md) when reachable
   runtime/configuration, packaging, API, persistence, compatibility, security, deployment,
   or cross-repository boundaries affect the Rust change.
+- See [references/agent-runtime-profile.md](references/agent-runtime-profile.md) only when the change reaches a stateful local-agent workflow, typed agent protocol, durable operation history/recovery, approval/policy/sandbox enforcement, or Tauri/local app-server IPC.
 - See [references/bun-production-patterns.md](references/bun-production-patterns.md) only when Porting/parity or Unsafe/FFI needs source-derived prompts for cross-language semantics, resource lifetime, or local invariant enforcement.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

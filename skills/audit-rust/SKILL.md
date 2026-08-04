@@ -36,6 +36,12 @@ Do not rewrite a working local design merely to resemble an external project.
    - **Ownership/errors:** resource lifetime, copying/retention, typed errors,
      panic/log/retry boundaries, and applicable Axum HTTP or Tauri IPC
      contracts.
+   - **Agent Runtime:** a stateful local-agent workflow, typed protocol/schema,
+     durable operation history/recovery, approval/policy/sandbox enforcement, or
+     Tauri/local app-server IPC. A Rust async crate, SQLite dependency, or Tauri
+     directory alone does not activate this profile; load
+     `references/agent-runtime-profile.md` only for a reachable lifecycle or
+     boundary.
    - **Concurrency/runtime:** Tokio/blocking work, tasks, channels, locks, backpressure, cancellation, panic propagation, and shutdown.
    - **Performance/memory:** representative workload, release baseline, CPU, allocation, RSS, I/O, binary/compile cost, caches, mmap, allocator/native/OS retention.
    - **SQLite:** runtime/linkage, connections, transactions, WAL, migrations, schema, indexes, plans, maintenance, backup, and recovery.
@@ -47,7 +53,7 @@ Do not rewrite a working local design merely to resemble an external project.
    `references/project-grounding.md`. Select this from semantic reachability, not from Rust,
    Cargo, or configuration file presence; mark unrelated risk classes `Not applicable` and
    unexercised runtime claims `Not verified`.
-7. Map governing invariants, resource owners, shutdown/cancellation paths, error boundaries, workload, baseline, and validation gaps for the selected profiles only. When duplication, dead/unused code, abstraction, coupling, or maintainability materially applies, load `references/code-quality.md` with audit semantics and Rust reachability rules.
+7. Map governing invariants, resource owners, shutdown/cancellation paths, error boundaries, workload, baseline, and validation gaps for the selected profiles only. When Agent Runtime is selected, map the smallest Thread/Turn/Operation state machine, one typed protocol/schema authority, uncertain-operation recovery, approval/policy/sandbox layers, durable source/projection authority, and Tauri/local app-server boundary. When duplication, dead/unused code, abstraction, coupling, or maintainability materially applies, load `references/code-quality.md` with audit semantics and Rust reachability rules.
 8. When an in-scope selected-profile change adds, reuses, moves, renames, or deletes a structural surface, audit every affected manifest, registration, export, feature, test, migration, generated file, deployment path, architecture document, and index; search for stale references.
 9. Validate hypotheses with non-mutating repository-defined commands and representative data. Do not substitute `cargo check` for release, benchmark, concurrency, migration, or runtime evidence.
 10. Stop when the selected profiles are supported by evidence. Mark unselected profiles out of scope rather than partially reviewing them.
@@ -63,19 +69,15 @@ Do not rewrite a working local design merely to resemble an external project.
 
 ## Hard Rules
 
-- Do not add or recommend a public trait, global state, runtime, thread pool, cache, pool, repository/service/manager layer, or database abstraction before proving the consumer, lifecycle, replacement, test, or deployment need.
-- Do not hard-code the latest stable Rust release or universal MSRV. Read the repository's pinned toolchain and support policy.
-- Do not impose one `apps/`, `crates/`, `domain/`, `application/`, `infrastructure/`, or frontend-mirrored directory tree. Split by stable responsibility or deployment boundary, not file count.
-- Do not label every `clone`, `Arc`, `Mutex`, `unwrap`, large file, or full table scan as a finding. Prove context, frequency, reachability, and impact.
-- Do not declare Rust code unused from reference search alone. Resolve public
-  API, features, targets, `cfg`, macros, derives, build scripts, examples,
-  benches, FFI exports, and downstream consumers; interpret Clippy groups in
-  repository context.
-- Load and apply only references for the selected architecture, ownership/error,
-  concurrency, performance/memory, SQLite, unsafe/FFI, or conditional
-  code-quality profile. Require the profile's workload, runtime, invariant,
-  reachability, or target evidence before conclusions.
-- Apply stricter templates to new projects only when adopted. Migrate established projects incrementally at real change boundaries; never rename mechanically for visual consistency.
+- Resolve toolchain, layout, ownership, and API expectations from the repository; do
+  not impose a universal MSRV, directory tree, abstraction, or external template.
+- Treat code shape, ownership primitives, panics, query patterns, lints, and apparent
+  dead code as signals. Require context, reachability, workload or invariant, impact,
+  and counterevidence through the selected references before reporting a finding.
+- Load and apply only references for the selected Agent Runtime, architecture,
+  ownership/error, concurrency, performance/memory, SQLite, unsafe/FFI, or
+  conditional code-quality profile. Require the selected profile's workload,
+  runtime, invariant, reachability, or target evidence before conclusions.
 - Do not edit, stage, commit, post review comments, or deliver code in audit mode. Route approved remediation to `dev-rust`. `repo-review` owns Worktree and immutable review coordination; `repo-delivery` alone owns Git mutation.
 - Do not claim profiles were reviewed when their workload, runtime, target, dataset, or tool support was unavailable. Mark the exact gap `Not verified`.
 - When a selected Rust profile exposes a security-relevant condition, return the
@@ -110,6 +112,10 @@ Load each linked reference independently when its named surface applies; groupin
 - Read [web-and-desktop-boundaries.md](references/web-and-desktop-boundaries.md)
   for Axum extractors/state/middleware/response testing and Tauri command,
   capability, permission, CSP, path, and webview trust boundaries.
+- Read [agent-runtime-profile.md](references/agent-runtime-profile.md) only when
+  the selected audit reaches a stateful local-agent workflow, typed agent
+  protocol/schema, durable operation history/recovery, approval/policy/sandbox
+  enforcement, or Tauri/local app-server IPC.
 - Read [async-and-concurrency.md](references/async-and-concurrency.md) for runtime, blocking work, tasks, channels, locks, timeouts, cancellation, shutdown, and Loom.
 - Read [performance.md](references/performance.md) for workloads, CPU, I/O, binary/compile cost, and measurement and [memory.md](references/memory.md) for allocation, retention, RSS, caches, mmap, and leak classification.
 - Read [sqlite.md](references/sqlite.md) for linkage, connections, transactions, WAL, migrations, schema, indexes, plans, maintenance, backup, and recovery.

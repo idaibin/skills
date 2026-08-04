@@ -1,5 +1,15 @@
 # Eval Cases
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Independent Review Outlet Eval](#independent-review-outlet-eval)
+- [Overlay Selection Eval](#overlay-selection-eval)
+- [Quality Eval](#quality-eval)
+- [Agent Runtime Critical Boundary Eval](#agent-runtime-critical-boundary-eval)
+- [Scoring](#scoring)
+
 Use these cases when changing `dev-rust` triggers, workflow,
 structure rules, validation expectations, or metadata.
 
@@ -12,6 +22,7 @@ structure rules, validation expectations, or metadata.
 | `Add a crate to this Cargo workspace and update manifests, tests, docs, and checks.` | Should trigger `dev-rust`. | Structural Rust lifecycle work. |
 | `Refactor this Tauri command and keep product logic in the core crate.` | Should trigger `dev-rust`. | Native shell and domain boundary. |
 | `Add this Tauri file command with Rust-side path validation, least-privilege capability/permission scope, typed errors, and real-client verification.` | Should trigger `dev-rust` plus applicable target/platform evidence. | Native IPC trust-boundary implementation. |
+| `Implement a resumable local agent turn with typed tool operations, bounded async work, approval before a file mutation, and recovery after an uncertain IPC response.` | Should trigger `dev-rust` with the Agent Runtime profile plus only the reachable Concurrency/runtime, Target/platform, and persistence/protocol overlays. | Stateful agent lifecycle and side-effect boundary are implementation scope; do not copy a generic runtime or claim host sandbox proof. |
 | `Implement Tauri authorization for a custom command: generate allow/deny app-command permissions, assign only the intended window capability, scope paths, and reject an unauthorized business user in the Rust domain.` | Should trigger `dev-rust` plus applicable target/platform and contract evidence. | Custom-command ACL setup, resource scope, and domain policy are distinct enforcement layers. |
 | `Remove this unused Rust module and close every export and CI reference.` | Should trigger `dev-rust`. | Deletion completeness. |
 | `Remove the Rust declarations made obsolete by this change after checking cfg, features, macros, FFI exports, examples, and downstream use.` | Should trigger `dev-rust` with shared code-quality reachability. | Scoped implementation cleanup. |
@@ -36,6 +47,7 @@ structure rules, validation expectations, or metadata.
 | `Fix the React UI inside this Tauri app.` | Should prefer `dev-frontend`. | Frontend implementation. |
 | `Define the product behavior, permission rules, user-visible outcomes, and acceptance before writing the endpoint.` | Should prefer `product-spec`. | Product decisions are unresolved. |
 | `Rename only a private Rust helper; no reachable runtime, packaging, API, persistence, or cross-repository behavior changes.` | Keep project-grounding risk classes `Not applicable`; do not scan deployment or consumer repositories. | A local refactor is not a semantic grounding trigger. |
+| `Implement a synchronous Rust parser with a typed return value; it has no agent thread/turn state, durable operation history, async work, or IPC.` | Trigger `dev-rust` Baseline only; do not load the Agent Runtime profile. | A Rust type or ordinary function is not an agent runtime boundary. |
 
 ## Independent Review Outlet Eval
 
@@ -58,6 +70,8 @@ structure rules, validation expectations, or metadata.
 | Source-derived case study: `Fix this Rust/C ownership port and compare its cleanup semantics with the source implementation.` | Baseline + applicable Porting/parity and Unsafe/FFI overlays; load Bun-derived prompts only for relevant cross-language, cleanup, or invariant questions, while keeping local repository contracts authoritative. | Loads the case study for a routine Rust task, copies Bun's architecture/toolchain, or lets it redefine the validation model. |
 | Tokio cancellation: `Fix a select loop that restarts a non-cancellation-safe operation and drops spawned task failures.` | Baseline + Concurrency/runtime: preserve in-progress state, observe output/error/cancel/panic, and test shutdown/cancellation behavior. | Adds a token/JoinSet mechanically, drops handles, or assumes every losing future is safe to restart. |
 | Tokio intentional detachment: `Keep this bounded best-effort telemetry task detached; failures already reach metrics and it owns no shutdown resource.` | Baseline + Concurrency/runtime: record the explicit lifecycle/outcome policy and verify bounded work, non-critical impact, resource ownership, and independent observability. | Saves/joins the handle mechanically or declares every detached task defective. |
+| Agent Runtime: `Add a resumable local-agent operation that crosses a typed IPC boundary and writes durable history.` | Baseline + Agent Runtime; compose Protocol automation, Concurrency/runtime, Persistence/SQLite, and Target/platform only when the repository/task actually owns those seams. Define the minimum Thread/Turn/Operation correlation, one schema authority, uncertain-write recovery, approval/policy/sandbox separation, and IPC evidence. | Introduces a generic runtime, requires all overlays unconditionally, treats generated types as runtime proof, or retries a non-idempotent write after an uncertain response. |
+| Agent Runtime non-trigger: `Add a stateless local command with no durable history, task lifecycle, approval, or cross-process transport.` | Baseline only; the Agent Runtime profile is `Not applicable`. | Adds a ledger, JSONL/SQLite projection, or thread/turn hierarchy solely because the command is called an agent. |
 
 ## Quality Eval
 
@@ -90,6 +104,16 @@ structure rules, validation expectations, or metadata.
 | Publish readiness | Keeps the package self-contained, updates metadata and eval cases, and runs the repository-authoritative source validation. | Depends on repository-local prompts or skips source validation. |
 | Source-derived reference boundary | Loads the Bun-derived case study only for applicable Porting/parity or Unsafe/FFI questions and uses it as prompts, not a second rule or validation authority. | Applies it to routine work, repeats its former validation ladder, or copies Bun-specific policy. |
 | Common implementation report | Reports scope, detected boundaries, authorities/owners, selected Rust risks, changed files/contracts, Baseline/overlay validation, Worktree drift, excluded work, and `Not verified`; adds FFI/persistence/target evidence only when applicable. | Uses an unrelated report shape, omits drift/exclusions, or requires high-risk fields for a routine change. |
+| Agent Runtime contract | Names the existing runtime/transport/persistence authority; records the smallest legal Thread/Turn/Operation state machine, operation idempotency and uncertain-result stop path, typed schema generation/compatibility evidence, and selected async, approval/policy/sandbox, durable, or IPC gates. | Treats a title, display ID, generated schema, unit test, or local compile as identity, authorization, sandbox, deployment, or recovery proof. |
+| Agent Runtime scope discipline | Reuses the nearest owner and selects only reachable sections; records target/host/client evidence as `Not verified` when unavailable and keeps unrelated profiles out of scope. | Copies a large external agent architecture, adds JSONL/SQLite without replay/recovery need, or applies a sandbox/approval claim based on Rust prose. |
+
+## Agent Runtime Critical Boundary Eval
+
+| Case | Expected behavior | Reject if |
+| --- | --- | --- |
+| An IPC write reaches the host but the process receives no response. | Persist `operation_id` before the call, mark the result `uncertain`, reconcile with bounded read-only evidence under the same ID, and stop without resending a non-idempotent operation. | Treats timeout as failure and blindly retries, creates a new operation ID, or reports success without evidence. |
+| A Tauri custom command mutates a file but has no generated app-command permission or assigned capability. | Stop the implementation at the authorization boundary; distinguish command registration, capability/permission, configured scope, Rust domain policy, and host/client evidence. | Assumes frontend typing, CSP, or `invoke_handler` registration supplies per-window authorization or sandboxing. |
+| A JSONL event is durable but the SQLite projection update is interrupted. | Keep the source log authoritative, replay idempotently from the event/sequence watermark, and test duplicate/restart behavior before claiming recovery. | Makes SQLite a second writer, deletes the log, or claims consistency from one successful append. |
 
 ## Scoring
 

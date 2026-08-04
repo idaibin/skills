@@ -9,6 +9,8 @@
 - `Profile this Rust hot path and prove whether clones, allocations, mmap, or a custom allocator matter.`
 - `Review SQLite migrations, WAL growth, query plans, indexes, backup, and recovery in this desktop app.`
 - `Check unsafe FFI ownership and run the supported Rust quality gates.`
+- `Audit a local-agent Thread/Turn/Operation lifecycle, typed IPC schema, bounded
+  tasks, approval/policy/sandbox boundaries, and JSONL-to-SQLite recovery.`
 - `Compare rusqlite and SQLx for this existing runtime and deployment model.`
 - `Verify Rust architecture docs against crates, commands, migrations, and real code.`
 - `As the repo-review Rust specialist, inspect only the changed Tokio and SQLite surface; return findings without staging or committing.`
@@ -46,6 +48,7 @@ gates. Select only the domain profiles needed by the request:
 | SQLite migration or query plan | SQLite; add Ownership/errors or Concurrency/runtime only when the transaction/runtime boundary is part of the claim | performance/memory and unsafe/FFI unless independently relevant |
 | Tokio service using SQLite | Concurrency/runtime + SQLite; add Ownership/errors when resource/error lifetime is material | architecture, performance/memory, unsafe/FFI unless independently relevant |
 | unsafe native adapter | Unsafe/FFI; add Ownership/errors, Target/platform evidence, or Performance/memory only when the request requires them | SQLite and unrelated workspace architecture |
+| stateful local-agent workflow or agent IPC | Agent Runtime; add Concurrency/runtime, SQLite, Ownership/errors, or Target/platform only when the selected path reaches them | unrelated performance, FFI, or whole-workspace architecture |
 
 Unavailable evidence does not trigger a broad fallback audit. Keep the selected
 profile, mark the exact claim `Not verified`, and state what evidence or tool is

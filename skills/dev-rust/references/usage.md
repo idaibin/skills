@@ -19,6 +19,9 @@ project class and repository standard instead of forcing one layout everywhere.
   lifetime, cleanup, FFI, and release/platform semantics explicit.
 - Implementing changes around `unsafe`, raw pointers, native handles, callbacks,
   ABI layout, or cross-language generated bindings.
+- Implementing a stateful local-agent workflow with typed operations, bounded
+  async work, approval/policy/sandbox checks, durable recovery, or Tauri/local
+  app-server IPC.
 
 ## Trigger Examples
 
@@ -36,6 +39,9 @@ project class and repository standard instead of forcing one layout everywhere.
 - `Change the SQLite-backed FFI import path and combine database recovery with native ownership validation.`
 - `Add this Rust HTTP operation using the service's existing code-first authority,
 regenerate normalized OpenAPI and the TS client, and prove compatibility and error conformance.`
+- `Implement a resumable local-agent turn with typed tool operations, bounded
+  backpressure, approval before a file mutation, and recovery after an uncertain
+  Tauri or local app-server response.`
 
 ## Non-Triggers
 
@@ -50,6 +56,9 @@ regenerate normalized OpenAPI and the TS client, and prove compatibility and err
 - Frontend UI work around a Tauri backend; use `dev-frontend`.
 - Product behavior, permissions, or failure semantics are unresolved; use
   `product-spec` before Rust implementation.
+- A stateless Rust command has no agent lifecycle, durable operation history, async
+  task owner, approval/policy/sandbox boundary, or cross-process transport; keep the
+  Agent Runtime profile `Not applicable`.
 
 ## Output
 
