@@ -5,7 +5,7 @@
 | Request | Expected behavior |
 | --- | --- |
 | `Audit this Java service's current transaction and Redis consistency.` | Trigger `audit-java` with Persistence and Integration profiles. |
-| `Audit whether source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.` | Trigger Build/Migration plus project grounding; keep source, artifact, and runtime evidence distinct. |
+| `Audit whether this Java service's source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.` | Trigger Build/Migration plus project grounding; keep source, artifact, and runtime evidence distinct. |
 
 ## Non-Trigger Eval
 

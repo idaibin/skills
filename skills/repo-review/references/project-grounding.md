@@ -1,9 +1,10 @@
 # Project Grounding Protocol
 
-Use this protocol when a task can change or judge behavior across a project boundary.
-It closes the gap between navigation and implementation/review evidence. It does not
-replace live source discovery, a repository map, product specification, domain audit,
-or runtime verification.
+Use this protocol when a task changes or judges behavior across a runtime,
+configuration, artifact, data, integration, compatibility, delivery, or authority
+boundary, within or across repositories. It closes the gap between navigation and
+implementation/review evidence. It does not replace live source discovery, a
+repository map, product specification, domain audit, or runtime verification.
 
 ## Contents
 
@@ -64,7 +65,8 @@ credential values, private endpoints, transient dirty state, or a configuration 
 ## Signal To Evidence Closure
 
 For each activated signal, record `signal -> affected invariant -> owner/authority ->
-evidence -> status -> required next action`.
+evidence category and evidence -> verification state -> disposition -> required next
+action and action owner`.
 
 | Signal | Questions and minimum evidence |
 | --- | --- |
@@ -92,10 +94,23 @@ Keep evidence categories distinct:
 - **Automated:** a named check exercises the stated seam with recorded inputs and
   environment. It proves only that coverage.
 - **Artifact-resolved:** the built/generated/package output was inspected or exercised.
-- **Runtime-resolved:** the authorized target-like or deployed path was exercised with
-  its environment and limitations recorded.
+- **Runtime-resolved:** an authorized executable path was exercised. Qualify it as
+  `local`, `target-like`, or `deployed:<environment>` and record the environment and
+  limitations; none of these qualifiers implies another.
 
-Use these operational states:
+Record verification independently from whether work may continue:
+
+- **Verified within scope:** name the evidence category, basis, command/path,
+  environment qualifier when applicable, and limit.
+- **Not verified:** evidence required for a claim was unavailable or outside authority.
+  It means unknown, not failed or safe.
+- **Not found within searched scope:** a bounded current search found no authority,
+  owner, path, or artifact. Record searched roots/paths, basis, and limits; never imply
+  global absence.
+- **Not applicable:** the risk class is outside the reachable change/review scope;
+  record the short reason when it would otherwise be expected.
+
+Then record one action disposition:
 
 - **Block:** continuing or claiming completion would perform an unauthorized or
   destructive action, cross an unresolved owner/contract boundary, replace durable
@@ -104,11 +119,26 @@ Use these operational states:
   action, cite the invariant and minimum resolution; continue safe independent work.
 - **Warn:** evidence shows a concrete risk but bounded work may continue without
   making the unsupported claim. State impact, owner, and required check.
-- **Not verified:** evidence required for a claim was unavailable or outside authority.
-  It means unknown, not failed or safe.
-- **Not applicable:** the risk class is outside the reachable change/review scope;
-  record the short reason when it would otherwise be expected.
-- **Verified within scope:** name the evidence category, basis, command/path, and limit.
+- **Continue:** the selected action is authorized within the stated verified scope;
+  preserve every narrower or unresolved claim and its next action.
+
+Apply claim-specific evidence floors:
+
+- packaged/generated completion requires `Artifact-resolved` evidence for the named
+  output;
+- deployed or production behavior requires `Runtime-resolved(deployed:<environment>)`
+  evidence from that named environment;
+- migration compatibility requires the applicable dialect/data basis, migration path,
+  and compatibility evidence; a clean-schema test alone is insufficient for existing
+  data;
+- cross-repository integration requires evidence from the affected provider-consumer
+  seam at compatible revisions;
+- rollout and rollback readiness require their own exercised evidence or remain
+  separately `Not verified`.
+
+A completion claim must be narrowed to the strongest supported evidence level. Listing
+a stronger unresolved check beside a broad completion claim does not make that claim
+valid.
 
 Never upgrade static or local evidence into production readiness. Revalidate historical
 findings against the current basis; history explains decisions but does not prove
@@ -134,7 +164,8 @@ current behavior.
 - Prefer bounded live discovery; do not scan every repository or run every profile by
   default. Expand only across an activated provider/consumer or runtime edge.
 - Do not invent CODEOWNERS, a release order, production topology, migration decision,
-  or spec authority. Mark absent evidence `Not found` or `Not verified`.
+  or spec authority. Mark absent evidence `Not found within searched scope` or `Not
+  verified` as applicable.
 - Do not require a framework-specific tool, OpenAPI, container, browser, deployment,
   or secret scanner unless the project/risk needs it. Use repository-native seams.
 - Credential-shaped content is a signal. Avoid displaying or externalizing values;

@@ -36,6 +36,7 @@
 | `Review this fixed frontend visual diff against its product Feature Spec, selected-source UI Feature Spec, and root DESIGN.md.` | Trigger `repo-review` with the conditional frontend design-compliance subflow; use the map only for navigation and report authority/runtime gaps separately. |
 | `Review this fixed UI diff that changes table-row transition timing, keyboard navigation feedback, and reduced-motion behavior.` | Trigger the existing frontend design-compliance subflow plus interaction/motion review; retain the fixed basis, evidence gates, and P0-P3 output. |
 | `Review this fixed range that adds requirements, schema, implementation, tests, and a replacement route together.` | Trigger project grounding; treat same-basis artifacts as intent and require independent compatibility/migration evidence before readiness. |
+| `Review this fixed range; after the final local verdict, apply my configured sanitized result-retention sync.` | Complete and freeze `repo-review` first, then hand only the terminal result to `ask-ai`; report receipt separately and never treat the retention provider as a reviewer. |
 
 ## Non-Trigger Eval
 
@@ -62,6 +63,7 @@
 | --- | --- |
 | `Review this fixed range locally, then explicitly prepare one independent ChatGPT architecture challenge against the same basis.` | Keep `repo-review` as owner and emit one lightweight `ask-ai` handoff. |
 | `Review this fixed range locally; no external reviewer was requested.` | Emit no `ask-ai` handoff. |
+| `Review this fixed range locally; there is no valid final-result-sync instruction.` | Emit no retention handoff; local review completion alone never authorizes an external send. |
 | `The ChatGPT review request was submitted, but no attributed response arrived.` | Preserve the local findings and verdict; report the external review axis `Not verified` without creating or clearing a finding. |
 
 ## Scenario Eval

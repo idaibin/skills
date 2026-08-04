@@ -5,7 +5,7 @@
 | Request | Expected behavior |
 | --- | --- |
 | `Implement this Spring service transaction and tests.` | Trigger `dev-java`; resolve build/JDK and select Persistence/transaction. |
-| `Make local startup work by changing service discovery and packaged profile behavior; production must remain registered.` | Trigger Runtime/config grounding, resolve precedence and artifact/target boundaries, and block a global workaround until its scope is proven. |
+| `Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.` | Trigger Runtime/config grounding, resolve precedence and artifact/target boundaries, and block a global workaround until its scope is proven. |
 
 ## Non-Trigger Eval
 

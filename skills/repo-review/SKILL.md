@@ -32,7 +32,8 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    persistence, legacy replacement, auth/security, or cross-repository delivery risk,
    load [project grounding](references/project-grounding.md). Bind every grounding fact
    to this review basis and close `signal -> invariant -> owner/authority -> evidence
-   -> status -> next action`; do not expand into unrelated repositories or profiles.
+   category and evidence -> verification state -> disposition -> next action and
+   action owner`; do not expand into unrelated repositories or profiles.
 6. Evaluate two independent axes:
    - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
@@ -65,6 +66,11 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 11. Run only non-mutating repository checks needed for the selected basis and risk.
 12. Produce semantic groups, commit messages, and exact staging guidance only when the Worktree commit-readiness profile was requested. Add the Release profile only for an explicit release candidate/readiness question.
 13. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap. Keep an authorized external-review status separate from the local verdict: a submitted request with no attributed response neither creates nor clears a finding.
+14. Freeze the complete local verdict before any optional post-terminal action. When a
+    valid, explicitly user-persisted `ask-ai` `final-result-sync` instruction applies,
+    hand only that frozen result to `ask-ai` for sanitized retention. The sync is not a
+    review pass: do not wait for, parse, or incorporate provider findings, and report
+    its receipt or incomplete state separately without changing the local verdict.
 
 ## Modes
 
@@ -114,6 +120,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Do not approve structural add/reuse/move/rename/delete work while manifests, exports, commands, tests, CI/deploy, docs, indexes, migrations, generated files, consumers, or stale references disagree.
 - Treat runtime, CI, deployment, external services, branch policy, and package completeness as `Not verified` unless directly evidenced.
 - Do not treat an external review request, pending response, timeout, or missing response as approval or rejection. Preserve the locally evidenced verdict and report the external review axis separately `Not verified` until an attributed response is captured and verified.
+- A configured final-result retention sync never adds an external review axis. Freeze
+  the local verdict first; provider commentary, missing receipt, or sync failure cannot
+  add, clear, reprioritize, or reopen findings.
 - Do not activate frontend design compliance merely because a repository contains
   frontend files. It is conditional on visual or UI-contract change scope, does not
   create another review profile, and does not require `audit-frontend`.
@@ -125,7 +134,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Security findings also state evidence status, proof gaps, and any provider/method used; `fixed` requires a new reviewed basis and replay of the original validation path. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. For the visual-completion profile, report schema validation, source/revision/approval, evidence coverage, both comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether the completion claim is supported. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-ai`; it never implies sending.
+Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Security findings also state evidence status, proof gaps, and any provider/method used; `fixed` requires a new reviewed basis and replay of the original validation path. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. For the visual-completion profile, report schema validation, source/revision/approval, evidence coverage, both comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether the completion claim is supported. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-ai`; it never implies sending. When a valid persisted final-result sync applies, report its separate receipt/incomplete state only after the frozen local verdict.
 
 ## References
 

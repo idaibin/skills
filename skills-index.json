@@ -57,7 +57,10 @@
         "java",
         "maven",
         "gradle",
-        "reuse"
+        "reuse",
+        "top-level directories",
+        "stable owners map",
+        "grounded repository ownership map"
       ],
       "excludes": [
         "task-local implementation",
@@ -105,7 +108,9 @@
         "release gate",
         "regression risk",
         "worktree",
-        "fixed SHA"
+        "fixed SHA",
+        "fixed range review",
+        "grounded fixed-basis review"
       ],
       "excludes": [
         "source implementation",
@@ -124,15 +129,34 @@
       "category": "repository-engineering",
       "intents": [
         "create categorized or explicitly requested commits",
-        "push or integrate a reviewed branch",
+        "deliver an explicitly authorized reviewed branch",
         "preserve authorized milestones and clean up Git state"
       ],
       "keywords": [
-        "commit",
-        "push",
+        "authorized local stage commit",
+        "verified scope stage commit",
+        "commit locally",
+        "push to origin",
+        "delete temporary branch",
+        "sync branch remote",
+        "integrate branch main",
+        "rebase onto main",
+        "commit changes",
+        "stage files",
+        "合并到main",
+        "变基到main",
+        "reviewed delivery", "categorized local commits", "exactly one commit",
+        "push current branch", "non-fast-forward divergence", "squash branch main",
+        "conflict resolution", "semantic milestone", "targeted fixup", "safety checkpoint",
+        "history normalization", "standing delivery plan",
+        "selected-source UI change", "reviewed GitHub feature branch", "conflicted rebase",
+        "normalize authorized fixups", "push reviewed branch",
+        "pull from origin", "拉取远程分支", "fetch remote refs", "fast-forward branch", "cherry-pick commit", "abort rebase",
+        "暂存并提交",
+        "提交这些更改",
+        "提交并推送",
         "branch integration",
         "Git delivery",
-        "history normalization",
         "cleanup"
       ],
       "excludes": [
@@ -208,7 +232,9 @@
         "UI component",
         "CSS",
         "state management",
-        "build tooling"
+        "build tooling",
+        "page route integration",
+        "CSS token change"
       ],
       "excludes": [
         "read-only frontend audit",
@@ -263,7 +289,9 @@
         "SQLite",
         "CLI",
         "unsafe",
-        "FFI"
+        "FFI",
+        "Rust startup configuration implementation",
+        "private Rust helper rename"
       ],
       "excludes": [
         "read-only Rust audit",
@@ -287,7 +315,10 @@
         "accessibility audit",
         "performance audit",
         "visual fidelity",
-        "architecture audit"
+        "architecture audit",
+        "Vue route audit",
+        "CSS token audit",
+        "CSS color token audit"
       ],
       "excludes": [
         "frontend implementation",
@@ -337,7 +368,9 @@
         "concurrency audit",
         "unsafe audit",
         "performance audit",
-        "ownership"
+        "ownership",
+        "Rust runtime configuration audit",
+        "Rust service migration compatibility audit"
       ],
       "excludes": [
         "Rust implementation",
@@ -404,6 +437,7 @@
         "prepare a local request package for one or more named external AI providers",
         "define or invoke a user-owned bounded external AI review instruction",
         "coordinate a bounded sequential cross-review that relays attributed responses between explicitly configured AI providers, with bare 互审 fixed to ChatGPT then Gemini unless a legacy reserved-alias conflict fails closed",
+        "synchronize one sanitized frozen local review result to one exact persistent external context for retention without adding another reviewer",
         "prepare or route an image review, generation, edit, or bounded visual exploration with explicit provider and asset boundaries",
         "coordinate an explicitly authorized independent ChatGPT, Gemini, Claude, DeepSeek, Kimi, Qwen, GLM, Grok, or other named AI result when its provider route is verified, otherwise stop at a safe local package or Not verified"
       ],
@@ -432,6 +466,11 @@
         "互审",
         "AI 互审",
         "cross review",
+        "final review result sync",
+        "review result retention",
+        "终审结果同步",
+        "审查结果留存",
+        "同步终版",
         "Codex in-app browser",
         "local browser fallback",
         "browser preference",

@@ -75,6 +75,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Change this API response type without touching rendered states, interaction feedback, transitions, gestures, or motion.` | Trigger the bounded frontend implementation but do not load interaction/motion quality. | A frontend file change alone is not a semantic motion trigger. |
 | `Define the product behavior, permission rules, user-visible states, and acceptance before anyone edits source.` | Should prefer `product-spec`. | Product decisions are unresolved. |
 | `Identify whether this existing Markdown file is a PRD or UI contract, but do not change source or specifications.` | Should not invoke `product-spec` or `ui-spec`; classify it from declared authority, path, content, links, and approval. | File recognition alone is not specification or implementation work. |
+| `Change only a local CSS color token; reachable API, build, runtime, and cross-repository contracts stay unchanged.` | Keep project-grounding risk classes `Not applicable`; do not scan unrelated repositories or deployment state. | A styling-only source edit does not activate cross-project evidence work. |
 
 ## Independent Review Outlet Eval
 

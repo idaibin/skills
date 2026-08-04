@@ -7,6 +7,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | User prompt | Expected result | Why |
 | --- | --- | --- |
 | `Review the staged scope, commit, and push this branch.` | Should trigger `repo-delivery`. | Commit plus push delivery. |
+| `The grounding record identifies the exact verified scope; stage and commit it locally, but do not push.` | Trigger Local commit mode after independently verifying the explicit stage/commit authority and accepted scope. | Grounding informs evidence; the Git mutation is separately authorized. |
 | `These changes are reviewed; stage and commit them locally, but do not push.` | Should trigger Local commit mode. | Explicit local Git mutation after review. |
 | `Deliver this reviewed selected-source UI change; its final visual evidence and fixed-basis verdict are attached.` | Trigger delivery, verify and reference the applicable final verdict/evidence, and keep browser capture and visual judgment with their existing owners. | Git delivery consumes approved evidence without taking over UI validation. |
 | `Classify all reviewed changes by intent and create one local commit per category.` | Should trigger Categorized local commits mode. | Default multi-intent delivery. |
@@ -36,6 +37,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | `Review all dirty changes and propose commit groups.` | Should prefer `repo-review`. | Pre-delivery review scope is not clear. |
 | `Review this diff and give me a commit message, but do not change Git state.` | Should prefer `repo-review`. | Review-only request without delivery authorization. |
 | `Review this endpoint diff for authorization risk.` | Should prefer `repo-review`. | Fixed-basis review, not Git mutation. |
+| `The grounding record says Continue. Do not stage, commit, push, or open a pull request; report the remaining evidence gap.` | Should not trigger Git mutation. | A grounding disposition is not delivery authority and cannot invert the Git boundary. |
 | `Verify this web page in the browser before release.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Take screenshots, compare responsive layout, and decide whether this UI is visually ready.` | Should prefer the existing visual evidence and review owners; do not trigger Git delivery without an authorized Git action. | UI validation is not a Git mutation. |
 | `Commit this branch, push it, and open a draft PR.` | Should prefer the GitHub publishing workflow. | PR creation is outside Git-only delivery. |
@@ -55,6 +57,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | Review dependency | Uses existing review evidence or routes to `repo-review` when ownership, mixed hunks, or commit groups are unclear. | Delivers an unclear dirty tree. |
 | Visual evidence consumption | When the approved delivery outcome depends on selected-source visual completion, verifies the applicable final review verdict and referenced final visual-evidence artifact, then reports or stops on gaps without generating new runtime evidence or a visual verdict. | Captures screenshots, operates browser/client state, re-reviews the UI, or calls the delivery ready from build/static checks alone. |
 | Mutation authorization | Stages or commits only after the user requested that delivery action and review scope is accepted. | Infers mutation authority from a review-only request. |
+| Grounding-record authority | Uses a grounding record as evidence input only; requires independent Git-delivery authority for every stage, commit, push, integration, cleanup, or PR action. | Treats a `Continue`, `Warn`, or `Block` disposition as Git-mutation authorization. |
 | Execution authorization | Creates a milestone, fixup, or checkpoint only from explicit local-commit authority and exact task-owned scope on a safe task branch. | Infers checkpoint authority from task size, elapsed time, risk, or implementation authorization. |
 | Bounded standing plan | Records branch, owned scope, allowed commit types, semantic triggers, validation floor, message policy, and push policy; reuses it for matching commits and refreshes it when any boundary changes. | Re-prompts for every covered milestone, treats the plan as time-based automation, expands scope/types, lowers validation, or pushes without separate authority. |
 | Scheduled automation boundary | Leaves schedule, cursor, deduplication, content state, and artifact acceptance with the automation owner; receives only an authorized fixed Git scope with branch, validation, commit, and push policy. | Takes over the product loop, treats elapsed time as a commit trigger, or infers push authority from the schedule. |

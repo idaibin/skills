@@ -24,6 +24,7 @@
 | `Audit this Axum router for extractor ordering, state, rejection mapping, middleware scope, auth, and service-level tests.` | Trigger `audit-rust` with Ownership/errors and applicable Concurrency/runtime. |
 | `Audit these Tauri commands, capabilities, permissions, scopes, CSP, and frontend-controlled paths.` | Trigger `audit-rust` with Ownership/errors plus independently applicable Unsafe/FFI or target evidence. |
 | `Under repo-review, inspect only the Rust paths in this immutable range.` | Trigger `audit-rust` as a scoped read-only specialist; `repo-review` retains immutable-review coordination. |
+| `Audit this Rust service's packaged configuration, startup registration, durable migration compatibility, and consumer handoff.` | Trigger `audit-rust` with project grounding; keep source, artifact, and runtime evidence distinct. |
 
 ## Non-Trigger Eval
 
@@ -33,6 +34,7 @@
 | `Find why this test started failing; the cause is unknown.` | Do not trigger this Skill; use the host's built-in diagnosis under effective instructions. |
 | `Memory grows after each Rust import and nobody knows whether the cause is ownership, allocator retention, or the operating system.` | Use host diagnosis to reproduce the concrete symptom and isolate its cause before auditing a selected remediation surface. |
 | `Map the repository and tell me whether it contains Rust.` | Prefer `repo-map`. |
+| `Audit only a private Rust naming cleanup with no reachable runtime, packaging, API, persistence, or cross-repository effect.` | Keep project grounding inactive and unrelated profiles out of scope. |
 | `Review my dirty tree and prepare exact commits.` | Prefer `repo-review`; it coordinates the local read-only Git-change review and may request a bounded Rust specialist subreview. |
 | `Review the current Rust crate deletion diff across manifests, CI, tests, and docs.` | Prefer `repo-review` as the local read-only review coordinator; do not auto-route to delivery. |
 | `Review this immutable branch range and coordinate Rust, frontend, security, CI, and docs.` | Prefer `repo-review`; it may delegate bounded Rust paths here. |

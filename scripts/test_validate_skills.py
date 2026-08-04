@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -139,6 +140,37 @@ class ValidatorTests(unittest.TestCase):
     def test_ask_ai_mutual_review_requires_bounded_relay_contract(self) -> None:
         package = ROOT / "skills" / "ask-ai"
         self.assertEqual([], VALIDATOR.ask_ai_mutual_review_errors(package))
+
+    def test_ask_ai_final_result_sync_is_retention_only(self) -> None:
+        package = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_final_result_sync_errors(package))
+        routing = (package / "references" / "provider-routing.md").read_text(
+            encoding="utf-8"
+        )
+        mappings = VALIDATOR.yaml_fence_mappings(routing)
+        instruction = next(
+            item["instructions"]["final-review-sync"]
+            for item in mappings
+            if item.get("schema_version") == "ask-ai-instructions/v1"
+            and "final-review-sync" in item.get("instructions", {})
+        )
+        self.assertEqual([], VALIDATOR.final_sync_instruction_errors(instruction))
+        self.assertEqual("gemini", instruction["external_provider"])
+        self.assertEqual("notebook", instruction["target_surface"])
+        self.assertEqual(1, instruction["max_sends_per_result"])
+        self.assertNotIn("prompt_profiles", instruction)
+        self.assertNotIn("rounds_per_provider", instruction)
+
+    def test_ask_ai_final_result_sync_rejects_review_fields(self) -> None:
+        instruction = {
+            **VALIDATOR.ASK_AI_FINAL_SYNC_FIXED_FIELDS,
+            "external_provider": "gemini",
+            "target_surface": "notebook",
+            "target_context": "Review Control",
+            "prompt_profiles": ["adversarial"],
+        }
+        errors = VALIDATOR.final_sync_instruction_errors(instruction)
+        self.assertTrue(any("must not contain review or relay fields" in error for error in errors))
 
     def test_ask_ai_bare_mutual_review_precedence_is_not_a_saved_default_alias(self) -> None:
         routing = (
@@ -399,6 +431,232 @@ class ValidatorTests(unittest.TestCase):
         source = ROOT / "protocols" / "app-native-thread-operation-v3.md"
         target = ROOT / "skills" / "ask-ai" / "references" / "app-native-thread-protocol.md"
         self.assertEqual(source.read_text(encoding="utf-8"), target.read_text(encoding="utf-8"))
+
+    def test_project_grounding_protocol_is_synced_and_semantically_bounded(self) -> None:
+        source = ROOT / "protocols" / "project-grounding-v1.md"
+        text = source.read_text(encoding="utf-8")
+        for relative in (
+            "skills/repo-map/references/project-grounding.md",
+            "skills/repo-review/references/project-grounding.md",
+            "skills/dev-frontend/references/project-grounding.md",
+            "skills/dev-java/references/project-grounding.md",
+            "skills/dev-rust/references/project-grounding.md",
+            "skills/audit-frontend/references/project-grounding.md",
+            "skills/audit-java/references/project-grounding.md",
+            "skills/audit-rust/references/project-grounding.md",
+        ):
+            self.assertEqual(text, (ROOT / relative).read_text(encoding="utf-8"))
+        evidence_and_status = text.split("## Evidence And Status\n", 1)[1].split(
+            "\n## Owner Responsibilities", 1
+        )[0]
+        evidence_categories = (
+            "**Declared:**",
+            "**Source-resolved:**",
+            "**Automated:**",
+            "**Artifact-resolved:**",
+            "**Runtime-resolved:**",
+        )
+        verification_states = (
+            "**Verified within scope:**",
+            "**Not verified:**",
+            "**Not found within searched scope:**",
+            "**Not applicable:**",
+        )
+        dispositions = ("**Block:**", "**Warn:**", "**Continue:**")
+        evidence_section, remainder = evidence_and_status.split(
+            "Record verification independently", 1
+        )
+        verification_section, disposition_and_floors = remainder.split(
+            "Then record one action disposition:", 1
+        )
+        disposition_section, _ = disposition_and_floors.split(
+            "Apply claim-specific evidence floors:", 1
+        )
+
+        def definition_markers(section: str) -> tuple[str, ...]:
+            return tuple(re.findall(r"^- (\*\*[^\n]+?:\*\*)", section, re.MULTILINE))
+
+        self.assertEqual(evidence_categories, definition_markers(evidence_section))
+        self.assertEqual(verification_states, definition_markers(verification_section))
+        self.assertEqual(dispositions, definition_markers(disposition_section))
+        runtime_qualifiers = re.search(
+            r"\*\*Runtime-resolved:\*\*.*?Qualify it as\n  (?P<values>.*?) and record",
+            evidence_section,
+            re.DOTALL,
+        )
+        self.assertIsNotNone(runtime_qualifiers)
+        qualifiers = tuple(re.findall(r"`([^`]+)`", runtime_qualifiers.group("values")))
+        self.assertEqual(("local", "target-like", "deployed:<environment>"), qualifiers)
+        self.assertEqual(3, len(set(qualifiers)))
+        self.assertIn("none of these qualifiers implies another.", evidence_and_status)
+        floors_section = disposition_and_floors.split("Apply claim-specific evidence floors:\n", 1)[1].split(
+            "\n\nA completion claim", 1
+        )[0]
+        floors = tuple(
+            match.group("floor")
+            for match in re.finditer(r"^- (?P<floor>.*(?:\n  .*)*)", floors_section, re.MULTILINE)
+        )
+        self.assertEqual(
+            (
+                "packaged/generated completion requires `Artifact-resolved` evidence for the named\n  output;",
+                "deployed or production behavior requires `Runtime-resolved(deployed:<environment>)`\n  evidence from that named environment;",
+                "migration compatibility requires the applicable dialect/data basis, migration path,\n  and compatibility evidence; a clean-schema test alone is insufficient for existing\n  data;",
+                "cross-repository integration requires evidence from the affected provider-consumer\n  seam at compatible revisions;",
+                "rollout and rollback readiness require their own exercised evidence or remain\n  separately `Not verified`.",
+            ),
+            floors,
+        )
+        self.assertIn(
+            "A completion claim must be narrowed to the strongest supported evidence level.",
+            evidence_and_status,
+        )
+        self.assertIn(
+            "Never upgrade static or local evidence into production readiness.", evidence_and_status
+        )
+        self.assertIn("signal -> affected invariant -> owner/authority ->", text)
+        self.assertIn("within or across repositories", text)
+        self.assertIn(
+            "Do not activate it merely because a repository contains Java/frontend/config files.",
+            text,
+        )
+
+    def test_project_grounding_owner_skills_disclose_activation_and_reference(self) -> None:
+        for skill in (
+            "repo-map",
+            "repo-review",
+            "dev-frontend",
+            "dev-java",
+            "dev-rust",
+            "audit-frontend",
+            "audit-java",
+            "audit-rust",
+        ):
+            with self.subTest(skill=skill):
+                text = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
+                self.assertIn("references/project-grounding.md", text)
+                self.assertIn("Not verified", text)
+
+    def test_project_grounding_owner_evals_and_index_keep_owner_action_distinct(self) -> None:
+        expected = {
+            "repo-map": (
+                "Map the stable owners and verification entry points for profiles, packaged resources, schema compatibility, gateway contracts, and cross-repo delivery; do not claim the target runtime was tested.",
+                "Trigger Repo Map with project grounding for stable routing facts.",
+                "List the top-level directories and owning manifests; do not map runtime, data, integration, compatibility, or delivery authorities.",
+                "Keep project grounding inactive and return the bounded navigation answer.",
+            ),
+            "repo-review": (
+                "Review this fixed range that adds requirements, schema, implementation, tests, and a replacement route together.",
+                "Trigger project grounding; treat same-basis artifacts as intent and require independent compatibility/migration evidence before readiness.",
+                "Review this Markdown typo-only range; no executable contract changed.",
+                "Keep runtime, schema, integration, and migration grounding `Not applicable`; do not inflate the review.",
+            ),
+            "dev-frontend": (
+                "Wire this page to the real backend route; the dev proxy, production gateway context path, auth source, and loading/error/permission states differ.",
+                "Trigger `dev-frontend` with project grounding before edits.",
+                "Change only a local CSS color token; reachable API, build, runtime, and cross-repository contracts stay unchanged.",
+                "Keep project-grounding risk classes `Not applicable`; do not scan unrelated repositories or deployment state.",
+            ),
+            "dev-java": (
+                "Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.",
+                "Trigger Runtime/config grounding, resolve precedence and artifact/target boundaries, and block a global workaround until its scope is proven.",
+                "Change only a Java comment; no behavior, build, config, or contract changes.",
+                "Keep project-grounding risk classes `Not applicable`; do not run environment or migration checks.",
+            ),
+            "dev-rust": (
+                "Change this Rust service's startup configuration, packaged resource precedence, and compatible consumer rollout.",
+                "Trigger `dev-rust` with project grounding before edits.",
+                "Rename only a private Rust helper; no reachable runtime, packaging, API, persistence, or cross-repository behavior changes.",
+                "Keep project-grounding risk classes `Not applicable`; do not scan deployment or consumer repositories.",
+            ),
+            "audit-frontend": (
+                "Audit this Vue app's client route against the backend controller, gateway context, auth scope, production config, and failure states.",
+                "Trigger State/Data plus Build/Tooling and project grounding for the bounded provider/consumer chain.",
+                "Audit only a local CSS color token rename with no reachable API, build, runtime, or cross-repo effect.",
+                "Keep project grounding inactive and unrelated profiles out of scope.",
+            ),
+            "audit-java": (
+                "Audit whether this Java service's source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.",
+                "Trigger Build/Migration plus project grounding; keep source, artifact, and runtime evidence distinct.",
+                "Audit this Java DTO naming only; no runtime, persistence, public contract, or cross-repo behavior is in scope.",
+                "Keep project grounding inactive; do not scan profiles, schemas, or sibling repositories.",
+            ),
+            "audit-rust": (
+                "Audit this Rust service's packaged configuration, startup registration, durable migration compatibility, and consumer handoff.",
+                "Trigger `audit-rust` with project grounding; keep source, artifact, and runtime evidence distinct.",
+                "Audit only a private Rust naming cleanup with no reachable runtime, packaging, API, persistence, or cross-repository effect.",
+                "Keep project grounding inactive and unrelated profiles out of scope.",
+            ),
+        }
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        indexed = {item["name"]: item for item in index["skills"]}
+
+        def table_rows(section: str) -> dict[str, str]:
+            rows: dict[str, str] = {}
+            for line in section.splitlines():
+                if not line.startswith("|") or line.startswith("| ---"):
+                    continue
+                cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+                if len(cells) >= 2:
+                    rows[cells[0].strip("`")] = cells[1]
+            return rows
+
+        for skill, (
+            trigger_prompt,
+            trigger_expected,
+            non_trigger_prompt,
+            non_trigger_expected,
+        ) in expected.items():
+            with self.subTest(skill=skill):
+                evals = (ROOT / "skills" / skill / "references" / "eval-cases.md").read_text(
+                    encoding="utf-8"
+                )
+                trigger = table_rows(
+                    evals.split("## Trigger Eval", 1)[1].split("## Non-Trigger Eval", 1)[0]
+                )
+                non_trigger = table_rows(
+                    evals.split("## Non-Trigger Eval", 1)[1].split("## ", 1)[0]
+                )
+                self.assertEqual(trigger_expected, trigger[trigger_prompt])
+                self.assertEqual(non_trigger_expected, non_trigger[non_trigger_prompt])
+                self.assertTrue(indexed[skill]["intents"])
+
+    def test_project_grounding_index_is_owner_qualified_and_not_literal_routing(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        indexed = {item["name"]: item for item in index["skills"]}
+        owners = (
+            "repo-map",
+            "repo-review",
+            "dev-frontend",
+            "dev-java",
+            "dev-rust",
+            "audit-frontend",
+            "audit-java",
+            "audit-rust",
+        )
+        for owner in owners:
+            with self.subTest(owner=owner):
+                self.assertNotIn("project grounding", indexed[owner]["keywords"])
+        self.assertIn("grounded repository ownership map", indexed["repo-map"]["keywords"])
+        self.assertIn("grounded fixed-basis review", indexed["repo-review"]["keywords"])
+
+    def test_repo_delivery_grounding_record_never_inverts_git_authority(self) -> None:
+        skill = (ROOT / "skills" / "repo-delivery" / "SKILL.md").read_text(encoding="utf-8")
+        evals = (ROOT / "skills" / "repo-delivery" / "references" / "eval-cases.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn(
+            "A grounding record may identify evidence gaps, but it never authorizes stage, commit, push,\n  integration, cleanup, or pull-request actions.",
+            skill,
+        )
+        trigger = evals.split("## Trigger Eval\n", 1)[1].split("\n## Non-Trigger Eval", 1)[0]
+        non_trigger = evals.split("## Non-Trigger Eval\n", 1)[1].split("\n## Quality Eval", 1)[0]
+        quality = evals.split("## Quality Eval\n", 1)[1]
+        self.assertIn("grounding record", trigger.lower())
+        self.assertIn("stage and commit", trigger.lower())
+        self.assertIn("grounding record", non_trigger.lower())
+        self.assertIn("do not stage, commit, push, or open a pull request", non_trigger.lower())
+        self.assertIn("Grounding-record authority", quality)
+        self.assertIn("requires independent Git-delivery authority", quality)
 
     def test_name_must_match_directory(self) -> None:
         root = self.make_repo()

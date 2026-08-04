@@ -32,8 +32,9 @@ template that overrides current source.
    When runtime/configuration, packaging, API/integration, persistence, legacy
    replacement, auth/security, or cross-repository delivery signals apply, load
    [project grounding](references/project-grounding.md) and close each activated
-   `signal -> invariant -> owner/authority -> evidence -> status -> next action`
-   chain before edits. A spec, schema, and tests added with the implementation prove
+   `signal -> invariant -> owner/authority -> evidence category and evidence ->
+   verification state -> disposition -> next action and action owner` chain before
+   edits. A spec, schema, and tests added with the implementation prove
    intent and selected behavior, not independent approval or migration safety.
 5. Inspect only the relevant manifests, entry points, configuration ownership,
    routes/controllers, DTOs, application services, domain rules, repositories,

@@ -52,6 +52,7 @@
 | `Review this feature range for dual authority, breaking API changes, and runtime gaps.` | Prefer `repo-review`. | Defect and readiness judgment against a fixed basis. |
 | `Implement changes in both the frontend and backend.` | Prefer the matching implementation owners; read existing guidance but do not create it implicitly. | Source work alone does not authorize new `AGENTS.md` files. |
 | `Upgrade this Maven project to a new JDK and replace its Spring dependencies.` | Prefer the matching implementation owner or host planning before source changes. | A build/runtime migration is implementation, not a durable map deliverable. |
+| `List the top-level directories and owning manifests; do not map runtime, data, integration, compatibility, or delivery authorities.` | Keep project grounding inactive and return the bounded navigation answer. | Directory navigation alone does not activate execution-evidence work. |
 
 ## Quality Eval
 

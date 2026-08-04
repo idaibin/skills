@@ -16,7 +16,12 @@ Implement Rust changes against the repository's real toolchain, project class, c
 3. Read the approved requirement/specification when one exists. Confirm requested behavior, acceptance criteria, non-goals, affected crates/modules/files, compatibility, and validation seams; for complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
 4. Inspect the relevant `Cargo.toml`, lockfile, toolchain, formatter, lint, command source, modules, tests, architecture docs, and API/interface docs.
 5. Consume a current `repo-map` inventory or perform the same targeted search across route registration, handlers, services, repositories, traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous features.
-6. Start with the **Baseline** validation contract, then select every applicable risk overlay. Overlays are composable, not severity levels:
+6. When the requested Rust change crosses reachable runtime/configuration, packaging, API,
+   persistence, compatibility, security, deployment, or cross-repository boundaries, load
+   `references/project-grounding.md` and build the smallest task-scoped record before edits.
+   A Rust file, Cargo manifest, or framework match alone does not activate grounding; leave
+   unrelated risk classes `Not applicable` and report unavailable runtime proof as `Not verified`.
+7. Start with the **Baseline** validation contract, then select every applicable risk overlay. Overlays are composable, not severity levels:
    - **Protocol automation:** an existing OpenAPI/generated-client pipeline or an explicitly requested contract migration. Ordinary HTTP/API changes keep the repository-native route/DTO/client/test boundary under Baseline.
    - **Concurrency/runtime:** Tokio tasks, channels, locks, cancellation, blocking work, overload, or shutdown.
    - **Persistence/SQLite:** migrations, transactions, schema/query changes, durable compatibility, backup, or recovery.
@@ -24,12 +29,12 @@ Implement Rust changes against the repository's real toolchain, project class, c
    - **Porting/parity:** language port or large rewrite that must preserve observable behavior and release semantics.
    - **Target/platform:** `cfg`, target-specific APIs, packaging, native linkage, or supported-platform behavior.
    A routine change uses Baseline with no overlays. A mixed FFI plus SQLite change selects both overlays; a target-only change selects Target/platform without inheriting unrelated heavy tools.
-7. Decide in order: directly reuse, extend an existing contract, adapt the nearest reference, or create new. Record why existing interfaces are insufficient before adding an endpoint, trait, type family, or module.
-8. Trace ownership, dependency direction, and the complete interface chain before adding or moving code. If Protocol automation applies, identify one code-first or contract-first authority; otherwise preserve the repository-native API authority without introducing OpenAPI.
-9. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory work, generated code, or behavior without an honest seam.
-10. Implement the smallest idiomatic change that follows local ownership, borrowing, module, error, async, persistence, FFI, configuration, logging, documentation, and test patterns. When the task materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only declarations made obsolete by the authorized change after resolving Rust reachability.
-11. Update manifests, module exports, tests, commands, docs, CI/deploy paths, migrations, generated files, and indexes when the structural or public boundary changes.
-12. Run focused checks after each slice, then the repository's baseline gates and every selected overlay. Use Miri, sanitizers, fuzzing, stress, or repeated-operation tools only when both supported by the target repository/environment and relevant to the changed invariant.
+8. Decide in order: directly reuse, extend an existing contract, adapt the nearest reference, or create new. Record why existing interfaces are insufficient before adding an endpoint, trait, type family, or module.
+9. Trace ownership, dependency direction, and the complete interface chain before adding or moving code. If Protocol automation applies, identify one code-first or contract-first authority; otherwise preserve the repository-native API authority without introducing OpenAPI.
+10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory work, generated code, or behavior without an honest seam.
+11. Implement the smallest idiomatic change that follows local ownership, borrowing, module, error, async, persistence, FFI, configuration, logging, documentation, and test patterns. When the task materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only declarations made obsolete by the authorized change after resolving Rust reachability.
+12. Update manifests, module exports, tests, commands, docs, CI/deploy paths, migrations, generated files, and indexes when the structural or public boundary changes.
+13. Run focused checks after each slice, then the repository's baseline gates and every selected overlay. Use Miri, sanitizers, fuzzing, stress, or repeated-operation tools only when both supported by the target repository/environment and relevant to the changed invariant.
 
 ## Modes
 
@@ -101,5 +106,8 @@ Report scope; detected project, crate/module, toolchain, and ownership boundarie
 - See [references/code-quality.md](references/code-quality.md) when the requested
   change materially involves duplication, dead/unused code, abstraction
   quality, hidden coupling, or maintainability.
+- See [references/project-grounding.md](references/project-grounding.md) when reachable
+  runtime/configuration, packaging, API, persistence, compatibility, security, deployment,
+  or cross-repository boundaries affect the Rust change.
 - See [references/bun-production-patterns.md](references/bun-production-patterns.md) only when Porting/parity or Unsafe/FFI needs source-derived prompts for cross-language semantics, resource lifetime, or local invariant enforcement.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

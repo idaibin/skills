@@ -1,4 +1,4 @@
 interface:
   display_name: "Ask AI"
-  short_description: "Build and route external AI reviews and visuals"
-  default_prompt: "Use $ask-ai to build an evidence-based external AI review or image request, select only the explicitly authorized provider and capability, prefer an available host image tool when no provider is named, and verify all results locally."
+  short_description: "Route AI reviews, final-result syncs, and visuals"
+  default_prompt: "Use $ask-ai to build an evidence-based external AI review, final-review-result retention sync, or image request; select only the explicitly authorized provider, target, and capability; keep final-result sync non-review and non-authoritative; prefer an available host image tool when no provider is named; and verify all results locally."

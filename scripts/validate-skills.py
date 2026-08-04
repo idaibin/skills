@@ -38,6 +38,15 @@ ASK_AI_DEFAULT_TOKENS = (
 ASK_AI_CANONICAL_STOP_AFTER = "all-providers-approve-same-candidate"
 ASK_AI_LEGACY_STOP_AFTER = "dual-approval-same-candidate"
 ASK_AI_PROMOTION_VALUES = {"user-only", "provider-authored-textual-revision"}
+ASK_AI_FINAL_SYNC_FIXED_FIELDS = {
+    "workflow": "final-result-sync",
+    "trigger": "after-final-local-review",
+    "package_policy": "sanitized-final-review-result-only",
+    "authorization": "send-after-final-local-review",
+    "max_sends_per_result": 1,
+    "response_policy": "receipt-only-non-authoritative",
+    "stop_after": "sync-recorded-or-incomplete",
+}
 
 
 def frontmatter(path: Path) -> tuple[dict[str, object], str]:
@@ -262,6 +271,90 @@ def normalize_relay_instruction(instruction: object) -> tuple[dict[str, object] 
 def relay_instruction_errors(instruction: object) -> list[str]:
     """Validate one v1 sequential-relay instruction and its legacy normalization."""
     _, errors = normalize_relay_instruction(instruction)
+    return errors
+
+
+def final_sync_instruction_errors(instruction: object) -> list[str]:
+    """Validate one bounded post-terminal retention instruction."""
+    if not isinstance(instruction, dict):
+        return ["final-result-sync instruction must be a mapping"]
+    errors: list[str] = []
+    for field, expected in ASK_AI_FINAL_SYNC_FIXED_FIELDS.items():
+        if instruction.get(field) != expected:
+            errors.append(f"final-result-sync {field} must be {expected}")
+    provider = instruction.get("external_provider")
+    if not isinstance(provider, str) or not provider:
+        errors.append("final-result-sync requires exactly one external_provider")
+    surface = instruction.get("target_surface")
+    if surface not in {"project", "notebook", "conversation"}:
+        errors.append("final-result-sync target_surface must be project, notebook, or conversation")
+    context = instruction.get("target_context")
+    if not isinstance(context, str) or not context:
+        errors.append("final-result-sync requires a non-empty target_context")
+    forbidden = {
+        "external_providers",
+        "prompt_profiles",
+        "rounds_per_provider",
+        "initial_provider",
+        "relay_order",
+        "candidate_promotion",
+        "max_turns_per_provider",
+    }
+    present = sorted(forbidden.intersection(instruction))
+    if present:
+        errors.append(
+            "final-result-sync must not contain review or relay fields: " + ", ".join(present)
+        )
+    return errors
+
+
+def ask_ai_final_result_sync_errors(package: Path) -> list[str]:
+    """Validate the final-review-result retention contract and its routing example."""
+    if package.name != "ask-ai":
+        return []
+    routing = package / "references" / "provider-routing.md"
+    sync = package / "references" / "final-result-sync.md"
+    gemini = package / "references" / "provider-gemini.md"
+    profile = package / "references" / "browser-profile.md"
+    evals = package / "references" / "eval-cases.md"
+    missing = [path.name for path in (routing, sync, gemini, profile, evals) if not path.is_file()]
+    if missing:
+        return ["ask-ai: missing final-result-sync contract files: " + ", ".join(missing)]
+
+    errors: list[str] = []
+    mappings = yaml_fence_mappings(routing.read_text(encoding="utf-8"))
+    instruction = next(
+        (
+            item["instructions"]["final-review-sync"]
+            for item in mappings
+            if item.get("schema_version") == "ask-ai-instructions/v1"
+            and isinstance(item.get("instructions"), dict)
+            and "final-review-sync" in item["instructions"]
+        ),
+        None,
+    )
+    errors.extend(f"ask-ai: {error}" for error in final_sync_instruction_errors(instruction))
+    sync_text = sync.read_text(encoding="utf-8")
+    for token in (
+        "This is not a review request.",
+        "SYNC RECEIVED: <same Final-result SHA-256>",
+        "unsafe-to-sanitize",
+        "receipt-only-non-authoritative",
+    ):
+        if token not in sync_text:
+            errors.append(f"ask-ai: final-result-sync.md missing contract token: {token}")
+    if "Do not fall back to Standard Chat" not in gemini.read_text(encoding="utf-8"):
+        errors.append("ask-ai: Gemini final-result retention must forbid Standard Chat fallback")
+    if "context is retention-only and is excluded" not in profile.read_text(encoding="utf-8"):
+        errors.append("ask-ai: review-context routing must exclude reserved retention targets")
+    eval_text = evals.read_text(encoding="utf-8")
+    for token in (
+        "configured final-result sync follows a completed local review",
+        "Gemini replies to a retention sync with new findings",
+        "Final review result retention",
+    ):
+        if token.lower() not in eval_text.lower():
+            errors.append(f"ask-ai: eval-cases.md missing final-result-sync case: {token}")
     return errors
 
 
@@ -495,6 +588,7 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
 
     errors.extend(ask_ai_defaults_errors(package))
     errors.extend(ask_ai_mutual_review_errors(package))
+    errors.extend(ask_ai_final_result_sync_errors(package))
     errors.extend(ask_ai_app_native_relay_errors(package))
 
     eval_file = references / "eval-cases.md"

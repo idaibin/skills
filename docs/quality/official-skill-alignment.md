@@ -49,6 +49,12 @@ This catalog uses four current primary baselines:
   win, otherwise a saved primary is freshly preflighted on every task; a before-submit
   fallback never demotes the next task's primary. Persist only a local browser product
   name, never profile, tab, URL, login, identity, or capability evidence.
+- Keep project grounding bounded and evidence-typed: semantic cross-project or
+  runtime risks activate the shared protocol, while filenames and framework presence
+  alone do not. Source, local checks, built artifacts, and target runtime remain
+  separate proof levels; runtime evidence names local, target-like, or deployed scope,
+  and verification state stays separate from action disposition. Every completion
+  claim is capped at its strongest supported evidence level.
 
 Raw evaluation output stays ignored and outside the published catalog. A durable
 summary is eligible for `docs/quality/` only when it records a fixed current basis,

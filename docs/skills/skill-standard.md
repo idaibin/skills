@@ -106,6 +106,13 @@ index shape validator-backed.
   its initial prompt, record distinct correlated create and submit logical IDs, and
   keep capture read-only and idempotent. Author the contract once and regenerate
   package copies.
+- Cross-project grounding is a semantic evidence gate, not a file or framework
+  detector. Activate it only when reachable runtime/configuration, packaging,
+  integration, durable-data, compatibility, security, or delivery boundaries affect
+  the task. Keep declared, source-resolved, automated, artifact-resolved, and
+  runtime-resolved evidence distinct; qualify runtime proof as local, target-like, or
+  deployed to a named environment. Record verification separately from the
+  `Block`/`Warn`/`Continue` disposition; missing target evidence remains `Not verified`.
 
 ## Task-Local Output
 

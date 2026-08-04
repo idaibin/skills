@@ -42,11 +42,16 @@ Do not rewrite a working local design merely to resemble an external project.
    - **Unsafe/FFI:** invariants, ABI/layout, pointer ownership, callbacks, threads, panic containment, alloc/free symmetry, and native cleanup.
 4. Classify applicable standards as portable governance, organization baseline, new-project template, repository contract, or documented legacy exception. Never turn a version snapshot or example tree into a universal rule.
 5. Consume current `repo-map` output or build a targeted inventory of analogous APIs, modules, database access, background tasks, tests, benchmarks, migrations, callers, and architecture docs.
-6. Map governing invariants, resource owners, shutdown/cancellation paths, error boundaries, workload, baseline, and validation gaps for the selected profiles only. When duplication, dead/unused code, abstraction, coupling, or maintainability materially applies, load `references/code-quality.md` with audit semantics and Rust reachability rules.
-7. When an in-scope selected-profile change adds, reuses, moves, renames, or deletes a structural surface, audit every affected manifest, registration, export, feature, test, migration, generated file, deployment path, architecture document, and index; search for stale references.
-8. Validate hypotheses with non-mutating repository-defined commands and representative data. Do not substitute `cargo check` for release, benchmark, concurrency, migration, or runtime evidence.
-9. Stop when the selected profiles are supported by evidence. Mark unselected profiles out of scope rather than partially reviewing them.
-10. Report severity-ranked findings with impact, exact location, evidence, remediation direction, `Not verified` gaps, and the selected/excluded profile boundary. In specialist mode, return findings to the coordinating `repo-review`; do not stage, commit, post comments, or take over final review ownership.
+6. When the selected Rust audit crosses reachable runtime/configuration, packaging, API,
+   persistence, compatibility, security, deployment, or cross-repository boundaries, load
+   `references/project-grounding.md`. Select this from semantic reachability, not from Rust,
+   Cargo, or configuration file presence; mark unrelated risk classes `Not applicable` and
+   unexercised runtime claims `Not verified`.
+7. Map governing invariants, resource owners, shutdown/cancellation paths, error boundaries, workload, baseline, and validation gaps for the selected profiles only. When duplication, dead/unused code, abstraction, coupling, or maintainability materially applies, load `references/code-quality.md` with audit semantics and Rust reachability rules.
+8. When an in-scope selected-profile change adds, reuses, moves, renames, or deletes a structural surface, audit every affected manifest, registration, export, feature, test, migration, generated file, deployment path, architecture document, and index; search for stale references.
+9. Validate hypotheses with non-mutating repository-defined commands and representative data. Do not substitute `cargo check` for release, benchmark, concurrency, migration, or runtime evidence.
+10. Stop when the selected profiles are supported by evidence. Mark unselected profiles out of scope rather than partially reviewing them.
+11. Report severity-ranked findings with impact, exact location, evidence, remediation direction, `Not verified` gaps, and the selected/excluded profile boundary. In specialist mode, return findings to the coordinating `repo-review`; do not stage, commit, post comments, or take over final review ownership.
 
 ## Modes
 
@@ -112,6 +117,9 @@ Load each linked reference independently when its named surface applies; groupin
 - Read [code-quality.md](references/code-quality.md) when duplication,
   dead/unused code, abstraction quality, hidden coupling, or maintainability is
   materially in scope.
+- Read [project-grounding.md](references/project-grounding.md) when selected Rust
+  evidence crosses reachable runtime/configuration, packaging, API, persistence,
+  compatibility, security, deployment, or cross-repository boundaries.
 - Read [review-checklist.md](references/review-checklist.md) for profile-scoped gates and [anti-patterns.md](references/anti-patterns.md) for detectable failure patterns.
 - Read [reference-corpus.md](references/reference-corpus.md) for official source evidence, adopted rules, and rejected cargo-cult choices.
 - Read [usage.md](references/usage.md) and [eval-cases.md](references/eval-cases.md) for routing/reporting/evals; load [codebase-design.md](references/codebase-design.md) only for a selected public-module, seam, abstraction, locality, or testability audit.

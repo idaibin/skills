@@ -21,6 +21,7 @@ structure rules, validation expectations, or metadata.
 | `Add this HTTP operation using the service's code-first Rust authority, regenerate normalized OpenAPI and the TypeScript client, and prove compatibility plus auth/error conformance.` | Should trigger `dev-rust` with Protocol-contract overlay. | Rust source and contract generation are requested. |
 | `Add this REST handler using the repository's native route, DTO, client, and tests; do not introduce schema generation.` | Should trigger `dev-rust` with Baseline only and mark protocol automation `Not applicable`. | HTTP implementation does not itself require OpenAPI. |
 | `Implement a macOS cleanup command that discovers app-owned residuals, asks before deletion, and rescans afterward.` | Should trigger `dev-rust` with Target/platform evidence and destructive-operation safeguards. | Rust implementation owns candidate attribution, bounded deletion behavior, confirmation, recovery policy, and result reconciliation. |
+| `Change this Rust service's startup configuration, packaged resource precedence, and compatible consumer rollout.` | Trigger `dev-rust` with project grounding before edits. | The change crosses runtime, artifact, compatibility, and delivery boundaries. |
 
 ## Non-Trigger Eval
 
@@ -34,6 +35,7 @@ structure rules, validation expectations, or metadata.
 | `Review this Axum endpoint diff for authorization and token exposure.` | Should prefer `repo-review`. | Fixed-basis review, not implementation. |
 | `Fix the React UI inside this Tauri app.` | Should prefer `dev-frontend`. | Frontend implementation. |
 | `Define the product behavior, permission rules, user-visible outcomes, and acceptance before writing the endpoint.` | Should prefer `product-spec`. | Product decisions are unresolved. |
+| `Rename only a private Rust helper; no reachable runtime, packaging, API, persistence, or cross-repository behavior changes.` | Keep project-grounding risk classes `Not applicable`; do not scan deployment or consumer repositories. | A local refactor is not a semantic grounding trigger. |
 
 ## Independent Review Outlet Eval
 

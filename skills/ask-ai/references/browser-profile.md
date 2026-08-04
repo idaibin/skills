@@ -81,6 +81,12 @@ that review. A history group or ordinary conversation title is not a persistent
 container. The record does not authorize creating a container, sending content, or
 changing accounts; those remain current-request actions.
 
+When a valid `final-result-sync` instruction reserves an exact provider context, that
+context is retention-only and is excluded from `review_context` resolution for
+ordinary, independent, and relay review. Use a clean Standard Chat for that provider
+unless the current request explicitly overrides the reservation for one invocation.
+The reserved target remains eligible only for its sanitized final-result sync.
+
 `review_context.name` is the single provider-neutral default name. Users may change
 that one field at any time; all provider routes inherit the new value on their next
 authorized review. Provider-specific `project_name` or `notebook_name` fields are

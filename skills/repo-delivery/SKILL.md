@@ -34,7 +34,7 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 - **Final history normalization:** with exact rewrite authorization, normalize completed task-branch history while preserving the expected tree, then freeze a new final review basis.
 - **Current-branch push:** push the already reviewed current branch after upstream/divergence checks; do not stage or commit unless separately authorized.
 - **Review publication:** after local review and validation, create and/or push the explicitly authorized fixed commit on a GitHub-backed non-default, non-protected branch so an external reviewer can use repository URL, branch, and SHA. Stop before PR creation or target-branch integration.
-- **Branch sync:** pull, fetch, rebase, merge, or fast-forward only according to repo guidance, current divergence, and the user's requested target.
+- **Branch sync and recovery:** pull, fetch, rebase, merge, fast-forward, cherry-pick, or abort an in-progress Git operation only according to repo guidance, current divergence, and the user's requested target. Cherry-pick still requires explicit partial-integration scope; abort does not authorize follow-up staging, commit, or push.
 - **Branch integration:** integrate a fixed reviewed source range into the target by preserving coherent semantic commits or squashing noisy/single-outcome history according to explicit intent, repository policy, and evidence.
 - **Squash-to-main:** a conditional branch-integration strategy that moves reviewed branch work into `main` as exactly one final commit only when repo guidance and explicit user intent permit direct `main` updates.
 - **Cleanup:** delete local or remote temporary branches only after final target state is verified and cleanup is requested or required by repo guidance.
@@ -55,6 +55,9 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 
 - Do not make ordinary task changes directly on protected or default branches when repo guidance forbids it.
 - Do not infer staging or commit authorization from a review-only request.
+- A grounding record may identify evidence gaps, but it never authorizes stage, commit, push,
+  integration, cleanup, or pull-request actions. Authorized Git delivery still requires
+  independent delivery authority for each requested mutation.
 - Do not infer milestone, fixup, or checkpoint authorization merely from a large, long-running, or risky implementation request. Git preservation may use exact per-action authority or one explicit bounded task-level plan; do not ask again for commits already covered by that plan.
 - Do not infer push, sync, branch-integration, cleanup, conflict-resolution, or branch-deletion authorization from a local commit request.
 - Do not infer that `main` is writable merely because local checkout permits a commit.
