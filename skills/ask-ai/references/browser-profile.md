@@ -97,30 +97,27 @@ name restriction.
 
 ## ChatGPT Legacy Record
 
-The old ~/.agents/config/ask-chatgpt/defaults.yaml record remains ChatGPT-only input.
-Recognize schema ask-chatgpt-defaults/v2 and older unversioned records only after the
-provider is resolved to ChatGPT.
+The old `~/.agents/config/ask-chatgpt/defaults.yaml` record remains ChatGPT-only input.
+Recognize `ask-chatgpt-defaults/v2` and older unversioned records only after the
+provider is resolved to ChatGPT or the request explicitly uses legacy ask-chatgpt
+wording.
 
-For ask-chatgpt-defaults/v2, default_transport_mode is required:
+For `ask-chatgpt-defaults/v2`, require `default_transport_mode`:
 
-- codex-app-native or desktop-built-in-browser selects which verified ChatGPT route
-  is tried first; the latter maps to Codex in-app browser, not a user-local browser;
-- manual stops before external action;
+- `codex-app-native` or `desktop-built-in-browser` selects which verified ChatGPT
+  route is tried first;
+- `manual` stops before external action;
 - missing or unknown values block external action pending explicit repair.
 
-For an unversioned legacy record:
-
-- missing mode, desktop-built-in-browser, and capability-auto remain built-in-first;
-- manual stops before external action;
-- current-chrome-explicit and standalone-playwright-explicit remain non-authorizing
-  hints and otherwise retain built-in-first fallback;
-- chatgpt-cloud-browser or an unknown value stops for explicit migration;
-- default_transport_mode without a schema version is ambiguous and blocks.
+For an unversioned legacy record, preserve built-in-first behavior for missing mode,
+`desktop-built-in-browser`, and `capability-auto`; stop for `manual`,
+`chatgpt-cloud-browser`, an unknown value, or an ambiguous versioned field. Treat
+`current-chrome-explicit` and `standalone-playwright-explicit` as non-authorizing hints.
 
 Do not reinterpret, copy, rewrite, or delete a legacy record automatically. Migration
-is a persistent external configuration change and requires explicit authorization.
-When authorized, write one complete Ask AI v1 record, report before/after route
-meaning, verify it, and retain or remove the legacy record only as separately directed.
+to one complete Ask AI v1 record is a persistent configuration change and requires
+explicit authorization, readback verification, and an explicit retain/remove decision
+for the legacy record.
 
 ## Route Evidence
 

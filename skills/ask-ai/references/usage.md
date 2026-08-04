@@ -6,7 +6,6 @@
 - [Non-Triggers](#non-triggers)
 - [Local Collection](#local-collection)
 - [External Action Gate](#external-action-gate)
-- [Local Codex Gate](#local-codex-gate)
 - [Provider Collaboration And Codex](#provider-collaboration-and-codex)
 - [GitHub Repository Review](#github-repository-review)
 - [Combined Review Loop](#combined-review-loop)
@@ -21,11 +20,11 @@
 - `Send the same fixed package independently to ChatGPT and Gemini, then compare the attributed responses locally.`
 - `Save “进行三方会审” as my custom ChatGPT + Gemini + Codex review instruction, one external round each.`
 - `Run my configured “进行三方会审” instruction for this fixed Worktree.`
-- `把“我的互审”保存为 Gemini 先审、Kimi 接着审的互审指令；双方同意同一版本即停止。`
-- `互审` uses the built-in ChatGPT then Gemini order and three turns each only when no
-  legacy reserved-alias conflict is present.
-- `帮我互审这个方案` may use a valid saved default; `我的互审` may invoke its exact
-  executable alias.
+- `把互审默认保存为 Gemini 先审、Kimi 接着审；双方同意同一版本即停止。`
+- `互审` uses the valid user-editable persisted default, or the built-in ChatGPT then
+  Gemini order with three turns each when no default exists.
+- `帮我互审这个方案` may use the same valid saved default; an additional exact alias
+  may invoke it too.
 - `用 ChatGPT 和 DeepSeek 互审这个方案，每个模型最多 2 轮。`
 - `以后互审默认使用 Gemini 和 Kimi，每个模型最多 2 轮。`
 - `Use Gemini now for one architecture challenge; do not fall back to another provider.`
@@ -49,8 +48,8 @@
 - `Use ChatGPT Images now to create two bounded UI concept images from these approved references and return the generated files plus prompt attribution.`
 - `I need an independent ChatGPT architecture challenge; infer the right boundaries from this repository instead of asking me to write the formal prompt.`
 - `Prepare a repository-wide ChatGPT review package for this GitHub URL, but do not connect or send it.`
-- `After ChatGPT review, run local Codex CLI to fix the findings, but ask which approval mode to use first.`
-- `Reset the ChatGPT review defaults for this repo.`
+- `After ChatGPT review, hand confirmed source fixes to the matching dev-* owner.`
+- `Reset the global external-review defaults.`
 
 ## Non-Triggers
 
@@ -90,31 +89,6 @@ Option handling:
 - `3`: generate/update the local package only.
 - `4`: resolve the user-provided ChatGPT URL or surface; do not persist it unless separately requested.
 - `0`: stop.
-
-## Local Codex Gate
-
-Use this gate before `codex exec`. `SKILL.md` loads it only when the user
-explicitly requests nested local Codex CLI execution; an ordinary request to
-apply verified fixes stays with the active implementation workflow.
-
-Mode mapping:
-
-- `1`: return review findings and recommendations only.
-- `2`: output the following copyable HEREDOC shape with `on-request`; do not execute it.
-- `3`: execute the same `on-request` command only after selection.
-- `4`: use the `never` variant only after explicit session-level approval plus confirmed repo path, branch, allowed files, validation commands, and forbidden actions.
-
-```bash
-codex --sandbox workspace-write --ask-for-approval on-request -C "<repo-root>" exec - <<'PROMPT'
-<bounded task, allowed files, validation commands, and forbidden actions>
-PROMPT
-```
-
-Mode 4 changes only `on-request` to `never`. `--ask-for-approval` is a global
-option, so it must appear before `exec`; do not emit
-`codex exec --ask-for-approval ...`.
-
-The screenshot-style permission prompt is produced by the local execution permission layer. This skill controls the choice gate and command parameters, not the system prompt UI.
 
 ## Provider Collaboration And Codex
 

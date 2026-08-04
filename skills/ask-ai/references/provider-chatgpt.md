@@ -51,8 +51,7 @@ of external review rounds.
    only when the current request explicitly authorizes that fallback; otherwise make
    no external send and stop or return to Package-only.
 3. With no current-request route constraint, read the ChatGPT section and
-   provider-neutral `browser_preference` of a valid Ask AI v1 record. If absent, read
-   the ChatGPT-only legacy record described in `browser-profile.md`.
+   provider-neutral `browser_preference` of a valid Ask AI v1 record.
 4. Resolve the configured primary freshly for this task. Without a durable route,
    start with the Codex in-app browser. Use App-native first only when explicitly
    requested or configured and its Project/Quick Chat preflight passes.
@@ -89,9 +88,8 @@ If generic ChatGPT is used, report that the review is not project-bound.
 Read explicit per-request settings first, then the ChatGPT section and
 `browser_preference` described in [browser-profile.md](browser-profile.md). A valid
 Ask AI v1 ChatGPT section may prefer `codex-app-native`, `browser`, or `manual`;
-`desktop-built-in-browser` is a compatible built-in-first alias. When absent, preserve the documented `ask-chatgpt-defaults/v2` and
-unversioned ChatGPT-only legacy meanings. Missing, unknown, or ambiguous values fail
-closed. Changing or migrating defaults requires explicit instruction. Availability
+`desktop-built-in-browser` is a compatible built-in-first alias. Missing, unknown, or
+ambiguous values fail closed. Changing defaults requires explicit instruction. Availability
 is not authorization, and stored values are not current identity, capability, model,
 or reasoning evidence.
 
