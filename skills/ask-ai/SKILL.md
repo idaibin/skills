@@ -7,7 +7,7 @@ description: "Use when the user requests a package or named external-AI result f
 
 ## Overview
 
-Coordinate one independently useful external-AI result without treating providers as
+Coordinate one useful external-AI result without treating providers as
 interchangeable or replacing work Codex and local owners can complete directly.
 Ask AI owns authorization, request packaging, basis identity, operation idempotency,
 response attribution, and local verification. Provider references own only their

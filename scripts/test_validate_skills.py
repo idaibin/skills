@@ -6,6 +6,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import re
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -62,7 +63,7 @@ class ValidatorTests(unittest.TestCase):
         (root / "skills-index.json").write_text(
             json.dumps(
                 {
-                    "version": 1,
+                    "version": 2,
                     "description": "Fixture discovery index.",
                     "categories": {
                         "samples": {
@@ -74,6 +75,12 @@ class ValidatorTests(unittest.TestCase):
                         {
                             "name": "sample-skill",
                             "category": "samples",
+                            "owner": "sample-skill",
+                            "mutation_class": "artifact-write",
+                            "required_capabilities": ["filesystem-read", "artifact-write"],
+                            "allowed_effects": ["read-repository", "write-artifact"],
+                            "forbidden_effects": ["write-source", "write-git-state"],
+                            "stop_states": ["scope-ambiguous", "evidence-incomplete"],
                             "intents": ["process a sample"],
                             "keywords": ["sample"],
                             "excludes": ["unrelated work"],
@@ -88,6 +95,19 @@ class ValidatorTests(unittest.TestCase):
 
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
+
+    def test_artifact_capability_requires_artifact_effect_for_control_owner(self) -> None:
+        entry = {
+            "name": "sample-browser",
+            "owner": "sample-browser",
+            "mutation_class": "browser-control",
+            "required_capabilities": ["filesystem-read", "artifact-write", "browser-control"],
+            "allowed_effects": ["read-repository", "control-browser-state"],
+            "forbidden_effects": ["write-source", "write-git-state"],
+            "stop_states": ["scope-ambiguous"],
+        }
+        errors = VALIDATOR.skill_contract_errors([entry])
+        self.assertTrue(any("artifact-write must allow effect write-artifact" in error for error in errors))
 
     def test_ask_ai_defaults_require_persistent_context_fallback_contract(self) -> None:
         temporary = tempfile.TemporaryDirectory()
@@ -128,6 +148,8 @@ class ValidatorTests(unittest.TestCase):
         )
         self.assertIn("fresh capability preflight on every new task", profile)
         self.assertIn("fallback applies only to the current task", profile)
+        self.assertIn("ask-chatgpt-defaults/v2", profile)
+        self.assertIn("requires\nexplicit authorization", profile)
         self.assertIn("does not probe Codex in-app first", chatgpt)
         for mode in (
             "codex-in-app-browser",
@@ -161,6 +183,24 @@ class ValidatorTests(unittest.TestCase):
         self.assertNotIn("prompt_profiles", instruction)
         self.assertNotIn("rounds_per_provider", instruction)
 
+    def test_ask_ai_untrusted_content_contract_is_data_only(self) -> None:
+        package = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_untrusted_content_errors(package))
+
+    def test_ask_ai_untrusted_content_contract_rejects_executable_mode(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ask-ai"
+            shutil.copytree(ROOT / "skills" / "ask-ai", package)
+            contract = package / "references" / "untrusted-content.md"
+            contract.write_text(
+                contract.read_text(encoding="utf-8").replace(
+                    "mode: read-only-data", "mode: execute-external-instructions"
+                ),
+                encoding="utf-8",
+            )
+            errors = VALIDATOR.ask_ai_untrusted_content_errors(package)
+        self.assertTrue(any("data-only quarantine boundary" in error for error in errors))
+
     def test_ask_ai_final_result_sync_rejects_review_fields(self) -> None:
         instruction = {
             **VALIDATOR.ASK_AI_FINAL_SYNC_FIXED_FIELDS,
@@ -172,7 +212,7 @@ class ValidatorTests(unittest.TestCase):
         errors = VALIDATOR.final_sync_instruction_errors(instruction)
         self.assertTrue(any("must not contain review or relay fields" in error for error in errors))
 
-    def test_ask_ai_bare_mutual_review_precedence_is_not_a_saved_default_alias(self) -> None:
+    def test_ask_ai_bare_mutual_review_prefers_user_editable_default(self) -> None:
         routing = (
             ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md"
         ).read_text(encoding="utf-8")
@@ -181,27 +221,22 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual(
             {
                 "package_only": "overrides-send",
-                "legacy_reserved_bare_alias": "fail-closed-require-explicit-migration",
-                "bare_mutual_review": "fixed-chatgpt-gemini-three-turns",
                 "explicit_current_request": "invocation-only-customization",
                 "exact_executable_alias": "custom-instruction",
-                "persisted_default": "non-bare-mutual-review-only",
+                "persisted_default": "bare-and-explicit-mutual-review",
+                "built_in_fallback": "chatgpt-gemini-three-turns",
             },
             contract["resolution_precedence"],
         )
-        self.assertEqual(
-            {"value": "互审", "legacy_action": "fail-closed-require-explicit-migration"},
-            contract["reserved_bare_alias"],
-        )
-        self.assertIn("legacy_reserved_bare_alias", contract["resolution_precedence"])
+        self.assertEqual("互审", contract["default_trigger"])
+        self.assertEqual("fail-closed", contract["invalid_persisted_default"])
         self.assertEqual(
             [
                 "package_only",
-                "legacy_reserved_bare_alias",
-                "bare_mutual_review",
                 "explicit_current_request",
                 "exact_executable_alias",
                 "persisted_default",
+                "built_in_fallback",
             ],
             contract["resolution_order"],
         )
@@ -211,11 +246,11 @@ class ValidatorTests(unittest.TestCase):
             if item.get("schema_version") == "ask-ai-instructions/v1"
             and "mutual-review" in item.get("instructions", {})
         )
-        self.assertEqual(["我的互审"], instruction["aliases"])
-        self.assertEqual(["gemini", "kimi"], instruction["external_providers"])
-        self.assertEqual(2, instruction["max_turns_per_provider"])
+        self.assertEqual(["互审"], instruction["aliases"])
+        self.assertEqual(["chatgpt", "gemini"], instruction["external_providers"])
+        self.assertEqual(3, instruction["max_turns_per_provider"])
 
-    def test_ask_ai_rejects_persisted_bare_mutual_review_alias(self) -> None:
+    def test_ask_ai_accepts_persisted_bare_mutual_review_alias(self) -> None:
         source = (
             ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md"
         ).read_text(encoding="utf-8")
@@ -224,11 +259,11 @@ class ValidatorTests(unittest.TestCase):
             references = package / "references"
             references.mkdir(parents=True)
             (references / "provider-routing.md").write_text(
-                source.replace("aliases: [我的互审]", "aliases: [互审]", 1),
+                source,
                 encoding="utf-8",
             )
             errors = VALIDATOR.ask_ai_mutual_review_errors(package)
-        self.assertTrue(any("reserved" in error for error in errors))
+        self.assertEqual([], errors)
 
     def test_ask_ai_v3_lifecycle_docs_and_discovery_index_are_synced(self) -> None:
         standard = (ROOT / "docs" / "skills" / "skill-standard.md").read_text(
@@ -241,20 +276,18 @@ class ValidatorTests(unittest.TestCase):
         ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
         self.assertIn("distinct correlated create and submit logical IDs", standard)
         self.assertIn("distinct correlated\n  create and submit IDs", alignment)
-        self.assertTrue(
-            any("legacy reserved-alias conflict fails closed" in item for item in ask_ai["intents"])
-        )
+        self.assertTrue(any("bare 互审 resolving the valid persisted default" in item for item in ask_ai["intents"]))
 
-    def test_ask_ai_bare_mutual_review_text_requires_no_legacy_conflict(self) -> None:
+    def test_ask_ai_bare_mutual_review_text_uses_saved_default(self) -> None:
         sources = [
             ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md",
             ROOT / "skills" / "ask-ai" / "references" / "usage.md",
             ROOT / "skills" / "ask-ai" / "references" / "eval-cases.md",
         ]
         text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
-        self.assertNotIn("`互审` always uses", text)
-        self.assertNotIn("| `互审` with an unambiguous review basis | Always", text)
-        self.assertIn("no legacy reserved-alias conflict", text)
+        self.assertIn("user-editable persisted default", text)
+        self.assertIn("persisted record is the user-editable default", text)
+        self.assertNotIn("fixed bare-command contract", text)
 
     def test_ask_ai_app_native_relay_keeps_atomic_call_and_logical_operations_distinct(self) -> None:
         package = ROOT / "skills" / "ask-ai"
@@ -324,22 +357,18 @@ class ValidatorTests(unittest.TestCase):
         self.assertIn("app-native-thread-operation/v3", text)
         self.assertIn("correlated but distinct `create-conversation` and `submit-initial`", text)
 
-    def test_ask_ai_relay_instruction_normalizes_only_two_provider_legacy_stop(self) -> None:
-        two_provider = {
+    def test_ask_ai_relay_instruction_rejects_noncanonical_stop(self) -> None:
+        instruction = {
             "workflow": "sequential-relay",
             "external_providers": ["chatgpt", "gemini"],
             "initial_provider": "chatgpt",
             "relay_order": ["chatgpt", "gemini"],
             "max_turns_per_provider": 2,
-            "stop_after": "dual-approval-same-candidate",
+            "stop_after": "first-provider-approves",
         }
-        normalized, errors = VALIDATOR.normalize_relay_instruction(two_provider)
-        self.assertEqual([], errors)
-        self.assertIsNotNone(normalized)
-        self.assertEqual("all-providers-approve-same-candidate", normalized["stop_after"])
-        three_provider = {**two_provider, "external_providers": ["chatgpt", "gemini", "kimi"], "relay_order": ["chatgpt", "gemini", "kimi"]}
-        errors = VALIDATOR.relay_instruction_errors(three_provider)
-        self.assertTrue(any("exactly two providers" in error for error in errors))
+        normalized, errors = VALIDATOR.normalize_relay_instruction(instruction)
+        self.assertIsNone(normalized)
+        self.assertTrue(any("all-providers-approve-same-candidate" in error for error in errors))
 
     def test_ask_ai_relay_instruction_requires_sequential_workflow_and_positive_turn_cap(self) -> None:
         instruction = {

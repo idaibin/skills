@@ -49,7 +49,9 @@ For metadata, package structure, shared protocols, multiple packages, or deliver
 bash scripts/check-skills.sh
 ```
 
-For behavior changes, exercise the affected Skill on roughly three representative
-tasks: a normal use, a nearby non-trigger or boundary, and an important edge case.
-Keep raw outputs only when they help improve the Skill. A formal benchmark is optional,
-not a publishing requirement.
+For behavior changes, keep the repository routing matrix synchronized with the
+affected Skill's normal use, nearest non-trigger or owner boundary, and critical stop.
+`bash scripts/check-skills.sh` runs that deterministic matrix, its committed no-new-
+regression baseline, and a warning-only context report. Real host/model behavior still
+requires representative live tasks when claimed; keep raw outputs only when they help
+improve the Skill. A formal cross-model benchmark remains optional.

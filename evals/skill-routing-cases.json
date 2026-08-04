@@ -1,0 +1,70 @@
+{
+  "$schema": "../docs/skills/skill-routing-cases.schema.json",
+  "version": 1,
+  "description": "Deterministic repository routing and contract-stop cases. These cases exercise every catalog owner across normal, nearest-boundary, and critical-stop paths.",
+  "cases": [
+    {"id": "repo-map-normal", "skill": "repo-map", "class": "normal", "prompt": "Map repository boundaries, owners, commands, and reusable contracts.", "expected_owner": "repo-map", "expected_outcome": "route"},
+    {"id": "repo-map-boundary", "skill": "repo-map", "class": "boundary", "prompt": "Implement the frontend source change and wire its page route.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
+    {"id": "repo-map-critical-stop", "skill": "repo-map", "class": "critical-stop", "prompt": "Map repository ownership, but the target scope is ambiguous; stop before writing a map.", "expected_owner": "repo-map", "expected_stop": "scope-ambiguous", "expected_outcome": "stop"},
+
+    {"id": "domain-modeling-normal", "skill": "domain-modeling", "class": "normal", "prompt": "Resolve shared business vocabulary, lifecycle rules, and bounded contexts.", "expected_owner": "domain-modeling", "expected_outcome": "route"},
+    {"id": "domain-modeling-boundary", "skill": "domain-modeling", "class": "boundary", "prompt": "Define feature behavior and acceptance criteria for the product.", "expected_owner": "product-spec", "expected_outcome": "reroute"},
+    {"id": "domain-modeling-critical-stop", "skill": "domain-modeling", "class": "critical-stop", "prompt": "Resolve conflicting business terms, but no authoritative fact source is available; stop.", "expected_owner": "domain-modeling", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
+
+    {"id": "repo-review-normal", "skill": "repo-review", "class": "normal", "prompt": "Review this fixed commit range for correctness and regression risk.", "expected_owner": "repo-review", "expected_outcome": "route"},
+    {"id": "repo-review-boundary", "skill": "repo-review", "class": "boundary", "prompt": "Audit this bounded Rust subsystem without editing source.", "expected_owner": "audit-rust", "expected_outcome": "reroute"},
+    {"id": "repo-review-critical-stop", "skill": "repo-review", "class": "critical-stop", "prompt": "Review this fixed commit, but the basis SHA is unavailable; stop.", "expected_owner": "repo-review", "expected_stop": "basis-drift", "expected_outcome": "stop"},
+
+    {"id": "repo-delivery-normal", "skill": "repo-delivery", "class": "normal", "prompt": "Commit these reviewed changes locally and push the branch to origin.", "expected_owner": "repo-delivery", "expected_outcome": "route"},
+    {"id": "repo-delivery-boundary", "skill": "repo-delivery", "class": "boundary", "prompt": "Review this fixed commit and do not change Git state.", "expected_owner": "repo-review", "expected_outcome": "reroute"},
+    {"id": "repo-delivery-critical-stop", "skill": "repo-delivery", "class": "critical-stop", "prompt": "Commit and push this reviewed branch, but authorization is not granted; stop.", "expected_owner": "repo-delivery", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "product-spec-normal", "skill": "product-spec", "class": "normal", "prompt": "Turn this ambiguous feature into behavior, states, rules, and acceptance criteria.", "expected_owner": "product-spec", "expected_outcome": "route"},
+    {"id": "product-spec-boundary", "skill": "product-spec", "class": "boundary", "prompt": "Translate the selected visual source into a traceable UI specification.", "expected_owner": "ui-spec", "expected_outcome": "reroute"},
+    {"id": "product-spec-critical-stop", "skill": "product-spec", "class": "critical-stop", "prompt": "Define product acceptance, but required product facts are missing; stop.", "expected_owner": "product-spec", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
+
+    {"id": "ui-spec-normal", "skill": "ui-spec", "class": "normal", "prompt": "Write a UI specification from the selected design source and visual contract.", "expected_owner": "ui-spec", "expected_outcome": "route"},
+    {"id": "ui-spec-boundary", "skill": "ui-spec", "class": "boundary", "prompt": "Edit the frontend source files and close the runtime UI difference.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
+    {"id": "ui-spec-critical-stop", "skill": "ui-spec", "class": "critical-stop", "prompt": "Create the selected-source UI specification, but the visual source is unavailable; stop.", "expected_owner": "ui-spec", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
+
+    {"id": "dev-frontend-normal", "skill": "dev-frontend", "class": "normal", "prompt": "Implement the frontend component, state, styling, and page route integration.", "expected_owner": "dev-frontend", "expected_outcome": "route"},
+    {"id": "dev-frontend-boundary", "skill": "dev-frontend", "class": "boundary", "prompt": "Create an implementation-ready UI specification from a selected visual source.", "expected_owner": "ui-spec", "expected_outcome": "reroute"},
+    {"id": "dev-frontend-critical-stop", "skill": "dev-frontend", "class": "critical-stop", "prompt": "Implement this frontend source change, but the source scope is not authorized; stop.", "expected_owner": "dev-frontend", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "dev-java-normal", "skill": "dev-java", "class": "normal", "prompt": "Implement the Spring Boot service change with API, persistence, and transaction tests.", "expected_owner": "dev-java", "expected_outcome": "route"},
+    {"id": "dev-java-boundary", "skill": "dev-java", "class": "boundary", "prompt": "Audit this bounded Java Spring service without editing source.", "expected_owner": "audit-java", "expected_outcome": "reroute"},
+    {"id": "dev-java-critical-stop", "skill": "dev-java", "class": "critical-stop", "prompt": "Implement this Java source change, but the source scope is not authorized; stop.", "expected_owner": "dev-java", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "dev-rust-normal", "skill": "dev-rust", "class": "normal", "prompt": "Implement the Rust service change with async, persistence, and typed errors.", "expected_owner": "dev-rust", "expected_outcome": "route"},
+    {"id": "dev-rust-boundary", "skill": "dev-rust", "class": "boundary", "prompt": "Audit this bounded Rust workspace for ownership and concurrency risks without editing.", "expected_owner": "audit-rust", "expected_outcome": "reroute"},
+    {"id": "dev-rust-critical-stop", "skill": "dev-rust", "class": "critical-stop", "prompt": "Implement this Rust source change, but the source scope is not authorized; stop.", "expected_owner": "dev-rust", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "audit-frontend-normal", "skill": "audit-frontend", "class": "normal", "prompt": "Audit this bounded frontend surface for accessibility, state, performance, and visual fidelity.", "expected_owner": "audit-frontend", "expected_outcome": "route"},
+    {"id": "audit-frontend-boundary", "skill": "audit-frontend", "class": "boundary", "prompt": "Implement the frontend source change and fix the UI component state.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
+    {"id": "audit-frontend-critical-stop", "skill": "audit-frontend", "class": "critical-stop", "prompt": "Audit this frontend surface, but the target scope is ambiguous; stop.", "expected_owner": "audit-frontend", "expected_stop": "scope-ambiguous", "expected_outcome": "stop"},
+
+    {"id": "audit-java-normal", "skill": "audit-java", "class": "normal", "prompt": "Audit this Java Spring service for build, security, transactions, and persistence risks.", "expected_owner": "audit-java", "expected_outcome": "route"},
+    {"id": "audit-java-boundary", "skill": "audit-java", "class": "boundary", "prompt": "Implement the Java source and Spring transaction change.", "expected_owner": "dev-java", "expected_outcome": "reroute"},
+    {"id": "audit-java-critical-stop", "skill": "audit-java", "class": "critical-stop", "prompt": "Audit this Java service, but the target scope is ambiguous; stop.", "expected_owner": "audit-java", "expected_stop": "scope-ambiguous", "expected_outcome": "stop"},
+
+    {"id": "audit-rust-normal", "skill": "audit-rust", "class": "normal", "prompt": "Audit this Rust workspace for ownership, concurrency, persistence, and unsafe risks.", "expected_owner": "audit-rust", "expected_outcome": "route"},
+    {"id": "audit-rust-boundary", "skill": "audit-rust", "class": "boundary", "prompt": "Implement the Rust source and async runtime change.", "expected_owner": "dev-rust", "expected_outcome": "reroute"},
+    {"id": "audit-rust-critical-stop", "skill": "audit-rust", "class": "critical-stop", "prompt": "Audit this Rust workspace, but the target scope is ambiguous; stop.", "expected_owner": "audit-rust", "expected_stop": "scope-ambiguous", "expected_outcome": "stop"},
+
+    {"id": "ops-browser-normal", "skill": "ops-browser", "class": "normal", "prompt": "Operate the specified browser page and capture same-state runtime visual evidence.", "expected_owner": "ops-browser", "expected_outcome": "route"},
+    {"id": "ops-browser-boundary", "skill": "ops-browser", "class": "boundary", "prompt": "Verify the real desktop client process and window state.", "expected_owner": "ops-client", "expected_outcome": "reroute"},
+    {"id": "ops-browser-critical-stop", "skill": "ops-browser", "class": "critical-stop", "prompt": "Operate this browser page, but authorization to control browser state is missing; stop.", "expected_owner": "ops-browser", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "ops-client-normal", "skill": "ops-client", "class": "normal", "prompt": "Operate the real Tauri desktop client and capture process and window evidence.", "expected_owner": "ops-client", "expected_outcome": "route"},
+    {"id": "ops-client-boundary", "skill": "ops-client", "class": "boundary", "prompt": "Operate the specified browser page and capture computed style evidence.", "expected_owner": "ops-browser", "expected_outcome": "reroute"},
+    {"id": "ops-client-critical-stop", "skill": "ops-client", "class": "critical-stop", "prompt": "Operate this desktop client, but authorization to control client state is missing; stop.", "expected_owner": "ops-client", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "ask-ai-normal", "skill": "ask-ai", "class": "normal", "prompt": "Prepare an authorized independent ChatGPT and Gemini review package.", "expected_owner": "ask-ai", "expected_outcome": "route"},
+    {"id": "ask-ai-boundary", "skill": "ask-ai", "class": "boundary", "prompt": "Rewrite this source-grounded technical article while preserving attribution.", "expected_owner": "human-writing", "expected_outcome": "reroute"},
+    {"id": "ask-ai-critical-stop", "skill": "ask-ai", "class": "critical-stop", "prompt": "Ask Gemini to review this plan, but external authorization is missing; stop.", "expected_owner": "ask-ai", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
+    {"id": "human-writing-normal", "skill": "human-writing", "class": "normal", "prompt": "Rewrite this source-grounded technical documentation without changing facts.", "expected_owner": "human-writing", "expected_outcome": "route"},
+    {"id": "human-writing-boundary", "skill": "human-writing", "class": "boundary", "prompt": "Ask ChatGPT for an independent review of this fixed proposal.", "expected_owner": "ask-ai", "expected_outcome": "reroute"},
+    {"id": "human-writing-critical-stop", "skill": "human-writing", "class": "critical-stop", "prompt": "Rewrite this source-grounded article, but the source basis is missing; stop.", "expected_owner": "human-writing", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"}
+  ]
+}

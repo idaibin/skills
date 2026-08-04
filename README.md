@@ -33,7 +33,11 @@ python3 scripts/search-skills.py "review release risk" --json
 ```
 
 The search reads [`skills-index.json`](skills-index.json). Each package's portable
-`SKILL.md` description remains the runtime activation authority.
+`SKILL.md` description remains the runtime activation authority. The index also
+declares machine-validated owner, maximum mutation class, capability/effect boundary,
+and stop states. Explicit exclusions are hard routing boundaries, while authorized
+multi-owner requests may return an ordered handoff plan such as implementation followed
+by Git delivery.
 
 Install selected Skills globally for Codex:
 
@@ -96,8 +100,9 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 | `ask-ai` | Codex needs a local request package, built-in domain review prompt, user-defined review instruction, or another explicitly authorized independent external-AI review, research result, image review/generation/edit, visual exploration, or decision challenge. |
 | `human-writing` | Source-grounded writing must be drafted, rewritten, diagnosed, or adapted in the requested final language while preserving facts, voice, attribution, and disclosures; English-first support for a Chinese final is optional. |
 
-`ask-chatgpt` was renamed to `ask-ai`. Legacy wording and ChatGPT-only defaults remain
-compatible through `ask-ai`; the old package is not maintained as a second owner.
+`ask-chatgpt` was renamed to `ask-ai`. Legacy wording and ChatGPT-only transport
+defaults remain compatible through `ask-ai`; the old package is not maintained as a
+second owner.
 
 ## Composition
 
@@ -149,15 +154,18 @@ copies of the Skill instructions.
 Repository-level `docs/`, `protocols/`, and `scripts/` are maintainer surfaces;
 published packages do not depend on them at runtime.
 
-`skills-index.json` is the repository-level semantic discovery source for local search
-and catalog consistency. It records categories, intents, keywords, exclusions, and
-related owners without adding unsupported fields to portable Skill frontmatter.
+`skills-index.json` is the repository-level semantic discovery and execution-boundary
+source for local search and catalog consistency. It records categories, intents,
+keywords, exclusions, related owners, maximum mutation class, capability/effect
+boundaries, and stop states without adding unsupported fields to portable Skill
+frontmatter.
 
 ## Validate
 
 Use the concise command matrix in [`skills/AGENTS.md`](skills/AGENTS.md#validation).
 The validator checks the portable Agent Skills package, OpenAI metadata, direct
-references, representative eval sections, semantic-index integrity, and catalog
+references, representative eval sections, execution contracts, semantic-index
+integrity, the deterministic routing/stop baseline, context warnings, and catalog
 consistency. Exercise behavior changes on a few representative tasks.
 
 ```bash

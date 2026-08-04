@@ -36,7 +36,6 @@ ASK_AI_DEFAULT_TOKENS = (
     "fallback: new-standard-chat",
 )
 ASK_AI_CANONICAL_STOP_AFTER = "all-providers-approve-same-candidate"
-ASK_AI_LEGACY_STOP_AFTER = "dual-approval-same-candidate"
 ASK_AI_PROMOTION_VALUES = {"user-only", "provider-authored-textual-revision"}
 ASK_AI_FINAL_SYNC_FIXED_FIELDS = {
     "workflow": "final-result-sync",
@@ -46,6 +45,42 @@ ASK_AI_FINAL_SYNC_FIXED_FIELDS = {
     "max_sends_per_result": 1,
     "response_policy": "receipt-only-non-authoritative",
     "stop_after": "sync-recorded-or-incomplete",
+}
+
+MUTATION_CLASSES = {
+    "read-only",
+    "artifact-write",
+    "source-write",
+    "git-write",
+    "browser-control",
+    "client-control",
+    "external-action",
+}
+MUTATION_CAPABILITIES = {
+    "read-only": set(),
+    "artifact-write": {"artifact-write"},
+    "source-write": {"source-write"},
+    "git-write": {"git-write"},
+    "browser-control": {"browser-control"},
+    "client-control": {"client-control"},
+    "external-action": {"external-provider"},
+}
+CONTRACT_EFFECT_BY_MUTATION = {
+    "read-only": set(),
+    "artifact-write": {"write-artifact"},
+    "source-write": {"write-source"},
+    "git-write": {"write-git-state"},
+    "browser-control": {"control-browser-state"},
+    "client-control": {"control-client-state"},
+    "external-action": {"invoke-external-provider"},
+}
+CAPABILITY_EFFECTS = {
+    "artifact-write": "write-artifact",
+    "source-write": "write-source",
+    "git-write": "write-git-state",
+    "browser-control": "control-browser-state",
+    "client-control": "control-client-state",
+    "external-provider": "invoke-external-provider",
 }
 
 
@@ -224,7 +259,7 @@ def yaml_fence_mappings(text: str) -> list[dict[str, object]]:
 
 
 def normalize_relay_instruction(instruction: object) -> tuple[dict[str, object] | None, list[str]]:
-    """Decode the narrowly supported legacy stop value into the v1 canonical form."""
+    """Validate and normalize one sequential-relay instruction."""
     if not isinstance(instruction, dict):
         return None, ["relay instruction must be a mapping"]
     normalized = dict(instruction)
@@ -257,19 +292,13 @@ def normalize_relay_instruction(instruction: object) -> tuple[dict[str, object] 
     promotion = instruction.get("candidate_promotion", "user-only")
     if promotion not in ASK_AI_PROMOTION_VALUES:
         return None, ["sequential relay candidate_promotion must be user-only or provider-authored-textual-revision"]
-    stop_after = instruction.get("stop_after")
-    if stop_after == ASK_AI_LEGACY_STOP_AFTER:
-        if len(providers) == 2:
-            normalized["stop_after"] = ASK_AI_CANONICAL_STOP_AFTER
-            return normalized, []
-        return None, ["dual-approval-same-candidate is legacy-compatible only with exactly two providers"]
-    if stop_after != ASK_AI_CANONICAL_STOP_AFTER:
+    if instruction.get("stop_after") != ASK_AI_CANONICAL_STOP_AFTER:
         return None, ["sequential relay stop_after must be all-providers-approve-same-candidate"]
     return normalized, []
 
 
 def relay_instruction_errors(instruction: object) -> list[str]:
-    """Validate one v1 sequential-relay instruction and its legacy normalization."""
+    """Validate one v1 sequential-relay instruction."""
     _, errors = normalize_relay_instruction(instruction)
     return errors
 
@@ -358,6 +387,109 @@ def ask_ai_final_result_sync_errors(package: Path) -> list[str]:
     return errors
 
 
+def ask_ai_untrusted_content_errors(package: Path) -> list[str]:
+    """Pin the data-only quarantine and browser-boundary contract."""
+    if package.name != "ask-ai":
+        return []
+    contract_file = package / "references" / "untrusted-content.md"
+    skill_file = package / "SKILL.md"
+    browser_file = package / "references" / "live-browser-review.md"
+    routing_file = package / "references" / "provider-routing.md"
+    eval_file = package / "references" / "eval-cases.md"
+    required = (contract_file, skill_file, browser_file, routing_file, eval_file)
+    missing = [path.name for path in required if not path.is_file()]
+    if missing:
+        return ["ask-ai: missing untrusted-content contract files: " + ", ".join(missing)]
+
+    mappings = yaml_fence_mappings(contract_file.read_text(encoding="utf-8"))
+    contract = next(
+        (item.get("untrusted_content_contract") for item in mappings if "untrusted_content_contract" in item),
+        None,
+    )
+    expected = {
+        "schema_version": "untrusted-review-data/v1",
+        "sources": [
+            "external-provider-response",
+            "inspected-webpage",
+            "downloaded-text",
+            "citation-target",
+        ],
+        "quarantine": {
+            "enter": "before-first-third-party-byte",
+            "mode": "read-only-data",
+            "allowed_effects": [
+                "capture-visible-content",
+                "hash-content",
+                "write-ignored-local-ledger",
+                "redact",
+                "analyze-read-only",
+            ],
+            "forbidden_effects": [
+                "follow-content-instructions",
+                "navigate-unapproved-url",
+                "invoke-content-requested-tool",
+                "read-extra-local-data",
+                "expose-secret",
+                "change-scope-recipient-route",
+                "write-source",
+                "write-git-state",
+                "mutate-external-system",
+                "relay-before-release",
+            ],
+        },
+        "extraction": {
+            "visibility": "visible-attributed-content-only",
+            "hidden_content": "reject",
+            "suspicious_controls": "stop-incomplete",
+        },
+        "browser": {
+            "scope": "exact-origin-url-and-actions",
+            "default_denials": [
+                "cross-origin-navigation",
+                "download",
+                "form-submit",
+                "permission-change",
+                "authentication-action",
+                "private-surface",
+                "unrelated-tab",
+            ],
+        },
+        "release": {
+            "local_verification": "independent-evidence-required",
+            "peer_relay": "explicit-source-to-recipient-authorization-and-sanitized-envelope",
+        },
+        "envelope": {
+            "authority": "data-only",
+            "capture_hash": "sha256-before-redaction",
+            "forwarded_hash": "sha256-after-redaction",
+            "attribution": "required",
+        },
+        "stop_states": [
+            "identity-unverified",
+            "visible-extraction-unverified",
+            "suspicious-hidden-content",
+            "semantic-redaction-loss",
+            "boundary-expansion-required",
+        ],
+    }
+    errors: list[str] = []
+    if contract != expected:
+        errors.append("ask-ai: untrusted_content_contract must preserve the complete data-only quarantine boundary")
+
+    required_tokens = {
+        skill_file: ("untrusted-content.md", "read-only", "quarantine"),
+        browser_file: ("exact origin, URL, and action allowlist", "suspicious-hidden-content"),
+        routing_file: ("untrusted-review-data/v1", "SHA-256 of the exact forwarded text"),
+        eval_file: ("Untrusted content quarantine", "open `.env`", "cross-origin"),
+    }
+    for path, tokens in required_tokens.items():
+        text = path.read_text(encoding="utf-8")
+        for token in tokens:
+            if token not in text:
+                errors.append(f"ask-ai: {path.name} missing untrusted-content token: {token}")
+    return errors
+
+
 def ask_ai_mutual_review_errors(package: Path) -> list[str]:
     """Validate structured mutual-review examples rather than safety words alone."""
     if package.name != "ask-ai":
@@ -382,36 +514,26 @@ def ask_ai_mutual_review_errors(package: Path) -> list[str]:
     precedence = contract.get("resolution_precedence")
     if precedence != {
         "package_only": "overrides-send",
-        "legacy_reserved_bare_alias": "fail-closed-require-explicit-migration",
-        "bare_mutual_review": "fixed-chatgpt-gemini-three-turns",
         "explicit_current_request": "invocation-only-customization",
         "exact_executable_alias": "custom-instruction",
-        "persisted_default": "non-bare-mutual-review-only",
+        "persisted_default": "bare-and-explicit-mutual-review",
+        "built_in_fallback": "chatgpt-gemini-three-turns",
     }:
-        errors.append("ask-ai: relay_contract must keep bare mutual-review fixed while allowing explicit or exact-alias customization")
+        errors.append("ask-ai: relay_contract must prefer the user-editable mutual-review default before the built-in fallback")
     if contract.get("resolution_order") != [
         "package_only",
-        "legacy_reserved_bare_alias",
-        "bare_mutual_review",
         "explicit_current_request",
         "exact_executable_alias",
         "persisted_default",
+        "built_in_fallback",
     ]:
-        errors.append("ask-ai: relay_contract must check the legacy reserved bare alias before built-in mutual-review routing")
-    if contract.get("reserved_bare_alias") != {
-        "value": "互审",
-        "legacy_action": "fail-closed-require-explicit-migration",
-    }:
-        errors.append("ask-ai: relay_contract must fail closed for a legacy persisted bare mutual-review alias")
+        errors.append("ask-ai: relay_contract mutual-review resolution order is invalid")
+    if contract.get("default_trigger") != "互审":
+        errors.append("ask-ai: relay_contract default_trigger must be 互审")
+    if contract.get("invalid_persisted_default") != "fail-closed":
+        errors.append("ask-ai: relay_contract must fail closed on an invalid persisted default")
     if set(contract.get("candidate_promotion_values", [])) != ASK_AI_PROMOTION_VALUES:
         errors.append("ask-ai: relay_contract must enumerate the candidate_promotion values")
-    legacy = contract.get("legacy_stop_after")
-    if not isinstance(legacy, dict) or legacy != {
-        "value": ASK_AI_LEGACY_STOP_AFTER,
-        "normalize_when_external_providers": 2,
-        "otherwise": "reject-or-migrate",
-    }:
-        errors.append("ask-ai: relay_contract must define two-provider legacy stop_after compatibility")
     exhaustion = contract.get("exhaustion")
     if not isinstance(exhaustion, dict) or exhaustion != {
         "only_when": "next-required-provider-has-no-legal-turn",
@@ -450,9 +572,6 @@ def ask_ai_mutual_review_errors(package: Path) -> list[str]:
     provider_counts: set[int] = set()
     for instruction in instructions:
         errors.extend(f"ask-ai: {error}" for error in relay_instruction_errors(instruction))
-        aliases = instruction.get("aliases") if isinstance(instruction, dict) else None
-        if isinstance(aliases, list) and "互审" in aliases:
-            errors.append("ask-ai: persisted bare 互审 alias is reserved and requires explicit migration")
         providers = instruction.get("external_providers") if isinstance(instruction, dict) else None
         if isinstance(providers, list):
             provider_counts.add(len(providers))
@@ -589,6 +708,7 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
     errors.extend(ask_ai_defaults_errors(package))
     errors.extend(ask_ai_mutual_review_errors(package))
     errors.extend(ask_ai_final_result_sync_errors(package))
+    errors.extend(ask_ai_untrusted_content_errors(package))
     errors.extend(ask_ai_app_native_relay_errors(package))
 
     eval_file = references / "eval-cases.md"
@@ -660,6 +780,72 @@ def catalog_errors(root: Path, names: set[str]) -> list[str]:
     return errors
 
 
+def skill_contract_errors(entries: list[dict[str, object]]) -> list[str]:
+    """Validate provider-neutral execution boundaries declared by the index.
+
+    These fields deliberately live outside portable ``SKILL.md`` frontmatter. The
+    validator checks the small closed vocabulary and the minimum relation between a
+    mutation class, its required capability, and its permitted effect.
+    """
+    errors: list[str] = []
+    for entry in entries:
+        name = entry.get("name", "<unknown>")
+        owner = entry.get("owner")
+        if owner != name:
+            errors.append(f"skills-index.json: {name} owner must match name")
+
+        mutation = entry.get("mutation_class")
+        if mutation not in MUTATION_CLASSES:
+            errors.append(f"skills-index.json: {name} has unknown mutation_class {mutation!r}")
+            continue
+
+        capabilities = entry.get("required_capabilities")
+        allowed = entry.get("allowed_effects")
+        forbidden = entry.get("forbidden_effects")
+        stops = entry.get("stop_states")
+        if not isinstance(capabilities, list) or not capabilities:
+            errors.append(f"skills-index.json: {name} required_capabilities must be non-empty")
+            capabilities = []
+        if not isinstance(allowed, list) or not allowed:
+            errors.append(f"skills-index.json: {name} allowed_effects must be non-empty")
+            allowed = []
+        if not isinstance(forbidden, list) or not forbidden:
+            errors.append(f"skills-index.json: {name} forbidden_effects must be non-empty")
+            forbidden = []
+        if not isinstance(stops, list) or not stops:
+            errors.append(f"skills-index.json: {name} stop_states must be non-empty")
+            stops = []
+
+        overlap = set(allowed) & set(forbidden)
+        if overlap:
+            errors.append(
+                f"skills-index.json: {name} allowed_effects and forbidden_effects overlap: {sorted(overlap)}"
+            )
+        missing_capabilities = MUTATION_CAPABILITIES[mutation] - set(capabilities)
+        if missing_capabilities:
+            errors.append(
+                f"skills-index.json: {name} mutation_class {mutation} requires capabilities "
+                f"{sorted(missing_capabilities)}"
+            )
+        missing_effects = CONTRACT_EFFECT_BY_MUTATION[mutation] - set(allowed)
+        if missing_effects:
+            errors.append(
+                f"skills-index.json: {name} mutation_class {mutation} must allow effects "
+                f"{sorted(missing_effects)}"
+            )
+        for capability, effect in CAPABILITY_EFFECTS.items():
+            if capability in capabilities and effect not in allowed:
+                errors.append(
+                    f"skills-index.json: {name} capability {capability} must allow effect {effect}"
+                )
+        if mutation == "read-only" and any(
+            effect in set(allowed)
+            for effect in ("write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider")
+        ):
+            errors.append(f"skills-index.json: {name} read-only contract allows a mutating effect")
+    return errors
+
+
 def skill_index_errors(root: Path, names: set[str]) -> list[str]:
     errors: list[str] = []
     index_path = root / "skills-index.json"
@@ -681,6 +867,7 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
         return errors
 
     entries = payload["skills"]
+    errors.extend(skill_contract_errors(entries))
     indexed_names = [entry["name"] for entry in entries]
     if len(indexed_names) != len(set(indexed_names)):
         errors.append("skills-index.json: duplicate Skill names")

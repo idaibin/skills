@@ -6,6 +6,12 @@ and output.
 
 ## Current Owners
 
+This table is the human navigation view. `skills-index.json` is the machine-readable
+authority for owner, maximum mutation class, capability classes, effects, and stop
+states. Portable activation remains in each `SKILL.md` description. A composed owner
+plan never transfers authorization: for example, `dev-frontend -> repo-delivery`
+means implementation finishes before separately authorized Git delivery.
+
 | Skill | Owns | Mutation |
 | --- | --- | --- |
 | `repo-map` | repository boundaries, commands, reuse, durable maps, and explicitly requested layered root/subproject guidance | named map or guidance artifacts only |

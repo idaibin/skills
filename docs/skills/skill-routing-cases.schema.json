@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Deterministic Skill routing cases",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "description", "cases"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "version": {"const": 1},
+    "description": {"type": "string", "minLength": 1},
+    "cases": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/case"}
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "skill",
+        "class",
+        "prompt",
+        "expected_owner",
+        "expected_outcome"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/name"},
+        "skill": {"$ref": "#/$defs/name"},
+        "class": {"enum": ["normal", "boundary", "critical-stop"]},
+        "prompt": {"type": "string", "minLength": 1},
+        "expected_owner": {"$ref": "#/$defs/name"},
+        "expected_stop": {"$ref": "#/$defs/name"},
+        "expected_outcome": {"enum": ["route", "reroute", "stop"]}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"class": {"const": "critical-stop"}}},
+          "then": {
+            "required": ["expected_stop"],
+            "properties": {"expected_outcome": {"const": "stop"}}
+          }
+        },
+        {
+          "if": {"properties": {"class": {"enum": ["normal", "boundary"]}}},
+          "then": {"not": {"required": ["expected_stop"]}}
+        }
+      ]
+    }
+  }
+}

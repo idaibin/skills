@@ -43,11 +43,21 @@ under the repository's established `docs/` structure.
 ## Project Structure
 
 - `skills/` contains publishable or reusable skill packages.
-- `skills-index.json` is the repository-level semantic discovery source used by
-  `scripts/search-skills.py`; portable runtime activation remains in `SKILL.md`.
+- `skills-index.json` is the repository-level semantic discovery and execution-
+  boundary contract used by `scripts/search-skills.py`; portable runtime activation
+  remains in `SKILL.md`. Its mutation class is the maximum owned boundary, not proof
+  that every invocation performs that effect.
 - `scripts/validate-skills.py` checks portable package structure, OpenAI metadata,
   local links, representative eval sections, semantic-index integrity, distribution
   hygiene, and catalog parity.
+- `scripts/run-skill-routing-evals.py` executes the catalog-wide normal, nearest-
+  boundary, and critical-stop matrix. CI resolves `SKILLS_BASE_SHA` (or the merge-base
+  with `origin/main`) to an immutable commit and reads the published baseline there;
+  the Worktree baseline is accepted only for the first v1-to-v2 bootstrap. Missing or
+  invalid base authority and any v2 base without its baseline fail closed.
+- `scripts/report-skill-context.py` reports deterministic entrypoint and direct-
+  reference context estimates as warnings; it does not claim exact model tokens or
+  actual host loading behavior.
 - `scripts/sync-shared-protocols.py` keeps identical self-contained package protocols
   synchronized from `protocols/`.
 - `scripts/test_*.py` contains focused validator regressions.

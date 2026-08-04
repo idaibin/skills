@@ -78,6 +78,65 @@ class SearchSkillsTests(unittest.TestCase):
     def test_unmatched_query_returns_no_results(self) -> None:
         self.assertEqual([], SEARCH.search(self.index, "calendar meeting schedule"))
 
+    def test_explicit_exclusion_routes_ui_spec_to_its_owner(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(index, "UI specification")
+        self.assertEqual("ui-spec", results[0]["owner"])
+        self.assertNotIn("dev-frontend", [result["owner"] for result in results])
+
+    def test_source_change_plus_delivery_returns_authorized_handoff_plan(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        for query in (
+            "Implement this frontend change and push this branch",
+            "Implement this frontend change, then push this branch",
+        ):
+            with self.subTest(query=query):
+                results = SEARCH.search(index, query)
+                delivery = next(result for result in results if result["owner"] == "repo-delivery")
+                self.assertEqual(["dev-frontend", "repo-delivery"], delivery["plan"])
+                self.assertTrue(delivery["handoff"]["authorization_required"])
+
+    def test_negated_spec_clause_keeps_frontend_implementation_owner(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(
+            index, "Do not create a UI specification; implement the frontend source change."
+        )
+        self.assertEqual("dev-frontend", results[0]["owner"])
+        self.assertNotIn("ui-spec", [result["owner"] for result in results])
+
+    def test_dont_want_spec_removes_spec_from_candidate_set(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(
+            index, "I don't want a UI specification; implement the frontend source change."
+        )
+        self.assertEqual("dev-frontend", results[0]["owner"])
+        self.assertNotIn("ui-spec", [result["owner"] for result in results])
+
+    def test_rust_audit_then_implementation_and_commit_keeps_rust_owner_chain(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(
+            index,
+            "Implement this Rust change after a read-only Rust audit, then commit it locally.",
+        )
+        delivery = next(result for result in results if result["owner"] == "repo-delivery")
+        self.assertEqual(["dev-rust", "repo-delivery"], delivery["plan"])
+        self.assertNotIn("dev-frontend", [result["owner"] for result in results])
+
+    def test_negated_rust_clause_does_not_override_frontend_owner_chain(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(
+            index,
+            "Do not touch Rust; implement the frontend source change and commit it locally.",
+        )
+        delivery = next(result for result in results if result["owner"] == "repo-delivery")
+        self.assertEqual(["dev-frontend", "repo-delivery"], delivery["plan"])
+        self.assertNotIn("dev-rust", [result["owner"] for result in results])
+
+    def test_explanation_does_not_authorize_composite_delivery(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(index, "Explain how to implement and push this branch")
+        self.assertNotIn("repo-delivery", [result["owner"] for result in results])
+
     def test_cjk_provider_keyword_finds_ask_ai(self) -> None:
         for query in (
             "通义千问",

@@ -62,9 +62,11 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
 
 ## Repository Discovery Index
 
-`skills-index.json` is the catalog's provider-neutral repository discovery source. It
-records logical categories, user intents, search keywords, exclusions, and related
-owners for browsing and `scripts/search-skills.py`. It is not portable Skill
+`skills-index.json` is the catalog's provider-neutral repository discovery and
+execution-boundary source. It records logical categories, user intents, search
+keywords, exclusions, related owners, the maximum owned mutation class, capability
+classes, allowed/forbidden effects, and critical stop states for browsing, routing,
+and repository validation. It is not portable Skill
 frontmatter, does not override `SKILL.md`, and must not be presented as if every Agent
 client loads it automatically.
 
@@ -73,6 +75,15 @@ fields such as `routing`, `triggers`, or `related` to `SKILL.md`; the portable s
 optional `metadata` remains string-to-string provider/client metadata, not this
 catalog's nested routing registry. Keep package set, names, relations, categories, and
 index shape validator-backed.
+
+Treat `mutation_class` as the maximum effect boundary owned by the Skill; a particular
+invocation may remain read-only or stop earlier. `required_capabilities` is the closed
+set that owned modes may require and must preflight when that mode is selected; it does
+not prove that the current host exposes them or that every mode needs them together.
+`allowed_effects` records effects the owner may perform after scope and authorization
+checks. `forbidden_effects` remains prohibited even when another owner is composed;
+handoffs transfer bounded context, never the other owner's authority. Stop states are
+machine-checkable outcomes, not permission to simulate runtime evidence.
 
 ## Instructions And References
 
@@ -164,10 +175,27 @@ Maintain at least three representative scenarios for each Skill: a normal trigge
 nearby non-trigger or boundary, and a quality/edge case. This catalog keeps them in
 `references/eval-cases.md` so they remain close to the package.
 
+The repository also keeps one deterministic catalog matrix in
+`evals/skill-routing-cases.json`. Every package contributes a normal owner case, a
+nearest-boundary reroute, and a critical stop. `scripts/run-skill-routing-evals.py`
+validates complete 16-package coverage, executes owner routing, requires each critical
+stop prompt to carry an owning-Skill signal, verifies declared stop states, and rejects
+removal or owner drift. After the first baseline is published, CI resolves
+`SKILLS_BASE_SHA` (or the merge-base with `origin/main`) and reads the baseline from
+that immutable Git object rather than the candidate Worktree. The local committed file
+is accepted as bootstrap authority only when the resolved base still has the v1 index;
+an invalid/unavailable base or a v2 base missing its baseline fails closed. This is an offline contract gate:
+the critical-stop check is a deterministic classifier/contract check, not proof that a
+host model followed the Skill or actually stopped at runtime.
+
 Run those scenarios when behavior changes. Compare with the previous version or no
 Skill when the result is genuinely uncertain or when making an improvement claim.
-Repeated campaigns, preregistration, global evidence manifests, token thresholds, and
-directory-wide certification are not required for publishing.
+Repeated model campaigns, preregistration, and directory-wide behavior certification
+are not required for publishing. `scripts/report-skill-context.py` does maintain a
+portable character-based warning report for entrypoints and directly linked runtime
+references. Its four-characters-per-token estimate is a comparison signal, not an
+exact tokenizer or proof of which references a host loaded. Promote a warning to a
+blocking budget only with measured quality/runtime evidence for the affected path.
 
 Feed a real failure back into the narrowest owning rule and existing eval file that
 would have caught it. Do not create a public Skill, shared regression framework, or
@@ -182,15 +210,17 @@ and coverage limits remain useful. Old raw runs never prove current behavior.
 
 Installation and update commands live only in `README.md` and `INSTALL.md`. Published
 packages contain no `npx skills` maintenance instructions. `skills.sh.json` is
-distribution display metadata; `skills-index.json` is semantic discovery metadata.
+distribution display metadata; `skills-index.json` is semantic discovery and
+execution-boundary metadata.
 Both must list the same package set as the root catalog.
 
 ## Validation
 
 Use the command matrix in [`../../skills/AGENTS.md`](../../skills/AGENTS.md). The
-validator checks portable metadata, OpenAI metadata, package-local links, progressive
-disclosure, representative eval sections, semantic-index integrity, distribution
-hygiene, and catalog parity.
-Focused regression tests are run by local `bash scripts/check-skills.sh`.
+validator checks portable metadata, OpenAI metadata, package-local links,
+progressive disclosure, representative eval sections, machine-readable execution
+contracts, semantic-index integrity, distribution hygiene, and catalog parity.
+Local `bash scripts/check-skills.sh` also runs the deterministic routing/stop matrix,
+its no-new-regression baseline, the context warning report, and focused regressions.
 The validator does not claim that a model will
 behave identically on every host or task.

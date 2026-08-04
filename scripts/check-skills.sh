@@ -60,6 +60,31 @@ fi
 echo "validation python: $resolved_python"
 "${python_runner[@]}" scripts/sync-shared-protocols.py --check
 "${python_runner[@]}" scripts/validate-skills.py
+routing_base_sha="${SKILLS_BASE_SHA:-}"
+if [[ -n "$routing_base_sha" ]]; then
+  if ! git cat-file -e "$routing_base_sha^{commit}" 2>/dev/null; then
+    echo "SKILLS_BASE_SHA does not resolve to a commit: $routing_base_sha" >&2
+    exit 2
+  fi
+elif git rev-parse --verify origin/main >/dev/null 2>&1; then
+  routing_base_sha="$(git merge-base HEAD origin/main)"
+else
+  echo "cannot resolve routing baseline authority: set SKILLS_BASE_SHA or fetch origin/main" >&2
+  exit 2
+fi
+if git cat-file -e "$routing_base_sha":evals/skill-routing-baseline.json 2>/dev/null; then
+  echo "routing baseline: $routing_base_sha (immutable Git authority)"
+  "${python_runner[@]}" scripts/run-skill-routing-evals.py --baseline-ref "$routing_base_sha"
+else
+  base_index_version="$(git show "$routing_base_sha":skills-index.json 2>/dev/null | "$python_bin" -c 'import json,sys; print(json.load(sys.stdin).get("version", 0))' 2>/dev/null || true)"
+  if [[ "$base_index_version" != "1" ]]; then
+    echo "published base $routing_base_sha is missing its routing baseline; refusing candidate bootstrap" >&2
+    exit 2
+  fi
+  echo "routing baseline: first v2 bootstrap (base index version 1 has no baseline)"
+  "${python_runner[@]}" scripts/run-skill-routing-evals.py --baseline-report evals/skill-routing-baseline.json
+fi
+"${python_runner[@]}" scripts/report-skill-context.py
 "${python_runner[@]}" scripts/validate-frontend-visual-evidence.py \
   skills/dev-frontend/assets/frontend-visual-evidence.example.json
 "${python_runner[@]}" -m unittest discover -s scripts -p 'test_*.py'

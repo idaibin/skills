@@ -60,10 +60,17 @@ Raw evaluation output stays ignored and outside the published catalog. A durable
 summary is eligible for `docs/quality/` only when it records a fixed current basis,
 host/model, scenarios, failures, and coverage limits without private transcripts.
 
-The repository does not require formal held-out campaigns, directory-wide behavior
-certification, evidence manifests, independent semantic graders, or token-efficiency
-thresholds. Those mechanisms exceeded the requirements of the providers and did not
-justify their maintenance cost.
+The repository does not require formal held-out model campaigns, directory-wide live
+behavior certification, or independent semantic graders. It does require an offline
+catalog-wide normal/boundary/critical-stop matrix with a committed no-new-regression
+baseline. A deterministic character-based context report supplies warnings only; it
+is not a token-efficiency certification or substitute for host/model evidence.
+
+The first unpublished routing baseline is necessarily a reviewed bootstrap. Once it
+exists on `main`, the gate reads it from the immutable base ref so a candidate cannot
+erase history merely by rewriting its own baseline file. Critical-stop prompts are
+checked by a deterministic owning-signal classifier plus the declared stop contract;
+this remains weaker than observing a real host stop.
 
 Official formats establish compatibility, not guaranteed model behavior. For a material
 workflow change, run the affected Skill on representative tasks and inspect the actual

@@ -396,6 +396,20 @@ def affirmative_action(clause: str, action: re.Match[str], segment_prefix: str, 
         r"\bcreate\b.{0,80}\b(?:local\s+)?commit\b", clause[: action.end()], re.IGNORECASE
     ):
         return {"commit"}
+    if re.match(
+        r"\s*(?:please\s+)?(?:implement|fix|update|change|refactor|build|create|add|remove)\b"
+        r".{0,160}\band\s*$",
+        segment_prefix,
+        re.IGNORECASE,
+    ) and re.match(
+        r"\s*(?:it|them|this|that|these|those|the|a|an|my|our|your|their|to\s+origin)\b",
+        suffix,
+        re.IGNORECASE,
+    ):
+        # A source-change command may coordinate a separately owned Git action.
+        # This only classifies the delivery clause; search() still returns a
+        # handoff plan and never transfers execution authorization to the source owner.
+        return {canonical_action(action)}
     action_pattern = re.escape(action.group(0))
     if re.search(
         r"\b(?:can|could|would|will)\s+you(?:\s+please)?\s+" + action_pattern + r"\b|"
@@ -1054,6 +1068,121 @@ def has_authorized_delivery_action(query: str) -> bool:
     return parse_delivery_intent(query).authorized
 
 
+CLAUSE_SPLIT_RE = re.compile(r"(?:[.;,，；。]|\b(?:then|but|while)\b|随后|然后)", re.IGNORECASE)
+NEGATED_CLAUSE_RE = re.compile(
+    r"^\s*(?:do\s+not\b|don't\b|never\b|avoid\b|skip\b|without\b|不要|不再|禁止|避免)",
+    re.IGNORECASE,
+)
+IMPLEMENTATION_RE = re.compile(
+    r"\b(?:implement|change|modify|fix|wire|build|create|update|edit|refactor)\b|"
+    r"(?:实现|修改|修复|接入|开发|更新|编辑|重构)",
+    re.IGNORECASE,
+)
+AUDIT_RE = re.compile(r"\b(?:audit|review|inspect|assess)\b|(?:审计|审查|检查|评估)", re.IGNORECASE)
+STACK_OWNER = {
+    "rust": {"dev-rust", "audit-rust"},
+    "java": {"dev-java", "audit-java"},
+    "frontend": {"dev-frontend", "audit-frontend"},
+}
+OWNER_ALIASES = {
+    "ui-spec": {"ui specification"},
+    "product-spec": {"product specification"},
+}
+
+
+def query_clauses(query: str) -> list[str]:
+    """Split a composite request into current-action clauses."""
+    return [part.strip() for part in CLAUSE_SPLIT_RE.split(query) if part.strip()]
+
+
+def task_stack(query: str) -> str | None:
+    """Return an explicit implementation/audit stack when the request names one."""
+    affirmative = "; ".join(
+        clause for clause in query_clauses(query) if not NEGATED_CLAUSE_RE.match(clause)
+    )
+    normalized = normalize(affirmative)
+    tokens = set(normalized.split())
+    if tokens & {"rust", "cargo", "tokio", "tauri"}:
+        return "rust"
+    if tokens & {"java", "spring", "maven", "gradle"}:
+        return "java"
+    if tokens & {"frontend", "react", "vue", "css", "typescript", "javascript"}:
+        return "frontend"
+    return None
+
+
+def primary_action(query: str) -> str | None:
+    """Classify the earliest affirmative implementation or audit action."""
+    affirmative = "; ".join(
+        clause for clause in query_clauses(query) if not NEGATED_CLAUSE_RE.match(clause)
+    )
+    implementation = IMPLEMENTATION_RE.search(affirmative)
+    audit = AUDIT_RE.search(affirmative)
+    if implementation and (not audit or implementation.start() < audit.start()):
+        return "implementation"
+    if audit:
+        return "audit"
+    return None
+
+
+def exclusion_match(entry: dict[str, object], query: str) -> str | None:
+    """Return the first machine-readable exclusion that owns the query boundary.
+
+    Exclusions are exact normalized phrases. Token-set matching is deliberately
+    avoided because it erased owners when the same words appeared in a different
+    clause or order.
+    """
+    normalized_query = normalize(query)
+    for raw_exclusion in entry.get("excludes", []):
+        exclusion = normalize(str(raw_exclusion))
+        if not exclusion:
+            continue
+        if exclusion in normalized_query:
+            return str(raw_exclusion)
+    return None
+
+
+def explicit_source_request(entry: dict[str, object], query: str) -> bool:
+    """Preserve a domain-matched writer in a composite audit/spec request."""
+    if entry.get("mutation_class") != "source-write" or primary_action(query) != "implementation":
+        return False
+    stack = task_stack(query)
+    return stack is not None and str(entry.get("name")) in STACK_OWNER[stack]
+
+
+def owner_explicitly_negated(entry: dict[str, object], query: str) -> bool:
+    """Reject an owner explicitly denied with ``don't want`` or ``without``."""
+    aliases = {str(entry.get("name", "")).replace("-", " ")}
+    aliases.update(OWNER_ALIASES.get(str(entry.get("name", "")), set()))
+    aliases.update(
+        str(keyword)
+        for keyword in entry.get("keywords", [])
+        if 2 <= len(normalize(str(keyword)).split()) <= 4
+    )
+    for alias in aliases:
+        normalized_alias = normalize(alias)
+        if not normalized_alias:
+            continue
+        target = r"\s+".join(re.escape(token) for token in normalized_alias.split())
+        if re.search(
+            rf"(?:\bdo\s+not\b|\bdon't\b|\bwithout\b|\bavoid(?:ing)?\b|\bskip(?:ping)?\b)"
+            rf"(?:\s+\w+){{0,3}}\s+(?:a\s+|an\s+|the\s+)?{target}\b",
+            query,
+            re.IGNORECASE,
+        ):
+            return True
+    return False
+
+
+def _implementation_candidates(results: list[dict[str, object]]) -> list[dict[str, object]]:
+    """Return scored source-writing owners in deterministic score/name order."""
+    return [
+        result
+        for result in results
+        if result.get("mutation_class") == "source-write"
+    ]
+
+
 def score_entry(entry: dict[str, object], query: str) -> tuple[int, list[str]]:
     normalized_query = normalize(query)
     query_tokens = set(normalized_query.split())
@@ -1103,16 +1232,50 @@ def score_entry(entry: dict[str, object], query: str) -> tuple[int, list[str]]:
     return score, reasons
 
 
+def score_query_entry(entry: dict[str, object], query: str) -> tuple[int, list[str]]:
+    """Score affirmative clauses only, so denied work cannot become an owner."""
+    clauses = query_clauses(query)
+    denied = [clause for clause in clauses if NEGATED_CLAUSE_RE.match(clause)]
+    if not denied:
+        return score_entry(entry, query)
+    affirmative = [clause for clause in clauses if not NEGATED_CLAUSE_RE.match(clause)]
+    if not affirmative:
+        return 0, []
+    score, reasons = score_entry(entry, "; ".join(affirmative))
+    denied_score = max(score_entry(entry, clause)[0] for clause in denied)
+    return (0, []) if denied_score >= score else (score, reasons)
+
+
 def search(index: dict[str, object], query: str) -> list[dict[str, object]]:
     results: list[dict[str, object]] = []
+    stack = task_stack(query)
+    action = primary_action(query)
     for raw_entry in index["skills"]:
         entry = dict(raw_entry)
+        entry_name = str(entry["name"])
+        if stack and entry_name in set().union(*STACK_OWNER.values()) and entry_name not in STACK_OWNER[stack]:
+            continue
         authorized_delivery = (
             entry["name"] == "repo-delivery" and has_authorized_delivery_action(query)
         )
         if entry["name"] == "repo-delivery" and not authorized_delivery:
             continue
-        score, reasons = score_entry(entry, query)
+        if not authorized_delivery and owner_explicitly_negated(entry, query):
+            continue
+        excluded_by = exclusion_match(entry, query)
+        # An explicit authorized Git action remains a valid handoff target for a
+        # composite implementation request. The implementation owner's exclusion
+        # must not erase the separate delivery owner from the plan.
+        if excluded_by and not authorized_delivery and not explicit_source_request(entry, query):
+            continue
+        score, reasons = score_query_entry(entry, query)
+        if stack and entry_name in STACK_OWNER[stack]:
+            if action == "implementation" and entry_name.startswith("dev-"):
+                score += 50
+                reasons.append(f"explicit {stack} implementation owner")
+            elif action == "audit" and entry_name.startswith("audit-"):
+                score += 50
+                reasons.append(f"explicit {stack} audit owner")
         if authorized_delivery:
             # Structured intent is a stronger routing contract than incidental
             # discovery-token overlap (for example ``git fetch --prune origin``).
@@ -1127,9 +1290,33 @@ def search(index: dict[str, object], query: str) -> list[dict[str, object]]:
                     "matched": reasons,
                     "excludes": entry["excludes"],
                     "related": entry["related"],
+                    "owner": entry.get("owner", entry["name"]),
+                    "mutation_class": entry.get("mutation_class"),
+                    "required_capabilities": entry.get("required_capabilities", []),
+                    "allowed_effects": entry.get("allowed_effects", []),
+                    "forbidden_effects": entry.get("forbidden_effects", []),
+                    "stop_states": entry.get("stop_states", []),
                 }
             )
-    return sorted(results, key=lambda item: (-int(item["score"]), str(item["name"])))
+    ordered = sorted(results, key=lambda item: (-int(item["score"]), str(item["name"])))
+    delivery = next((item for item in ordered if item["name"] == "repo-delivery"), None)
+    implementations = _implementation_candidates(ordered)
+    if delivery is not None and implementations:
+        primary = implementations[0]
+        owner_chain = [str(primary["owner"]), "repo-delivery"]
+        handoff = {
+            "owners": owner_chain,
+            "primary_owner": str(primary["owner"]),
+            "handoff_owner": "repo-delivery",
+            "authorization_required": True,
+            "reason": "source implementation completes before separately authorized Git delivery",
+        }
+        # Keep the historical delivery-first ordering for pure delivery callers,
+        # while exposing a deterministic composite owner chain to machine clients.
+        delivery["owner_chain"] = owner_chain
+        delivery["handoff"] = handoff
+        delivery["plan"] = owner_chain
+    return ordered
 
 
 def main() -> int:
