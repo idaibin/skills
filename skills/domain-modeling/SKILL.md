@@ -24,7 +24,7 @@ Resolve shared business language and rules from authoritative evidence. Default 
 - **Terminology and rules (default):** shared vocabulary, ambiguity, business rules, contradictions, and boundary scenarios.
 - **Lifecycle (conditional):** states, transitions, guards, retries, cancellation, expiry, and terminal outcomes.
 - **Bounded Context (conditional):** different business meanings, owners, consistency rules, or sources of truth across real boundaries.
-- **Artifact update (authorized only):** update an existing durable domain fact source; never create or rewrite documentation automatically.
+- **Artifact update (authorized only):** update an existing durable domain fact source.
 
 ## Do Not Use For
 

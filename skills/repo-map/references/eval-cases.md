@@ -13,7 +13,7 @@
 | --- | --- | --- |
 | `Map the current project's directory structure and technical architecture into durable documentation.` | Trigger Repo Map mode. | Durable current-truth navigation is requested. |
 | `Add the real startup, test, and build commands to the repo map.` | Trigger Targeted Update mode. | Command navigation update. |
-| `List the shortest set of directories, components, and interfaces to read before developing this page.` | Trigger Reuse Inventory mode. | Shortest development path and reuse entries. |
+| `Create a durable repo-map entry with the shortest set of directories, components, and interfaces to read before developing this page.` | Trigger Reuse Inventory mode. | A persistent shortest-path and reuse index is requested. |
 | `Update the Rust APIs, DTOs, and call chain in the repo map.` | Trigger Targeted Update mode. | Bounded interface-map update. |
 | `The documented directory and its parent are gone; ascend to the nearest existing ancestor and repair only the affected map entries.` | Trigger Navigation Repair mode. | Explicit incremental recovery. |
 | `Create docs/repo-map/README.md from the repository's current truth.` | Trigger Repo Map mode. | Initial durable map. |
@@ -51,6 +51,7 @@
 | `Regenerate OpenAPI and migrate the React caller to the generated client.` | Prefer the matching `dev-*` owner. | Source implementation, not a durable map deliverable. |
 | `Review this feature range for dual authority, breaking API changes, and runtime gaps.` | Prefer `repo-review`. | Defect and readiness judgment against a fixed basis. |
 | `Implement changes in both the frontend and backend.` | Prefer the matching implementation owners; read existing guidance but do not create it implicitly. | Source work alone does not authorize new `AGENTS.md` files. |
+| `Read the files needed for this feature, then implement it; do not create or update a repository map.` | Prefer the matching implementation owner and its bounded live discovery. | Task-local discovery is not a durable map deliverable. |
 | `Upgrade this Maven project to a new JDK and replace its Spring dependencies.` | Prefer the matching implementation owner or host planning before source changes. | A build/runtime migration is implementation, not a durable map deliverable. |
 | `List the top-level directories and owning manifests; do not map runtime, data, integration, compatibility, or delivery authorities.` | Keep project grounding inactive and return the bounded navigation answer. | Directory navigation alone does not activate execution-evidence work. |
 

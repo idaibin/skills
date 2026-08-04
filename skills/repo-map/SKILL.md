@@ -1,6 +1,6 @@
 ---
 name: repo-map
-description: "Use when current Git or non-Git workspace truth needs a durable map of roots, ownership, architecture, commands, dependency routes, reusable contracts, Maven/Gradle Java boundaries, or layered AGENTS.md guidance at real root and subproject boundaries, or when an existing map or guidance file needs evidence-based repair; do not use for ordinary task-local discovery or change review."
+description: "Use when a Git or non-Git workspace needs a durable map of roots, ownership, architecture, commands, dependency routes, reusable contracts, Java build boundaries, or layered AGENTS.md guidance, or an existing map/guidance file needs evidence-based repair; not for task-local discovery or change review."
 ---
 
 # Repository Map
@@ -125,7 +125,11 @@ Map stable workspace or repository semantics into either a concise navigation la
 
 ## Output Contract
 
-Report every created or updated repo-map or guidance path, initial working scope, scope class, map root, discovered Git roots and containment, persistence state, relevant worktree state, sections created or updated, and validation performed. For layered guidance, include the placement decision for each root/subproject candidate and why a nearer file was created or skipped. Summarize task routes, reuse decisions and canonical entries, duplicate-declaration risks avoided, semantic or path repairs, preserved sections, and remaining `Not found` or `Not verified` gaps. For stopped or partial execution, also report the stop reason, completed evidence chain, unresolved boundary, artifact state, and required follow-up. Do not duplicate full artifacts in chat.
+Report changed artifact paths, scope/map/Git roots, persistence and Worktree state,
+placement decisions, updated sections, task routes, reuse/repair decisions, validation,
+and remaining `Not found` or `Not verified` gaps. For stopped work, add the reason,
+completed evidence chain, unresolved boundary, artifact state, and follow-up. Do not
+duplicate full artifacts in chat.
 
 ## References
 

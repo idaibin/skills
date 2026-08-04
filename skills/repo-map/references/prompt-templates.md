@@ -8,14 +8,12 @@ publishing. Do not resolve templates outside this package at runtime.
 - [Template Selection](#template-selection)
 - [Repo Map Bootstrap](#repo-map-bootstrap-template)
 - [Doc/Code Alignment Review](#doccode-alignment-review-template)
-- [Task-Start Context](#task-start-context-template)
 
 ## Template Selection
 
 - Missing effective repository guidance: load the directly linked layered repository-guidance profile from `SKILL.md` when the user explicitly requests creating or repairing it.
 - Missing `docs/repo-map/README.md`: apply the creation gate, then use the repo-map bootstrap template when justified.
 - Existing docs present: use the doc/code alignment review template.
-- New task before edits: use the task-start context template.
 
 Templates provide structure only. Repository files, configs, commands, and code are the source of truth.
 
@@ -94,24 +92,3 @@ Output:
 - exact doc file or section when possible
 - suggested replacement wording when useful
 - validation performed and remaining `Not verified` items
-
-## Task-Start Context Template
-
-Use when the user is about to start implementation in a repo.
-
-Required first pass:
-
-- read relevant `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present
-- inspect related docs and code
-- resolve the containing Git root or classify the path as a multi-repo/non-Git workspace; run `git status --short` only in applicable Git roots
-- identify allowed and disallowed edit scope
-- identify existing commands needed for verification
-- inventory relevant existing implementations before proposing a new page, component, endpoint, handler, service, repository, trait, type/DTO, hook, or helper
-
-Output:
-
-- current context in one short paragraph
-- proposed edit boundary
-- `reuse`, `extend`, `wrap`, or `new` decision with the canonical candidate; for `new`, include checked scope and justification
-- verification commands to run after changes
-- risks or blockers before editing

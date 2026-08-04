@@ -70,7 +70,6 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - A session record should capture the task key, stable session id such as a conversation id, exact URL or title helper, tab handle when available, account/session note, last used date, and active/archived status.
 - Treat the stable session id as the source of truth. Exact conversation URLs and tool-exposed tab handles are stronger lookup helpers than tab title or visible window state, but tab handles can be scoped to a browser, tool session, or runtime lifetime and must be revalidated before use.
 - Do not reuse one persistent web conversation for unrelated tasks just because the tab is still open. Do not create a new conversation for follow-up work when an active session record already exists.
-- If the recorded tab was closed, replaced, logged out, or navigated away, report the session break and ask whether to recover the original session or start a fresh one.
 - Prefer selectors, roles, labels, DOM state, console, network, and storage evidence.
 - Match evidence to the claim: use screenshots for visual/layout state, DOM or accessibility data for selectors and rendered text, console logs for client errors, network records for request/response behavior, storage/auth state for account/session claims, and file checks for downloads.
 - For an ordinary desktop browser operation with no requested viewport, responsive

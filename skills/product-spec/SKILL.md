@@ -1,6 +1,6 @@
 ---
 name: product-spec
-description: "Use when an ambiguous product feature, new product boundary, or named product fact source must become the smallest implementation-ready specification; owns product decisions and authorized spec artifacts, not selected-source UI specification or implementation."
+description: "Use when an ambiguous product feature, new product boundary, or named product fact source must become the smallest implementation-ready specification; owns product decisions and authorized spec artifacts, not shared domain-language/lifecycle conflicts, selected-source UI specification, or implementation."
 ---
 
 # Product Specification
@@ -86,21 +86,13 @@ writes. Keep technical design and source mutation with their existing owners.
   failure behavior. Keep unresolved material decisions visible.
 - Do not infer complete product behavior from prototype screenshots, visited page
   titles, static export alone, or an interaction set whose coverage is unknown.
-- Keep one main document unless a repository convention or proven complexity needs
-  a split. Independent features are proven complexity: use a short index and separate
-  slice facts, not one large specification. Glossaries, ADRs, UI evidence, and
-  handoffs are conditional outputs.
 - Do not duplicate colors, typography, component choices, token values, or page
   geometry. Link the applicable `ui-spec` contract and keep only product behavior,
   user-visible meaning, and acceptance here.
-- Make every product slice independently consumable: implementation reads shared
-  index facts plus the target slice only, never every sibling specification.
 - Do not define technical interfaces. Cite a verified existing dependency, owner, or
   interface fact only when it is necessary to make the implementation handoff
   unambiguous; route current topology mapping to `repo-map` and new technical design
   to host planning.
-- Do not own source code, Git state, runtime evidence, a complete domain model, a
-  shared design system, or repository-wide maps.
 - Treat static checks as structure evidence only. Mark behavior, workflow, runtime,
   and consumer claims `Not verified` until directly evidenced.
 

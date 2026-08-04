@@ -78,7 +78,8 @@ This checklist is read-only. Do not edit, create, delete, rename, or format work
 - Keep code + contract docs together when the docs describe the same change.
 - Separate build/deploy/CI changes from feature behavior when possible.
 - Separate docs-only changes from code changes when possible.
-- Keep generated artifacts out unless they are the requested deliverable.
+- Keep repository-owned generated artifacts with the semantic change when policy
+  requires them; exclude disposable generated output.
 
 ## Common Cases
 
@@ -86,7 +87,9 @@ This checklist is read-only. Do not edit, create, delete, rename, or format work
 - Artifact or path renames across `justfile`, Dockerfiles, and workflows: one deploy commit.
 - Crate/package/module moves: keep manifests, exports, commands, tests, CI/deploy paths, and ownership docs in the semantic change that makes the move valid.
 - Repository docs and readmes that only describe the new contract: one docs commit.
-- Generated outputs such as build caches or release artifacts: do not commit unless the artifact itself is the deliverable.
+- Repository-owned generated clients, schemas, or indexes: when policy requires them,
+  verify their authority, diff, and idempotence and keep them with the contract change.
+- Build caches or release artifacts: do not commit unless the artifact itself is the deliverable.
 - User-owned local edits mixed with task files: plan only the requested staging slice and mention the excluded files.
 - Adjacent cleanup noticed during review: report it as a follow-up or exclude it from the current commit unless the user explicitly expanded scope.
 
@@ -95,7 +98,8 @@ This checklist is read-only. Do not edit, create, delete, rename, or format work
 - Build outputs such as `target/`.
 - Runtime logs, caches, screenshots, and temp files.
 - Local env files and other machine-specific artifacts.
-- Generated artifacts unless they are the intended deliverable.
+- Disposable or ignored generated output; repository-owned generated artifacts follow
+  the owning policy and semantic change.
 - Unrelated local changes, even when they are already in the same directory.
 
 ## Staging-Plan Rules

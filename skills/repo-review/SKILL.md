@@ -1,13 +1,16 @@
 ---
 name: repo-review
-description: "Use when current Worktree changes or a fixed snapshot/range, including security-sensitive changes, need coordinated read-only Standards and Spec findings or completed provider evidence integrated; also reviews selected-source visual-completion claims. Use audit-* for a bounded domain audit and a host security workflow for a security-only review or scan."
+description: "Use when Worktree changes or a fixed snapshot/range need coordinated read-only Standards and Spec findings, completed provider-evidence integration, or selected-source visual-completion review; use audit-* for bounded domain audits and a host security workflow for security-only review."
 ---
 
 # Repository Review
 
 ## Overview
 
-Review repository changes without modifying files, Git, GitHub, or remote state. Select the basis first. Worktree reads current staged/unstaged/untracked changes; it does not manage worktrees. Fixed-basis review normalizes snapshots, ranges, and pull requests to immutable SHA evidence. Commit-readiness and release checks are conditional profiles, not default review ceremony.
+Review changes without modifying files, Git, or remote state. Select the basis
+first: Worktree reads current staged/unstaged/untracked changes; fixed-basis review
+normalizes snapshots, ranges, and pull requests to immutable SHA evidence.
+Commit-readiness and release checks are conditional profiles.
 
 ## Review Basis
 

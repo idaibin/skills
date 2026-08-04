@@ -83,33 +83,21 @@ template that overrides current source.
 
 ## Hard Rules
 
-- Use the repository-pinned JDK and build commands. Do not replace an old supported
-  JDK, Wrapper, Gradle, Maven, Spring, or dependency set with the machine default.
-- Do not copy RuoYi, Petclinic, Spring Modulith, or another project's directory tree,
-  base classes, response wrappers, security chain, or dependencies into the target.
-- Keep controllers and transport adapters thin when the current architecture provides
-  an application/service owner; keep deterministic rules independent of IO where the
-  established design supports it.
-- Preserve deny-by-default authorization, route and method permission coverage,
-  tenant/data-scope constraints, input validation, safe error mapping, and secret/log
-  boundaries. Never weaken CSRF, CORS, authentication, or authorization without an
-  explicit threat-modelled contract and matching tests.
-- Make transaction ownership, propagation, rollback rules, remote-call boundaries,
-  event timing, retries, and idempotency observable. Do not assume `@Transactional`
-  works through self-invocation, private methods, or unmanaged instances.
-- Do not expose persistence entities as public API DTOs merely for convenience. Keep
-  mapping and validation at the existing boundary.
-- Do not invent a repository/service/manager layer, generic base class, global
-  singleton, event bus, cache, thread pool, or abstraction without a proven owner and
-  consumer.
-- Never put credentials, tokens, private keys, connection strings, or production
-  identifiers in source, examples, tests, logs, or reports.
+- Use the repository-pinned JDK and build commands; do not replace supported build,
+  framework, or dependency contracts with machine defaults or a reference project's
+  structure. Apply [Java engineering](references/java-engineering.md) only through the
+  selected overlays.
+- Preserve established authorization, tenant/data scope, validation, error/secret
+  boundaries, transaction/rollback behavior, remote-call timing, retries, idempotency,
+  and DTO/entity separation. Any intentional change requires an explicit contract and
+  matching evidence.
+- Do not add a layer, global facility, or abstraction without a proven owner and
+  consumer, and do not place secrets or production identifiers in source or evidence.
 - Preserve unrelated changes. Do not stage, commit, push, or open a pull request;
   route Git mutation to `repo-delivery`.
-- Do not hide a local startup workaround in a global entry point, tracked shared
-  profile, or packaging rule without proving its intended environment boundary and
-  target-runtime effect. A framework annotation or exclusion is a signal, not an
-  automatic defect; decide from effective precedence, reachability, and contract.
+- Treat framework annotations, exclusions, and local startup workarounds as signals:
+  change shared entry points or packaging only after proving precedence, reachability,
+  intended environment, and target-runtime effect.
 
 ## Validation Model
 

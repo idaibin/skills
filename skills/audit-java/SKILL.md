@@ -77,23 +77,16 @@ never outranks a working local contract.
 
 ## Hard Rules
 
-- Do not infer the effective JDK, Spring generation, active profile, database, or
-  deployment from local machine defaults or framework convention.
-- Do not require RuoYi's modules, response wrappers, JWT design, data-scope aspects,
-  MyBatis choices, or utility base classes. Use them only as comparative questions.
-- Do not label every large service, annotation, field injection, missing interface,
-  `@Transactional`, cache, executor, or SQL query as a finding. Prove reachability and impact.
-- Treat annotations, exclusions, dependencies, credential-shaped values, file size,
-  and scanner matches as signals, not verdicts. Prove ownership, reachability, impact,
-  and counterevidence; redact sensitive values from output.
+- Resolve effective build/runtime facts from repository evidence, not machine defaults,
+  framework convention, or a reference project's structure. Treat annotations,
+  dependencies, scanner matches, and code shape as signals: prove ownership,
+  reachability, impact, and counterevidence, and redact sensitive values.
 - Treat source configuration, packaged configuration, and effective runtime as
   separate evidence. A local boot or compilation cannot clear a target-profile,
   service-registration, migration, or external-integration gap.
-- Verify route and method authorization together, including tenant/data scope and
-  negative tests. Treat CSRF/session/token decisions according to the actual client
-  and trust model rather than universal slogans.
-- Verify proxy boundaries, rollback rules, lock scope, after-commit behavior,
-  idempotency, retries, cache invalidation, and shutdown before claiming consistency.
+- Apply authorization, transaction, integration, and persistence conclusions through
+  the selected Java engineering profile and require their matching negative/runtime
+  evidence before claiming consistency.
 - Do not claim dependency vulnerability, exploitability, secret exposure, or complete
   security coverage without the matching evidence. Route explicit vulnerability scans,
   attack-path analysis, or PoC validation to an available security workflow.

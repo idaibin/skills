@@ -229,8 +229,6 @@ Avoid:
 - vague `would love feedback`
 - presenting first-party results as community consensus
 
-Keep the title plain, disclose self-interest early, include concrete build details and limitations, and end with a precise question only when feedback is genuinely needed. Do not add launch theater, fake humility, link-first promotion, community-consensus claims, or vague `would love feedback` language.
-
 ## Medium / DEV Community
 
 Reader expectation:
