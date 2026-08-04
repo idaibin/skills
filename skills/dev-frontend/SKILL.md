@@ -23,15 +23,12 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 5. Use an existing `repo-map` only to navigate, then verify routes, UI, state, services, tests, analogous implementations, and live theme/adapters in source and config. For API callers, follow the repository's existing client/type authority. Load the protocol-contract profile only when an OpenAPI/generated-client chain already exists or the task explicitly introduces one.
 6. Treat root `DESIGN.md` as the shared visual-semantic authority when adopted. Repository-native component, styling, theme, and generator configuration are implementation adapters and current execution facts, not competing semantic authorities. Verify their actual binding in live source/config; do not claim DESIGN.md automatically synchronizes implementation. Decide `reuse`, `extend`, `wrap`, or justified `new`, and record insufficient candidates or unresolved drift as `Not verified`.
 7. For selected-source work, require a valid `spec-ready` artifact and stop before editing when the source is unavailable, the slice is `Partial`/`Not Ready`, target viewport/state is unresolved, or a P1 asset lacks an accepted owner and per-item fallback. Map every applicable acceptance ID to owner file/component, `reuse`/`extend`/`wrap`/justified `new`, asset/data owner, and static/runtime verification method; validate the artifact at `mapped` before editing. Keep source targets separate from current computed runtime values.
-8. Inspect only the selected target and reference files needed for the requested change.
-9. Classify the existing UI system and layout model: product surface, framework, component library, state/data stack, styling system, shell/content/page boundaries, panels, and scroll regions. When layout geometry, spacing, sizing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the affected owners and task-completion seam.
-10. Detect the actual framework, component system, styling system, router, and state/data owners for each edited boundary, then load only their matching rules. Treat framework and library variants as repository facts that refine implementation, not as public execution modes.
-11. Preserve typography, spacing, density, already-correct structure, routing, state, API contracts, accessibility, and shared visual ownership unless the task explicitly changes them. Close P1 structure, real assets, font inheritance, contrast, and cross-section alignment before P2 polish; do not rewrite the whole page or change shared `DESIGN.md` tokens for a page-local delta. Do not duplicate a DTO or endpoint already owned by the repository's client/type authority. When the authorized change adds or changes motion, gesture behavior, transition ownership, or user-visible interaction feedback, load [references/interaction-motion-quality.md](references/interaction-motion-quality.md); do not activate it from frontend file types alone.
-12. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory visuals, generated code, or behavior without an honest seam.
-13. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. When the change materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only code made obsolete by this task.
-14. Update manifests, scripts, routes, tests, docs, indexes, generated route files, and stale references when adding, reusing, moving, renaming, or deleting structural frontend code.
-15. Remove stale wrappers, duplicate declarations, late overrides, and temporary layout patches made obsolete by the change.
-16. Run focused checks after each slice, then matching project-defined gates; use `ops-browser` or `ops-client` when runtime UI evidence is required. For selected-source work, use `ops-browser` to complete two same-viewport/state comparisons: validate `pass-1` after the first capture/computed review, fix confirmed findings, then recapture and reinspect before validating `final`. Exercise the desktop target and every key breakpoint named by the spec; otherwise report `Partial` or `Not Ready`, never visual completion. Record Worktree state before validation that may generate or rewrite files, compare it afterward, and classify every new diff as requested source, expected task-owned generated output, validation side effect, or unrelated/user-owned work before continuing.
+8. Classify the existing UI and layout owners for the selected target, then load only the matching framework, styling, state/data, layout, and desktop-webview references. When geometry, spacing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the task-completion seam.
+9. Preserve already-correct behavior and visual ownership unless the task changes them. For a visually material greenfield surface, accepted redesign, theme/accent change, or anti-slop correction, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); for changed motion or interaction feedback, load [references/interaction-motion-quality.md](references/interaction-motion-quality.md). Do not activate either profile from frontend file types alone.
+10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory visuals, generated code, or behavior without an honest seam.
+11. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. When duplication, dead/unused code, abstraction, coupling, or maintainability is material, load `references/code-quality.md` and remove only code made obsolete by this task.
+12. Update manifests, scripts, routes, tests, docs, indexes, generated files, and stale references for every affected structural change; remove only wrappers, declarations, overrides, or temporary patches made obsolete by the task.
+13. Run focused checks after each slice, then matching project-defined gates. For selected-source work, use `ops-browser` for two same-viewport/state comparisons and validate `pass-1` before `final`; missing required runtime coverage remains `Partial` or `Not Ready`. Compare pre/post Worktree state around validation and classify every new diff before continuing.
 
 ## Modes
 
@@ -55,15 +52,9 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 
 ## Hard Rules
 
-- Verify the actual framework, component, styling, routing, state/data, form, icon, and build owners before applying their rules or introducing dependencies.
 - Follow repository-pinned Node/package-manager versions, lockfile, dependency policy, script names, directory names, and file naming. Do not upgrade or normalize them during unrelated UI work.
-- Keep the repository's framework-native route, page, view, feature, and generated-entry structure. Preserve existing naming and registration conventions until alignment is explicit.
 - Do not introduce a parallel UI kit, CSS system, routing pattern, state layer, API helper, icon library, or form library when an existing one covers the need.
-- Do not create a page, component, hook, composable, helper, service, store, wrapper, or shared abstraction before checking any available `repo-map` navigation and performing a targeted live file/symbol search.
 - Do not elevate an implementation adapter, local theme/config, generated component source, or current runtime into a second visual-semantic authority. They prove only their current implementation binding; report design-to-adapter drift or unexercised behavior as `Not verified` until evidenced.
-- Create a new implementation only when reuse or adaptation would violate ownership or behavior. State the reason and place it in the existing directory and naming convention.
-- Preserve existing user-visible behavior and repository-owned route, state, data,
-  accessibility, and visual contracts unless the task explicitly changes them.
 - Load and apply only the selected framework, styling, build/tooling, protocol,
   behavior-first, conditional code-quality, or codebase-design references. Do
   not cross-apply another stack profile.
@@ -73,13 +64,7 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
   offline/runtime-failure behavior as contract questions only when reachable for the
   selected data or integration path; do not impose every state on styling-only work.
 - Do not claim selected-source visual completion from build/lint/typecheck, SCSS inspection, or one screenshot pass. Require the two-pass runtime gate and applicable computed geometry/style evidence.
-- Do not replace all product logos or content assets with one generic fallback. Keep fallback behavior isolated to an approved missing/failed item.
-- Report OpenAPI gates only when that profile applies; otherwise mark them `Not
-  applicable`, not `Not verified`.
-- Do not add speculative shared layers, default memoization, export-style
-  rewrites, or bundler migrations as incidental cleanup. Do not delete
-  apparently unused frontend code until route, dynamic import, framework
-  registration, build, test, and external-consumer reachability is resolved.
+- Do not add speculative shared layers or incidental framework/tooling rewrites. Resolve route, dynamic import, registration, build, test, and external-consumer reachability before deleting apparently unused code.
 
 ## Output Contract
 
@@ -95,6 +80,7 @@ Report scope; detected project, stack, and ownership boundaries; applicable auth
 - See [references/frontend-layout-governance.md](references/frontend-layout-governance.md)
   when geometry, spacing, sizing, overflow, scrolling, layering, or responsive
   behavior is material to the change.
+- Read [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md) only for a visually material greenfield surface, accepted redesign, theme/accent change, density decision, or anti-slop correction.
 - Read [references/interaction-motion-quality.md](references/interaction-motion-quality.md)
   only when the change adds or changes motion, gesture behavior, transition ownership,
   or user-visible interaction feedback.

@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:e4eaa1fbfa65b93ebe4545aed1f69ce6442924d420c79291e18f5bc0a40f19fb`
+- Package digest: `sha256:0fb414fa618084a0ee568303041ac656194fd59923fbc46a73e65f545916703b`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
   fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
@@ -22,6 +22,7 @@ behavior certification and does not replace target-environment runtime validatio
 | --- | --- | --- |
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
 | Catalog discovery | Pass | `npx skills@latest add ./skills --list` validated the local publishable source and found exactly 16 packages. |
+| Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
 | Isolated project-local install | Not verified | The five scoped packages were not installed into a disposable project for this digest. |
 | Installed-copy parity | Not verified | No installed-copy comparison was accepted for this digest. |
 | Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |
@@ -39,6 +40,8 @@ behavior certification and does not replace target-environment runtime validatio
 | `implicit-spec-01` | Approved visual source to implementation-ready contract, no code edit; unapproved-source stop variant. | `ui-spec`; unapproved source is `Not Ready`. | Not verified |
 | `implicit-dev-01` | Implement an accepted frontend contract; unresolved `spec-ready` and viewport stop variant. | `dev-frontend`; unresolved evidence stops before editing as `Partial` / `Not Ready`. | Not verified |
 | `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Not verified |
+| `visual-direction-01` | Existing settings redesign with one primary accent semantic role, independent state colors, optional dials, and dark mode only when the accepted contract selects it. | `ui-spec` records Preserve/Overhaul and accepted direction; `dev-frontend` implements; `audit-frontend` stays evidence-bound. | Not verified |
+| `nested-inset-01` | Outer content container already owns page inset while a standard inner panel also adds left/top padding and the scrollbar must stay flush right. | Trace shell → container → page → component → control, keep one owner per boundary, and verify effective insets by axis plus shared-owner sibling impact. | Not verified |
 | `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Not verified |
 | `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Not verified |
 | `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Not verified |

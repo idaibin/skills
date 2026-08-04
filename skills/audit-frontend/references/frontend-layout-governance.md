@@ -1,5 +1,14 @@
 # Frontend Layout Governance
 
+## Contents
+
+- [Scope and Ownership](#scope-and-ownership)
+- [Layout Responsibility Model](#layout-responsibility-model)
+- [Nested Inset Contract](#nested-inset-contract)
+- [Evidence and Findings](#evidence-and-findings)
+- [Task-Completion Seam](#task-completion-seam)
+- [Validation Proportionality](#validation-proportionality)
+
 ## Scope and Ownership
 
 Use this protocol only when layout geometry, spacing, sizing, overflow, scrolling,
@@ -13,7 +22,8 @@ design-token table, breakpoint catalog, or framework recipe.
   accessibility acceptance for that surface.
 - Repository source owns the current shell, component, styling, and runtime model;
   it is implementation evidence, not silent approval for a conflicting decision.
-- `dev-frontend` owns source changes. `audit-frontend` stays read-only.
+- `ui-spec` records accepted layout ownership, `dev-frontend` owns source changes,
+  and `audit-frontend` stays read-only.
 
 ## Layout Responsibility Model
 
@@ -30,6 +40,37 @@ One responsibility should have one effective owner. Parent layout owns relations
 between children; reusable components own their internal spacing. Intentional nested
 scrolling, overlays, sticky regions, and fixed geometry are valid when their owner,
 boundary, and user benefit are explicit.
+
+## Nested Inset Contract
+
+Trace horizontal and vertical insets through the whole rendered chain before changing
+one `padding`, `margin`, `gap`, or utility class:
+
+`shell -> content container -> page root -> section/panel -> reusable component -> control`
+
+- Give each boundary one purpose. The shell may own viewport/chrome clearance, the
+  content container may own the shared page inset, the page root may own composition,
+  and a reusable component may own only its internal content spacing.
+- Do not stack equal outer and inner padding by default. When the parent already owns
+  the page inset, a child component should normally use its internal token only; use
+  `padding: 0` or a documented edge-to-edge variant where another owner supplies the
+  same boundary.
+- Compare the effective sum on each axis, not isolated declarations. Record left,
+  top, right, and bottom separately because a flush scrollbar, title baseline,
+  sticky header, safe area, or command strip can require asymmetric ownership.
+- Align sibling headings, controls, panels, empty states, and scroll content to one
+  named left/top boundary or intentionally documented offset. Mathematical equality
+  is not enough when borders, icons, optical alignment, or collapsed states change the
+  visible edge.
+- Keep the scroll owner padding-free when the scrollbar must remain flush to the
+  viewport or panel edge; move readable-content inset to its inner content owner.
+- A shared-shell change must not leak into pages with a different inset model. Verify
+  the target page and at least one affected sibling/analogue when the owner is shared.
+
+For specification, record the owner and expected effective inset rather than
+prescribing incidental DOM. For implementation, remove competing declarations instead
+of adding a late override. For audit, report double inset or misalignment only with
+contract/source/runtime evidence and the exact competing owners.
 
 ## Evidence and Findings
 

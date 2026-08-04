@@ -31,8 +31,14 @@ PROTOCOLS = {
         Path("skills/ops-browser/scripts/validate-frontend-visual-evidence.py"),
     ),
     Path("protocols/frontend-layout-governance-v1.md"): (
+        Path("skills/ui-spec/references/frontend-layout-governance.md"),
         Path("skills/dev-frontend/references/frontend-layout-governance.md"),
         Path("skills/audit-frontend/references/frontend-layout-governance.md"),
+    ),
+    Path("protocols/visual-direction-and-anti-slop-v1.md"): (
+        Path("skills/ui-spec/references/visual-direction-and-anti-slop.md"),
+        Path("skills/dev-frontend/references/visual-direction-and-anti-slop.md"),
+        Path("skills/audit-frontend/references/visual-direction-and-anti-slop.md"),
     ),
     Path("protocols/specification-authorities-v1.md"): (
         Path("skills/dev-frontend/references/specification-authorities.md"),

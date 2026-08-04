@@ -54,7 +54,7 @@ owner; do not invent one.
    the audit through its signal-to-evidence chain. Do not activate it from frontend
    directories, framework presence, or literals alone.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
-6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, and trace only the applicable task-completion seam. When a root `DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
+6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, trace nested effective padding by axis, and cover only the applicable task-completion seam. When the audit explicitly covers visual direction, an existing-surface redesign, theme/accent consistency, density, or anti-slop drift, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); require an accepted direction, analogue, measurement, or user impact rather than treating taste as a finding. When a root `DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
 7. Trace only selected profiles without changing the repository. Do not perform shallow checks for excluded profiles merely to imply coverage. When code-quality concerns materially apply, load the shared code-quality reference with audit semantics and the selected framework/build reachability rules.
 8. Audit applicable loading, empty, error, partial, retry, optimistic, stale, cancellation, keyboard, focus, and long-task behavior within the selected profiles.
 9. Use non-mutating repository checks and request browser or real-client evidence only when a selected claim cannot be proven statically.
@@ -70,30 +70,22 @@ owner; do not invent one.
 ## Hard Rules
 
 - Select profiles before applying detailed checklists. Do not imply architecture, state, layout, accessibility, performance, and desktop were all reviewed when only some were evidenced.
-- Do not recommend a shared component, hook, composable, store, service, schema, or layout system before searching existing implementations and recording why reuse or adaptation is insufficient.
 - Load and apply only the selected framework, styling, architecture, state/data,
   build/tooling, accessibility/performance, desktop, or conditional
   code-quality reference. Do not cross-apply an unselected profile or imply its
   coverage.
 - Require reachable source evidence for ownership and reuse, and direct runtime or
   measurement evidence when the selected claim cannot be established statically.
-- A dev proxy, mock, local build, source config, or client route does not prove the
-  production gateway, authorization, persistence, packaging, or target runtime.
-  Report the exact gap as `Not verified`; do not convert it into a generic defect.
-- Do not report spacing, density, fixed geometry, nested scrolling, or overlay
-  behavior from taste or pattern matching alone. Require a contract violation,
-  competing ownership, measured inconsistency, or concrete user impact; otherwise
-  record the visual judgment as `Not verified`.
-- For an applicable root `DESIGN.md`, trace contract token/component/layout/pattern
-  to implementation adapter/config, live component/consumer, and static or runtime
-  evidence. Do not infer exact values from pixels; without runtime evidence, mark
-  responsive, scroll, accessibility, and rendered-compliance claims `Not verified`.
-- Do not refactor unrelated legacy code. File length alone never justifies splitting.
-- Do not call code dead from text-search absence alone or prescribe one
-  component per file, named exports, memoization, or a bundler migration as a
-  universal React rule.
+- Separate source/config evidence from production and rendered-runtime proof; report
+  unsupported claims as `Not verified`, not generic defects. For layout or visual
+  findings, require a contract, competing ownership, measurement, or concrete impact
+  through the selected visual references rather than taste or pixel inference.
+- Apply reuse, dead-code, abstraction, and framework recommendations only through
+  reachable evidence in the selected references; file shape or text search alone is
+  not a finding.
 - Do not edit, stage, commit, post review comments, or deliver code in audit mode. `repo-review` owns Worktree and immutable review coordination; `repo-delivery` alone owns Git mutation. Route accepted remediation to `dev-frontend`.
-- Do not treat build/lint success, source CSS, current-runtime similarity, or a single screenshot as selected-source visual acceptance. Lead with P0-P3 visual findings and mark missing desktop/breakpoint/state evidence `Not verified`.
+- Do not treat build/lint success or one screenshot as selected-source visual
+  acceptance; lead with P0-P3 findings and mark missing runtime coverage `Not verified`.
 - When a selected frontend profile exposes a security-relevant condition, return
   the browser/build/IPC evidence, authoritative control boundary,
   counterevidence, and proof gap without claiming exploit validation or fix
@@ -126,6 +118,7 @@ Start with the inspection snapshot, selected product, framework, styling, and au
   the selected audit scope.
 - Read [frontend-layout-governance.md](references/frontend-layout-governance.md)
   for evidence and false-positive rules when Component/Layout is selected.
+- Read [visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md) only when the selected audit covers visual direction, redesign mode, theme/accent consistency, density, or anti-slop drift.
 - Read [design-md-compliance.md](references/design-md-compliance.md) only when an
   applicable Component/Layout audit includes root `DESIGN.md` consistency.
 - Read [frontend-visual-evidence.md](references/frontend-visual-evidence.md) when a selected source or visual-completion claim is in scope; validate staged evidence offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
