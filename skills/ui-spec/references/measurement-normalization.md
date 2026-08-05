@@ -33,7 +33,7 @@ evidence and approval in the target-contract row.
 
 Do not auto-normalize a tie, an odd majority, a spread greater than `1px`, mixed
 semantics, or any non-spacing property. Resolve an odd majority against the accepted
-root `DESIGN.md` spacing scale or ask the owning decision; do not arbitrarily choose
+resolved `<design-root>/DESIGN.md` spacing scale or ask the owning decision; do not arbitrarily choose
 the lower or upper even value.
 
 ## Contract Record
@@ -46,8 +46,8 @@ For every normalized cluster, record:
 | raw source | all values and evidence IDs |
 | rule result | qualifying majority/tolerance or reason normalization was rejected |
 | target contract | accepted value or `proposed` candidate |
-| authority | user decision or exact root `DESIGN.md` anchor |
+| authority | user decision or exact `<design-root>/DESIGN.md` anchor |
 | verification | implementation/runtime assertion without relabeling it as source evidence |
 
-Use page-local normalization in the Feature Spec. Change root `DESIGN.md` only when
+Use page-local normalization in the Feature Spec. Change `<design-root>/DESIGN.md` only when
 the accepted even-grid rule changes shared spacing semantics across surfaces.

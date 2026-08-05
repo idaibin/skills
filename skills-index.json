@@ -49,7 +49,8 @@
       "intents": [
         "map repository boundaries, architecture, commands, dependencies, and task routes",
         "bootstrap layered repository guidance in root and owned subprojects",
-        "find reusable contracts and repair durable navigation"
+        "find reusable contracts and repair durable navigation",
+        "rebuild current repository documentation with canonical ownership identity separation"
       ],
       "keywords": [
         "repository map",
@@ -66,7 +67,10 @@
         "reuse",
         "top-level directories",
         "stable owners map",
-        "grounded repository ownership map"
+        "grounded repository ownership map",
+        "multi-identity repository map",
+        "canonical ownership identity map",
+        "documentation-authority rebuild map"
       ],
       "excludes": [
         "task-local implementation",
@@ -118,7 +122,8 @@
       "intents": [
         "review current Worktree or index changes",
         "review a fixed commit, range, or verified package",
-        "coordinate correctness, security, performance, and maintainability findings"
+        "coordinate correctness, security, performance, and maintainability findings",
+        "review terminal documentation authority, sidecar lifecycle, and post-fix basis closure"
       ],
       "keywords": [
         "code review",
@@ -128,7 +133,9 @@
         "worktree",
         "fixed SHA",
         "fixed range review",
-        "grounded fixed-basis review"
+        "grounded fixed-basis review",
+        "documentation authority review",
+        "文档权威审查"
       ],
       "excludes": [
         "source implementation",
@@ -203,14 +210,19 @@
       "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "turn an ambiguous feature into an implementation-ready specification",
-        "define product behavior, states, rules, and acceptance"
+        "define product behavior, states, rules, and acceptance",
+        "rebuild current terminal product documentation without preserving process history in formal docs"
       ],
       "keywords": [
         "product spec",
         "feature requirements",
         "acceptance criteria",
         "user flow",
-        "product behavior"
+        "product behavior",
+        "terminal product documentation",
+        "structured artifact gate",
+        "终态产品文档",
+        "结构化文件准入"
       ],
       "excludes": [
         "visual design specification",
@@ -232,7 +244,8 @@
       "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "translate a selected visual source into an implementation-ready UI contract",
-        "maintain traceable feature UI specs and shared DESIGN.md semantics"
+        "maintain traceable feature UI specs and shared DESIGN.md semantics",
+        "rebuild current UI documentation at the resolved design root with local evidence lifecycle rules"
       ],
       "keywords": [
         "UI spec",
@@ -240,7 +253,11 @@
         "visual contract",
         "DESIGN.md",
         "responsive",
-        "accessibility"
+        "accessibility",
+        "design root",
+        "visual evidence lifecycle",
+        "设计根目录",
+        "视觉证据生命周期"
       ],
       "excludes": [
         "visual exploration",

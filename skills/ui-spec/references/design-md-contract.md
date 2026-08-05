@@ -2,8 +2,8 @@
 
 ## Scope and Source
 
-- `DESIGN.md` is the canonical shared visual authority for repository-level visual
-  semantics.
+- `<design-root>/DESIGN.md` is the canonical shared visual authority for the proven
+  shared visual boundary.
 - This document defines how this Skill uses the official Google `DESIGN.md` spec and
   the CLI for shared-system changes only.
 - Canonical spec snapshot:
@@ -23,7 +23,9 @@
 
 - YAML frontmatter tokens are normative contract values.
 - Markdown prose is the application guidance for how those tokens are used.
-- Only the repository-root `DESIGN.md` can carry long-lived token and component semantics.
+- Only the resolved `<design-root>/DESIGN.md` can carry long-lived token and component semantics for that boundary.
+- Frontmatter `version` is optional. Do not use an edit or approval date as its
+  default value; omit it when the project has no semantic version policy.
 - Preserve unknown Markdown sections, valid token names, and component properties instead of deleting them during an edit.
 - Duplicate section headings fail validation.
 - `@google/design.md@0.3.0` currently may report duplicate H2 via warning output while returning lint exit code `0`; this Skill must still treat duplicate H2 as a hard blocker and reject those cases.
@@ -35,7 +37,7 @@
 
 ## First Creation
 
-1. Copy `assets/DESIGN.md` to the target repository root.
+1. Copy `assets/DESIGN.md` to the resolved `<design-root>`.
 2. Replace its name, description, and prose only from verified sources.
 3. Add token groups only when their exact values and meanings are verified; never derive exact values from pixels alone.
 4. Obtain named human approval for the new shared authority.

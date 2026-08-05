@@ -6,6 +6,7 @@
 - [Security Evidence](#security-evidence)
 - [Spec Axis](#spec-axis)
 - [Conditional Frontend Design Compliance](#conditional-frontend-design-compliance)
+- [Conditional Documentation Authority Review](#conditional-documentation-authority-review)
 - [Independence and Integration](#independence-and-integration)
 - [Verdict](#verdict)
 
@@ -74,7 +75,7 @@ a UI contract. Trace the smallest relevant chain in order:
 ```text
 product requirements or product Feature Spec
   -> selected-source UI Feature Spec
-  -> root DESIGN.md
+  -> resolved design-root DESIGN.md
   -> implementation adapter/config
   -> runtime/browser evidence
 ```
@@ -92,6 +93,17 @@ When the basis adds or changes motion, gesture behavior, transition ownership, o
 user-visible interaction feedback, load `interaction-motion-review.md` inside this
 same subflow. Do not infer that branch from `.tsx`, `.vue`, `.css`, component paths,
 or a frontend dependency alone.
+
+## Conditional Documentation Authority Review
+
+Use this subflow only when the basis creates, restructures, moves, deletes, or claims
+completion of authoritative documentation. Load
+`documentation-authority-review.md`; keep Standards and Spec evidence independent.
+Check current-only authority, index and link closure, Product/UI/DESIGN/Map ownership,
+task evidence placement, structured-artifact lifecycle, source-owner/runtime-identity
+separation, deleted and untracked files, and absence of Skill-development material
+from the product repository. After a fix, freeze a new basis and replay the failing
+check; do not reuse the old verdict.
 
 ## Independence and Integration
 

@@ -7,7 +7,7 @@ visual-quality request makes visual direction material. Do not load it for copy-
 data-only, invisible behavior, or contract-neutral refactors.
 
 - Product requirements own audience, tasks, behavior, and acceptance.
-- Root `DESIGN.md` owns adopted shared visual semantics.
+- Resolved `<design-root>/DESIGN.md` owns adopted shared visual semantics.
 - A selected-source UI Feature Spec owns page/flow visual acceptance.
 - Product Design or another user-selected source owns visual exploration; these
   frontend Skills do not silently invent or replace that direction.
@@ -22,8 +22,8 @@ specification, implementation handoff, or audit basis.
 
 Use `DESIGN_VARIANCE`, `MOTION_INTENSITY`, and `VISUAL_DENSITY` on a 1-10 scale only
 when they make a material visual choice clearer. Every value needs a source or short
-rationale, may be `Not applicable`, and cannot override an accepted source, root
-`DESIGN.md`, reduced-motion requirement, or product constraint. Do not install a
+rationale, may be `Not applicable`, and cannot override an accepted source, the
+resolved `<design-root>/DESIGN.md`, reduced-motion requirement, or product constraint. Do not install a
 catalog-wide default such as `8/6/4`.
 
 ## Theme And Color Contract
@@ -34,7 +34,7 @@ information, data-series, and accessibility colors remain independently owned. D
 flatten those roles into the accent or introduce competing decorative accent systems.
 
 Dark mode is conditional, not mandatory. Specify, implement, or audit it only when the
-user, selected source, adopted `DESIGN.md`, existing product contract, or target
+user, selected source, resolved `<design-root>/DESIGN.md`, existing product contract, or target
 platform requires it. When selected, map the same semantic roles into dark tokens and
 verify contrast, elevation/surface separation, imagery, focus, hover, disabled, and
 system-preference/manual-toggle behavior that is actually in scope. Do not add a dark

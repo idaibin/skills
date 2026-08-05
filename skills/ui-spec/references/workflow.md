@@ -43,7 +43,10 @@ Choose **Feature Spec** unless at least one answer is yes:
 - Must several surfaces adopt a changed shared rule?
 - Is an accepted shared-system owner being created, extracted, maintained, or evaluated?
 
-If not, reference existing owners and keep the specification local. If yes, open and update the repo root `DESIGN.md` directly and change only the shared closure. Artifact presence does not prove acceptance: pending, rejected, or stale candidates are not proof; verify live owners before reuse and require approval before promotion.
+If not, reference existing owners and keep the specification local. If yes, resolve
+the shared `<design-root>`, open its `DESIGN.md`, and change only the shared closure.
+Artifact presence does not prove acceptance: pending, rejected, or stale candidates
+are not proof; verify live owners before reuse and require approval before promotion.
 
 ## Specification Pass
 
@@ -111,19 +114,19 @@ the source target. Define product-asset ownership and isolated fallback behavior
 
 | Profile | Primary artifact | Optional dependencies |
 | --- | --- | --- |
-| Feature Spec, one slice | `docs/ui/<slice-id>/spec.md` | source annotations, component/token mapping, state matrix, acceptance checklist |
+| Feature Spec, one slice | the repository's existing UI-spec location; otherwise `docs/ui/<slice-id>/spec.md` as a fallback | source annotations, component/token mapping, state matrix, acceptance checklist |
 | Feature Spec, multiple domains | one short shared UI index plus one independently loadable contract per confirmed domain | only shared facts and per-slice links/status in the index |
-| Design System Spec | repo root `DESIGN.md` (the only shared visual artifact) | feature-spec references and relevant owner approvals |
+| Design System Spec | `<design-root>/DESIGN.md` (the only shared visual artifact for that boundary) | feature-spec references and relevant owner approvals |
 
 For multiple surfaces, apply [the multi-surface scope gate](multi-surface.md). Produce
 only what removes a real implementation ambiguity. The shared System update should be
-single-sourced in root `DESIGN.md`; do not create or maintain a separate Design System
+single-sourced in `<design-root>/DESIGN.md`; do not create or maintain a separate Design System
 manifest in this path.
 
 ## Lint And Diff Gates
 
 The official lint and diff gates require external tool access and network authorization.
-Run lint for every root `DESIGN.md`. Run diff against the previous accepted file for an
+Run lint for every changed `<design-root>/DESIGN.md`. Run diff against the previous accepted file for an
 update; record diff as `Not applicable` for the first accepted creation instead of
 inventing a baseline. If a required tool cannot run, mark the gate `Not verified` and
 keep the readiness result `Not Ready`.

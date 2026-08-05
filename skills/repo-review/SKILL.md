@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when Worktree changes or a fixed snapshot/range need coordinated read-only Standards and Spec findings, completed provider-evidence integration, or selected-source visual-completion review; use audit-* for bounded domain audits and a host security workflow for security-only review."
+description: "Use when Worktree changes or a fixed snapshot/range need coordinated read-only Standards and Spec findings, documentation-authority review, completed provider-evidence integration, or selected-source visual-completion review; use audit-* for bounded domain audits and a host security workflow for security-only review."
 ---
 
 # Repository Review
@@ -51,7 +51,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    dangerous API to a validated vulnerability.
    When the change involves frontend visual or UI-contract behavior, add the
    conditional frontend design-compliance subflow: product requirements or product
-   Feature Spec -> selected-source UI Feature Spec -> root `DESIGN.md` ->
+   Feature Spec -> selected-source UI Feature Spec -> resolved `<design-root>/DESIGN.md` ->
    implementation adapters/config -> runtime/browser evidence.
    When that basis specifically adds or changes motion, gesture behavior, transition
    ownership, or user-visible interaction feedback, also load
@@ -62,11 +62,19 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    When maintainability, duplication, dead/unused code, abstraction, or coupling
    materially applies, load the shared code-quality reference and apply its
    fixed-basis attribution rules inside the Standards axis.
+   When the basis creates, restructures, moves, or deletes authoritative project
+   documentation, load
+   [references/documentation-authority-review.md](references/documentation-authority-review.md).
+   Review current-only authority, index/read-path closure, Product/UI/DESIGN/Map
+   separation, transient evidence placement, structured-artifact admission,
+   source-owner/runtime-identity separation, deleted/untracked files, and stale links.
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
 8. Select only applicable profiles. Delegate bounded frontend, Java, or Rust specialist work only when the user requests it or an independently necessary evidence result cannot be obtained efficiently by the coordinator. Route a security-only change review, vulnerability scan, or validation to an available host security workflow; do not collapse its execution into this Skill. When completed provider evidence is part of a broader review, verify and integrate it while retaining this review's basis, deduplication, evidence status, severity, and verdict.
 9. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
 10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
 11. Run only non-mutating repository checks needed for the selected basis and risk.
+    After any fix, freeze a new complete Worktree or immutable basis and replay the
+    affected checks; a verdict from the old basis cannot clear new changes.
 12. Produce semantic groups, commit messages, and exact staging guidance only when the Worktree commit-readiness profile was requested. Add the Release profile only for an explicit release candidate/readiness question.
 13. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap. Keep an authorized external-review status separate from the local verdict: a submitted request with no attributed response neither creates nor clears a finding.
 14. Freeze the complete local verdict before any optional post-terminal action. When a
@@ -134,6 +142,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
   profile applies, fix its Git/authority/artifact basis and replay write-mode
   generation only in an isolated copy; otherwise review the repository-native
   route/DTO/client/test chain and mark OpenAPI `Not applicable`.
+- Do not approve a documentation rebuild while durable docs still contain
+  superseded decisions, task-time evidence, duplicate authorities, stale indexes,
+  Skill-development reports, or machine sidecars without proven lifecycle owners.
 
 ## Output Contract
 
@@ -146,6 +157,9 @@ Lead with mode/profile, basis, scope, exclusions, and validation, then severity-
 - See [references/checklist.md](references/checklist.md) for immutable basis, severity, and release review.
 - See [references/protocol-contracts.md](references/protocol-contracts.md) only for an existing or explicitly requested OpenAPI/generated-client review gate.
 - See [references/standards-and-spec.md](references/standards-and-spec.md) for independent Standards and Spec review axes.
+- Read [references/documentation-authority-review.md](references/documentation-authority-review.md)
+  when the basis changes authoritative documentation structure or claims a terminal
+  documentation rebuild.
 - Read [references/interaction-motion-review.md](references/interaction-motion-review.md)
   only when the selected basis adds or changes motion, gesture behavior, transition
   ownership, or user-visible interaction feedback.

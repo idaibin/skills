@@ -1,6 +1,6 @@
 ---
 name: product-spec
-description: "Use when an ambiguous product feature, new product boundary, or named product fact source must become the smallest implementation-ready specification; owns product decisions and authorized spec artifacts, not shared domain-language/lifecycle conflicts, selected-source UI specification, or implementation."
+description: "Use when an ambiguous product feature, new product boundary, named product fact source, or authorized product-document rebuild must become the smallest current implementation-ready specification; owns product decisions and terminal product artifacts, not shared domain-language/lifecycle conflicts, selected-source UI specification, or implementation."
 ---
 
 # Product Specification
@@ -62,6 +62,12 @@ writes. Keep technical design and source mutation with their existing owners.
 9. Preview product-document changes before writing unless the user explicitly
    requested implementation of the document edit. Validate links and repository
    checks that apply to the changed artifact.
+10. For an authorized documentation rebuild, make every durable product artifact a
+    current terminal contract: reconcile indexes and slices, remove superseded
+    decisions and task-time validation narratives, repair links, and let Git retain
+    formal history. Put local reviews, handoffs, captures, and environment snapshots
+    under a verified ignored `.codex/` location; publish time-bound status only when
+    a named team consumer and revalidation owner require it.
 
 ## Do Not Use For
 
@@ -95,6 +101,11 @@ writes. Keep technical design and source mutation with their existing owners.
   to host planning.
 - Treat static checks as structure evidence only. Mark behavior, workflow, runtime,
   and consumer claims `Not verified` until directly evidenced.
+- Do not use edit, approval, or validation dates as document versions. Retain a date
+  only when the date itself changes product behavior, eligibility, rollout, or
+  acceptance. Do not create YAML/JSON sidecars merely for AI convenience; require a
+  named owner, producer, consumer, version, validator, drift policy, and retirement
+  rule, otherwise keep Markdown as the single durable authority.
 
 ## Output Contract
 

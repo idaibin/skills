@@ -17,7 +17,7 @@ Resolve conflicts in this order:
 2. Effective repository guidance, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 3. Declared and applicable product/UI contracts: product requirements or product
    Feature Specs define behavior and acceptance; selected-source UI Feature Specs
-   and root `DESIGN.md` define applicable UI and shared visual semantics.
+   and resolved `<design-root>/DESIGN.md` define applicable UI and shared visual semantics.
 4. Live code, config, components, and the repository-declared visual system define
    current implementation facts. They do not override an applicable contract; report
    a conflict as implementation drift.
@@ -25,7 +25,7 @@ Resolve conflicts in this order:
 6. External reference repositories.
 
 Never rewrite a working local structure merely to match this skill or an external repository.
-When a repository has not adopted root `DESIGN.md`, follow its declared visual-system
+When a proven visual boundary has not adopted `DESIGN.md`, follow its declared visual-system
 owner; do not invent one.
 
 ## Workflow
@@ -54,7 +54,7 @@ owner; do not invent one.
    the audit through its signal-to-evidence chain. Do not activate it from frontend
    directories, framework presence, or literals alone.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
-6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, trace nested effective padding by axis, and cover only the applicable task-completion seam. When the audit explicitly covers visual direction, an existing-surface redesign, theme/accent consistency, density, or anti-slop drift, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); require an accepted direction, analogue, measurement, or user impact rather than treating taste as a finding. When a root `DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
+6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, trace nested effective padding by axis, and cover only the applicable task-completion seam. When the audit explicitly covers visual direction, an existing-surface redesign, theme/accent consistency, density, or anti-slop drift, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); require an accepted direction, analogue, measurement, or user impact rather than treating taste as a finding. When a resolved `<design-root>/DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
 7. Trace only selected profiles without changing the repository. Do not perform shallow checks for excluded profiles merely to imply coverage. When code-quality concerns materially apply, load the shared code-quality reference with audit semantics and the selected framework/build reachability rules.
 8. Audit applicable loading, empty, error, partial, retry, optimistic, stale, cancellation, keyboard, focus, and long-task behavior within the selected profiles.
 9. Use non-mutating repository checks and request browser or real-client evidence only when a selected claim cannot be proven statically.
@@ -96,7 +96,7 @@ owner; do not invent one.
 
 - Repository orientation, commands, reuse inventory, or docs/code alignment without an audit request; use `repo-map`.
 - Frontend implementation, modification, or refactoring; use `dev-frontend`.
-- Creating a repository-root `DESIGN.md` or selected-source Feature Specs; use `ui-spec`.
+- Creating a resolved `<design-root>/DESIGN.md` or selected-source Feature Specs; use `ui-spec`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
 - Owning Worktree readiness or immutable repository/range/PR/release coordination; use `repo-review`, which may delegate a bounded frontend surface here.
 - Actual staging, commit, rebase/squash, push, or delivery; use `repo-delivery`.
@@ -114,13 +114,13 @@ Start with the inspection snapshot, selected product, framework, styling, and au
 
 - Read [architecture-and-ownership.md](references/architecture-and-ownership.md) for discovery, directories, routes, pages, and file responsibility.
 - Read [specification-authorities.md](references/specification-authorities.md) when
-  product requirements, root `DESIGN.md`, slice UI contracts, or their drift are in
+  product requirements, resolved `<design-root>/DESIGN.md`, slice UI contracts, or their drift are in
   the selected audit scope.
 - Read [frontend-layout-governance.md](references/frontend-layout-governance.md)
   for evidence and false-positive rules when Component/Layout is selected.
 - Read [visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md) only when the selected audit covers visual direction, redesign mode, theme/accent consistency, density, or anti-slop drift.
 - Read [design-md-compliance.md](references/design-md-compliance.md) only when an
-  applicable Component/Layout audit includes root `DESIGN.md` consistency.
+  applicable Component/Layout audit includes resolved `<design-root>/DESIGN.md` consistency.
 - Read [frontend-visual-evidence.md](references/frontend-visual-evidence.md) when a selected source or visual-completion claim is in scope; validate staged evidence offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
 - Read [framework-profiles.md](references/framework-profiles.md) for React, Vue Composition, Vue Options, and repository-native audit rules.
 - Read [component-system.md](references/component-system.md) when selected Architecture/Reuse or Component/Layout work examines primitives, feature components, composition, variants, or reuse decisions.

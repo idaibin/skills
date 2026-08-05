@@ -43,6 +43,24 @@ sibling specification.
   instead of silently changing tracked policy. A handoff is not automatically loaded
   and is not a substitute for durable product facts.
 
+## Terminal Documents And Evidence
+
+Durable product documents describe the latest accepted product contract. Git stores
+their formal history; do not keep edit dates, approval timestamps, superseded
+decisions, migration narratives, or task validation logs in the current spec. A
+business-effective date remains only when the date itself changes user eligibility,
+behavior, rollout, or acceptance.
+
+Use a verified ignored `.codex/` workspace for local reviews, captures, handoffs,
+comparison reports, and environment snapshots. Publish a time-bound status document
+only when a named team consumer needs it and the document declares its fixed basis,
+revalidation owner, and refresh or expiry condition.
+
+Do not add YAML, JSON, Schema, or another sidecar merely to make a spec easier for an
+AI to parse. A durable structured artifact requires all of: named owner, producer,
+real consumer, semantic version, validator, drift policy, and retirement rule. When
+any item is absent, keep Markdown as the single authority.
+
 ## Authority
 
 `product-spec` may update product documents only after explicit authorization. It

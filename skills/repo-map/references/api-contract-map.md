@@ -8,14 +8,16 @@ clients and optional generated pipelines; it is not an implementation prerequisi
 
 Verify the shortest decisive current-source chain:
 
-1. service and owner/provider root;
-2. repository-native authority and canonical path;
-3. route or registration entry, method/path, and operation ID when present;
-4. request, success, error, authentication, and authorization declaration owners;
-5. executable exchange artifact and generator details only when current source owns them;
-6. native or generated client package/path and access command when applicable;
-7. one or two representative real consumers and the touched DTO ownership boundary;
-8. validation, compatibility, contract-test, frontend-check, and CI entrypoints that
+1. canonical source/module owner and provider root;
+2. build/deploy owner when it differs;
+3. runtime service identity and gateway/registration alias when they differ;
+4. repository-native authority and canonical path;
+5. route or registration entry, method/path, and operation ID when present;
+6. request, success, error, authentication, and authorization declaration owners;
+7. executable exchange artifact and generator details only when current source owns them;
+8. native or generated client package/path and access command when applicable;
+9. one or two representative real consumers and the touched DTO ownership boundary;
+10. validation, compatibility, contract-test, frontend-check, and CI entrypoints that
    exist in current source.
 
 Use `Not applicable` when no generated contract pipeline is intended. Record a
@@ -30,7 +32,10 @@ Use one row per bounded operation or independently governed service contract:
 | Field | Required content |
 | --- | --- |
 | Product/contract term | Stable business or capability name; link the product fact source instead of copying it |
-| Service and owner root | Canonical service plus the owner/provider boundary that limits discovery and stale repair |
+| Source/module owner | Canonical source root and provider boundary that limit discovery and stale repair |
+| Build/deploy owner | Owning manifest/module/pipeline, or `same as source owner` |
+| Runtime identity | Service/discovery name used at runtime; never treated as source ownership by itself |
+| Gateway/registration alias | External context, route prefix, registration alias, or `Not applicable` |
 | Authority | Repository-native owner/path/symbol; code-first or contract-first only when an executable exchange pipeline exists |
 | Registration | Route/schema registration, method/path, operation ID, and actual visibility |
 | Request/success/error owners | Canonical DTO/envelope/error declaration paths or symbols |
@@ -61,6 +66,8 @@ The map may link that record as evidence but must recheck current source before 
   the entry stale and perform fresh bounded discovery; never cross the old root.
 - Use Git history only to explain a current-source-proven rename or move. Never use a
   historical artifact or consumer to prove current authority or reusability.
+- A module may move while retaining a legacy runtime service name. Record both facts
+  without reporting a conflict when current registration, adapters, and tests agree.
 
 ## Verification Boundary
 

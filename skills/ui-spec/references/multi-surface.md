@@ -19,9 +19,9 @@ default unless facts prove they are one domain.
 | One page/flow | One Feature Spec contract |
 | Multiple connected surfaces in one domain | One domain-level Feature Spec contract |
 | Multiple independent domains with shared visual rules | One short shared index + one independently loadable Feature Spec per domain |
-| Shared token/component semantic change across slices | Design System Spec update to repository-root `DESIGN.md` |
+| Shared token/component semantic change across slices | Design System Spec update to resolved `<design-root>/DESIGN.md` |
 
-The shared index contains only source identity, the root `DESIGN.md` link and accepted
+The shared index contains only source identity, the resolved `DESIGN.md` link and accepted
 revision, inventory, per-slice links, per-slice status, exclusions, and dependencies.
 Do not copy shared visual rules into the index.
 
@@ -39,7 +39,7 @@ Read only this order when implementing one slice:
 
 1. effective repository guidance and declared authority paths or exceptions
 2. applicable product foundation/index facts and target product slice
-3. root `DESIGN.md`
+3. resolved `<design-root>/DESIGN.md`
 4. shared UI index (for multi-slice tasks only)
 5. target UI slice contract
 
@@ -59,9 +59,9 @@ Evaluate every requested slice independently.
 
 When a request requires shared token/component change:
 
-- Update repository-root `DESIGN.md` content.
-- Before handoff, run official lint and diff gates on `DESIGN.md`:
-  - `npx -p @google/design.md@0.3.0 designmd lint --format json DESIGN.md`
-  - `npx -p @google/design.md@0.3.0 designmd diff <before-DESIGN.md> DESIGN.md --format json`
+- Update resolved `<design-root>/DESIGN.md` content.
+- Before handoff, run official lint and diff gates against the resolved design root:
+  - `npx -p @google/design.md@0.3.0 designmd lint --format json <design-root>/DESIGN.md`
+  - `npx -p @google/design.md@0.3.0 designmd diff <before-DESIGN.md> <design-root>/DESIGN.md --format json`
 
 No additional machine artifact is required for this gate.

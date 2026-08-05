@@ -79,3 +79,11 @@ package-wide verdict.
 - Stop and route deep domain or `ui-spec` ownership to the proper Skill.
 - Stop before implementation, Git mutation, runtime verification, or technical
   interface definition. Route current interface mapping separately to `repo-map`.
+
+## Documentation Rebuild Closure
+
+When a full rebuild is explicitly authorized, finish only after the product index,
+foundation, all affected slices, cross-links, and deleted paths agree. Remove
+superseded decisions, task-time verification, and duplicate authorities from durable
+docs; verify the ignored location for any retained local evidence. Scan tracked and
+untracked files because ordinary diffs do not expose the full documentation tree.

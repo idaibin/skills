@@ -44,8 +44,8 @@ slice is implementable. Omit this structure for settled or low-impact facts:
 | --- | --- | --- | --- | --- | --- | --- |
 | `<confirmed product behavior or scope>` | `<why it matters now>` | `<verified facts or explicit constraints>` | `<why this option>` | `<cost or limitation>` | `<material alternative and reason, or omitted>` | `<slice and observable consequence>` |
 
-When a visual decision is relevant, link the applicable UI contract or root
-`DESIGN.md` in the surrounding section. Do not use this table to choose UI style,
+When a visual decision is relevant, link the applicable UI contract or resolved
+`<design-root>/DESIGN.md` in the surrounding section. Do not use this table to choose UI style,
 tokens, components, geometry, motion values, libraries, or implementation details.
 
 Use the product fact trace only for facts that materially affect a slice or its
@@ -84,3 +84,9 @@ Move multi-context language, lifecycle, invariants, and complex state modeling t
 Preview the smallest patch to the named artifact. Preserve its structure and
 authority, identify the confirmed source for each changed fact, and do not create
 fallback files merely because the named path is missing.
+
+For an explicitly authorized full documentation rebuild, preserve authority rather
+than historical layout: consolidate duplicate indexes, rewrite each surviving slice
+to its current Confirmed/Assumption/Open/Rejected/Deferred state, remove superseded
+decision and validation narratives, and repair all links. Do not add a changelog or
+edit-date version field to the terminal artifact.

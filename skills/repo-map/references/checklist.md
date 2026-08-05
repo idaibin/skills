@@ -12,12 +12,17 @@
 8. Verify commands from executable sources such as manifests, task files, and CI config.
 9. Verify reusable contracts through definitions, access/registration entries, representative callers, and tests where needed.
 10. Update only sections whose evidence was checked and verify the final diff preserves unrelated hunks.
+11. For an explicitly authorized full rebuild, reconcile every root/specialist
+    index, link, owner, consumer, moved/deleted path, and untracked artifact before
+    completion; remove task narratives and superseded routes from the durable map.
 
 ## Required Repo-Map Content
 
 - Repository purpose and real project boundaries
 - Directory structure with ownership, not an exhaustive file tree
 - Technical architecture and runtime/deployment boundaries
+- Separate canonical/source owner, build/deploy owner, runtime service identity,
+  and gateway/registration alias when they differ
 - Build and dependency authorities: owning manifests, runtime/toolchain source,
   internal module edges, and routing-relevant direct external dependencies; for a
   Java/JVM project, apply `java-build-and-dependency-map.md`
@@ -47,6 +52,8 @@
 Do not include content obtainable from one directory listing, an exhaustive symbol or
 dependency catalog, configuration values, credentials, or transient Git/local/runtime
 status.
+Do not create structured map sidecars without a named owner, producer, consumer,
+semantic version, validator, drift policy, and retirement rule.
 Do not flatten specialist maps into the root index. If a UI component map, API
 contract map, deployment map, or similar artifact already owns bounded detail,
 verify it, link it, and keep the root entry to authority, purpose, and reading order.

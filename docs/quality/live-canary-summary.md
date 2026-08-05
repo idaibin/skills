@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:0fb414fa618084a0ee568303041ac656194fd59923fbc46a73e65f545916703b`
+- Package digest: `sha256:c197e18772acbd896f123ed7fe6a7178b19cf23783b98e7a3464228f1fc1acb1`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
   fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
@@ -23,6 +23,7 @@ behavior certification and does not replace target-environment runtime validatio
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
 | Catalog discovery | Pass | `npx skills@latest add ./skills --list` validated the local publishable source and found exactly 16 packages. |
 | Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
+| Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership and ignored task-evidence placement across the synchronized protocol copies. This is static contract evidence, not host-routing or browser proof. |
 | Isolated project-local install | Not verified | The five scoped packages were not installed into a disposable project for this digest. |
 | Installed-copy parity | Not verified | No installed-copy comparison was accepted for this digest. |
 | Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |

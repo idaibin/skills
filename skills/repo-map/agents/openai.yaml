@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Map"
   short_description: "Map architecture, dependencies, guidance, and authority"
-  default_prompt: "Use $repo-map to resolve real roots and maintain the smallest semantic map or explicitly requested layered AGENTS.md guidance, including critical dependency routes, Maven/Gradle Java boundaries, justified subproject files, verified reuse, and owner-bounded stale repair."
+  default_prompt: "Use $repo-map to resolve real roots and maintain or explicitly rebuild the smallest current semantic map, separating source/build/runtime identities while preserving verified reuse and owner-bounded repair."

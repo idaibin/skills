@@ -1,6 +1,6 @@
 ---
 name: repo-map
-description: "Use when a Git or non-Git workspace needs a durable map of roots, ownership, architecture, commands, dependency routes, reusable contracts, Java build boundaries, or layered AGENTS.md guidance, or an existing map/guidance file needs evidence-based repair; not for task-local discovery or change review."
+description: "Use when a Git or non-Git workspace needs a current durable map or authorized rebuild of roots, source/build/runtime identities, ownership, architecture, commands, dependency routes, reusable contracts, Java build boundaries, or layered AGENTS.md guidance; not for task-local discovery or change review."
 ---
 
 # Repository Map
@@ -38,7 +38,7 @@ Map stable workspace or repository semantics into either a concise navigation la
    For reusable UI components, record the product/design term, visual cue or
    semantic job, canonical path and symbol, export/registration path, owning
    provider root, representative consumers, states/variants, reuse boundary,
-   and current-source evidence. When the repository adopts root `DESIGN.md`,
+   and current-source evidence. When the project adopts a resolved `<design-root>/DESIGN.md`,
    also record its exact map-root-relative path plus anchor or semantic binding;
    do not copy token values or design rules. Keep this a high-value index, not a
    catalog. Load `references/frontend-inventory.md` only for a requested frontend
@@ -111,7 +111,15 @@ Map stable workspace or repository semantics into either a concise navigation la
 - Never treat a map miss as proof that no implementation exists. Record the live search scope before allowing a new declaration.
 - Say `Not found` for missing items and `Not verified` for unchecked or runtime claims.
 - Keep current truth separate from history, plans, and aspirational architecture.
+- Keep canonical/source owner, build/deploy owner, runtime service identity, and
+  gateway/registration alias as separate fields when they differ; a stable runtime
+  name does not move source ownership back to an old module.
 - Repair stale navigation locally. Never rebuild the whole document merely because one path or parent directory disappeared.
+- When the user explicitly authorizes a full map rebuild, reconcile every root and
+  specialist index, link, owner, consumer, and deletion as one current-state closure;
+  remove task narratives and superseded routes instead of preserving them as history.
+- Do not add YAML/JSON map sidecars for machine convenience without a named owner,
+  producer, consumer, version, validator, drift policy, and retirement rule.
 - Never ascend or search outside a recorded owner/provider root to rescue a stale
   component entry. If that root no longer exists, mark the entry stale and use a
   fresh bounded live search with newly proven ownership.

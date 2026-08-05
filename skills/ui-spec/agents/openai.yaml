@@ -1,4 +1,4 @@
 interface:
   display_name: "UI Specification"
   short_description: "Specify traceable UI targets and visual evidence"
-  default_prompt: "Use $ui-spec to freeze the selected source, separate source targets from current runtime, write traceable Feature Spec deltas, and update root DESIGN.md only when shared visual semantics change."
+  default_prompt: "Use $ui-spec to freeze the selected source, resolve the shared design root, separate source targets from current runtime, write traceable Feature Spec deltas, and update that boundary's DESIGN.md only when shared visual semantics change."

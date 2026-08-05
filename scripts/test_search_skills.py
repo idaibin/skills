@@ -75,6 +75,19 @@ class SearchSkillsTests(unittest.TestCase):
         results = SEARCH.search(self.index, "code review release gate")
         self.assertEqual("repo-review", results[0]["name"])
 
+    def test_documentation_authority_queries_route_to_owners(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        cases = {
+            "终态产品文档": "product-spec",
+            "设计根目录和视觉证据生命周期": "ui-spec",
+            "repository map source owner runtime identity": "repo-map",
+            "文档权威审查 worktree": "repo-review",
+        }
+        for query, owner in cases.items():
+            with self.subTest(query=query):
+                results = SEARCH.search(index, query)
+                self.assertEqual(owner, results[0]["owner"])
+
     def test_unmatched_query_returns_no_results(self) -> None:
         self.assertEqual([], SEARCH.search(self.index, "calendar meeting schedule"))
 

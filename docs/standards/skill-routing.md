@@ -14,11 +14,11 @@ means implementation finishes before separately authorized Git delivery.
 
 | Skill | Owns | Mutation |
 | --- | --- | --- |
-| `repo-map` | repository boundaries, commands, reuse, durable maps, and explicitly requested layered root/subproject guidance | named map or guidance artifacts only |
+| `repo-map` | current repository boundaries, commands, reuse, source/runtime identities, durable maps, and explicitly requested layered root/subproject guidance | named map or guidance artifacts only |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
-| `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
-| `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion | read-only |
+| `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
+| `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and two-pass visual closure | source files |
 | `dev-java` | requested Java/Spring implementation and migration | source files |
 | `dev-rust` | requested Rust implementation | source files |
@@ -143,14 +143,22 @@ coverage.
 
 For a frontend surface with applicable contracts, `dev-frontend` reads the effective
 instructions, product requirements or product Feature Spec, selected-source UI
-Feature Spec, root `DESIGN.md`, any existing repo-map only for navigation, then live
+Feature Spec, resolved `<design-root>/DESIGN.md`, any existing repo-map only for navigation, then live
 source/config before editing. The two Feature Spec types have separate authorities;
 when both apply they are both read, while missing optional artifacts remain separate
-`Not verified` gaps only when they affect behavior or acceptance. Root `DESIGN.md`
+`Not verified` gaps only when they affect behavior or acceptance. The resolved `DESIGN.md`
 owns shared visual semantics; themes and component libraries are implementation adapters. A
 Component/Layout `audit-frontend` profile may trace that contract to adapters,
 components/consumers, and runtime evidence. `repo-review` keeps the sole
 change-basis gateway and adds this check only for visual or UI-contract changes.
+
+For authoritative documentation rebuilds, `product-spec`, `ui-spec`, and `repo-map`
+write only their owned current terminal contracts. Git retains formal history;
+verified ignored `.codex/` locations own task reviews, handoffs, captures, comparison
+passes, and environment snapshots. `repo-review` activates its conditional
+Documentation Authority Review to verify index/link/deletion closure, authority
+separation, structured-artifact lifecycle, source-owner/runtime-identity separation,
+and absence of Skill-development reports from the product repository.
 
 ## Review Checklist
 

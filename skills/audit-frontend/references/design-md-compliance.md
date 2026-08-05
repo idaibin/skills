@@ -1,6 +1,6 @@
 # DESIGN.md Consistency
 
-Use only inside a selected Component/Layout audit with an applicable repository-root
+Use only inside a selected Component/Layout audit with an applicable resolved `<design-root>`
 `DESIGN.md`. This is a bounded evidence chain, not a new audit entry point or a
 replacement for `repo-review`.
 

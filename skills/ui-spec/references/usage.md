@@ -9,13 +9,15 @@
 - changing shared tokens, component semantics, variants, state vocabulary, or visual rules through the conditional Design System Spec profile;
 - extracting, maintaining, or evaluating an accepted shared UI contract without editing product source.
 
-Using existing shared components does not activate Design System Spec. A normal page or flow stays in Feature Spec and must reference current owners in the repo root `DESIGN.md`.
+Using existing shared components does not activate Design System Spec. A normal page
+or flow stays in Feature Spec and must reference current owners in the resolved
+`<design-root>/DESIGN.md`.
 
 ## Typical Chain
 
 ```text
 visual exploration needed -> host Product Design -> selected visual source
-root DESIGN.md + selected visual source + product facts -> ui-spec
+resolved design-root DESIGN.md + selected visual source + product facts -> ui-spec
   -> Feature Spec (reads DESIGN.md, does not rewrite it) -> dev-frontend
   -> Design System Spec (updates DESIGN.md) -> affected Feature Specs
   -> ops-browser or ops-client -> audit-frontend -> repo-review -> repo-delivery
@@ -25,7 +27,11 @@ A task with an already selected visual source may start directly with `ui-spec`.
 
 ## Artifact Locations
 
-Keep unfinished specifications directly under `.codex/artifacts/` as `ui-<YYYYMMDD-HHmmss>-<slice-id>.md`; do not create nested task directories. For explicitly approved durable publication, follow [the UI documentation boundaries](documentation-boundaries.md): keep shared visual semantics only in the repository-root `DESIGN.md`, write Feature Specs to `docs/ui/<slice-id>/spec.md`, use the same slice ID as related `docs/prd/` facts, and never add a `docs/specs/` wrapper or another shared visual authority.
+Keep unfinished specifications under a verified ignored `.codex/artifacts/` path. For
+explicitly approved durable publication, follow [the UI documentation boundaries](documentation-boundaries.md):
+keep shared visual semantics only in the resolved `<design-root>/DESIGN.md`, write
+Feature Specs to the project convention such as `docs/ui/<slice-id>/spec.md`, use the
+same slice ID as related product facts, and never add another shared visual authority.
 
 ## Handoff Examples
 

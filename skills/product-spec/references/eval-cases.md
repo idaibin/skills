@@ -1,5 +1,14 @@
 # Product Specification Eval Cases
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Independent Review Outlet Eval](#independent-review-outlet-eval)
+- [Scenario Eval](#scenario-eval)
+- [Quality Eval](#quality-eval)
+- [Scoring](#scoring)
+
 ## Trigger Eval
 
 | Prompt | Expected |
@@ -19,7 +28,7 @@
 | `Implement the approved React form and tests now.` | Prefer `dev-frontend`. |
 | `Implement the approved Rust change and tests now.` | Prefer `dev-rust`. |
 | `Resolve conflicting shared business language and rules across three product areas, including lifecycle or context depth only where material.` | Prefer `domain-modeling`. |
-| `Create a selected-source Feature Spec at docs/ui/<slice-id>/spec.md that references the root DESIGN.md.` | Prefer `ui-spec`. |
+| `Create a selected-source Feature Spec at the project UI-spec location that references resolved <design-root>/DESIGN.md.` | Prefer `ui-spec`. |
 | `Map existing components, owners, exports, consumers, and reuse boundaries.` | Prefer `repo-map`. |
 | `Map the current implementation interface, owner, callers, and consumers.` | Prefer `repo-map`; repository topology is outside `product-spec`. |
 | `Review this feature branch against the approved spec.` | Prefer `repo-review`. |
@@ -45,6 +54,9 @@
 | New module inside an existing product | Use Feature Spec unless the product boundary is being redefined. | Uses Foundation merely because work is large. |
 | Existing Foundation Spec is Ready and source exposes one bounded completion gap | Preserve the foundation and produce one Feature Spec for that gap when downstream implementation was requested. | Rewrites product positioning, invents a roadmap, or treats current code as authority for an unresolved product choice. |
 | Existing positioning is consistently split across a README, product map, and policy manifest | Use the smallest verified source set as Feature Spec evidence. | Creates a new Foundation Spec only to consolidate documents or ignores a conflicting authority. |
+| User authorizes a full product-document rebuild | Reconcile the index and every affected slice to one current terminal contract, remove superseded decisions and task validation, repair links, and let Git retain history. | Renames folders only, preserves an edit timeline in the final spec, or leaves duplicate authorities. |
+| User asks for `feature.yaml` only so AI can parse the spec | Keep Markdown authoritative unless owner, producer, consumer, version, validator, drift policy, and retirement are all proven. | Creates a sidecar with no real lifecycle. |
+| A regulatory cutoff date changes eligibility | Preserve the business-effective date in the current product rule. | Removes all dates mechanically or confuses an edit timestamp with business semantics. |
 | Repository already has an RFC convention | Use the RFC location and shape. | Creates `docs/prd` in parallel. |
 | No spec convention exists and one feature slice is authorized for durable publication | Preview `docs/prd/<slice-id>/spec.md`; do not create an index. | Adds `docs/specs/`, creates `docs/prd/index.md` for one slice, or creates a glossary, ADR, and handoff automatically. |
 | No spec convention exists and several independent feature slices are authorized | Use `docs/prd/index.md` plus `docs/prd/<slice-id>/spec.md` for each confirmed slice. | Creates one omnibus PRD or adds a `docs/specs/` wrapper. |
@@ -55,14 +67,14 @@
 | A confirmed product fact changes one slice's scope or acceptance but creates no data risk | Trace only the affected slice and observable acceptance consequence; omit any data-risk phrase rather than inventing one. | Adds a fictional risk, forces `N/A` ceremony, or omits the material acceptance impact. |
 | Two material decisions remain and the second depends on the first | Ask the prerequisite decision first with a recommendation, trade-off, and affected slices; recompute the frontier after the answer. | Asks both questions together or guesses the dependent answer. |
 | A material product choice has two viable behaviors with different recovery and acceptance outcomes | Record the confirmed behavior with user need, verified constraints/evidence, reason, principal trade-off, materially rejected alternative, and affected slice/acceptance. | Records only the chosen label, invents evidence, or turns the rationale into technical/UI design. |
-| A product choice depends on an approved visual direction | Record only the product behavior and acceptance consequence, then link the applicable UI contract or root DESIGN.md. | Selects a UI library, visual style, token, layout, animation curve, or duration inside the product spec. |
+| A product choice depends on an approved visual direction | Record only the product behavior and acceptance consequence, then link the applicable UI contract or resolved `<design-root>/DESIGN.md`. | Selects a UI library, visual style, token, layout, animation curve, or duration inside the product spec. |
 | A vague request contains many conceivable branches but only permissions and recovery can change the selected slice | Pressure-test only permissions and recovery, then stop at the slice Ready gate. | Exhaustively interviews every preference or unrelated future branch. |
 | The user stops before resolving a material decision for one of several slices | Preserve that decision as Open and keep only the affected slice not Ready; allow unrelated confirmed slices to proceed. | Invents confirmation, claims shared understanding, or blocks every slice. |
 | The selected slice already passes its Ready gate | Synthesize without activating the pressure test. | Reopens settled product decisions without contradictory evidence. |
 | Missing decision affects only an internal naming choice | Mark Assumption or Deferred and declare Ready for the slice. | Blocks implementation ceremony without behavioral impact. |
 | Missing decision changes permission or error behavior | Keep the slice not ready and ask one decision question. | Lets implementation invent the behavior. |
 | Feature spans several bounded contexts | Route the shared language/lifecycle/invariants to `domain-modeling`. | Builds a complete domain model inside the spec. |
-| Feature changes shared component semantics/tokens | Route the root `DESIGN.md` update to `ui-spec`; keep product behavior in the product spec and add a Feature Spec only for affected implementation details. | Duplicates a design system. |
+| Feature changes shared component semantics/tokens | Route the resolved `<design-root>/DESIGN.md` update to `ui-spec`; keep product behavior in the product spec and add a Feature Spec only for affected implementation details. | Duplicates a design system. |
 | Request asks for current implementation-interface facts | Route that mapping separately to `repo-map`; keep the product spec behavioral. | Adds technical interface definitions to the product spec. |
 
 ## Quality Eval
@@ -80,6 +92,8 @@
 | Fact-to-acceptance trace | Adds the optional two-column trace only when a classified/evidenced fact materially affects scope, user outcome, data risk, or acceptance; links it to the affected slice and observable consequence. | Requires the table for every feature, duplicates the decision record, inventories harmless facts, or crosses into implementation/interface design. |
 | Artifact authority | Uses existing convention and writes only explicitly authorized product facts. | Overwrites or invents an authority. |
 | Conditional artifacts | Creates glossary, ADR, UI evidence, or handoff only when separately justified. | Treats them as minimum output. |
+| Terminal document lifecycle | Keeps durable specs current-only, Git as formal history, and local reviews/captures in ignored `.codex/`; publishes time-bound status only for a named team consumer and revalidation owner. | Stores superseded decisions, approval/edit dates, or task validation as current product authority. |
+| Structured artifact admission | Requires owner, producer, consumer, version, validator, drift policy, and retirement before adding a sidecar. | Treats AI readability or file extension as sufficient. |
 | Local handoff visibility | Writes an unfinished local continuation directly under a verified ignored `.codex/handoffs/` parent as `product-<YYYYMMDD-HHmmss>.md`; uses a repository-approved docs location only for explicitly requested team-shared continuation. | Creates nested task directories, tracks a local-private handoff, silently edits ignore policy, or treats a handoff as durable product authority. |
 | Domain boundary | Keeps slice-local rules and routes deep shared modeling. | Absorbs `domain-modeling`. |
 | UI contract boundary | Keeps product behavior and routes selected-source/shared visual-system specification ownership. | Absorbs `ui-spec`. |

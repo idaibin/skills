@@ -22,7 +22,7 @@ Use this checklist when implementing or reviewing frontend changes.
 - Identify the frontend project class, pinned runtime/package manager, lockfile, dependency policy, script contract, directory/naming standard, and documented exceptions.
 - Inspect only target page, component, route, service, hook or composable, store, type, style, shared UI, and layout owner files needed for the request.
 - Check existing imports and nearby patterns before adding libraries, aliases, icons, helpers, or components.
-- For selected-source work, read the current product/UI slice, root `DESIGN.md`,
+- For selected-source work, read the current product/UI slice, resolved `<design-root>/DESIGN.md`,
   selected-source evidence, delta rows, and readiness. Stop on unavailable source,
   `Partial`/`Not Ready`, unresolved target viewport/state, or missing P1 asset owner.
 - Map every applicable acceptance ID to owner file/component,

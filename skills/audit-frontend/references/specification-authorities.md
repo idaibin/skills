@@ -6,7 +6,8 @@
   semantics, compatibility, and product acceptance. Use the repository's declared
   requirement authority or established convention. `PRD` is an authority role, not
   a required root filename or a universal Markdown schema.
-- **Shared visual semantics:** the repository-root `DESIGN.md` when the repository
+- **Shared visual semantics:** the resolved `<design-root>/DESIGN.md` when effective
+  guidance, shared-system ownership, and actual consumers prove that boundary and it
   adopts the Google DESIGN.md contract. It owns shared tokens, component semantics,
   variants, and cross-surface visual rules.
 - **Slice UI contract:** the accepted selected-source contract for one page, flow, or
@@ -28,9 +29,9 @@ approval state.
 2. Read the repository's existing product foundation or shared index only when the
    target slice depends on it, then read the target product slice. Do not load sibling
    slices by default.
-3. When UI contracts are relevant, read the repository-root `DESIGN.md`, then any
-   applicable UI index and the target UI slice. Do not treat another `DESIGN.md` path
-   or generated metadata as shared visual authority.
+3. When UI contracts are relevant, resolve and read `<design-root>/DESIGN.md`, then
+   the project-declared UI index when applicable and the target UI slice. Do not infer
+   the design root from the Git root or treat generated metadata as shared authority.
 4. Cross-check implementation and runtime evidence against those contracts without
    silently treating current code as approval for an unresolved product or visual
    decision.

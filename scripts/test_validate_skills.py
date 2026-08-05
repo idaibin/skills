@@ -666,6 +666,9 @@ class ValidatorTests(unittest.TestCase):
             with self.subTest(owner=owner):
                 self.assertNotIn("project grounding", indexed[owner]["keywords"])
         self.assertIn("grounded repository ownership map", indexed["repo-map"]["keywords"])
+        self.assertIn("multi-identity repository map", indexed["repo-map"]["keywords"])
+        self.assertIn("canonical ownership identity map", indexed["repo-map"]["keywords"])
+        self.assertIn("documentation-authority rebuild map", indexed["repo-map"]["keywords"])
         self.assertIn("grounded fixed-basis review", indexed["repo-review"]["keywords"])
 
     def test_repo_delivery_grounding_record_never_inverts_git_authority(self) -> None:

@@ -17,7 +17,7 @@ audit. It provides shared vocabulary and evidence rules; it is not a CSS guide,
 design-token table, breakpoint catalog, or framework recipe.
 
 - Product requirements own user tasks, behavior, permissions, and acceptance.
-- Root `DESIGN.md` owns adopted shared visual semantics.
+- Resolved `<design-root>/DESIGN.md` owns adopted shared visual semantics.
 - The target UI slice owns observable layout, interaction, responsive, and
   accessibility acceptance for that surface.
 - Repository source owns the current shell, component, styling, and runtime model;
@@ -76,7 +76,7 @@ contract/source/runtime evidence and the exact competing owners.
 
 Classify evidence as:
 
-- **Contract:** approved requirement, root `DESIGN.md`, or target UI slice.
+- **Contract:** approved requirement, resolved `<design-root>/DESIGN.md`, or target UI slice.
 - **Source:** reachable DOM/component/style declarations and their cascade or
   composition path.
 - **Runtime:** rendered geometry, computed styles, viewport/window behavior,

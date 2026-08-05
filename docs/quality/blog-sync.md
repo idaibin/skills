@@ -15,10 +15,11 @@ local path, repository identity, and article filenames are intentionally omitted
 
 - The catalog has 16 public packages after the current source validation, including
   `dev-java` and `audit-java` as separate implementation and read-only audit owners.
-- `ui-spec` requires Google DESIGN.md at the repository root as the sole shared
-  visual authority. It translates a selected visual source into a Feature Spec for
+- `ui-spec` resolves `<design-root>` from guidance, shared-system ownership, and
+  consumers, then uses its Google `DESIGN.md` as the sole shared visual authority for
+  that boundary. It translates a selected visual source into a Feature Spec for
   one page or flow by default; shared tokens, component semantics, variants, or
-  shared visual rules update root `DESIGN.md` through the conditional Design System
+  shared visual rules update `<design-root>/DESIGN.md` through the conditional Design System
   Spec profile. Visual exploration, image generation, critique, and prototypes
   belong to Codex Product Design.
 - `domain-modeling` defaults to shared business terms, ambiguity, rules, and

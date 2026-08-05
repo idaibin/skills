@@ -11,7 +11,7 @@ Trace only the applicable authorities and reachable implementation:
 ```text
 product behavior or acceptance
   -> selected-source UI contract when applicable
-  -> root DESIGN.md or repository motion tokens when adopted
+  -> resolved design-root DESIGN.md or repository motion tokens when adopted
   -> changed component/style/state ownership
   -> runtime/browser evidence when the claim depends on rendered behavior
 ```

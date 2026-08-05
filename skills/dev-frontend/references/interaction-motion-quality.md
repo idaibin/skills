@@ -6,7 +6,7 @@ load it for every frontend edit or use it to redesign an approved surface.
 
 ## Authority And Purpose
 
-1. Read the applicable product behavior, UI contract, root `DESIGN.md`, and existing
+1. Read the applicable product behavior, UI contract, resolved `<design-root>/DESIGN.md`, and existing
    component or motion tokens before choosing an implementation.
 2. State the communication purpose: state indication, action feedback, spatial
    relationship, change explanation, or prevention of a jarring transition. Remove or

@@ -72,13 +72,13 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 
 | Skill | Use when |
 | --- | --- |
-| `product-spec` | Product behavior, scope, rules, states, or acceptance must become one implementation-ready feature/foundation spec or an authorized product-fact update. |
+| `product-spec` | Product behavior, scope, rules, states, or acceptance must become one implementation-ready feature/foundation spec, an authorized product-fact update, or a current terminal product-document rebuild. |
 
 ### Design and Implementation
 
 | Skill | Use when |
 | --- | --- |
-| `ui-spec` | A selected visual source or accepted UI surface must become a traceable implementation-ready contract; keep source targets separate from current runtime and use root DESIGN.md only for shared visual authority. |
+| `ui-spec` | A selected visual source or accepted UI surface must become a traceable implementation-ready contract; keep source targets separate from current runtime and use the resolved design-root DESIGN.md only for shared visual authority. |
 | `dev-frontend` | A requested frontend feature, component, page, build/tooling migration, or accepted UI specification must be implemented and validated, including two-pass runtime comparison for selected-source visual work. |
 | `dev-java` | A requested Java source or Java-owned Spring/build change must be implemented against the repository's JDK, Maven/Gradle, security, transaction, and runtime contracts. |
 | `dev-rust` | A requested Rust feature, refactor, or port must be implemented with ownership and behavior evidence. |

@@ -1,6 +1,6 @@
 ---
 name: ui-spec
-description: "Use when a selected visual source or accepted UI surface must become a traceable implementation-ready Feature Spec or Google DESIGN.md shared visual contract, including source/runtime deltas, states, responsive/accessibility behavior, assets, and acceptance; route unresolved product behavior to product-spec, current-state audits to audit-frontend, and source edits to dev-frontend."
+description: "Use when a selected visual source or accepted UI surface must become a traceable current Feature Spec or Google DESIGN.md contract at a resolved shared design root, including evidence lifecycle, source/runtime deltas, states, responsive/accessibility behavior, assets, and acceptance; route unresolved product behavior to product-spec, current-state audits to audit-frontend, and source edits to dev-frontend."
 compatibility: "Node.js + npm, with `@google/design.md@0.3.0` for DESIGN.md lint/diff/export."
 ---
 
@@ -14,17 +14,29 @@ Turn a selected visual source and verified product facts into an implementation-
 
 1. Read effective repository guidance and run `git status --short` before planning an authorized artifact write.
 2. Fix the selected visual source: a user-selected Product Design result, supplied screenshot/mockup/frame, accepted current surface, or accepted shared visual baseline. Record identity, revision/image ID, approval, rights status, `use` and `ignore` boundaries, target viewport/state, and source limitations. When a current runtime exists, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and request same-round, same-viewport/state source and runtime captures from `ops-browser` without operating the browser here.
-3. Require the repository-root `DESIGN.md` as the single source of truth for shared visual semantics. If it does not exist, copy [assets/DESIGN.md](assets/DESIGN.md) as the structural starter, replace every placeholder from verified sources, omit unverified token groups, obtain named human approval, and validate it before authoring Feature Specs or shared-system changes.
+3. Resolve the approved `<design-root>` from effective guidance, build ownership,
+   and shared consumers. Require `<design-root>/DESIGN.md` as that boundary's single
+   source of truth for shared visual semantics; a monorepo does not imply automatic
+   parent/child inheritance or one file per application. If it does not exist, copy
+   [assets/DESIGN.md](assets/DESIGN.md) as the structural starter, replace every
+   placeholder from verified sources, omit unverified token groups, obtain named
+   human approval, and validate it before authoring Feature Specs or shared-system changes.
 4. Define implementation slices: one Feature Spec per confirmed page/flow/domain; for multiple independent domains, create one shared index plus one independently loadable contract per slice and load [references/multi-surface.md](references/multi-surface.md).
 5. Select one profile:
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
    - **Design System Spec (conditional):** only when shared tokens, reusable component meaning/variants, state vocabulary, or cross-surface visual rules must change.
-6. In Design System Spec, keep repository-root `DESIGN.md` as the only durable shared visual output; Feature Specs reference it instead of copying shared semantics.
+6. In Design System Spec, keep `<design-root>/DESIGN.md` as the only durable shared visual output; Feature Specs reference it instead of copying shared semantics.
 7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply.
 8. Add a traceable delta table for every material visual difference: acceptance ID, selected-source target, current runtime, target contract, priority, shared-or-local owner, evidence IDs, verification, and applicable asset owner/fallback.
 9. For every slice and multi-slice task, add one `Ready for dev-frontend <slice>`, `Partial`, or `Not Ready` verdict. Do not issue `Ready` when the selected source is unavailable or unapproved, rights/use are insufficient, target viewport/state is uncertain, a P1 asset has no accepted owner/fallback, or an exact proposed value lacks owner approval.
 10. For a shared `DESIGN.md` change, follow [references/design-md-contract.md](references/design-md-contract.md) for lint, diff, duplicate-heading, and explicit derived-export gates. Missing required evidence remains `Not verified` and keeps the affected slice `Not Ready`.
-11. Hand the spec, delta rows, evidence limits, and a validated `frontend-visual-evidence/v1` `spec-ready` artifact to `dev-frontend`. Do not add implementation mapping, visual reviews, runtime coverage, final verdict, or claim runtime behavior in this Skill.
+11. Hand the spec, delta rows, evidence limits, and a validated
+    `frontend-visual-evidence/v1` `spec-ready` artifact to `dev-frontend`. Store that
+    task evidence under a verified ignored `.codex/artifacts/` location by default;
+    publish it with durable docs only when a named team consumer, accessible
+    artifacts, schema/validator, drift policy, and revalidation owner justify it.
+    Do not add implementation mapping, visual reviews, runtime coverage, final
+    verdict, or claim runtime behavior in this Skill.
 
 ## Profiles
 
@@ -51,7 +63,10 @@ Turn a selected visual source and verified product facts into an implementation-
 - Do not treat pixels as proof of exact tokens, component ownership, behavior, accessibility, or implementation feasibility.
 - Do not activate Design System Spec merely because a feature reuses existing tokens or components.
 - Do not create a parallel component library or token system when the project already has an owner.
-- Treat the repository-root `DESIGN.md` as the single human-readable visual-semantic authority.
+- Treat `<design-root>/DESIGN.md` as the single human-readable visual-semantic authority for its proven shared boundary.
+- Keep durable `DESIGN.md`, UI indexes, and Feature Specs current-only. Git retains
+  formal history; task captures, comparison passes, superseded candidates, and
+  validation timestamps belong in `.codex/` unless durable-evidence gates are met.
 - Require named human approval before treating a newly created or changed `DESIGN.md` as accepted.
 - Require applicable loading, empty, error, populated, permission, focus, responsive, overflow, localization, and reduced-motion rules; justify exclusions.
 - Give every applicable slice its own viewport matrix and readiness verdict; keep independent incomplete slices visible as `Partial` without turning one surface's viewport requirements into a catalog default.
@@ -61,7 +76,7 @@ Turn a selected visual source and verified product facts into an implementation-
 
 Report the selected profile, source identity/approval and rights/use boundary, target viewport/state and slices, evidence levels, layout/state contract, delta table, component/token mappings, responsive/accessibility rules, assets/copy, shared-system changes or `None`, evaluation gates, per-slice and overall readiness, and every `Not found` or `Not verified` gap. Include at least:
 
-- root `DESIGN.md` revision
+- resolved `<design-root>` and `DESIGN.md` revision or stable identity
 - lint command and result
 - diff command and regression verdict, or `Not applicable` when a Feature Spec leaves `DESIGN.md` unchanged or the authority is created for the first time
 - per-slice spec IDs and readiness

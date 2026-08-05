@@ -12,7 +12,7 @@ Index only the selected surface and its direct owner edges:
 - hooks/composables, local/shared state, and data/cache owners;
 - API client, request types, and direct consumer boundary;
 - styling/theme/config sources and layout owners;
-- root `DESIGN.md` binding when the repository adopts it.
+- resolved `<design-root>/DESIGN.md` binding when the project adopts it.
 
 Do not turn this into a complete component catalog or duplicate live source. A map
 miss means only that the index has no verified row: search the relevant owner root
@@ -22,7 +22,7 @@ before deciding `reuse`, `extend`, `wrap`, or justified `new`.
 
 For a reusable UI entry, record:
 
-1. the semantic job and the exact map-root-relative root `DESIGN.md` path plus
+1. the semantic job and the exact map-root-relative `<design-root>/DESIGN.md` path plus
    heading anchor or named semantic binding, when applicable;
 2. current implementation path and symbol, export or registration, provider root,
    and representative current consumer;

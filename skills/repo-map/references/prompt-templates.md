@@ -31,6 +31,8 @@ Required sections:
 - Runtime and package manager requirements
 - Build authority, runtime/toolchain source, internal module edges, and critical
   direct dependency routes
+- Canonical/source owner, build/deploy owner, runtime service identity, and
+  gateway/registration alias where they differ
 - Directory structure
 - Typical file chain for page, API, backend, CLI, or worker changes
 - Components, services, state, styles, tests, and config locations
@@ -63,6 +65,10 @@ Hard requirements:
 - Preserve the requested path as initial working scope and resolve its containing Git root. For a non-Git container, discover child Git roots; when none exist, map the ordinary directory project normally and mark the artifact `local-unversioned`. Record nested-root containment and default file ownership to the deepest Git root unless current evidence overrides it.
 - When updating an existing map, patch only evidence-backed stale sections. If a path is gone, ascend to the nearest existing ancestor, rescan the relevant subtree, and preserve verified sections.
 - Treat still-resolving entries as stale when their definition, access/registration, command, schema, owner, or runtime role changed; update dependent routes and edges in the same consistency closure.
+- For an explicitly requested full rebuild, make the root and every specialist index
+  one current-state closure; remove historical task prose, superseded routes, and
+  deleted references. Do not create a YAML/JSON sidecar without a proven lifecycle
+  owner, producer, consumer, version, validator, drift policy, and retirement rule.
 
 ## Doc/Code Alignment Review Template
 

@@ -174,6 +174,13 @@ inspectable state when requested.
 
 Use `frontend-visual-evidence/v1`. The package-local
 `assets/frontend-visual-evidence.schema.json` is the machine-checkable contract. The
+artifact is task evidence and defaults to a verified ignored
+`.codex/artifacts/ui-<slice-id>/` location. Do not link it from durable UI indexes or
+commit it under formal docs merely because it validates. Durable publication needs a
+named team consumer, accessible source artifacts, schema/validator, drift policy,
+revalidation owner, and retirement condition. Capture timestamps remain valid inside
+the evidence artifact; they do not require dates or date-based versions in the UI
+spec. The
 artifact has a required `stage` and advances without inventing future evidence:
 
 | Stage | Producer and allowed closure |

@@ -1,5 +1,4 @@
 ---
-version: alpha
 name: "Replace with accepted design-system name"
 description: "Replace with verified visual authority summary for the selected design system"
 ---
