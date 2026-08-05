@@ -7,13 +7,21 @@ description: "Use when a Git or non-Git workspace needs a current durable map or
 
 ## Overview
 
-Map stable workspace or repository semantics into either a concise navigation layer rooted at `<map-root>/docs/repo-map/README.md`, unless the project already defines an equivalent, or explicitly requested layered repository guidance in `AGENTS.md`. A map should let later work reach the correct working root, Git root when present, canonical owner, reusable contract, protocol authority, generated consumer, and verification source without rediscovering the project. Layered guidance should put shared rules at the map root and narrower commands or constraints at independently owned subproject boundaries. Source remains proof; neither artifact substitutes for task-time checks or judges changes for defects.
+Map stable workspace or repository semantics into a concise Markdown-first navigation
+layer rooted at `<map-root>/docs/project-map.md`, unless the project already defines
+an equivalent, or explicitly requested layered repository guidance in `AGENTS.md`. A
+map should let later work reach the correct working root, Git root when present,
+canonical owner, reusable contract, protocol authority, generated consumer, and
+verification source without rediscovering the project. Layered guidance should put
+shared rules at the map root and narrower commands or constraints at independently
+owned subproject boundaries. Source remains proof; neither artifact substitutes for
+task-time checks or judges changes for defects.
 
 ## Workflow
 
 1. Resolve the requested scope, containing Git root, child/nested Git roots, map root, and `versioned` or `local-unversioned` persistence before reading broadly. Keep the deepest Git root as file owner unless current manifests prove otherwise; non-Git projects remain valid map targets. Use the root-resolution procedure in `references/checklist.md` only when boundaries are ambiguous.
 2. Read effective repository guidance from the map root and each child Git root actually opened, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present. Run `git status --short` in every applicable Git root before editing a document there; do not run Git commands as if a non-Git container were a repository.
-3. Select the requested artifact. For a repo map, locate the existing project-defined equivalent or consider `<map-root>/docs/repo-map/README.md`; reconcile competing candidates and federated specialist maps without copying their detail. For explicitly requested repository-guidance creation or repair, load `references/project-guidance.md`, follow its placement gate and workflow through artifact validation, then resume at step 15; do not also create a repo map unless requested. If any target artifact is already modified, inspect its staged and unstaged diff, preserve unrelated hunks, and stop on an unsafe overlap.
+3. Select the requested artifact. For a repo map, locate the existing project-defined equivalent or consider `<map-root>/docs/project-map.md`; reconcile competing candidates and federated specialist maps without copying their detail. For explicitly requested repository-guidance creation or repair, load `references/project-guidance.md`, follow its placement gate and workflow through artifact validation, then resume at step 15; do not also create a repo map unless requested. If any target artifact is already modified, inspect its staged and unstaged diff, preserve unrelated hunks, and stop on an unsafe overlap.
 4. For repo-map artifacts, apply the creation gate: create or expand a map only when it will reduce wrong-root routing, repeated semantic discovery, duplicate implementation, or cross-boundary inference. If one directory listing or manifest answers the need, read it directly and keep the map absent or smaller.
 5. Select workspace, repository, or scoped level from real ownership, build, deploy, or runtime boundaries; never split from directory names alone.
 6. Define the questions the map must answer: real boundaries and owners, architecture, command sources, shortest task routes, reusable contracts, cross-boundary relationships, and validation entry points. When product positioning changes task routing, link the smallest verified product-fact authority set without restating or deciding product behavior. Treat canonical owner as the definition or contract owner; record build/deploy, runtime/operations, or data/schema ownership only when it changes routing. When the user supplies an external project or framework as a design reference, use it to identify candidate architecture, documentation, and validation questions, then retain only conclusions verified against the target repository; never turn the reference into a target-repository authority or a framework-specific execution branch.
@@ -41,7 +49,11 @@ Map stable workspace or repository semantics into either a concise navigation la
    and current-source evidence. When the project adopts a resolved `<design-root>/DESIGN.md`,
    also record its exact map-root-relative path plus anchor or semantic binding;
    do not copy token values or design rules. Keep this a high-value index, not a
-   catalog. Load `references/frontend-inventory.md` only for a requested frontend
+   catalog. When page UI contracts need durable composition links, assign stable
+   component IDs and let pages reference those IDs; keep props, slots, events, types,
+   and page-specific composition out of the map. Record only currently implemented
+   states as variants; put required-but-unimplemented states in an explicit gap or
+   target contract. Load `references/frontend-inventory.md` only for a requested frontend
    inventory or code-context index.
    For a requested HTTP API inventory, use `references/api-contract-map.md`. Record
    the repository-native authority/consumer chain and only existing or explicitly
@@ -51,7 +63,10 @@ Map stable workspace or repository semantics into either a concise navigation la
 12. Repair stale paths only inside their recorded owner/provider root. If that root is absent, mark stale and restart bounded live discovery from newly proven ownership. Git history may explain only a move already proven by current source; see `references/checklist.md` for the bounded repair procedure.
 13. Rebuild the whole repo-map artifact only when it is missing, corrupt, structurally unusable, or the user explicitly requests a rebuild.
 14. Stop when each selected common task reaches the correct working/Git root through the minimum decisive evidence chain, normally 1-8 unique entries per task. Reuse shared entries across tasks; exceed eight only when distinct required ownership or runtime boundaries cannot be represented safely with fewer entries, and record the reason. Mark unchecked areas `Not verified`.
-15. Run project-defined documentation or skill checks that match the edit, then verify the final diff contains only intended changes.
+15. Run project-defined documentation checks that match the edit, then verify the
+    final diff contains only intended changes. Do not require a project-local map
+    schema or validator for a Markdown project map; source inspection remains the
+    authority for routes, components, APIs, and consumers.
 
 ## Modes
 
@@ -103,6 +118,14 @@ Map stable workspace or repository semantics into either a concise navigation la
   paths, symbols, commands, consumers, and evidence references only.
 - Do not recommend a new component, function, endpoint, service, repository, trait, DTO, hook, composable, store, or helper before verifying the nearest reusable or reference implementation in live source.
 - Treat the reuse index as high-value navigation, not an exhaustive symbol catalog. Include explicit shared contracts or proven reusable candidates; keep leaf-local details in source.
+- A stable component ID resolves navigation only. Do not invent an importable symbol for an inline region, and do not record target-only page states as current variants.
+- If a page UI contract consumes the map as a machine artifact, require a named
+  non-LLM consumer, producer, validator, drift policy, retirement rule, and semantic
+  version; otherwise keep the map Markdown-only and non-authoritative for automation.
+  Structure, route, component, and API entries are
+  frontend navigation indexes: an API row may record only observed client adapter
+  method/path/consumer facts, while backend DTO, permission, response, and OpenAPI
+  ownership remains outside the map.
 - Prefer verified existing components during implementation, but do not make a
   repo map or Component Map a mandatory implementation prerequisite.
 - A frontend inventory or code-context index is selective navigation. Its absence
@@ -120,6 +143,9 @@ Map stable workspace or repository semantics into either a concise navigation la
   remove task narratives and superseded routes instead of preserving them as history.
 - Do not add YAML/JSON map sidecars for machine convenience without a named owner,
   producer, consumer, version, validator, drift policy, and retirement rule.
+- Do not create a generic Repo Map schema/profile or validator merely for AI parsing.
+  A project-local validator is justified only by a named maintained consumer and
+  executable lifecycle.
 - Never ascend or search outside a recorded owner/provider root to rescue a stale
   component entry. If that root no longer exists, mark the entry stale and use a
   fresh bounded live search with newly proven ownership.

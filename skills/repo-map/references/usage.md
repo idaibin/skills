@@ -6,7 +6,7 @@ Create or maintain a durable semantic repo map from current source truth. It sho
 
 ## Best For
 
-- Initial `docs/repo-map/README.md` or repository-equivalent creation
+- Initial `docs/project-map.md` or repository-equivalent creation
 - Explicitly requested root and subproject `AGENTS.md` bootstrapping from proven
   workspace, frontend, backend, desktop, CLI, worker, or nested-repository boundaries
 - Workspace routing across multiple child Git roots
@@ -32,7 +32,7 @@ Create or maintain a durable semantic repo map from current source truth. It sho
 - `Update the APIs and reusable components in the repo map.`
 - `Verify and record this service's single OpenAPI authority, generation chain, frontend consumers, and duplicate-DTO boundary.`
 - `The documented directory is missing; scan locally from the nearest existing ancestor and repair the map.`
-- `Create or update docs/repo-map/README.md from current repository truth.`
+- `Create or update docs/project-map.md from current repository truth.`
 - `Create root guidance and nearer AGENTS.md files for independently built frontend and backend subprojects.`
 - `The current directory is not a Git repository; check for child repositories, or map it as an ordinary project if none exist.`
 

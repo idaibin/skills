@@ -59,9 +59,17 @@ writes. Keep technical design and source mutation with their existing owners.
 8. Hand off only the unresolved owner that must act now: deep cross-context domain
    work to `domain-modeling`, shared visual-system contracts to `ui-spec`, source
    changes to the matching `dev-*`, and review to `repo-review` when requested.
+   Keep Product Markdown as the behavior, failure, and acceptance authority. Product
+   may describe the current terminal user outcome and business rules, but must not
+   author page composition, visual semantics, component interfaces, API/DTO details,
+   or source paths. Markdown is the default durable artifact; create a structured
+   companion only when a real named consumer, producer, version, executable
+   validator, drift policy, and retirement owner already exist.
 9. Preview product-document changes before writing unless the user explicitly
-   requested implementation of the document edit. Validate links and repository
-   checks that apply to the changed artifact.
+   requested implementation of the document edit. Validate repository-defined checks;
+   run the repository's existing documentation checks when present. Do not require a
+   project-local schema or validator merely to make Product Markdown machine-readable;
+   structural checks do not validate product truth, readiness, or acceptance quality.
 10. For an authorized documentation rebuild, make every durable product artifact a
     current terminal contract: reconcile indexes and slices, remove superseded
     decisions and task-time validation narratives, repair links, and let Git retain

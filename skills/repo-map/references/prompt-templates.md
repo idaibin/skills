@@ -12,14 +12,14 @@ publishing. Do not resolve templates outside this package at runtime.
 ## Template Selection
 
 - Missing effective repository guidance: load the directly linked layered repository-guidance profile from `SKILL.md` when the user explicitly requests creating or repairing it.
-- Missing `docs/repo-map/README.md`: apply the creation gate, then use the repo-map bootstrap template when justified.
+- Missing `docs/project-map.md`: apply the creation gate, then use the repo-map bootstrap template when justified.
 - Existing docs present: use the doc/code alignment review template.
 
 Templates provide structure only. Repository files, configs, commands, and code are the source of truth.
 
 ## Repo Map Bootstrap Template
 
-Use for `docs/repo-map/README.md` or an equivalent context map. Keep one `README.md` as the authoritative root index at the selected map root. Add linked sibling scoped pages only for independently owned, built, deployed, or operationally complex boundaries; do not change storage root for a scoped request or mirror source directories. If multiple current/legacy candidates cannot be reconciled from ownership and references, stop for clarification.
+Use for `docs/project-map.md` or an equivalent context map. Keep one Markdown page as the authoritative root index at the selected map root. Add linked sibling scoped pages only for independently owned, built, deployed, or operationally complex boundaries; do not change storage root for a scoped request or mirror source directories. If multiple current/legacy candidates cannot be reconciled from ownership and references, stop for clarification.
 
 Required sections:
 

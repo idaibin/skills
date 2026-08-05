@@ -26,11 +26,17 @@ Turn a selected visual source and verified product facts into an implementation-
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
    - **Design System Spec (conditional):** only when shared tokens, reusable component meaning/variants, state vocabulary, or cross-surface visual rules must change.
 6. In Design System Spec, keep `<design-root>/DESIGN.md` as the only durable shared visual output; Feature Specs reference it instead of copying shared semantics.
-7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply.
+7. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Name reusable and page-defining components only after checking current source and the project map when one exists; keep props, slots, events, types, and copied token values out of the page contract. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply.
 8. Add a traceable delta table for every material visual difference: acceptance ID, selected-source target, current runtime, target contract, priority, shared-or-local owner, evidence IDs, verification, and applicable asset owner/fallback.
 9. For every slice and multi-slice task, add one `Ready for dev-frontend <slice>`, `Partial`, or `Not Ready` verdict. Do not issue `Ready` when the selected source is unavailable or unapproved, rights/use are insufficient, target viewport/state is uncertain, a P1 asset has no accepted owner/fallback, or an exact proposed value lacks owner approval.
 10. For a shared `DESIGN.md` change, follow [references/design-md-contract.md](references/design-md-contract.md) for lint, diff, duplicate-heading, and explicit derived-export gates. Missing required evidence remains `Not verified` and keeps the affected slice `Not Ready`.
-11. Hand the spec, delta rows, evidence limits, and a validated
+11. Keep the page UI contract and component guidance human-readable and authoritative
+    for their own meanings. Markdown is the default durable UI artifact. A YAML/JSON
+    projection is conditional: use it only when a named non-LLM consumer, producer,
+    executable validator, drift policy, and retirement owner already exist. Never copy
+    tokens, API/DTO schemas, props, slots, events, or source paths into a projection;
+    otherwise omit it and let current source plus Markdown remain authoritative.
+12. Hand the spec, delta rows, evidence limits, and a validated
     `frontend-visual-evidence/v1` `spec-ready` artifact to `dev-frontend`. Store that
     task evidence under a verified ignored `.codex/artifacts/` location by default;
     publish it with durable docs only when a named team consumer, accessible
@@ -63,6 +69,10 @@ Turn a selected visual source and verified product facts into an implementation-
 - Do not treat pixels as proof of exact tokens, component ownership, behavior, accessibility, or implementation feasibility.
 - Do not activate Design System Spec merely because a feature reuses existing tokens or components.
 - Do not create a parallel component library or token system when the project already has an owner.
+- Do not make page specs redefine reusable component interfaces. Record page composition and page-local state/interaction; route current component ownership through a validated project map when one exists, then recheck live source before implementation.
+- Do not require a `ui-page/v1` or `ui-components/v1` Schema, project-local validator,
+  or YAML/JSON companion for ordinary UI work. Admit a projection only when its named
+  non-LLM consumer and complete lifecycle are already real and maintained.
 - Treat `<design-root>/DESIGN.md` as the single human-readable visual-semantic authority for its proven shared boundary.
 - Keep durable `DESIGN.md`, UI indexes, and Feature Specs current-only. Git retains
   formal history; task captures, comparison passes, superseded candidates, and
