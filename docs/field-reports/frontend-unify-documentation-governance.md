@@ -65,7 +65,10 @@ viewport scope, and honest readiness without restoring dated review logs.
 - Routing: 48/48 catalog cases passed; 7/7 documentation-authority contract tests passed.
 - Independent mutual review: completed on the repaired basis; material project,
   cross-Skill design-root, metadata-routing, and source-truth findings were corrected.
-- Source-to-global-install package parity: Pending.
+- Source-to-global-install package parity: Passed for all files in `product-spec`,
+  `ui-spec`, `repo-map`, and `repo-review` after installation from the published
+  `idaibin/skills` main branch; empty source-only placeholder directories are not
+  packaged by the installer.
 - Updated-Skill project canary: static Product/UI/Repo Map/Documentation Authority
   checks passed on the rewritten tree; browser and deployment canaries remain out of scope.
 
