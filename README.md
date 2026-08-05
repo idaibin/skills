@@ -104,6 +104,11 @@ See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
 defaults remain compatible through `ask-ai`; the old package is not maintained as a
 second owner.
 
+Documentation-authority optimization and its sanitized real-project canary are
+maintained under [docs/documentation-authority/](docs/documentation-authority/README.md).
+Project-specific facts remain in their owning project and are not copied into Skill
+packages.
+
 ## Composition
 
 Skills are composable owners, not a mandatory framework:
