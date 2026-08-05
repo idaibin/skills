@@ -25,6 +25,16 @@ drift policy, and retirement rule. “AI may read it” is not a consumer. A dep
 Swagger document is environment evidence unless the API owner maintains an adopted
 generation and compatibility pipeline.
 
+## UI documentation closure
+
+For a UI documentation change, verify the chain in order: Product Markdown for
+behavior, page/component UI Markdown for UI meaning, resolved `DESIGN.md` for shared
+visual semantics, project-map Markdown for navigation, and live source for routes,
+components, states, and consumers. Identify repeated facts, stale derived maps, and
+source/document drift. A YAML/JSON projection is reviewed only when its named
+non-LLM consumer, producer, validator, drift policy, and retirement rule are
+evidenced; otherwise its absence is not a defect and Markdown remains authoritative.
+
 ## Ownership identities
 
 Review canonical/source owner, build/deploy owner, runtime service identity, and

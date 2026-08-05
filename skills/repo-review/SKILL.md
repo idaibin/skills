@@ -31,6 +31,14 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 3. Build the smallest complete read set from changed or explicitly owned paths. A `repo-map` artifact may guide navigation but is never review proof.
 4. In Worktree mode, inventory full status but deeply classify only the requested scope and necessary interface closure. Classify every changed file and mixed hunk only for requested commit-readiness.
 5. Trace relevant interfaces through registrations, callers, types, data shaping, persistence, generated artifacts, runtime config, tests, docs, CI/deploy, and stale references. Activate the protocol-contract profile only for an existing OpenAPI/generated-client pipeline or an explicitly requested contract gate. Activate the visual-completion profile only when the basis implements a selected visual source or claims visual completion; then load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), require and validate the appropriate staged handoff (`final` for completion), and inspect its cited artifacts and reachable source.
+   When the basis changes or claims Product/UI/DESIGN/project-map documentation, apply
+   the current-only authority gate in
+   [documentation-authority-review.md](references/documentation-authority-review.md):
+   verify Markdown authority, source ownership, consumer/read-path closure, duplicate
+   facts, stale derived maps, and independent `Not verified` gaps. A YAML/JSON
+   projection is relevant only when a named non-LLM consumer and maintained validator,
+   drift, and retirement lifecycle are evidenced; never require project-local Schema
+   or validator files for ordinary Markdown contracts.
    When the basis activates runtime/configuration, packaging, public integration,
    persistence, legacy replacement, auth/security, or cross-repository delivery risk,
    load [project grounding](references/project-grounding.md). Bind every grounding fact

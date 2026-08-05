@@ -4,7 +4,7 @@
 
 1. Keep the requested path as the initial working scope and resolve its containing Git root. If none exists, keep the requested directory as map root and discover child Git roots; if none exist, classify it as an ordinary non-Git directory project. Record nested-root containment and canonical ownership.
 2. Record `versioned` or `local-unversioned`, read effective repository guidance (`AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present), and run `git status --short` only in applicable Git roots.
-3. Locate the existing map or consider `<map-root>/docs/repo-map/README.md`; choose one authoritative root index, record legacy migration, stop on unresolved competing candidates, and inspect target diffs before editing.
+3. Locate the existing map or consider `<map-root>/docs/project-map.md`; choose one authoritative root index, record legacy migration, stop on unresolved competing candidates, and inspect target diffs before editing.
 4. Apply the creation gate and classify workspace, repository, or scoped-map level.
 5. List the exact navigation questions the map must answer.
 6. Search manifests/config, entry points, registrations, and representative implementations before opening broad docs or directories.

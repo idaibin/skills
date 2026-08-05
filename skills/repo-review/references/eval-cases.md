@@ -43,7 +43,7 @@
 
 | Prompt | Expected |
 | --- | --- |
-| `Map the repository architecture and reusable contracts into docs/repo-map/README.md.` | Prefer `repo-map`. |
+| `Map the repository architecture and reusable contracts into docs/project-map.md.` | Prefer `repo-map`. |
 | `Find why this test fails.` | Do not trigger this Skill; use the host's built-in diagnosis under effective instructions. |
 | `Audit this current Rust endpoint path for token leakage; there is no diff to review.` | Prefer `audit-rust`. |
 | `Scan this current repository for vulnerabilities; there is no change basis.` | Prefer an available host security-scan capability; do not widen `repo-review` or recreate a scanner. |
@@ -66,6 +66,15 @@
 | `Review this fixed range locally; no external reviewer was requested.` | Emit no `ask-ai` handoff. |
 | `Review this fixed range locally; there is no valid final-result-sync instruction.` | Emit no retention handoff; local review completion alone never authorizes an external send. |
 | `The ChatGPT review request was submitted, but no attributed response arrived.` | Preserve the local findings and verdict; report the external review axis `Not verified` without creating or clearing a finding. |
+
+## UI documentation fixtures
+
+| Fixture | Expected review result |
+| --- | --- |
+| `current`: Product/UI/DESIGN/project-map Markdown and current source resolve | No documentation finding; runtime remains separately evidenced. |
+| `duplicate-fact`: a derived map repeats a source-owned route, component, token, API path, or DTO | Report duplicate authority and preserve the source owner. |
+| `no-consumer`: a YAML/JSON companion has no named non-LLM consumer or lifecycle | Report unnecessary derived artifact and recommend Markdown-only authority. |
+| `stale-map`: project-map points to a moved/removed route or component | Report stale navigation and require bounded source recheck; do not infer a replacement. |
 
 ## Scenario Eval
 

@@ -86,6 +86,18 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Implement the React slice, then explicitly prepare an independent ChatGPT implementation challenge without applying its findings.` | Keep `dev-frontend` as owner and emit one lightweight `ask-ai` handoff. |
 | `Implement and validate the React slice locally; no external review was requested.` | Emit no `ask-ai` handoff. |
 
+## UI documentation fixtures
+
+These sanitized fixtures exercise the consumer boundary without carrying project
+names, endpoints, props, slots, or visual values.
+
+| Fixture | Expected consumer behavior |
+| --- | --- |
+| `current`: Product/UI/DESIGN/project-map Markdown and current source resolve | Read Markdown authorities, then verify routes, components, states, and consumers in live source. |
+| `duplicate-fact`: a derived UI map repeats a source-owned token, API path, DTO, prop, or event | Keep the existing owner; do not copy or create a second contract. |
+| `no-consumer`: a YAML/JSON companion has no named non-LLM consumer or lifecycle | Ignore it for implementation and report the unnecessary derived artifact. |
+| `stale-map`: project-map points to a moved/removed route or component | Recheck bounded live source before editing; do not invent a replacement. |
+
 ## Quality Eval
 
 | Case | Expected evidence | Reject if |
