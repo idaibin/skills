@@ -72,8 +72,9 @@
 | Fixture | Expected review result |
 | --- | --- |
 | `current`: Product/UI/DESIGN/project-map Markdown and current source resolve | No documentation finding; runtime remains separately evidenced. |
-| `duplicate-fact`: a derived map repeats a source-owned route, component, token, API path, or DTO | Report duplicate authority and preserve the source owner. |
-| `no-consumer`: a YAML/JSON companion has no named non-LLM consumer or lifecycle | Report unnecessary derived artifact and recommend Markdown-only authority. |
+| `navigation-reference`: project-map records a route/API path, source symbol, canonical owner, and representative consumer | Accept it as navigation after verifying every reference at the review basis. |
+| `copied-authority`: a derived map restates product behavior, token values, permission semantics, DTO fields, request/response shape, or component props/events as its own facts | Report duplicate authority and preserve the source owner. |
+| `incomplete-lifecycle`: a YAML/JSON projection lacks any of the seven required lifecycle fields | Report the missing lifecycle only when the basis introduces or relies on it; never require a projection for ordinary Markdown. |
 | `stale-map`: project-map points to a moved/removed route or component | Report stale navigation and require bounded source recheck; do not infer a replacement. |
 
 ## Scenario Eval

@@ -129,9 +129,10 @@ task-time checks or judges changes for defects.
 - Do not recommend a new component, function, endpoint, service, repository, trait, DTO, hook, composable, store, or helper before verifying the nearest reusable or reference implementation in live source.
 - Treat the reuse index as high-value navigation, not an exhaustive symbol catalog. Include explicit shared contracts or proven reusable candidates; keep leaf-local details in source.
 - If an already maintained non-LLM component registry is in scope, treat its IDs as
-  navigation only and require its producer, validator, drift policy, retirement rule,
-  semantic version, and named consumer. Otherwise keep the map Markdown-only and do
-  not invent IDs, importable symbols, or target-only states as current facts.
+  navigation only and require its named owner, producer, non-LLM consumer, semantic
+  version, executable validator, drift policy, and retirement rule. Otherwise keep the
+  map Markdown-only and do not invent IDs, importable symbols, or target-only states as
+  current facts.
   Structure, route, component, and API entries are
   frontend navigation indexes: an API row may record only observed client adapter
   method/path/consumer facts, while backend DTO, permission, response, and OpenAPI
@@ -152,7 +153,8 @@ task-time checks or judges changes for defects.
   specialist index, link, owner, consumer, and deletion as one current-state closure;
   remove task narratives and superseded routes instead of preserving them as history.
 - Do not add YAML/JSON map sidecars for machine convenience without a named owner,
-  producer, consumer, version, validator, drift policy, and retirement rule.
+  producer, non-LLM consumer, semantic version, executable validator, drift policy,
+  and retirement rule.
 - Do not create a generic Repo Map schema/profile or validator merely for AI parsing.
   A project-local validator is justified only by a named maintained consumer and
   executable lifecycle.

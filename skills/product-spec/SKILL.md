@@ -63,8 +63,8 @@ writes. Keep technical design and source mutation with their existing owners.
    may describe the current terminal user outcome and business rules, but must not
    author page composition, visual semantics, component interfaces, API/DTO details,
    or source paths. Markdown is the default durable artifact; create a structured
-   companion only when a real named consumer, producer, version, executable
-   validator, drift policy, and retirement owner already exist.
+   companion only when a named owner, producer, non-LLM consumer, semantic version,
+   executable validator, drift policy, and retirement rule already exist.
 9. Preview product-document changes before writing unless the user explicitly
    requested implementation of the document edit. Validate repository-defined checks;
    run the repository's existing documentation checks when present. Do not require a
@@ -112,8 +112,9 @@ writes. Keep technical design and source mutation with their existing owners.
 - Do not use edit, approval, or validation dates as document versions. Retain a date
   only when the date itself changes product behavior, eligibility, rollout, or
   acceptance. Do not create YAML/JSON sidecars merely for AI convenience; require a
-  named owner, producer, consumer, version, validator, drift policy, and retirement
-  rule, otherwise keep Markdown as the single durable authority.
+  named owner, producer, non-LLM consumer, semantic version, executable validator,
+  drift policy, and retirement rule, otherwise keep Markdown as the single durable
+  authority.
 
 ## Output Contract
 

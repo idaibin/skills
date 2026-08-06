@@ -58,7 +58,7 @@ revalidation owner, and refresh or expiry condition.
 
 Do not add YAML, JSON, Schema, or another sidecar merely to make a spec easier for an
 AI to parse. A durable structured artifact requires all of: named owner, producer,
-real consumer, semantic version, validator, drift policy, and retirement rule. When
+non-LLM consumer, semantic version, executable validator, drift policy, and retirement rule. When
 any item is absent, keep Markdown as the single authority.
 
 ## Authority

@@ -82,7 +82,8 @@ Hard requirements:
 - For an explicitly requested full rebuild, make the root and every specialist index
   one current-state closure; remove historical task prose, superseded routes, and
   deleted references. Do not create a YAML/JSON sidecar without a proven lifecycle
-  owner, producer, consumer, version, validator, drift policy, and retirement rule.
+  named owner, producer, non-LLM consumer, semantic version, executable validator,
+  drift policy, and retirement rule.
 
 ## Doc/Code Alignment Review Template
 

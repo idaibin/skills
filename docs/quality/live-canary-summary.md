@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:65a31addde4828cde0bee0ffa887a7a1f86882fbb176c2d79a29157a04ce90b5`
+- Package digest: `sha256:a229d3bbe995c9c835437ce2d86e84261baff2ef158f866410242d4894d2e645`
 - Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
   fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
@@ -23,7 +23,8 @@ behavior certification and does not replace target-environment runtime validatio
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
 | Catalog discovery | Pass | `npx skills@latest add ./skills --list` validated the local publishable source and found exactly 16 packages. |
 | Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
-| Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership and ignored task-evidence placement across the synchronized protocol copies. This is static contract evidence, not host-routing or browser proof. |
+| Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
+| Browser tab-lifecycle contract regression | Pass | Focused offline tests verify identity-first tab selection, explicit retention authority, recoverable task-tab ownership, and representative same-URL/different-session cases. This is static contract evidence, not a live browser canary. |
 | Isolated project-local install | Not verified | The five scoped packages were not installed into a disposable project for this digest. |
 | Installed-copy parity | Not verified | No installed-copy comparison was accepted for this digest. |
 | Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |

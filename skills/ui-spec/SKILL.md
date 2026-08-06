@@ -32,8 +32,9 @@ Turn a selected visual source and verified product facts into an implementation-
 10. For a shared `DESIGN.md` change, follow [references/design-md-contract.md](references/design-md-contract.md) for lint, diff, duplicate-heading, and explicit derived-export gates. Missing required evidence remains `Not verified` and keeps the affected slice `Not Ready`.
 11. Keep the page UI contract and component guidance human-readable and authoritative
     for their own meanings. Markdown is the default durable UI artifact. A YAML/JSON
-    projection is conditional: use it only when a named non-LLM consumer, producer,
-    executable validator, drift policy, and retirement owner already exist. Never copy
+    projection is conditional: use it only when a named owner, producer, non-LLM
+    consumer, semantic version, executable validator, drift policy, and retirement
+    rule already exist. Never copy
     tokens, API/DTO schemas, props, slots, events, or source paths into a projection;
     otherwise omit it and let current source plus Markdown remain authoritative.
 12. Hand the spec, delta rows, evidence limits, and a validated

@@ -52,8 +52,8 @@
 Do not include content obtainable from one directory listing, an exhaustive symbol or
 dependency catalog, configuration values, credentials, or transient Git/local/runtime
 status.
-Do not create structured map sidecars without a named owner, producer, consumer,
-semantic version, validator, drift policy, and retirement rule.
+Do not create structured map sidecars without a named owner, producer, non-LLM
+consumer, semantic version, executable validator, drift policy, and retirement rule.
 Do not flatten specialist maps into the root index. If a UI component map, API
 contract map, deployment map, or similar artifact already owns bounded detail,
 verify it, link it, and keep the root entry to authority, purpose, and reading order.

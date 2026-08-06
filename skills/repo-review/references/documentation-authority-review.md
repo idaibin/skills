@@ -20,8 +20,9 @@ moves, deletes, or claims completion of authoritative project documentation.
 ## Structured artifact gate
 
 Before accepting YAML, JSON, Schema, OpenAPI, or another sidecar as durable project
-authority, verify a named owner, producer, consumer, semantic version, validator,
-drift policy, and retirement rule. “AI may read it” is not a consumer. A deployed
+authority, verify a named owner, producer, non-LLM consumer, semantic version,
+executable validator, drift policy, and retirement rule. “AI may read it” is not a
+consumer. A deployed
 Swagger document is environment evidence unless the API owner maintains an adopted
 generation and compatibility pipeline.
 
@@ -31,9 +32,10 @@ For a UI documentation change, verify the chain in order: Product Markdown for
 behavior, page/component UI Markdown for UI meaning, resolved `DESIGN.md` for shared
 visual semantics, project-map Markdown for navigation, and live source for routes,
 components, states, and consumers. Identify repeated facts, stale derived maps, and
-source/document drift. A YAML/JSON projection is reviewed only when its named
-non-LLM consumer, producer, validator, drift policy, and retirement rule are
-evidenced; otherwise its absence is not a defect and Markdown remains authoritative.
+source/document drift. A YAML/JSON projection is reviewed only when its named owner,
+producer, non-LLM consumer, semantic version, executable validator, drift policy, and
+retirement rule are evidenced; otherwise its absence is not a defect and Markdown
+remains authoritative.
 
 ## Ownership identities
 

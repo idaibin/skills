@@ -9,16 +9,118 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+LIFECYCLE_TERMS = (
+    "named owner",
+    "producer",
+    "non-LLM consumer",
+    "semantic version",
+    "executable validator",
+    "drift policy",
+    "retirement rule",
+)
+
+LIFECYCLE_GATE_PATTERNS = {
+    "docs/skills/skill-standard.md": (
+        r"Structured sidecars require (?P<gate>.*?); “AI may read it”",
+    ),
+    "skills/product-spec/references/documentation-boundaries.md": (
+        r"durable structured artifact requires all of: (?P<gate>.*?)\. When",
+    ),
+    "skills/product-spec/references/eval-cases.md": (
+        r"Structured artifact admission \| Requires (?P<gate>.*?) before adding a sidecar\.",
+    ),
+    "skills/ui-spec/SKILL.md": (
+        r"projection is conditional: use it only when (?P<gate>.*?) already exist\.",
+    ),
+    "skills/repo-map/SKILL.md": (
+        r"navigation only and require its (?P<gate>.*?)\. Otherwise",
+        r"map sidecars for machine convenience without a (?P<gate>.*?)\.",
+    ),
+    "skills/repo-map/references/checklist.md": (
+        r"structured map sidecars without a (?P<gate>.*?)\.",
+    ),
+    "skills/repo-map/references/prompt-templates.md": (
+        r"sidecar without a proven lifecycle (?P<gate>.*?)\.",
+    ),
+    "skills/repo-map/references/eval-cases.md": (
+        r"Structured map admission \| Adds a sidecar only with a (?P<gate>.*?)\. \|",
+    ),
+    "skills/dev-frontend/SKILL.md": (
+        r"Require a (?P<gate>.*?)\. Run the repository-defined non-mutating validator",
+    ),
+    "skills/audit-frontend/SKILL.md": (
+        r"verify its (?P<gate>.*?)\. Inspect current validator evidence",
+    ),
+    "skills/repo-review/SKILL.md": (
+        r"projection is relevant only when a (?P<gate>.*?) are evidenced;",
+    ),
+    "skills/repo-review/references/documentation-authority-review.md": (
+        r"verify a (?P<gate>.*?)\. “AI may read it”",
+        r"projection is reviewed only when its (?P<gate>.*?) are evidenced;",
+    ),
+}
 
 
 class DocumentationAuthorityContractTests(unittest.TestCase):
     def read(self, relative: str) -> str:
         return (ROOT / relative).read_text(encoding="utf-8")
 
+    def lifecycle_gates(self, relative: str) -> list[str]:
+        text = re.sub(r"\s+", " ", self.read(relative))
+        gates = []
+        for pattern in LIFECYCLE_GATE_PATTERNS[relative]:
+            match = re.search(pattern, text)
+            self.assertIsNotNone(match, f"missing lifecycle gate in {relative}: {pattern}")
+            assert match is not None
+            gates.append(match.group("gate"))
+        return gates
+
+    def assert_complete_lifecycle(self, gate: str, *, context: str) -> None:
+        for term in LIFECYCLE_TERMS:
+            with self.subTest(context=context, term=term):
+                self.assertIn(term, gate)
+
+    def assert_each_lifecycle_term_is_required(self, gate: str, *, context: str) -> None:
+        for term in LIFECYCLE_TERMS:
+            mutated = gate.replace(term, "", 1)
+            with self.subTest(context=context, removed=term):
+                self.assertFalse(
+                    all(required in mutated for required in LIFECYCLE_TERMS),
+                    f"gate stayed complete after removing {term}: {context}",
+                )
+
     def test_product_spec_terminal_and_sidecar_gates(self) -> None:
-        text = self.read("skills/product-spec/SKILL.md")
+        text = re.sub(r"\s+", " ", self.read("skills/product-spec/SKILL.md"))
         self.assertIn("current terminal contract", text)
-        self.assertIn("named owner, producer, consumer, version, validator", text)
+        workflow_gate = re.search(
+            r"create a structured companion only when (?P<gate>.*?) already exist\.",
+            text,
+        )
+        self.assertIsNotNone(workflow_gate)
+        assert workflow_gate is not None
+        gate = workflow_gate.group("gate")
+        self.assert_complete_lifecycle(gate, context="product-spec workflow gate")
+        self.assert_each_lifecycle_term_is_required(
+            gate, context="product-spec workflow gate"
+        )
+
+    def test_structured_projection_consumers_keep_complete_lifecycle(self) -> None:
+        for path in LIFECYCLE_GATE_PATTERNS:
+            for index, gate in enumerate(self.lifecycle_gates(path)):
+                context = f"{path} gate {index + 1}"
+                self.assert_complete_lifecycle(gate, context=context)
+                self.assert_each_lifecycle_term_is_required(gate, context=context)
+
+    def test_navigation_references_are_distinct_from_copied_authority(self) -> None:
+        paths = (
+            "skills/dev-frontend/references/eval-cases.md",
+            "skills/repo-review/references/eval-cases.md",
+        )
+        for path in paths:
+            text = self.read(path)
+            with self.subTest(path=path):
+                self.assertIn("`navigation-reference`", text)
+                self.assertIn("`copied-authority`", text)
 
     def test_ui_spec_resolves_design_root_and_local_evidence(self) -> None:
         text = self.read("skills/ui-spec/SKILL.md")

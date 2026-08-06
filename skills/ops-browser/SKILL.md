@@ -18,18 +18,56 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    user did not request. Verify the effective page viewport rather than treating a
    successful resize call as proof.
 2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work.
-3. Enumerate browser sessions and existing tabs only when the available tool exposes them; never invent missing tab/window identity.
+3. Before every action that would open or create a page, enumerate browser sessions and
+   existing tabs when the available tool exposes them. Narrow candidates by browser
+   surface, verified account/session, and task context, then prefer an exact URL within
+   those candidates. URL matching never crosses an identity boundary. Reuse a safely
+   matching tab and do not open another one. Open a new tab only when no safe match exists or when an
+   independent state or side-by-side comparison is required; record that reason. Keep
+   a task-local tab ledger that distinguishes pre-existing user tabs from task-created
+   tabs and records task key, browser surface/session identity, tab identity or `Not
+   verified`, target fingerprint, ownership evidence, purpose, lifecycle state,
+   cleanup disposition, and retention authority. Record creation intent before opening,
+   then re-enumerate and bind the created tab afterward. Before changing a pre-existing
+   user tab, also record its original URL and any exposed viewport, zoom, and scroll
+   state. If required state cannot be recorded, avoid changing it or report degraded
+   restoration evidence. This tab ledger never replaces an `ask-ai` side-effect
+   operation ledger. When tab
+   enumeration is unavailable, reuse any already recorded task tab; otherwise open at
+   most one isolated task-owned tab for the declared purpose and mark tab identity
+   `Not verified`. Never invent missing tab/window identity.
    Imported bookmarks, history, and saved credentials may accelerate target discovery or user login, but do not prove an active session, account/workspace identity, conversation ownership, authorization, or operation state.
 4. When `ask-ai` delegates a browser route, validate the Handoff Request fields,
    reuse or refresh the named Capability Snapshot, and return a Handoff Result
    with the same `operation_id`; do not reconstruct bridge policy locally. App-native
    ChatGPT Project/Thread operations never enter this Skill.
 5. Choose the surface mode and evidence plan based on capability and state ownership. For social, publishing, design-collaboration, development-collaboration, or admin sites, also select one generic operation pattern from `references/platform-operations.md`; load platform-specific detail only when it changes the action or proof boundary. For an Axure product-source inventory, load [references/axure-product-evidence.md](references/axure-product-evidence.md); for Lanhu selected-element measurements, load [references/lanhu-ui-evidence.md](references/lanhu-ui-evidence.md). For repeatable multi-route/state or element capture, load the optional manifest in [references/usage.md](references/usage.md); do not impose it on one-off inspection. For selected-source visual capture/comparison, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and require caller-provided source identity, viewport/state, pass number, capture targets, computed checks, and state-restoration plan. For an already-isolated browser-layer failure, load `references/devtools-debugging.md`; route unexplained or cross-system root-cause requests back to the caller for diagnosis before browser operation.
-6. Reuse the evidence-bearing session and target tab when it can be identified safely. If the user requires no window, mouse, or keyboard interruption, prefer the host-provided Codex in-app Browser, which is classified as non-interrupting. For controlled Chrome, Computer Use, system accessibility/coordinate automation, or another visible/user-owned surface, require direct background-safety capability evidence; otherwise return Degraded Evidence or stop. Open an isolated managed page only when the task does not depend on unavailable user-profile state.
+6. Reuse the evidence-bearing session and target tab when it can be identified safely.
+   Treat opening a page as disallowed until step 3 either finds no safe reusable tab or
+   records the specific isolation/comparison reason. If the user requires no window,
+   mouse, or keyboard interruption, prefer the host-provided Codex in-app Browser,
+   which is classified as non-interrupting. For controlled Chrome, Computer Use,
+   system accessibility/coordinate automation, or another visible/user-owned surface,
+   require direct background-safety capability evidence; otherwise return Degraded
+   Evidence or stop. Open an isolated managed page only when the task does not depend
+   on unavailable user-profile state.
 7. Prefer browser/tool APIs, DOM inspection, roles, labels, test ids, and deterministic actions over manual guessing.
 8. Gather only evidence the tool can actually expose: UI state, DOM/accessibility, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads. For visual comparison, independently retain design and runtime captures, produce side-by-side/overlay/diff evidence, and read applicable computed font, final color/contrast, geometry, alignment, truncation, hover/focus, state, and breakpoint facts.
 9. Distinguish direct evidence from inference; mark unavailable or unchecked claims `Not verified`.
-10. Close task-only temporary pages/windows and clean temporary local artifacts when the tool supports it. Restore user-owned tabs to their recorded viewport, zoom, and scroll where possible, and leave only an explicitly requested delivery tab/artifact inspectable; report anything left changed, open, or undeleted. For a runtime started by this task, record and verify cleanup of only its exact command, PID/process tree, port, temporary profile, and artifacts; return caller-owned runtime cleanup to the caller. See `references/devtools-debugging.md`.
+10. Reconcile the task-local tab ledger before finishing. After interruption or
+    reconnect, resume ownership only from the same revalidated browser surface/session,
+    tab identity, and target fingerprint; otherwise mark ownership `Not verified` and
+    do not close the tab. Close every identity-matched task-created page
+    or window that is no longer needed when the tool supports it, verify that no
+    duplicate task tabs remain. Retain a delivery tab only when the user explicitly
+    requested it; otherwise close every task-created tab.
+    Never close a pre-existing user tab unless the user explicitly authorized it.
+    Restore user-owned tabs to their recorded viewport, zoom, and scroll where possible,
+    and report anything left changed, open, unsupported, or undeleted. Clean temporary
+    local artifacts as applicable. For a runtime started by this task, record and verify
+    cleanup of only its exact command, PID/process tree, port, temporary profile, and
+    artifacts; return caller-owned runtime cleanup to the caller. See
+    `references/devtools-debugging.md`.
 
 ## Modes
 

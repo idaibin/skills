@@ -36,9 +36,10 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    [documentation-authority-review.md](references/documentation-authority-review.md):
    verify Markdown authority, source ownership, consumer/read-path closure, duplicate
    facts, stale derived maps, and independent `Not verified` gaps. A YAML/JSON
-   projection is relevant only when a named non-LLM consumer and maintained validator,
-   drift, and retirement lifecycle are evidenced; never require project-local Schema
-   or validator files for ordinary Markdown contracts.
+   projection is relevant only when a named owner, producer, non-LLM consumer,
+   semantic version, executable validator, drift policy, and retirement rule are
+   evidenced; never require project-local Schema or validator files for ordinary
+   Markdown contracts.
    When the basis activates runtime/configuration, packaging, public integration,
    persistence, legacy replacement, auth/security, or cross-repository delivery risk,
    load [project grounding](references/project-grounding.md). Bind every grounding fact

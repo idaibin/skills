@@ -7,6 +7,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 - Trigger Eval
 - Non-Trigger Eval
 - Independent Review Outlet Eval
+- UI Documentation Fixtures
 - Quality Eval
 - Scoring
 
@@ -94,8 +95,10 @@ names, endpoints, props, slots, or visual values.
 | Fixture | Expected consumer behavior |
 | --- | --- |
 | `current`: Product/UI/DESIGN/project-map Markdown and current source resolve | Read Markdown authorities, then verify routes, components, states, and consumers in live source. |
-| `duplicate-fact`: a derived UI map repeats a source-owned token, API path, DTO, prop, or event | Keep the existing owner; do not copy or create a second contract. |
-| `no-consumer`: a YAML/JSON companion has no named non-LLM consumer or lifecycle | Ignore it for implementation and report the unnecessary derived artifact. |
+| `navigation-reference`: project-map names a route, component symbol, source owner, and representative consumer | Use it to navigate, then verify every reference in current source. |
+| `copied-authority`: a derived UI map restates token values, DTO fields, component props/events, or behavior rules as its own facts | Keep the existing owner; do not copy or create a second contract. |
+| `incomplete-lifecycle`: one or more of named owner, producer, non-LLM consumer, semantic version, executable validator, drift policy, or retirement rule is missing | Do not rely on the projection; continue from Markdown and current source and report `Not verified` without inventing lifecycle files. |
+| `maintained-projection`: all seven lifecycle fields exist and its current non-mutating validator passes | Use it only for bounded navigation, then verify referenced routes, components, states, and consumers in live source. |
 | `stale-map`: project-map points to a moved/removed route or component | Recheck bounded live source before editing; do not invent a replacement. |
 
 ## Quality Eval
@@ -106,6 +109,7 @@ names, endpoints, props, slots, or visual values.
 | Specification authority | Reads only applicable declared product/shared visual/slice UI authorities, classifies them by meaning rather than filename, and invokes an owner only for a required unresolved decision. | Treats root `PRD.md` as universal, loads sibling specs, or invokes `ui-spec` merely because `DESIGN.md` exists. |
 | Feature Spec distinction | Separately reads applicable product requirements/product Feature Spec, selected-source UI Feature Spec, and resolved `<design-root>/DESIGN.md` before implementation facts. | Treats one Feature Spec as both product and UI authority or blocks a known scoped change on an optional absent artifact. |
 | Design binding | Treats resolved `<design-root>/DESIGN.md` as shared semantics, then verifies Tailwind, component-library, or local-theme bindings in live config/source and reports drift or unexercised behavior honestly. | Promotes an adapter to shared authority, assumes automatic synchronization, or blocks solely because a repo map is absent. |
+| Structured projection consumption | Requires all seven lifecycle fields, runs the existing non-mutating validator, preserves Markdown/source authority, and verifies referenced consumers in live source. | Trusts an unvalidated projection, hand-edits it, requires one for ordinary work, or treats it as product/UI/source authority. |
 | Visual direction and anti-slop | Uses verified surface/audience/brand constraints, optional reasoned dials, explicit Preserve/Overhaul mode, one primary accent semantic role with state-color exceptions, and conditional dark-mode scope; rejects generic visual defaults only when the accepted direction or user impact supports it. | Applies a universal aesthetic, default dial values, mandatory dark mode, one literal color for every semantic state, or treats deliberate repeated layouts as slop. |
 | Nested inset implementation | Traces shell → container → page → component → control, computes effective padding per axis, removes competing declarations, preserves internal component spacing, and verifies flush scrollbar plus sibling impact when a shared owner changes. | Patches one `px`/`pt`, stacks parent and child page insets, shifts the left/top grid, or leaks a page-specific inset model into siblings. |
 | Interaction and motion quality | For a material motion/feedback change, states its communication purpose and frequency, reuses existing contracts/tokens, specifies transitioned properties instead of introducing `transition: all`, preserves reduced-motion/focus/hover capability, keeps rapid input interruptible, and obtains proportional runtime evidence or reports `Not verified`. | Activates from file extensions, invents exact timing/easing or a new visual system, adds decorative delay to frequent work, rewrites unrelated legacy motion, or claims feel/interaction quality from static checks. |

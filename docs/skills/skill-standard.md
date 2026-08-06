@@ -140,8 +140,9 @@ Durable normative documents are current terminal contracts; Git retains their fo
 history. Do not publish task review passes, superseded decisions, captures, or
 environment snapshots as current authority. A time-bound shared status document needs
 a named team consumer, fixed basis, revalidation owner, and refresh or expiry rule.
-Structured sidecars require a named owner, producer, consumer, semantic version,
-validator, drift policy, and retirement rule; “AI may read it” is not a consumer.
+Structured sidecars require a named owner, producer, non-LLM consumer, semantic
+version, executable validator, drift policy, and retirement rule; “AI may read it” is
+not a consumer.
 
 ## Maintenance And Pruning
 
