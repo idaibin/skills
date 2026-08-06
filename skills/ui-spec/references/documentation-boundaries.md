@@ -34,6 +34,8 @@ To implement one UI slice, read in order:
 3. `<design-root>/DESIGN.md` (required shared visual authority);
 4. the project-declared UI index when the request has several UI slices;
 5. the project-declared target UI slice.
+6. the component guidance and project-map entries referenced by that slice, followed
+   by live source owners when implementation work begins.
 
 Do not require sibling PRD or UI contracts. Keep unfinished task-local work and
 visual-evidence JSON under the repository's verified ignored task workspace, such as
@@ -45,3 +47,13 @@ implementation logs, captured timestamps, and superseded specs remain task evide
 A durable evidence artifact additionally requires a named team consumer, accessible
 source artifacts, schema and validator, drift policy, revalidation owner, and
 retirement condition.
+
+## Page And Component Binding
+
+A page contract should answer which reusable or page-defining component roles compose
+the surface and which page states and interactions apply. Human-readable component
+guidance owns cross-page usage semantics; the project map points to high-value source
+owners, and implementation revalidates symbols, registration, consumers, and current
+states in live source. Keep props, slots, events, types, token values, and API schemas
+in their source owners. Do not create a component registry solely to make the page
+contract machine-readable.

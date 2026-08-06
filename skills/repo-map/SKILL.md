@@ -24,7 +24,20 @@ task-time checks or judges changes for defects.
 3. Select the requested artifact. For a repo map, locate the existing project-defined equivalent or consider `<map-root>/docs/project-map.md`; reconcile competing candidates and federated specialist maps without copying their detail. For explicitly requested repository-guidance creation or repair, load `references/project-guidance.md`, follow its placement gate and workflow through artifact validation, then resume at step 15; do not also create a repo map unless requested. If any target artifact is already modified, inspect its staged and unstaged diff, preserve unrelated hunks, and stop on an unsafe overlap.
 4. For repo-map artifacts, apply the creation gate: create or expand a map only when it will reduce wrong-root routing, repeated semantic discovery, duplicate implementation, or cross-boundary inference. If one directory listing or manifest answers the need, read it directly and keep the map absent or smaller.
 5. Select workspace, repository, or scoped level from real ownership, build, deploy, or runtime boundaries; never split from directory names alone.
-6. Define the questions the map must answer: real boundaries and owners, architecture, command sources, shortest task routes, reusable contracts, cross-boundary relationships, and validation entry points. When product positioning changes task routing, link the smallest verified product-fact authority set without restating or deciding product behavior. Treat canonical owner as the definition or contract owner; record build/deploy, runtime/operations, or data/schema ownership only when it changes routing. When the user supplies an external project or framework as a design reference, use it to identify candidate architecture, documentation, and validation questions, then retain only conclusions verified against the target repository; never turn the reference into a target-repository authority or a framework-specific execution branch.
+6. Define only the questions this map must answer. By default require purpose,
+   boundary/owner, working and Git roots, command sources, and the shortest routes for
+   common tasks. Add architecture, reusable contracts, cross-boundary relationships,
+   runtime identities, dependencies, frontend/API detail, or validation entry points
+   only when they materially change routing for the selected repository or request.
+   When product positioning changes task routing, link the smallest verified
+   product-fact authority set without restating or deciding product behavior. Treat
+   canonical owner as the definition or contract owner; record build/deploy,
+   runtime/operations, or data/schema ownership only when it changes routing. When
+   the user supplies an external project or framework as a design reference, use it
+   to identify candidate architecture, documentation, and validation questions, then
+   retain only conclusions verified against the target repository; never turn the
+   reference into a target-repository authority or a framework-specific execution
+   branch.
    When the request is explicitly to understand project execution, configuration,
    compatibility, integration, or delivery rather than navigation alone, load
    [project grounding](references/project-grounding.md). Persist only stable routing,
@@ -32,28 +45,25 @@ task-time checks or judges changes for defects.
    freshness, and operational status in the consuming implementation or review.
 7. Search before opening files. Start with manifests/config, entry points, exports/registrations, and the nearest representative implementation. Read only evidence that can change the map. When Maven, Gradle, or JVM source-set evidence appears, load `references/java-build-and-dependency-map.md` and resolve the owning build root, JDK source, module graph, and critical dependency routes without dumping the full dependency tree.
 8. For monorepos or multi-repo workspaces, map the routing boundary first, then only the owning child repository or package needed. Do not scan every child by default.
-9. Write or update the repo-map artifact with:
-   - current directory and ownership map;
-   - technical architecture and runtime boundaries;
-   - install, start, test, lint, typecheck, and build commands from their real sources;
-   - repository-specific conventions and effective guidance;
-   - shortest reading path for common task types;
-   - a verified reuse index for shared components, functions/helpers, hooks/composables, stores, services, API clients/endpoints, routes, handlers, repositories, traits/types/DTOs, and reference implementations;
-   - each reusable entry's canonical owner/definition, access or registration entry with actual visibility, representative real consumers, usage boundary, and live verification source;
-   - cross-boundary contracts such as frontend-to-API, Tauri IPC, package exports, generated clients, events, persistence, and deployment edges;
-   - a bounded dependency map covering internal owner-to-consumer edges and only those external platforms, BOMs, frameworks, stores, transports, generators, or build plugins that change build, runtime, contract, deployment, or task routing;
-   - known exceptions, high-risk boundaries, and `Not verified` gaps.
+9. Write or update the smallest repo-map artifact that answers the selected questions.
+   The default map contains purpose/boundary, owner and working/Git roots, command
+   source links, and short reading paths for common tasks. Add technical architecture,
+   runtime identities, conventions, reuse entries, cross-boundary contracts,
+   dependency routes, exceptions, or risks only when the repository and selected
+   tasks actually require them. A reuse entry, when justified, records canonical
+   owner/definition, access or registration, representative consumers, boundary, and
+   current-source evidence. Never add an empty or generic section merely because a
+   template lists it; mark only materially unchecked selected areas `Not verified`.
    For reusable UI components, record the product/design term, visual cue or
    semantic job, canonical path and symbol, export/registration path, owning
    provider root, representative consumers, states/variants, reuse boundary,
    and current-source evidence. When the project adopts a resolved `<design-root>/DESIGN.md`,
    also record its exact map-root-relative path plus anchor or semantic binding;
    do not copy token values or design rules. Keep this a high-value index, not a
-   catalog. When page UI contracts need durable composition links, assign stable
-   component IDs and let pages reference those IDs; keep props, slots, events, types,
-   and page-specific composition out of the map. Record only currently implemented
-   states as variants; put required-but-unimplemented states in an explicit gap or
-   target contract. Load `references/frontend-inventory.md` only for a requested frontend
+   catalog. Let page UI Markdown name its component roles and composition; use the
+   project map only to reach high-value source owners, then verify symbols, consumers,
+   and implemented states in current source. Do not create a parallel component
+   registry merely to connect UI docs to source. Load `references/frontend-inventory.md` only for a requested frontend
    inventory or code-context index.
    For a requested HTTP API inventory, use `references/api-contract-map.md`. Record
    the repository-native authority/consumer chain and only existing or explicitly
@@ -118,10 +128,10 @@ task-time checks or judges changes for defects.
   paths, symbols, commands, consumers, and evidence references only.
 - Do not recommend a new component, function, endpoint, service, repository, trait, DTO, hook, composable, store, or helper before verifying the nearest reusable or reference implementation in live source.
 - Treat the reuse index as high-value navigation, not an exhaustive symbol catalog. Include explicit shared contracts or proven reusable candidates; keep leaf-local details in source.
-- A stable component ID resolves navigation only. Do not invent an importable symbol for an inline region, and do not record target-only page states as current variants.
-- If a page UI contract consumes the map as a machine artifact, require a named
-  non-LLM consumer, producer, validator, drift policy, retirement rule, and semantic
-  version; otherwise keep the map Markdown-only and non-authoritative for automation.
+- If an already maintained non-LLM component registry is in scope, treat its IDs as
+  navigation only and require its producer, validator, drift policy, retirement rule,
+  semantic version, and named consumer. Otherwise keep the map Markdown-only and do
+  not invent IDs, importable symbols, or target-only states as current facts.
   Structure, route, component, and API entries are
   frontend navigation indexes: an API row may record only observed client adapter
   method/path/consumer facts, while backend DTO, permission, response, and OpenAPI

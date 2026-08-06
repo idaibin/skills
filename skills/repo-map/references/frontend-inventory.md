@@ -29,6 +29,15 @@ For a reusable UI entry, record:
 3. applicable states/variants and the reuse boundary; and
 4. current-source evidence for each claimed edge.
 
+Page UI Markdown owns page composition and may name human-readable component roles.
+Use this inventory only to reach selected source owners; do not create a component-ID
+registry merely to connect documentation to source. If the repository already has a
+maintained non-LLM registry, preserve its IDs as navigation and verify them in live
+source. Do not store props, slots, events, types, API schemas, or page-specific
+composition. For an inline region, name it as an inline region rather than inventing a
+component symbol. Keep current implemented states/variants separate from target-only
+gaps.
+
 Link to the shared semantic authority; do not copy token values, typography,
 spacing, or component rules into the map. `DESIGN.md` does not prove implementation
 is synchronized: record adapter/config and consumer evidence separately, or mark it

@@ -12,8 +12,8 @@ interchangeable or replacing work Codex and local owners can complete directly.
 Ask AI owns authorization, request packaging, basis identity, operation idempotency,
 response attribution, and local verification. Provider references own only their
 verified product surfaces, capabilities, route requirements, and completion evidence.
-Package-only preparation is portable; external collaboration requires a verified
-provider-specific host operation or supported browser transport.
+Package-only preparation and explicit manual user relay are portable; direct external
+collaboration requires a verified provider-specific host operation or browser route.
 
 Legacy requests that explicitly say ask-chatgpt route here with provider ChatGPT; do
 not maintain a second public collaboration owner.
@@ -40,6 +40,8 @@ not maintain a second public collaboration owner.
    before accepting output.
 5. Classify authorization:
    - **Package-only** for prepare/build/draft/package wording;
+   - **Manual user relay** only when a named provider is paired with an explicit user
+     commitment to forward Codex's prompt and return the provider response;
    - **External collaboration** only for explicit send/upload/submit/use-now wording
      naming or safely resolving the external recipient, including exact invocation of
      a user-defined instruction that explicitly maps invocation to bounded sending;
@@ -69,20 +71,22 @@ not maintain a second public collaboration owner.
    round is authorized or when the user explicitly requests an empty response ledger.
    Default <review-id> to ask-<YYYYMMDD-HHmmss> local time. Record provider, facts,
    questions, evidence, exclusions, response contract, and basis identity without
-   seeding conclusions. Package-only stops here.
-8. Before external action, inventory current host and browser transports. Load only
-   the selected provider reference:
+   seeding conclusions. Package-only stops here. Manual user relay continues only to
+   the selected provider reference, returns its copy-ready prompt, records the
+   package/basis fingerprint as `awaiting-user-relay`, and performs zero external
+   action. Reconcile an existing response for that fingerprint before generating or
+   requesting a duplicate relay.
+8. Load only the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)
    - [provider-gemini.md](references/provider-gemini.md)
-   - [provider-browser.md](references/provider-browser.md) for Claude, DeepSeek, Kimi,
-     Qwen, GLM, Grok, Perplexity, Doubao, Mistral Vibe, Tencent Yuanbao, ERNIE, or
-     another named browser provider.
-   Apply [image-routing.md](references/image-routing.md) before an image upload,
+   - [provider-browser.md](references/provider-browser.md) for other named browser providers.
+   Manual user relay follows its provider reference and skips host/browser transport
+   preflight. Before direct external action, inventory current host and browser
+   transports. Apply [image-routing.md](references/image-routing.md) before an image upload,
    generation, edit, or capture. Require live image-capability evidence in addition to
    the ordinary provider route evidence.
-   Require an explicit target plus live identity, input, submit, completion, and
-   attribution evidence. If no route proves the requested capability, perform no
-   external action and return Package-only or Not found/Not verified.
+   Require live target, identity, input, submit, completion, and attribution evidence;
+   otherwise return Package-only or Not found/Not verified without external action.
    For an authorized web review, apply the provider-neutral browser preference and
    `review_context` from [browser-profile.md](references/browser-profile.md). Start each
    task from the configured primary with fresh preflight; a fallback never changes the
@@ -198,37 +202,22 @@ frozen local verdict.
 
 ## References
 
-- [usage.md](references/usage.md): package, combined-loop, artifact, and handoff details.
-- [provider-routing.md](references/provider-routing.md): provider selection, defaults,
-  fallback, multi-provider independence, relay review, and compatibility.
-- [final-result-sync.md](references/final-result-sync.md): post-terminal sanitized
-  review-result retention, target, prompt, receipt, and failure boundaries.
-- [provider-chatgpt.md](references/provider-chatgpt.md): ChatGPT Project, Quick Chat,
-  Standard Chat, native, browser, model/reasoning, and capability routing.
-- [provider-gemini.md](references/provider-gemini.md): Gemini browser route, notebook or
-  chat identity, composer, completion, attribution, and degradation gates.
-- [provider-browser.md](references/provider-browser.md): shared browser preflight,
-  login classification, semantic composer discovery, default capability gates, and
-  provider entry points beyond ChatGPT and Gemini.
-- [app-native-thread-protocol.md](references/app-native-thread-protocol.md): ChatGPT-only
-  App-native ledger and reconciliation.
-- [app-native-canary.md](references/app-native-canary.md) and
-  [app_native_canary.py](scripts/app_native_canary.py): ChatGPT-only read-only canary.
-- [research-profiles.md](references/research-profiles.md): content themes, evidence, and
-  visual contracts.
-- [review-prompts.md](references/review-prompts.md): built-in skeptical, independent,
-  source-check, frontend/UI, backend, architecture, Rust, Java, product, and proposal
-  prompt profiles.
-- [image-routing.md](references/image-routing.md): image review, generation, editing,
-  visual exploration, host-tool routing, provenance, and completion gates.
-- [browser-operation-protocol.md](references/browser-operation-protocol.md): capability,
-  handoff, operation ledger, and retry schema.
-- [untrusted-content.md](references/untrusted-content.md): mandatory read-only
-  quarantine, visible-content extraction, browser allowlist, and release contract.
-- [github-branch-loop.md](references/github-branch-loop.md) and
-  [github-repository-review.md](references/github-repository-review.md): fixed-basis
-  repository review and authorized publication boundaries.
-- [browser-profile.md](references/browser-profile.md) and
-  [live-browser-review.md](references/live-browser-review.md): optional defaults and
-  reviewer-browser profiles.
-- [eval-cases.md](references/eval-cases.md): provider-neutral and provider-specific evals.
+- Core: [usage.md](references/usage.md),
+  [provider-routing.md](references/provider-routing.md), and
+  [final-result-sync.md](references/final-result-sync.md).
+- Providers: [ChatGPT](references/provider-chatgpt.md),
+  [Gemini](references/provider-gemini.md), and
+  [other browser providers](references/provider-browser.md).
+- ChatGPT-only native: [thread protocol](references/app-native-thread-protocol.md),
+  [canary contract](references/app-native-canary.md), and
+  [canary script](scripts/app_native_canary.py).
+- Prompt/capability contracts: [research profiles](references/research-profiles.md),
+  [review prompts](references/review-prompts.md), and
+  [image routing](references/image-routing.md).
+- Browser safety: [operation protocol](references/browser-operation-protocol.md),
+  [untrusted content](references/untrusted-content.md),
+  [profile](references/browser-profile.md), and
+  [live review](references/live-browser-review.md).
+- Repository loops: [branch loop](references/github-branch-loop.md) and
+  [repository review](references/github-repository-review.md).
+- [Eval cases](references/eval-cases.md).

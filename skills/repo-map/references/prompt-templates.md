@@ -21,29 +21,26 @@ Templates provide structure only. Repository files, configs, commands, and code 
 
 Use for `docs/project-map.md` or an equivalent context map. Keep one Markdown page as the authoritative root index at the selected map root. Add linked sibling scoped pages only for independently owned, built, deployed, or operationally complex boundaries; do not change storage root for a scoped request or mirror source directories. If multiple current/legacy candidates cannot be reconciled from ownership and references, stop for clarification.
 
-Required sections:
+Default required sections:
 
 - Repository purpose and project boundaries
 - Scope class: workspace, repository, or scoped boundary
 - Initial working scope, map root, and containing/child Git roots
-- Tech stack
-- Install, start, test, lint, typecheck, and build commands
-- Runtime and package manager requirements
-- Build authority, runtime/toolchain source, internal module edges, and critical
-  direct dependency routes
-- Canonical/source owner, build/deploy owner, runtime service identity, and
-  gateway/registration alias where they differ
-- Directory structure
-- Typical file chain for page, API, backend, CLI, or worker changes
-- Components, services, state, styles, tests, and config locations
-- Verified reusable pages, layouts, components, functions, hooks, services, and shared UI relevant to common tasks
-- Existing Rust/API routes, handlers, services, repositories, traits/types, DTOs, errors, migrations, callers, and tests relevant to common tasks
-- Reference implementations, naming/placement patterns, and new-file decision rule
-- Reuse index entries with canonical owner, access or registration entry, actual visibility, representative consumers, boundary, and evidence
-- Cross-boundary contracts and generated-source ownership
-- Frequent edit areas
-- High-risk areas
+- Command authorities for install/start/test/lint/typecheck/build, listing only commands relevant to this repository
 - Recommended reading order for new tasks
+
+Optional sections, included only when they change routing for the selected repository
+or common tasks:
+
+- Tech stack and runtime/toolchain requirements
+- Build/deploy owner, runtime service identity, gateway/registration alias, internal
+  module edges, and critical direct dependency routes
+- A bounded directory/architecture map
+- Typical file chains for relevant page, API, backend, CLI, or worker changes
+- Selected component, service, state, style, test, configuration, reuse, or reference
+  implementation owners
+- Cross-boundary contracts and generated-source ownership
+- Frequent edit or high-risk areas
 
 For each common task type, prefer a short ordered reading path over a broad inventory. Point to the owning manifest/config, entry or registration, reusable contract, representative caller, and matching test only when each hop is useful.
 
@@ -54,7 +51,24 @@ management authority, executable entry points, configuration ownership, and only
 external dependencies that change routing. Do not copy dependency trees or
 configuration values.
 
-Stop when each mapped common task reaches the correct working/Git root through the minimum decisive chain, normally 1-8 unique entries per task. Reuse shared entries; exceed eight only for distinct required boundaries and record the reason. Omit any section that merely repeats a directory listing or manifest.
+Stop when each mapped common task reaches the correct working/Git root through the minimum decisive chain, normally 1-8 unique entries per task. Reuse shared entries; exceed eight only for distinct required boundaries and record the reason. Omit any optional section that is not needed, is empty, or merely repeats a directory listing or manifest.
+
+Minimal example for a small repository:
+
+```markdown
+# Project Map
+
+## Purpose and owner
+- Purpose: <one sentence>
+- Owner/root: `<owner-relative-root>`
+- Git root: `<git-root>`
+
+## Commands
+- Install/test/build authority: `<manifest-or-task-file>`
+
+## Common task routes
+- Change application behavior: `<entry>` -> `<representative-owner>` -> `<test>`
+```
 
 Hard requirements:
 
