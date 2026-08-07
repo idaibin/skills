@@ -43,7 +43,7 @@
 | `Implement this Rust API now.` | Prefer `dev-rust`. | No separate map deliverable. |
 | `Review all local changes before commit.` | Prefer `repo-review`. | Dirty-tree readiness. |
 | `Review main..feature for P0-P3 findings.` | Prefer `repo-review`. | Immutable range review. |
-| `Find why the build fails.` | Do not trigger this Skill; use the host's built-in diagnosis under effective instructions. | Concrete failure. |
+| `Find why the build fails.` | Do not trigger this Skill for root-cause diagnosis; use the host's built-in diagnosis. repo-map may provide navigation evidence (roots, owners, paths) that the debug task consumes, but must not claim root-cause diagnosis or own the fix. | Concrete failure. |
 | `Split this migration into tasks.` | Do not trigger this Skill; use the host's built-in planning. | Future work planning. |
 | `Define the entities, relationships, lifecycle, invariants, and bounded contexts for this product domain.` | Prefer `domain-modeling`. | Business model, not repository semantics. |
 | `Review this endpoint diff for authorization risk.` | Prefer `repo-review`. | Fixed-basis change review. |
@@ -61,6 +61,7 @@
 | Case | Pass evidence | Reject if |
 | --- | --- | --- |
 | Current truth | Verifies paths, commands, architecture, and conventions from current repository evidence. | Copies stale prose or invents missing layers. |
+| Path-claim classification | Classifies every durable path claim as `verified` (checked in current source), `declared-only` (manifest/config-named but not source-confirmed), `stale` (root absent or moved), or `Not verified` (unchecked). | Treats a declared-only path as verified, or leaves a path claim unclassified. |
 | Directory map | Documents ownership and boundaries with exact paths, not an exhaustive tree. | Dumps every file without explaining ownership. |
 | Shortest reading path | Gives the minimum ordered files/areas needed for common task types. | Produces a broad reading list with no order. |
 | Reuse navigation | Names definitions, access/registration entries, representative callers, and new-contract gate. | Suggests new components or interfaces before searching. |

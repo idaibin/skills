@@ -97,7 +97,7 @@ task-time checks or judges changes for defects.
 - Local diff readiness or fixed immutable review; use `repo-review` with Worktree/index, resolved SHA/range (including PR base/head), or verified package basis, plus the conditional Release profile when applicable.
 - Future implementation planning; use the host's built-in planning.
 - Generic policy generation with no current repository evidence or no explicit request to create or update repository guidance.
-- Root-cause investigation of a concrete failure; use the host's built-in diagnosis under effective instructions.
+- Root-cause investigation of a concrete failure; use the host's built-in diagnosis under effective instructions. repo-map may establish navigation evidence (roots, owners, paths, reuse entries) that a debug task consumes, but must not claim root-cause diagnosis or own the fix; when source changes are requested, hand off to the matching `dev-*` owner.
 
 ## Hard Rules
 
@@ -143,6 +143,7 @@ task-time checks or judges changes for defects.
   or a map miss never proves that a route, component, style, hook, state owner,
   API client, or design binding does not exist; perform bounded live discovery.
 - Never treat a map miss as proof that no implementation exists. Record the live search scope before allowing a new declaration.
+- Classify every durable path claim against the resolved root as `verified` (checked in current source), `declared-only` (named in a manifest/config but not source-confirmed), `stale` (root absent or moved), or `Not verified` (unchecked). A map miss is never proof of absence.
 - Say `Not found` for missing items and `Not verified` for unchecked or runtime claims.
 - Keep current truth separate from history, plans, and aspirational architecture.
 - Keep canonical/source owner, build/deploy owner, runtime service identity, and
