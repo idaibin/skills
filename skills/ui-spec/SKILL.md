@@ -13,11 +13,13 @@ Turn a selected visual source and verified product facts into an implementation-
 ## Workflow
 
 1. Read effective repository guidance and run `git status --short` before planning an authorized artifact write.
-2. Fix the selected visual source: a user-selected Product Design result, supplied screenshot/mockup/frame, accepted current surface, or accepted shared visual baseline. Record identity, revision/image ID, approval, rights status, `use` and `ignore` boundaries, target viewport/state, and source limitations. When a current runtime exists, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and request same-round, same-viewport/state source and runtime captures from `ops-browser` without operating the browser here.
+2. Fix the selected visual source: a user-selected Product Design result, supplied screenshot/mockup/frame, accepted current surface, or accepted shared visual baseline. Record identity, revision/image ID, approval, rights status, `use` and `ignore` boundaries, target viewport/state, and source limitations. When a current runtime exists, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and request same-round, same-viewport/state source and runtime captures from `ops-browser` without operating the browser here. For implicit routing, do not trigger this Skill when no selected visual source or accepted existing UI surface is available; route to `product-spec` for unresolved behavior or host Product Design for visual exploration. If this Skill is already explicitly invoked without that source, stop as `evidence-incomplete` instead of fabricating one.
 3. Resolve the approved `<design-root>` from effective guidance, build ownership,
    and shared consumers. Require `<design-root>/DESIGN.md` as that boundary's single
    source of truth for shared visual semantics; a monorepo does not imply automatic
-   parent/child inheritance or one file per application. If it does not exist, copy
+   parent/child inheritance or one file per application. A missing pre-existing
+   `DESIGN.md` is not a non-trigger once a selected visual source is fixed; it is an
+   authorized artifact-creation path. If it does not exist, copy
    [assets/DESIGN.md](assets/DESIGN.md) as the structural starter, replace every
    placeholder from verified sources, omit unverified token groups, obtain named
    human approval, and validate it before authoring Feature Specs or shared-system changes.

@@ -30,6 +30,8 @@
 | `Critique this interface and redesign it.` | Route to Product Design or audit owner; do not do redesign in `ui-spec`. |
 | `Collect runtime screenshots and network logs for the accepted surface.` | Route to `ops-browser` or `ops-client`; do not claim runtime evidence in `ui-spec`. |
 | `DESIGN.md and the matching UI slice already exist; identify their file types before implementation.` | Let the consumer classify and read them directly; do not trigger `ui-spec` merely for recognition. |
+| `Specify the dashboard UI from this accepted project screenshot.` | Trigger `ui-spec` with the screenshot as the selected visual source; a versioned project-owned screenshot referenced in the README is an accepted current UI surface. |
+| `No visual source or accepted UI surface is available; specify the UI anyway.` | For implicit routing, do not trigger `ui-spec`; route to `product-spec` for unresolved behavior or host Product Design for visual exploration. If `ui-spec` is explicitly invoked, stop as `evidence-incomplete`. Do not fabricate a visual source. |
 
 ## Scenario Eval
 
@@ -71,6 +73,7 @@
 | Viewport acceptance scope | every applicable slice has required/optional/excluded entries with size, environment, state, assertions, and evidence source; current user requirements override older specs | calls one screenshot full coverage, omits the evidence source or state, or treats an excluded viewport as unsupported |
 | Multi-surface gating | per-slice readiness plus shared index and explicit partial/complete status | uses one omnibus contract or one package-wide readiness only |
 | Handoff | per-slice artifact and readiness delivered to dev-frontend with remaining gaps | omits per-slice readiness or unresolved blockers |
+| End-of-work checklist | reports each binary readiness item by name (source fixed, DESIGN.md resolved, lint passed, delta table complete, viewport matrix complete, P1 asset owner, required state coverage, evidence levels tagged); evaluates in numeric order; returns `Not Ready` with the first failed item, `Partial` only when all eight pass but an explicitly non-blocking `Not verified` gap remains, and `Ready` only with all eight passed and no gap | collapses the checklist into a prose Ready, omits or skips the first failing item, downgrades a blocking unknown to `Partial`, or marks Ready with an unreported gap |
 
 ## Scoring
 

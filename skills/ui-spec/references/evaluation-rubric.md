@@ -47,3 +47,31 @@ Use source identity, product facts, and resolved `<design-root>/DESIGN.md` as pr
 
 Mark runtime execution, console/network screenshots, and deployment as `Not verified` unless
 owned by the implementation and operations workflow.
+
+## End-of-Work Readiness Checklist
+
+Every applicable Feature Spec must pass each binary item before `Ready for dev-frontend <slice>`.
+Report each item by name; do not collapse them into a prose `Ready` label.
+
+| # | Item | Check |
+| --- | --- | --- |
+| 1 | Selected source fixed | source identity, revision, approval, and rights/use recorded |
+| 2 | DESIGN.md resolved | `<design-root>/DESIGN.md` exists or is created and validated under named human approval |
+| 3 | DESIGN.md lint | official lint reports zero errors on `<design-root>/DESIGN.md` |
+| 4 | Delta table complete | every material visual difference has a row with acceptance ID, source target, current runtime, target contract, priority, owner, evidence IDs, verification, and asset owner/fallback |
+| 5 | Viewport matrix complete | every required viewport/state entry is present with no missing required items; justified exclusions are named |
+| 6 | P1 asset owner | every P1 asset has an accepted owner or fallback |
+| 7 | Required state coverage | loading, empty, error, populated, permission, focus, responsive, overflow, localization, and reduced-motion rules are present or justified-excluded |
+| 8 | Evidence levels | every claim uses `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, or `Not verified`; no untagged claim |
+
+Evaluate the eight items in numeric order:
+
+1. If an item fails, stop at that item, report its number and name, and return
+   `Not Ready`.
+2. If all eight pass but one or more explicitly non-blocking claims remain
+   `Not verified`, report the first such gap and return `Partial`.
+3. Return `Ready for dev-frontend <slice>` only when all eight pass and no
+   `Not verified` gap remains.
+
+A blocking `Not verified` condition must fail its owning checklist item; it cannot be
+downgraded to `Partial`.
