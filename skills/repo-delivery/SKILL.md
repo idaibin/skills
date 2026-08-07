@@ -1,6 +1,6 @@
 ---
 name: repo-delivery
-description: "Use when authorized Git mutation must preserve a large task through semantic milestone, targeted fixup, or exceptional checkpoint commits, normalize task-branch history, or deliver reviewed changes through commit, push, integration, cleanup, or ref proof; stops before pull-request creation."
+description: "Use when authorized Git mutation must preserve a large task through semantic milestone, targeted fixup, or exceptional checkpoint commits, normalize task-branch history, or deliver reviewed changes—including a validated Skills catalog release—through commit, push, integration, cleanup, or ref proof; stops before pull-request creation."
 ---
 
 # Repository Delivery
@@ -13,7 +13,7 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Run `git status --short --branch` and identify branch, upstream, staged files, dirty files, and unrelated local work.
-3. Select **Execution Durability** or **Final Delivery** from the requested outcome. Implementation-only wording never authorizes either lifecycle.
+3. Select **Execution Durability** or **Final Delivery** from the requested outcome. For an accepted Skills catalog release, load its conditional profile; runtime installation remains a separate handoff. Implementation-only wording never authorizes either lifecycle.
 4. Inspect existing local refs. Fetch or otherwise refresh remote state only for an explicitly authorized push, sync, branch-integration, history-rewrite assessment, or remote-refresh target; a local-commit-only request leaves remote state `Not verified`.
 5. Confirm each target through either exact per-action authorization or a bounded task-level execution-durability plan. A standing plan records the task branch, owned scope, allowed milestone/fixup/checkpoint types, event triggers, validation floor, message policy, and push policy; matching commits may proceed without asking again. Scope expansion, a new commit type, failed safety gates, rewrite, push, integration, or cleanup requires fresh authority.
 6. Confirm branch policy and permissions: task/default/protected status, upstream and known sharing/review state, force-push restrictions, required checks, branch naming, and every unknown that changes safety.
@@ -39,6 +39,7 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 - **Squash-to-main:** a conditional branch-integration strategy that moves reviewed branch work into `main` as exactly one final commit only when repo guidance and explicit user intent permit direct `main` updates.
 - **Cleanup:** delete local or remote temporary branches only after final target state is verified and cleanup is requested or required by repo guidance.
 - **Conflict resolution (conditional):** resolve an authorized in-progress merge/rebase hunk by hunk from both sides' primary intent. Treat resolution writes, staging, continuation/commit, and push as separate permissions.
+- **Skills release:** deliver an accepted package/catalog scope after the canonical gate and fixed-basis review; hand off runtime installation. See [references/skills-release.md](references/skills-release.md).
 
 ## Do Not Use For
 
@@ -69,6 +70,7 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 - Do not split one indivisible contract change merely to increase commit count.
 - Do not rewrite, force-push, squash, delete branches, change remotes, or alter upstream tracking unless the user requested it or repo guidance requires it for the delivery target.
 - Never treat a milestone, fixup, or checkpoint as final review, merge readiness, release evidence, or remote backup.
+- Never substitute a direct validator or package-local test for the Skills repository's canonical gate, and never perform runtime installation inside Git delivery.
 - Do not create time-based or automatic WIP commits. Prefer a semantic milestone; use a checkpoint only for a named loss/recovery risk and never on a default or protected branch.
 - A standing execution-durability plan is authorization, not automation: trigger only on verified semantic events inside its branch and owned scope. Stop and refresh authority when scope, branch, commit type, validation floor, or risk materially changes.
 - Every checkpoint must identify incomplete scope and a final disposition of split, absorb, or drop. Do not carry checkpoint-only history into final integration by accident.
@@ -103,4 +105,5 @@ Return a compact Delivery Report with `Completed`, `Changed Files`, `Verificatio
 - See [references/checklist.md](references/checklist.md) for delivery and verification details.
 - See [references/delivery-report.md](references/delivery-report.md) for the compact handoff/report template.
 - See [references/resolving-merge-conflicts.md](references/resolving-merge-conflicts.md) only for an authorized in-progress merge/rebase conflict.
+- See [references/skills-release.md](references/skills-release.md) only for an accepted Skills catalog delivery.
 - See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.

@@ -9,6 +9,7 @@
 - [Merge Or Rebase Conflicts](#merge-or-rebase-conflicts)
 - [Push And Sync](#push-and-sync)
 - [Review Publication](#review-publication)
+- [Skills Release](#skills-release)
 - [Branch Integration Strategy](#branch-integration-strategy)
 - [Squash-To-Main](#squash-to-main)
 - [Do Not Deliver](#do-not-deliver)
@@ -109,6 +110,15 @@ does not authorize staging or committing.
 - Publish only the authorized current feature branch; never `main`, another default/protected branch, a pull request, or a force-pushed rewrite.
 - Return the canonical GitHub repository URL, branch, base/head SHA, and remote-ref proof to the calling review owner.
 - When the remote is not GitHub, the branch is default/protected, authorization is incomplete, or publication cannot be proved safe, do not mutate Git; let the caller provide the minimum necessary files or review package instead.
+
+## Skills Release
+
+- Load `skills-release.md` only for a fixed accepted Skills catalog scope.
+- Require the repository's canonical gate, package-script tests, fixed-basis review, and an exact package/catalog allowlist before staging.
+- Keep source repair outside delivery; stop on generated drift or an invalidated review basis.
+- Treat Git stage/commit/push, hosted publication, and global runtime installation as separate permissions.
+- Hand authorized installation to its runtime owner with the immutable delivered basis and exact package allowlist; consume returned parity evidence without performing the install here.
+- Do not claim live host/model/browser behavior from source validation or filesystem parity.
 
 ## Branch Integration Strategy
 

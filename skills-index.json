@@ -161,6 +161,7 @@
       "intents": [
         "create categorized or explicitly requested commits",
         "deliver an explicitly authorized reviewed branch",
+        "deliver an accepted Skills catalog scope after canonical validation and review",
         "preserve authorized milestones and clean up Git state"
       ],
       "keywords": [
@@ -188,6 +189,8 @@
         "提交并推送",
         "branch integration",
         "Git delivery",
+        "Skills catalog release",
+        "canonical Skills gate",
         "cleanup"
       ],
       "excludes": [

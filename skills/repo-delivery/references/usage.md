@@ -24,6 +24,7 @@ commit.
 - Integrate a completed branch by preserving useful semantic commits or squashing noisy/single-outcome history when repository guidance and evidence support it.
 - Delete temporary branches after final state is verified.
 - Prove local and remote refs match after delivery.
+- Deliver an accepted Skills catalog scope after the canonical repository gate and fixed-basis review, then hand off any separately authorized runtime installation.
 
 ## Trigger Examples
 
@@ -44,6 +45,7 @@ commit.
 - `Merge this branch into main; preserve its meaningful commits if their boundaries are clean, otherwise squash it.`
 - `After verification, delete the temporary branch.`
 - `Ship this to main following the repo workflow.`
+- `The exact Skill package and catalog paths passed the canonical gate and fixed-basis review; commit and push that scope, then hand the immutable basis to the authorized runtime installer.`
 
 ## Non-Triggers
 
@@ -56,6 +58,7 @@ commit.
   or input risks; use `repo-review`.
 - Browser or desktop-client evidence collection; use `ops-browser` or `ops-client`.
 - A full GitHub publish flow that explicitly includes creating a draft or ready pull request; use the available GitHub publishing workflow.
+- Skill design, package implementation, or canonical validation repair; return to the owning Skill source workflow before Git delivery.
 - Preparing files or a review package when GitHub publication is unavailable or unauthorized; the calling review workflow owns that artifact.
 
 ## Output
