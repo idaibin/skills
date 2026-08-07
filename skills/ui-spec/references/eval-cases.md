@@ -20,6 +20,7 @@
 | `The current runtime geometry differs from exact values in the approved source inspect panel.` | Keep source target and browser-computed runtime in separate delta columns; use inspect-panel values as `source-extracted` and do not call current geometry already aligned. |
 | `Lanhu shows the same card gap as 16px three times and 17px once; use the default even-grid policy.` | Preserve all four source-extracted values, cluster only the same semantic gap, and target 16px with the recorded user policy; do not rewrite the 17px observation. |
 | `Specify the catalog page with SearchBar, CatalogCard, DownloadDialog, and shared states; the project has component guidance and a concise project map.` | Keep page composition, page states, and interaction in the UI slice; use the guidance and project map to reach source owners, leave props/slots/events and tokens in their owners, and require live-source revalidation before implementation. |
+| `Specify the dashboard UI from this accepted project screenshot.` | Trigger `ui-spec` with the screenshot as the selected visual source; a versioned project-owned screenshot referenced in the README is an accepted current UI surface. |
 
 ## Non-Trigger Eval
 
@@ -30,7 +31,6 @@
 | `Critique this interface and redesign it.` | Route to Product Design or audit owner; do not do redesign in `ui-spec`. |
 | `Collect runtime screenshots and network logs for the accepted surface.` | Route to `ops-browser` or `ops-client`; do not claim runtime evidence in `ui-spec`. |
 | `DESIGN.md and the matching UI slice already exist; identify their file types before implementation.` | Let the consumer classify and read them directly; do not trigger `ui-spec` merely for recognition. |
-| `Specify the dashboard UI from this accepted project screenshot.` | Trigger `ui-spec` with the screenshot as the selected visual source; a versioned project-owned screenshot referenced in the README is an accepted current UI surface. |
 | `No visual source or accepted UI surface is available; specify the UI anyway.` | For implicit routing, do not trigger `ui-spec`; route to `product-spec` for unresolved behavior or host Product Design for visual exploration. If `ui-spec` is explicitly invoked, stop as `evidence-incomplete`. Do not fabricate a visual source. |
 
 ## Scenario Eval
