@@ -22,6 +22,28 @@
 - [ ] Stop if the basis is moving, truncated, mismatched, or otherwise unverifiable.
 - [ ] If a `repo-map` artifact exists, use it only as navigation and verify finding facts at this basis.
 
+For every fixed commit or range:
+
+- [ ] Read raw commit metadata with `git cat-file -p <commit>` and derive every
+      required parent identity from its `parent` headers; do not infer root or parent
+      state from shallow-aware log output.
+- [ ] Check `git rev-parse --is-shallow-repository`; when true, resolve
+      `git rev-parse --git-path shallow` and determine whether the selected commit is
+      listed as a shallow boundary.
+- [ ] Treat a commit as a genuine root only when its raw metadata has no `parent`
+      header and it is not a shallow boundary that truncates parent history.
+- [ ] Verify every parent, merge parent, explicit base, and head required by the
+      promised comparison with `git cat-file -e <object>^{commit}`.
+- [ ] If a required object is absent, stop the fixed-basis conclusion as
+      `Not verified` and name the exact missing object. Do not substitute
+      `git diff --root`, an arbitrary first-parent comparison, or a network fetch as
+      equivalent evidence.
+- [ ] If an explicit base and head were supplied and both objects exist, use that
+      fixed range instead of deriving a different comparison.
+- [ ] Record reachable defects visible without the complete basis only as
+      current-source observations; do not attribute them as introduced by the
+      unavailable commit or range.
+
 ## 2. Project Classification
 
 - [ ] Read nearest repository guidance.
