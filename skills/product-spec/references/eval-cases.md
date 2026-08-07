@@ -33,6 +33,8 @@
 | `Map the current implementation interface, owner, callers, and consumers.` | Prefer `repo-map`; repository topology is outside `product-spec`. |
 | `Review this feature branch against the approved spec.` | Prefer `repo-review`. |
 | `Write a two-sentence acceptance check for this already-decided toggle.` | Use host planning; do not force a product artifact. |
+| `Specify that we keep improving the dashboard.` | Reroute to host planning; a pure activity request with no verifiable product outcome is not an implementation-ready product slice. |
+| `All product decisions for this slice are already in the conversation; write the spec.` | Synthesize the Feature Spec directly from existing context; do not re-interview for decisions already given. |
 
 ## Independent Review Outlet Eval
 
@@ -74,6 +76,8 @@
 | A vague request contains many conceivable branches but only permissions and recovery can change the selected slice | Pressure-test only permissions and recovery, then stop at the slice Ready gate. | Exhaustively interviews every preference or unrelated future branch. |
 | The user stops before resolving a material decision for one of several slices | Preserve that decision as Open and keep only the affected slice not Ready; allow unrelated confirmed slices to proceed. | Invents confirmation, claims shared understanding, or blocks every slice. |
 | The selected slice already passes its Ready gate | Synthesize without activating the pressure test. | Reopens settled product decisions without contradictory evidence. |
+| The request is pure activity with no verifiable outcome | Reroute to host planning or demand one verifiable slice before producing a product artifact. | Produces a spec for "keep improving X" without a testable outcome. |
+| The conversation already contains every material decision for the slice | Synthesize the Feature Spec directly; do not re-interview. | Re-asks the user for decisions already given or activates the pressure test unnecessarily. |
 | Missing decision affects only an internal naming choice | Mark Assumption or Deferred and declare Ready for the slice. | Blocks implementation ceremony without behavioral impact. |
 | Missing decision changes permission or error behavior | Keep the slice not ready and ask one decision question. | Lets implementation invent the behavior. |
 | Feature spans several bounded contexts | Route the shared language/lifecycle/invariants to `domain-modeling`. | Builds a complete domain model inside the spec. |
@@ -87,7 +91,8 @@
 | Mode selection | Exposes only Feature Spec, Foundation Spec, and Artifact Update. | Publishes Discovery, grill, Brief, or Standard modes. |
 | Decision pressure test | Activates only for material product choices, resolves facts first, asks the highest-impact frontier decision one at a time with user need, verified constraints/evidence, recommendation, trade-off, materially rejected alternative when applicable, and affected slices; records the answer and stops per slice at Ready. | Runs an exhaustive interview, asks dependent questions together, guesses decisions, invents evidence, absorbs visual design, or reopens a Ready slice. |
 | Progressive scope | Produces one main document for one feature, or a short index plus slice documents for proven independent features. | Requires every UI/data/domain section, splits one cohesive feature by page, or merges independent features. |
-| Ready gate | Names `Ready for <implementation slice>` for every slice and blocks only the affected slice on decision-changing ambiguity. | Uses one global Ready verdict, blocks unrelated slices, or blocks on harmless detail. |
+| Ready gate | Names `Ready for <implementation slice>` for every slice and blocks only the affected slice on decision-changing ambiguity. Each blocked slice names the decision category (user behavior, business rule, permission/security, failure semantics, or acceptance) that blocks it. | Uses one global Ready verdict, blocks unrelated slices, blocks on harmless detail, or omits the blocking category. |
+| Blocker separation | Separates a product-decision blocker (missing user or business choice) from an environment or preflight validation blocker (build, install, or toolchain gap preventing the oracle); does not collapse either into `Ready`. | Merges a validation blocker into the product decision, or marks a product-decision-blocked slice `Ready`. |
 | Consumer read contract | One slice requires only shared index facts and its target slice. | Requires every sibling Feature Spec to be loaded. |
 | Documentation fallback | Uses repository convention first; otherwise writes directly under `docs/prd/`, adding its index only for multiple independent slices and never adding `docs/specs/`. | Creates a competing tree, an unnecessary index, or another wrapper layer. |
 | Visual-detail boundary | Links UI contracts without duplicating colors, typography, components, tokens, or geometry. | Turns product facts into a visual specification. |

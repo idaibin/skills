@@ -35,6 +35,10 @@ writes. Keep technical design and source mutation with their existing owners.
    slice per confirmed feature; never default home, tasks, contacts, and profile into
    one omnibus Feature Spec.
 4. Clarify internally before synthesis. Search discoverable repository facts first.
+   When the conversation or request package already contains every material product
+   decision for the selected slice, synthesize the Feature Spec directly from that
+   context; do not re-interview the user for decisions already given. Activate the
+   decision pressure test only when a material decision is genuinely missing.
    When Axure is a named product source, load
    [references/prototype-evidence.md](references/prototype-evidence.md), consume a
    coverage-ledger handoff from `ops-browser`, and keep prototype coverage separate
@@ -55,7 +59,13 @@ writes. Keep technical design and source mutation with their existing owners.
 7. Apply **Ready for `<implementation slice>`** to every product slice. Block only
    that slice when a missing decision
    could change user behavior, business rules, permission or security boundaries,
-   failure semantics, or acceptance results.
+   failure semantics, or acceptance results. For each blocked slice, name the
+   decision category that blocks it (user behavior, business rule,
+   permission/security, failure semantics, or acceptance) so the blocker is
+   machine-checkable and the resolving owner is unambiguous. Separate a
+   product-decision blocker (a missing user or business choice) from an
+   environment or preflight validation blocker (a build, install, or toolchain
+   gap that prevents running the oracle); do not collapse either into `Ready`.
 8. Hand off only the unresolved owner that must act now: deep cross-context domain
    work to `domain-modeling`, shared visual-system contracts to `ui-spec`, source
    changes to the matching `dev-*`, and review to `repo-review` when requested.
@@ -81,6 +91,9 @@ writes. Keep technical design and source mutation with their existing owners.
 
 - Simple task decomposition, technical planning, or acceptance checks when product
   behavior is already decided; use host planning and repository instructions.
+- Pure activity requests with no verifiable product outcome ("keep improving the
+  dashboard", "make progress on X"); reroute to host planning or demand one
+  verifiable slice before producing a product artifact.
 - Source implementation with a usable approved requirement; use `dev-frontend`
   or `dev-rust`.
 - Business language, shared lifecycle, invariants, complex state machines, or
