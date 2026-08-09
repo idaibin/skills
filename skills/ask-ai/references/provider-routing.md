@@ -47,7 +47,8 @@ capability, route, round count, send authorization, or multi-provider workflow.
 
 ## Capability Contract
 
-For each selected provider record:
+For each selected provider, build the live
+[`ask-ai-provider-adapter/v1`](provider-adapter.md) record. At minimum record:
 
 - provider and requested capability;
 - target surface and stable identity when exposed;
@@ -61,6 +62,11 @@ For each selected provider record:
 
 A provider reference describes known routing rules but never proves the current page,
 session, controls, quota, model, or capability.
+
+Adapter schema acceptance does not authorize sending or prove conformance. Run the
+contract's applicable create, submit, capture, same-conversation continuation,
+reconnect, persistent-context, ambiguous-submit, and wrong-identity cases before
+calling a new or materially changed provider route supported.
 
 ## Defaults And Compatibility
 
@@ -463,7 +469,8 @@ instructions:
 
 For Claude, DeepSeek, Kimi, Qwen, GLM, Grok, Perplexity, Doubao, Mistral Vibe,
 Tencent Yuanbao, ERNIE, or another named browser provider, load
-[provider-browser.md](provider-browser.md). Its entry points and observed controls are
+[provider-browser.md](provider-browser.md) as a generic-browser implementation of
+[provider-adapter.md](provider-adapter.md). Its entry points and observed controls are
 discovery hints, not current capability proof. Live preflight must still prove the
 exact target, login class, clean composer, intended input, submit control, side effect,
 completion signal, and response attribution. Do not assume upload, search, research,

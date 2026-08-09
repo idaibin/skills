@@ -64,6 +64,9 @@ capabilities:
   composer_inspection: <available|unavailable|unknown>
   response_completion: <available|unavailable|unknown>
   background_safe: <available|unavailable|unknown>
+  deterministic_automation: <available|unavailable|unknown>
+  agentic_navigation: <available|unavailable|unknown>
+  direct_cdp: <available|unavailable|unknown>
 evidence:
   - <tool result, stable identifier, or direct observation>
 gaps:
@@ -152,6 +155,15 @@ artifact:
   sha256: <hash or none>
   sequence: <single|part n/N|final-marker>
 capability_snapshot_id: <snapshot_id>
+execution_constraints:
+  action_shape: <fixed|open-ended|low-level-chromium>
+  external_write: <authorized|not-authorized>
+  allowed_origins:
+    - <origin or none>
+  allowed_action_classes:
+    - <read|navigate|compose|attach|submit|capture|cleanup>
+  max_steps: <positive integer|not-applicable>
+  max_actions: <positive integer|not-applicable>
 preconditions:
   - <required identity, composer, attachment, or completion state>
 expected_postcondition:
@@ -160,6 +172,14 @@ retry_policy: <never|only-if-no-side-effect-proven>
 prior_evidence:
   - <evidence from an earlier attempt or none>
 ```
+
+`execution_constraints` narrows an already authorized operation; it never grants
+authority. When `external_write` is `not-authorized`, exclude `attach` and `submit`
+from `allowed_action_classes`; include `compose` only after proving that typing cannot
+persist a server draft or notify another party. An LLM browser agent handoff must use
+`external_write: not-authorized` and only read, navigate, and capture classes. If
+exploration discovers a later write, end the agentic handoff and require a new
+deterministic handoff with fresh identity, target, authorization, and operation ID.
 
 `provider: other`, `surface: provider-specific`, and
 `provider_interface: provider-specific` are labels, not capability evidence. When no
@@ -189,6 +209,10 @@ relay_turn_id: <same request relay turn id>
 attempt: <same request attempt>
 capability_snapshot_id: <same snapshot id>
 state: <preflighted|ready|created|attached|submitted|acknowledged|captured|cleaned|completed|failed-before-submit|blocked|ambiguous>
+execution:
+  backend: <host-browser-api|playwright|llm-browser-agent|cdp|manual>
+  selection_reason: <direct capability and task-shape evidence>
+  budget_used: <steps/actions or not-applicable>
 before:
   - <verified target/composer/attachment state>
 action:

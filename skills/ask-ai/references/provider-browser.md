@@ -17,6 +17,12 @@ contract in this package. It standardizes live preflight and evidence; it does n
 make product interfaces interchangeable and does not promise that a free, regional,
 account, model, quota, or capability tier is currently available.
 
+Create one `ask-ai-provider-adapter/v1` record from
+[provider-adapter.md](provider-adapter.md) with `adapter_level: generic-browser` and
+`transport: browser`. Keep every non-default capability `not-verified` until the
+current route exercises it. This reference implements the adapter contract; it does
+not replace its identity, reuse, recovery, or conformance gates.
+
 Resolve the provider-neutral browser preference from `browser-profile.md` before the
 live provider preflight. Freshly probe the configured primary on every new task. A
 before-submit fallback is task-local and does not demote the next task's primary; an

@@ -125,7 +125,8 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 ## Output Contract
 
 By default, report the selected surface/mode, target and identity evidence, direct
-observations, actions, validation, cleanup, and `Not verified` gaps. For delegated,
+observations, selected execution backend and reason, actions, validation, cleanup,
+and `Not verified` gaps. For delegated,
 state-changing, transfer, debug, or selected-source comparison work, also return the Capability Snapshot, matching
 `operation_id`, before/action/side-effect/after evidence, protocol state, retained
 artifacts, and blocked or ambiguous claims required by the selected reference. For

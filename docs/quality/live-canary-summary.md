@@ -4,8 +4,8 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:c1287f87e941ef6d8ed69cdb62a7cbc33062818e42a2202f414c8655a406b79b`
-- Host environment: Codex desktop task; local Volta CLI check: `0.146.0`;
+- Package digest: `sha256:bfc58da42913a264618741e1b9955e718e1215e3b5333889e04188ee59788e67`
+- Host environment: isolated Linux Work task; `skills` CLI `1.5.22`;
   fresh external model sessions were not authorized for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
@@ -25,9 +25,10 @@ behavior certification and does not replace target-environment runtime validatio
 | Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
 | Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
 | Browser tab-lifecycle contract regression | Pass | Focused offline tests verify identity-first tab selection, explicit retention authority, recoverable task-tab ownership, and representative same-URL/different-session cases. This is static contract evidence, not a live browser canary. |
-| Isolated project-local install | Not verified | The five scoped packages were not installed into a disposable project for this digest. |
-| Installed-copy parity | Not verified | No installed-copy comparison was accepted for this digest. |
-| Installed package-local validator | Not verified | Installed package validators were not rerun for this digest. |
+| Browser backend handoff regression | Pass | Focused offline tests verify shared protocol copy parity, deterministic/agentic/CDP capability fields, action-shape and budget constraints, backend attribution, deterministic-first fixed writes, and the Ask AI provider-adapter links. This is contract evidence, not live browser or provider behavior. |
+| Isolated project-local install | Pass | The five scoped packages were copied with `skills` CLI `1.5.22` into a disposable Git project for the Codex agent. |
+| Installed-copy parity | Pass | Recursive file comparison found no difference between each scoped source package and its isolated installed copy. |
+| Installed package-local validator | Pass | Every isolated scoped package ran its bundled frontend-visual-evidence validator against the catalog fixture successfully. The CLI install also accepted all five package shapes. |
 | Explicit host invocation | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Critical stop routing | Not verified | No fresh host-routing model invocation was run for this digest. |
@@ -88,6 +89,7 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Repository validation and local catalog discovery pass. Isolated installation,
-installed-copy parity and validators, model routing, and browser behavior remain
-`Not verified` for this digest; the overall live behavior verdict is `Not verified`.
+Repository validation, local catalog discovery, isolated installation, installed-copy
+parity, package-local validators, and focused browser backend contracts pass. Model
+routing and live browser behavior remain `Not verified` for this digest; the overall
+live behavior verdict is `Not verified`.

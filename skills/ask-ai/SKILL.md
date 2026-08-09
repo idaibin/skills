@@ -76,7 +76,8 @@ not maintain a second public collaboration owner.
    package/basis fingerprint as `awaiting-user-relay`, and performs zero external
    action. Reconcile an existing response for that fingerprint before generating or
    requesting a duplicate relay.
-8. Load only the selected provider reference:
+8. Load [provider-adapter.md](references/provider-adapter.md), build its live adapter
+   record, then load only the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)
    - [provider-gemini.md](references/provider-gemini.md)
    - [provider-browser.md](references/provider-browser.md) for other named browser providers.
@@ -85,7 +86,8 @@ not maintain a second public collaboration owner.
    transports. Apply [image-routing.md](references/image-routing.md) before an image upload,
    generation, edit, or capture. Require live image-capability evidence in addition to
    the ordinary provider route evidence.
-   Require live target, identity, input, submit, completion, and attribution evidence;
+   Require the adapter's live target, identity, required operations, input, submit,
+   completion, attribution, and reuse/recovery evidence;
    otherwise return Package-only or Not found/Not verified without external action.
    For an authorized web review, apply the provider-neutral browser preference and
    `review_context` from [browser-profile.md](references/browser-profile.md). Start each
@@ -133,6 +135,11 @@ provider-specific and live-verified:
 - search, deep-research, image, file, tool, agent, and reviewer-browser modes;
 - composer, attachment, submit, completion, recovery, and response extraction evidence;
 - rate, quota, region, policy, and other runtime restrictions.
+
+Every executable provider route conforms to
+[provider-adapter.md](references/provider-adapter.md). Conformance standardizes the
+adapter boundary and recovery tests; it does not make provider capabilities
+interchangeable or eliminate provider-specific implementation.
 
 Do not add speculative provider metadata or executable selector registries to this
 portable package. Low-level browser selectors are measured at runtime by ops-browser.
@@ -208,6 +215,7 @@ frozen local verdict.
 - Providers: [ChatGPT](references/provider-chatgpt.md),
   [Gemini](references/provider-gemini.md), and
   [other browser providers](references/provider-browser.md).
+- Provider integration: [adapter contract](references/provider-adapter.md).
 - ChatGPT-only native: [thread protocol](references/app-native-thread-protocol.md),
   [canary contract](references/app-native-canary.md), and
   [canary script](scripts/app_native_canary.py).

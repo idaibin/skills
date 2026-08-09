@@ -616,6 +616,8 @@
         "multi-provider review",
         "independent review",
         "decision challenge",
+        "provider adapter",
+        "conversation reuse",
         "research"
       ],
       "excludes": [
