@@ -42,30 +42,10 @@
       "category": "repository-engineering",
       "owner": "repo-map",
       "mutation_class": "artifact-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "command-runner",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "write-artifact",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "command-runner", "text-authoring"],
+      "allowed_effects": ["read-repository", "read-source", "write-artifact", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "map repository boundaries, architecture, commands, dependencies, and task routes",
         "bootstrap layered repository guidance in root and owned subprojects",
@@ -106,29 +86,10 @@
       "category": "repository-engineering",
       "owner": "domain-modeling",
       "mutation_class": "artifact-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "write-artifact",
-        "emit-draft",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "text-authoring"],
+      "allowed_effects": ["read-repository", "write-artifact", "emit-draft", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "resolve shared business vocabulary and meaning",
         "define lifecycle rules and bounded contexts"
@@ -154,32 +115,10 @@
       "category": "repository-engineering",
       "owner": "repo-review",
       "mutation_class": "read-only",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "read-git-state",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "basis-drift",
-        "capability-unavailable",
-        "evidence-incomplete"
-      ],
+      "required_capabilities": ["filesystem-read", "git-read", "command-runner"],
+      "allowed_effects": ["read-repository", "read-source", "read-git-state", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "basis-drift", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "review current Worktree or index changes",
         "review a fixed commit, range, or verified package",
@@ -215,34 +154,10 @@
       "category": "repository-engineering",
       "owner": "repo-delivery",
       "mutation_class": "git-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "git-write",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-git-state",
-        "write-git-state",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "basis-drift",
-        "evidence-incomplete",
-        "capability-unavailable",
-        "unsafe-or-destructive"
-      ],
+      "required_capabilities": ["filesystem-read", "git-read", "git-write", "command-runner"],
+      "allowed_effects": ["read-repository", "read-git-state", "write-git-state", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-artifact", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "basis-drift", "evidence-incomplete", "capability-unavailable", "unsafe-or-destructive"],
       "intents": [
         "create categorized or explicitly requested commits",
         "deliver an explicitly authorized reviewed branch",
@@ -262,29 +177,13 @@
         "stage files",
         "合并到main",
         "变基到main",
-        "reviewed delivery",
-        "categorized local commits",
-        "exactly one commit",
-        "push current branch",
-        "non-fast-forward divergence",
-        "squash branch main",
-        "conflict resolution",
-        "semantic milestone",
-        "targeted fixup",
-        "safety checkpoint",
-        "history normalization",
-        "standing delivery plan",
-        "selected-source UI change",
-        "reviewed GitHub feature branch",
-        "conflicted rebase",
-        "normalize authorized fixups",
-        "push reviewed branch",
-        "pull from origin",
-        "拉取远程分支",
-        "fetch remote refs",
-        "fast-forward branch",
-        "cherry-pick commit",
-        "abort rebase",
+        "reviewed delivery", "categorized local commits", "exactly one commit",
+        "push current branch", "non-fast-forward divergence", "squash branch main",
+        "conflict resolution", "semantic milestone", "targeted fixup", "safety checkpoint",
+        "history normalization", "standing delivery plan",
+        "selected-source UI change", "reviewed GitHub feature branch", "conflicted rebase",
+        "normalize authorized fixups", "push reviewed branch",
+        "pull from origin", "拉取远程分支", "fetch remote refs", "fast-forward branch", "cherry-pick commit", "abort rebase",
         "暂存并提交",
         "提交这些更改",
         "提交并推送",
@@ -308,29 +207,10 @@
       "category": "product-definition",
       "owner": "product-spec",
       "mutation_class": "artifact-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "write-artifact",
-        "emit-draft",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "text-authoring"],
+      "allowed_effects": ["read-repository", "write-artifact", "emit-draft", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "turn an ambiguous feature into an implementation-ready specification",
         "define product behavior, states, rules, and acceptance",
@@ -361,30 +241,10 @@
       "category": "design",
       "owner": "ui-spec",
       "mutation_class": "artifact-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "visual-evidence",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "write-artifact",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "visual-evidence", "text-authoring"],
+      "allowed_effects": ["read-repository", "read-source", "write-artifact", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "translate a selected visual source into an implementation-ready UI contract",
         "maintain traceable feature UI specs and shared DESIGN.md semantics",
@@ -418,33 +278,10 @@
       "category": "implementation",
       "owner": "dev-frontend",
       "mutation_class": "source-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "filesystem-write",
-        "source-write",
-        "command-runner",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "write-source",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "unsafe-or-destructive"
-      ],
+      "required_capabilities": ["filesystem-read", "filesystem-write", "source-write", "command-runner", "text-authoring"],
+      "allowed_effects": ["read-repository", "read-source", "write-source", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "unsafe-or-destructive"],
       "intents": [
         "implement or refactor frontend source",
         "close selected-source UI differences with runtime validation",
@@ -477,33 +314,10 @@
       "category": "implementation",
       "owner": "dev-java",
       "mutation_class": "source-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "filesystem-write",
-        "source-write",
-        "command-runner",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "write-source",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "unsafe-or-destructive"
-      ],
+      "required_capabilities": ["filesystem-read", "filesystem-write", "source-write", "command-runner", "text-authoring"],
+      "allowed_effects": ["read-repository", "read-source", "write-source", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "unsafe-or-destructive"],
       "intents": [
         "implement, migrate, or refactor Java source and Java-owned Spring configuration",
         "change Maven or Gradle builds, APIs, security, transactions, persistence, integrations, or runtime behavior"
@@ -534,33 +348,10 @@
       "category": "implementation",
       "owner": "dev-rust",
       "mutation_class": "source-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "filesystem-write",
-        "source-write",
-        "command-runner",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "write-source",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "unsafe-or-destructive"
-      ],
+      "required_capabilities": ["filesystem-read", "filesystem-write", "source-write", "command-runner", "text-authoring"],
+      "allowed_effects": ["read-repository", "read-source", "write-source", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "unsafe-or-destructive"],
       "intents": [
         "implement, port, or refactor Rust source",
         "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI"
@@ -591,30 +382,10 @@
       "category": "specialist-audit",
       "owner": "audit-frontend",
       "mutation_class": "read-only",
-      "required_capabilities": [
-        "filesystem-read",
-        "command-runner",
-        "visual-evidence"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "emit-findings"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
+      "required_capabilities": ["filesystem-read", "command-runner", "visual-evidence"],
+      "allowed_effects": ["read-repository", "read-source", "emit-findings"],
+      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
       "intents": [
         "audit a bounded frontend surface without editing",
         "assess frontend architecture, accessibility, performance, state, tooling, or visual fidelity"
@@ -643,31 +414,10 @@
       "category": "specialist-audit",
       "owner": "audit-java",
       "mutation_class": "read-only",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "read-git-state",
-        "emit-findings"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
+      "required_capabilities": ["filesystem-read", "git-read", "command-runner"],
+      "allowed_effects": ["read-repository", "read-source", "read-git-state", "emit-findings"],
+      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
       "intents": [
         "audit a bounded Java source or Java-owned Spring/build configuration surface without editing",
         "assess build, architecture, API security, transactions, persistence, integrations, performance, or migration risks"
@@ -697,31 +447,10 @@
       "category": "specialist-audit",
       "owner": "audit-rust",
       "mutation_class": "read-only",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "read-git-state",
-        "emit-findings"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
+      "required_capabilities": ["filesystem-read", "git-read", "command-runner"],
+      "allowed_effects": ["read-repository", "read-source", "read-git-state", "emit-findings"],
+      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
       "intents": [
         "audit a bounded Rust workspace or subsystem without editing",
         "assess ownership, concurrency, persistence, performance, or unsafe boundaries"
@@ -749,33 +478,10 @@
       "category": "runtime-operations",
       "owner": "ops-browser",
       "mutation_class": "browser-control",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "browser-control",
-        "visual-evidence",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "write-artifact",
-        "control-browser-state",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "browser-control", "visual-evidence", "command-runner"],
+      "allowed_effects": ["read-repository", "write-artifact", "control-browser-state", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
       "intents": [
         "operate or verify a specified browser page",
         "capture same-state visual and computed browser evidence"
@@ -809,33 +515,10 @@
       "category": "runtime-operations",
       "owner": "ops-client",
       "mutation_class": "client-control",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "client-control",
-        "visual-evidence",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "write-artifact",
-        "control-client-state",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "client-control", "visual-evidence", "command-runner"],
+      "allowed_effects": ["read-repository", "write-artifact", "control-client-state", "emit-findings", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "invoke-external-provider"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
       "intents": [
         "operate or verify a real desktop client",
         "capture process and window evidence for Tauri, Electron, or native applications"
@@ -861,31 +544,10 @@
       "category": "collaboration",
       "owner": "ask-ai",
       "mutation_class": "external-action",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "external-provider"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "write-artifact",
-        "invoke-external-provider",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "provider-unavailable",
-        "evidence-incomplete",
-        "suspicious-hidden-content"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "external-provider"],
+      "allowed_effects": ["read-repository", "write-artifact", "invoke-external-provider", "emit-handoff"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state"],
+      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "provider-unavailable", "evidence-incomplete", "suspicious-hidden-content"],
       "intents": [
         "prepare a local request package for one or more named external AI providers",
         "define or invoke a user-owned bounded external AI review instruction",
@@ -971,28 +633,10 @@
       "category": "writing",
       "owner": "human-writing",
       "mutation_class": "artifact-write",
-      "required_capabilities": [
-        "filesystem-read",
-        "artifact-write",
-        "text-authoring"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "write-artifact",
-        "emit-draft"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete"
-      ],
+      "required_capabilities": ["filesystem-read", "artifact-write", "text-authoring"],
+      "allowed_effects": ["read-repository", "write-artifact", "emit-draft"],
+      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
+      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
       "intents": [
         "draft, rewrite, proofread, diagnose, or adapt source-grounded prose",
         "preserve facts, attribution, uncertainty, voice, and meaning"
