@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Browser"
   short_description: "Operate browser surfaces with verified computed evidence"
-  default_prompt: "Use $ops-browser to prefer the non-interrupting Codex in-app Browser when suitable, verify capability, identity, target, and authorization, then perform the smallest browser action or same-state visual comparison using only exposed browser or DevTools evidence; return direct before/after and computed evidence with unsupported claims marked Not verified."
+  default_prompt: "Use $ops-browser to select the verified browser surface and execution backend separately: prefer deterministic browser APIs or Playwright for specified repeatable work, allow a bounded LLM-driven browser agent only for open-ended read navigation, and use direct CDP only for a required low-level Chromium capability; verify capability, identity, target, authorization, and final postcondition, with unsupported claims marked Not verified."
