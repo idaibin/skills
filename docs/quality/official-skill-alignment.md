@@ -34,6 +34,11 @@ This catalog uses four current primary baselines:
 - Keep provider-neutral runtime preferences, such as a preferred persistent review
   context with a Standard Chat fallback, inside package references and focused
   validation. Do not encode provider capability claims in portable metadata.
+- Keep provider-family aliases separate from canonical CLI profiles: plain Qoder is
+  ambiguous, while an optional user-owned `provider_aliases` mapping may select
+  `qoder-cli-global` or `qoder-cli-cn`. The mapping selects only the recipient; fresh
+  help/version/path identity and capability gates remain required, and global/CN routes
+  never cross-fallback.
 - Keep sequential external-AI relay as a bounded, attributed package workflow: one
   fixed basis and stable review round, one relay-turn ID per submitted provider turn,
   separate logical IDs for actual side effects, and one verified conversation per provider:

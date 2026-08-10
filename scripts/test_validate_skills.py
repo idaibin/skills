@@ -159,6 +159,85 @@ class ValidatorTests(unittest.TestCase):
         ):
             self.assertIn(mode, protocol)
 
+    def test_ask_ai_provider_aliases_are_optional_and_canonical(self) -> None:
+        source = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_provider_variant_errors(source))
+        for aliases in ("provider_aliases: {}\n", "provider_aliases:\n  qoder: qoder-cli-global\n", "provider_aliases:\n  qoder: qoder-cli-cn\n"):
+            with self.subTest(aliases=aliases.strip()):
+                with tempfile.TemporaryDirectory() as temporary:
+                    package = Path(temporary) / "ask-ai"
+                    shutil.copytree(source, package)
+                    routing = package / "references" / "provider-routing.md"
+                    routing.write_text(
+                        routing.read_text(encoding="utf-8").replace(
+                            "default_provider: manual\n",
+                            f"default_provider: manual\n{aliases}",
+                            1,
+                        ),
+                        encoding="utf-8",
+                    )
+                    self.assertEqual([], VALIDATOR.ask_ai_provider_variant_errors(package))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ask-ai"
+            shutil.copytree(source, package)
+            routing = package / "references" / "provider-routing.md"
+            routing.write_text(
+                routing.read_text(encoding="utf-8").replace(
+                    "default_provider: manual\n",
+                    "default_provider: manual\nprovider_aliases:\n  qoder: qoder-cli-unknown\n",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            errors = VALIDATOR.ask_ai_provider_variant_errors(package)
+        self.assertTrue(any("canonical Qoder variants" in error for error in errors))
+
+    def test_ask_ai_authority_contract_matches_index_write_source_forbidden(self) -> None:
+        source = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_authority_errors(source))
+
+        def fixture(temporary: str) -> tuple[Path, Path]:
+            root = Path(temporary)
+            package = root / "skills" / "ask-ai"
+            package.parent.mkdir(parents=True)
+            shutil.copytree(source, package)
+            shutil.copy(ROOT / "skills-index.json", root / "skills-index.json")
+            return root, package
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root, package = fixture(temporary)
+            index_path = root / "skills-index.json"
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
+            ask_ai["allowed_effects"].append("write-source")
+            index_path.write_text(json.dumps(index), encoding="utf-8")
+            errors = VALIDATOR.ask_ai_authority_errors(package)
+        self.assertTrue(any("must not include write-source" in error for error in errors))
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root, package = fixture(temporary)
+            index_path = root / "skills-index.json"
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
+            ask_ai["forbidden_effects"].remove("write-source")
+            index_path.write_text(json.dumps(index), encoding="utf-8")
+            errors = VALIDATOR.ask_ai_authority_errors(package)
+        self.assertTrue(any("must include write-source" in error for error in errors))
+
+        for relative, token in (
+            ("SKILL.md", "Review and research default to no-write."),
+            ("references/provider-cli.md", "implementation-owner-authorized"),
+            ("references/eval-cases.md", "Review CLI write-source attempt"),
+        ):
+            with self.subTest(relative=relative):
+                with tempfile.TemporaryDirectory() as temporary:
+                    _, package = fixture(temporary)
+                    path = package / relative
+                    path.write_text(path.read_text(encoding="utf-8").replace(token, ""), encoding="utf-8")
+                    errors = VALIDATOR.ask_ai_authority_errors(package)
+                self.assertTrue(any(relative in error and "missing authority token" in error for error in errors))
+
     def test_ask_ai_mutual_review_requires_bounded_relay_contract(self) -> None:
         package = ROOT / "skills" / "ask-ai"
         self.assertEqual([], VALIDATOR.ask_ai_mutual_review_errors(package))

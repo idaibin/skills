@@ -11,6 +11,8 @@ generated copies.
 - [Capability Snapshot](#capability-snapshot)
 - [Handoff Request](#handoff-request)
 - [Handoff Result](#handoff-result)
+- [Attachment Failure Evidence](#attachment-failure-evidence)
+- [Stable Response Evidence](#stable-response-evidence)
 - [Operation State Machine](#operation-state-machine)
 - [Degraded Mode](#degraded-mode)
 
@@ -231,6 +233,42 @@ error:
   kind: <none|capability|identity|composer|attachment|submission|completion|interruption>
   detail: <sanitized detail>
 ```
+
+## Attachment Failure Evidence
+
+Classify an attachment failure by the last directly observed phase: before file
+selection, after selection or while upload state is unresolved, or attached. A
+before-selection failure may return `failed-before-submit` only when direct evidence
+on the same reverified browser/session, tab, target, and composer proves all of the
+following: no file was selected or uploaded, the intended input remains empty or
+unchanged, no submit postcondition occurred, and no other side effect was observed.
+Record those facts in `before`, `action`, `side_effect`, and `after`; a chooser timeout
+or tool error alone is not proof.
+
+If selection/upload state or target binding cannot be reverified, return `ambiguous`
+and do not retry that operation. If the action was proven not to start but a required
+identity, tab, target, or composer precondition is now missing, return `blocked` until
+fresh evidence changes that condition. A later separately authorized task is a new
+operation; it must not allocate a new ID merely to bypass an ambiguous attachment.
+
+## Stable Response Evidence
+
+Provider-specific completion controls are evidence signals, not universal oracles.
+When the selected provider contract permits stable-response completion, `ops-browser`
+may return direct completion evidence from separated samples of the same attributed
+assistant response in the same reverified conversation. Before the first sample, fix a
+finite observation window and sampling cadence. Take at least two samples according to
+that cadence, including one at the end of the window; immediate consecutive snapshots
+do not qualify. The samples must contain a non-empty, non-truncated response, have the
+same sanitized content hash, and show no material response mutation. Record the fixed
+window and cadence, sample count and times, response-container identity, hashes, and
+any still-visible generation or stop control in `after` or `retained_evidence`.
+
+A lingering control remains a separate `Not verified` terminal-UI gap; it does not
+invalidate an otherwise permitted stable-response capture and never authorizes a
+resend. Empty, truncated, changing, differently attributed, or target-drifted samples
+remain completion `Not verified` or `ambiguous` as required by the route state. Capture
+the accepted response once and stop.
 
 ## Operation State Machine
 

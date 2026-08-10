@@ -245,6 +245,104 @@ def ask_ai_defaults_errors(package: Path) -> list[str]:
     ]
 
 
+def ask_ai_provider_variant_errors(package: Path) -> list[str]:
+    """Validate Qoder variant aliases as recipient-only defaults."""
+    if package.name != "ask-ai":
+        return []
+    routing = package / "references" / "provider-routing.md"
+    if not routing.is_file():
+        return ["ask-ai: missing references/provider-routing.md"]
+    text = routing.read_text(encoding="utf-8")
+    mappings = yaml_fence_mappings(text)
+    defaults = next(
+        (item for item in mappings if item.get("schema_version") == "ask-ai-defaults/v1"),
+        None,
+    )
+    if not isinstance(defaults, dict):
+        return ["ask-ai: provider-routing.md missing ask-ai-defaults/v1 example"]
+    aliases = defaults.get("provider_aliases", {})
+    if aliases is None:
+        aliases = {}
+    if not isinstance(aliases, dict):
+        return ["ask-ai: ask-ai-defaults/v1 provider_aliases must be a mapping when present"]
+    errors: list[str] = []
+    canonical = {"qoder-cli-global", "qoder-cli-cn"}
+    for alias, recipient in aliases.items():
+        if not isinstance(alias, str) or not isinstance(recipient, str):
+            errors.append("ask-ai: provider_aliases entries must be string recipient mappings")
+        elif recipient not in canonical:
+            errors.append("ask-ai: provider_aliases recipients must be canonical Qoder variants")
+    if any(token not in text for token in ("capability", "identity", "authentication", "send-authorization")):
+        errors.append("ask-ai: provider_aliases example must state recipient-only semantics")
+    if "Never cross-fallback between the global" not in text:
+        errors.append("ask-ai: Qoder variants must forbid cross-variant fallback")
+    return errors
+
+
+def ask_ai_authority_errors(package: Path) -> list[str]:
+    """Keep Ask AI source-write authority aligned with its catalog contract."""
+    if package.name != "ask-ai":
+        return []
+    skill = package / "SKILL.md"
+    provider_cli = package / "references" / "provider-cli.md"
+    evals = package / "references" / "eval-cases.md"
+    missing = [path.relative_to(package).as_posix() for path in (skill, provider_cli, evals) if not path.is_file()]
+    if missing:
+        return ["ask-ai: missing authority contract files: " + ", ".join(missing)]
+
+    errors: list[str] = []
+    documents = {
+        "SKILL.md": (
+            skill.read_text(encoding="utf-8"),
+            (
+                "Review and research default to no-write.",
+                "matching implementation owner",
+                "source write authority belongs to the implementation",
+                "repo-delivery",
+            ),
+        ),
+        "references/provider-cli.md": (
+            provider_cli.read_text(encoding="utf-8"),
+            (
+                "Review defaults to no-write.",
+                "implementation-owner-authorized",
+                "CLI provider presence",
+                "not authorize source writes",
+                "matching implementation owner",
+                "repo-delivery",
+            ),
+        ),
+        "references/eval-cases.md": (
+            evals.read_text(encoding="utf-8"),
+            (
+                "Review CLI write-source attempt",
+                "External implementation authorization composition",
+                "Git delivery authorization separation",
+            ),
+        ),
+    }
+    for relative, (text, required) in documents.items():
+        for token in required:
+            if token not in text:
+                errors.append(f"ask-ai: {relative} missing authority token: {token}")
+
+    index_path = package.parents[1] / "skills-index.json"
+    try:
+        payload = json.loads(index_path.read_text(encoding="utf-8"))
+        entry = next(item for item in payload["skills"] if item.get("name") == "ask-ai")
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, KeyError, StopIteration, TypeError) as error:
+        return errors + [f"ask-ai: cannot load skills-index authority entry: {error}"]
+    allowed = entry.get("allowed_effects")
+    forbidden = entry.get("forbidden_effects")
+    if not isinstance(allowed, list) or not isinstance(forbidden, list):
+        return errors + ["ask-ai: skills-index authority effect lists must be arrays"]
+    if "write-source" in allowed:
+        errors.append("ask-ai: skills-index allowed_effects must not include write-source")
+    if "write-source" not in forbidden:
+        errors.append("ask-ai: skills-index forbidden_effects must include write-source")
+    return errors
+
+
 def yaml_fence_mappings(text: str) -> list[dict[str, object]]:
     """Read only well-formed YAML examples from Markdown fences."""
     mappings: list[dict[str, object]] = []
@@ -706,6 +804,8 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
         errors.append(f"{package.name}: missing references directory")
 
     errors.extend(ask_ai_defaults_errors(package))
+    errors.extend(ask_ai_provider_variant_errors(package))
+    errors.extend(ask_ai_authority_errors(package))
     errors.extend(ask_ai_mutual_review_errors(package))
     errors.extend(ask_ai_final_result_sync_errors(package))
     errors.extend(ask_ai_untrusted_content_errors(package))

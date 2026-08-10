@@ -167,6 +167,32 @@ class SearchSkillsTests(unittest.TestCase):
                 results = SEARCH.search(self.index, query)
                 self.assertEqual("ask-ai", results[0]["name"])
 
+    def test_named_cli_and_web_research_providers_find_ask_ai(self) -> None:
+        for provider in (
+            "Claude Code CLI",
+            "Qoder CLI Global",
+            "Qoder CLI CN",
+            "Qoder Global",
+            "Qoder CN",
+            "ZCode CLI",
+            "Antigravity CLI",
+            "CodeBuddy CLI",
+            "Cursor CLI",
+            "GitHub Copilot CLI",
+            "Kiro CLI",
+            "Factory Droid",
+            "OpenCode",
+            "Gemini Deep Research",
+            "NotebookLM",
+            "Elicit",
+            "Consensus Research Agent",
+            "Scite Smart Citations",
+        ):
+            query = f"Use {provider} now for one independent external AI result."
+            with self.subTest(provider=provider):
+                results = SEARCH.search(self.index, query)
+                self.assertEqual("ask-ai", results[0]["name"])
+
     def test_saved_review_instruction_phrase_finds_ask_ai(self) -> None:
         for query in ("进行三方会审", "互审", "让 ChatGPT 和 Gemini 互审这个方案"):
             with self.subTest(query=query):

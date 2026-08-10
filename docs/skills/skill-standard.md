@@ -105,6 +105,11 @@ machine-checkable outcomes, not permission to simulate runtime evidence.
 - Provider-specific local-default schemas belong in a focused package reference and
   must be validated as runtime contracts; they are preferences and discovery hints,
   not portable frontmatter, current capability proof, or external-action authority.
+  When a provider family has distinct variants, an optional `provider_aliases` entry may
+  select only one canonical recipient (`qoder-cli-global` or `qoder-cli-cn`); it may be
+  omitted and never proves executable identity, capability, authentication, or send
+  authorization. Ambiguous family aliases fail closed, and variant routes must not
+  silently fall back across one another.
 - Browser-route defaults store only a primary route, bounded fallback, and optional
   browser product name. Every new task freshly probes its primary; a task-local
   fallback never rewrites the next task's preference or supplies identity evidence.

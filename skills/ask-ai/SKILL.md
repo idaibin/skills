@@ -80,6 +80,8 @@ not maintain a second public collaboration owner.
    record, then load only the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)
    - [provider-gemini.md](references/provider-gemini.md)
+   - [provider-cli.md](references/provider-cli.md) for coding-agent CLIs;
+   - [provider-web-research.md](references/provider-web-research.md) for Web research;
    - [provider-browser.md](references/provider-browser.md) for other named browser providers.
    Manual user relay follows its provider reference and skips host/browser transport
    preflight. Before direct external action, inventory current host and browser
@@ -89,7 +91,10 @@ not maintain a second public collaboration owner.
    Require the adapter's live target, identity, required operations, input, submit,
    completion, attribution, and reuse/recovery evidence;
    otherwise return Package-only or Not found/Not verified without external action.
-   For an authorized web review, apply the provider-neutral browser preference and
+   Apply the CLI execution and permission gates in `provider-cli.md`; review-only
+   authority never permits source writes. An explicitly named external coding-agent
+   implementation may write only when the root coordinator combines the provider
+   invocation with the matching implementation owner. For an authorized web review, apply the provider-neutral browser preference and
    `review_context` from [browser-profile.md](references/browser-profile.md). Start each
    task from the configured primary with fresh preflight; a fallback never changes the
    next task's default. Reuse a uniquely verified persistent container when supported,
@@ -133,6 +138,7 @@ provider-specific and live-verified:
 - account/workspace and conversation/project identity;
 - native host mappings, browser routes, login, model, and reasoning controls;
 - search, deep-research, image, file, tool, agent, and reviewer-browser modes;
+- CLI session and research-source profile details;
 - composer, attachment, submit, completion, recovery, and response extraction evidence;
 - rate, quota, region, policy, and other runtime restrictions.
 
@@ -192,8 +198,14 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
   inferred politeness is not agreement.
 - Research and visual outputs do not automatically write product facts, source, Git,
   external systems, or publications.
-- Do not edit, stage, commit, push, create a PR, or mutate main; use the matching owner
-  after local verification and separate authorization.
+- Review and research default to no-write. If the current task explicitly names an
+  external coding agent to implement changes, the root coordinator must combine its
+  Ask AI provider invocation with the matching implementation owner
+  (`dev-frontend`, `dev-java`, `dev-rust`, or another host owner). Exact directories,
+  tools/commands, sandbox/permission grants, and write scope come from that combined
+  current-task authorization; source write authority belongs to the implementation
+  owner, never Ask AI alone, a provider, or a stored default. Git delivery requires
+  separate `repo-delivery` authorization.
 - Mark missing identity, capability, attribution, execution, or completion evidence
   Not found or Not verified.
 
@@ -213,7 +225,8 @@ frozen local verdict.
   [provider-routing.md](references/provider-routing.md), and
   [final-result-sync.md](references/final-result-sync.md).
 - Providers: [ChatGPT](references/provider-chatgpt.md),
-  [Gemini](references/provider-gemini.md), and
+  [Gemini](references/provider-gemini.md), [CLI](references/provider-cli.md),
+  [Web research](references/provider-web-research.md), and
   [other browser providers](references/provider-browser.md).
 - Provider integration: [adapter contract](references/provider-adapter.md).
 - ChatGPT-only native: [thread protocol](references/app-native-thread-protocol.md),

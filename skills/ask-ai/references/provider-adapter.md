@@ -29,7 +29,7 @@ them.
 schema_version: ask-ai-provider-adapter/v1
 provider: <canonical provider name>
 adapter_level: <generic-browser|dedicated>
-transport: <app-native|browser|api|manual>
+transport: <app-native|browser|cli|acp|api|manual>
 verified_at: <ISO-8601|Not verified>
 identity:
   provider_origin: <verified origin|not-applicable>
@@ -44,6 +44,12 @@ capabilities:
   search: <supported|unsupported|not-verified>
   deep_research: <supported|unsupported|not-verified>
   model_selection: <supported|unsupported|not-verified>
+  project_context: <supported|unsupported|not-verified>
+  structured_output: <supported|unsupported|not-verified>
+  source_citations: <supported|unsupported|not-verified>
+  scholarly_corpus: <supported|unsupported|not-verified>
+  session_resume: <supported|unsupported|not-verified>
+  session_fork: <supported|unsupported|not-verified>
 operations:
   discover_target: <verified operation|unavailable>
   verify_identity: <verified operation|unavailable>
@@ -52,6 +58,13 @@ operations:
   submit: <verified operation|unavailable>
   capture_response: <verified operation|unavailable>
   reconcile_submission: <verified operation|unavailable>
+execution:
+  executable_or_origin: <absolute executable path|verified origin|not-applicable>
+  version_or_surface: <exact version/surface|Not verified>
+  cwd: <absolute project path|not-applicable|Not verified>
+  permission_policy: <read-only|bounded-write|browser-read-only|Not verified>
+  output_framing: <json|jsonl|provider-container|lossless-text|Not verified>
+  exit_or_completion: <exit-code and terminal event|provider completion signal|Not verified>
 reuse:
   conversation: <verified-id-only|unsupported>
   persistent_context: <verified-container-only|unsupported>
@@ -87,6 +100,18 @@ Project, notebook, space, or other persistent container is requested.
 `create_conversation` is required only when the authorized route needs a new
 conversation.
 
+For CLI or ACP, `discover_target` includes executable identity and version;
+`verify_identity` includes the active provider/account class without exposing tokens;
+`resolve_context` includes the exact `cwd` and basis; `capture_response` includes
+stdout/event framing plus exit status; and `reconcile_submission` must distinguish a
+process that never started from one that may have submitted remotely. A shell exit
+code alone does not prove response attribution or that requested tools were read-only.
+
+For Web research, capability proof also records the selected research mode, corpus or
+source controls, provider-owned completion state, report/container identity, and
+whether citations expose resolvable original targets. A citation list is captured
+provider output, not independent verification of any claim.
+
 Each state-changing operation receives its own `operation_id`. The adapter returns
 direct precondition, action, side-effect, postcondition, completion, and attribution
 evidence. Provider success text is not evidence of completion or correct attribution.
@@ -118,6 +143,12 @@ Run the applicable cases before declaring a new or materially changed adapter us
 8. prove a different account/workspace or ambiguous target is rejected;
 9. verify every claimed non-default capability independently;
 10. confirm unsupported capabilities degrade to Package-only or a named blocked state.
+11. for CLI/ACP, prove exact `cwd`, read-only enforcement, structured-output framing,
+    terminal event/exit handling, session ID capture, and resume rejection on a
+    different repository or basis;
+12. for research, resolve a representative citation to its original source, detect a
+    missing or mismatched citation, preserve publication identifiers, and reject a
+    report whose cited claims cannot be locally checked.
 
 Record each case as `pass`, `fail`, or `not-run` with provider, transport, date,
 surface/version evidence, and gaps. Schema validation alone is not conformance.
@@ -129,6 +160,9 @@ surface/version evidence, and gaps. Schema validation alone is not conformance.
   Research, model selection, and durable reuse remain `not-verified` until exercised.
 - **Dedicated:** may use provider-specific native operations or stronger browser
   contracts and may declare additional supported capabilities after live conformance.
+- **Dedicated CLI/ACP:** uses the shared CLI lifecycle plus a provider profile. The
+  profile is routing knowledge; only current executable/help/version and conformance
+  evidence make it runnable.
 
 Promote a generic adapter to dedicated only when provider-specific behavior is both
 repeatedly needed and validator/eval-backed. Keep selectors and volatile UI details in

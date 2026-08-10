@@ -41,9 +41,32 @@ Normalize common provider aliases only inside an external-AI selection context:
 | Mistral Vibe | `Mistral`, `Vibe Chat`, `Le Chat` |
 | Tencent Yuanbao | `腾讯元宝`, `元宝` |
 | ERNIE | `文心一言`, `文心助手`, `文心` |
+| Google Antigravity | `Antigravity CLI`, `AGY CLI`; never plain `Google` |
+| Claude Code | `Claude Code CLI` |
+| Qoder CLI Global (`qoder-cli-global`) | `Qoder CLI Global`, `Qoder Global`; never plain `Qoder`/`qoder` |
+| Qoder CLI CN (`qoder-cli-cn`) | `Qoder CLI CN`, `Qoder CN`; never plain `Qoder`/`qoder` |
+| ZCode | `ZCode CLI`; plain `ZCode` requires CLI/tool context |
+| CodeBuddy Code | `CodeBuddy`, `CodeBuddy CLI`; never infer from WorkBuddy alone |
+| Cursor CLI | `Cursor Agent`, `Cursor Agent CLI` |
+| GitHub Copilot CLI | `Copilot CLI`; plain `Copilot` requires product disambiguation |
+| Kiro CLI | `Kiro` only when CLI/tool context is explicit |
+| Factory Droid | `Droid`, `Droid CLI` only in coding-agent context |
+| OpenCode | `OpenCode CLI` |
+| NotebookLM | `Google NotebookLM`; a named notebook is a hard context target |
+| Elicit | `Elicit Research` |
+| Consensus | `Consensus Research`, `Consensus Research Agent` |
+| Scite | `scite`, `Scite Assistant`, `Smart Citations` |
 
 Provider aliases select only the recipient. They do not imply a model version,
 capability, route, round count, send authorization, or multi-provider workflow.
+CLI and Web-research aliases also do not imply that the executable is installed, the
+user is signed in, a paid mode is available, or a source corpus is suitable. Load
+`provider-cli.md` or `provider-web-research.md` and run its live gates.
+
+Plain `Qoder`/`qoder` is an ambiguous family alias, not a canonical provider. It may
+resolve only through the user-owned `provider_aliases` mapping below; an absent,
+unknown, or conflicting mapping fails closed. Never cross-fallback between the global
+and CN variants.
 
 ## Capability Contract
 
@@ -77,11 +100,22 @@ New provider-neutral records live at:
 Use schema_version ask-ai-defaults/v1 with:
 
 - default_provider: one provider name or manual;
+- optional provider_aliases: family aliases mapped to canonical recipients only;
 - provider-specific sections for transport, surface, project/notebook hint, model,
   reasoning, browser preference, and ordered fallbacks;
 - an optional provider-neutral review_context name with
   prefer-verified-persistent/new-standard-chat behavior;
 - last_verified_at as informational evidence only.
+
+Portable defaults example:
+
+```yaml
+schema_version: ask-ai-defaults/v1
+default_provider: manual
+```
+
+`provider_aliases` changes recipient resolution only. It is not capability, executable,
+identity, authentication, or send-authorization evidence.
 
 Explicit current-request values override defaults. Stored provider, project/notebook,
 conversation, model, browser, or account hints never prove current selection.
