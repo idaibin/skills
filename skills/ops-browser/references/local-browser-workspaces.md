@@ -52,7 +52,7 @@ local_browser:
     allow_unconfigured_groups: false
     allow_ungrouped: false
     close_task_tabs_after_use: true
-    max_open_tabs_per_domain: 3
+    max_open_tabs_per_domain: <positive integer>
 last_verified_at: <informational timestamp>
 ```
 
@@ -119,10 +119,11 @@ session label.
 
 Before opening another tab, normalize the target to its hostname (an IP address or
 `localhost` remains its exact host) and count observed tabs for that host in the
-resolved group. `max_open_tabs_per_domain` defaults to `3` and must be a positive
-integer. At the limit, reuse a safe matching tab, close an identity-matched unused
-task-created tab, or stop. Never close a pre-existing user tab merely to satisfy the
-limit.
+resolved group. `max_open_tabs_per_domain` must be an explicitly configured positive
+integer. If it is missing while grouping is enabled, do not open another task-created
+tab; reuse a safe matching tab or stop `capability-unavailable`. At the configured
+limit, reuse a safe matching tab, close an identity-matched unused task-created tab,
+or stop. Never close a pre-existing user tab merely to satisfy the limit.
 
 ## Lifecycle
 

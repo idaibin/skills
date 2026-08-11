@@ -59,17 +59,33 @@ ASK_AI_DEFAULT_TOKENS = (
     "hard_process_deadline_seconds: <positive integer | null>",
     "redact_log_fields: [<field or pattern>]",
     "persistent-context",
-    "preserve unrelated\nvalid fields, write it atomically, then read back",
+    "preserve unrelated valid fields, write it atomically, then read back",
 )
 ASK_AI_CANONICAL_STOP_AFTER = "all-providers-approve-same-candidate"
 ASK_AI_PROMOTION_VALUES = {"user-only", "provider-authored-textual-revision"}
+# Protocol constant: keep this set aligned with the First-Tier Providers table in
+# skills/ask-ai/references/provider-cli.md. Mutable paths, models, and flags belong in
+# the user-owned CLI profile and must never be added here.
+ASK_AI_CLI_CANONICAL_PROVIDERS = {
+    "google-antigravity",
+    "claude-code",
+    "qoder-cli-global",
+    "qoder-cli-cn",
+    "zcode",
+    "codebuddy-code",
+    "cursor-cli",
+    "github-copilot-cli",
+    "kiro-cli",
+    "factory-droid",
+    "opencode",
+}
 ASK_AI_CLI_MONITOR_TOKENS = (
     "## Adaptive Monitoring",
     "about one minute",
-    "about five\nminutes",
-    "scheduling examples,\nnot fixed limits",
-    "quiet poll\nkeeps the operation `running`",
-    "one smallest\ncapable read-only observer",
+    "about five minutes",
+    "scheduling examples, not fixed limits",
+    "quiet poll keeps the operation `running`",
+    "one smallest capable read-only observer",
     "never the authority to submit",
     "role or model such as Luna",
     "effective role/model metadata",
@@ -93,12 +109,17 @@ OPS_BROWSER_WORKSPACE_TOKENS = (
     "allow_unconfigured_groups: false",
     "allow_ungrouped: false",
     "close_task_tabs_after_use: true",
-    "max_open_tabs_per_domain: 3",
+    "max_open_tabs_per_domain: <positive integer>",
     "explicit current-request instruction",
     "session naming as a label only",
     "capability-unavailable",
     "preserve unrelated valid fields, then read back",
 )
+
+
+def normalized_contract_text(text: str) -> str:
+    """Make prose-token validation insensitive to harmless Markdown reflow."""
+    return " ".join(text.split())
 ASK_AI_FINAL_SYNC_FIXED_FIELDS = {
     "workflow": "final-result-sync",
     "trigger": "after-final-local-review",
@@ -299,7 +320,7 @@ def ask_ai_defaults_errors(package: Path) -> list[str]:
     profile = package / "references" / "browser-profile.md"
     if not profile.is_file():
         return ["ask-ai: missing references/browser-profile.md"]
-    text = profile.read_text(encoding="utf-8")
+    text = normalized_contract_text(profile.read_text(encoding="utf-8"))
     return [
         f"ask-ai: browser-profile.md missing defaults token: {token}"
         for token in ASK_AI_DEFAULT_TOKENS
@@ -314,7 +335,7 @@ def ops_browser_workspace_errors(package: Path) -> list[str]:
     profile = package / "references" / "local-browser-workspaces.md"
     if not profile.is_file():
         return ["ops-browser: missing references/local-browser-workspaces.md"]
-    text = profile.read_text(encoding="utf-8")
+    text = normalized_contract_text(profile.read_text(encoding="utf-8"))
     return [
         f"ops-browser: local-browser-workspaces.md missing contract token: {token}"
         for token in OPS_BROWSER_WORKSPACE_TOKENS
@@ -329,7 +350,7 @@ def ask_ai_cli_monitor_errors(package: Path) -> list[str]:
     provider_cli = package / "references" / "provider-cli.md"
     if not provider_cli.is_file():
         return ["ask-ai: missing references/provider-cli.md"]
-    text = provider_cli.read_text(encoding="utf-8")
+    text = normalized_contract_text(provider_cli.read_text(encoding="utf-8"))
     return [
         f"ask-ai: provider-cli.md missing adaptive-monitor token: {token}"
         for token in ASK_AI_CLI_MONITOR_TOKENS
@@ -358,23 +379,10 @@ def ask_ai_provider_variant_errors(package: Path) -> list[str]:
     if not isinstance(aliases, dict):
         return ["ask-ai: ask-ai-defaults/v1 provider_aliases must be a mapping when present"]
     errors: list[str] = []
-    canonical = {
-        "google-antigravity",
-        "claude-code",
-        "qoder-cli-global",
-        "qoder-cli-cn",
-        "zcode",
-        "codebuddy-code",
-        "cursor-cli",
-        "github-copilot-cli",
-        "kiro-cli",
-        "factory-droid",
-        "opencode",
-    }
     for alias, recipient in aliases.items():
         if not isinstance(alias, str) or not isinstance(recipient, str):
             errors.append("ask-ai: provider_aliases entries must be string recipient mappings")
-        elif recipient not in canonical:
+        elif recipient not in ASK_AI_CLI_CANONICAL_PROVIDERS:
             errors.append("ask-ai: provider_aliases recipients must be canonical providers")
     if any(token not in text for token in ("capability", "identity", "authentication", "send-authorization")):
         errors.append("ask-ai: provider_aliases example must state recipient-only semantics")

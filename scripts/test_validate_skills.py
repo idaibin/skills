@@ -211,6 +211,21 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("read-only observer" in error for error in errors))
             self.assertTrue(any("effective role/model" in error for error in errors))
 
+    def test_contract_tokens_tolerate_markdown_reflow(self) -> None:
+        source = ROOT / "skills" / "ask-ai"
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ask-ai"
+            shutil.copytree(source, package)
+            provider_cli = package / "references" / "provider-cli.md"
+            text = provider_cli.read_text(encoding="utf-8")
+            provider_cli.write_text(
+                text.replace("about five\nminutes", "about five minutes").replace(
+                    "A quiet poll\nkeeps", "A quiet poll keeps"
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual([], VALIDATOR.ask_ai_cli_monitor_errors(package))
+
     def test_ops_browser_local_workspace_is_configurable_and_strict(self) -> None:
         source = ROOT / "skills" / "ops-browser"
         self.assertEqual([], VALIDATOR.ops_browser_workspace_errors(source))
