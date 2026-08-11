@@ -109,7 +109,7 @@ class ValidatorTests(unittest.TestCase):
         errors = VALIDATOR.skill_contract_errors([entry])
         self.assertTrue(any("artifact-write must allow effect write-artifact" in error for error in errors))
 
-    def test_ask_ai_defaults_require_persistent_context_fallback_contract(self) -> None:
+    def test_ask_ai_defaults_require_strict_task_context_contract(self) -> None:
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         package = Path(temporary.name) / "ask-ai"
@@ -121,20 +121,36 @@ class ValidatorTests(unittest.TestCase):
             "  local_browser: <user-selected browser name>\n"
             "  fallback: user-local-browser | codex-in-app-browser | package-only\n"
             "fallback applies only to the current task.\n"
-            "review_context:\n  name: <user-editable default persistent context name>\n"
-            "  policy: prefer-verified-persistent\n"
-            "  fallback: new-standard-chat\n",
+            "context_routes:\n"
+            "  review:\n    name: <user-editable review Project/notebook name>\n"
+            "    policy: prefer-verified-persistent | require-verified-persistent\n"
+            "    fallback: new-standard-chat | package-only\n"
+            "    provider_targets:\n"
+            "      chatgpt: {surface: project, name: <optional ChatGPT Project name>}\n"
+            "      gemini: {surface: notebook, name: <optional Gemini Notebook name>}\n"
+            "  design:\n    name: <user-editable design Project/notebook name>\n"
+            "    policy: prefer-verified-persistent | require-verified-persistent\n"
+            "    fallback: new-standard-chat | package-only\n"
+            "  image:\n    name: <user-editable image Project/notebook name>\n"
+            "    policy: prefer-verified-persistent | require-verified-persistent\n"
+            "    fallback: new-standard-chat | package-only\n"
+            "standard_chat:\n  policy: allow-default | explicit-current-request-only\n"
+            "persistent-context\n",
             encoding="utf-8",
         )
         self.assertEqual([], VALIDATOR.ask_ai_defaults_errors(package))
-        profile.write_text("review_context:\n", encoding="utf-8")
+        profile.write_text("context_routes:\n", encoding="utf-8")
         errors = VALIDATOR.ask_ai_defaults_errors(package)
         self.assertTrue(any("codex-in-app-browser" in error for error in errors))
         self.assertTrue(any("user-selected browser" in error for error in errors))
         self.assertTrue(any("current task" in error for error in errors))
-        self.assertTrue(any("user-editable default" in error for error in errors))
+        self.assertTrue(any("review Project/notebook" in error for error in errors))
+        self.assertTrue(any("design Project/notebook" in error for error in errors))
         self.assertTrue(any("prefer-verified-persistent" in error for error in errors))
-        self.assertTrue(any("new-standard-chat" in error for error in errors))
+        self.assertTrue(any("provider_targets" in error for error in errors))
+        self.assertTrue(any("image Project/notebook" in error for error in errors))
+        self.assertTrue(any("allow-default" in error for error in errors))
+        self.assertTrue(any("persistent-context" in error for error in errors))
 
     def test_ask_ai_browser_preference_is_task_scoped_and_legacy_recoverable(self) -> None:
         profile = (

@@ -95,10 +95,12 @@ not maintain a second public collaboration owner.
    authority never permits source writes. An explicitly named external coding-agent
    implementation may write only when the root coordinator combines the provider
    invocation with the matching implementation owner. For an authorized web review, apply the provider-neutral browser preference and
-   `review_context` from [browser-profile.md](references/browser-profile.md). Start each
+   task-specific `context_routes` from [browser-profile.md](references/browser-profile.md). Start each
    task from the configured primary with fresh preflight; a fallback never changes the
-   next task's default. Reuse a uniquely verified persistent container when supported,
-   otherwise open a clean new Standard Chat.
+   next task's default. Resolve provider-specific Project, notebook, space, or collection
+   labels as one `persistent-context` capability. Use Standard Chat when neither the
+   current request nor local configuration selects a persistent context, then apply any
+   matched route's configured policy and fallback.
    Never treat a conversation title or stored name as container proof.
 9. Create one round_id per review round, a new relay_turn_id per sequential provider
    turn, and a unique logical operation_id per actual create, submit, or capture. On a provider's

@@ -30,10 +30,16 @@ ASK_AI_DEFAULT_TOKENS = (
     "local_browser: <user-selected browser name>",
     "fallback: user-local-browser | codex-in-app-browser | package-only",
     "fallback applies only to the current task",
-    "review_context:",
-    "name: <user-editable default persistent context name>",
-    "policy: prefer-verified-persistent",
-    "fallback: new-standard-chat",
+    "context_routes:",
+    "name: <user-editable review Project/notebook name>",
+    "name: <user-editable design Project/notebook name>",
+    "policy: prefer-verified-persistent | require-verified-persistent",
+    "fallback: new-standard-chat | package-only",
+    "provider_targets:",
+    "name: <user-editable image Project/notebook name>",
+    "standard_chat:",
+    "policy: allow-default | explicit-current-request-only",
+    "persistent-context",
 )
 ASK_AI_CANONICAL_STOP_AFTER = "all-providers-approve-same-candidate"
 ASK_AI_PROMOTION_VALUES = {"user-only", "provider-authored-textual-revision"}
@@ -472,8 +478,8 @@ def ask_ai_final_result_sync_errors(package: Path) -> list[str]:
             errors.append(f"ask-ai: final-result-sync.md missing contract token: {token}")
     if "Do not fall back to Standard Chat" not in gemini.read_text(encoding="utf-8"):
         errors.append("ask-ai: Gemini final-result retention must forbid Standard Chat fallback")
-    if "context is retention-only and is excluded" not in profile.read_text(encoding="utf-8"):
-        errors.append("ask-ai: review-context routing must exclude reserved retention targets")
+    if "same persistent container as a normal route" not in profile.read_text(encoding="utf-8"):
+        errors.append("ask-ai: shared review/sync containers must preserve operation isolation")
     eval_text = evals.read_text(encoding="utf-8")
     for token in (
         "configured final-result sync follows a completed local review",

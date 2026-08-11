@@ -112,12 +112,13 @@ explicitly selected chat. Search, deep research, thinking/reasoning, file upload
 images, video, voice, code, agents, presentations, data analysis, connectors,
 projects, notebooks, and model selection are separate capabilities.
 
-When the provider-neutral review-context preference is configured, inspect for one
-true persistent Project/notebook/space/collection with that name before opening the
-ordinary chat. Reuse it only with live container and stable-identity evidence. If the
-provider does not support it or verification fails, open a clean new ordinary chat for
-the authorized review. History groups and renamed conversations do not satisfy this
-preference, and the preference never authorizes container creation.
+When a provider-neutral task context is configured, inspect for one true persistent
+Project/notebook/space/collection with that name before composing. Reuse it only with
+live container and stable-identity evidence, then apply the configured require/prefer
+policy and fallback. History groups and renamed conversations do not satisfy the route,
+and the route never authorizes container creation. Open an ordinary or Standard Chat
+when no explicit or configured persistent context applies, or when the current request
+or matched local policy selects it.
 
 Select a non-default capability only when the current request explicitly authorizes it
 and live UI evidence proves that it is active before submit. Provider defaults never

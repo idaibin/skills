@@ -34,21 +34,20 @@ Then:
 1. Select the authorized browser surface and enumerate existing tabs only when exposed.
 2. Verify the final gemini.google.com route, authenticated/unauthenticated state, and
    minimal non-PII account category evidence.
-3. Apply an explicit target first. For a review operation, exclude any notebook or
-   context reserved by a valid `final-result-sync` instruction; that target is
-   retention-only and ordinary review, independent review, and relay review use a clean
-   Standard Chat unless the current request explicitly overrides the reservation for
-   that one invocation. Otherwise, when the provider-neutral review-context preference
-   is configured, reuse the uniquely verified notebook with that name; if it is absent,
-   unavailable, or not tied to the active Gemini account, resolve a clean Standard
-   Chat. Treat any user-named non-reserved notebook or existing conversation as a hard
-   target and verify its stable URL/identity before action.
+3. Apply an explicit target first. Otherwise resolve the configured task context, such
+   as review, design, or image. Reuse only the uniquely verified notebook with that
+   name, then apply the route's configured require/prefer policy and fallback. A
+   `final-result-sync` may use the same notebook in a separate verified conversation
+   without reserving the whole notebook against other work. Treat Gemini Notebook as
+   the provider-specific form of canonical `persistent-context`; if no explicit or
+   configured Notebook applies, use a new Standard Chat.
 4. Verify the current model or mode only when exposed. A stored or visible label is a
    preference unless active selection evidence proves it; a hard model requirement
    blocks submission when unverified.
 5. Inspect the composer and attachments. Preserve unrelated drafts; never overwrite,
-   append to, or submit mixed content. Use a new authorized conversation only when the
-   request permits it.
+   append to, or submit mixed content. Use a new conversation inside the verified
+   target only when the request permits it. Use Standard Chat only when the current
+   request selects it or the matched local policy explicitly allows that fallback.
 
 If the page is clearly signed out, ask the user to sign in on the selected surface.
 Stop before credentials, MFA, consent, account switching, or permission grants.

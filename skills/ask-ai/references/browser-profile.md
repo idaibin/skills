@@ -24,10 +24,24 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
       primary: codex-in-app-browser | user-local-browser | manual
       local_browser: <user-selected browser name>
       fallback: user-local-browser | codex-in-app-browser | package-only
-    review_context:
-      name: <user-editable default persistent context name>
-      policy: prefer-verified-persistent
-      fallback: new-standard-chat
+    context_routes:
+      review:
+        name: <user-editable review Project/notebook name>
+        policy: prefer-verified-persistent | require-verified-persistent
+        fallback: new-standard-chat | package-only
+        provider_targets:
+          chatgpt: {surface: project, name: <optional ChatGPT Project name>}
+          gemini: {surface: notebook, name: <optional Gemini Notebook name>}
+      design:
+        name: <user-editable design Project/notebook name>
+        policy: prefer-verified-persistent | require-verified-persistent
+        fallback: new-standard-chat | package-only
+      image:
+        name: <user-editable image Project/notebook name>
+        policy: prefer-verified-persistent | require-verified-persistent
+        fallback: new-standard-chat | package-only
+    standard_chat:
+      policy: allow-default | explicit-current-request-only
     providers:
       chatgpt:
         default_transport_mode: codex-app-native | browser | manual
@@ -71,29 +85,58 @@ Never store secrets, cookies, tokens, browser storage, email addresses, display 
 or raw profile data. A Project/notebook name, URL, conversation identifier, model,
 reasoning mode, tab, or timestamp is a hint until reverified.
 
-`review_context` is a provider-neutral selection preference, not a claim that every
-provider supports Projects, notebooks, spaces, or collections. For each authorized web
-review, first look for one live, uniquely identified persistent container with the
-configured name. Reuse it only after provider, account class, container type, and stable
-identity are verified. If the provider does not expose such a container, the container
-is unavailable, or its identity cannot be verified, use a clean new Standard Chat for
-that review. A history group or ordinary conversation title is not a persistent
-container. The record does not authorize creating a container, sending content, or
-changing accounts; those remain current-request actions.
+`context_routes` is user configuration that maps task intent to provider-neutral
+persistent-container names. Common route IDs are `review` for critique/audit/verification,
+`design` for product/UI/UX/architecture creation, and `image` for generation, editing,
+or visual exploration. Classify by the requested operation, so architecture review and
+architecture creation may resolve differently. Additional user-defined route keys may
+follow the same contract. The Skill never supplies personal container names.
 
-When a valid `final-result-sync` instruction reserves an exact provider context, that
-context is retention-only and is excluded from `review_context` resolution for
-ordinary, independent, and relay review. Use a clean Standard Chat for that provider
-unless the current request explicitly overrides the reservation for one invocation.
-The reserved target remains eligible only for its sanitized final-result sync.
+Normalize product terminology before routing:
 
-`review_context.name` is the single provider-neutral default name. Users may change
-that one field at any time; all provider routes inherit the new value on their next
-authorized review. Provider-specific `project_name` or `notebook_name` fields are
-optional explicit overrides, not required mirrors of the global name. A stored URL is
-eligible only when its live container name still matches the currently resolved name;
-otherwise ignore it and rediscover by name. The example placeholder is not a built-in
-name restriction.
+| Canonical surface | Provider presentation examples |
+| --- | --- |
+| `standard-chat` | ChatGPT Standard Chat, Gemini new chat, another provider's ordinary chat |
+| `persistent-context` | ChatGPT Project, Gemini Notebook, or a verified provider Project, Space, or Collection |
+
+These are functional mappings, not claims that every provider implements equivalent
+storage, tools, context limits, or permissions. Require live provider capability and
+stable container identity. Preserve the user's exact container name independently for
+each provider when configured names differ.
+
+`provider_targets` is an optional per-route override for providers whose container
+surface or configured name differs. Resolve the selected provider's exact override
+first, then the route-level `name`; never copy a ChatGPT Project label into Gemini or
+infer a Notebook name from another provider. Unknown provider or surface values block
+that override without changing the configured recipient.
+
+For each authorized external action, first apply an explicit current-request target,
+then a matching configured route. If neither selects `persistent-context`, use
+`standard-chat`. For a persistent route, reuse only one live provider-specific
+container whose configured name, provider account class, type, and stable identity are
+verified. `require-verified-persistent` makes it a hard target and requires
+`fallback: package-only`. `prefer-verified-persistent` may use
+`fallback: new-standard-chat` when the Standard Chat policy permits it. Missing,
+unknown, or conflicting policy/fallback combinations fail closed.
+
+`standard_chat.policy` is also user configuration. When it is absent, default to
+`allow-default`. `explicit-current-request-only`
+means a new, blank, ordinary, Quick, or Standard Chat is legal only when the current
+request explicitly selects that surface; `allow-default` permits a matched
+`new-standard-chat` fallback and ordinary default routing. Wording that excludes
+current project or conversation facts changes the outbound package, not the target
+container; it does not by itself select a different surface.
+
+A `final-result-sync` target may name the same persistent container as a normal route.
+Keep the sync payload and receipt in their own verified conversation and preserve the
+sync workflow's sanitization and one-send boundary; sharing the container does not turn
+ordinary review into retention or vice versa.
+
+Provider-specific `project_name` or `notebook_name` fields are optional exact overrides
+for a route, not current identity proof. A stored URL is eligible only when its live
+container name still matches the resolved route; otherwise stop and rediscover by name.
+The record does not authorize creating a container, sending content, changing accounts,
+or selecting a different route.
 
 ## ChatGPT Legacy Record
 

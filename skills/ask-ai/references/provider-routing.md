@@ -103,8 +103,10 @@ Use schema_version ask-ai-defaults/v1 with:
 - optional provider_aliases: family aliases mapped to canonical recipients only;
 - provider-specific sections for transport, surface, project/notebook hint, model,
   reasoning, browser preference, and ordered fallbacks;
-- an optional provider-neutral review_context name with
-  prefer-verified-persistent/new-standard-chat behavior;
+- optional provider-neutral context_routes that map review, design, image, or another
+  user-defined task intent to a user-selected persistent-container policy and fallback;
+- optional per-route provider_targets for different Project/notebook names and surface labels;
+- a user-selected standard_chat policy;
 - last_verified_at as informational evidence only.
 
 Portable defaults example:
@@ -119,9 +121,13 @@ identity, authentication, or send-authorization evidence.
 
 Explicit current-request values override defaults. Stored provider, project/notebook,
 conversation, model, browser, or account hints never prove current selection.
-The review-context preference is evaluated separately for each selected provider: reuse
-only a live verified persistent container of the configured name; otherwise use a clean
-new Standard Chat without claiming that the provider supports a persistent container.
+The matching context route is evaluated separately for each selected provider. Reuse
+only a live verified persistent container of the configured name. Apply the configured
+`require`/`prefer` policy, route fallback, and Standard Chat policy without inventing a
+personal container name or changing those settings in portable Skill guidance. Map
+ChatGPT Project, Gemini Notebook, and verified provider Project/Space/Collection
+surfaces to the canonical `persistent-context` capability; when no explicit or
+configured persistent context applies, use the provider's ordinary Standard Chat.
 
 The old `~/.agents/config/ask-chatgpt/defaults.yaml` record and
 `ask-chatgpt-defaults/v2` schema remain ChatGPT-only compatibility input. Read them only

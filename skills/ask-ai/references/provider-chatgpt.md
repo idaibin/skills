@@ -67,15 +67,17 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 - Resolve `project` for repository-bound, persistent, or multi-round review when a
   verified stable ChatGPT Project ID or Project URL exists.
-- When the provider-neutral review-context preference is configured, first resolve the
-  uniquely verified Project with that name. If it is absent, unavailable, or cannot be
-  tied to the active ChatGPT workspace, resolve a clean `standard-chat`; never infer a
-  Project from the saved label or create one without current authorization.
+- When a provider-neutral task context is configured, first resolve the uniquely
+  verified Project with that name. Apply its configured require/prefer policy and
+  fallback. Never infer a Project from the saved label or create one without current
+  authorization.
 - Resolve `quick-chat` only when the user explicitly asks for Quick Chat, a
   projectless ChatGPT cloud task, or the equivalent host surface.
-- Resolve `standard-chat` for a generic one-off review or when no durable Project
-  route exists. On the current host schema it has no App-native target; use an
-  authorized browser route or Package-only.
+- Resolve `standard-chat` when the current request explicitly selects it or when the
+  matched local route permits `new-standard-chat` and the local Standard Chat policy
+  allows defaults. It is also the default when no explicit or configured Project
+  applies. On the current host schema it has no App-native target; use an authorized
+  browser route or Package-only.
 - Resolve `search`, `deep-research`, or `images` only when the selected collaboration capability is verified on the active surface. These are capability routes, not content themes.
 - Resolve `codex` only as the executor or as an explicitly requested separate-agent review. Never count self-review as an independent ChatGPT pass.
 - Treat UI labels as presentation details. Route by verified capability plus stable Project/conversation identity or URL so a label change does not silently change behavior.
