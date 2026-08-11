@@ -62,6 +62,9 @@ hard-process deadline or explicit no-deadline policy. Validate these separately:
 - **Input reachability:** every package/attachment path must be readable inside the
   selected `cwd` and permission policy. Otherwise move the ignored package under the
   repository review parent or use a bounded self-contained prompt before submit.
+- **Workspace binding:** inject the current task repository through the configured
+  workspace option and verify the provider's active workspace. Host `cwd` alone does
+  not satisfy this gate when the CLI owns a separate project or directory registry.
 - **Model compatibility:** do not pair a model with effort/reasoning flags unless the
   installed build proves that exact combination. A parser/model-selection error with
   zero turns, zero usage, and no conversation ID is failed-before-submit; otherwise
@@ -158,7 +161,7 @@ capability cannot be verified, stop at Package-only or `Not verified`.
 
 Store mutable installed-runtime facts only in the user-owned defaults record. A profile
 may configure executable candidates, identity markers, discovery arguments, exact
-argument order, prompt transport, base/review arguments, model and reasoning options,
+argument order, workspace option/semantics, prompt transport, base/review arguments, model and reasoning options,
 model aliases, output format, provider-owned attribution paths, terminal values,
 resume option, workspace binding, deadlines, and log redaction. Validate the complete
 record, preserve unrelated fields, write atomically, and read it back.

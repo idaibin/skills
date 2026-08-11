@@ -106,6 +106,7 @@ class AskAIProviderProfileTests(unittest.TestCase):
         for scenario in (
             "output explains an option token",
             "Qoder cannot read a review package outside",
+            "provider response says no active workspace is set",
             "CLI model attribution and vote eligibility",
             "CLI timeout semantics",
         ):

@@ -61,6 +61,10 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
           version_args: [<argument>]
           help_args: [<argument>]
           argument_order: <ordered option categories>
+          workspace:
+            option: <verified option>
+            value_source: current-task-repository
+            semantics: change-directory | add-directory
           prompt_transport: argument | stdin | file
           prompt_option: <verified option | none>
           base_args: [<verified argument>]
@@ -135,6 +139,11 @@ portable Skill. Build an exact argv array from the validated profile, preserve i
 declared order, and reject missing or unknown fields. Null deadlines mean no configured
 deadline, not infinite authorization. Provider-owned attribution selectors and terminal
 values must be reverified after executable drift. Never store secrets or raw logs.
+The `workspace` record is required for a repository-scoped CLI: inject the current
+task's canonical repository through the configured option and verify the provider's
+active workspace before submit. A host process `cwd` alone is not provider workspace
+evidence, especially when the configured semantics add a directory instead of changing
+the provider's primary working directory.
 
 `context_routes` is user configuration that maps task intent to provider-neutral
 persistent-container names. Common route IDs are `review` for critique/audit/verification,

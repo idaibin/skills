@@ -53,6 +53,10 @@ ASK_AI_DEFAULT_TOKENS = (
     "executable_candidates: [<absolute path or command name>]",
     "prompt_transport: argument | stdin | file",
     "argument_order: <ordered option categories>",
+    "workspace:",
+    "option: <verified option>",
+    "value_source: current-task-repository",
+    "semantics: change-directory | add-directory",
     "attribution_paths:",
     "require_repository_binding: true",
     "provider_deadline_seconds: <positive integer | null>",
@@ -97,6 +101,8 @@ ASK_AI_CLI_MONITOR_TOKENS = (
     "submission-uncertain",
     "profile_digest:",
     "apply configured redaction",
+    "Workspace binding",
+    "Host `cwd` alone",
 )
 OPS_BROWSER_WORKSPACE_TOKENS = (
     "schema_version: ops-browser-defaults/v1",
