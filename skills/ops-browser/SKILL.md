@@ -17,7 +17,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    the precedence and exceptions in `references/usage.md`; do not add a category the
    user did not request. Verify the effective page viewport rather than treating a
    successful resize call as proof.
-2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work.
+2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work. For a user local-browser route, load [references/local-browser-workspaces.md](references/local-browser-workspaces.md), resolve its optional grouping policy, and preflight group enumeration and placement separately from login and page control.
 3. Before every action that would open or create a page, enumerate browser sessions and
    existing tabs when the available tool exposes them. Narrow candidates by browser
    surface, verified account/session, and task context, then prefer an exact URL within
@@ -32,7 +32,9 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    user tab, also record its original URL and any exposed viewport, zoom, and scroll
    state. If required state cannot be recorded, avoid changing it or report degraded
    restoration evidence. This tab ledger never replaces an `ask-ai` side-effect
-   operation ledger. When tab
+   operation ledger. For a configured local-browser workspace, also record the
+   resolved strategy, operation type, target and observed group, policy source, and
+   placement evidence. When tab
    enumeration is unavailable, reuse any already recorded task tab; otherwise open at
    most one isolated task-owned tab for the declared purpose and mark tab identity
    `Not verified`. Never invent missing tab/window identity.
@@ -50,7 +52,9 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    system accessibility/coordinate automation, or another visible/user-owned surface,
    require direct background-safety capability evidence; otherwise return Degraded
    Evidence or stop. Open an isolated managed page only when the task does not depend
-   on unavailable user-profile state.
+   on unavailable user-profile state. A configured local-browser group is a placement
+   constraint, not a hint: do not open, move, or retain a tab outside it when verified
+   placement is required. Session naming alone never proves group reuse or membership.
 7. Prefer browser/tool APIs, DOM inspection, roles, labels, test ids, and deterministic actions over manual guessing.
 8. Gather only evidence the tool can actually expose: UI state, DOM/accessibility, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads. For visual comparison, independently retain design and runtime captures, produce side-by-side/overlay/diff evidence, and read applicable computed font, final color/contrast, geometry, alignment, truncation, hover/focus, state, and breakpoint facts.
 9. Distinguish direct evidence from inference; mark unavailable or unchecked claims `Not verified`.
@@ -106,6 +110,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - Use direct CDP only when the selected Chromium session and required low-level event or domain cannot be reached through the higher-level backend. Keep raw protocol commands narrowly scoped; CDP connectivity alone does not prove page readiness, identity, or task completion.
 - For browser debug evidence, establish exact URL, steps, expected symptom, observed symptom, and red/green evidence before testing a browser-layer hypothesis.
 - Treat the host-provided Codex in-app Browser as catalog-classified non-interrupting. Do not present that classification as an official public API guarantee or extend it to controlled Chrome, Computer Use, system accessibility/coordinate automation, or other visible/user-owned routes; those require direct background-safety evidence when the user forbids window, mouse, or keyboard interruption.
+- Keep local-browser workspace configuration user-owned. Resolve explicit current-task grouping first, then a valid local record; never write a personal group name into the portable Skill, create extra groups for convenience, treat session naming as group placement proof, or bypass a required group with an ungrouped tab.
 - Treat readiness and product behavior as separate assertions. Retry only a bounded readiness probe when direct evidence shows setup is not ready and the probe has no external side effect; never retry a behavior assertion merely because it failed.
 - Test one browser hypothesis at a time. Do not bundle refresh, cache clearing, account switch, viewport changes, and code edits.
 - Confirm only direct browser facts such as the active URL, missing cookie, absent DOM control, console error, network response, or browser-enforced CORS failure. Return cross-system evidence to the caller; do not claim a final frontend-to-API-to-backend-to-database root cause or decide a permanent code fix.
@@ -140,4 +145,5 @@ ledger without making product or UI-contract decisions.
 - Read [references/lanhu-ui-evidence.md](references/lanhu-ui-evidence.md) for Lanhu selected-element measurements, assets, and spacing-normalization candidates.
 - See [references/devtools-debugging.md](references/devtools-debugging.md) for localhost, test, and authorized production browser debugging.
 - See [references/browser-operation-protocol.md](references/browser-operation-protocol.md) for the shared Capability Snapshot, handoff schema, operation state machine, and degraded mode.
+- Read [references/local-browser-workspaces.md](references/local-browser-workspaces.md) when a user local-browser route must preserve a configured unified or operation-mapped tab group.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for same-viewport/state capture, evidence levels, pass-scoped computed checks, and tab restoration; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).

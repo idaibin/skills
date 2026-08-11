@@ -135,7 +135,25 @@ class ValidatorTests(unittest.TestCase):
             "    policy: prefer-verified-persistent | require-verified-persistent\n"
             "    fallback: new-standard-chat | package-only\n"
             "standard_chat:\n  policy: allow-default | explicit-current-request-only\n"
-            "persistent-context\n",
+            "cli_monitoring:\n"
+            "  strategy: adaptive\n"
+            "  short_task_poll_hint_seconds: <positive seconds>\n"
+            "  long_task_poll_hint_seconds: <positive seconds>\n"
+            "  preferred_wait_observer: <user-selected read-only role | none>\n"
+            "  require_observer_runtime_identity: true\n"
+            "provider_aliases:\n  <user alias>: <canonical provider>\n"
+            "model_aliases:\n  <user model alias>: <installed model identifier>\n"
+            "cli_profile:\n"
+            "  executable_candidates: [<absolute path or command name>]\n"
+            "  prompt_transport: argument | stdin | file\n"
+            "  argument_order: <ordered option categories>\n"
+            "  attribution_paths:\n"
+            "  require_repository_binding: true\n"
+            "  provider_deadline_seconds: <positive integer | null>\n"
+            "  hard_process_deadline_seconds: <positive integer | null>\n"
+            "  redact_log_fields: [<field or pattern>]\n"
+            "persistent-context\n"
+            "preserve unrelated\nvalid fields, write it atomically, then read back\n",
             encoding="utf-8",
         )
         self.assertEqual([], VALIDATOR.ask_ai_defaults_errors(package))
@@ -150,7 +168,10 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("provider_targets" in error for error in errors))
         self.assertTrue(any("image Project/notebook" in error for error in errors))
         self.assertTrue(any("allow-default" in error for error in errors))
+        self.assertTrue(any("cli_monitoring" in error for error in errors))
+        self.assertTrue(any("cli_profile" in error for error in errors))
         self.assertTrue(any("persistent-context" in error for error in errors))
+        self.assertTrue(any("write it atomically" in error for error in errors))
 
     def test_ask_ai_browser_preference_is_task_scoped_and_legacy_recoverable(self) -> None:
         profile = (
@@ -175,10 +196,50 @@ class ValidatorTests(unittest.TestCase):
         ):
             self.assertIn(mode, protocol)
 
+    def test_ask_ai_cli_monitoring_is_adaptive_and_single_owner(self) -> None:
+        source = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_cli_monitor_errors(source))
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ask-ai"
+            (package / "references").mkdir(parents=True)
+            provider_cli = package / "references" / "provider-cli.md"
+            provider_cli.write_text("## Adaptive Monitoring\n", encoding="utf-8")
+            errors = VALIDATOR.ask_ai_cli_monitor_errors(package)
+            self.assertTrue(any("one minute" in error for error in errors))
+            self.assertTrue(any("five" in error for error in errors))
+            self.assertTrue(any("not fixed limits" in error for error in errors))
+            self.assertTrue(any("read-only observer" in error for error in errors))
+            self.assertTrue(any("effective role/model" in error for error in errors))
+
+    def test_ops_browser_local_workspace_is_configurable_and_strict(self) -> None:
+        source = ROOT / "skills" / "ops-browser"
+        self.assertEqual([], VALIDATOR.ops_browser_workspace_errors(source))
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ops-browser"
+            (package / "references").mkdir(parents=True)
+            profile = package / "references" / "local-browser-workspaces.md"
+            profile.write_text("schema_version: ops-browser-defaults/v1\n", encoding="utf-8")
+            errors = VALIDATOR.ops_browser_workspace_errors(package)
+            self.assertTrue(any("unified | by-operation" in error for error in errors))
+            self.assertTrue(any("user-selected group name" in error for error in errors))
+            self.assertTrue(any("create_if_missing" in error for error in errors))
+            self.assertTrue(any("reuse_existing" in error for error in errors))
+            self.assertTrue(any("allow_unconfigured_groups" in error for error in errors))
+            self.assertTrue(any("allow_ungrouped" in error for error in errors))
+            self.assertTrue(any("close_task_tabs_after_use" in error for error in errors))
+            self.assertTrue(any("max_open_tabs_per_domain" in error for error in errors))
+            self.assertTrue(any("session naming" in error for error in errors))
+            self.assertTrue(any("capability-unavailable" in error for error in errors))
+
     def test_ask_ai_provider_aliases_are_optional_and_canonical(self) -> None:
         source = ROOT / "skills" / "ask-ai"
         self.assertEqual([], VALIDATOR.ask_ai_provider_variant_errors(source))
-        for aliases in ("provider_aliases: {}\n", "provider_aliases:\n  qoder: qoder-cli-global\n", "provider_aliases:\n  qoder: qoder-cli-cn\n"):
+        for aliases in (
+            "provider_aliases: {}\n",
+            "provider_aliases:\n  qoder: qoder-cli-global\n",
+            "provider_aliases:\n  qoder: qoder-cli-cn\n",
+            "provider_aliases:\n  agy: google-antigravity\n  z: zcode\n",
+        ):
             with self.subTest(aliases=aliases.strip()):
                 with tempfile.TemporaryDirectory() as temporary:
                     package = Path(temporary) / "ask-ai"
@@ -207,7 +268,7 @@ class ValidatorTests(unittest.TestCase):
                 encoding="utf-8",
             )
             errors = VALIDATOR.ask_ai_provider_variant_errors(package)
-        self.assertTrue(any("canonical Qoder variants" in error for error in errors))
+            self.assertTrue(any("canonical providers" in error for error in errors))
 
     def test_ask_ai_authority_contract_matches_index_write_source_forbidden(self) -> None:
         source = ROOT / "skills" / "ask-ai"

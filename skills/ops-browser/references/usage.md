@@ -6,13 +6,14 @@
 - [Trigger Examples](#trigger-examples)
 - [Non-Triggers](#non-triggers)
 - [Operation Notes](#operation-notes)
+- [Local Browser Workspace](#local-browser-workspace)
 - [Execution Backend Selection](#execution-backend-selection)
 - [Repeatable Capture Manifest](#repeatable-capture-manifest)
 - [Browser Debug Evidence](#browser-debug-evidence)
 
 ## Summary
 
-Use `ops-browser` for browser-based operations where existing tabs, sessions, state, visual evidence, or artifacts matter. It covers inspection, visual/responsive verification, browser DevTools evidence, form filling, upload/download, and browser evidence collection. Prefer the non-interrupting Codex in-app Browser when it can satisfy the task; capability-check every requested evidence surface. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for code changes.
+Use `ops-browser` for browser-based operations where existing tabs, sessions, state, visual evidence, or artifacts matter. It covers inspection, visual/responsive verification, browser DevTools evidence, form filling, upload/download, and browser evidence collection. Prefer the non-interrupting Codex in-app Browser when it can satisfy the task without user-profile state; prefer a verified user local browser when an existing login, extension, download context, or exact user tab is required. Capability-check every requested evidence surface. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for code changes.
 
 ## Trigger Examples
 
@@ -48,6 +49,19 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 ## Operation Notes
 
 - For content communities, design collaboration, development collaboration, and admin tools, select a reusable operation pattern from [platform-operations.md](platform-operations.md). Keep platform adapters thin and verify live labels, rules, account, and capabilities at execution time.
+
+## Local Browser Workspace
+
+When a selected user local browser must keep task tabs in a named workspace, load
+[local-browser-workspaces.md](local-browser-workspaces.md). Apply an explicit current-
+request override before the optional local configuration. Support one unified group or
+an exact user-defined operation-to-group map without supplying personal group names.
+If strict placement is configured but the active host exposes only read-only group
+metadata, reuse a verified tab in the target group or stop. When the target group is
+absent, create exactly that configured group only through a verifiable host operation;
+never infer placement from session naming, create an unconfigured group, or leave an
+ungrouped task tab. Apply the configured per-domain tab limit before opening, and close
+identity-matched task-created tabs after use unless explicitly retained.
 
 ## Execution Backend Selection
 

@@ -110,7 +110,9 @@ not maintain a second public collaboration owner.
    submit, or response capture. When a browser route is selected, delegate low-level
    actions through [browser-operation-protocol.md](references/browser-operation-protocol.md)
    to ops-browser. Never resend an already submitted or ambiguous operation; retry
-   only a proven failed-before-submit attempt with the original operation ID.
+   only a proven failed-before-submit attempt with the original operation ID. For a
+   running CLI operation, use the adaptive same-process monitoring contract in
+   `provider-cli.md`; a quiet observation interval is not a failure or retry trigger.
 10. For ordinary multi-provider work, follow **Multi-Provider Independence** in
     [provider-routing.md](references/provider-routing.md). Only an explicitly requested
     relay workflow may include the immediately preceding provider response; follow

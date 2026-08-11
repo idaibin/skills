@@ -49,11 +49,11 @@ class AskAIProviderProfileTests(unittest.TestCase):
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         for term in (
             "exact `cwd`",
-            "structured-output",
+            "structured result/event/log metadata",
             "session ID",
             "submission-uncertain",
             "different repository or account",
-            "never `--trust-all-tools`",
+            "flags such as `dangerously-skip-permissions`",
             "Argument binding",
             "Input reachability",
             "Timeout layers",
@@ -63,27 +63,30 @@ class AskAIProviderProfileTests(unittest.TestCase):
             with self.subTest(term=term):
                 self.assertIn(term, profile)
 
-    def test_zcode_profile_is_local_version_bound_and_repository_safe(self) -> None:
+    def test_cli_profile_is_local_version_bound_and_repository_safe(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         for term in (
-            "Version-Bound Local Evidence",
-            "`zcode 0.16.1`",
-            "`app-server` over stdio",
-            "returns `sessionId`, `traceId`, `turnId`",
-            "reject a repository/account/session registry mismatch before",
+            "Configured Runtime Profiles",
+            "user-owned `cli_profiles` record",
+            "must not embed provider versions, model IDs, executable paths",
+            "profile_digest:",
+            "repository-bound resume",
         ):
             with self.subTest(term=term):
                 self.assertIn(term, profile)
         self.assertNotIn("Do not route `ZCode CLI`", profile)
+        for forbidden in ("`zcode 0.16.1`", "claude-opus-4-6-thinking", "gemini-3.1-pro-high"):
+            with self.subTest(forbidden=forbidden):
+                self.assertNotIn(forbidden, profile)
 
     def test_cli_regressions_cover_model_attribution_and_known_invocation_drift(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         adapter = self.read("skills/ask-ai/references/provider-adapter.md")
         evals = self.read("skills/ask-ai/references/eval-cases.md")
         for term in (
-            "`--max-turns` and `--allowed-tools` are",
-            "placing `--print` before",
-            "rejected `--effort high`",
+            "installed help as a candidate contract",
+            "configured, reverified values",
+            "apply configured redaction",
             "Response prose",
             "host poll/yield expiry",
         ):
@@ -101,7 +104,7 @@ class AskAIProviderProfileTests(unittest.TestCase):
             with self.subTest(field=field):
                 self.assertIn(field, adapter)
         for scenario in (
-            "output explains `--output-format`",
+            "output explains an option token",
             "Qoder cannot read a review package outside",
             "CLI model attribution and vote eligibility",
             "CLI timeout semantics",
@@ -138,8 +141,8 @@ class AskAIProviderProfileTests(unittest.TestCase):
         for term in (
             "qoder-cli-global",
             "qoder-cli-cn",
-            "official `qodercli`",
-            "official executable `qoderclicn",
+            "supplies its own executable candidates",
+            "CN profile rejects global-only evidence",
             "ambiguous family alias",
             "no cross-variant fallback",
         ):

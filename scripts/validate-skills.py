@@ -39,10 +39,66 @@ ASK_AI_DEFAULT_TOKENS = (
     "name: <user-editable image Project/notebook name>",
     "standard_chat:",
     "policy: allow-default | explicit-current-request-only",
+    "cli_monitoring:",
+    "strategy: adaptive",
+    "short_task_poll_hint_seconds: <positive seconds>",
+    "long_task_poll_hint_seconds: <positive seconds>",
+    "preferred_wait_observer: <user-selected read-only role | none>",
+    "require_observer_runtime_identity: true",
+    "provider_aliases:",
+    "<user alias>: <canonical provider>",
+    "model_aliases:",
+    "<user model alias>: <installed model identifier>",
+    "cli_profile:",
+    "executable_candidates: [<absolute path or command name>]",
+    "prompt_transport: argument | stdin | file",
+    "argument_order: <ordered option categories>",
+    "attribution_paths:",
+    "require_repository_binding: true",
+    "provider_deadline_seconds: <positive integer | null>",
+    "hard_process_deadline_seconds: <positive integer | null>",
+    "redact_log_fields: [<field or pattern>]",
     "persistent-context",
+    "preserve unrelated\nvalid fields, write it atomically, then read back",
 )
 ASK_AI_CANONICAL_STOP_AFTER = "all-providers-approve-same-candidate"
 ASK_AI_PROMOTION_VALUES = {"user-only", "provider-authored-textual-revision"}
+ASK_AI_CLI_MONITOR_TOKENS = (
+    "## Adaptive Monitoring",
+    "about one minute",
+    "about five\nminutes",
+    "scheduling examples,\nnot fixed limits",
+    "quiet poll\nkeeps the operation `running`",
+    "one smallest\ncapable read-only observer",
+    "never the authority to submit",
+    "role or model such as Luna",
+    "effective role/model metadata",
+    "single operation owner",
+    "Configured Runtime Profiles",
+    "must not embed provider versions, model IDs, executable paths",
+    "failed-before-submit",
+    "provider-rejected",
+    "submission-uncertain",
+    "profile_digest:",
+    "apply configured redaction",
+)
+OPS_BROWSER_WORKSPACE_TOKENS = (
+    "schema_version: ops-browser-defaults/v1",
+    "strategy: unified | by-operation",
+    "default_group: <user-selected group name>",
+    "<exact operation type>: <user-selected group name>",
+    "require_verified_placement: true",
+    "create_if_missing: true",
+    "reuse_existing: true",
+    "allow_unconfigured_groups: false",
+    "allow_ungrouped: false",
+    "close_task_tabs_after_use: true",
+    "max_open_tabs_per_domain: 3",
+    "explicit current-request instruction",
+    "session naming as a label only",
+    "capability-unavailable",
+    "preserve unrelated valid fields, then read back",
+)
 ASK_AI_FINAL_SYNC_FIXED_FIELDS = {
     "workflow": "final-result-sync",
     "trigger": "after-final-local-review",
@@ -251,8 +307,38 @@ def ask_ai_defaults_errors(package: Path) -> list[str]:
     ]
 
 
+def ops_browser_workspace_errors(package: Path) -> list[str]:
+    """Keep user-owned local-browser grouping configurable and fail closed."""
+    if package.name != "ops-browser":
+        return []
+    profile = package / "references" / "local-browser-workspaces.md"
+    if not profile.is_file():
+        return ["ops-browser: missing references/local-browser-workspaces.md"]
+    text = profile.read_text(encoding="utf-8")
+    return [
+        f"ops-browser: local-browser-workspaces.md missing contract token: {token}"
+        for token in OPS_BROWSER_WORKSPACE_TOKENS
+        if token not in text
+    ]
+
+
+def ask_ai_cli_monitor_errors(package: Path) -> list[str]:
+    """Keep CLI monitoring adaptive, single-owner, and retry-safe."""
+    if package.name != "ask-ai":
+        return []
+    provider_cli = package / "references" / "provider-cli.md"
+    if not provider_cli.is_file():
+        return ["ask-ai: missing references/provider-cli.md"]
+    text = provider_cli.read_text(encoding="utf-8")
+    return [
+        f"ask-ai: provider-cli.md missing adaptive-monitor token: {token}"
+        for token in ASK_AI_CLI_MONITOR_TOKENS
+        if token not in text
+    ]
+
+
 def ask_ai_provider_variant_errors(package: Path) -> list[str]:
-    """Validate Qoder variant aliases as recipient-only defaults."""
+    """Validate provider aliases as canonical recipient-only defaults."""
     if package.name != "ask-ai":
         return []
     routing = package / "references" / "provider-routing.md"
@@ -272,12 +358,24 @@ def ask_ai_provider_variant_errors(package: Path) -> list[str]:
     if not isinstance(aliases, dict):
         return ["ask-ai: ask-ai-defaults/v1 provider_aliases must be a mapping when present"]
     errors: list[str] = []
-    canonical = {"qoder-cli-global", "qoder-cli-cn"}
+    canonical = {
+        "google-antigravity",
+        "claude-code",
+        "qoder-cli-global",
+        "qoder-cli-cn",
+        "zcode",
+        "codebuddy-code",
+        "cursor-cli",
+        "github-copilot-cli",
+        "kiro-cli",
+        "factory-droid",
+        "opencode",
+    }
     for alias, recipient in aliases.items():
         if not isinstance(alias, str) or not isinstance(recipient, str):
             errors.append("ask-ai: provider_aliases entries must be string recipient mappings")
         elif recipient not in canonical:
-            errors.append("ask-ai: provider_aliases recipients must be canonical Qoder variants")
+            errors.append("ask-ai: provider_aliases recipients must be canonical providers")
     if any(token not in text for token in ("capability", "identity", "authentication", "send-authorization")):
         errors.append("ask-ai: provider_aliases example must state recipient-only semantics")
     if "Never cross-fallback between the global" not in text:
@@ -810,12 +908,14 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
         errors.append(f"{package.name}: missing references directory")
 
     errors.extend(ask_ai_defaults_errors(package))
+    errors.extend(ask_ai_cli_monitor_errors(package))
     errors.extend(ask_ai_provider_variant_errors(package))
     errors.extend(ask_ai_authority_errors(package))
     errors.extend(ask_ai_mutual_review_errors(package))
     errors.extend(ask_ai_final_result_sync_errors(package))
     errors.extend(ask_ai_untrusted_content_errors(package))
     errors.extend(ask_ai_app_native_relay_errors(package))
+    errors.extend(ops_browser_workspace_errors(package))
 
     eval_file = references / "eval-cases.md"
     if not eval_file.is_file():

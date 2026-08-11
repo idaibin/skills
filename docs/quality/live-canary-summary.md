@@ -4,9 +4,10 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:2200901e1e0769ae4f68fcdb1844d0b017895f169725a2a65ff637d7c603cf64`
+- Package digest: `sha256:3d909a7e7db07908265826c7a5e76b39c672f049c406b948f1acfdc3c6db1cb1`
 - Host environment: current Codex desktop on macOS; local `skills` CLI `1.5.22`.
-  No fresh host-routing model or browser run was performed for this digest.
+  A fresh read-only browser capability and tab-group inventory was performed; no
+  host-routing model or page-operation canary was run for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -26,6 +27,7 @@ behavior certification and does not replace target-environment runtime validatio
 | Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
 | Browser tab-lifecycle contract regression | Pass | Focused offline tests verify identity-first tab selection, explicit retention authority, recoverable task-tab ownership, and representative same-URL/different-session cases. This is static contract evidence, not a live browser canary. |
 | Browser backend handoff regression | Pass | Focused offline tests verify shared protocol copy parity, deterministic/agentic/CDP capability fields, action-shape and budget constraints, backend attribution, deterministic-first fixed writes, and the Ask AI provider-adapter links. `test_browser_operation_stability_contract` also covers complete negative evidence for attachment failure and stable-response evidence while keeping a lingering stop control as a separate gap. This is contract evidence, not live browser or provider behavior. |
+| Local-browser group capability | Partial | The contract supports reusing the resolved configured group or creating exactly that group when the active host exposes a verifiable create/placement operation. The current controlled local-browser surface exposed read-only tab-group metadata but no verified create, move, or merge operation, so this runtime can only reuse a verified target group or stop. No personal group name or tab content is retained here. |
 | Isolated project-local install | Pass | The five scoped packages were copied with `skills` CLI `1.5.22` into a disposable Git project for the Codex agent. |
 | Installed-copy parity | Pass | Recursive file comparison found no difference between each scoped source package and its isolated installed copy. |
 | Installed package-local validator | Pass | Every isolated scoped package ran its bundled frontend-visual-evidence validator against the catalog fixture successfully. The CLI install also accepted all five package shapes. |
@@ -90,6 +92,7 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 ## Verdict
 
 Repository validation, local catalog discovery, isolated installation, installed-copy
-parity, package-local validators, and focused browser backend contracts pass. Model
-routing and live browser behavior remain `Not verified` for this digest; the overall
-live behavior verdict is `Not verified`.
+parity, package-local validators, and focused browser backend contracts pass. The
+local-browser group inventory is Partial; model routing and page-operation behavior
+remain `Not verified` for this digest. The overall live behavior verdict is `Not
+verified`.

@@ -484,7 +484,8 @@
       "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
       "intents": [
         "operate or verify a specified browser page",
-        "capture same-state visual and computed browser evidence"
+        "capture same-state visual and computed browser evidence",
+        "preserve a configurable unified or operation-mapped local-browser tab workspace"
       ],
       "keywords": [
         "browser operation",
@@ -497,7 +498,9 @@
         "browser-use",
         "CDP",
         "deterministic browser automation",
-        "agentic browser navigation"
+        "agentic browser navigation",
+        "local browser workspace",
+        "tab group"
       ],
       "excludes": [
         "desktop-client verification",

@@ -42,7 +42,42 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
         fallback: new-standard-chat | package-only
     standard_chat:
       policy: allow-default | explicit-current-request-only
+    cli_monitoring:
+      strategy: adaptive
+      short_task_poll_hint_seconds: <positive seconds>
+      long_task_poll_hint_seconds: <positive seconds>
+      preferred_wait_observer: <user-selected read-only role | none>
+      require_observer_runtime_identity: true
+    provider_aliases:
+      <user alias>: <canonical provider>
     providers:
+      <canonical CLI provider>:
+        default_transport_mode: cli
+        model_aliases:
+          <user model alias>: <installed model identifier>
+        cli_profile:
+          executable_candidates: [<absolute path or command name>]
+          identity_markers: [<installed identity marker>]
+          version_args: [<argument>]
+          help_args: [<argument>]
+          argument_order: <ordered option categories>
+          prompt_transport: argument | stdin | file
+          prompt_option: <verified option | none>
+          base_args: [<verified argument>]
+          review_args: [<verified no-write argument>]
+          model_option: <verified option | none>
+          reasoning_option: <verified option | none>
+          output_format: <configured machine format | text>
+          attribution_paths:
+            session: <provider-owned field or log selector | none>
+            model: <provider-owned field or log selector | none>
+            terminal: <provider-owned field or log selector | none>
+          terminal_values: [<verified terminal value>]
+          resume_option: <verified option | none>
+          require_repository_binding: true
+          provider_deadline_seconds: <positive integer | null>
+          hard_process_deadline_seconds: <positive integer | null>
+          redact_log_fields: [<field or pattern>]
       chatgpt:
         default_transport_mode: codex-app-native | browser | manual
         surface: standard-chat | quick-chat | project
@@ -84,6 +119,22 @@ required.
 Never store secrets, cookies, tokens, browser storage, email addresses, display names,
 or raw profile data. A Project/notebook name, URL, conversation identifier, model,
 reasoning mode, tab, or timestamp is a hint until reverified.
+
+`cli_monitoring` is optional user configuration for observation cadence, not a timeout
+or retry policy. `strategy: adaptive` selects intervals from the task's estimated
+duration and observed progress. The short and long values are positive scheduling
+hints, not success deadlines. `preferred_wait_observer` may name one user-selected
+read-only role; verify that role's effective runtime identity before attributing it,
+and keep the primary coordinator as the operation owner.
+
+`provider_aliases` and `model_aliases` are routing conveniences only. Resolve aliases
+to a canonical recipient and an exact installed model identifier before invocation;
+neither alias proves identity, availability, compatibility, or effective-model use.
+`cli_profile` contains mutable machine-local facts and must not be copied into the
+portable Skill. Build an exact argv array from the validated profile, preserve its
+declared order, and reject missing or unknown fields. Null deadlines mean no configured
+deadline, not infinite authorization. Provider-owned attribution selectors and terminal
+values must be reverified after executable drift. Never store secrets or raw logs.
 
 `context_routes` is user configuration that maps task intent to provider-neutral
 persistent-container names. Common route IDs are `review` for critique/audit/verification,
@@ -171,6 +222,10 @@ evidence. A profile path remains Not verified unless the active surface exposes 
 
 ## Reset
 
-Update, migrate, reset, or delete defaults only after explicit instruction. Reset
-clears bridge records, not real browser data, conversations, review artifacts, source,
-commits, or installed Skills.
+Create, update, migrate, reset, or delete defaults only after explicit instruction.
+For an authorized change, validate the complete target record, preserve unrelated
+valid fields, write it atomically, then read back and report the effective provider,
+browser preference, route policies, and provider hints. The configuration write never
+proves or changes current login, browser state, tabs, conversations, or capabilities.
+Reset clears bridge records, not real browser data, conversations, review artifacts,
+source, commits, or installed Skills.
