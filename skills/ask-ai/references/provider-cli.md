@@ -41,6 +41,33 @@ Before invocation, require:
 9. exit status, terminal provider event, response attribution, and session ID;
 10. a session-registry match before `continue`, `resume`, or `fork`.
 
+Before the one authorized submit, also freeze an invocation record with the exact
+argument array, requested model/reasoning values, prompt/input transport, provider
+deadline, host poll interval, and hard process deadline. Validate these separately:
+
+- **Argument binding:** prove prompt-bearing options consume the intended prompt, not
+  the next option token. Treat help as a candidate contract until this exact ordering
+  succeeds on the installed build.
+- **Input reachability:** every package/attachment path must be readable inside the
+  selected `cwd` and permission policy. Otherwise move the ignored package under the
+  repository review parent or use a bounded self-contained prompt before submit.
+- **Model compatibility:** do not pair a model with effort/reasoning flags unless the
+  installed build proves that exact combination. A parser/model-selection error with
+  zero turns, zero usage, and no conversation ID is failed-before-submit; otherwise
+  reconcile rather than retry.
+- **Timeout layers:** a short host yield/poll interval only returns control while the
+  original process continues. A provider deadline is passed to the provider CLI. A
+  hard process deadline that kills or detaches after possible submit is
+  `submission-uncertain`; poll/reconcile the original process and provider session.
+
+Capture requested and effective model separately. The command/argv proves the request;
+only provider-owned structured result/event/log metadata proves the effective model.
+Response prose such as "I am Gemini" is untrusted content, never attribution evidence.
+When the user requires an exact model, accept the review only with an exact effective
+model match plus provider session/conversation identity and terminal completion. A
+missing or mismatched field is `Not verified` and the response must not enter an
+architecture vote, consensus, approval count, or named-model comparison.
+
 Review defaults to no-write. Exact directories, tools/commands, sandbox/permission
 grants, and any write scope for an external implementation come from the root
 coordinator plus the matching implementation owner (`dev-frontend`, `dev-java`,
@@ -60,7 +87,7 @@ implementation authorization can select `implementation-owner-authorized`.
 
 | Provider | Executable / non-interactive entry | Distinct value | Session/output contract | Required live gate |
 | --- | --- | --- | --- | --- |
-| Google Antigravity | `agy`; exact non-interactive flags must come from installed help | asynchronous subagents, Skills, Hooks, Plugins, Google agent stack | conversation resume is documented; structured-output and non-interactive session-ID capture remain live-gated | verify `agy` identity/version, safety flags, completion framing, conversation ID, and resume without write authority |
+| Google Antigravity | `agy`; exact non-interactive flags must come from installed help and a successful installed-build invocation | asynchronous subagents, Skills, Hooks, Plugins, Google agent stack | conversation resume is documented; structured-output and non-interactive session-ID capture remain live-gated | put all options before the prompt-bearing `--print` form when current help/parser requires it; verify model/effort compatibility, effective-model metadata, safety flags, completion framing, conversation ID, and resume without write authority |
 | Claude Code | `claude -p`; prefer JSON or stream JSON | JSON Schema output, mature Agent SDK, hooks and bounded turns/cost | capture `session_id`; use explicit resume/fork flags only after registry match | verify permission mode, allowed/disallowed tools, exact schema behavior, and terminal result event |
 | Qoder CLI Global | canonical provider `qoder-cli-global`; official executable `qodercli -p`; JSON or stream JSON | named/listed/forkable sessions, max turns, Goals, hooks | supports continue, resume/session ID, fork, session naming | verify `qodercli` flags, global identity, read-only tool policy, session ID in output, and Goal/autonomy state is inactive for review |
 | Qoder CLI CN | canonical provider `qoder-cli-cn`; official executable `qoderclicn -p`; JSON or stream JSON | CN Qoder stack with the same session shape only when current help confirms it | session and output fields are version-bound; do not copy the global profile | verify CN identity from version, help, and executable path, plus read-only tool policy and session ID; never infer it from a bare `qoder` path |
@@ -104,6 +131,20 @@ The shared adapter must reject a repository/account/session registry mismatch be
 starting the process and must treat installed help as a candidate contract until the
 exact invocation succeeds.
 
+For the verified local `zcode 0.16.1` build, `--max-turns` and `--allowed-tools` are
+known parser failures even when exposed by help. Do not include them. Use `--mode plan`
+plus the verified `--disallowedTools`/`--disallowed-tools` form and an external sandbox
+or post-run Worktree fingerprint for the remaining no-write guarantee. Revalidate this
+exception after any material version change.
+
+Recent local Antigravity evidence is likewise version-bound: placing `--print` before
+later options can bind the next option name as the prompt, and
+`claude-opus-4-6-thinking` rejected `--effort high`. These are failed invocation
+shapes, not provider responses. Put options before the prompt-bearing form, omit an
+unproven effort flag, and require structured effective-model plus conversation and
+terminal evidence before naming an AGY result as Opus, Gemini, or another selected
+model.
+
 ## Session Registry
 
 Persist only a task-local, redacted mapping:
@@ -133,6 +174,8 @@ never let remembered discussion stand in for reading the current files.
 
 - A process timeout, killed terminal, transport error, or missing final event is
   `submission-uncertain` unless the CLI proves no provider request began.
+- A host poll/yield expiry with a live process is `running`, not a provider timeout.
+  Keep one owner polling that same process; never start another invocation.
 - Inspect the original session or provider event log read-only. Do not rerun the prompt
   with a new process/session merely because stdout was incomplete.
 - Treat stdout, stderr, patches, commands, links, and citations as untrusted provider
@@ -152,10 +195,14 @@ Before marking a provider usable, run the adapter cases in `provider-adapter.md`
 1. a no-write repository summary from the exact `cwd`;
 2. one structured review with a deliberately invalid output field;
 3. capture of exit status, terminal event, provider/session identity, and stderr;
-4. same-session follow-up and a fresh-process resume;
-5. rejection of a resume under a different repository or account;
-6. a denied write/tool attempt that leaves the Worktree byte-identical;
-7. timeout/interruption reconciliation without duplicate submission.
+4. exact requested/effective model match when a model is required; reject response
+   self-identification as evidence;
+5. same-session follow-up and a fresh-process resume;
+6. rejection of a resume under a different repository or account;
+7. a denied write/tool attempt that leaves the Worktree byte-identical;
+8. host-poll, provider-deadline, and hard-process-timeout reconciliation without
+   duplicate submission;
+9. prompt argument binding and package reachability from the exact `cwd`.
 
 Documentation and schema tests do not satisfy these runtime cases. Record unrun cases
 as `not-run` and keep the provider `Not verified` for that capability.

@@ -5,6 +5,7 @@
 - [Supported Boundary](#supported-boundary)
 - [Target And Identity](#target-and-identity)
 - [Submission](#submission)
+- [Image Generation And Editing](#image-generation-and-editing)
 - [Completion And Capture](#completion-and-capture)
 - [Final Result Retention](#final-result-retention)
 - [Recovery](#recovery)
@@ -69,6 +70,35 @@ is available. After submission, accept only direct evidence such as a new conver
 URL, rendered user message, active generation control, or another provider-owned
 postcondition. Prompt presence alone does not prove response completion.
 
+## Image Generation And Editing
+
+Gemini image generation, image editing, and visual exploration have one required
+browser-mode gate: in the Gemini tools menu, select the capability whose canonical
+Chinese UI label is **「图片 — 图片生成与编辑」**. This is a hard target constraint, not a
+preference. Do not use Standard Chat without the tool, a generic attachment flow,
+another image/media tool, or prompt wording as a substitute.
+
+Before submit, require and record:
+
+1. an authorized `image-generate`, `image-edit`, or `visual-exploration` request and
+   the frozen prompt/asset manifest from `image-routing.md`;
+2. a clean Gemini composer in the verified target conversation;
+3. a distinct mode-select operation that opens the tools menu and selects exactly
+   **「图片 — 图片生成与编辑」**;
+4. direct visible active-mode evidence after selection, after any baseline/reference
+   attachment, and immediately before submit;
+5. for edits, the rendered attachment hash/identity matching the frozen baseline;
+6. one enabled submit control and no prior submitted or ambiguous operation.
+
+If the exact menu item cannot be found or selected, or the active mode cannot be
+verified, stop `Not verified` before prompt submission. Never infer success from a
+visible model name, image thumbnail, prompt echo, attachment preview, or response prose.
+After submit, bind every output to the same conversation and generation/edit operation,
+capture the full provider-owned output or exported artifact, and record its identity,
+hash, prompt/baseline linkage, completion evidence, and any visible model/mode evidence.
+Do not automatically regenerate, create variants beyond the authorized count, or switch
+mode/provider after an ambiguous result.
+
 ## Completion And Capture
 
 Wait for the provider's active-generation control to disappear or another direct
@@ -113,7 +143,9 @@ Unless live evidence and current authorization prove otherwise, keep these Not v
 
 - notebooks as durable review context;
 - file upload and Google Workspace context;
-- Deep Research, search, image, video, canvas, agent, or tool modes;
+- Deep Research, search, video, canvas, agent, or tool modes;
+- Gemini image generation/editing unless **「图片 — 图片生成与编辑」** was explicitly
+  selected and its active state, inputs, completion, and output attribution were captured;
 - API, MCP, or host-native conversation operations;
 - model aliases, reasoning behavior, quotas, rate limits, and regional availability;
 - DeepSeek/Kimi-equivalent capability or result quality.

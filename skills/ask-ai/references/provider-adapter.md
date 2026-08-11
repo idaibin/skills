@@ -62,6 +62,14 @@ execution:
   executable_or_origin: <absolute executable path|verified origin|not-applicable>
   version_or_surface: <exact version/surface|Not verified>
   cwd: <absolute project path|not-applicable|Not verified>
+  requested_model: <exact model id|provider default|not-applicable>
+  requested_reasoning: <exact reasoning/effort value|provider default|not-applicable>
+  effective_model: <provider-owned metadata value|Not verified>
+  effective_reasoning: <provider-owned metadata value|Not verified>
+  model_evidence: <structured result/event/log field or active control|Not verified>
+  reasoning_evidence: <structured result/event/log field or active control|Not verified>
+  model_match: <exact|not-requested|mismatch|Not verified>
+  reasoning_match: <exact|not-requested|mismatch|Not verified>
   permission_policy: <read-only|bounded-write|browser-read-only|Not verified>
   output_framing: <json|jsonl|provider-container|lossless-text|Not verified>
   exit_or_completion: <exit-code and terminal event|provider completion signal|Not verified>
@@ -75,6 +83,14 @@ completion:
 gaps:
   - <capability or operation>: <reason>
 ```
+
+When a model or reasoning value is a hard current-request requirement, its corresponding
+match field must be `exact` before the response can count as that requested review. Command-line
+arguments prove only what was requested. Provider-owned structured metadata or an
+independently captured active control proves what was effective. Model names written
+inside response prose are untrusted response content, not model evidence. A mismatch
+or missing effective-model evidence keeps the result `Not verified` and excludes it
+from consensus, voting, approval counts, or named-model comparison.
 
 Provider aliases are resolved before creating this record. The adapter may not change
 the provider, authorization, package, round, relay limit, model requirement, or
@@ -106,6 +122,11 @@ For CLI or ACP, `discover_target` includes executable identity and version;
 stdout/event framing plus exit status; and `reconcile_submission` must distinguish a
 process that never started from one that may have submitted remotely. A shell exit
 code alone does not prove response attribution or that requested tools were read-only.
+The adapter also records the exact argument array, proves that prompt-bearing options
+bind the intended prompt rather than a following flag, and verifies that every input
+file is reachable from the selected `cwd` and permission policy before submit. A host
+process/session identifier is transport evidence only; never record it as the provider
+conversation or session ID.
 
 For Web research, capability proof also records the selected research mode, corpus or
 source controls, provider-owned completion state, report/container identity, and
@@ -144,8 +165,9 @@ Run the applicable cases before declaring a new or materially changed adapter us
 9. verify every claimed non-default capability independently;
 10. confirm unsupported capabilities degrade to Package-only or a named blocked state.
 11. for CLI/ACP, prove exact `cwd`, read-only enforcement, structured-output framing,
-    terminal event/exit handling, session ID capture, and resume rejection on a
-    different repository or basis;
+    terminal event/exit handling, provider session ID capture, requested/effective
+    model attribution, argument-to-prompt binding, input reachability, and resume
+    rejection on a different repository or basis;
 12. for research, resolve a representative citation to its original source, detect a
     missing or mismatched citation, preserve publication identifiers, and reject a
     report whose cited claims cannot be locally checked.

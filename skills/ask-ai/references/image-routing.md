@@ -4,6 +4,7 @@
 
 - [Capability Selection](#capability-selection)
 - [Authorization And Provider Boundary](#authorization-and-provider-boundary)
+- [Google Gemini Image Mode](#google-gemini-image-mode)
 - [Input And Output Evidence](#input-and-output-evidence)
 - [Live Preflight And Completion](#live-preflight-and-completion)
 - [Stop Conditions And Output](#stop-conditions-and-output)
@@ -45,6 +46,29 @@ effect with its own operation ID. A request to create an image authorizes only t
 declared asset and variant count; an edit authorizes only the declared baseline and
 transformation. Never overwrite a baseline or an existing output without explicit
 overwrite authorization.
+
+## Google Gemini Image Mode
+
+For Gemini `image-generate`, `image-edit`, or `visual-exploration`, load
+`provider-gemini.md` and use only the Gemini tools-menu capability whose canonical
+Chinese UI label is **「图片 — 图片生成与编辑」**. Selecting Gemini as the provider,
+mentioning image creation in the prompt, attaching an image, seeing a generic image or
+media control, or receiving an image-like response does not activate or prove this
+capability.
+
+Before filling the prompt or attaching an edit baseline, create a distinct mode-select
+operation, open the Gemini tools menu, select **「图片 — 图片生成与编辑」**, and capture
+direct visible evidence that this exact mode is active in the clean composer. Reverify
+the active mode after attachment and immediately before submit. If the exact item or
+active-state evidence is absent, ambiguous, disabled, reset, or unavailable on the
+current account/region/UI, stop `Not verified` without submission. Do not fall back to
+ordinary Gemini chat, image upload alone, another Gemini media mode, a different
+provider, or a host image tool unless the current request separately authorizes that
+fallback.
+
+This hard mode gate does not apply to `image-review`: a review may use only a separately
+verified visual-input route and must not select the generation/editing tool by
+implication.
 
 ## Input And Output Evidence
 

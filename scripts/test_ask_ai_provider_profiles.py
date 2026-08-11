@@ -54,6 +54,11 @@ class AskAIProviderProfileTests(unittest.TestCase):
             "submission-uncertain",
             "different repository or account",
             "never `--trust-all-tools`",
+            "Argument binding",
+            "Input reachability",
+            "Timeout layers",
+            "effective model",
+            "must not enter an",
         ):
             with self.subTest(term=term):
                 self.assertIn(term, profile)
@@ -70,6 +75,62 @@ class AskAIProviderProfileTests(unittest.TestCase):
             with self.subTest(term=term):
                 self.assertIn(term, profile)
         self.assertNotIn("Do not route `ZCode CLI`", profile)
+
+    def test_cli_regressions_cover_model_attribution_and_known_invocation_drift(self) -> None:
+        profile = self.read("skills/ask-ai/references/provider-cli.md")
+        adapter = self.read("skills/ask-ai/references/provider-adapter.md")
+        evals = self.read("skills/ask-ai/references/eval-cases.md")
+        for term in (
+            "`--max-turns` and `--allowed-tools` are",
+            "placing `--print` before",
+            "rejected `--effort high`",
+            "Response prose",
+            "host poll/yield expiry",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, profile)
+        for field in (
+            "requested_model:",
+            "effective_model:",
+            "effective_reasoning:",
+            "model_evidence:",
+            "reasoning_evidence:",
+            "model_match:",
+            "reasoning_match:",
+        ):
+            with self.subTest(field=field):
+                self.assertIn(field, adapter)
+        for scenario in (
+            "output explains `--output-format`",
+            "Qoder cannot read a review package outside",
+            "CLI model attribution and vote eligibility",
+            "CLI timeout semantics",
+        ):
+            with self.subTest(scenario=scenario):
+                self.assertIn(scenario, evals)
+
+    def test_gemini_image_work_requires_exact_generation_and_editing_tool(self) -> None:
+        image_routing = self.read("skills/ask-ai/references/image-routing.md")
+        gemini = self.read("skills/ask-ai/references/provider-gemini.md")
+        evals = self.read("skills/ask-ai/references/eval-cases.md")
+        exact_tool = "「图片 — 图片生成与编辑」"
+        for text in (image_routing, gemini, evals):
+            with self.subTest(source=text[:40]):
+                self.assertIn(exact_tool, text)
+        for term in (
+            "mode-select",
+            "active mode after attachment",
+            "does not apply to `image-review`",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, image_routing)
+        for term in (
+            "This is a hard target constraint",
+            "immediately before submit",
+            "stop `Not verified` before prompt submission",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, gemini)
 
     def test_qoder_variants_are_canonical_and_do_not_cross_fallback(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")
