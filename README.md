@@ -1,196 +1,118 @@
-# Skills
+# Agent Skills for Software Engineering
 
-Independent Agent Skills for real software-engineering work.
+Reusable Agent Skills for practical software-engineering work.
 
-Each published Skill is a self-contained package with its own trigger, workflow,
-authority boundary, output contract, supporting references, and evaluation
-cases. Skills can be installed separately and composed when a task crosses
-owners; none requires another package or a repository-root runtime file to do
-its basic job.
+Install only the capabilities you need, or use the complete catalog. Each Skill owns
+one clear kind of work—such as repository mapping, implementation, review, browser
+operation, or external-AI collaboration—and keeps its authority boundary explicit.
 
-## Install
+## Quick Start
 
-Set `CATALOG_SOURCE` to the published catalog coordinate for the environment. The
-documentation intentionally does not embed an owner, account, or repository name.
-
-Browse and select Skills interactively:
+Browse the 16 available Skills:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE"
+npx skills@latest add idaibin/skills --list
 ```
 
-List the catalog without installing:
+Choose Skills interactively:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" --list
+npx skills@latest add idaibin/skills
 ```
-
-Search this checkout by task, capability, stack, or boundary before installing:
-
-```bash
-python3 scripts/search-skills.py "create AGENTS.md for frontend and backend"
-python3 scripts/search-skills.py "review release risk" --json
-```
-
-The search reads [`skills-index.json`](skills-index.json). Each package's portable
-`SKILL.md` description remains the runtime activation authority. The index also
-declares machine-validated owner, maximum mutation class, capability/effect boundary,
-and stop states. Explicit exclusions are hard routing boundaries, while authorized
-multi-owner requests may return an ordered handoff plan such as implementation followed
-by Git delivery.
 
 Install selected Skills globally for Codex:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
-  --skill repo-map domain-modeling repo-review \
+npx skills@latest add idaibin/skills \
+  --skill repo-map repo-review ask-ai \
   --global --agent codex
 ```
 
-Install one Skill:
+Install the complete catalog:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
-  --skill ui-spec \
-  --global --agent codex
+npx skills@latest add idaibin/skills \
+  --skill '*' --global --agent codex --yes
 ```
 
-See [INSTALL.md](INSTALL.md) for project/global scope, updates, and removal.
+See [INSTALL.md](INSTALL.md) for project installs, suggested sets, updates, removal,
+and other supported agents.
 
 ## Catalog
 
-### Repository Engineering
-
-| Skill | Use when |
+| Skill | What it helps with |
 | --- | --- |
-| `repo-map` | Current repository boundaries, architecture, commands, critical dependency routes—including Maven/Gradle Java boundaries—reusable owners, or explicitly requested layered root/subproject `AGENTS.md` guidance needs evidence-based creation or repair. |
-| `domain-modeling` | Shared business terms, rules, lifecycle conflicts, or domain boundaries are ambiguous across product work. |
-| `repo-review` | Current Worktree/index, a fixed SHA/range (including resolved PR base/head), or a verified review package needs independent read-only review; Release and selected-source visual completion are conditional profiles. |
-| `repo-delivery` | Reviewed changes need categorized commits, an explicit single commit, push/sync, evidence-based branch integration, or cleanup. |
+| `repo-map` | Map repository roots, architecture, commands, dependencies, ownership, and reusable contracts. |
+| `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
+| `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
+| `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
+| `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
+| `dev-java` | Implement Java and Spring changes against the repository's real build and runtime contracts. |
+| `dev-rust` | Implement Rust features and refactors with ownership, safety, and behavior evidence. |
+| `audit-frontend` | Audit a bounded frontend surface without modifying it. |
+| `audit-java` | Audit Java and Spring architecture, security, transactions, persistence, and integration. |
+| `audit-rust` | Audit Rust ownership, concurrency, persistence, performance, memory, and unsafe boundaries. |
+| `repo-review` | Review a Worktree, commit, range, or verified package on a fixed evidence basis. |
+| `repo-delivery` | Commit, integrate, push, and clean up reviewed changes with explicit Git authorization. |
+| `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
+| `ops-client` | Operate and verify real desktop-client processes and windows. |
+| `ask-ai` | Prepare or run explicitly authorized external-AI review, research, relay, and image workflows. |
+| `human-writing` | Draft, rewrite, diagnose, and adapt source-grounded writing without changing its facts or voice. |
 
-### Product Definition
+## How They Work Together
 
-| Skill | Use when |
-| --- | --- |
-| `product-spec` | Product behavior, scope, rules, states, or acceptance must become one implementation-ready feature/foundation spec, an authorized product-fact update, or a current terminal product-document rebuild. |
-
-### Design and Implementation
-
-| Skill | Use when |
-| --- | --- |
-| `ui-spec` | A selected visual source or accepted UI surface must become a traceable implementation-ready contract; keep source targets separate from current runtime and use the resolved design-root DESIGN.md only for shared visual authority. |
-| `dev-frontend` | A requested frontend feature, component, page, build/tooling migration, or accepted UI specification must be implemented and validated, including two-pass runtime comparison for selected-source visual work. |
-| `dev-java` | A requested Java source or Java-owned Spring/build change must be implemented against the repository's JDK, Maven/Gradle, security, transaction, and runtime contracts. |
-| `dev-rust` | A requested Rust feature, refactor, or port must be implemented with ownership and behavior evidence. |
-
-### Audit and Operations
-
-| Skill | Use when |
-| --- | --- |
-| `audit-frontend` | A known frontend surface needs a bounded read-only architecture, build/tooling, accessibility, performance, state, or selected-source visual fidelity audit. |
-| `audit-java` | A known Java source or Java-owned Spring/build configuration surface needs a bounded read-only architecture, API/security, transaction, persistence, integration, performance, or migration audit. |
-| `audit-rust` | A Rust workspace or surface needs a bounded ownership, concurrency, SQLite, unsafe/FFI, performance, or memory audit. |
-| `ops-browser` | A browser page or bounded platform action must be operated or verified, including same-viewport/state source/runtime capture and computed visual evidence. |
-| `ops-client` | A Tauri, Electron, or native desktop client must be verified against its real process and window. |
-
-### External AI and Writing Extensions
-
-| Skill | Use when |
-| --- | --- |
-| `ask-ai` | Codex needs a local request package, built-in domain review prompt, user-defined review instruction, or another explicitly authorized independent external-AI review, research result, image review/generation/edit, visual exploration, or decision challenge. |
-| `human-writing` | Source-grounded writing must be drafted, rewritten, diagnosed, or adapted in the requested final language while preserving facts, voice, attribution, and disclosures; English-first support for a Chinese final is optional. |
-
-`ask-chatgpt` was renamed to `ask-ai`. Legacy wording and ChatGPT-only transport
-defaults remain compatible through `ask-ai`; the old package is not maintained as a
-second owner.
-
-Documentation-authority optimization and its sanitized real-project canary are
-maintained under [docs/documentation-authority/](docs/documentation-authority/README.md).
-Project-specific facts remain in their owning project and are not copied into Skill
-packages.
-
-## Composition
-
-Skills are composable owners, not a mandatory framework:
+Start with the Skill closest to the requested outcome. Add another owner only when the
+task genuinely crosses an authority boundary.
 
 ```text
 unknown repository -> repo-map
-unclear domain      -> domain-modeling
-unclear product     -> product-spec
-complex change      -> host planning and repository instructions
-known failure       -> evidence-driven diagnosis under effective instructions
-source work         -> dev-frontend / dev-java / dev-rust
-visual exploration  -> Codex Product Design -> selected visual source
-UI specification    -> ui-spec (source/runtime delta + per-slice Feature Spec) -> dev-frontend
-visual evidence     -> ops-browser (same viewport/state + computed evidence per pass)
-review              -> repo-review (including security risks on the selected basis)
-delivery            -> repo-delivery
+unclear product     -> domain-modeling / product-spec
+UI contract         -> ui-spec -> dev-frontend
+source change       -> matching dev-* owner
+bounded audit       -> matching audit-* owner
+change review       -> repo-review
+Git delivery        -> repo-delivery
+browser/client proof -> ops-browser / ops-client
+external AI         -> ask-ai
 ```
 
-The nearest applicable owner may start directly. Cross-Skill handoffs transfer
-bounded evidence, never implicit authorization. Use one owner by default, load only
-the selected references, reuse unchanged evidence, and add tasks or review rounds only
-when they produce a required independent result.
+Handoffs transfer scoped evidence, not permission. For example, implementation does
+not authorize a commit, and an external review does not authorize source changes.
+Every package is self-contained at runtime and can be installed independently.
 
-Selected-source frontend work uses the shared `frontend-visual-evidence/v1` contract;
-see [the migration and owner-gate summary](docs/quality/frontend-visual-gate-migration.md).
+## Find the Right Skill
 
-## Package Contract
+From a source checkout, search by task, stack, capability, or boundary:
 
-Every public package lives at `skills/<name>/` and contains:
-
-```text
-skills/<name>/
-├── SKILL.md
-├── agents/openai.yaml
-└── references/
+```bash
+python3 scripts/search-skills.py "review release risk"
+python3 scripts/search-skills.py "implement a Java migration" --json
 ```
 
-Packages add `assets/` or `scripts/` only when the capability needs them. A
-published package may depend only on files inside its own directory and must not
-require another Skill or an absolute local path at runtime.
+The search uses [`skills-index.json`](skills-index.json). Runtime discovery continues
+to use each package's portable `SKILL.md` metadata.
 
-`SKILL.md` is the portable Agent Skills contract. `agents/openai.yaml` is the only
-provider-specific per-Skill surface currently shipped; Anthropic consumes the portable
-package directly and does not require a parallel `agents/anthropic.yaml`. Additional
-provider adapters are added only for documented machine-readable contracts, not as
-copies of the Skill instructions.
+## Documentation
 
-Repository-level `docs/`, `protocols/`, and `scripts/` are maintainer surfaces;
-published packages do not depend on them at runtime.
+- [Installation and updates](INSTALL.md)
+- [Skill authoring standard](docs/skills/skill-standard.md)
+- [Routing and ownership](docs/standards/skill-routing.md)
+- [Repository contribution rules](AGENTS.md)
+- [Package contribution rules](skills/AGENTS.md)
 
-`skills-index.json` is the repository-level semantic discovery and execution-boundary
-source for local search and catalog consistency. It records categories, intents,
-keywords, exclusions, related owners, maximum mutation class, capability/effect
-boundaries, and stop states without adding unsupported fields to portable Skill
-frontmatter.
+`ask-chatgpt` was renamed to `ask-ai`; legacy wording remains compatible, but
+`ask-ai` is the maintained package.
 
-## Validate
+## Development
 
-Use the concise command matrix in [`skills/AGENTS.md`](skills/AGENTS.md#validation).
-The validator checks the portable Agent Skills package, OpenAI metadata, direct
-references, representative eval sections, execution contracts, semantic-index
-integrity, the deterministic routing/stop baseline, context warnings, and catalog
-consistency. Exercise behavior changes on a few representative tasks.
+Run the repository's complete validation entry point before publishing changes:
 
 ```bash
 bash scripts/check-skills.sh
 ```
 
-## Design Principles
+Detailed validation rules live in [skills/AGENTS.md](skills/AGENTS.md#validation).
 
-- Small, intent-based, and composable, following established public catalog
-  practices without embedding a personal source identity.
-- One public Skill per stable user intent and authority boundary; technology
-  variants remain profiles when their owner and output contract are the same.
-- Progressive disclosure: concise discovery metadata and `SKILL.md`, with
-  detailed workflows and examples in package-local references.
-- Repository truth and explicit authorization take priority over generic
-  conventions.
+## License
 
-## Contributing and License
-
-Read [AGENTS.md](AGENTS.md), [skills/AGENTS.md](skills/AGENTS.md), and
-[docs/skills/skill-standard.md](docs/skills/skill-standard.md) before changing a
-package. Unless a file states otherwise, the collection is available under the
-[Apache License, Version 2.0](LICENSE).
+Licensed under the [Apache License 2.0](LICENSE).

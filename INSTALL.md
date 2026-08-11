@@ -1,13 +1,11 @@
 # Install Skills
 
-Use the standard `skills` CLI. Set `CATALOG_SOURCE` to the published catalog
-coordinate for the environment; this document intentionally omits owner and account
-identifiers.
+Use the standard `skills` CLI with the published catalog `idaibin/skills`.
 
 ## Discover
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" --list
+npx skills@latest add idaibin/skills --list
 ```
 
 The result must contain exactly these public packages:
@@ -64,13 +62,13 @@ The publishable source directories are:
 Choose Skills and agents interactively:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE"
+npx skills@latest add idaibin/skills
 ```
 
 Install selected Skills into the current project for Codex:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill repo-map repo-review \
   --agent codex
 ```
@@ -78,7 +76,7 @@ npx skills@latest add "$CATALOG_SOURCE" \
 Install selected Skills globally for Codex and Claude Code:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill repo-map domain-modeling product-spec repo-review repo-delivery \
   --global --agent codex claude-code
 ```
@@ -86,7 +84,7 @@ npx skills@latest add "$CATALOG_SOURCE" \
 Install one Skill globally:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill audit-rust \
   --global --agent codex
 ```
@@ -95,7 +93,7 @@ Install all published Skills non-interactively only when that broad scope is
 intentional:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill '*' --global --agent codex --yes
 ```
 
@@ -104,20 +102,20 @@ npx skills@latest add "$CATALOG_SOURCE" \
 Core read-only repository work:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill repo-map domain-modeling repo-review
 ```
 
 Product definition:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" --skill product-spec
+npx skills@latest add idaibin/skills --skill product-spec
 ```
 
 Frontend specification and implementation:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill ui-spec dev-frontend audit-frontend ops-browser repo-review
 ```
 
@@ -129,14 +127,14 @@ findings, and `repo-review` owns fixed-basis completion review.
 Rust implementation and audit:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill dev-rust audit-rust repo-review
 ```
 
 Java implementation and audit:
 
 ```bash
-npx skills@latest add "$CATALOG_SOURCE" \
+npx skills@latest add idaibin/skills \
   --skill dev-java audit-java repo-review
 ```
 
@@ -145,7 +143,7 @@ These are documentation shortcuts, not custom CLI bundles or quality claims.
 ## Use Without Installing
 
 ```bash
-npx skills@latest use "$CATALOG_SOURCE"@audit-rust
+npx skills@latest use idaibin/skills@audit-rust
 ```
 
 ## Inspect, Update, and Remove
