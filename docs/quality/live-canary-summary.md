@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:3d909a7e7db07908265826c7a5e76b39c672f049c406b948f1acfdc3c6db1cb1`
+- Package digest: `sha256:c7ec1c677adb7c3ffea3fb4fd0566748a4a797844fd7249c01651fe21a55db92`
 - Host environment: current Codex desktop on macOS; local `skills` CLI `1.5.22`.
   A fresh read-only browser capability and tab-group inventory was performed; no
   host-routing model or page-operation canary was run for this digest.
