@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:da49e4c555adbc2918dbde1d705e002ae57ee704e9f48de787ca8be7942c3935`
+- Package digest: `sha256:2200901e1e0769ae4f68fcdb1844d0b017895f169725a2a65ff637d7c603cf64`
 - Host environment: current Codex desktop on macOS; local `skills` CLI `1.5.22`.
   No fresh host-routing model or browser run was performed for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are

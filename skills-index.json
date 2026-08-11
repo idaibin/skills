@@ -551,7 +551,7 @@
       "intents": [
         "prepare a local request package for one or more named external AI providers",
         "define or invoke a user-owned bounded external AI review instruction",
-        "coordinate a bounded sequential cross-review that relays attributed responses between user-configured AI providers, with bare 互审 resolving the valid persisted default and ChatGPT then Gemini as the no-config fallback",
+        "relay attributed responses between named external AI providers in a bounded sequential mutual review; bare 互审 uses only a valid user-persisted instruction and otherwise remains Package-only",
         "synchronize one sanitized frozen local review result to one exact persistent external context for retention without adding another reviewer",
         "prepare or route an image review, generation, edit, or bounded visual exploration with explicit provider and asset boundaries",
         "ask an explicitly named Antigravity, Claude Code, Qoder Global, Qoder CN, ZCode, CodeBuddy, Cursor, Copilot, Kiro, Droid, or OpenCode CLI",

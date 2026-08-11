@@ -161,9 +161,10 @@ ambiguous, or unresolved operation for the primary provider.
 Ask AI has no built-in roster for ordinary independent multi-provider review or a
 phrase such as `三方会审`. Mutual review has one user-editable persisted default. The
 exact bare command `互审` and explicit natural-language mutual-review requests use that
-valid default; when no default exists, they use ChatGPT then Gemini in cyclic order,
-with at most three submitted turns per provider and
-`stop_after: all-providers-approve-same-candidate`.
+valid default. When no valid default exists and the current request does not name the
+providers, order, and positive bounded turn cap, prepare only a provider-neutral
+Package-only result and ask for those choices before any external action. Never infer a
+provider roster, order, or turn limit from `互审` itself.
 
 Resolve mutual-review settings in this order:
 
@@ -174,12 +175,12 @@ Resolve mutual-review settings in this order:
 3. an exact executable alias;
 4. a valid persisted `mutual-review` instruction for bare `互审` or an explicit
    natural-language mutual-review request;
-5. the built-in ChatGPT -> Gemini order and three-turn-per-provider cap only when no
-   persisted `mutual-review` instruction exists.
+5. Package-only plus an explicit provider/order/turn-cap request when neither the
+   current request nor a persisted instruction resolves those fields.
 
 If a matching alias or persisted default exists but is invalid, fail closed and report
-the invalid fields. Never silently replace an invalid user configuration with the
-built-in fallback.
+the invalid fields. Never silently replace an invalid or missing user configuration
+with a public-Skill provider roster.
 
 A current-request override never rewrites the saved default. It may lower or raise the
 turn cap only to an explicit positive bounded value and may use only explicitly named
@@ -242,8 +243,8 @@ two or more distinct `external_providers`, an initial provider in `relay_order`,
 complete non-duplicated relay order containing every provider exactly once, and
 `stop_after: all-providers-approve-same-candidate`. `candidate_promotion` defaults to
 `user-only`; the only provider-authorized value is
-`provider-authored-textual-revision`. When the user persists a sequential relay without a turn cap, save and
-report `max_turns_per_provider: 3`; an explicit positive bounded value overrides it.
+`provider-authored-textual-revision`. When the user persists a sequential relay without
+a turn cap, request one explicit positive bounded value instead of inventing a default.
 Create, update, rename, or delete an instruction only when the user explicitly asks to
 persist that definition.
 
@@ -269,7 +270,7 @@ trimming surrounding whitespace and normalizing case for Latin text, equals that
 Do not use a prefix, suffix, punctuation extension, substring, fuzzy, semantic, or
 translated match to inherit a saved alias's send authority. This exact-match rule does
 not prevent bare `互审` or an explicit current-session mutual-review request from using
-the persisted default or built-in fallback under the precedence above. Provider-name
+the persisted default under the precedence above. Provider-name
 aliases remain normal provider selection and do not create a workflow instruction.
 
 `authorization: send-on-exact-invocation` means that the user's current exact alias
@@ -486,8 +487,8 @@ relay_contract:
     explicit_current_request: invocation-only-customization
     exact_executable_alias: custom-instruction
     persisted_default: bare-and-explicit-mutual-review
-    built_in_fallback: chatgpt-gemini-three-turns
-  resolution_order: [package_only, explicit_current_request, exact_executable_alias, persisted_default, built_in_fallback]
+    missing_persisted_default: package-only-or-provider-choice
+  resolution_order: [package_only, explicit_current_request, exact_executable_alias, persisted_default, missing_persisted_default]
   default_trigger: 互审
   invalid_persisted_default: fail-closed
 ```

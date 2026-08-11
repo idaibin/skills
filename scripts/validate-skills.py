@@ -621,15 +621,15 @@ def ask_ai_mutual_review_errors(package: Path) -> list[str]:
         "explicit_current_request": "invocation-only-customization",
         "exact_executable_alias": "custom-instruction",
         "persisted_default": "bare-and-explicit-mutual-review",
-        "built_in_fallback": "chatgpt-gemini-three-turns",
+        "missing_persisted_default": "package-only-or-provider-choice",
     }:
-        errors.append("ask-ai: relay_contract must prefer the user-editable mutual-review default before the built-in fallback")
+        errors.append("ask-ai: relay_contract must keep missing mutual-review defaults Package-only")
     if contract.get("resolution_order") != [
         "package_only",
         "explicit_current_request",
         "exact_executable_alias",
         "persisted_default",
-        "built_in_fallback",
+        "missing_persisted_default",
     ]:
         errors.append("ask-ai: relay_contract mutual-review resolution order is invalid")
     if contract.get("default_trigger") != "互审":

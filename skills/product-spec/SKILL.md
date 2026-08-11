@@ -94,8 +94,8 @@ writes. Keep technical design and source mutation with their existing owners.
 - Pure activity requests with no verifiable product outcome ("keep improving the
   dashboard", "make progress on X"); reroute to host planning or demand one
   verifiable slice before producing a product artifact.
-- Source implementation with a usable approved requirement; use `dev-frontend`
-  or `dev-rust`.
+- Source implementation with a usable approved requirement; use the matching
+  implementation owner (`dev-*` in this catalog or another available host owner).
 - Business language, shared lifecycle, invariants, complex state machines, or
   multiple bounded contexts as the primary object; use `domain-modeling`.
 - Selected-source UI specifications, shared tokens, component semantics, visual

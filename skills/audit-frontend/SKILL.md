@@ -101,7 +101,8 @@ owner; do not invent one.
 - Owning Worktree readiness or immutable repository/range/PR/release coordination; use `repo-review`, which may delegate a bounded frontend surface here.
 - Actual staging, commit, rebase/squash, push, or delivery; use `repo-delivery`.
 - Browser or real desktop runtime operation; use `ops-browser` or `ops-client`.
-- A backend-only Rust implementation or audit; use `dev-rust` or `audit-rust`.
+- A backend-only implementation or audit; use the matching backend implementation or
+  audit owner.
 - A general repository/path vulnerability scan or explicit exploit validation;
   use an available host security workflow. Keep bounded frontend env, browser
   storage, redirect/DOM, permission-UX, and desktop-adapter evidence here.

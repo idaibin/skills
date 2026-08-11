@@ -319,7 +319,7 @@ class ValidatorTests(unittest.TestCase):
                 "explicit_current_request": "invocation-only-customization",
                 "exact_executable_alias": "custom-instruction",
                 "persisted_default": "bare-and-explicit-mutual-review",
-                "built_in_fallback": "chatgpt-gemini-three-turns",
+                "missing_persisted_default": "package-only-or-provider-choice",
             },
             contract["resolution_precedence"],
         )
@@ -331,7 +331,7 @@ class ValidatorTests(unittest.TestCase):
                 "explicit_current_request",
                 "exact_executable_alias",
                 "persisted_default",
-                "built_in_fallback",
+                "missing_persisted_default",
             ],
             contract["resolution_order"],
         )
@@ -371,18 +371,40 @@ class ValidatorTests(unittest.TestCase):
         ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
         self.assertIn("distinct correlated create and submit logical IDs", standard)
         self.assertIn("distinct correlated\n  create and submit IDs", alignment)
-        self.assertTrue(any("bare 互审 resolving the valid persisted default" in item for item in ask_ai["intents"]))
+        self.assertTrue(
+            any(
+                "bare 互审 uses only a valid user-persisted instruction" in item
+                for item in ask_ai["intents"]
+            )
+        )
 
     def test_ask_ai_bare_mutual_review_text_uses_saved_default(self) -> None:
         sources = [
+            ROOT / "skills" / "ask-ai" / "SKILL.md",
             ROOT / "skills" / "ask-ai" / "references" / "provider-routing.md",
             ROOT / "skills" / "ask-ai" / "references" / "usage.md",
             ROOT / "skills" / "ask-ai" / "references" / "eval-cases.md",
+            ROOT / "skills-index.json",
         ]
         text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
         self.assertIn("user-editable persisted default", text)
         self.assertIn("persisted record is the user-editable default", text)
+        self.assertIn("Package-only", text)
+        self.assertNotIn("built-in ChatGPT", text)
+        self.assertNotIn("ChatGPT then Gemini", text)
         self.assertNotIn("fixed bare-command contract", text)
+
+    def test_owner_handoffs_do_not_freeze_an_incomplete_language_subset(self) -> None:
+        product_spec = (ROOT / "skills" / "product-spec" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        frontend_audit = (
+            ROOT / "skills" / "audit-frontend" / "SKILL.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("matching\n  implementation owner", product_spec)
+        self.assertNotIn("use `dev-frontend`\n  or `dev-rust`", product_spec)
+        self.assertIn("matching backend implementation or\n  audit owner", frontend_audit)
+        self.assertNotIn("backend-only Rust", frontend_audit)
 
     def test_ask_ai_app_native_relay_keeps_atomic_call_and_logical_operations_distinct(self) -> None:
         package = ROOT / "skills" / "ask-ai"

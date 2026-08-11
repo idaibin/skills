@@ -21,8 +21,8 @@
 - `Save “进行三方会审” as my custom ChatGPT + Gemini + Codex review instruction, one external round each.`
 - `Run my configured “进行三方会审” instruction for this fixed Worktree.`
 - `把互审默认保存为 Gemini 先审、Kimi 接着审；双方同意同一版本即停止。`
-- `互审` uses the valid user-editable persisted default, or the built-in ChatGPT then
-  Gemini order with three turns each when no default exists.
+- `互审` uses the valid user-editable persisted default. Without one, it remains
+  Package-only and asks for an explicit provider order and positive bounded turn cap.
 - `帮我互审这个方案` may use the same valid saved default; an additional exact alias
   may invoke it too.
 - `用 ChatGPT 和 DeepSeek 互审这个方案，每个模型最多 2 轮。`

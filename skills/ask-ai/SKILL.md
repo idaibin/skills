@@ -48,8 +48,8 @@ not maintain a second public collaboration owner.
    - **Relay review** when the user explicitly requests one provider's attributed
      response to be sent to another provider in a bounded sequence. Resolve explicit
      current-session choices first, then the user-editable persisted mutual-review
-     default for `互审`; use the built-in ChatGPT -> Gemini, three-turn default only
-     when no persisted default exists, and fail closed on an invalid saved record;
+     default for `互审`; when no valid default exists, keep the result Package-only
+     and request an explicit provider order and turn cap before any external action;
    - **Combined loop** when independent Codex and external-AI review plus local
      verification is requested;
    - **Final result synchronization** only when a valid explicitly user-persisted
