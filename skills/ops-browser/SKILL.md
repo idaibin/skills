@@ -17,7 +17,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    the precedence and exceptions in `references/usage.md`; do not add a category the
    user did not request. Verify the effective page viewport rather than treating a
    successful resize call as proof.
-2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work. For a user local-browser route, load [references/local-browser-workspaces.md](references/local-browser-workspaces.md), resolve its optional grouping policy, and preflight group enumeration and placement separately from login and page control.
+2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work. For a user local-browser route, load [references/local-browser-workspaces.md](references/local-browser-workspaces.md) before initializing browser control, resolve control-session and tab-group policies independently, and preflight session reuse plus group enumeration/placement separately from login and page control.
 3. Before every action that would open or create a page, enumerate browser sessions and
    existing tabs when the available tool exposes them. Narrow candidates by browser
    surface, verified account/session, and task context, then prefer an exact URL within
@@ -33,8 +33,8 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    state. If required state cannot be recorded, avoid changing it or report degraded
    restoration evidence. This tab ledger never replaces an `ask-ai` side-effect
    operation ledger. For a configured local-browser workspace, also record the
-   resolved strategy, operation type, target and observed group, policy source, and
-   placement evidence. When tab
+   resolved control-session identity/name/reuse evidence, tab-group strategy, operation
+   type, target and observed group, policy source, and placement evidence. When tab
    enumeration is unavailable, reuse any already recorded task tab; otherwise open at
    most one isolated task-owned tab for the declared purpose and mark tab identity
    `Not verified`. Never invent missing tab/window identity.
@@ -54,7 +54,9 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    Evidence or stop. Open an isolated managed page only when the task does not depend
    on unavailable user-profile state. A configured local-browser group is a placement
    constraint, not a hint: do not open, move, or retain a tab outside it when verified
-   placement is required. Session naming alone never proves group reuse or membership.
+   placement is required. A required `nameSession`-style operation uses only the
+   resolved configured control-session name; it never uses a task label and proves
+   neither session reuse nor tab-group membership.
 7. Prefer browser/tool APIs, DOM inspection, roles, labels, test ids, and deterministic actions over manual guessing.
 8. Gather only evidence the tool can actually expose: UI state, DOM/accessibility, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads. For visual comparison, independently retain design and runtime captures, produce side-by-side/overlay/diff evidence, and read applicable computed font, final color/contrast, geometry, alignment, truncation, hover/focus, state, and breakpoint facts.
 9. Distinguish direct evidence from inference; mark unavailable or unchecked claims `Not verified`.

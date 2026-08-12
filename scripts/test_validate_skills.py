@@ -141,6 +141,18 @@ class ValidatorTests(unittest.TestCase):
             "  long_task_poll_hint_seconds: <positive seconds>\n"
             "  preferred_wait_observer: <user-selected read-only role | none>\n"
             "  require_observer_runtime_identity: true\n"
+            "artifact_handoff:\n"
+            "  workspace_parent: <verified ignored task-local parent>\n"
+            "  layout: flat-prefixed\n"
+            "  roles:\n"
+            "    task: <configurable task-document suffix or path>\n"
+            "    events: <configurable append-only event-ledger suffix or path>\n"
+            "    partial_result: <configurable partial-result suffix or path>\n"
+            "    final_result: <configurable final-result suffix or path>\n"
+            "  result_writer: provider | coordinator-capture\n"
+            "  finalization: atomic-replace\n"
+            "  require_terminal_event: true\n"
+            "  require_final_result: true\n"
             "provider_aliases:\n  <user alias>: <canonical provider>\n"
             "model_aliases:\n  <user model alias>: <installed model identifier>\n"
             "cli_profile:\n"
@@ -181,6 +193,7 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("image Project/notebook" in error for error in errors))
         self.assertTrue(any("allow-default" in error for error in errors))
         self.assertTrue(any("cli_monitoring" in error for error in errors))
+        self.assertTrue(any("artifact_handoff" in error for error in errors))
         self.assertTrue(any("cli_profile" in error for error in errors))
         self.assertTrue(any("persistent-context" in error for error in errors))
         self.assertTrue(any("write it atomically" in error for error in errors))
@@ -223,6 +236,21 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("read-only observer" in error for error in errors))
             self.assertTrue(any("runtime identity" in error for error in errors))
 
+    def test_ask_ai_cli_artifact_handoff_is_durable_and_completion_safe(self) -> None:
+        source = ROOT / "skills" / "ask-ai"
+        self.assertEqual([], VALIDATOR.ask_ai_cli_handoff_errors(source))
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ask-ai"
+            (package / "references").mkdir(parents=True)
+            handoff = package / "references" / "cli-artifact-handoff.md"
+            handoff.write_text("## Launch Barrier\n", encoding="utf-8")
+            errors = VALIDATOR.ask_ai_cli_handoff_errors(package)
+            self.assertTrue(any("Monitoring And Recovery" in error for error in errors))
+            self.assertTrue(any("Completion Gate" in error for error in errors))
+            self.assertTrue(any("semantic roles" in error for error in errors))
+            self.assertTrue(any("concurrently rewrite" in error for error in errors))
+            self.assertTrue(any("replacement process" in error for error in errors))
+
     def test_contract_tokens_tolerate_markdown_reflow(self) -> None:
         source = ROOT / "skills" / "ask-ai"
         with tempfile.TemporaryDirectory() as temporary:
@@ -256,6 +284,11 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("close_task_tabs_after_use" in error for error in errors))
             self.assertTrue(any("max_open_tabs_per_domain" in error for error in errors))
             self.assertTrue(any("session naming" in error for error in errors))
+            self.assertTrue(any("control_session" in error for error in errors))
+            self.assertTrue(any("control-session name" in error for error in errors))
+            self.assertTrue(any("require_verified_reuse" in error for error in errors))
+            self.assertTrue(any("allow_unconfigured_sessions" in error for error in errors))
+            self.assertTrue(any("nameSession" in error for error in errors))
             self.assertTrue(any("capability-unavailable" in error for error in errors))
 
     def test_ask_ai_provider_aliases_are_optional_and_canonical(self) -> None:

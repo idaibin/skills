@@ -4,10 +4,10 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:c7ec1c677adb7c3ffea3fb4fd0566748a4a797844fd7249c01651fe21a55db92`
+- Package digest: `sha256:5b5b72cf8990dbe6916839c5a24a06279991c30b18556e855c3afc4c2694f6ba`
 - Host environment: current Codex desktop on macOS; local `skills` CLI `1.5.22`.
-  A fresh read-only browser capability and tab-group inventory was performed; no
-  host-routing model or page-operation canary was run for this digest.
+  No fresh browser capability/session/group inventory, host-routing model invocation,
+  isolated install, or page-operation canary was run for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -22,15 +22,15 @@ behavior certification and does not replace target-environment runtime validatio
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
-| Catalog discovery | Pass | `npx skills@latest add ./skills --list` validated the local publishable source and found exactly 16 packages. |
+| Catalog discovery | Not verified | No fresh catalog discovery was run for this digest. |
 | Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
 | Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
 | Browser tab-lifecycle contract regression | Pass | Focused offline tests verify identity-first tab selection, explicit retention authority, recoverable task-tab ownership, and representative same-URL/different-session cases. This is static contract evidence, not a live browser canary. |
 | Browser backend handoff regression | Pass | Focused offline tests verify shared protocol copy parity, deterministic/agentic/CDP capability fields, action-shape and budget constraints, backend attribution, deterministic-first fixed writes, and the Ask AI provider-adapter links. `test_browser_operation_stability_contract` also covers complete negative evidence for attachment failure and stable-response evidence while keeping a lingering stop control as a separate gap. This is contract evidence, not live browser or provider behavior. |
-| Local-browser group capability | Partial | The contract supports reusing the resolved configured group or creating exactly that group when the active host exposes a verifiable create/placement operation. The current controlled local-browser surface exposed read-only tab-group metadata but no verified create, move, or merge operation, so this runtime can only reuse a verified target group or stop. No personal group name or tab content is retained here. |
-| Isolated project-local install | Pass | The five scoped packages were copied with `skills` CLI `1.5.22` into a disposable Git project for the Codex agent. |
-| Installed-copy parity | Pass | Recursive file comparison found no difference between each scoped source package and its isolated installed copy. |
-| Installed package-local validator | Pass | Every isolated scoped package ran its bundled frontend-visual-evidence validator against the catalog fixture successfully. The CLI install also accepted all five package shapes. |
+| Local-browser session/group capability | Not verified | Static contracts now keep control-session reuse and tab-group placement separate and stop when either required capability is unavailable. No fresh local-browser inventory or page operation was run for this digest. |
+| Isolated project-local install | Not verified | No fresh isolated install was run for this digest. |
+| Installed-copy parity | Not verified | No fresh isolated install exists for parity comparison on this digest. |
+| Installed package-local validator | Not verified | No installed-copy validator run was performed for this digest. |
 | Explicit host invocation | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Critical stop routing | Not verified | No fresh host-routing model invocation was run for this digest. |
@@ -91,8 +91,7 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Repository validation, local catalog discovery, isolated installation, installed-copy
-parity, package-local validators, and focused browser backend contracts pass. The
-local-browser group inventory is Partial; model routing and page-operation behavior
-remain `Not verified` for this digest. The overall live behavior verdict is `Not
-verified`.
+Repository validation and focused static browser backend contracts pass. Catalog
+discovery, isolated installation/parity, local-browser session/group capability, model
+routing, and page-operation behavior remain `Not verified` for this digest. The overall
+live behavior verdict is `Not verified`.

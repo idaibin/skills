@@ -45,6 +45,17 @@ ASK_AI_DEFAULT_TOKENS = (
     "long_task_poll_hint_seconds: <positive seconds>",
     "preferred_wait_observer: <user-selected read-only role | none>",
     "require_observer_runtime_identity: true",
+    "artifact_handoff:",
+    "workspace_parent: <verified ignored task-local parent>",
+    "layout: flat-prefixed",
+    "task: <configurable task-document suffix or path>",
+    "events: <configurable append-only event-ledger suffix or path>",
+    "partial_result: <configurable partial-result suffix or path>",
+    "final_result: <configurable final-result suffix or path>",
+    "result_writer: provider | coordinator-capture",
+    "finalization: atomic-replace",
+    "require_terminal_event: true",
+    "require_final_result: true",
     "provider_aliases:",
     "<user alias>: <canonical provider>",
     "model_aliases:",
@@ -115,9 +126,32 @@ ASK_AI_CLI_MONITOR_TOKENS = (
     "apply configured redaction",
     "Workspace binding",
     "Host `cwd` alone",
+    "## Artifact Handoff",
+    "tell the CLI only to read that resolved file",
+    "event, progress, partial-result, and final-result roles",
+    "completion-not-verified",
+    "incomplete-output",
+)
+ASK_AI_CLI_HANDOFF_TOKENS = (
+    "## Launch Barrier",
+    "## Monitoring And Recovery",
+    "## Completion Gate",
+    "Portable examples define semantic roles only",
+    "must never concurrently rewrite the same progress or result file",
+    "the only task instruction the provider is told to read",
+    "coordinator-owned append-only observations",
+    "Persist the invocation record in `prepared`",
+    "Do not silently fall back from artifact handoff to an inline prompt",
+    "never launch a replacement process or resend",
+    "process terminates without the required final result",
+    "final result exists without terminal/session evidence",
 )
 OPS_BROWSER_WORKSPACE_TOKENS = (
     "schema_version: ops-browser-defaults/v1",
+    "control_session:",
+    "default_name: <user-selected control-session name>",
+    "require_verified_reuse: true",
+    "allow_unconfigured_sessions: false",
     "strategy: unified | by-operation",
     "default_group: <user-selected group name>",
     "<exact operation type>: <user-selected group name>",
@@ -130,6 +164,9 @@ OPS_BROWSER_WORKSPACE_TOKENS = (
     "max_open_tabs_per_domain: <positive integer>",
     "explicit current-request instruction",
     "session naming as a label only",
+    "nameSession",
+    "Never derive its argument from a task title",
+    "fresh uninspectable automation session",
     "capability-unavailable",
     "preserve unrelated valid fields, then read back",
 )
@@ -372,6 +409,21 @@ def ask_ai_cli_monitor_errors(package: Path) -> list[str]:
     return [
         f"ask-ai: provider-cli.md missing adaptive-monitor token: {token}"
         for token in ASK_AI_CLI_MONITOR_TOKENS
+        if token not in text
+    ]
+
+
+def ask_ai_cli_handoff_errors(package: Path) -> list[str]:
+    """Keep durable CLI handoff configurable, incremental, and completion-safe."""
+    if package.name != "ask-ai":
+        return []
+    handoff = package / "references" / "cli-artifact-handoff.md"
+    if not handoff.is_file():
+        return ["ask-ai: missing references/cli-artifact-handoff.md"]
+    text = normalized_contract_text(handoff.read_text(encoding="utf-8"))
+    return [
+        f"ask-ai: cli-artifact-handoff.md missing contract token: {token}"
+        for token in ASK_AI_CLI_HANDOFF_TOKENS
         if token not in text
     ]
 
@@ -935,6 +987,7 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
 
     errors.extend(ask_ai_defaults_errors(package))
     errors.extend(ask_ai_cli_monitor_errors(package))
+    errors.extend(ask_ai_cli_handoff_errors(package))
     errors.extend(ask_ai_provider_variant_errors(package))
     errors.extend(ask_ai_authority_errors(package))
     errors.extend(ask_ai_mutual_review_errors(package))

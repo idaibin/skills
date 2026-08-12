@@ -6,6 +6,7 @@
 - [Shared Execution Contract](#shared-execution-contract)
 - [Native Execution Modes](#native-execution-modes)
 - [Adaptive Monitoring](#adaptive-monitoring)
+- [Artifact Handoff](#artifact-handoff)
 - [First-Tier Providers](#first-tier-providers)
 - [Configured Runtime Profiles](#configured-runtime-profiles)
 - [Session Registry](#session-registry)
@@ -153,6 +154,21 @@ continue, resume, retry, kill, change model, or judge the result. The primary
 coordinator remains the single operation owner and locally verifies the captured
 terminal evidence. A configured observer name is a user-owned preference, not runtime
 identity proof or permission to start another provider invocation.
+
+## Artifact Handoff
+
+For durable CLI work, load [cli-artifact-handoff.md](cli-artifact-handoff.md). Resolve
+its artifact roles and writer ownership from the current request and user-owned
+configuration; do not hard-code paths, filenames, intervals, or provider output fields.
+Freeze one task document and tell the CLI only to read that resolved file. Persist the
+invocation barrier before process start, then monitor the same process/session plus its
+event, progress, partial-result, and final-result roles.
+
+Completion requires both terminal process/provider evidence and a verified complete
+final result. A live process with no file change remains `running`; a final file without
+terminal/session evidence is `completion-not-verified`; terminal exit without the
+required final file is `incomplete-output`. Preserve partial evidence and reconcile the
+original operation before any retry.
 
 ## First-Tier Providers
 

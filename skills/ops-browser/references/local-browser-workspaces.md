@@ -7,6 +7,7 @@
 - [Configuration](#configuration)
 - [Configuration Changes](#configuration-changes)
 - [Resolution](#resolution)
+- [Control Session Gate](#control-session-gate)
 - [Capability Gate](#capability-gate)
 - [Lifecycle](#lifecycle)
 
@@ -40,6 +41,16 @@ state and verify it live. An explicit current-request surface remains a hard con
 schema_version: ops-browser-defaults/v1
 local_browser:
   product: <user-selected browser product>
+  control_session:
+    enabled: true
+    strategy: unified | by-operation
+    default_name: <user-selected control-session name>
+    operation_names:
+      <exact operation type>: <user-selected control-session name>
+    require_verified_reuse: true
+    create_if_missing: true
+    reuse_existing: true
+    allow_unconfigured_sessions: false
   tab_grouping:
     enabled: true
     strategy: unified | by-operation
@@ -56,37 +67,70 @@ local_browser:
 last_verified_at: <informational timestamp>
 ```
 
-With `strategy: unified`, `default_group` is required and
-`operation_groups` must be absent or empty. With `strategy: by-operation`, resolve an
-exact current-task operation type through `operation_groups`, then use
-`default_group` only when no exact key exists. Group names and operation keys are
-user-owned; the public Skill does not supply personal names or a closed operation map.
+For both `control_session` and `tab_grouping`, `strategy: unified` requires the
+corresponding default name and an absent or empty operation map. With
+`strategy: by-operation`, resolve an exact current-task operation type through its map,
+then use its configured default only when no exact key exists. Session names, group
+names, and operation keys are user-owned; the public Skill supplies no personal names
+or closed operation map.
 
-Set `enabled: false` to disable grouping. `last_verified_at` is informational and
-never proves that the browser, group, tab, or login still exists.
+Set either section's `enabled: false` to disable only that policy. `last_verified_at`
+is informational and never proves that the browser, control session, group, tab, or
+login still exists.
 
 ## Configuration Changes
 
 Create, modify, disable, or reset this record only when the user explicitly requests
 a persistent configuration change. Validate the complete result before one atomic
 write, preserve unrelated valid fields, then read back and report the effective
-strategy, group mapping, creation/reuse policy, cleanup policy, and domain limit.
+control-session and tab-group strategies, mappings, creation/reuse policy, cleanup
+policy, and domain limit.
 Changing configuration does not itself create, move, close, or inspect a browser tab.
 
 ## Resolution
 
-Resolve local-browser grouping in this order:
+Resolve local-browser control-session naming and tab grouping independently, each in
+this order:
 
-1. an explicit current-request instruction to use, avoid, or override grouping;
+1. an explicit current-request instruction to use, avoid, or override the corresponding
+   control-session or grouping policy;
 2. a valid `ops-browser-defaults/v1` record;
 3. the active browser host's ordinary behavior when no configuration exists.
 
 A current-request override applies only to the current task and does not rewrite the
-stored record. Invalid, conflicting, or partially populated grouping configuration
+stored record. Invalid, conflicting, or partially populated workspace configuration
 fails closed before opening, claiming, moving, or navigating a tab.
 
-Grouping selects placement only. It never selects an account, provider, Project,
+Control-session policy selects the host automation-session identity and label; grouping
+selects tab placement. Neither selects an account, provider, Project,
 conversation, model, browser permission, external recipient, or write authorization.
+
+## Control Session Gate
+
+Resolve the control-session policy before initializing a local-browser controller.
+Starting or naming a host automation session is a browser-state action, not harmless
+setup. A user statement that the target is already open means reuse the safely matching
+browser session and tab; it does not authorize a second control session, group, or tab.
+
+- Enumerate reusable control sessions when the host exposes that capability. With
+  `reuse_existing: true`, bind the one verified session matching the resolved name and
+  browser identity before considering creation.
+- Call a required session-label operation such as `nameSession` only on the resolved
+  session and only with the resolved configured name. Never derive its argument from a
+  task title, provider, agent, emoji, page, or conversation name.
+- Session naming does not create, select, reuse, merge, or verify a control session. If
+  the host creates a session implicitly during controller setup, record that creation
+  separately and apply `create_if_missing` before setup whenever the host can expose
+  the behavior.
+- With `allow_unconfigured_sessions: false`, never create or retain a convenience,
+  per-task, per-agent, or per-provider session.
+- With `require_verified_reuse: true`, missing session enumeration, selection, or
+  after-state identity is `capability-unavailable`; stop before page operation instead
+  of naming the current session and claiming reuse.
+
+If the host requires a fresh uninspectable automation session for every task, it cannot
+satisfy verified unified-session reuse. Report `capability-unavailable`; do not create a
+same-named duplicate and do not weaken the tab-group policy to continue.
 
 ## Capability Gate
 
@@ -127,8 +171,9 @@ or stop. Never close a pre-existing user tab merely to satisfy the limit.
 
 ## Lifecycle
 
-Add the resolved strategy, operation type, target group, observed group, placement
-evidence, and policy source to the task-local tab ledger. Revalidate group membership
+Add the resolved control-session identity/name/reuse evidence plus tab-group strategy,
+operation type, target group, observed group, placement evidence, and policy source to
+the task-local tab ledger. Revalidate session identity and group membership
 before changing a claimed tab and after any supported create or move action. A matching
 group name does not override account/session or target-identity checks.
 

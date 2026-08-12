@@ -48,6 +48,24 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
       long_task_poll_hint_seconds: <positive seconds>
       preferred_wait_observer: <user-selected read-only role | none>
       require_observer_runtime_identity: true
+    artifact_handoff:
+      enabled: true
+      workspace_parent: <verified ignored task-local parent>
+      layout: flat-prefixed
+      roles:
+        task: <configurable task-document suffix or path>
+        invocation: <configurable invocation-record suffix or path>
+        events: <configurable append-only event-ledger suffix or path>
+        progress: <configurable progress-document suffix or path>
+        partial_result: <configurable partial-result suffix or path>
+        final_result: <configurable final-result suffix or path>
+        verification: <configurable local-verification suffix or path>
+      result_writer: provider | coordinator-capture
+      progress_writer: provider | coordinator-capture
+      finalization: atomic-replace
+      require_session_identity: true
+      require_terminal_event: true
+      require_final_result: true
     provider_aliases:
       <user alias>: <canonical provider>
     providers:
@@ -143,6 +161,13 @@ duration and observed progress. The short and long values are positive schedulin
 hints, not success deadlines. `preferred_wait_observer` may name one user-selected
 read-only role; verify that role's effective runtime identity before attributing it,
 and keep the primary coordinator as the operation owner.
+
+`artifact_handoff` is optional user configuration for durable CLI task/result exchange.
+Every role is user-configurable and resolves under one verified ignored task-local
+parent; `flat-prefixed` keeps related files under that parent without creating a task
+subdirectory. Exactly one writer owns each progress/result role. The setting changes
+artifact transport only: it does not authorize invocation, mutation, retry, or Git
+delivery. Load `cli-artifact-handoff.md` for its launch, recovery, and completion gates.
 
 `provider_aliases` and `model_aliases` are routing conveniences only. Resolve aliases
 to a canonical recipient and an exact installed model identifier before invocation;

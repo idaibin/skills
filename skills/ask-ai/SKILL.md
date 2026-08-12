@@ -76,6 +76,10 @@ not maintain a second public collaboration owner.
    package/basis fingerprint as `awaiting-user-relay`, and performs zero external
    action. Reconcile an existing response for that fingerprint before generating or
    requesting a duplicate relay.
+   For durable coding-agent CLI work, load
+   [cli-artifact-handoff.md](references/cli-artifact-handoff.md), resolve its configurable
+   flat-prefixed artifact roles, freeze one task document, and persist the invocation
+   barrier before process start. Package-only may prepare the task but does not launch it.
 8. Load [provider-adapter.md](references/provider-adapter.md), build its live adapter
    record, then load only the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)
@@ -115,7 +119,8 @@ not maintain a second public collaboration owner.
    to ops-browser. Never resend an already submitted or ambiguous operation; retry
    only a proven failed-before-submit attempt with the original operation ID. For a
    running CLI operation, use the adaptive same-process monitoring contract in
-   `provider-cli.md`; a quiet observation interval is not a failure or retry trigger.
+   `provider-cli.md` and the artifact handoff when selected; a quiet observation
+   interval or unchanged progress file is not a failure or retry trigger.
 10. For ordinary multi-provider work, follow **Multi-Provider Independence** in
     [provider-routing.md](references/provider-routing.md). Only an explicitly requested
     relay workflow may include the immediately preceding provider response; follow
@@ -243,6 +248,7 @@ frozen local verdict.
   [Web research](references/provider-web-research.md), and
   [other browser providers](references/provider-browser.md).
 - Provider integration: [adapter contract](references/provider-adapter.md).
+- Durable CLI execution: [artifact handoff](references/cli-artifact-handoff.md).
 - ChatGPT-only native: [thread protocol](references/app-native-thread-protocol.md),
   [canary contract](references/app-native-canary.md), and
   [canary script](scripts/app_native_canary.py).
