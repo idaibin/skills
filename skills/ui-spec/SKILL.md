@@ -1,6 +1,6 @@
 ---
 name: ui-spec
-description: "Use when a selected visual source or accepted UI surface must become a traceable current Feature Spec or Google DESIGN.md contract at a resolved shared design root, including evidence lifecycle, source/runtime deltas, states, responsive/accessibility behavior, assets, and acceptance; route unresolved product behavior to product-spec, current-state audits to audit-frontend, and source edits to dev-frontend."
+description: "Use when a selected visual source or accepted UI surface must become a traceable current Feature Spec or, when adopted, a Google DESIGN.md contract at a resolved shared design root, including evidence lifecycle, source/runtime deltas, states, responsive/accessibility behavior, assets, and acceptance; route unresolved product behavior to product-spec, current-state audits to audit-frontend, and source edits to dev-frontend."
 compatibility: "Node.js + npm, with `@google/design.md@0.3.0` for DESIGN.md lint/diff/export."
 ---
 
@@ -20,12 +20,17 @@ authority; the handoff references them and never copies shared token semantics.
 
 1. Read effective repository guidance and run `git status --short` before planning an authorized artifact write.
 2. Fix the selected visual source: a user-selected Product Design result, supplied screenshot/mockup/frame, accepted current surface, or accepted shared visual baseline. Record identity, revision/image ID, approval, rights status, `use` and `ignore` boundaries, target viewport/state, and source limitations. When a current runtime exists, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and request same-round, same-viewport/state source and runtime captures from `ops-browser` without operating the browser here. For implicit routing, do not trigger this Skill when no selected visual source or accepted existing UI surface is available; route to `product-spec` for unresolved behavior or host Product Design for visual exploration. If this Skill is already explicitly invoked without that source, stop as `evidence-incomplete` instead of fabricating one.
-3. Resolve the approved `<design-root>` from effective guidance, build ownership,
-   and shared consumers. Require `<design-root>/DESIGN.md` as that boundary's single
+3. Resolve whether the proven visual boundary has adopted `DESIGN.md` from effective
+   guidance, build ownership, and shared consumers. When adopted, resolve the approved
+   `<design-root>` and require `<design-root>/DESIGN.md` as that boundary's single
    source of truth for shared visual semantics; a monorepo does not imply automatic
-   parent/child inheritance or one file per application. A missing pre-existing
-   `DESIGN.md` is not a non-trigger once a selected visual source is fixed; it is an
-   authorized artifact-creation path. If it does not exist, copy
+   parent/child inheritance or one file per application. When the boundary has not
+   adopted `DESIGN.md`, a Feature Spec that preserves existing shared semantics may
+   use the accepted current surface and repository-native visual owners, record
+   `DESIGN.md: Not adopted (not required for this slice)`, and continue without
+   creating a new shared authority. First adoption is required only when the user
+   explicitly requests it or the selected slice changes shared visual semantics. For
+   first adoption, copy
    [assets/DESIGN.md](assets/DESIGN.md) as the structural starter, replace every
    placeholder from verified sources, omit unverified token groups, obtain named
    human approval from someone other than the proposer/implementer, bind that approval
@@ -92,7 +97,7 @@ authority; the handoff references them and never copies shared token semantics.
 - Do not require a `ui-page/v1` or `ui-components/v1` Schema, project-local validator,
   or YAML/JSON companion for ordinary UI work. Admit a projection only when its named
   non-LLM consumer and complete lifecycle are already real and maintained.
-- Treat `<design-root>/DESIGN.md` as the single human-readable visual-semantic authority for its proven shared boundary.
+- Treat `<design-root>/DESIGN.md` as the single human-readable visual-semantic authority for a proven boundary that has adopted it; do not force first adoption for a local slice that preserves shared semantics.
 - Keep durable `DESIGN.md`, UI indexes, and Feature Specs current-only. Git retains
   formal history; task captures, comparison passes, superseded candidates, and
   validation timestamps belong in `.codex/` unless durable-evidence gates are met.
@@ -113,9 +118,10 @@ responsive/accessibility rules, assets/copy, shared-system changes or `None`,
 evaluation gates, per-slice and overall readiness, and every `Not found` or `Not
 verified` gap. Include at least:
 
-- resolved `<design-root>` and `DESIGN.md` revision or stable identity
-- lint command and result
-- diff command and regression verdict, or `Not applicable` when a Feature Spec leaves `DESIGN.md` unchanged or the authority is created for the first time
+- shared visual-authority disposition: adopted, first-adoption requested, or not adopted/not required for this slice
+- resolved `<design-root>` and `DESIGN.md` revision or stable identity when adopted
+- lint command and result when `DESIGN.md` is created or changed; otherwise `Not applicable`
+- diff command and regression verdict, or `Not applicable` when a Feature Spec leaves `DESIGN.md` unchanged, the authority is created for the first time, or the boundary has not adopted it
 - per-slice spec IDs and readiness
 - raw selected-source measurement evidence and the normalization record for every
   applicable repeated spacing cluster

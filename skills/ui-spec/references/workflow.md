@@ -43,8 +43,10 @@ Choose **Feature Spec** unless at least one answer is yes:
 - Must several surfaces adopt a changed shared rule?
 - Is an accepted shared-system owner being created, extracted, maintained, or evaluated?
 
-If not, reference existing owners and keep the specification local. If yes, resolve
-the shared `<design-root>`, open its `DESIGN.md`, and change only the shared closure.
+If not, reference existing owners and keep the specification local. A boundary that
+has not adopted `DESIGN.md` does not need to create it for this local path. If yes,
+resolve the shared `<design-root>` and either open its adopted `DESIGN.md` or begin the
+independently approved first-adoption path, then change only the shared closure.
 Artifact presence does not prove acceptance: pending, rejected, or stale candidates
 are not proof; verify live owners before reuse and require approval before promotion.
 

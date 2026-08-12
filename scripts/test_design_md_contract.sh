@@ -42,7 +42,31 @@ if (start < 0) {
   process.exit(2);
 }
 
-const data = JSON.parse(raw.slice(start));
+let depth = 0;
+let inString = false;
+let escaped = false;
+let end = -1;
+for (let index = start; index < raw.length; index += 1) {
+  const character = raw[index];
+  if (inString) {
+    if (escaped) escaped = false;
+    else if (character === "\\") escaped = true;
+    else if (character === "\"") inString = false;
+    continue;
+  }
+  if (character === "\"") inString = true;
+  else if (character === "{") depth += 1;
+  else if (character === "}") {
+    depth -= 1;
+    if (depth === 0) {
+      end = index + 1;
+      break;
+    }
+  }
+}
+if (end < 0) process.exit(2);
+
+const data = JSON.parse(raw.slice(start, end));
 const summary = data.summary || {};
 let warnings = summary.warnings;
 
@@ -63,9 +87,34 @@ if (typeof warnings !== "number") {
   warnings = walk(data);
 }
 
+if (!Number.isInteger(warnings) || warnings < 0) process.exit(2);
 console.log(String(warnings));
 ' _ "$output"
 }
+
+require_warning_count() {
+  local variable_name="$1"
+  local label="$2"
+  local output="$3"
+  local count
+  if ! count="$(extract_warning_count "$output")"; then
+    echo "$output" >&2
+    echo "could not parse DESIGN.md warning count for $label" >&2
+    return 1
+  fi
+  printf -v "$variable_name" '%s' "$count"
+}
+
+parser_fixture=$'npm notice before\n{"summary":{"warnings":2}}\nnpm notice after'
+require_warning_count parser_fixture_count "parser regression fixture" "$parser_fixture"
+if [[ "$parser_fixture_count" -ne 2 ]]; then
+  echo "DESIGN.md warning parser ignored or misread trailing tool output" >&2
+  exit 1
+fi
+if extract_warning_count 'npm notice without JSON' >/dev/null 2>&1; then
+  echo "DESIGN.md warning parser accepted output without JSON" >&2
+  exit 1
+fi
 
 guard_duplicate_h2() {
   local file="$1"
@@ -119,7 +168,8 @@ if ! guard_duplicate_h2 "$design_md_path"; then
   echo "baseline DESIGN.md should not have duplicate H2 headings" >&2
   exit 1
 fi
-if [[ "$(extract_warning_count "$baseline_output")" -ne 0 ]]; then
+require_warning_count baseline_warning_count "baseline" "$baseline_output"
+if [[ "$baseline_warning_count" -ne 0 ]]; then
   echo "$baseline_output" >&2
   echo "expected baseline DESIGN.md to have zero warnings" >&2
   exit 1
@@ -139,7 +189,8 @@ if [[ $unknown_status -ne 0 ]]; then
   echo "baseline DESIGN.md + unknown H2 lint failed" >&2
   exit 1
 fi
-if [[ "$(extract_warning_count "$unknown_output")" -ne 0 ]]; then
+require_warning_count unknown_warning_count "unknown H2 variant" "$unknown_output"
+if [[ "$unknown_warning_count" -ne 0 ]]; then
   echo "$unknown_output" >&2
   echo "expected no warnings after adding an unknown H2 section" >&2
   exit 1
@@ -164,7 +215,8 @@ for duplicate_heading in "${duplicate_h2_variants[@]}"; do
     echo "duplicate synthetic H2 lint failed for: $duplicate_heading" >&2
     exit 1
   fi
-  if [[ "$(extract_warning_count "$duplicate_output")" -lt 1 ]]; then
+  require_warning_count duplicate_warning_count "duplicate H2 variant: $duplicate_heading" "$duplicate_output"
+  if [[ "$duplicate_warning_count" -lt 1 ]]; then
     echo "$duplicate_output" >&2
     echo "duplicate synthetic H2 did not produce warning findings for: $duplicate_heading" >&2
     exit 1

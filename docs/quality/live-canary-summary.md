@@ -4,10 +4,12 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:00534bf2f3820e32c54e2984899c444bf2e255ac0682d4d094bd7c4c0d29aff1`
-- Host environment: current Codex desktop on macOS; local `skills` CLI `1.5.22`.
-  No fresh browser capability/session/group inventory, host-routing model invocation,
-  isolated install, or page-operation canary was run for this digest.
+- Package digest: `sha256:cd87515d061c6398fec4e20b4a2e1719e9ca5a2c6e22490600a5a9369c631c0e`
+- Host environment: Codex cloud workspace on Linux with Node.js 24; a disposable
+  Epic Stack checkout at commit `da819d69af1bb66b19cfee35ad81aa8502d0be05`;
+  headless Chromium supplied by `@sparticuz/chromium` and driven through
+  Playwright. No desktop-browser session/group inventory, host-routing model
+  invocation, or isolated Skill installation was run for this digest.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -27,6 +29,10 @@ behavior certification and does not replace target-environment runtime validatio
 | Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
 | Browser tab-lifecycle contract regression | Pass | Focused offline tests verify identity-first tab selection, explicit retention authority, recoverable task-tab ownership, and representative same-URL/different-session cases. This is static contract evidence, not a live browser canary. |
 | Browser backend handoff regression | Pass | Focused offline tests verify shared protocol copy parity, deterministic/agentic/CDP capability fields, action-shape and budget constraints, backend attribution, deterministic-first fixed writes, and the Ask AI provider-adapter links. `test_browser_operation_stability_contract` also covers complete negative evidence for attachment failure and stable-response evidence while keeping a lingering stop control as a separate gap. This is contract evidence, not live browser or provider behavior. |
+| Community feature specification | Pass | A bounded Epic Stack accessibility change was specified as product, UI, architecture, and task artifacts. The UI result correctly kept `DESIGN.md` not adopted because the change preserved existing visual semantics and introduced no shared design authority. |
+| Community behavior-first implementation | Pass | The focused Testing Library check was observed failing against the unchanged route because 21 technology-logo links had no accessible names; adding `aria-label` from the existing logo model made the same check pass. The target repository's original database-backed full Vitest setup remained environment-blocked and is not counted as passing. |
+| Fixed-basis frontend audit and review | Pass | Read-only audit and review used the exact two-file Worktree basis. Typecheck, lint, build, focused test, `git diff --check`, and scoped browser evidence passed; a separate pre-existing unnamed brand link was excluded rather than silently folded into the task result. |
+| Live headless-browser page operation | Pass | At 1280x720, Chromium resolved all 21 links by accessible role/name and expected href. axe-core scoped to the technology grid returned zero violations and `link-name` passed. This does not establish a reusable desktop session, tab-group control, two-pass visual closure, assistive-technology software behavior, or whole-page accessibility. |
 | Local-browser session/group capability | Not verified | Static contracts now keep control-session reuse and tab-group placement separate and stop when either required capability is unavailable. No fresh local-browser inventory or page operation was run for this digest. |
 | Isolated project-local install | Not verified | No fresh isolated install was run for this digest. |
 | Installed-copy parity | Not verified | No fresh isolated install exists for parity comparison on this digest. |
@@ -35,20 +41,20 @@ behavior certification and does not replace target-environment runtime validatio
 | Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Critical stop routing | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Browser capability stop gate | Not verified | No fresh host invocation was run for this digest. |
-| Browser two-pass visual closure | Not verified | No fresh browser visual canary was run for this digest. |
+| Browser two-pass visual closure | Not verified | One fresh headless-browser accessibility/runtime pass was run, but no same-state selected-source two-pass visual comparison was performed. |
 
 ## Sanitized Scenario Ledger
 
 | Case | Trigger shape | Expected owner or stop | Result |
 | --- | --- | --- | --- |
 | `explicit-owner-01` | Explicitly load the five scoped packages and state each boundary. | All five owners visible and distinct. | Not verified |
-| `implicit-spec-01` | Approved visual source to implementation-ready contract, no code edit; unapproved-source stop variant. | `ui-spec`; unapproved source is `Not Ready`. | Not verified |
-| `implicit-dev-01` | Implement an accepted frontend contract; unresolved `spec-ready` and viewport stop variant. | `dev-frontend`; unresolved evidence stops before editing as `Partial` / `Not Ready`. | Not verified |
-| `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Not verified |
+| `implicit-spec-01` | Approved visual source to implementation-ready contract, no code edit; unapproved-source stop variant. | `ui-spec`; unapproved source is `Not Ready`. | Target behavior pass; implicit host routing not verified |
+| `implicit-dev-01` | Implement an accepted frontend contract; unresolved `spec-ready` and viewport stop variant. | `dev-frontend`; unresolved evidence stops before editing as `Partial` / `Not Ready`. | Target behavior pass; implicit host routing not verified |
+| `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Target behavior pass; implicit host routing not verified |
 | `visual-direction-01` | Existing settings redesign with one primary accent semantic role, independent state colors, optional dials, and dark mode only when the accepted contract selects it. | `ui-spec` records Preserve/Overhaul and accepted direction; `dev-frontend` implements; `audit-frontend` stays evidence-bound. | Not verified |
 | `nested-inset-01` | Outer content container already owns page inset while a standard inner panel also adds left/top padding and the scrollbar must stay flush right. | Trace shell → container → page → component → control, keep one owner per boundary, and verify effective insets by axis plus shared-owner sibling impact. | Not verified |
-| `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Not verified |
-| `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Not verified |
+| `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Target behavior pass; implicit host routing not verified |
+| `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Partial: live accessibility/runtime pass; no selected-source visual comparison |
 | `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Not verified |
 | `browser-stop-01` | Request two same-viewport/state passes without an available browser capability. | `ops-browser`; exact viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion are `Not verified`. | Not verified |
 
@@ -91,7 +97,10 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Repository validation and focused static browser backend contracts pass. Catalog
-discovery, isolated installation/parity, local-browser session/group capability, model
-routing, and page-operation behavior remain `Not verified` for this digest. The overall
-live behavior verdict is `Not verified`.
+Repository validation, focused static browser backend contracts, a community
+red-green frontend slice, fixed-basis review, and a live headless-browser accessibility
+operation pass. Catalog discovery, isolated Skill installation/parity, desktop-browser
+session/group capability, model routing, two-pass visual closure, whole-page
+accessibility, assistive-technology software, and deployment remain `Not verified`.
+The overall live behavior verdict remains `Not verified` because the scoped successes
+do not establish those missing runtime boundaries.

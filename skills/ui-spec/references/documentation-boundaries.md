@@ -2,9 +2,12 @@
 
 ## Location Order
 
-1. Resolve `<design-root>` from effective guidance, shared-system ownership, and
-   actual consumers; use `<design-root>/DESIGN.md` as that boundary's sole shared
-   visual authority.
+1. Determine from effective guidance, shared-system ownership, and actual consumers
+   whether the boundary has adopted `DESIGN.md`. If adopted, resolve `<design-root>`
+   and use `<design-root>/DESIGN.md` as that boundary's sole shared visual authority.
+   If not adopted and the slice preserves shared semantics, record that disposition
+   and use the accepted current surface plus repository-native visual owners without
+   creating a new shared authority.
 2. Use the project's established UI-spec location for one page domain or connected
    flow contract; only as a fallback use `docs/ui/<slice-id>/spec.md`.
 3. Use the project-declared UI index for several independent slices; only as a
@@ -31,7 +34,7 @@ To implement one UI slice, read in order:
 
 1. effective repository guidance and its declared authority paths or exceptions;
 2. applicable project-declared product foundation/index and target product slice;
-3. `<design-root>/DESIGN.md` (required shared visual authority);
+3. `<design-root>/DESIGN.md` when adopted or when first adoption is explicitly in scope;
 4. the project-declared UI index when the request has several UI slices;
 5. the project-declared target UI slice.
 6. the component guidance and project-map entries referenced by that slice, followed
