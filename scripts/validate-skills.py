@@ -53,6 +53,13 @@ ASK_AI_DEFAULT_TOKENS = (
     "executable_candidates: [<absolute path or command name>]",
     "prompt_transport: argument | stdin | file",
     "argument_order: <ordered option categories>",
+    "modes:",
+    "native-review:",
+    "native-execution:",
+    "permission_strategy: <verified non-interactive strategy>",
+    "native_capabilities: all",
+    "profile_fingerprint: <executable/version/mode-profile fingerprint>",
+    "conformance_verified_at: <ISO-8601 | Not verified>",
     "workspace:",
     "option: <verified option>",
     "value_source: current-task-repository",
@@ -84,6 +91,11 @@ ASK_AI_CLI_CANONICAL_PROVIDERS = {
     "opencode",
 }
 ASK_AI_CLI_MONITOR_TOKENS = (
+    "## Native Execution Modes",
+    "Do not turn a coding agent into a text-only model",
+    "automatically approve operations",
+    "disposable worktree",
+    "stale executable fingerprint",
     "## Adaptive Monitoring",
     "about one minute",
     "about five minutes",
@@ -91,8 +103,8 @@ ASK_AI_CLI_MONITOR_TOKENS = (
     "quiet poll keeps the operation `running`",
     "one smallest capable read-only observer",
     "never the authority to submit",
-    "role or model such as Luna",
-    "effective role/model metadata",
+    "effective runtime identity before delegation",
+    "configured observer name is a user-owned preference",
     "single operation owner",
     "Configured Runtime Profiles",
     "must not embed provider versions, model IDs, executable paths",
@@ -413,7 +425,7 @@ def ask_ai_authority_errors(package: Path) -> list[str]:
         "SKILL.md": (
             skill.read_text(encoding="utf-8"),
             (
-                "Review and research default to no-write.",
+                "Review and research default to no persistent mutation",
                 "matching implementation owner",
                 "source write authority belongs to the implementation",
                 "repo-delivery",
@@ -422,8 +434,8 @@ def ask_ai_authority_errors(package: Path) -> list[str]:
         "references/provider-cli.md": (
             provider_cli.read_text(encoding="utf-8"),
             (
-                "Review defaults to no-write.",
-                "implementation-owner-authorized",
+                "Review defaults to no persistent mutation.",
+                "native-execution",
                 "CLI provider presence",
                 "not authorize source writes",
                 "matching implementation owner",
@@ -433,7 +445,7 @@ def ask_ai_authority_errors(package: Path) -> list[str]:
         "references/eval-cases.md": (
             evals.read_text(encoding="utf-8"),
             (
-                "Review CLI write-source attempt",
+                "Native review temporary write",
                 "External implementation authorization composition",
                 "Git delivery authorization separation",
             ),

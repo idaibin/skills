@@ -70,7 +70,10 @@ execution:
   reasoning_evidence: <structured result/event/log field or active control|Not verified>
   model_match: <exact|not-requested|mismatch|Not verified>
   reasoning_match: <exact|not-requested|mismatch|Not verified>
-  permission_policy: <read-only|bounded-write|browser-read-only|Not verified>
+  native_mode: <native-review|native-execution|not-applicable|Not verified>
+  native_capabilities: <all-verified|partial|not-applicable|Not verified>
+  permission_strategy: <verified non-interactive strategy|not-applicable|Not verified>
+  persistence_boundary: <disposable|authorized-worktree|external-read-only|not-applicable|Not verified>
   output_framing: <json|jsonl|provider-container|lossless-text|Not verified>
   exit_or_completion: <exit-code and terminal event|provider completion signal|Not verified>
 reuse:
@@ -124,7 +127,10 @@ process that never started from one that may have submitted remotely. A shell ex
 code alone does not prove response attribution or that requested tools were read-only.
 The adapter also records the exact argument array, proves that prompt-bearing options
 bind the intended prompt rather than a following flag, and verifies that every input
-file is reachable from the selected `cwd` and permission policy before submit. A host
+file is reachable from the selected `cwd` and permission strategy before submit. The
+adapter proves the complete native capability set is exposed in both execution modes,
+that eligible permission prompts do not require interaction, and that the selected
+persistence boundary—not a text prompt—enforces whether writes survive. A host
 process/session identifier is transport evidence only; never record it as the provider
 conversation or session ID.
 
@@ -164,10 +170,11 @@ Run the applicable cases before declaring a new or materially changed adapter us
 8. prove a different account/workspace or ambiguous target is rejected;
 9. verify every claimed non-default capability independently;
 10. confirm unsupported capabilities degrade to Package-only or a named blocked state.
-11. for CLI/ACP, prove exact `cwd`, read-only enforcement, structured-output framing,
-    terminal event/exit handling, provider session ID capture, requested/effective
-    model attribution, argument-to-prompt binding, input reachability, and resume
-    rejection on a different repository or basis;
+11. for CLI/ACP, prove exact `cwd`, equal complete native capability exposure in both
+    modes, non-interactive permission handling, mode-specific persistence isolation,
+    structured-output framing, terminal event/exit handling, provider session ID
+    capture, requested/effective model attribution, argument-to-prompt binding, input
+    reachability, and resume rejection on a different repository or basis;
 12. for research, resolve a representative citation to its original source, detect a
     missing or mismatched citation, preserve publication identifiers, and reject a
     report whose cited claims cannot be locally checked.

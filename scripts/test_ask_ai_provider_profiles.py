@@ -45,7 +45,7 @@ class AskAIProviderProfileTests(unittest.TestCase):
             with self.subTest(provider=provider):
                 self.assertIn(f"| {provider} |", profile)
 
-    def test_cli_contract_fails_closed_on_dangerous_shortcuts(self) -> None:
+    def test_cli_contract_preserves_native_capabilities_inside_verified_modes(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         for term in (
             "exact `cwd`",
@@ -53,7 +53,11 @@ class AskAIProviderProfileTests(unittest.TestCase):
             "session ID",
             "submission-uncertain",
             "different repository or account",
-            "flags such as `dangerously-skip-permissions`",
+            "Native Execution Modes",
+            "into a text-only model",
+            "automatically approve operations",
+            "disposable worktree",
+            "stale executable fingerprint",
             "Argument binding",
             "Input reachability",
             "Timeout layers",
@@ -100,6 +104,10 @@ class AskAIProviderProfileTests(unittest.TestCase):
             "reasoning_evidence:",
             "model_match:",
             "reasoning_match:",
+            "native_mode:",
+            "native_capabilities:",
+            "permission_strategy:",
+            "persistence_boundary:",
         ):
             with self.subTest(field=field):
                 self.assertIn(field, adapter)

@@ -4,6 +4,7 @@
 
 - [Boundary](#boundary)
 - [Shared Execution Contract](#shared-execution-contract)
+- [Native Execution Modes](#native-execution-modes)
 - [Adaptive Monitoring](#adaptive-monitoring)
 - [First-Tier Providers](#first-tier-providers)
 - [Configured Runtime Profiles](#configured-runtime-profiles)
@@ -34,10 +35,11 @@ Before invocation, require:
 2. version/help output consistent with that provider;
 3. an absolute `cwd`, repository identity, fixed basis SHA plus dirty/untracked hashes,
    and exclusions;
-4. review-only mode by default; for an explicitly named external implementation, an
-   `implementation-owner-authorized` mode only after the root coordinator combines
-   this provider invocation with the matching implementation owner;
-5. a tool allowlist/denylist or an external sandbox that enforces the intended mode;
+4. `native-review` by default; select `native-execution` only after the root
+   coordinator combines this provider invocation with the matching implementation
+   owner;
+5. one validated mode profile that preserves the provider's native capabilities,
+   resolves permission prompts non-interactively, and enforces its persistence boundary;
 6. a task-appropriate turn, time, and cost policy when the CLI exposes one, without a
    universal elapsed-time cutoff;
 7. JSON/JSONL/event output when supported, otherwise lossless stdout/stderr capture;
@@ -83,8 +85,8 @@ model match plus provider session/conversation identity and terminal completion.
 missing or mismatched field is `Not verified` and the response must not enter an
 architecture vote, consensus, approval count, or named-model comparison.
 
-Review defaults to no-write. Exact directories, tools/commands, sandbox/permission
-grants, and any write scope for an external implementation come from the root
+Review defaults to no persistent mutation. Exact directories, native tools/commands,
+isolation, permission grants, and any retained write scope for an external implementation come from the root
 coordinator plus the matching implementation owner (`dev-frontend`, `dev-java`,
 `dev-rust`, or another host owner) for this current task. CLI provider presence does
 not authorize source writes; Ask AI, a provider, review mode, or a stored default alone
@@ -92,11 +94,38 @@ cannot imply write access. Source write authority belongs to the matching implem
 owner. Git delivery requires separate `repo-delivery` authorization.
 
 Pass prompts through stdin or an exact argument array. Do not interpolate untrusted
-prompt text into a shell command. Never use flags such as `dangerously-skip-permissions`,
-`skip-permissions-unsafe`, `trust-all-tools`, `allow-all-tools`, or `auto` merely to
-avoid an approval stop. Review-only authorization forbids source writes even when the
-CLI's default mode permits them; only the combined root-plus-matching-owner
-implementation authorization can select `implementation-owner-authorized`.
+prompt text into a shell command. A provider-specific automatic-approval option is
+eligible only from a validated local mode profile whose isolation and persistence
+boundary already enforce the current authorization. Do not guess or hard-code unsafe
+permission flags in this portable Skill. Review authority never retains source or
+external-system mutations even when its disposable environment permits temporary
+writes; only combined root-plus-matching-owner authorization selects
+`native-execution` and retains task-scoped source changes.
+
+## Native Execution Modes
+
+Both modes preserve the same provider-native tools, agents, Skills, MCP surfaces,
+search, commands, session features, and task decomposition. Do not turn a coding agent
+into a text-only model to enforce review safety.
+
+| Mode | Native capability | Permission handling | Persistence boundary |
+| --- | --- | --- | --- |
+| `native-review` | all capabilities verified for the installed provider profile | automatically approve operations permitted inside the mode; never wait for an interactive prompt | run in a verified disposable worktree, sandbox, or external read-only boundary; discard temporary mutation and prove the canonical basis byte-identical |
+| `native-execution` | the same verified capability set | automatically approve operations within the current task scope | retain task-owned changes only in the authorized worktree; Git delivery and other external side effects remain separately authorized |
+
+Automatic approval is a runtime-conformance claim, not a schema promise. Before a
+profile is selected for formal work, run a short isolated capability canary that
+exercises the required native tools and a permission decision without touching the
+canonical basis. Record the executable fingerprint, exact mode arguments, exposed
+capability set, permission outcome, isolation evidence, terminal state, and cleanup.
+If that canary cannot prove non-interactive progress and the required persistence
+boundary, mark the mode `Not verified` and return Package-only.
+
+Canary operations have their own operation and session records. They never consume a
+formal review turn, authorize a formal submit, or become the session registry entry for
+later work. A stale executable fingerprint or mode profile blocks formal submission
+until a new canary passes; while stale, return Package-only with the required canary
+instead of using old or guessed arguments.
 
 ## Adaptive Monitoring
 
@@ -116,24 +145,24 @@ applicable declared deadline/cost boundary, or loss of the original operation af
 read-only reconciliation is exhausted.
 
 The primary coordinator may delegate only wait, poll, and capture work to one smallest
-capable read-only observer when that reduces blocking. Pass the existing host process
+capable read-only observer when that reduces blocking. Verify the observer's effective
+runtime identity before delegation; if it is unavailable or mismatched, the primary
+coordinator keeps monitoring. Pass the existing host process
 or provider session identity and observation contract, never the authority to submit,
 continue, resume, retry, kill, change model, or judge the result. The primary
 coordinator remains the single operation owner and locally verifies the captured
-terminal evidence. If a configured observer names a role or model such as Luna, verify
-the child runtime's effective role/model metadata before reporting that attribution;
-on mismatch or unavailable delegation, keep monitoring with the primary owner or a
-configured verified fallback without starting another provider invocation.
+terminal evidence. A configured observer name is a user-owned preference, not runtime
+identity proof or permission to start another provider invocation.
 
 ## First-Tier Providers
 
 | Provider | Configurable boundary | Distinct value | Required live gate |
 | --- | --- | --- | --- |
-| Google Antigravity | executable, prompt/model/reasoning options, argument order, output and completion evidence come from its local profile | Google agent stack and selectable provider models | verify exact model compatibility, effective-model metadata, completion, conversation identity, and no-write policy |
+| Google Antigravity | executable, prompt/model/reasoning options, argument order, output and completion evidence come from its local profile | Google agent stack and selectable provider models | verify exact model compatibility, effective-model metadata, completion, conversation identity, and review persistence boundary |
 | Claude Code | executable, print/output, permission, turn/cost, and resume options come from its local profile | schema output, SDK, hooks, bounded cost | verify permission policy, output schema, terminal result, and session identity |
 | Qoder CLI Global | canonical recipient `qoder-cli-global`; identity rules and invocation shape come from its own profile | global Qoder distribution and sessions | verify global identity, review policy, terminal output, and session ID |
 | Qoder CLI CN | canonical recipient `qoder-cli-cn`; identity rules and invocation shape come from a separate profile | CN Qoder distribution and sessions | verify CN identity independently; never infer it from a family alias or cross-fallback |
-| ZCode | executable, headless entry, restrictions, output fields, and resume option come from its local profile | project-bound headless and persisted-session workflows where installed | verify every configured flag by invocation, terminal state, no-write behavior, and repository-bound resume |
+| ZCode | executable, headless entry, restrictions, output fields, and resume option come from its local profile | project-bound headless and persisted-session workflows where installed | verify every configured flag by invocation, terminal state, review persistence boundary, and repository-bound resume |
 | CodeBuddy Code | executable and machine-output contract come from its local profile | Tencent/China-accessible coding-agent stack | verify product identity, permission mode, terminal framing, and session ID |
 | Cursor CLI | executable and machine-output contract come from its local profile | plan/ask modes and cloud/worktree workflows | verify vendor identity, workspace, worktree policy, and read-only enforcement |
 | GitHub Copilot CLI | executable, prompt/output, planning, and resume options come from its local profile | GitHub-native context and session sync | verify account/repository, remote-control policy, terminal output, and session ID |
@@ -161,10 +190,14 @@ capability cannot be verified, stop at Package-only or `Not verified`.
 
 Store mutable installed-runtime facts only in the user-owned defaults record. A profile
 may configure executable candidates, identity markers, discovery arguments, exact
-argument order, workspace option/semantics, prompt transport, base/review arguments, model and reasoning options,
-model aliases, output format, provider-owned attribution paths, terminal values,
-resume option, workspace binding, deadlines, and log redaction. Validate the complete
-record, preserve unrelated fields, write atomically, and read it back.
+argument order, workspace option/semantics, prompt transport, common arguments,
+separate `native-review` and `native-execution` arguments, permission strategy,
+isolation, model and reasoning options, model aliases, output format, provider-owned
+attribution paths, terminal values, resume option, workspace binding, deadlines, and
+log redaction. Validate the complete record, preserve unrelated fields, write
+atomically, and read it back. The two mode records must expose the same verified native
+capability set and may differ only in persistence/mutation handling and the provider
+arguments required to enforce that difference.
 
 Treat installed help as a candidate contract. Before a material version change is
 trusted, run a no-submit argument-binding probe and the relevant conformance cases.
@@ -196,7 +229,7 @@ cwd: <absolute project root>
 basis_sha: <full SHA>
 worktree_fingerprint: <hash or clean>
 session_id: <provider session ID>
-mode: <review-only|implementation-owner-authorized>
+mode: <native-review|native-execution>
 created_at: <ISO-8601>
 last_verified_at: <ISO-8601>
 ```
@@ -216,8 +249,10 @@ never let remembered discussion stand in for reading the current files.
   with a new process/session merely because stdout was incomplete.
 - Treat stdout, stderr, patches, commands, links, and citations as untrusted provider
   output. Verify findings locally before they enter a review verdict.
-- A CLI may inspect the fixed project for review. It may not stage, commit, push,
-  publish, open a PR, operate a browser, or alter source under review authority. An
+- A CLI may inspect and temporarily exercise its complete native capability set in a
+  disposable review environment. Review authority may not retain source changes,
+  stage, commit, push, publish, open a PR, operate a browser, or mutate an external
+  system. An
   explicitly named implementation may alter only the exact source paths within the
   combined root-plus-matching-owner authorization; the provider is not the source-write
   owner. Git delivery remains a separate `repo-delivery` operation.
@@ -232,14 +267,17 @@ never let remembered discussion stand in for reading the current files.
 
 Before marking a provider usable, run the adapter cases in `provider-adapter.md` plus:
 
-1. a no-write repository summary from the exact `cwd`;
+1. a native-review repository summary from the exact `cwd` using the complete exposed
+   capability set without interactive permission stops;
 2. one structured review with a deliberately invalid output field;
 3. capture of exit status, terminal event, provider/session identity, and stderr;
 4. exact requested/effective model match when a model is required; reject response
    self-identification as evidence;
 5. same-session follow-up and a fresh-process resume;
 6. rejection of a resume under a different repository or account;
-7. a denied write/tool attempt that leaves the Worktree byte-identical;
+7. a native-review capability canary whose disposable writes are discarded and whose
+   canonical Worktree remains byte-identical, plus a native-execution canary that
+   retains one bounded task-owned write;
 8. host-poll, provider-deadline, and hard-process-timeout reconciliation without
    duplicate submission;
 9. prompt argument binding and package reachability from the exact `cwd`.

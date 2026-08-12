@@ -44,6 +44,7 @@ SECRET_SHAPE = re.compile(
     r"(?:AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|"
     r"-----BEGIN [A-Z ]+PRIVATE KEY-----)"
 )
+PERSONAL_RUNTIME_NAMES = tuple("AI " + suffix for suffix in ("Review", "Design", "Exec"))
 
 
 def public_text_files() -> list[Path]:
@@ -93,6 +94,19 @@ class PublicContentHygieneTests(unittest.TestCase):
                 findings.append(f"{path.relative_to(ROOT)}: private hostname")
             if SECRET_SHAPE.search(text):
                 findings.append(f"{path.relative_to(ROOT)}: secret-like value")
+        self.assertEqual([], findings)
+
+    def test_public_runtime_contracts_have_no_known_personal_names(self) -> None:
+        findings: list[str] = []
+        runtime_roots = (ROOT / "skills", ROOT / "protocols", ROOT / "scripts")
+        for entry in runtime_roots:
+            for path in entry.rglob("*"):
+                if not path.is_file() or path.suffix not in TEXT_SUFFIXES:
+                    continue
+                text = path.read_text(encoding="utf-8")
+                for name in PERSONAL_RUNTIME_NAMES:
+                    if name in text:
+                        findings.append(f"{path.relative_to(ROOT)}: personal runtime name {name}")
         self.assertEqual([], findings)
 
     def test_visual_fixture_is_explicitly_synthetic_and_generically_named(self) -> None:

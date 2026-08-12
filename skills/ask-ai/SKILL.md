@@ -91,10 +91,13 @@ not maintain a second public collaboration owner.
    Require the adapter's live target, identity, required operations, input, submit,
    completion, attribution, and reuse/recovery evidence;
    otherwise return Package-only or Not found/Not verified without external action.
-   Apply the CLI execution and permission gates in `provider-cli.md`; review-only
-   authority never permits source writes. An explicitly named external coding-agent
-   implementation may write only when the root coordinator combines the provider
-   invocation with the matching implementation owner. For an authorized web review, apply the provider-neutral browser preference and
+   Apply the CLI execution and permission gates in `provider-cli.md`. Preserve the
+   provider's full native capability set in both `native-review` and
+   `native-execution`; automatically resolve permission prompts only inside a
+   live-verified local mode profile and its isolation/persistence boundary. Review
+   authority never retains source writes. An explicitly named external coding-agent
+   implementation may retain task-scoped writes only when the root coordinator combines
+   the provider invocation with the matching implementation owner. For an authorized web review, apply the provider-neutral browser preference and
    task-specific `context_routes` from [browser-profile.md](references/browser-profile.md). Start each
    task from the configured primary with fresh preflight; a fallback never changes the
    next task's default. Resolve provider-specific Project, notebook, space, or collection
@@ -133,6 +136,11 @@ not maintain a second public collaboration owner.
     decisions, publication, Git mutation, defaults migration, or any other external
     turn outside the explicitly authorized round, relay limit, or final-sync operation
     only with separate authorization.
+    When a user-owned `ask-ai-feedback/v1` record explicitly enables local feedback,
+    load [feedback-recording.md](references/feedback-recording.md) and append the
+    terminal metadata events after local reconciliation. Recording failure is
+    `feedback-deferred`; it never changes the provider outcome, authorizes a retry, or
+    delays returning the result.
 
 ## Provider Boundary
 
@@ -202,7 +210,8 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
   inferred politeness is not agreement.
 - Research and visual outputs do not automatically write product facts, source, Git,
   external systems, or publications.
-- Review and research default to no-write. If the current task explicitly names an
+- Review and research default to no persistent mutation while preserving provider-native
+  capabilities in an isolated review environment. If the current task explicitly names an
   external coding agent to implement changes, the root coordinator must combine its
   Ask AI provider invocation with the matching implementation owner
   (`dev-frontend`, `dev-java`, `dev-rust`, or another host owner). Exact directories,
@@ -228,6 +237,7 @@ frozen local verdict.
 - Core: [usage.md](references/usage.md),
   [provider-routing.md](references/provider-routing.md), and
   [final-result-sync.md](references/final-result-sync.md).
+- Optional local learning: [feedback recording](references/feedback-recording.md).
 - Providers: [ChatGPT](references/provider-chatgpt.md),
   [Gemini](references/provider-gemini.md), [CLI](references/provider-cli.md),
   [Web research](references/provider-web-research.md), and

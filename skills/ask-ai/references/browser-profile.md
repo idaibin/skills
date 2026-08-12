@@ -68,7 +68,20 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
           prompt_transport: argument | stdin | file
           prompt_option: <verified option | none>
           base_args: [<verified argument>]
-          review_args: [<verified no-write argument>]
+          modes:
+            native-review:
+              args: [<verified provider-specific argument>]
+              permission_strategy: <verified non-interactive strategy>
+              isolation: disposable-worktree | sandbox | external-read-only
+              persistent_mutation: deny
+            native-execution:
+              args: [<verified provider-specific argument>]
+              permission_strategy: <verified non-interactive strategy>
+              isolation: authorized-worktree | provider-worktree
+              persistent_mutation: allow-within-task-scope
+          native_capabilities: all
+          profile_fingerprint: <executable/version/mode-profile fingerprint>
+          conformance_verified_at: <ISO-8601 | Not verified>
           model_option: <verified option | none>
           reasoning_option: <verified option | none>
           output_format: <configured machine format | text>
@@ -138,7 +151,13 @@ neither alias proves identity, availability, compatibility, or effective-model u
 portable Skill. Build an exact argv array from the validated profile, preserve its
 declared order, and reject missing or unknown fields. Null deadlines mean no configured
 deadline, not infinite authorization. Provider-owned attribution selectors and terminal
-values must be reverified after executable drift. Never store secrets or raw logs.
+values must be reverified after executable drift. Never store secrets or raw logs. Both
+CLI modes expose the same verified provider-native capability set and resolve eligible
+permission prompts non-interactively. Their only semantic difference is whether
+task-scoped mutation may persist. Provider-specific flags and isolation mechanisms stay
+inside each mode record and require an isolated runtime canary for the current profile
+fingerprint. A stale or `Not verified` profile returns Package-only until that canary
+passes; it never submits formal work with old or guessed arguments.
 The `workspace` record is required for a repository-scoped CLI: inject the current
 task's canonical repository through the configured option and verify the provider's
 active workspace before submit. A host process `cwd` alone is not provider workspace

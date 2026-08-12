@@ -105,6 +105,11 @@ machine-checkable outcomes, not permission to simulate runtime evidence.
 - Provider-specific local-default schemas belong in a focused package reference and
   must be validated as runtime contracts; they are preferences and discovery hints,
   not portable frontmatter, current capability proof, or external-action authority.
+  Coding-agent review and execution profiles preserve the same provider-native
+  capability set and resolve eligible permission prompts non-interactively; they differ
+  only in whether task-scoped mutation may persist. Provider flags, tool names,
+  executable fingerprints, isolation choices, and automatic-approval mechanisms remain
+  user-owned runtime facts and require isolated conformance evidence before formal use.
   When a provider family has distinct variants, an optional `provider_aliases` entry may
   select only one canonical recipient (`qoder-cli-global` or `qoder-cli-cn`); it may be
   omitted and never proves executable identity, capability, authentication, or send

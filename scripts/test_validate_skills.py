@@ -147,6 +147,14 @@ class ValidatorTests(unittest.TestCase):
             "  executable_candidates: [<absolute path or command name>]\n"
             "  prompt_transport: argument | stdin | file\n"
             "  argument_order: <ordered option categories>\n"
+            "  modes:\n"
+            "    native-review:\n"
+            "      permission_strategy: <verified non-interactive strategy>\n"
+            "    native-execution:\n"
+            "      permission_strategy: <verified non-interactive strategy>\n"
+            "  native_capabilities: all\n"
+            "  profile_fingerprint: <executable/version/mode-profile fingerprint>\n"
+            "  conformance_verified_at: <ISO-8601 | Not verified>\n"
             "  workspace:\n"
             "    option: <verified option>\n"
             "    value_source: current-task-repository\n"
@@ -213,7 +221,7 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("five" in error for error in errors))
             self.assertTrue(any("not fixed limits" in error for error in errors))
             self.assertTrue(any("read-only observer" in error for error in errors))
-            self.assertTrue(any("effective role/model" in error for error in errors))
+            self.assertTrue(any("runtime identity" in error for error in errors))
 
     def test_contract_tokens_tolerate_markdown_reflow(self) -> None:
         source = ROOT / "skills" / "ask-ai"
@@ -322,9 +330,9 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("must include write-source" in error for error in errors))
 
         for relative, token in (
-            ("SKILL.md", "Review and research default to no-write."),
-            ("references/provider-cli.md", "implementation-owner-authorized"),
-            ("references/eval-cases.md", "Review CLI write-source attempt"),
+            ("SKILL.md", "Review and research default to no persistent mutation"),
+            ("references/provider-cli.md", "native-execution"),
+            ("references/eval-cases.md", "Native review temporary write"),
         ):
             with self.subTest(relative=relative):
                 with tempfile.TemporaryDirectory() as temporary:
