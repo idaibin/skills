@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -53,6 +54,9 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
         self.assertEqual(0, result.returncode, result.stderr)
         self.assertIn("feedback-recorded", result.stdout)
         self.assertEqual(self.event, json.loads(self.log.read_text(encoding="utf-8")))
+        if os.name != "nt":
+            lock_mode = self.log.with_suffix(".jsonl.lock").stat().st_mode & 0o777
+            self.assertEqual(0o600, lock_mode)
 
     def test_rejects_duplicate_event_id(self) -> None:
         self.assertEqual(0, self.run_recorder().returncode)

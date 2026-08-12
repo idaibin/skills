@@ -177,7 +177,14 @@ def append_event(log_path: Path, event: dict) -> None:
     encoded = (json.dumps(event, ensure_ascii=False, separators=(",", ":")) + "\n").encode(
         "utf-8"
     )
-    with lock_path.open("a+", encoding="utf-8") as lock:
+    lock_descriptor = os.open(lock_path, os.O_APPEND | os.O_CREAT | os.O_RDWR, 0o600)
+    try:
+        os.chmod(lock_path, 0o600)
+        lock = os.fdopen(lock_descriptor, "a+", encoding="utf-8")
+    except Exception:
+        os.close(lock_descriptor)
+        raise
+    with lock:
         with advisory_lock(lock):
             if log_path.exists():
                 with log_path.open(encoding="utf-8") as existing:
