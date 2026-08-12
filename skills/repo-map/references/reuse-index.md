@@ -60,7 +60,9 @@ Before a new declaration:
    - `new`: create only after documenting why the nearest candidates cannot serve the need.
 7. For `new`, record every checked root, closest candidate or `Not found`, incompatibility, intended owner, and expected consumers.
 
-Report this decision for the current task. Add it to the durable map only when it creates or changes a stable canonical owner, reuse boundary, or reusable contract.
+Report this decision for the current task. Persist only source-derived stable owner,
+consumer, registration or contract edges in the Asset Graph; implementation decisions
+and delivery status remain outside the Graph.
 
 Do not extract a speculative shared abstraction solely to make code look uniform. Prefer a named owner and proven consumers; follow stricter repository rules when present.
 

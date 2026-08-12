@@ -511,7 +511,8 @@ def ask_ai_authority_errors(package: Path) -> list[str]:
     index_path = package.parents[1] / "skills-index.json"
     try:
         payload = json.loads(index_path.read_text(encoding="utf-8"))
-        entry = next(item for item in payload["skills"] if item.get("name") == "ask-ai")
+        entries = payload.get("packages", payload.get("skills", []))
+        entry = next(item for item in entries if item.get("name") == "ask-ai")
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, KeyError, StopIteration, TypeError) as error:
         return errors + [f"ask-ai: cannot load skills-index authority entry: {error}"]
     allowed = entry.get("allowed_effects")
@@ -1131,6 +1132,150 @@ def skill_contract_errors(entries: list[dict[str, object]]) -> list[str]:
     return errors
 
 
+CAPABILITY_MUTATION_EFFECT = {
+    "artifact-write": "write-artifact",
+    "source-write": "write-source",
+    "git-write": "write-git-state",
+    "browser-control": "control-browser-state",
+    "client-control": "control-client-state",
+    "external-action": "invoke-external-provider",
+}
+
+MUTATING_EFFECTS = set(CAPABILITY_MUTATION_EFFECT.values()) | {"write-run-local-cache"}
+
+
+def symbolic_scope_errors(capability_id: str, constraints: object) -> list[str]:
+    """Reject path-shaped scope declarations; hosts resolve symbolic roots at runtime."""
+    if not isinstance(constraints, list):
+        return []
+    errors: list[str] = []
+    for constraint in constraints:
+        if not isinstance(constraint, str):
+            continue
+        if (
+            constraint.startswith(("/", "\\", "~"))
+            or ".." in constraint
+            or "://" in constraint
+            or any(separator in constraint for separator in ("/", "\\"))
+        ):
+            errors.append(
+                f"skills-index.json: capability {capability_id} symbolic scope constraint "
+                f"{constraint!r} may not escape a host-resolved symbolic root"
+            )
+    return errors
+
+
+def capability_contract_errors(
+    payload: dict[str, object], packages: list[dict[str, object]]
+) -> list[str]:
+    """Validate v3 capability identity, refs, and narrowed runtime boundaries."""
+    errors: list[str] = []
+    capabilities = payload.get("capabilities", [])
+    if not isinstance(capabilities, list):
+        return ["skills-index.json: capabilities must be an array"]
+    package_by_name = {
+        str(package.get("name")): package
+        for package in packages
+        if isinstance(package, dict) and package.get("name")
+    }
+    cap_by_id: dict[str, dict[str, object]] = {}
+    schema_refs = payload.get("schema_refs", {})
+    if not isinstance(schema_refs, dict):
+        schema_refs = {}
+    declared = set(schema_refs.get("declared_portable", []))
+    local = set(schema_refs.get("known_local", []))
+    if declared & local:
+        errors.append(
+            "skills-index.json: schema_refs declared_portable and known_local overlap"
+        )
+    for position, capability in enumerate(capabilities):
+        if not isinstance(capability, dict):
+            errors.append(f"skills-index.json: capabilities[{position}] must be an object")
+            continue
+        capability_id = str(capability.get("capability_id", "<unknown>"))
+        if capability_id in cap_by_id:
+            errors.append(f"skills-index.json: duplicate capability ID {capability_id}")
+        cap_by_id[capability_id] = capability
+        package_name = capability.get("package")
+        package = package_by_name.get(str(package_name))
+        if package is None:
+            errors.append(
+                f"skills-index.json: capability {capability_id} references unknown package {package_name!r}"
+            )
+            continue
+        permission = capability.get("permission_contract", {})
+        if not isinstance(permission, dict):
+            continue
+        maximum = permission.get("maximum_mutation_class")
+        maximum_effects = set(permission.get("maximum_effects", []))
+        forbidden_effects = set(permission.get("forbidden_effects", []))
+        errors.extend(
+            symbolic_scope_errors(
+                capability_id, permission.get("symbolic_scope_constraints", [])
+            )
+        )
+        package_allowed = set(package.get("allowed_effects", []))
+        if not maximum_effects <= package_allowed:
+            errors.append(
+                f"skills-index.json: capability {capability_id} maximum_effects exceed package boundary"
+            )
+        overlap = maximum_effects & forbidden_effects
+        if overlap:
+            errors.append(
+                f"skills-index.json: capability {capability_id} maximum/forbidden effects overlap: {sorted(overlap)}"
+            )
+        required_effect = CAPABILITY_MUTATION_EFFECT.get(str(maximum))
+        if required_effect and required_effect not in maximum_effects:
+            errors.append(
+                f"skills-index.json: capability {capability_id} maximum mutation {maximum} must allow {required_effect}"
+            )
+        if maximum == "read-only" and (maximum_effects & MUTATING_EFFECTS):
+            errors.append(
+                f"skills-index.json: capability {capability_id} read-only maximum may not allow mutating effects"
+            )
+        if maximum == "read-only" and permission.get("required_confirmations"):
+            errors.append(
+                f"skills-index.json: capability {capability_id} read-only maximum may not require mutation confirmation"
+            )
+        for field in ("accepts", "produces"):
+            for schema_input in capability.get(field, []):
+                if not isinstance(schema_input, dict):
+                    continue
+                schema_ref = schema_input.get("schema")
+                kind = schema_input.get("kind")
+                if kind == "portable" and schema_ref not in declared:
+                    errors.append(
+                        f"skills-index.json: capability {capability_id} {field} references undeclared portable schema {schema_ref!r}"
+                    )
+                elif kind == "local" and schema_ref not in local:
+                    errors.append(
+                        f"skills-index.json: capability {capability_id} {field} references unknown local schema {schema_ref!r}"
+                    )
+        adapter = capability.get("adapter_binding", {})
+        if isinstance(adapter, dict) and adapter.get("policy") != "runtime-only":
+            errors.append(
+                f"skills-index.json: capability {capability_id} adapter binding must be runtime-only"
+            )
+    ids_by_package: dict[str, set[str]] = {}
+    for capability_id, capability in cap_by_id.items():
+        ids_by_package.setdefault(str(capability.get("package")), set()).add(capability_id)
+    for package in packages:
+        name = str(package.get("name"))
+        declared_ids = set(package.get("capability_ids", []))
+        actual_ids = ids_by_package.get(name, set())
+        unknown = declared_ids - cap_by_id.keys()
+        if unknown:
+            errors.append(
+                f"skills-index.json: package {name} references unknown capability IDs {sorted(unknown)}"
+            )
+        if declared_ids != actual_ids:
+            errors.append(
+                f"skills-index.json: package {name} capability_ids differ from capabilities: "
+                f"declared {sorted(declared_ids)}, found {sorted(actual_ids)}"
+            )
+    return errors
+
+
 def skill_index_errors(root: Path, names: set[str]) -> list[str]:
     errors: list[str] = []
     index_path = root / "skills-index.json"
@@ -1141,7 +1286,10 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
         return [f"skills-index.json: cannot load index and schema: {error}"]
 
-    schema_errors = sorted(
+    # Keep a bounded v2 read path for temporary fixtures and migration tooling.
+    # The published catalog and all new consumers use the v3 schema directly.
+    legacy_v2 = payload.get("version") == 2 and isinstance(payload.get("skills"), list)
+    schema_errors = [] if legacy_v2 else sorted(
         jsonschema.Draft202012Validator(schema).iter_errors(payload),
         key=lambda error: [str(part) for part in error.absolute_path],
     )
@@ -1151,7 +1299,7 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
     if schema_errors:
         return errors
 
-    entries = payload["skills"]
+    entries = payload["skills"] if legacy_v2 else payload["packages"]
     errors.extend(skill_contract_errors(entries))
     indexed_names = [entry["name"] for entry in entries]
     if len(indexed_names) != len(set(indexed_names)):
@@ -1161,6 +1309,23 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
             "skills-index.json package set differs: "
             f"expected {sorted(names)}, found {sorted(set(indexed_names))}"
         )
+
+    if not legacy_v2:
+        errors.extend(capability_contract_errors(payload, entries))
+        implemented_portable = root / "docs" / "skills" / "schemas"
+        for filename, expected_id in (
+            ("repository-scope.v1.schema.json", "urn:skills:repository-scope:v1"),
+            ("asset-map-result.v1.schema.json", "urn:skills:asset-map-result:v1"),
+        ):
+            try:
+                portable_schema = json.loads((implemented_portable / filename).read_text(encoding="utf-8"))
+                jsonschema.Draft202012Validator.check_schema(portable_schema)
+                if portable_schema.get("$id") != expected_id:
+                    errors.append(f"{filename}: $id must be {expected_id}")
+                if expected_id not in payload["schema_refs"]["declared_portable"]:
+                    errors.append(f"{filename}: implemented portable schema is not declared")
+            except (OSError, json.JSONDecodeError, jsonschema.SchemaError) as error:
+                errors.append(f"{filename}: cannot validate implemented portable schema: {error}")
 
     categories = set(payload["categories"])
     used_categories: set[str] = set()

@@ -1,195 +1,139 @@
 ---
 name: repo-map
-description: "Use when a Git or non-Git workspace needs a current durable map or authorized rebuild of roots, source/build/runtime identities, ownership, architecture, commands, dependency routes, reusable contracts, Java build boundaries, or layered AGENTS.md guidance; not for task-local discovery or change review."
+description: "Use when a Git or non-Git workspace needs a machine-queryable repository asset scan, impact/relationship query, coverage or drift check, or an optional derived navigation view; not for task-local discovery, source changes, repository-guidance authoring, or change review."
 ---
 
 # Repository Map
 
 ## Overview
 
-Map stable workspace or repository semantics into a concise Markdown-first navigation
-layer rooted at `<map-root>/docs/project-map.md`, unless the project already defines
-an equivalent, or explicitly requested layered repository guidance in `AGENTS.md`. A
-map should let later work reach the correct working root, Git root when present,
-canonical owner, reusable contract, protocol authority, generated consumer, and
-verification source without rediscovering the project. Layered guidance should put
-shared rules at the map root and narrower commands or constraints at independently
-owned subproject boundaries. Source remains proof; neither artifact substitutes for
-task-time checks or judges changes for defects.
+Own two read-only capabilities, `repository.asset.query` and
+`repository.map.render`, plus the artifact-writing `repository.asset.scan` capability.
+The scan never changes repository source, documentation, or Git, but its host adapter
+must own an isolated run-local SQLite/cache path and declare that write explicitly.
+The authoritative result is a
+versioned Repository Asset Graph snapshot with stable asset and edge references,
+explicit basis, scope, exclusions, coverage, conflicts, and unresolved records. A
+Markdown or HTML map is an optional derived view over that snapshot; it is never the
+gate, completeness proof, or source of truth.
+
+Project source, contracts, configuration, Product Markdown, `DESIGN.md`, and local UI
+contracts retain their native authority. The graph indexes identity and relationships
+without copying their bodies. Runtime claims and delivery status belong to typed
+delivery observations, not the asset graph.
+
+Keep canonical/source owner, build/deploy owner, runtime service identity, and
+gateway/registration alias as separate fields when they differ.
 
 ## Workflow
 
-1. Resolve the requested scope, containing Git root, child/nested Git roots, map root, and `versioned` or `local-unversioned` persistence before reading broadly. Keep the deepest Git root as file owner unless current manifests prove otherwise; non-Git projects remain valid map targets. Use the root-resolution procedure in `references/checklist.md` only when boundaries are ambiguous.
-2. Read effective repository guidance from the map root and each child Git root actually opened, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present. Run `git status --short` in every applicable Git root before editing a document there; do not run Git commands as if a non-Git container were a repository.
-3. Select the requested artifact. For a repo map, locate the existing project-defined equivalent or consider `<map-root>/docs/project-map.md`; reconcile competing candidates and federated specialist maps without copying their detail. For explicitly requested repository-guidance creation or repair, load `references/project-guidance.md`, follow its placement gate and workflow through artifact validation, then resume at step 15; do not also create a repo map unless requested. If any target artifact is already modified, inspect its staged and unstaged diff, preserve unrelated hunks, and stop on an unsafe overlap.
-4. For repo-map artifacts, apply the creation gate: create or expand a map only when it will reduce wrong-root routing, repeated semantic discovery, duplicate implementation, or cross-boundary inference. If one directory listing or manifest answers the need, read it directly and keep the map absent or smaller.
-5. Select workspace, repository, or scoped level from real ownership, build, deploy, or runtime boundaries; never split from directory names alone.
-6. Define only the questions this map must answer. By default require purpose,
-   boundary/owner, working and Git roots, command sources, and the shortest routes for
-   common tasks. Add architecture, reusable contracts, cross-boundary relationships,
-   runtime identities, dependencies, frontend/API detail, or validation entry points
-   only when they materially change routing for the selected repository or request.
-   When product positioning changes task routing, link the smallest verified
-   product-fact authority set without restating or deciding product behavior. Treat
-   canonical owner as the definition or contract owner; record build/deploy,
-   runtime/operations, or data/schema ownership only when it changes routing. When
-   the user supplies an external project or framework as a design reference, use it
-   to identify candidate architecture, documentation, and validation questions, then
-   retain only conclusions verified against the target repository; never turn the
-   reference into a target-repository authority or a framework-specific execution
-   branch.
-   When the request is explicitly to understand project execution, configuration,
-   compatibility, integration, or delivery rather than navigation alone, load
-   [project grounding](references/project-grounding.md). Persist only stable routing,
-   authority, contract-edge, and verification-entry facts; keep task-time evidence,
-   freshness, and operational status in the consuming implementation or review.
-7. Search before opening files. Start with manifests/config, entry points, exports/registrations, and the nearest representative implementation. Read only evidence that can change the map. When Maven, Gradle, or JVM source-set evidence appears, load `references/java-build-and-dependency-map.md` and resolve the owning build root, JDK source, module graph, and critical dependency routes without dumping the full dependency tree.
-8. For monorepos or multi-repo workspaces, map the routing boundary first, then only the owning child repository or package needed. Do not scan every child by default.
-9. Write or update the smallest repo-map artifact that answers the selected questions.
-   The default map contains purpose/boundary, owner and working/Git roots, command
-   source links, and short reading paths for common tasks. Add technical architecture,
-   runtime identities, conventions, reuse entries, cross-boundary contracts,
-   dependency routes, exceptions, or risks only when the repository and selected
-   tasks actually require them. A reuse entry, when justified, records canonical
-   owner/definition, access or registration, representative consumers, boundary, and
-   current-source evidence. Never add an empty or generic section merely because a
-   template lists it; mark only materially unchecked selected areas `Not verified`.
-   For reusable UI components, record the product/design term, visual cue or
-   semantic job, canonical path and symbol, export/registration path, owning
-   provider root, representative consumers, states/variants, reuse boundary,
-   and current-source evidence. When the project adopts a resolved `<design-root>/DESIGN.md`,
-   also record its exact map-root-relative path plus anchor or semantic binding;
-   do not copy token values or design rules. Keep this a high-value index, not a
-   catalog. Let page UI Markdown name its component roles and composition; use the
-   project map only to reach high-value source owners, then verify symbols, consumers,
-   and implemented states in current source. Do not create a parallel component
-   registry merely to connect UI docs to source. Load `references/frontend-inventory.md` only for a requested frontend
-   inventory or code-context index.
-   For a requested HTTP API inventory, use `references/api-contract-map.md`. Record
-   the repository-native authority/consumer chain and only existing or explicitly
-   requested generated artifacts; do not introduce or copy schemas.
-10. Before recommending a new declaration, search bounded live source through explicit owner/provider edges, rank current candidates, and report `reuse`, `extend`, `wrap`, justified `new`, or `Not verified`. Do not scan unrelated dependency graphs or persist task-local choices.
-11. Revalidate an entry's current definition, access/registration, command, schema, and runtime role before use. Repair only the changed entry and directly dependent declared edges.
-12. Repair stale paths only inside their recorded owner/provider root. If that root is absent, mark stale and restart bounded live discovery from newly proven ownership. Git history may explain only a move already proven by current source; see `references/checklist.md` for the bounded repair procedure.
-13. Rebuild the whole repo-map artifact only when it is missing, corrupt, structurally unusable, or the user explicitly requests a rebuild.
-14. Stop when each selected common task reaches the correct working/Git root through the minimum decisive evidence chain, normally 1-8 unique entries per task. Reuse shared entries across tasks; exceed eight only when distinct required ownership or runtime boundaries cannot be represented safely with fewer entries, and record the reason. Mark unchecked areas `Not verified`.
-15. Run project-defined documentation checks that match the edit, then verify the
-    final diff contains only intended changes. Do not require a project-local map
-    schema or validator for a Markdown project map; source inspection remains the
-    authority for routes, components, APIs, and consumers.
+1. Resolve the requested capability, repository root, nested Git roots, symbolic scan
+   scope, exclusions, and current basis. Reject absolute, parent-escaping, or symlink-
+   escaping scope. Read effective repository guidance and inspect Worktree state before
+   broad reads.
+2. Preflight a compatible graph runtime for the selected capability and schema version.
+   If none exists, return `CAPABILITY_MISSING` with the missing capability/version and
+   recovery hint. Do not fall back to a hand-written Markdown map and imply equivalent
+   coverage.
+3. For `repository.asset.scan`, require a host-owned, repository-excluded run-local
+   store and run bounded extractors against source, contracts,
+   manifests, configuration, tests, and declared authorities. Record extractor identity
+   and version, confidence, evidence status, content hash, and last-seen basis for every
+   record. Keep runtime observations out of the graph.
+4. Persist the local `urn:forgeway:repository-asset-snapshot:v1` snapshot and emit a
+   portable `urn:skills:asset-map-result:v1` envelope containing its compatible
+   snapshot/scan ID,
+   basis, included scope, exclusions, coverage denominator and numerator, unresolved
+   records, conflicts, stale/tombstoned records, and validation result. A partial scan
+   remains partial even when all attempted extractors succeed.
+5. For `repository.asset.query`, consume an exact compatible snapshot reference and a
+   bounded query such as asset lookup, relationship traversal, consumer lookup, reverse
+   impact, authority conflict, or drift. Preserve the snapshot basis in the result; a
+   query against a stale basis is labeled stale rather than silently refreshed.
+6. Before any absence claim, report the searched scope, extractor coverage, unresolved
+   records, and exclusions. A query miss means `Not found in this snapshot`, not proof
+   that no implementation exists.
+7. For `repository.map.render`, consume an exact snapshot/query result and render only
+   the requested navigation projection. Include snapshot ID, basis, coverage, and a
+   regeneration command or capability reference. Do not add facts that are absent from
+   the machine result.
+8. Validate schema, references, authority uniqueness, edge endpoints, path containment,
+   and snapshot/basis consistency. Report drift and conflicts as typed failures; do not
+   repair source, approve authorities, or mutate Git.
+9. When the host provides Forgeway delivery integration, bind the invocation to an
+   immutable Run input reference and PackageManifest/basis reference, then attach the
+   typed result as an Observation. Provider, model, executable, and session attribution
+   remain run-local facts. Absence of that integration does not weaken graph validation,
+   but delivery state remains `Not verified`.
 
 ## Modes
 
-- **Repo map:** create the smallest useful workspace, repository, or scoped navigation artifact.
-- **Project guidance baseline:** create or repair explicitly requested layered `AGENTS.md` files at the map root and at independently owned frontend, backend, desktop, CLI, worker, or other subproject boundaries; load `references/project-guidance.md`.
-- **Targeted update:** add or refresh one architecture, command, ownership, component, or interface area.
-- **Reuse inventory:** map the shortest chain to existing reusable or reference implementations before new development.
-- **Frontend inventory profile (on demand):** index only the routes/pages,
-  components, hooks/state, API, styles, and design bindings that materially guide
-  a requested frontend surface. It is a reference for later work, not a required
-  implementation phase.
-- **API Contract Map profile:** record a bounded native or generated authority/consumer chain and its available checks.
-- **Navigation repair:** recover stale documented paths by ascending to the nearest existing ancestor and repairing only affected entries.
-
-## Do Not Use For
-
-- Ordinary implementation when no separate repo-map deliverable was requested; implementation skills perform their own bounded discovery and live reuse search.
-- Local diff readiness or fixed immutable review; use `repo-review` with Worktree/index, resolved SHA/range (including PR base/head), or verified package basis, plus the conditional Release profile when applicable.
-- Future implementation planning; use the host's built-in planning.
-- Generic policy generation with no current repository evidence or no explicit request to create or update repository guidance.
-- Root-cause investigation of a concrete failure; use the host's built-in diagnosis under effective instructions. repo-map may establish navigation evidence (roots, owners, paths, reuse entries) that a debug task consumes, but must not claim root-cause diagnosis or own the fix; when source changes are requested, hand off to the matching `dev-*` owner.
+- **Asset scan:** produce or incrementally refresh a validated graph snapshot.
+- **Asset query:** answer bounded identity, relation, authority, reuse, consumer, impact,
+  coverage, unresolved, conflict, or drift questions against one snapshot.
+- **Derived render:** create a disposable Markdown/HTML navigation view from a typed
+  result. Deleting the view must not lose graph facts.
 
 ## Hard Rules
 
-- Project files, configs, commands, and effective guidance are the source of truth.
-- Treat external example repositories and framework documentation as comparative
-  design input only. Separate adopted current-source facts from proposed patterns and
-  rejected differences; do not copy their directory layout, commands, dependencies,
-  or conventions into the target map without target-repository evidence.
-- Use exact map-root-relative paths and state the working root plus every relevant Git root when ambiguity is possible.
-- Prefer the shortest accurate reading path over a complete file inventory.
-- Keep one root navigation authority while allowing verified specialist maps to own
-  bounded detail. Do not duplicate their rows, tokens, schemas, or component
-  inventories into the root map.
-- Keep root and subproject guidance layered: root `AGENTS.md` owns shared rules and
-  task routing; a nearer file owns only commands, paths, checks, and constraints that
-  differ for its proven boundary. Do not duplicate the root file into every directory.
-- Do not infer a subproject boundary from names such as `frontend`, `backend`, `src`,
-  or `apps` alone. Require evidence such as an independent manifest, build/start/test
-  surface, deploy/runtime unit, nested Git root, or explicit ownership boundary.
-- Never overwrite an existing guidance file wholesale. Preserve its effective rules,
-  inspect local diffs, and patch only evidence-backed gaps or stale statements.
-- Do not mirror the source directory structure, enumerate every leaf file/function/API, or store transient branch, dirty-tree, local-environment, or runtime status.
-- Do not copy a lockfile, dependency tree, effective build model, repository credentials,
-  or application configuration values into the map. Record manifest authorities,
-  direct routing-relevant edges, configuration ownership, and verification commands;
-  mark unresolved remote configuration or transitive behavior `Not verified`.
-- Do not generate or copy an executable API schema into the map. Record authority,
-  paths, symbols, commands, consumers, and evidence references only.
-- Do not recommend a new component, function, endpoint, service, repository, trait, DTO, hook, composable, store, or helper before verifying the nearest reusable or reference implementation in live source.
-- Treat the reuse index as high-value navigation, not an exhaustive symbol catalog. Include explicit shared contracts or proven reusable candidates; keep leaf-local details in source.
-- If an already maintained non-LLM component registry is in scope, treat its IDs as
+- Keep this Skill read-only with respect to repository source, documentation, and Git;
+  only the bounded scan store or requested derived view may be written.
+- Never make Markdown the authoritative scan result or a required delivery gate.
+- Never treat directory enumeration or a selective reading path as complete repository
+  cognition.
+- Never copy Product, design, UI, source-contract, schema, or runtime bodies into the
+  graph; store stable identity, location, hash, authority role, and edges.
+- Never infer runtime success, review approval, delivery, deployment, or production
+  verification from static graph records.
+- Never hand-author stable IDs or relationship edges to compensate for a missing or
+  failed extractor. Emit unresolved/conflict records and the responsible extractor.
+- Never erase renamed or deleted assets needed by historical Runs; use tombstones or
+  versioned snapshot history according to the graph retention policy.
+- Never accept a snapshot whose basis, schema version, producer, validator, drift
+  policy, or retirement rule is absent.
+- If an already maintained non-LLM structured projection is encountered, treat it as
   navigation only and require its named owner, producer, non-LLM consumer, semantic
-  version, executable validator, drift policy, and retirement rule. Otherwise keep the
-  map Markdown-only and do not invent IDs, importable symbols, or target-only states as
-  current facts.
-  Structure, route, component, and API entries are
-  frontend navigation indexes: an API row may record only observed client adapter
-  method/path/consumer facts, while backend DTO, permission, response, and OpenAPI
-  ownership remains outside the map.
-- Prefer verified existing components during implementation, but do not make a
-  repo map or Component Map a mandatory implementation prerequisite.
-- A frontend inventory or code-context index is selective navigation. Its absence
-  or a map miss never proves that a route, component, style, hook, state owner,
-  API client, or design binding does not exist; perform bounded live discovery.
-- Never treat a map miss as proof that no implementation exists. Record the live search scope before allowing a new declaration.
-- Classify every durable path claim against the resolved root as `verified` (checked in current source), `declared-only` (named in a manifest/config but not source-confirmed), `stale` (root absent or moved), or `Not verified` (unchecked). A map miss is never proof of absence.
-- Say `Not found` for missing items and `Not verified` for unchecked or runtime claims.
-- Keep current truth separate from history, plans, and aspirational architecture.
-- Keep canonical/source owner, build/deploy owner, runtime service identity, and
-  gateway/registration alias as separate fields when they differ; a stable runtime
-  name does not move source ownership back to an old module.
-- Repair stale navigation locally. Never rebuild the whole document merely because one path or parent directory disappeared.
-- When the user explicitly authorizes a full map rebuild, reconcile every root and
-  specialist index, link, owner, consumer, and deletion as one current-state closure;
-  remove task narratives and superseded routes instead of preserving them as history.
-- Do not add YAML/JSON map sidecars for machine convenience without a named owner,
-  producer, non-LLM consumer, semantic version, executable validator, drift policy,
-  and retirement rule.
-- Do not create a generic Repo Map schema/profile or validator merely for AI parsing.
-  A project-local validator is justified only by a named maintained consumer and
-  executable lifecycle.
-- Never ascend or search outside a recorded owner/provider root to rescue a stale
-  component entry. If that root no longer exists, mark the entry stale and use a
-  fresh bounded live search with newly proven ownership.
-- Use Git history only as corroboration for a current-source-proven move or rename;
-  historical definitions and consumers do not prove current reusability.
-- Preserve unrelated local changes.
-- Do not produce P0-P3 findings or claim review approval.
-- Do not present a directory/command map as complete project understanding. Runtime
-  precedence, packaged artifacts, data compatibility, cross-repository integration,
-  and target-environment behavior remain separate evidence claims.
+  version, executable validator, drift policy, and retirement rule. Otherwise ignore
+  it and use the validated graph/native source chain.
+- Do not create map sidecars for machine convenience without a named owner, producer,
+  non-LLM consumer, semantic version, executable validator, drift policy, and
+  retirement rule.
+- Preserve unrelated local changes and secrets. Do not export source bodies, credentials,
+  or sensitive configuration into graph snapshots or derived views.
+- Say `Not verified` for unchecked runtime or delivery claims and distinguish it from
+  `false`, `conflict`, `stale`, and `Not found in this snapshot`.
 
 ## Output Contract
 
-Report changed artifact paths, scope/map/Git roots, persistence and Worktree state,
-placement decisions, updated sections, task routes, reuse/repair decisions, validation,
-and remaining `Not found` or `Not verified` gaps. For stopped work, add the reason,
-completed evidence chain, unresolved boundary, artifact state, and follow-up. Do not
-duplicate full artifacts in chat.
+Return the selected capability ID/version, repository and Git roots, basis/PackageManifest
+reference when available, scan scope and exclusions, snapshot/scan ID, typed result
+schema, validation, coverage, unresolved/conflict/stale counts, query and bounded result,
+derived-view path when requested, and every `Not verified` boundary. If Forgeway
+integration is active, also return Run and Observation references; never claim a Receipt
+or delivery level that this read-only owner did not produce.
 
 ## References
 
-- See [references/usage.md](references/usage.md) for routing and examples.
-- See [references/checklist.md](references/checklist.md) for evidence and incremental repair details.
-- See [references/reuse-index.md](references/reuse-index.md) when mapping components, functions, types, or APIs and deciding whether a new declaration is justified.
-- See [references/frontend-inventory.md](references/frontend-inventory.md) only
-  for a requested frontend inventory or code-context index.
-- See [references/api-contract-map.md](references/api-contract-map.md) only for a requested HTTP authority/consumer map.
-- Read [references/java-build-and-dependency-map.md](references/java-build-and-dependency-map.md) when Maven, Gradle, or JVM source-set evidence appears.
-- See [references/project-guidance.md](references/project-guidance.md) only for explicitly requested root or layered subproject `AGENTS.md` creation or repair.
-- Read [references/project-grounding.md](references/project-grounding.md) when the
-  requested artifact must route stable runtime, configuration, data, compatibility,
-  integration, or verification authorities beyond ordinary navigation.
-- See [references/prompt-templates.md](references/prompt-templates.md) for the repo-map structure.
-- See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.
+- See [references/checklist.md](references/checklist.md) only for ambiguous root and
+  bounded source-resolution procedures.
+- See [references/project-grounding.md](references/project-grounding.md) when static
+  repository relations cross packaging, integration, compatibility, or deployment-
+  target boundaries; runtime results still belong to delivery observations.
+- See [references/frontend-inventory.md](references/frontend-inventory.md) only to
+  select frontend extractor/query scope; do not emit its legacy Markdown inventory as
+  authority.
+- See [references/api-contract-map.md](references/api-contract-map.md) only to locate
+  native API authority and consumer edges without copying schemas.
+- See [references/java-build-and-dependency-map.md](references/java-build-and-dependency-map.md)
+  only to select Java build/dependency extractor scope; any tabular examples are query
+  projections, not an authoritative output contract.
+- See [references/reuse-index.md](references/reuse-index.md) only to translate legacy
+  reuse questions into graph consumer/registration queries; do not author its old
+  Markdown rows.
+- See [references/project-guidance.md](references/project-guidance.md) only to identify
+  and reroute an explicit repository-guidance authoring request; this read-only Skill
+  does not perform that write mode.
+- See [references/prompt-templates.md](references/prompt-templates.md) only when
+  composing a bounded scan/query/render request.
+- See [references/usage.md](references/usage.md) and
+  [references/eval-cases.md](references/eval-cases.md) for usage and routing checks.

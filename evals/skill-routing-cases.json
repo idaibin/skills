@@ -4,6 +4,9 @@
   "description": "Deterministic repository routing and contract-stop cases. These cases exercise every catalog owner across normal, nearest-boundary, and critical-stop paths.",
   "cases": [
     {"id": "repo-map-normal", "skill": "repo-map", "class": "normal", "prompt": "Map repository boundaries, owners, commands, and reusable contracts.", "expected_owner": "repo-map", "expected_outcome": "route"},
+    {"id": "repo-map-capability-scan", "skill": "repo-map", "capability_id": "repository.asset.scan", "class": "normal", "prompt": "Scan repository assets and report scan coverage.", "expected_owner": "repo-map", "expected_outcome": "route"},
+    {"id": "repo-map-capability-query", "skill": "repo-map", "capability_id": "repository.asset.query", "class": "normal", "prompt": "Query repository assets and relations for this scope.", "expected_owner": "repo-map", "expected_outcome": "route"},
+    {"id": "repo-map-capability-render", "skill": "repo-map", "capability_id": "repository.map.render", "class": "normal", "prompt": "Render a derived repository map artifact.", "expected_owner": "repo-map", "expected_outcome": "route"},
     {"id": "repo-map-boundary", "skill": "repo-map", "class": "boundary", "prompt": "Implement the frontend source change and wire its page route.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
     {"id": "repo-map-critical-stop", "skill": "repo-map", "class": "critical-stop", "prompt": "Map repository ownership, but the target scope is ambiguous; stop before writing a map.", "expected_owner": "repo-map", "expected_stop": "scope-ambiguous", "expected_outcome": "stop"},
 

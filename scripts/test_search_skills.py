@@ -1274,6 +1274,62 @@ class SearchSkillsTests(unittest.TestCase):
         self.assertEqual("dev-frontend", SEARCH.search(index, "implement a frontend component")[0]["name"])
         self.assertEqual("audit-java", SEARCH.search(index, "audit a Java service")[0]["name"])
 
+    def test_v3_repo_map_exposes_three_capabilities_and_runtime_scope_formula(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        result = SEARCH.search(
+            index,
+            "Query repository assets and relations",
+            user_scope=["repository-root", "query-scope"],
+            host_scope=["repository-root", "query-scope"],
+        )[0]
+        self.assertEqual("repo-map", result["name"])
+        self.assertEqual(
+            {
+                "repository.asset.scan",
+                "repository.asset.query",
+                "repository.map.render",
+            },
+            {capability["capability_id"] for capability in result["capabilities"]},
+        )
+        self.assertFalse(result["effective_scope"]["static_manifest_authorizes"])
+        self.assertEqual("user ∩ host ∩ maximum", result["effective_scope"]["formula"])
+
+    def test_effective_scope_intersects_runtime_inputs(self) -> None:
+        scope = SEARCH.effective_scope(
+            ["repository-root", "query-scope"],
+            ["repository-root", "query-scope", "host-only"],
+            ["repository-root", "query-scope", "maximum-only"],
+        )
+        self.assertEqual("computed", scope["status"])
+        self.assertEqual(["query-scope", "repository-root"], scope["value"])
+        self.assertFalse(scope["static_manifest_authorizes"])
+
+    def test_read_only_request_excludes_mutating_capabilities(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        result = SEARCH.search(index, "read-only repository map query")[0]
+        self.assertEqual("repo-map", result["name"])
+        self.assertTrue(result["capability_ids"])
+        self.assertTrue(
+            all(
+                capability["maximum_mutation_class"] == "read-only"
+                for capability in result["capabilities"]
+            )
+        )
+        self.assertNotIn("repository.map.render", result["capability_ids"])
+        self.assertNotIn(
+            "repo-map",
+            {
+                item["name"]
+                for item in SEARCH.search(index, "read-only repository.map.render")
+            },
+        )
+
+    def test_exact_capability_id_resolves_only_its_owner_and_contract(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        results = SEARCH.search(index, "read-only repository.asset.query")
+        self.assertEqual(["repo-map"], [result["name"] for result in results])
+        self.assertEqual(["repository.asset.query"], results[0]["capability_ids"])
+
 
 if __name__ == "__main__":
     unittest.main()

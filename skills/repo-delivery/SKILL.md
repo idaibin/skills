@@ -9,6 +9,13 @@ description: "Use when authorized Git mutation must preserve a large task throug
 
 Own two separately authorized Git lifecycles: **Execution Durability** preserves large-task progress on a task branch through semantic milestones, targeted fixups, and exceptional safety checkpoints; **Final Delivery** normalizes the completed branch when requested, fixes the final review basis, and performs reviewed commits, pushes, integration, or cleanup. Execution commits preserve work but never imply final review, merge readiness, or remote durability. Verify branch policy, sharing/rewrite safety, permissions, commit grouping, and staged content before mutation; never open a pull request.
 
+Consume `urn:skills:delivery-request:v1`; this is the sole default Skill that produces
+`urn:skills:delivery-receipt:v1`. Consume
+an exact reviewed PackageManifest/basis, review Observations, authorization, and target;
+emit a typed DeliveryReceipt only after target readback. Local commits without remote
+readback remain local durability and do not imply delivered, deployed, or production-
+verified state.
+
 ## Workflow
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
@@ -18,11 +25,28 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 5. Confirm each target through either exact per-action authorization or a bounded task-level execution-durability plan. A standing plan records the task branch, owned scope, allowed milestone/fixup/checkpoint types, event triggers, validation floor, message policy, and push policy; matching commits may proceed without asking again. Scope expansion, a new commit type, failed safety gates, rewrite, push, integration, or cleanup requires fresh authority.
 6. Confirm branch policy and permissions: task/default/protected status, upstream and known sharing/review state, force-push restrictions, required checks, branch naming, and every unknown that changes safety.
 7. For **Execution Durability**, require exact per-action authority or a still-valid bounded task plan plus an exact separable scope. Classify it as a completed semantic milestone, a correction owned by one reachable milestone, or an exceptional checkpoint permitted by the plan before a concrete loss/recovery risk. Reuse implementation evidence, run focused validation when possible, stage only exact paths/hunks, inspect the complete cached diff, commit, then report remaining and unrelated Worktree content. Continue under the same plan only while its branch, scope, triggers, and safety gates still match; push remains separately authorized.
-8. For ordinary reviewed local commits, ensure the accepted review basis and ownership are clear, then classify every approved path or hunk by semantic intent and dependency order. When the approved delivery outcome depends on a selected-source visual-completion claim, require the applicable final review verdict and referenced final visual-evidence artifact before calling it ready; consume those artifacts without capturing screenshots, operating a browser/client, or issuing a new visual verdict. Default to one commit per independent category. Use one commit only when explicitly requested or the complete scope is one indivisible intent. Inspect cached stat, name-status, and full diff before each commit.
+8. For ordinary reviewed local commits, require the accepted review basis and ownership
+   to match the immutable PackageManifest when one is supplied; regenerate through its
+   declared producer and stop for review when any file/hash/status differs. Classify
+   every approved path or hunk by semantic intent and dependency order. When the
+   approved delivery outcome depends on a selected-source visual-completion claim,
+   require the applicable final review Observation and referenced final visual-
+   evidence artifact before calling it ready; consume those artifacts without
+   capturing screenshots, operating a browser/client, or issuing a new visual verdict.
+   Default to one commit per independent category. Use one commit only when explicitly
+   requested or the complete scope is one indivisible intent. Inspect cached stat,
+   name-status, and full diff before each commit.
 9. For **Final History Normalization**, require completed implementation, exact rewrite authorization, and either a clean task worktree or an isolated worktree with every remaining staged/unstaged/untracked item fingerprinted outside the rewrite basis. Record the source range, before HEAD/tree, and recoverable pre-rewrite SHA; do not rewrite a default, protected, shared, or active-review branch when safe ownership is not proven. After normalization, require the expected tree and scope to match, freeze the new immutable basis, and obtain final fixed-basis review evidence. Any later history or tree change invalidates that evidence.
 10. For branch integration, fix the source range and target tip before choosing the history shape. Preserve coherent, reviewed, meaningful commits when their order and boundaries remain useful; squash noisy, fixup-heavy, checkpoint-bearing, or single-outcome history when policy or explicit intent calls for one commit. Selecting only some source commits requires explicit partial-integration scope and proof that omitted content is intentional.
 11. For push, sync, cleanup, or conflict resolution, execute only that target's authorized mutations. Conflict authorization separately covers file resolution, staging, merge/rebase continuation or commit, and push; an omitted action remains forbidden.
-12. Verify the requested final local and remote state with branch, status, log, tree, remaining Worktree content, and remote ref evidence. A local-only durability commit reports remote protection as absent, not implied.
+12. Verify the requested final local and remote state with branch, status, log, tree,
+    remaining Worktree content, and remote ref evidence. A local-only durability commit
+    reports remote protection as absent, not implied.
+13. When Forgeway delivery integration is active, bind capability, reviewed result
+    PackageManifest, accepted review Observations, authorization, target, and exact
+    mutation scope to an immutable Run/Attempt. Emit DeliveryReceipt only from actual
+    commit/ref/remote readback evidence. Deployment and production verification require
+    their own environment-specific receipts and are never inferred from Git success.
 
 ## Modes
 
@@ -95,7 +119,19 @@ Own two separately authorized Git lifecycles: **Execution Durability** preserves
 
 ## Output Contract
 
-Return a compact Delivery Report with `Completed`, `Changed Files`, `Verification`, `Known Issues`, `Next Steps`, and `Git Status`. Include lifecycle and mode, per-action or bounded-plan authorization basis, delivery target, branch/upstream, branch policy, ahead/behind/diverged state, dirty-tree risks, semantic categories and dependency order, each staged scope and commit hash, validation and review state, local-only versus pushed durability, remaining uncommitted content, required checkpoint/fixup disposition, before/after tree proof for normalization, branch-integration strategy and rationale, authorized Git actions, final local and remote ref evidence, rejected unsafe operations, and every `Not verified` item. Reference existing artifacts instead of duplicating them; redact secrets and unrelated personal data.
+Return capability `repository.git.deliver`, Run/Attempt and reviewed PackageManifest
+refs when integration is active, the typed DeliveryReceipt ref or an explicit reason
+none was produced, and a compact Delivery Report with `Completed`, `Changed Files`,
+`Verification`, `Known Issues`, `Next Steps`, and `Git Status`. Include lifecycle and
+mode, per-action or bounded-plan authorization basis, delivery target,
+branch/upstream, branch policy, ahead/behind/diverged state, dirty-tree risks,
+semantic categories and dependency order, each staged scope and commit hash,
+validation and review Observation refs, local-only versus pushed durability,
+remaining uncommitted content, required checkpoint/fixup disposition, before/after
+tree proof for normalization, branch-integration strategy and rationale, authorized
+Git actions, final local and remote ref readback, rejected unsafe operations, and every
+`Not verified` item. Reference existing artifacts instead of duplicating them; redact
+secrets and unrelated personal data.
 
 ## References
 

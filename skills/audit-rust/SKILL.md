@@ -9,6 +9,12 @@ description: "Use when a Rust workspace or known Rust surface needs a scoped, re
 
 Audit Rust engineering from repository evidence. Select only the audit profiles required by the task; do not load architecture, performance, memory, SQLite, concurrency, and FFI review into every audit. This workflow is read-only by default; use `dev-rust` for requested changes. `repo-review` may invoke this skill for a bounded Rust specialist subreview under either a Worktree or immutable review basis.
 
+Consume `urn:skills:audit-request:v1`; the portable output is
+`urn:skills:audit-findings:v1`. When supplied, consume an
+exact PackageManifest/basis plus compatible graph asset/consumer/impact results. The
+audit produces findings and validation Observations, not Task/Requirement status or a
+delivery Receipt.
+
 ## Rule Priority
 
 Resolve conflicts in this order:
@@ -47,7 +53,11 @@ Do not rewrite a working local design merely to resemble an external project.
    - **SQLite:** runtime/linkage, connections, transactions, WAL, migrations, schema, indexes, plans, maintenance, backup, and recovery.
    - **Unsafe/FFI:** invariants, ABI/layout, pointer ownership, callbacks, threads, panic containment, alloc/free symmetry, and native cleanup.
 4. Classify applicable standards as portable governance, organization baseline, new-project template, repository contract, or documented legacy exception. Never turn a version snapshot or example tree into a universal rule.
-5. Consume current `repo-map` output or build a targeted inventory of analogous APIs, modules, database access, background tasks, tests, benchmarks, migrations, callers, and architecture docs.
+5. Consume a compatible graph asset/consumer/impact query or build a targeted live
+   inventory of analogous APIs, modules, database access, background tasks, tests,
+   benchmarks, migrations, callers, and architecture docs. Reject stale or mismatched
+   graph results; a query miss never proves absence, and a derived Markdown view is
+   not audit evidence.
 6. When the selected Rust audit crosses reachable runtime/configuration, packaging, API,
    persistence, compatibility, security, deployment, or cross-repository boundaries, load
    `references/project-grounding.md`. Select this from semantic reachability, not from Rust,
@@ -58,6 +68,10 @@ Do not rewrite a working local design merely to resemble an external project.
 9. Validate hypotheses with non-mutating repository-defined commands and representative data. Do not substitute `cargo check` for release, benchmark, concurrency, migration, or runtime evidence.
 10. Stop when the selected profiles are supported by evidence. Mark unselected profiles out of scope rather than partially reviewing them.
 11. Report severity-ranked findings with impact, exact location, evidence, remediation direction, `Not verified` gaps, and the selected/excluded profile boundary. In specialist mode, return findings to the coordinating `repo-review`; do not stage, commit, post comments, or take over final review ownership.
+12. When Forgeway delivery integration is active, bind the audit to an immutable Run,
+    exact input/result PackageManifest, and typed input refs. Attach each finding or
+    validation result as an Observation against that package. Do not hand-edit a Gate,
+    rewrite prior Observations after a retry, or infer reviewed/delivered state.
 
 ## Modes
 
@@ -101,7 +115,15 @@ Do not rewrite a working local design merely to resemble an external project.
 
 ## Output Contract
 
-Start with the inspection snapshot, selected profiles, and severity-ranked findings. For each finding, report impact, exact location, evidence, remediation direction, and validation gap. Then summarize project class; coordinating owner when this is a scoped specialist subreview; guidance/manifests/code/migrations/docs/tests/commands inspected; existing candidates; ownership and invariants; selected profile evidence; structural lifecycle; workload and before/after data where applicable; explicitly excluded profiles; and `Not found` or `Not verified` gaps.
+Start with capability `rust.surface.audit`, typed audit-findings/Observation refs, Run
+and PackageManifest refs when integration is active, the inspection snapshot,
+selected profiles, and severity-ranked findings. For each finding, report impact,
+exact location, evidence, remediation direction, and validation gap. Then summarize
+project class; coordinating owner when this is a scoped specialist subreview;
+guidance/manifests/code/migrations/docs/tests/commands inspected; existing candidates;
+ownership and invariants; selected profile evidence; structural lifecycle; workload
+and before/after data where applicable; explicitly excluded profiles; and `Not found`
+or `Not verified` gaps.
 
 ## References
 

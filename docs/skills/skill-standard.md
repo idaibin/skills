@@ -63,18 +63,37 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
 ## Repository Discovery Index
 
 `skills-index.json` is the catalog's provider-neutral repository discovery and
-execution-boundary source. It records logical categories, user intents, search
-keywords, exclusions, related owners, the maximum owned mutation class, capability
-classes, allowed/forbidden effects, and critical stop states for browsing, routing,
-and repository validation. It is not portable Skill
+execution-boundary source. Version 3 is the `capability-registry/3` contract:
+`packages[]` preserves the 16 package owners and `capabilities[]` declares a
+one-to-many set of stable `capability_id`/`capability_version` entries. Each capability
+declares accepted and produced schema references, preconditions/postconditions,
+`permission_contract` (maximum effects, confirmations, and symbolic scope
+constraints), failure/recovery codes, evidence requirements, and a runtime-only
+adapter binding. It is not portable Skill
 frontmatter, does not override `SKILL.md`, and must not be presented as if every Agent
 client loads it automatically.
+
+Schema references are declarations, not proof that a schema is implemented. The
+registry distinguishes `schema_refs.declared_portable` from `known_local`; the
+validator checks URN shape and requires local references to be registered, while
+portable references remain provider-neutral contract names. Static manifests never
+authorize an action. A host computes `effective_scope = user ∩ host ∩ maximum` when a
+capability is selected, resolves symbolic roots to repository-relative roots, and
+fails closed on absolute, parent, or symlink escape.
 
 Keep runtime trigger keywords in the portable `description`. Do not add custom top-level
 fields such as `routing`, `triggers`, or `related` to `SKILL.md`; the portable spec's
 optional `metadata` remains string-to-string provider/client metadata, not this
 catalog's nested routing registry. Keep package set, names, relations, categories, and
 index shape validator-backed.
+
+Registry lifecycle is explicit: the catalog maintainer owns and produces
+`capability-registry/3`; `search-skills.py`, routing evals and CI validation are its
+non-LLM consumers; `skills-index.schema.json` plus semantic validation is its executable
+validator. Capability or package drift changes the versioned registry and immutable
+routing baseline together. Version 3 may retire only after every named consumer reads
+the successor, migration/readback tests pass, and the prior baseline remains available
+for compatibility evaluation.
 
 Treat `mutation_class` as the maximum effect boundary owned by the Skill; a particular
 invocation may remain read-only or stop earlier. `required_capabilities` is the closed
@@ -84,6 +103,12 @@ not prove that the current host exposes them or that every mode needs them toget
 checks. `forbidden_effects` remains prohibited even when another owner is composed;
 handoffs transfer bounded context, never the other owner's authority. Stop states are
 machine-checkable outcomes, not permission to simulate runtime evidence.
+
+`write-run-local-cache` is a mutating effect even when the scanned repository remains
+read-only. A capability using it must have an `artifact-write` maximum, the host must
+choose and exclude the cache location from the scan, and the local cache schema must
+be declared in `known_local`. Portable results reference that local snapshot through a
+versioned adapter contract; they do not pretend the SQLite file itself is portable.
 
 ## Instructions And References
 

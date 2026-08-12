@@ -346,7 +346,7 @@ class ValidatorTests(unittest.TestCase):
             root, package = fixture(temporary)
             index_path = root / "skills-index.json"
             index = json.loads(index_path.read_text(encoding="utf-8"))
-            ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
+            ask_ai = next(item for item in index.get("packages", index.get("skills", [])) if item["name"] == "ask-ai")
             ask_ai["allowed_effects"].append("write-source")
             index_path.write_text(json.dumps(index), encoding="utf-8")
             errors = VALIDATOR.ask_ai_authority_errors(package)
@@ -356,7 +356,7 @@ class ValidatorTests(unittest.TestCase):
             root, package = fixture(temporary)
             index_path = root / "skills-index.json"
             index = json.loads(index_path.read_text(encoding="utf-8"))
-            ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
+            ask_ai = next(item for item in index.get("packages", index.get("skills", [])) if item["name"] == "ask-ai")
             ask_ai["forbidden_effects"].remove("write-source")
             index_path.write_text(json.dumps(index), encoding="utf-8")
             errors = VALIDATOR.ask_ai_authority_errors(package)
@@ -489,7 +489,7 @@ class ValidatorTests(unittest.TestCase):
             ROOT / "docs" / "quality" / "official-skill-alignment.md"
         ).read_text(encoding="utf-8")
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        ask_ai = next(item for item in index["skills"] if item["name"] == "ask-ai")
+        ask_ai = next(item for item in index.get("packages", index.get("skills", [])) if item["name"] == "ask-ai")
         self.assertIn("distinct correlated create and submit logical IDs", standard)
         self.assertIn("distinct correlated\n  create and submit IDs", alignment)
         self.assertTrue(
@@ -855,7 +855,7 @@ class ValidatorTests(unittest.TestCase):
             ),
         }
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        indexed = {item["name"]: item for item in index["skills"]}
+        indexed = {item["name"]: item for item in index.get("packages", index.get("skills", []))}
 
         def table_rows(section: str) -> dict[str, str]:
             rows: dict[str, str] = {}
@@ -889,7 +889,7 @@ class ValidatorTests(unittest.TestCase):
 
     def test_project_grounding_index_is_owner_qualified_and_not_literal_routing(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        indexed = {item["name"]: item for item in index["skills"]}
+        indexed = {item["name"]: item for item in index.get("packages", index.get("skills", []))}
         owners = (
             "repo-map",
             "repo-review",
@@ -1048,6 +1048,61 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(
             any("duplicate category titles" in error for error in VALIDATOR.validate(root))
         )
+
+    def test_v3_registry_has_one_to_many_capabilities_and_repo_map_modes(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        self.assertEqual(3, index["version"])
+        self.assertEqual(16, len(index["packages"]))
+        self.assertGreater(len(index["capabilities"]), len(index["packages"]))
+        repo_map = next(item for item in index["packages"] if item["name"] == "repo-map")
+        self.assertEqual(
+            {
+                "repository.asset.scan",
+                "repository.asset.query",
+                "repository.map.render",
+            },
+            set(repo_map["capability_ids"]),
+        )
+        self.assertEqual([], VALIDATOR.capability_contract_errors(index, index["packages"]))
+
+    def test_v3_capability_contract_rejects_duplicate_id_and_unknown_package(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        duplicate = json.loads(json.dumps(index["capabilities"][0]))
+        index["capabilities"].append(duplicate)
+        errors = VALIDATOR.capability_contract_errors(index, index["packages"])
+        self.assertTrue(any("duplicate capability ID" in error for error in errors))
+
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        index["capabilities"][0]["package"] = "missing-package"
+        errors = VALIDATOR.capability_contract_errors(index, index["packages"])
+        self.assertTrue(any("unknown package" in error for error in errors))
+
+    def test_v3_capability_contract_rejects_unknown_local_schema_and_version(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        capability = next(item for item in index["capabilities"] if item["capability_id"] == "repository.asset.query")
+        capability["accepts"][0] = {
+            "schema": "urn:skills:not-registered:v1",
+            "kind": "local",
+        }
+        errors = VALIDATOR.capability_contract_errors(index, index["packages"])
+        self.assertTrue(any("unknown local schema" in error for error in errors))
+
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        index["capabilities"][0]["capability_version"] = "v1"
+        schema = json.loads(INDEX_SCHEMA.read_text(encoding="utf-8"))
+        schema_errors = list(
+            VALIDATOR.jsonschema.Draft202012Validator(schema).iter_errors(index)
+        )
+        self.assertTrue(any("capability_version" in ".".join(map(str, error.absolute_path)) for error in schema_errors))
+
+    def test_v3_capability_contract_rejects_readonly_mutation_and_symbolic_escape(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        capability = next(item for item in index["capabilities"] if item["capability_id"] == "repository.asset.query")
+        capability["permission_contract"]["maximum_effects"].append("write-source")
+        capability["permission_contract"]["symbolic_scope_constraints"].append("../../repo")
+        errors = VALIDATOR.capability_contract_errors(index, index["packages"])
+        self.assertTrue(any("read-only maximum" in error for error in errors))
+        self.assertTrue(any("may not escape" in error for error in errors))
 
     def test_openai_metadata_requires_interface_root(self) -> None:
         root = self.make_repo()

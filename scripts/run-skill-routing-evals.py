@@ -77,7 +77,14 @@ def validate_case_contract(
     if errors:
         return errors
 
-    entries = {str(entry["name"]): entry for entry in index["skills"]}
+    entries = {
+        str(entry["name"]): entry for entry in SEARCH.package_entries(index)
+    }
+    capabilities = {
+        str(capability["capability_id"]): capability
+        for capability in index.get("capabilities", [])
+        if isinstance(capability, dict) and capability.get("capability_id")
+    }
     seen_ids: set[str] = set()
     coverage: dict[str, set[str]] = {name: set() for name in entries}
     for case in cases["cases"]:
@@ -90,6 +97,15 @@ def validate_case_contract(
         if skill not in entries:
             errors.append(f"{case_id}: unknown skill {skill}")
             continue
+        capability_id = case.get("capability_id")
+        if capability_id is not None:
+            capability = capabilities.get(str(capability_id))
+            if capability is None:
+                errors.append(f"{case_id}: unknown capability {capability_id}")
+            elif capability.get("package") != skill:
+                errors.append(
+                    f"{case_id}: capability {capability_id} is owned by {capability.get('package')}, not {skill}"
+                )
         coverage[skill].add(kind)
         if kind == "normal" and case["expected_owner"] != skill:
             errors.append(f"{case_id}: normal case must route to its owning skill")
@@ -128,9 +144,19 @@ def evaluate(
                 failures.append(
                     f"expected owner {case['expected_owner']}, observed {observed_owner or 'none'}"
                 )
+            capability_id = case.get("capability_id")
+            if capability_id and matches:
+                observed_capabilities = {
+                    str(capability.get("capability_id"))
+                    for capability in matches[0].get("capabilities", [])
+                }
+                if capability_id not in observed_capabilities:
+                    failures.append(
+                        f"expected capability {capability_id}, observed {sorted(observed_capabilities)}"
+                    )
         else:
             entry = next(
-                item for item in index["skills"] if item["name"] == case["skill"]
+                item for item in SEARCH.package_entries(index) if item["name"] == case["skill"]
             )
             observed_owner = str(entry["owner"])
             prompt_score, _ = SEARCH.score_entry(entry, str(case["prompt"]))

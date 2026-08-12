@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skills:asset-map-result:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "capability_id", "capability_version", "repository_id", "snapshot_ref", "basis", "scope", "coverage", "validation"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "capability_id": { "enum": ["repository.asset.scan", "repository.asset.query"] },
+    "capability_version": { "const": "1.0.0" },
+    "repository_id": { "type": "string", "minLength": 1 },
+    "snapshot_ref": { "type": "string", "pattern": "^scan:" },
+    "basis": { "type": "object" },
+    "scope": { "type": "object" },
+    "coverage": { "type": "object" },
+    "validation": { "type": "object", "required": ["valid", "issues"], "properties": { "valid": { "type": "boolean" }, "issues": { "type": "array" } } },
+    "assets": { "type": "array" }
+  }
+}

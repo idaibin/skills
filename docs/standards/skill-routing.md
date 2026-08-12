@@ -6,11 +6,20 @@ and output.
 
 ## Current Owners
 
-This table is the human navigation view. `skills-index.json` is the machine-readable
-authority for owner, maximum mutation class, capability classes, effects, and stop
-states. Portable activation remains in each `SKILL.md` description. A composed owner
+This table is the human navigation view. `skills-index.json` v3 is the
+machine-readable Capability Registry authority: `packages[]` owns routing and maximum
+mutation boundaries, while `capabilities[]` provides stable IDs/versions and typed
+input/output, precondition, failure, evidence, and runtime adapter contracts. Portable
+activation remains in each `SKILL.md` description. A composed owner
 plan never transfers authorization: for example, `dev-frontend -> repo-delivery`
 means implementation finishes before separately authorized Git delivery.
+
+Capability selection is not permission. Runtime must intersect the explicit user scope,
+host policy, and selected capability maximum (`user ∩ host ∩ maximum`), resolve symbolic
+roots safely, and stop on missing authorization, incompatible versions, unavailable
+adapters, or scope escape. Search output may expose the declared capability contract and
+an `effective_scope` calculation marker, but static registry data cannot claim runtime
+identity, installed adapters, or completed evidence.
 
 | Skill | Owns | Mutation |
 | --- | --- | --- |

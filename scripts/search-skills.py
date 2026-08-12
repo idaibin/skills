@@ -144,6 +144,7 @@ DELIVERY_DIAGNOSTIC_RE = re.compile(
     r"\b(?:inspect|check|report|tell|safe\s+(?:delivery\s+)?path)\b",
     re.IGNORECASE,
 )
+READ_ONLY_REQUEST_RE = re.compile(r"\bread[ -]only\b|只读|只讀", re.IGNORECASE)
 DIAGNOSTIC_DENIAL_RE = re.compile(
     r"\b(?:do\s+not|don't|never|must\s+not|may\s+not|cannot|can't)\s+"
     r"(?:inspect|check|report|tell)\b|\b(?:advise|advice)\b",
@@ -157,6 +158,63 @@ def repo_root() -> Path:
 
 def load_index(root: Path) -> dict[str, object]:
     return json.loads((root / "skills-index.json").read_text(encoding="utf-8"))
+
+
+def package_entries(index: dict[str, object]) -> list[dict[str, object]]:
+    """Return package entries while keeping tiny v2 fixtures readable.
+
+    The repository catalog is v3 and uses ``packages`` as its machine authority.
+    The fallback is intentionally limited to test/transition fixtures; it does not
+    make a v2 index a published v3 registry.
+    """
+    packages = index.get("packages")
+    if isinstance(packages, list):
+        return [entry for entry in packages if isinstance(entry, dict)]
+    skills = index.get("skills")
+    if isinstance(skills, list):
+        return [entry for entry in skills if isinstance(entry, dict)]
+    return []
+
+
+def capability_entries(index: dict[str, object]) -> list[dict[str, object]]:
+    capabilities = index.get("capabilities")
+    if isinstance(capabilities, list):
+        return [entry for entry in capabilities if isinstance(entry, dict)]
+    return []
+
+
+def _scope_value(value: object) -> object:
+    """Normalize optional runtime scope input without granting static authority."""
+    if value is None:
+        return "runtime-input"
+    if isinstance(value, (set, tuple, list)):
+        return sorted({str(item) for item in value})
+    return value
+
+
+def effective_scope(
+    user_scope: object = None,
+    host_scope: object = None,
+    maximum_scope: object = None,
+) -> dict[str, object]:
+    """Describe the runtime intersection; static search never authorizes it."""
+    values = [_scope_value(user_scope), _scope_value(host_scope), _scope_value(maximum_scope)]
+    if all(isinstance(value, list) for value in values):
+        intersection = sorted(set(values[0]) & set(values[1]) & set(values[2]))
+        computed: object = intersection
+        status = "computed"
+    else:
+        computed = "runtime-compute-required"
+        status = "runtime-required"
+    return {
+        "status": status,
+        "formula": "user ∩ host ∩ maximum",
+        "user": values[0],
+        "host": values[1],
+        "maximum": values[2],
+        "value": computed,
+        "static_manifest_authorizes": False,
+    }
 
 
 def normalize(value: str) -> str:
@@ -1190,6 +1248,7 @@ def score_entry(entry: dict[str, object], query: str) -> tuple[int, list[str]]:
         ("name", [str(entry["name"])], 6),
         ("intent", list(entry["intents"]), 4),
         ("keyword", list(entry["keywords"]), 3),
+        ("capability", list(entry.get("capability_keywords", [])), 4),
         ("category", [str(entry["category"])], 2),
     )
     score = 0
@@ -1242,17 +1301,85 @@ def score_query_entry(entry: dict[str, object], query: str) -> tuple[int, list[s
     if not affirmative:
         return 0, []
     score, reasons = score_entry(entry, "; ".join(affirmative))
-    denied_score = max(score_entry(entry, clause)[0] for clause in denied)
+    # Capability descriptions are positive discovery metadata.  Do not let a
+    # negated phrase such as ``do not map runtime`` erase an otherwise valid
+    # package merely because the package exposes a ``map.render`` capability.
+    denied_entry = dict(entry)
+    denied_entry["capability_keywords"] = []
+    denied_score = max(score_entry(denied_entry, clause)[0] for clause in denied)
     return (0, []) if denied_score >= score else (score, reasons)
 
 
-def search(index: dict[str, object], query: str) -> list[dict[str, object]]:
+def search(
+    index: dict[str, object],
+    query: str,
+    *,
+    user_scope: object = None,
+    host_scope: object = None,
+) -> list[dict[str, object]]:
     results: list[dict[str, object]] = []
     stack = task_stack(query)
     action = primary_action(query)
-    for raw_entry in index["skills"]:
+    packages = package_entries(index)
+    all_capabilities = capability_entries(index)
+    explicitly_named = [
+        capability
+        for capability in all_capabilities
+        if re.search(
+            rf"(?<![A-Za-z0-9_.-]){re.escape(str(capability.get('capability_id', '')))}(?![A-Za-z0-9_.-])",
+            query,
+        )
+    ]
+    explicit_packages = {str(capability.get("package", "")) for capability in explicitly_named}
+    capabilities_by_package: dict[str, list[dict[str, object]]] = {}
+    for capability in all_capabilities:
+        package_name = str(capability.get("package", ""))
+        capabilities_by_package.setdefault(package_name, []).append(capability)
+    for raw_entry in packages:
         entry = dict(raw_entry)
         entry_name = str(entry["name"])
+        if explicitly_named and entry_name not in explicit_packages:
+            continue
+        package_capabilities = capabilities_by_package.get(entry_name, [])
+        selected_capabilities = (
+            [capability for capability in explicitly_named if capability.get("package") == entry_name]
+            if explicitly_named
+            else package_capabilities
+        )
+        read_only_only_request = (
+            READ_ONLY_REQUEST_RE.search(query)
+            and action != "implementation"
+            and not has_authorized_delivery_action(query)
+        )
+        if read_only_only_request and any(
+            str(capability.get("capability_id", "")) in query
+            and capability.get("permission_contract", {}).get("maximum_mutation_class")
+            != "read-only"
+            for capability in selected_capabilities
+        ):
+            # An explicitly named mutating capability may not be downgraded to
+            # another read-only mode just because the request says read-only.
+            continue
+        if read_only_only_request and selected_capabilities:
+            selected_capabilities = [
+                capability
+                for capability in selected_capabilities
+                if capability.get("permission_contract", {}).get("maximum_mutation_class")
+                == "read-only"
+            ]
+            # A read-only request must never route only through a mutating
+            # capability. A package may expose both read-only and write modes.
+            if not selected_capabilities:
+                continue
+        entry["capability_keywords"] = [
+            str(value)
+            for capability in selected_capabilities
+            for value in (
+                capability.get("capability_id", ""),
+                capability.get("description", ""),
+            )
+            if value
+        ]
         if stack and entry_name in set().union(*STACK_OWNER.values()) and entry_name not in STACK_OWNER[stack]:
             continue
         authorized_delivery = (
@@ -1296,6 +1423,41 @@ def search(index: dict[str, object], query: str) -> list[dict[str, object]]:
                     "allowed_effects": entry.get("allowed_effects", []),
                     "forbidden_effects": entry.get("forbidden_effects", []),
                     "stop_states": entry.get("stop_states", []),
+                    "capabilities": [
+                        {
+                            "capability_id": capability.get("capability_id"),
+                            "capability_version": capability.get("capability_version"),
+                            "description": capability.get("description"),
+                            "maximum_mutation_class": capability.get("permission_contract", {}).get(
+                                "maximum_mutation_class"
+                            ),
+                            "maximum_effects": capability.get("permission_contract", {}).get(
+                                "maximum_effects", []
+                            ),
+                            "symbolic_scope_constraints": capability.get(
+                                "permission_contract", {}
+                            ).get("symbolic_scope_constraints", []),
+                        }
+                        for capability in selected_capabilities
+                    ],
+                    "capability_ids": [
+                        capability.get("capability_id") for capability in selected_capabilities
+                    ],
+                    "capability_versions": {
+                        str(capability.get("capability_id")): capability.get("capability_version")
+                        for capability in selected_capabilities
+                    },
+                    "effective_scope": effective_scope(
+                        user_scope,
+                        host_scope,
+                        [
+                            scope
+                            for capability in selected_capabilities
+                            for scope in capability.get("permission_contract", {}).get(
+                                "symbolic_scope_constraints", []
+                            )
+                        ],
+                    ),
                 }
             )
     ordered = sorted(results, key=lambda item: (-int(item["score"]), str(item["name"])))

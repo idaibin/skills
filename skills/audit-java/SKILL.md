@@ -11,6 +11,12 @@ Audit Java engineering from current repository evidence with explicitly selected
 profiles. Use open-source projects and framework guidance to form questions, not to
 declare target-repository defects by stylistic comparison.
 
+Consume `urn:skills:audit-request:v1`; the portable output is
+`urn:skills:audit-findings:v1`. When supplied, consume an
+exact PackageManifest/basis plus compatible graph asset/consumer/impact results. The
+audit produces findings and validation Observations, not Task/Requirement status or a
+delivery Receipt.
+
 ## Rule Priority
 
 Apply current user intent, effective repository guidance, manifests/source/tests,
@@ -47,9 +53,11 @@ never outranks a working local contract.
 4. Load [Java engineering](references/java-engineering.md) for every audit. Load
    [codebase design](references/codebase-design.md) for module/API/testability analysis
    and [code quality](references/code-quality.md) only when maintainability is in scope.
-5. Consume a current `repo-map` or reproduce a bounded inventory of entries, callers,
+5. Consume a compatible graph asset/consumer/impact query or reproduce a bounded
+   inventory of entries, callers,
    permissions, services, repositories, entities/mappers, migrations, configuration,
-   jobs/listeners, and tests. A missing map entry never proves missing code.
+   jobs/listeners, and tests. Reject stale or mismatched graph results; a query miss
+   never proves missing code, and a derived Markdown view is not audit evidence.
 6. Trace each candidate issue through trigger, reachable path, owner, state or data
    consequence, counterevidence, and a falsifiable validation seam. Reject checklist-only
    findings and style preferences without concrete impact.
@@ -67,6 +75,10 @@ never outranks a working local contract.
    concurrency, or runtime behavior.
 8. Stop when the selected profiles are supported or explicitly blocked. Mark all
    other profiles out of scope.
+9. When Forgeway delivery integration is active, bind the audit to an immutable Run,
+   exact input/result PackageManifest, and typed input refs. Attach each finding or
+   validation result as an Observation against that package. Do not hand-edit a Gate,
+   rewrite prior Observations after a retry, or infer reviewed/delivered state.
 
 ## Modes
 
@@ -107,7 +119,9 @@ never outranks a working local contract.
 
 ## Output Contract
 
-Lead with severity-ranked findings, each with impact, exact location, evidence chain,
+Lead with capability `java.surface.audit`, typed audit-findings/Observation refs, Run
+and PackageManifest refs when integration is active, then severity-ranked findings,
+each with impact, exact location, evidence chain,
 counterevidence, remediation direction, and validation seam. Then report scope/basis,
 JDK/build/framework facts, before/after Worktree state, commands and ephemeral resources,
 and cleanup. For each profile, report applicability as `Applicable` or

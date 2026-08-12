@@ -12,6 +12,12 @@ can authorize one implementation slice. Own product behavior, scope, business
 rules, user-visible states, acceptance, and explicitly authorized product-fact
 writes. Keep technical design and source mutation with their existing owners.
 
+Consume `urn:skills:product-request:v1`; the portable typed handoff is
+`urn:skills:product-contract:v1`. Product Markdown
+remains the human product-behavior authority; the handoff carries stable document,
+decision, acceptance, and authority references without copying the document body or
+claiming implementation or delivery state.
+
 ## Workflow
 
 1. Read effective repository and host guidance, then inspect the requested scope,
@@ -86,6 +92,17 @@ writes. Keep technical design and source mutation with their existing owners.
     formal history. Put local reviews, handoffs, captures, and environment snapshots
     under a verified ignored `.codex/` location; publish time-bound status only when
     a named team consumer and revalidation owner require it.
+11. When a compatible Repository Asset Graph is available, resolve existing product
+    authority and consumer asset IDs, check duplicate active authority claims, and
+    include only stable refs in the typed handoff. A missing graph capability is
+    `CAPABILITY_MISSING` for graph-backed completeness, not permission to invent IDs;
+    specification may continue from native authorities with that boundary explicit.
+12. When Forgeway delivery integration is active, bind the specification invocation
+    to its immutable Run input refs and input PackageManifest/basis. After an
+    authorized artifact write, let the package producer create the result
+    PackageManifest and attach the product-contract result as an Observation. This
+    owner does not create a review or DeliveryReceipt and never derives a completion
+    level from `Ready`.
 
 ## Do Not Use For
 
@@ -131,7 +148,9 @@ writes. Keep technical design and source mutation with their existing owners.
 
 ## Output Contract
 
-Report mode, repository evidence and convention used, product scope classification,
+Report capability `product.contract.specify`, typed result schema and reference, mode,
+Run/input/result PackageManifest references when integration is active, repository
+evidence and convention used, product scope classification,
 shared index and slice artifact paths or preview-only result, Confirmed/Assumption/Open/Rejected/Deferred
 decisions, user flows and failure states, scope/non-goals, user-visible UI/data
 effects that are actually applicable, acceptance criteria, one Ready verdict and

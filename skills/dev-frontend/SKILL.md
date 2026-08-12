@@ -9,11 +9,17 @@ description: "Use when a frontend change must be implemented or refactored acros
 
 Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear layout ownership, and explicit verification. Detect the actual framework before applying framework-specific rules. Use `ops-browser` for web runtime evidence and `ops-client` for real desktop-window proof.
 
+Consume `urn:skills:frontend-change-request:v1`; the portable output is
+`urn:skills:source-change-result:v1`. When supplied, consume
+typed Task/requirement refs, authority refs, a compatible Asset Graph snapshot/query
+result, and an exact input PackageManifest; native source and contracts remain the
+implementation authority.
+
 ## Workflow
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
 2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions.
-3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When usable authorities apply, load the minimum chain in this order: effective instructions, product requirements or product Feature Spec, selected-source UI Feature Spec, resolved `<design-root>/DESIGN.md`, existing project-map Markdown (`repo-map` output; navigation only), then live source/config before editing. Load `references/specification-authorities.md`, resolve authorities by meaning rather than filename, and read only the target-slice facts needed for this change. Missing optional artifacts do not create ceremony, but separately report each missing authority as `Not verified` when it affects behavior or acceptance. A missing map never blocks bounded live discovery. For selected-source visual work, also read the selected-source evidence and [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md).
+3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When usable authorities apply, load the minimum chain in this order: effective instructions, product requirements or product Feature Spec, selected-source UI Feature Spec, resolved `<design-root>/DESIGN.md`, a compatible Repository Asset Graph query result when available, then live source/config before editing. Load `references/specification-authorities.md`, resolve authorities by meaning rather than filename, and read only the target-slice facts needed for this change. Missing optional artifacts do not create ceremony, but separately report each missing authority as `Not verified` when it affects behavior or acceptance. A missing graph never blocks bounded live discovery, and a graph miss never proves absence. For selected-source visual work, also read the selected-source evidence and [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md).
    If a real non-LLM UI projection is already maintained, consume it only as bounded
    composition/state navigation after the applicable Product Markdown, UI Markdown,
    and `DESIGN.md`. Require a named owner, producer, non-LLM consumer, semantic
@@ -31,7 +37,13 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
    load [project grounding](references/project-grounding.md) and close the activated
    signal-to-evidence chain before editing. Do not let a dev proxy, mock, literal,
    local build, or same-change UI contract stand in for the real behavior owner.
-5. Use an existing `repo-map` only to navigate, then verify routes, UI, state, services, tests, analogous implementations, and live theme/adapters in source and config. For API callers, follow the repository's existing client/type authority. Load the protocol-contract profile only when an OpenAPI/generated-client chain already exists or the task explicitly introduces one.
+5. Use graph asset/consumer/impact queries only to navigate and bound the read set,
+   then verify routes, UI, state, services, tests, analogous implementations, and live
+   theme/adapters in source and config. Reject a stale or mismatched snapshot; never
+   substitute a derived Markdown render for the typed query result. For API callers,
+   follow the repository's existing client/type authority. Load the protocol-contract
+   profile only when an OpenAPI/generated-client chain already exists or the task
+   explicitly introduces one.
 6. Treat resolved `<design-root>/DESIGN.md` as the shared visual-semantic authority when adopted. Repository-native component, styling, theme, and generator configuration are implementation adapters and current execution facts, not competing semantic authorities. Verify their actual binding in live source/config; do not claim DESIGN.md automatically synchronizes implementation. Decide `reuse`, `extend`, `wrap`, or justified `new`, and record insufficient candidates or unresolved drift as `Not verified`.
 7. For selected-source work, require a valid `spec-ready` artifact and stop before editing when the source is unavailable, the slice is `Partial`/`Not Ready`, target viewport/state is unresolved, or a P1 asset lacks an accepted owner and per-item fallback. Map every applicable acceptance ID to owner file/component, `reuse`/`extend`/`wrap`/justified `new`, asset/data owner, and static/runtime verification method; validate the artifact at `mapped` before editing. Keep source targets separate from current computed runtime values.
 8. Classify the existing UI and layout owners for the selected target, then load only the matching framework, styling, state/data, layout, and desktop-webview references. When geometry, spacing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the task-completion seam.
@@ -40,6 +52,12 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 11. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. When duplication, dead/unused code, abstraction, coupling, or maintainability is material, load `references/code-quality.md` and remove only code made obsolete by this task.
 12. Update manifests, scripts, routes, tests, docs, indexes, generated files, and stale references for every affected structural change; remove only wrappers, declarations, overrides, or temporary patches made obsolete by the task.
 13. Run focused checks after each slice, then matching project-defined gates. For selected-source work, use `ops-browser` for two same-viewport/state comparisons and validate `pass-1` before `final`; missing required runtime coverage remains `Partial` or `Not Ready`. Compare pre/post Worktree state around validation and classify every new diff before continuing.
+14. When Forgeway delivery integration is active, require an immutable Run with the
+    selected capability, input refs, exact scope, and input PackageManifest before
+    mutation. Let the package producer fingerprint the resulting tracked/untracked
+    files after each Attempt, and bind command/browser/artifact results as typed
+    Observations to that exact result package. A retry that changes the package makes
+    prior downstream observations stale; never rewrite them or emit a Receipt here.
 
 ## Modes
 
@@ -79,7 +97,15 @@ Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear
 
 ## Output Contract
 
-Report scope; detected project, stack, and ownership boundaries; applicable authorities and existing owners; selected frontend risks; reuse or new-surface decision; changed files and contracts; validation; Worktree drift and its disposition; excluded work; and `Not verified` gaps. When applicable, add selected-source readiness, acceptance-to-owner mapping, both visual review passes, and evidence artifacts under selected risks and validation. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-ai`; never send implicitly.
+Report capability `frontend.source.implement`, Run/input/result PackageManifest refs
+when integration is active, typed source-change result/Observation refs, scope;
+detected project, stack, and ownership boundaries; applicable authorities and existing
+owners; selected frontend risks; reuse or new-surface decision; changed files and
+contracts; validation; Worktree drift and its disposition; excluded work; and `Not
+verified` gaps. When applicable, add selected-source readiness, acceptance-to-owner
+mapping, both visual review passes, and evidence artifacts under selected risks and
+validation. If the user explicitly requests independent external review/research,
+hand one fixed basis/question to `ask-ai`; never send implicitly.
 
 ## References
 

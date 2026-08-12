@@ -1,44 +1,19 @@
-# Frontend Inventory Profile
+# Frontend Graph Profile
 
-Use this optional profile only when a durable map must guide repeated frontend
-discovery. It is not a prerequisite for a scoped implementation, audit, or review.
+Use this profile only to select frontend extractor and query scope.
 
-## Bounded Inventory
+Index route/entry registrations, pages/screens, reusable and feature components,
+hooks/composables, state/data owners, API clients and request types, style/theme/config
+owners, tests, and the resolved `<design-root>/DESIGN.md` binding when adopted. Emit
+typed Assets and Edges such as `registers`, `renders`, `imports`, `calls`, `consumes`,
+`verifies`, `owned-by`, and `derived-from` according to the graph schema.
 
-Index only the selected surface and its direct owner edges:
+Keep Product Markdown, Feature UI Markdown, `DESIGN.md`, and live source as separate
+authorities. Graph records carry their IDs, paths, symbols, roles, hashes, and edges;
+they do not copy tokens, component interfaces, API schemas, page composition, or target-
+only states. A current implementation adapter does not become design authority.
 
-- route or entry registration, pages/screens, and feature boundary;
-- reusable primitives and feature components;
-- hooks/composables, local/shared state, and data/cache owners;
-- API client, request types, and direct consumer boundary;
-- styling/theme/config sources and layout owners;
-- resolved `<design-root>/DESIGN.md` binding when the project adopts it.
-
-Do not turn this into a complete component catalog or duplicate live source. A map
-miss means only that the index has no verified row: search the relevant owner root
-before deciding `reuse`, `extend`, `wrap`, or justified `new`.
-
-## Reusable UI Row
-
-For a reusable UI entry, record:
-
-1. the semantic job and the exact map-root-relative `<design-root>/DESIGN.md` path plus
-   heading anchor or named semantic binding, when applicable;
-2. current implementation path and symbol, export or registration, provider root,
-   and representative current consumer;
-3. applicable states/variants and the reuse boundary; and
-4. current-source evidence for each claimed edge.
-
-Page UI Markdown owns page composition and may name human-readable component roles.
-Use this inventory only to reach selected source owners; do not create a component-ID
-registry merely to connect documentation to source. If the repository already has a
-maintained non-LLM registry, preserve its IDs as navigation and verify them in live
-source. Do not store props, slots, events, types, API schemas, or page-specific
-composition. For an inline region, name it as an inline region rather than inventing a
-component symbol. Keep current implemented states/variants separate from target-only
-gaps.
-
-Link to the shared semantic authority; do not copy token values, typography,
-spacing, or component rules into the map. `DESIGN.md` does not prove implementation
-is synchronized: record adapter/config and consumer evidence separately, or mark it
-`Not verified`.
+For reuse or impact queries, return the canonical definition, export/registration,
+owner/provider root, representative consumers, states proven by current source, scan
+basis, and unresolved/conflict records. A query miss means `Not found in this
+snapshot`; perform bounded live discovery before recommending `new`.

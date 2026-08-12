@@ -9,6 +9,12 @@ description: "Use when shared business terms, meanings, rules, lifecycle conflic
 
 Resolve shared business language and rules from authoritative evidence. Default to terminology, ambiguity, rules, and boundary scenarios. Load lifecycle or bounded-context depth only when the business complexity actually requires it; do not turn the result into technical DDD, API, database, frontend, or backend design.
 
+Consume `urn:skills:task-request:v1`; the portable typed handoff is
+`urn:skills:domain-contract:v1`. A durable domain
+document remains the business-language authority; the handoff references confirmed
+terms, rules, conflicts, decisions, and authority assets without copying product,
+interface, or delivery state.
+
 ## Workflow
 
 1. Read effective repository and host guidance, then inspect only the supplied requirements, existing business facts, representative behavior, and tests needed for the named ambiguity.
@@ -18,6 +24,14 @@ Resolve shared business language and rules from authoritative evidence. Default 
 5. Load the **Bounded Context** profile only when the same term or rule has materially different meanings, owners, consistency needs, or sources of truth across boundaries.
 6. Label material statements `Confirmed`, `Inferred`, `Conflict`, or `Not verified`; request a decision when a conflict changes identity, permissions, money, lifecycle, compatibility, or irreversible behavior.
 7. Return only the model depth needed to unblock the request. Write or update a named domain artifact only when the user explicitly authorizes it, the repository already has a fact-source location, and the decision is durable across functions.
+8. When a compatible Repository Asset Graph exists, resolve or produce domain-
+   authority asset refs through its declared producer and check duplicate authority
+   claims. Do not hand-author IDs; unresolved ownership remains `Conflict` or `Not
+   verified`.
+9. When Forgeway delivery integration is active, bind input refs and the input
+   PackageManifest/basis to an immutable Run. After an authorized artifact update,
+   let the package producer create the result PackageManifest and attach the domain
+   contract as an Observation. Domain resolution does not create a review or Receipt.
 
 ## Profiles
 
@@ -44,7 +58,15 @@ Resolve shared business language and rules from authoritative evidence. Default 
 
 ## Output Contract
 
-Return the scope and evidence, resolved glossary, business rules, relevant scenarios, contradictions, decisions, open questions, and `Not verified` gaps. Include lifecycle or bounded contexts only when the selected conditional profile requires them. If an artifact update was authorized, report its exact path, why it is a durable shared fact source, and the preserved Git state. An explicitly requested independent external challenge/research may hand one fixed question to `ask-ai`; it never implies sending.
+Return capability `domain.model.define`, `urn:skills:domain-contract:v1` result ref,
+Run and input/result PackageManifest refs when integration is active, scope and
+evidence, resolved glossary, business rules, relevant scenarios, contradictions,
+decisions, open questions, authority asset refs, and `Not verified` gaps. Include
+lifecycle or bounded contexts only when the selected conditional profile requires
+them. If an artifact update was authorized, report its exact path, why it is a durable
+shared fact source, and the preserved Git state. An explicitly requested independent
+external challenge/research may hand one fixed question to `ask-ai`; it never implies
+sending.
 
 ## References
 

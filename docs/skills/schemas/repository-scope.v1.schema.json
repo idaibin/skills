@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skills:repository-scope:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "repository_root", "includes", "exclusions"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "repository_root": { "const": "repository-root" },
+    "repository_id": { "type": "string", "minLength": 1 },
+    "includes": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+    "exclusions": { "type": "array", "items": { "type": "string", "minLength": 1 } }
+  }
+}

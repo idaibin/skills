@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:08d389168662d00671ab632a8d6d980b78d90130f2a8f87b56d5585cbc1bf479",
+  "fingerprint": "sha256:0d9c53998bed5f2e612000edec66fdbb5ef0d35f9b447166f59a84e600311171",
   "summary": {
-    "total": 48,
-    "passed": 48,
+    "total": 51,
+    "passed": 51,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -15,6 +15,42 @@
     {
       "id": "repo-map-normal",
       "case_fingerprint": "sha256:49f0a71ad9f001a505d3271f0c20e7e74387eb16c19bc33127346fdeae60dafb",
+      "class": "normal",
+      "skill": "repo-map",
+      "expected_owner": "repo-map",
+      "observed_owner": "repo-map",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "repo-map-capability-scan",
+      "case_fingerprint": "sha256:1d56a50bb4b28487dfce11afa21d7c97d6f895244aa7539252f12554114796c7",
+      "class": "normal",
+      "skill": "repo-map",
+      "expected_owner": "repo-map",
+      "observed_owner": "repo-map",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "repo-map-capability-query",
+      "case_fingerprint": "sha256:a471549cee73a2afa2776d1c7f51b8f24e94d6f205546d1aa2ef699138469da9",
+      "class": "normal",
+      "skill": "repo-map",
+      "expected_owner": "repo-map",
+      "observed_owner": "repo-map",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "repo-map-capability-render",
+      "case_fingerprint": "sha256:3ece507aacb47f7f94c958c2265821ac6ae8b5db0f7fbef295ac0600d9ca3634",
       "class": "normal",
       "skill": "repo-map",
       "expected_owner": "repo-map",

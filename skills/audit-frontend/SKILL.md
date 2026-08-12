@@ -9,6 +9,12 @@ description: "Use when a known frontend surface needs a scoped, read-only audit 
 
 Audit frontend engineering from repository evidence rather than a universal framework or folder template. Detect the real framework and local API style, then select only the profiles required by the request. This skill is read-only: use it directly for frontend domain audits or as a bounded specialist under `repo-review`; use `dev-frontend` for requested changes.
 
+Consume `urn:skills:audit-request:v1`; the portable output is
+`urn:skills:audit-findings:v1`. When supplied, consume an
+exact PackageManifest/basis plus compatible graph asset/consumer/impact results. The
+audit produces findings and validation Observations, not Task/Requirement status or a
+delivery Receipt.
+
 ## Rule Priority
 
 Resolve conflicts in this order:
@@ -35,7 +41,7 @@ owner; do not invent one.
    app, project class, framework, package manager, scripts, documented
    architecture, and coordinating review owner when delegated. This inspection
    snapshot does not turn the audit into change attribution.
-2. Consume current project-map Markdown (`repo-map` output; navigation only) or perform a targeted live inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. Load `references/specification-authorities.md` when a selected profile depends on Product/UI contracts; resolve them by meaning rather than filename, consume Product Markdown, UI Markdown, and resolved `DESIGN.md` before comparing current source, and hand off only unresolved decisions required by the audit outcome. If a structured non-LLM projection is in scope, verify its named owner, producer, non-LLM consumer, semantic version, executable validator, drift policy, and retirement rule. Inspect current validator evidence, consumer read path, and Markdown/source parity without regenerating or repairing the projection. Missing lifecycle evidence, duplicate authority facts, stale routes/components, or source drift become findings only when concrete impact is established; otherwise report `Not verified`. When no real projection exists, do not require project YAML/JSON, schema, or validator files.
+2. Consume a compatible graph asset/consumer/impact query or perform a targeted live inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. Reject stale or mismatched graph results; a query miss never proves absence, and a derived Markdown view is not review evidence. Load `references/specification-authorities.md` when a selected profile depends on Product/UI contracts; resolve them by meaning rather than filename, consume Product Markdown, UI Markdown, and resolved `DESIGN.md` before comparing current source, and hand off only unresolved decisions required by the audit outcome. If a structured non-LLM projection is in scope, verify its named owner, producer, non-LLM consumer, semantic version, executable validator, drift policy, and retirement rule. Inspect current validator evidence, consumer read path, and Markdown/source parity without regenerating or repairing the projection. Missing lifecycle evidence, duplicate authority facts, stale routes/components, or source drift become findings only when concrete impact is established; otherwise report `Not verified`. When no real projection exists, do not require project YAML/JSON, schema, or validator files.
 3. Classify the product surface as Web, high-density Console, or Tauri Desktop. Select exactly one framework profile per audited boundary: **React**, **Vue Composition**, **Vue Options**, or **Repository-native Other**. Select only styling profiles present in scope: **Tailwind**, **CSS Modules**, **Sass/Less**, **CSS-in-JS**, **Ant Design**, **shadcn/ui**, or a documented local system.
 4. Select one or more audit profiles; explicitly mark the rest `Out of scope`:
    - **Architecture/reuse:** routes, features, shared layers, dependency direction, reuse, abstractions, structural lifecycle, and docs.
@@ -59,6 +65,10 @@ owner; do not invent one.
 8. Audit applicable loading, empty, error, partial, retry, optimistic, stale, cancellation, keyboard, focus, and long-task behavior within the selected profiles.
 9. Use non-mutating repository checks and request browser or real-client evidence only when a selected claim cannot be proven statically.
 10. Report severity-ranked findings with exact location, framework-specific evidence, impact, remediation direction, validation gap, selected profiles, and excluded profiles.
+11. When Forgeway delivery integration is active, bind the audit to an immutable Run,
+    exact input/result PackageManifest, and typed input refs. Attach each finding or
+    validation result as an Observation against that exact package. Do not hand-edit a
+    Gate, rewrite prior Observations after a retry, or infer reviewed/delivered state.
 
 ## Modes
 
@@ -109,7 +119,19 @@ owner; do not invent one.
 
 ## Output Contract
 
-Start with the inspection snapshot, selected product, framework, styling, and audit profiles; explicitly excluded audit profiles; coordinating owner when delegated; and severity-ranked findings. For Selected-source visual fidelity, state the source/revision/approval, evidence levels, target viewport/state, comparison passes available, and whether the `frontend-visual-evidence/v1` artifact validates. For each finding, report impact, exact location, profile-specific evidence, recommended remediation owner/direction, and validation gap. Then summarize inspected rules/files, existing candidates, ownership map, selected state/data/layout/accessibility/performance/build/desktop evidence, component/injection/router/lifetime contracts, Google `DESIGN.md` token/prose consistency, official lint evidence, implementation drift from source, commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
+Start with capability `frontend.surface.audit`, typed audit-findings/Observation refs,
+Run and PackageManifest refs when integration is active, the inspection snapshot,
+selected product, framework, styling, and audit profiles; explicitly excluded audit
+profiles; coordinating owner when delegated; and severity-ranked findings. For
+Selected-source visual fidelity, state the source/revision/approval, evidence levels,
+target viewport/state, comparison passes available, and whether the
+`frontend-visual-evidence/v1` artifact validates. For each finding, report impact,
+exact location, profile-specific evidence, recommended remediation owner/direction,
+and validation gap. Then summarize inspected rules/files, existing candidates,
+ownership map, selected state/data/layout/accessibility/performance/build/desktop
+evidence, component/injection/router/lifetime contracts, Google `DESIGN.md` token/prose
+consistency, official lint evidence, implementation drift from source,
+commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
 
 ## References
 

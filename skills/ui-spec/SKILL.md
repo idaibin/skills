@@ -10,6 +10,12 @@ compatibility: "Node.js + npm, with `@google/design.md@0.3.0` for DESIGN.md lint
 
 Turn a selected visual source and verified product facts into an implementation-ready UI contract, then hand it to `dev-frontend`. This Skill specifies an accepted direction; it does not explore visual directions, generate images, build prototypes, or edit product source.
 
+Consume `urn:skills:ui-request:v1`; the portable typed handoff is
+`urn:skills:ui-contract:v1`, with
+`urn:frontend-visual-evidence:v1` retained as a typed attachment when applicable.
+Product behavior, shared `DESIGN.md`, and Feature UI Markdown keep separate native
+authority; the handoff references them and never copies shared token semantics.
+
 ## Workflow
 
 1. Read effective repository guidance and run `git status --short` before planning an authorized artifact write.
@@ -22,7 +28,9 @@ Turn a selected visual source and verified product facts into an implementation-
    authorized artifact-creation path. If it does not exist, copy
    [assets/DESIGN.md](assets/DESIGN.md) as the structural starter, replace every
    placeholder from verified sources, omit unverified token groups, obtain named
-   human approval, and validate it before authoring Feature Specs or shared-system changes.
+   human approval from someone other than the proposer/implementer, bind that approval
+   to the exact content hash, and validate it before authoring Feature Specs or shared-
+   system changes. A later content-hash change makes the approval stale.
 4. Define implementation slices: one Feature Spec per confirmed page/flow/domain; for multiple independent domains, create one shared index plus one independently loadable contract per slice and load [references/multi-surface.md](references/multi-surface.md).
 5. Select one profile:
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
@@ -46,6 +54,14 @@ Turn a selected visual source and verified product facts into an implementation-
     artifacts, schema/validator, drift policy, and revalidation owner justify it.
     Do not add implementation mapping, visual reviews, runtime coverage, final
     verdict, or claim runtime behavior in this Skill.
+13. When a compatible Repository Asset Graph is available, resolve shared-design,
+    feature-UI, route, component, and consumer refs and reject duplicate active
+    authority claims. Never invent graph IDs or turn the graph into visual authority.
+14. When Forgeway delivery integration is active, bind the invocation to an immutable
+    Run input and input PackageManifest/basis. Let the package producer fingerprint
+    authorized artifact writes, then attach the UI contract and visual-evidence
+    payload as typed Observations against that exact result package. A `Ready` verdict
+    is not a review, delivery, deployment, or production Receipt.
 
 ## Profiles
 
@@ -80,14 +96,22 @@ Turn a selected visual source and verified product facts into an implementation-
 - Keep durable `DESIGN.md`, UI indexes, and Feature Specs current-only. Git retains
   formal history; task captures, comparison passes, superseded candidates, and
   validation timestamps belong in `.codex/` unless durable-evidence gates are met.
-- Require named human approval before treating a newly created or changed `DESIGN.md` as accepted.
+- Require named non-implementer human approval bound to the exact content hash before
+  treating a newly created or changed `DESIGN.md` as accepted; never let the executor
+  self-approve extracted current CSS as the target design.
 - Require applicable loading, empty, error, populated, permission, focus, responsive, overflow, localization, and reduced-motion rules; justify exclusions.
 - Give every applicable slice its own viewport matrix and readiness verdict; keep independent incomplete slices visible as `Partial` without turning one surface's viewport requirements into a catalog default.
 - Do not stage, commit, push, publish, or approve a shared baseline.
 
 ## Output Contract
 
-Report the selected profile, source identity/approval and rights/use boundary, target viewport/state and slices, evidence levels, layout/state contract, delta table, component/token mappings, responsive/accessibility rules, assets/copy, shared-system changes or `None`, evaluation gates, per-slice and overall readiness, and every `Not found` or `Not verified` gap. Include at least:
+Report capability `ui.contract.specify`, typed result/attachment refs, Run and
+input/result PackageManifest refs when integration is active, the selected profile,
+source identity/approval and rights/use boundary, target viewport/state and slices,
+evidence levels, layout/state contract, delta table, component/token mappings,
+responsive/accessibility rules, assets/copy, shared-system changes or `None`,
+evaluation gates, per-slice and overall readiness, and every `Not found` or `Not
+verified` gap. Include at least:
 
 - resolved `<design-root>` and `DESIGN.md` revision or stable identity
 - lint command and result

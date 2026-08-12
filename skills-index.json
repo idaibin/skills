@@ -1,7 +1,42 @@
 {
   "$schema": "./docs/skills/skills-index.schema.json",
-  "version": 2,
-  "description": "Repository-level discovery and execution contract index. Portable Skill activation remains authoritative in each SKILL.md description.",
+  "version": 3,
+  "contract_version": "capability-registry/3",
+  "description": "Provider-neutral capability discovery and execution-boundary contract. Portable Skill activation remains authoritative in each SKILL.md description; static manifests never grant runtime authority.",
+  "schema_refs": {
+    "declared_portable": [
+      "urn:frontend-visual-evidence:v1",
+      "urn:skills:ai-result:v1",
+      "urn:skills:ai-review-request:v1",
+      "urn:skills:asset-map-result:v1",
+      "urn:skills:audit-findings:v1",
+      "urn:skills:audit-request:v1",
+      "urn:skills:browser-operation-request:v1",
+      "urn:skills:client-operation-request:v1",
+      "urn:skills:delivery-receipt:v1",
+      "urn:skills:delivery-request:v1",
+      "urn:skills:domain-contract:v1",
+      "urn:skills:frontend-change-request:v1",
+      "urn:skills:java-change-request:v1",
+      "urn:skills:map-render-result:v1",
+      "urn:skills:product-contract:v1",
+      "urn:skills:product-request:v1",
+      "urn:skills:repository-scope:v1",
+      "urn:skills:review-findings:v1",
+      "urn:skills:review-request:v1",
+      "urn:skills:runtime-observation:v1",
+      "urn:skills:rust-change-request:v1",
+      "urn:skills:source-change-result:v1",
+      "urn:skills:task-request:v1",
+      "urn:skills:ui-contract:v1",
+      "urn:skills:ui-request:v1",
+      "urn:skills:writing-output:v1",
+      "urn:skills:writing-request:v1"
+    ],
+    "known_local": [
+      "urn:forgeway:repository-asset-snapshot:v1"
+    ]
+  },
   "categories": {
     "repository-engineering": {
       "title": "Core Engineering",
@@ -36,16 +71,37 @@
       "description": "Source-grounded drafting, rewriting, diagnosis, and adaptation."
     }
   },
-  "skills": [
+  "packages": [
     {
       "name": "repo-map",
       "category": "repository-engineering",
       "owner": "repo-map",
       "mutation_class": "artifact-write",
-      "required_capabilities": ["filesystem-read", "artifact-write", "command-runner", "text-authoring"],
-      "allowed_effects": ["read-repository", "read-source", "write-artifact", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "command-runner",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-artifact",
+        "write-run-local-cache",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
       "intents": [
         "map repository boundaries, architecture, commands, dependencies, and task routes",
         "bootstrap layered repository guidance in root and owned subprojects",
@@ -79,6 +135,11 @@
       "related": [
         "domain-modeling",
         "repo-review"
+      ],
+      "capability_ids": [
+        "repository.asset.scan",
+        "repository.asset.query",
+        "repository.map.render"
       ]
     },
     {
@@ -86,10 +147,29 @@
       "category": "repository-engineering",
       "owner": "domain-modeling",
       "mutation_class": "artifact-write",
-      "required_capabilities": ["filesystem-read", "artifact-write", "text-authoring"],
-      "allowed_effects": ["read-repository", "write-artifact", "emit-draft", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "emit-draft",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
       "intents": [
         "resolve shared business vocabulary and meaning",
         "define lifecycle rules and bounded contexts"
@@ -108,6 +188,9 @@
       "related": [
         "product-spec",
         "repo-map"
+      ],
+      "capability_ids": [
+        "domain.model.define"
       ]
     },
     {
@@ -115,10 +198,32 @@
       "category": "repository-engineering",
       "owner": "repo-review",
       "mutation_class": "read-only",
-      "required_capabilities": ["filesystem-read", "git-read", "command-runner"],
-      "allowed_effects": ["read-repository", "read-source", "read-git-state", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "basis-drift", "capability-unavailable", "evidence-incomplete"],
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "read-git-state",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-artifact",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "basis-drift",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
       "intents": [
         "review current Worktree or index changes",
         "review a fixed commit, range, or verified package",
@@ -147,6 +252,9 @@
         "audit-java",
         "audit-rust",
         "repo-delivery"
+      ],
+      "capability_ids": [
+        "repository.change.review"
       ]
     },
     {
@@ -154,10 +262,34 @@
       "category": "repository-engineering",
       "owner": "repo-delivery",
       "mutation_class": "git-write",
-      "required_capabilities": ["filesystem-read", "git-read", "git-write", "command-runner"],
-      "allowed_effects": ["read-repository", "read-git-state", "write-git-state", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-artifact", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "basis-drift", "evidence-incomplete", "capability-unavailable", "unsafe-or-destructive"],
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "git-write",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-git-state",
+        "write-git-state",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-artifact",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "basis-drift",
+        "evidence-incomplete",
+        "capability-unavailable",
+        "unsafe-or-destructive"
+      ],
       "intents": [
         "create categorized or explicitly requested commits",
         "deliver an explicitly authorized reviewed branch",
@@ -177,13 +309,29 @@
         "stage files",
         "合并到main",
         "变基到main",
-        "reviewed delivery", "categorized local commits", "exactly one commit",
-        "push current branch", "non-fast-forward divergence", "squash branch main",
-        "conflict resolution", "semantic milestone", "targeted fixup", "safety checkpoint",
-        "history normalization", "standing delivery plan",
-        "selected-source UI change", "reviewed GitHub feature branch", "conflicted rebase",
-        "normalize authorized fixups", "push reviewed branch",
-        "pull from origin", "拉取远程分支", "fetch remote refs", "fast-forward branch", "cherry-pick commit", "abort rebase",
+        "reviewed delivery",
+        "categorized local commits",
+        "exactly one commit",
+        "push current branch",
+        "non-fast-forward divergence",
+        "squash branch main",
+        "conflict resolution",
+        "semantic milestone",
+        "targeted fixup",
+        "safety checkpoint",
+        "history normalization",
+        "standing delivery plan",
+        "selected-source UI change",
+        "reviewed GitHub feature branch",
+        "conflicted rebase",
+        "normalize authorized fixups",
+        "push reviewed branch",
+        "pull from origin",
+        "拉取远程分支",
+        "fetch remote refs",
+        "fast-forward branch",
+        "cherry-pick commit",
+        "abort rebase",
         "暂存并提交",
         "提交这些更改",
         "提交并推送",
@@ -200,6 +348,9 @@
       ],
       "related": [
         "repo-review"
+      ],
+      "capability_ids": [
+        "repository.git.deliver"
       ]
     },
     {
@@ -207,10 +358,29 @@
       "category": "product-definition",
       "owner": "product-spec",
       "mutation_class": "artifact-write",
-      "required_capabilities": ["filesystem-read", "artifact-write", "text-authoring"],
-      "allowed_effects": ["read-repository", "write-artifact", "emit-draft", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "emit-draft",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
       "intents": [
         "turn an ambiguous feature into an implementation-ready specification",
         "define product behavior, states, rules, and acceptance",
@@ -234,6 +404,9 @@
       "related": [
         "domain-modeling",
         "ui-spec"
+      ],
+      "capability_ids": [
+        "product.contract.specify"
       ]
     },
     {
@@ -241,10 +414,30 @@
       "category": "design",
       "owner": "ui-spec",
       "mutation_class": "artifact-write",
-      "required_capabilities": ["filesystem-read", "artifact-write", "visual-evidence", "text-authoring"],
-      "allowed_effects": ["read-repository", "read-source", "write-artifact", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "visual-evidence",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-artifact",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
       "intents": [
         "translate a selected visual source into an implementation-ready UI contract",
         "maintain traceable feature UI specs and shared DESIGN.md semantics",
@@ -271,6 +464,9 @@
         "product-spec",
         "dev-frontend",
         "ops-browser"
+      ],
+      "capability_ids": [
+        "ui.contract.specify"
       ]
     },
     {
@@ -278,10 +474,33 @@
       "category": "implementation",
       "owner": "dev-frontend",
       "mutation_class": "source-write",
-      "required_capabilities": ["filesystem-read", "filesystem-write", "source-write", "command-runner", "text-authoring"],
-      "allowed_effects": ["read-repository", "read-source", "write-source", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "unsafe-or-destructive"],
+      "required_capabilities": [
+        "filesystem-read",
+        "filesystem-write",
+        "source-write",
+        "command-runner",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-source",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "unsafe-or-destructive"
+      ],
       "intents": [
         "implement or refactor frontend source",
         "close selected-source UI differences with runtime validation",
@@ -307,6 +526,9 @@
         "ui-spec",
         "audit-frontend",
         "ops-browser"
+      ],
+      "capability_ids": [
+        "frontend.source.implement"
       ]
     },
     {
@@ -314,10 +536,33 @@
       "category": "implementation",
       "owner": "dev-java",
       "mutation_class": "source-write",
-      "required_capabilities": ["filesystem-read", "filesystem-write", "source-write", "command-runner", "text-authoring"],
-      "allowed_effects": ["read-repository", "read-source", "write-source", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "unsafe-or-destructive"],
+      "required_capabilities": [
+        "filesystem-read",
+        "filesystem-write",
+        "source-write",
+        "command-runner",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-source",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "unsafe-or-destructive"
+      ],
       "intents": [
         "implement, migrate, or refactor Java source and Java-owned Spring configuration",
         "change Maven or Gradle builds, APIs, security, transactions, persistence, integrations, or runtime behavior"
@@ -341,6 +586,9 @@
         "audit-java",
         "repo-map",
         "repo-review"
+      ],
+      "capability_ids": [
+        "java.source.implement"
       ]
     },
     {
@@ -348,10 +596,33 @@
       "category": "implementation",
       "owner": "dev-rust",
       "mutation_class": "source-write",
-      "required_capabilities": ["filesystem-read", "filesystem-write", "source-write", "command-runner", "text-authoring"],
-      "allowed_effects": ["read-repository", "read-source", "write-source", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "unsafe-or-destructive"],
+      "required_capabilities": [
+        "filesystem-read",
+        "filesystem-write",
+        "source-write",
+        "command-runner",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-source",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "unsafe-or-destructive"
+      ],
       "intents": [
         "implement, port, or refactor Rust source",
         "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI"
@@ -375,6 +646,9 @@
       "related": [
         "audit-rust",
         "repo-review"
+      ],
+      "capability_ids": [
+        "rust.source.implement"
       ]
     },
     {
@@ -382,10 +656,30 @@
       "category": "specialist-audit",
       "owner": "audit-frontend",
       "mutation_class": "read-only",
-      "required_capabilities": ["filesystem-read", "command-runner", "visual-evidence"],
-      "allowed_effects": ["read-repository", "read-source", "emit-findings"],
-      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
+      "required_capabilities": [
+        "filesystem-read",
+        "command-runner",
+        "visual-evidence"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "emit-findings"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-artifact",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified"
+      ],
       "intents": [
         "audit a bounded frontend surface without editing",
         "assess frontend architecture, accessibility, performance, state, tooling, or visual fidelity"
@@ -407,6 +701,9 @@
       "related": [
         "dev-frontend",
         "repo-review"
+      ],
+      "capability_ids": [
+        "frontend.surface.audit"
       ]
     },
     {
@@ -414,10 +711,31 @@
       "category": "specialist-audit",
       "owner": "audit-java",
       "mutation_class": "read-only",
-      "required_capabilities": ["filesystem-read", "git-read", "command-runner"],
-      "allowed_effects": ["read-repository", "read-source", "read-git-state", "emit-findings"],
-      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "read-git-state",
+        "emit-findings"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-artifact",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified"
+      ],
       "intents": [
         "audit a bounded Java source or Java-owned Spring/build configuration surface without editing",
         "assess build, architecture, API security, transactions, persistence, integrations, performance, or migration risks"
@@ -440,6 +758,9 @@
       "related": [
         "dev-java",
         "repo-review"
+      ],
+      "capability_ids": [
+        "java.surface.audit"
       ]
     },
     {
@@ -447,10 +768,31 @@
       "category": "specialist-audit",
       "owner": "audit-rust",
       "mutation_class": "read-only",
-      "required_capabilities": ["filesystem-read", "git-read", "command-runner"],
-      "allowed_effects": ["read-repository", "read-source", "read-git-state", "emit-findings"],
-      "forbidden_effects": ["write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "read-git-state",
+        "emit-findings"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-artifact",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified"
+      ],
       "intents": [
         "audit a bounded Rust workspace or subsystem without editing",
         "assess ownership, concurrency, persistence, performance, or unsafe boundaries"
@@ -471,6 +813,9 @@
       "related": [
         "dev-rust",
         "repo-review"
+      ],
+      "capability_ids": [
+        "rust.surface.audit"
       ]
     },
     {
@@ -478,10 +823,33 @@
       "category": "runtime-operations",
       "owner": "ops-browser",
       "mutation_class": "browser-control",
-      "required_capabilities": ["filesystem-read", "artifact-write", "browser-control", "visual-evidence", "command-runner"],
-      "allowed_effects": ["read-repository", "write-artifact", "control-browser-state", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "browser-control",
+        "visual-evidence",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "control-browser-state",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified"
+      ],
       "intents": [
         "operate or verify a specified browser page",
         "capture same-state visual and computed browser evidence",
@@ -511,6 +879,9 @@
         "ops-client",
         "ui-spec",
         "dev-frontend"
+      ],
+      "capability_ids": [
+        "browser.runtime.operate"
       ]
     },
     {
@@ -518,10 +889,33 @@
       "category": "runtime-operations",
       "owner": "ops-client",
       "mutation_class": "client-control",
-      "required_capabilities": ["filesystem-read", "artifact-write", "client-control", "visual-evidence", "command-runner"],
-      "allowed_effects": ["read-repository", "write-artifact", "control-client-state", "emit-findings", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "invoke-external-provider"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "evidence-incomplete", "runtime-unverified"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "client-control",
+        "visual-evidence",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "control-client-state",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified"
+      ],
       "intents": [
         "operate or verify a real desktop client",
         "capture process and window evidence for Tauri, Electron, or native applications"
@@ -540,6 +934,9 @@
       ],
       "related": [
         "ops-browser"
+      ],
+      "capability_ids": [
+        "client.runtime.operate"
       ]
     },
     {
@@ -547,10 +944,33 @@
       "category": "collaboration",
       "owner": "ask-ai",
       "mutation_class": "external-action",
-      "required_capabilities": ["filesystem-read", "git-read", "artifact-write", "command-runner", "external-provider"],
-      "allowed_effects": ["read-repository", "write-artifact", "invoke-external-provider", "emit-handoff"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state"],
-      "stop_states": ["missing-authorization", "scope-ambiguous", "capability-unavailable", "provider-unavailable", "evidence-incomplete", "suspicious-hidden-content"],
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "artifact-write",
+        "command-runner",
+        "external-provider"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "invoke-external-provider",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "provider-unavailable",
+        "evidence-incomplete",
+        "suspicious-hidden-content"
+      ],
       "intents": [
         "prepare a local request package for one or more named external AI providers",
         "define or invoke a user-owned bounded external AI review instruction",
@@ -660,6 +1080,9 @@
       "related": [
         "repo-review",
         "ops-browser"
+      ],
+      "capability_ids": [
+        "external.ai.collaborate"
       ]
     },
     {
@@ -667,10 +1090,28 @@
       "category": "writing",
       "owner": "human-writing",
       "mutation_class": "artifact-write",
-      "required_capabilities": ["filesystem-read", "artifact-write", "text-authoring"],
-      "allowed_effects": ["read-repository", "write-artifact", "emit-draft"],
-      "forbidden_effects": ["write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-      "stop_states": ["scope-ambiguous", "capability-unavailable", "evidence-incomplete"],
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "emit-draft"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
       "intents": [
         "draft, rewrite, proofread, diagnose, or adapt source-grounded prose",
         "preserve facts, attribution, uncertainty, voice, and meaning"
@@ -688,7 +1129,1377 @@
         "fiction",
         "AI-detection evasion"
       ],
-      "related": []
+      "related": [],
+      "capability_ids": [
+        "writing.source.adapt"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "capability_id": "repository.asset.scan",
+      "capability_version": "1.0.0",
+      "package": "repo-map",
+      "description": "Scan repository assets and coverage.",
+      "accepts": [
+        {
+          "schema": "urn:skills:repository-scope:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:asset-map-result:v1",
+          "kind": "portable"
+        },
+        {
+          "schema": "urn:forgeway:repository-asset-snapshot:v1",
+          "kind": "local"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "write-artifact",
+          "write-run-local-cache",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [],
+        "symbolic_scope_constraints": [
+          "repository-root",
+          "scan-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "repository.asset.query",
+      "capability_version": "1.0.0",
+      "package": "repo-map",
+      "description": "Query repository assets and relations.",
+      "accepts": [
+        {
+          "schema": "urn:skills:asset-map-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:asset-map-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "read-only",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [],
+        "symbolic_scope_constraints": [
+          "repository-root",
+          "query-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "repository.map.render",
+      "capability_version": "1.0.0",
+      "package": "repo-map",
+      "description": "Render a derived repository map artifact.",
+      "accepts": [
+        {
+          "schema": "urn:skills:asset-map-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:map-render-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-handoff",
+          "write-artifact"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "repository-root",
+          "output-artifact-root"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "domain.model.define",
+      "capability_version": "1.0.0",
+      "package": "domain-modeling",
+      "description": "Resolve shared terms, rules, and bounded contexts.",
+      "accepts": [
+        {
+          "schema": "urn:skills:task-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:domain-contract:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "emit-draft",
+          "emit-handoff",
+          "write-artifact"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "repository.change.review",
+      "capability_version": "1.0.0",
+      "package": "repo-review",
+      "description": "Review a fixed repository basis.",
+      "accepts": [
+        {
+          "schema": "urn:skills:review-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:review-findings:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "read-only",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "read-git-state",
+          "emit-findings",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-artifact",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "repository.git.deliver",
+      "capability_version": "1.0.0",
+      "package": "repo-delivery",
+      "description": "Perform separately authorized Git delivery.",
+      "accepts": [
+        {
+          "schema": "urn:skills:delivery-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:delivery-receipt:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "git-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-git-state",
+          "emit-findings",
+          "emit-handoff",
+          "write-git-state"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-artifact",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "product.contract.specify",
+      "capability_version": "1.0.0",
+      "package": "product-spec",
+      "description": "Specify product behavior, states, and acceptance.",
+      "accepts": [
+        {
+          "schema": "urn:skills:product-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:product-contract:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "emit-draft",
+          "emit-handoff",
+          "write-artifact"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "ui.contract.specify",
+      "capability_version": "1.0.0",
+      "package": "ui-spec",
+      "description": "Specify a traceable UI contract from selected evidence.",
+      "accepts": [
+        {
+          "schema": "urn:skills:ui-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:ui-contract:v1",
+          "kind": "portable"
+        },
+        {
+          "schema": "urn:frontend-visual-evidence:v1",
+          "kind": "portable",
+          "stage": "spec-ready"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-handoff",
+          "write-artifact"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "frontend.source.implement",
+      "capability_version": "1.0.0",
+      "package": "dev-frontend",
+      "description": "Implement an authorized frontend source change.",
+      "accepts": [
+        {
+          "schema": "urn:skills:frontend-change-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:source-change-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "SOURCE_SCOPE_REMAINS_BOUNDED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "source-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-findings",
+          "emit-handoff",
+          "write-source"
+        ],
+        "forbidden_effects": [
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "java.source.implement",
+      "capability_version": "1.0.0",
+      "package": "dev-java",
+      "description": "Implement an authorized Java source change.",
+      "accepts": [
+        {
+          "schema": "urn:skills:java-change-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:source-change-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "SOURCE_SCOPE_REMAINS_BOUNDED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "source-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-findings",
+          "emit-handoff",
+          "write-source"
+        ],
+        "forbidden_effects": [
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "rust.source.implement",
+      "capability_version": "1.0.0",
+      "package": "dev-rust",
+      "description": "Implement an authorized Rust source change.",
+      "accepts": [
+        {
+          "schema": "urn:skills:rust-change-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:source-change-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "SOURCE_SCOPE_REMAINS_BOUNDED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "source-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-findings",
+          "emit-handoff",
+          "write-source"
+        ],
+        "forbidden_effects": [
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "frontend.surface.audit",
+      "capability_version": "1.0.0",
+      "package": "audit-frontend",
+      "description": "Audit a bounded frontend surface read-only.",
+      "accepts": [
+        {
+          "schema": "urn:skills:audit-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:audit-findings:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "read-only",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-findings"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-artifact",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "java.surface.audit",
+      "capability_version": "1.0.0",
+      "package": "audit-java",
+      "description": "Audit a bounded Java surface read-only.",
+      "accepts": [
+        {
+          "schema": "urn:skills:audit-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:audit-findings:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "read-only",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "read-git-state",
+          "emit-findings"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-artifact",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "rust.surface.audit",
+      "capability_version": "1.0.0",
+      "package": "audit-rust",
+      "description": "Audit a bounded Rust surface read-only.",
+      "accepts": [
+        {
+          "schema": "urn:skills:audit-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:audit-findings:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "read-only",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "read-git-state",
+          "emit-findings"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-artifact",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "browser.runtime.operate",
+      "capability_version": "1.0.0",
+      "package": "ops-browser",
+      "description": "Operate an authorized browser session and capture evidence.",
+      "accepts": [
+        {
+          "schema": "urn:skills:browser-operation-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:runtime-observation:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "RUNTIME_TARGET_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "browser-control",
+        "maximum_effects": [
+          "read-repository",
+          "emit-findings",
+          "emit-handoff",
+          "control-browser-state"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization",
+          "host-runtime-confirmation"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "client.runtime.operate",
+      "capability_version": "1.0.0",
+      "package": "ops-client",
+      "description": "Operate an authorized desktop client and capture evidence.",
+      "accepts": [
+        {
+          "schema": "urn:skills:client-operation-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:runtime-observation:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "RUNTIME_TARGET_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "client-control",
+        "maximum_effects": [
+          "read-repository",
+          "emit-findings",
+          "emit-handoff",
+          "control-client-state"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization",
+          "host-runtime-confirmation"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "external.ai.collaborate",
+      "capability_version": "1.0.0",
+      "package": "ask-ai",
+      "description": "Coordinate authorized external AI collaboration.",
+      "accepts": [
+        {
+          "schema": "urn:skills:ai-review-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:ai-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "PROVIDER_ROUTE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "external-action",
+        "maximum_effects": [
+          "read-repository",
+          "emit-handoff",
+          "invoke-external-provider"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization",
+          "host-runtime-confirmation"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "writing.source.adapt",
+      "capability_version": "1.0.0",
+      "package": "human-writing",
+      "description": "Adapt source-grounded writing without changing facts.",
+      "accepts": [
+        {
+          "schema": "urn:skills:writing-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:writing-output:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "emit-draft",
+          "write-artifact"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
     }
   ]
 }

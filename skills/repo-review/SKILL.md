@@ -10,13 +10,21 @@ description: "Use when Worktree changes or a fixed snapshot/range need coordinat
 Review changes read-only. Select the basis first: Worktree reads current changes;
 fixed-basis review normalizes snapshots, ranges, and pull requests to immutable SHAs.
 
+Consume `urn:skills:review-request:v1`; the portable output is
+`urn:skills:review-findings:v1`. A compatible immutable
+PackageManifest is the preferred dirty/untracked review identity; graph impact queries
+bound consumers, while native source/contracts and the selected package remain proof.
+The review produces typed findings/Observations, not Requirement state or a Receipt.
+
 ## Review Basis
 
 Select exactly one basis before conclusions:
 
 - **Worktree/index:** current tracked, untracked, staged, and unstaged state.
 - **Fixed snapshot/range:** one resolved SHA or explicit immutable `base..head`; a pull request is normalized to complete metadata plus resolved base/head SHAs.
-- **Review package:** manifest, hashes, coverage, exclusions, and marker.
+- **Review package:** immutable PackageManifest with base/result identity, every
+  in-scope file status/hash/mode/bytes including untracked files, aggregate hash,
+  exclusions, and validation marker.
 
 Do not mix evidence between bases. Current-worktree content is contamination when reviewing another SHA unless explicitly included in the basis.
 
@@ -31,7 +39,10 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
      only when raw commit metadata has no parent and the commit is not a shallow-clone
      boundary that truncates parent history. Missing basis objects fail closed as
      `Not verified`; keep current-source observations separate from basis attribution.
-3. Build the smallest complete read set from changed or explicitly owned paths. A `repo-map` artifact may guide navigation but is never review proof.
+3. Build the smallest complete read set from changed or explicitly owned paths. Use a
+   compatible graph reverse-impact/consumer query when available, verify its snapshot
+   basis matches the package, and recheck referenced source. A stale graph, query miss,
+   or derived map view is never review proof or proof of no downstream impact.
 4. In Worktree mode, inventory full status but deeply classify only the requested scope and necessary interface closure. Classify every changed file and mixed hunk only for requested commit-readiness.
 5. Trace relevant registrations, callers, types, data shaping, persistence, generated
    artifacts, runtime config, tests, docs, CI/deploy, and stale references. Select the
@@ -63,13 +74,17 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    [interaction and motion](references/interaction-motion-review.md) only for changed
    motion, gesture, transition ownership, or user-visible feedback. Load
    [code quality](references/code-quality.md) only when its maintainability signals
-   materially apply, and attribute them to the fixed basis. Use `repo-map` only for
-   navigation; keep missing authority and runtime proof independently `Not verified`.
+   materially apply, and attribute them to the fixed basis. Use compatible graph
+   queries only for navigation/impact bounding; keep missing authority and runtime
+   proof independently `Not verified`.
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
 8. Select only applicable profiles. Delegate bounded frontend, Java, or Rust work only
    when requested or necessary. Route security-only work to a host security workflow.
    Verify completed provider evidence against this basis before integrating it.
-9. Resolve documented path mismatches at the selected basis. If a path or parent is absent, ascend to the nearest existing ancestor and search only the relevant subtree; route repo-map edits to `repo-map`.
+9. Resolve documented path mismatches at the selected basis. If a path or parent is
+   absent, ascend to the nearest existing ancestor and search only the relevant
+   subtree; report graph drift for a later `repository.asset.scan` refresh without
+   mutating graph or documentation during review.
 10. Reject speculative, unreachable, style-only, duplicate, or already-resolved findings. Consolidate both axes into P0-P3 findings from concrete impact and urgency while retaining each finding's axis.
 11. Run only non-mutating repository checks needed for the selected basis and risk.
     After any fix, freeze a new complete Worktree or immutable basis and replay the
@@ -79,6 +94,11 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 14. Freeze the local verdict before optional post-terminal action. An explicitly
     persisted `ask-ai` `final-result-sync` receives only that sanitized frozen result;
     its outcome is not review evidence and cannot change the verdict.
+15. When Forgeway delivery integration is active, bind the review capability, exact
+    input/result PackageManifest, graph snapshot/query refs, scope, and spec refs to an
+    immutable Run. Import every local or accepted external finding/result as a typed
+    Observation against that exact package. A new Attempt/result package makes prior
+    downstream review observations stale; never rewrite them or hand-edit a Gate.
 
 ## Modes
 
@@ -146,7 +166,24 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with mode/profile, basis, scope, exclusions, and validation, then severity-ranked P0-P3 findings labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when available, evidence, impact, remediation, and verification. Security findings also state evidence status, proof gaps, and any provider/method used; `fixed` requires a new reviewed basis and replay of the original validation path. Include Standards and Spec verdicts; mark missing specification evidence `Not verified`. For the visual-completion profile, report schema validation, source/revision/approval, evidence coverage, both comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether the completion claim is supported. Add ownership labels, staged risks, logical groups, staging, and messages only for Worktree commit-readiness. Fixed-basis review includes resolved SHAs; release implications appear only when the Release profile was selected. Finish with the local verdict, separate external-review status when applicable, residual risk, and gaps. An explicitly requested independent external challenge/research may hand the fixed basis/question to `ask-ai`; it never implies sending. When a valid persisted final-result sync applies, report its separate receipt/incomplete state only after the frozen local verdict.
+Lead with capability `repository.change.review`, typed review-findings/Observation refs,
+Run, PackageManifest and graph query refs when integration is active, then mode/profile,
+basis, scope, exclusions, and validation, followed by severity-ranked P0-P3 findings
+labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when
+available, evidence, impact, remediation, and verification. Security findings also
+state evidence status, proof gaps, and any provider/method used; `fixed` requires a new
+reviewed basis and replay of the original validation path. Include Standards and Spec
+verdicts; mark missing specification evidence `Not verified`. For the visual-completion
+profile, report schema validation, source/revision/approval, evidence coverage, both
+comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether
+the completion claim is supported. Add ownership labels, staged risks, logical groups,
+staging, and messages only for Worktree commit-readiness. Fixed-basis review includes
+resolved SHAs; release implications appear only when the Release profile was selected.
+Finish with the local verdict, separate external-review status when applicable,
+residual risk, and gaps. An explicitly requested independent external
+challenge/research may hand the fixed basis/question to `ask-ai`; it never implies
+sending. When a valid persisted final-result sync applies, report its separate
+receipt/incomplete state only after the frozen local verdict.
 
 ## References
 

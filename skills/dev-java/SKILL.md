@@ -12,6 +12,12 @@ generation, module boundaries, security model, transaction semantics, and runtim
 contracts. Treat reference projects such as RuoYi as comparative evidence, never as a
 template that overrides current source.
 
+Consume `urn:skills:java-change-request:v1`; the portable output is
+`urn:skills:source-change-result:v1`. When supplied, consume
+typed Task/requirement refs, authority refs, a compatible Asset Graph snapshot/query
+result, and an exact input PackageManifest; native Java source, build contracts, and
+interface/schema authorities remain authoritative.
+
 ## Workflow
 
 1. Read effective repository guidance and run `git status --short` in the owning Git
@@ -71,6 +77,14 @@ template that overrides current source.
     output, unexpected validation drift, and unrelated user changes without
     auto-reverting any of them. Do not substitute compilation for behavioral,
     database, authorization, concurrency, migration, or runtime evidence.
+13. When a compatible Asset Graph is available, use asset/consumer/impact queries to
+    bound the read set and recheck every referenced symbol in current source. A stale
+    snapshot or query miss never proves absence and never replaces build/runtime proof.
+14. When Forgeway delivery integration is active, require an immutable Run with input
+    refs, exact scope, and input PackageManifest before mutation. Let the package
+    producer fingerprint each Attempt result and bind command, test, migration, and
+    artifact outcomes as typed Observations to that exact result package. Retries do
+    not overwrite earlier Attempts; this implementation owner emits no Receipt.
 
 ## Modes
 
@@ -123,7 +137,9 @@ template that overrides current source.
 
 ## Output Contract
 
-Report scope, Git/build root, project class, JDK/build/framework evidence, selected
+Report capability `java.source.implement`, Run/input/result PackageManifest refs when
+integration is active, typed source-change result/Observation refs, scope, Git/build
+root, project class, JDK/build/framework evidence, selected
 overlays, reuse/new decision, changed contract chain, security and transaction impact,
 Baseline/overlay validation, before/after Worktree state, and exact gaps. For each
 overlay, report applicability as `Affected` or `Not applicable`, then report evidence

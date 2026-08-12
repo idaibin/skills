@@ -9,13 +9,23 @@ description: "Use when a Rust source change must be implemented, ported, or refa
 
 Implement Rust changes against the repository's real toolchain, project class, crate boundaries, error model, and validation contract. Select validation by risk rather than applying native/FFI-level gates to every routine change.
 
+Consume `urn:skills:rust-change-request:v1`; the portable output is
+`urn:skills:source-change-result:v1`. When supplied, consume
+typed Task/requirement refs, authority refs, a compatible Asset Graph snapshot/query
+result, and an exact input PackageManifest; Rust source, manifests, and native
+interface/schema contracts remain authoritative.
+
 ## Workflow
 
 1. Read effective repository guidance, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present, then run `git status --short` before edits.
 2. Identify the Rust project class: library workspace, application workspace, HTTP service, CLI, Tauri/native backend, or compact single package.
 3. Read the approved requirement/specification when one exists. Confirm requested behavior, acceptance criteria, non-goals, affected crates/modules/files, compatibility, and validation seams; for complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
 4. Inspect the relevant `Cargo.toml`, lockfile, toolchain, formatter, lint, command source, modules, tests, architecture docs, and API/interface docs.
-5. Consume a current `repo-map` inventory or perform the same targeted search across route registration, handlers, services, repositories, traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous features.
+5. Consume a compatible graph asset/consumer/impact query or perform the same targeted
+   live search across route registration, handlers, services, repositories,
+   traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous
+   features. Reject a stale/mismatched snapshot, and never treat a query miss or
+   derived Markdown render as proof of absence.
 6. When the requested Rust change crosses reachable runtime/configuration, packaging, API,
    persistence, compatibility, security, deployment, or cross-repository boundaries, load
    `references/project-grounding.md` and build the smallest task-scoped record before edits.
@@ -36,6 +46,11 @@ Implement Rust changes against the repository's real toolchain, project class, c
 11. Implement the smallest idiomatic change that follows local ownership, borrowing, module, error, async, persistence, FFI, configuration, logging, documentation, and test patterns. When Agent Runtime applies, load `references/agent-runtime-profile.md` and keep the smallest explicit Thread/Turn/Operation, typed protocol, lifecycle, authorization, persistence, and IPC contract that the requested behavior needs. When the task materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only declarations made obsolete by the authorized change after resolving Rust reachability.
 12. Update manifests, module exports, tests, commands, docs, CI/deploy paths, migrations, generated files, and indexes when the structural or public boundary changes.
 13. Run focused checks after each slice, then the repository's baseline gates and every selected overlay. Use Miri, sanitizers, fuzzing, stress, or repeated-operation tools only when both supported by the target repository/environment and relevant to the changed invariant.
+14. When Forgeway delivery integration is active, require an immutable Run with input
+    refs, exact scope, and input PackageManifest before mutation. Let the package
+    producer fingerprint each Attempt result and bind commands, tests, runtime checks,
+    and artifacts as typed Observations to that exact result package. Retries do not
+    overwrite earlier Attempts; this implementation owner emits no Receipt.
 
 ## Modes
 
@@ -95,7 +110,16 @@ Do not claim Baseline or an overlay passed when a required tool, target, runtime
 
 ## Output Contract
 
-Report scope; detected project, crate/module, toolchain, and ownership boundaries; applicable authorities and existing owners; selected Rust risk overlays; reuse/extension/reference decision; changed files and contract chain; validation mapped to Baseline and each selected overlay; Worktree drift; excluded work and optional checks; and `Not found` or `Not verified` gaps. Add new-interface justification, manifest/docs lifecycle, failures, and target/runtime evidence only when applicable. If the user explicitly requests independent external review/research, hand one fixed basis/question to `ask-ai`; never send implicitly.
+Report capability `rust.source.implement`, Run/input/result PackageManifest refs when
+integration is active, typed source-change result/Observation refs, scope; detected
+project, crate/module, toolchain, and ownership boundaries; applicable authorities and
+existing owners; selected Rust risk overlays; reuse/extension/reference decision;
+changed files and contract chain; validation mapped to Baseline and each selected
+overlay; Worktree drift; excluded work and optional checks; and `Not found` or `Not
+verified` gaps. Add new-interface justification, manifest/docs lifecycle, failures,
+and target/runtime evidence only when applicable. If the user explicitly requests
+independent external review/research, hand one fixed basis/question to `ask-ai`; never
+send implicitly.
 
 ## References
 
