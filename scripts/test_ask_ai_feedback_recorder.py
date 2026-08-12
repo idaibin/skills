@@ -69,6 +69,48 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
         self.assertEqual(1, self.run_recorder().returncode)
         self.assertFalse(self.log.exists())
 
+    def test_rejects_null_nested_and_invalid_scalar_types(self) -> None:
+        for value in (None, {"nested": "value"}, 7):
+            with self.subTest(value=value):
+                self.event["summary"] = value
+                self.assertEqual(1, self.run_recorder().returncode)
+        self.assertFalse(self.log.exists())
+
+    def test_serializes_concurrent_appenders(self) -> None:
+        processes = []
+        for index in range(8):
+            event = dict(self.event)
+            event["event_id"] = f"round-{index}:verification-update:1:abcd"
+            event["feedback_id"] = f"round-{index}"
+            event_file = self.root / f"event-{index}.json"
+            event_file.write_text(json.dumps(event), encoding="utf-8")
+            processes.append(
+                subprocess.Popen(
+                    [
+                        sys.executable,
+                        str(RECORDER),
+                        "--config",
+                        str(self.config),
+                        "--event-file",
+                        str(event_file),
+                    ],
+                    text=True,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                )
+            )
+        results = [
+            process.communicate(timeout=10) + (process.returncode,)
+            for process in processes
+        ]
+        self.assertTrue(all(returncode == 0 for _, _, returncode in results), results)
+        events = [
+            json.loads(line)
+            for line in self.log.read_text(encoding="utf-8").splitlines()
+        ]
+        self.assertEqual(8, len(events))
+        self.assertEqual(8, len({event["event_id"] for event in events}))
+
 
 if __name__ == "__main__":
     unittest.main()

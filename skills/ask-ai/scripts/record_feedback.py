@@ -4,12 +4,19 @@
 from __future__ import annotations
 
 import argparse
-import fcntl
+from contextlib import contextmanager
+from datetime import datetime
 import json
 import os
 from pathlib import Path
 import re
 import sys
+
+try:
+    import fcntl
+except ImportError:  # pragma: no cover - exercised on Windows
+    fcntl = None
+    import msvcrt
 
 
 ALLOWED_EVENT_TYPES = {"review-attempt", "response-captured", "verification-update"}
@@ -59,6 +66,17 @@ ALLOWED_FIELDS = REQUIRED_FIELDS | {
 }
 FORBIDDEN_KEY_PARTS = {"raw", "content", "secret", "token", "email", "url", "path"}
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
+INTEGER_FIELDS = {
+    "event_version",
+    "prompt_artifact_size",
+    "material_findings",
+    "confirmed_findings",
+    "rejected_findings",
+    "duplicate_findings",
+    "not_verified_gaps",
+}
+LIST_FIELDS = {"review_modes"}
+STRING_FIELDS = ALLOWED_FIELDS - INTEGER_FIELDS - LIST_FIELDS
 
 
 def load_config(path: Path) -> dict:
@@ -98,18 +116,59 @@ def validate_event(event: object) -> dict:
         raise ValueError("unsupported event type")
     if not HEX_64.fullmatch(str(event["fixed_basis_hash"])):
         raise ValueError("fixed_basis_hash must be lowercase SHA-256")
+    try:
+        timestamp = datetime.fromisoformat(str(event["timestamp"]))
+    except ValueError as error:
+        raise ValueError("timestamp must be ISO-8601") from error
+    if timestamp.tzinfo is None:
+        raise ValueError("timestamp must include a timezone")
     for key, value in event.items():
         lowered = key.lower().replace("-", "_").split("_")
         if FORBIDDEN_KEY_PARTS.intersection(lowered):
             raise ValueError(f"forbidden metadata field: {key}")
-        values = value if isinstance(value, list) else [value]
+        if key in STRING_FIELDS and (not isinstance(value, str) or not value):
+            raise ValueError(f"non-empty string required: {key}")
+        if key in INTEGER_FIELDS and (
+            not isinstance(value, int) or isinstance(value, bool) or value < 0
+        ):
+            raise ValueError(f"non-negative integer required: {key}")
+        if key in LIST_FIELDS and (
+            not isinstance(value, list)
+            or not value
+            or any(not isinstance(item, str) or not item for item in value)
+        ):
+            raise ValueError(f"non-empty string list required: {key}")
+        values = value if key in LIST_FIELDS else [value]
         for item in values:
-            if isinstance(item, str):
-                if len(item) > 240 or "\n" in item or "\r" in item:
-                    raise ValueError(f"unsafe text value: {key}")
-                if item.startswith(("/", "~", "file:", "http:", "https:")):
-                    raise ValueError(f"path or URL value forbidden: {key}")
+            if not isinstance(item, str):
+                continue
+            if len(item) > 240 or "\n" in item or "\r" in item:
+                raise ValueError(f"unsafe text value: {key}")
+            if item.startswith(("/", "~", "file:", "http:", "https:")) or "://" in item:
+                raise ValueError(f"path or URL value forbidden: {key}")
     return event
+
+
+@contextmanager
+def advisory_lock(lock):
+    if fcntl is not None:
+        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+        return
+    lock.seek(0, os.SEEK_END)
+    if lock.tell() == 0:
+        lock.write("\0")
+        lock.flush()
+    lock.seek(0)
+    msvcrt.locking(lock.fileno(), msvcrt.LK_LOCK, 1)
+    try:
+        yield
+    finally:
+        lock.seek(0)
+        msvcrt.locking(lock.fileno(), msvcrt.LK_UNLCK, 1)
 
 
 def append_event(log_path: Path, event: dict) -> None:
@@ -119,27 +178,27 @@ def append_event(log_path: Path, event: dict) -> None:
         "utf-8"
     )
     with lock_path.open("a+", encoding="utf-8") as lock:
-        fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
-        if log_path.exists():
-            with log_path.open(encoding="utf-8") as existing:
-                for line in existing:
-                    if json.loads(line).get("event_id") == event["event_id"]:
-                        raise ValueError("duplicate event_id")
-        descriptor = os.open(log_path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o600)
-        try:
-            remaining = memoryview(encoded)
-            while remaining:
-                written = os.write(descriptor, remaining)
-                if written == 0:
-                    raise OSError("feedback append made no progress")
-                remaining = remaining[written:]
-            os.fsync(descriptor)
-        finally:
-            os.close(descriptor)
-        with log_path.open("rb") as recorded:
-            recorded.seek(-len(encoded), os.SEEK_END)
-            if recorded.read() != encoded:
-                raise OSError("feedback append readback mismatch")
+        with advisory_lock(lock):
+            if log_path.exists():
+                with log_path.open(encoding="utf-8") as existing:
+                    for line in existing:
+                        if json.loads(line).get("event_id") == event["event_id"]:
+                            raise ValueError("duplicate event_id")
+            descriptor = os.open(log_path, os.O_APPEND | os.O_CREAT | os.O_WRONLY, 0o600)
+            try:
+                remaining = memoryview(encoded)
+                while remaining:
+                    written = os.write(descriptor, remaining)
+                    if written == 0:
+                        raise OSError("feedback append made no progress")
+                    remaining = remaining[written:]
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+            with log_path.open("rb") as recorded:
+                recorded.seek(-len(encoded), os.SEEK_END)
+                if recorded.read() != encoded:
+                    raise OSError("feedback append readback mismatch")
 
 
 def main() -> int:

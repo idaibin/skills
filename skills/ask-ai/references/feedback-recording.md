@@ -48,6 +48,11 @@ duplicate event IDs, holds one advisory lock, performs one append plus `fsync`, 
 re-reads the appended line. A successful zero exit plus matching readback is
 `feedback-recorded`.
 
+The configured log path is a user-owned trust boundary and may point outside the
+default agent state directory. All intended writers, including a user-owned rotation
+or compaction tool, must acquire the recorder's sibling `.lock` file. The recorder uses
+the operating system's standard advisory lock primitive on Unix/macOS and Windows.
+
 Any nonzero exit, unavailable lock/path, invalid record, duplicate, or ambiguous
 readback is `feedback-deferred`. Preserve the detailed evidence in the ordinary ignored
 review artifact and return the provider result normally. Never rerun or resubmit the
