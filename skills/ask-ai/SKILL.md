@@ -79,7 +79,10 @@ not maintain a second public collaboration owner.
    For durable coding-agent CLI work, load
    [cli-artifact-handoff.md](references/cli-artifact-handoff.md), resolve its configurable
    flat-prefixed artifact roles, freeze one task document, and persist the invocation
-   barrier before process start. Package-only may prepare the task but does not launch it.
+   barrier before process start. The formal CLI instruction names only that task
+   document; it does not duplicate the task body, prescribe an exploration sequence,
+   or narrow the provider's native tools. Package-only may prepare the task but does
+   not launch it.
 8. Load [provider-adapter.md](references/provider-adapter.md), build its live adapter
    record, then load only the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)
