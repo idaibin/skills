@@ -99,6 +99,10 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
     immutable Run. Import every local or accepted external finding/result as a typed
     Observation against that exact package. A new Attempt/result package makes prior
     downstream review observations stale; never rewrite them or hand-edit a Gate.
+    The portable result separately reports `scope_assessment` and `spec_assessment`:
+    graph impact can bound a static search but never authorizes scope expansion, and
+    missing trustworthy acceptance authority remains `not-verified` rather than being
+    inferred from source or tests.
 
 ## Modes
 
@@ -173,8 +177,13 @@ labeled `Standards`, `Spec`, or both. Every finding includes location, requireme
 available, evidence, impact, remediation, and verification. Security findings also
 state evidence status, proof gaps, and any provider/method used; `fixed` requires a new
 reviewed basis and replay of the original validation path. Include Standards and Spec
-verdicts; mark missing specification evidence `Not verified`. For the visual-completion
-profile, report schema validation, source/revision/approval, evidence coverage, both
+verdicts; mark missing specification evidence `Not verified`. In the typed result,
+preserve the request `review_id` and basis; return exact finding counts,
+line-anchored quotes, contributing axes, scope violations, acceptance refs,
+executed/not-run checks, and limitations. A clean no-op has zero findings and zero
+blocking findings; it does not imply Spec compliance when no trustworthy spec exists.
+For the visual-completion profile, report schema validation,
+source/revision/approval, evidence coverage, both
 comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether
 the completion claim is supported. Add ownership labels, staged risks, logical groups,
 staging, and messages only for Worktree commit-readiness. Fixed-basis review includes

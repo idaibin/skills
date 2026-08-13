@@ -1500,6 +1500,8 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
         for filename, expected_id in (
             ("repository-scope.v1.schema.json", "urn:skills:repository-scope:v1"),
             ("asset-map-result.v1.schema.json", "urn:skills:asset-map-result:v1"),
+            ("review-request.v1.schema.json", "urn:skills:review-request:v1"),
+            ("review-findings.v1.schema.json", "urn:skills:review-findings:v1"),
         ):
             try:
                 portable_schema = json.loads((implemented_portable / filename).read_text(encoding="utf-8"))

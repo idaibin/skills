@@ -6,12 +6,12 @@
   `audit-frontend`, `repo-review`, `ops-browser`, and `workspace-taskboard` from one
   current Worktree snapshot. Behavior scenarios remain evidence-bounded per row and
   do not imply live invocation of every package in this digest scope.
-- Package digest: `sha256:bfb6fc45dae92df708d081b68e9f8c19220ccad3b8abf1947973e772a7ec2260`
+- Package digest: `sha256:179a67a93a8d1e6b8cb82062969ed78b068cb72c16054e1016fc0fe493eae671`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
-  completeness, routing, source discovery, installation, and byte-parity checks. The
-  seven changed consumer/owner packages were installed globally for Codex with Claude
-  Code symlinks and read back against source. The refresh sent no provider message,
-  created no conversation, and opened, moved, renamed, or closed no browser tab/group.
+  completeness, routing, and source-discovery checks. Global installation and
+  installed-copy parity were not rerun for this digest. The refresh sent no provider
+  message, created no conversation, and opened, moved, renamed, or closed no browser
+  tab/group.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -38,8 +38,8 @@ behavior certification and does not replace target-environment runtime validatio
 | Fixed-basis frontend audit and review | Not rerun | No external target Worktree audit was rerun for this digest. |
 | Live headless-browser page operation | Not rerun | No browser page operation was run for this digest. |
 | Local-browser session/group capability | Partial | Executable regressions cover two browser identities, stale-ID reconnect, stable reuse, duplicate names, label-only ambiguity, missing capabilities, exact create-required transitions, and each enabled-policy combination. No live user-local Chrome inventory or page operation was run. |
-| Global package install | Pass | Current `ui-spec`, `ask-ai`, `ops-browser`, `dev-frontend`, `audit-frontend`, `repo-review`, and `workspace-taskboard` source packages installed globally for Codex; Claude Code targets resolve to their universal copies. This is not an isolated project-local install. |
-| Installed-copy parity | Pass | Recursive comparisons found no package-content drift for all seven installed packages after excluding source-only Python cache files; Claude Code symlink targets resolved to the same universal copies. |
+| Global package install | Not rerun | Prior installation evidence belongs to an earlier package digest and is not promoted to this one. |
+| Installed-copy parity | Not rerun | Current source-to-installed byte parity was not checked for this digest. |
 | Installed package-local validator | Not verified | The repository validator requires root catalog files that global package installation intentionally does not copy, so it cannot validate the installed directory as a standalone catalog. Source validation and installed-copy parity passed separately. |
 | Explicit host invocation | Not verified | No provider submit, image generation, or browser target discovery was run for this digest. Prior operations remain historical evidence only. |
 | Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
@@ -100,8 +100,9 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Repository validation, DESIGN completeness, Forgeway handoff, local-workspace offline
-gates, global installation, and installed-copy parity passed. Live provider target
+Repository validation, DESIGN completeness, Forgeway handoff, and local-workspace
+offline gates passed. Global installation and installed-copy parity were not rerun for
+this digest. Live provider target
 discovery, user-local Chrome
 session/group capability, implicit model routing, effective model identity, human
 visual approval, frontend implementation, same-state browser acceptance,

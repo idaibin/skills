@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skills:review-findings:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "capability_id", "capability_version", "review_id", "basis", "verdict", "finding_count", "blocking_count", "findings", "scope_assessment", "spec_assessment", "checks", "limitations"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "capability_id": { "const": "repository.change.review" },
+    "capability_version": { "const": "1.0.0" },
+    "review_id": { "type": "string", "pattern": "^review:[A-Za-z0-9._:-]+$" },
+    "basis": { "type": "object", "minProperties": 1 },
+    "verdict": { "enum": ["pass", "partial", "gap"] },
+    "finding_count": { "type": "integer", "minimum": 0 },
+    "blocking_count": { "type": "integer", "minimum": 0 },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "scope_assessment": { "$ref": "#/$defs/scopeAssessment" },
+    "spec_assessment": { "$ref": "#/$defs/specAssessment" },
+    "checks": { "type": "array", "items": { "$ref": "#/$defs/check" } },
+    "limitations": { "$ref": "#/$defs/refs" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "verdict": { "const": "pass" } }, "required": ["verdict"] },
+      "then": {
+        "properties": {
+          "blocking_count": { "const": 0 },
+          "scope_assessment": { "properties": { "status": { "enum": ["within-scope", "not-verified"] } } },
+          "spec_assessment": { "properties": { "status": { "enum": ["satisfied", "not-verified"] } } }
+        }
+      }
+    },
+    {
+      "if": { "properties": { "finding_count": { "const": 0 } }, "required": ["finding_count"] },
+      "then": { "properties": { "findings": { "maxItems": 0 } } }
+    },
+    {
+      "if": { "properties": { "findings": { "minItems": 1 } }, "required": ["findings"] },
+      "then": { "properties": { "finding_count": { "minimum": 1 } } }
+    }
+  ],
+  "$defs": {
+    "path": { "type": "string", "minLength": 1, "pattern": "^(?!/|~|[A-Za-z]:[\\\\])(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$" },
+    "paths": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/path" } },
+    "refs": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["finding_id", "severity", "title", "path", "line_start", "line_end", "quote", "axes", "impact", "remediation", "evidence_status"],
+      "properties": {
+        "finding_id": { "type": "string", "pattern": "^finding:[A-Za-z0-9._:-]+$" },
+        "severity": { "enum": ["P0", "P1", "P2", "P3"] },
+        "title": { "type": "string", "minLength": 1 },
+        "path": { "$ref": "#/$defs/path" },
+        "line_start": { "type": "integer", "minimum": 1 },
+        "line_end": { "type": "integer", "minimum": 1 },
+        "quote": { "type": "string", "minLength": 1 },
+        "axes": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "enum": ["standards", "spec", "scope", "security"] } },
+        "impact": { "type": "string", "minLength": 1 },
+        "remediation": { "type": "string", "minLength": 1 },
+        "evidence_status": { "enum": ["verified", "not-verified"] },
+        "acceptance_refs": { "$ref": "#/$defs/refs" }
+      }
+    },
+    "scopeAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "changed_paths", "allowed_paths", "violations", "limitations"],
+      "properties": {
+        "status": { "enum": ["within-scope", "out-of-scope", "not-verified"] },
+        "changed_paths": { "$ref": "#/$defs/paths" },
+        "allowed_paths": { "$ref": "#/$defs/paths" },
+        "violations": { "$ref": "#/$defs/paths" },
+        "graph_snapshot_ref": { "type": "string", "pattern": "^scan:[A-Za-z0-9._:-]+$" },
+        "limitations": { "$ref": "#/$defs/refs" }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "const": "within-scope" } }, "required": ["status"] }, "then": { "properties": { "violations": { "maxItems": 0 } } } },
+        { "if": { "properties": { "status": { "const": "out-of-scope" } }, "required": ["status"] }, "then": { "properties": { "violations": { "minItems": 1 } } } }
+      ]
+    },
+    "specAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "acceptance_refs", "uncovered_refs", "limitations"],
+      "properties": {
+        "status": { "enum": ["satisfied", "unsatisfied", "not-verified"] },
+        "acceptance_refs": { "$ref": "#/$defs/refs" },
+        "uncovered_refs": { "$ref": "#/$defs/refs" },
+        "limitations": { "$ref": "#/$defs/refs" }
+      },
+      "allOf": [
+        { "if": { "properties": { "status": { "const": "satisfied" } }, "required": ["status"] }, "then": { "properties": { "uncovered_refs": { "maxItems": 0 } } } },
+        { "if": { "properties": { "status": { "const": "unsatisfied" } }, "required": ["status"] }, "then": { "properties": { "uncovered_refs": { "minItems": 1 } } } }
+      ]
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "status", "evidence"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["pass", "fail", "not-run", "not-verified"] },
+        "evidence": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

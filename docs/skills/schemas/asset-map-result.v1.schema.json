@@ -14,6 +14,19 @@
     "scope": { "type": "object" },
     "coverage": { "type": "object" },
     "validation": { "type": "object", "required": ["valid", "issues"], "properties": { "valid": { "type": "boolean" }, "issues": { "type": "array" } } },
-    "assets": { "type": "array" }
+    "query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "root_asset_id", "direction", "depth", "relation_filters"],
+      "properties": {
+        "kind": { "const": "impact" },
+        "root_asset_id": { "type": "string", "minLength": 1 },
+        "direction": { "enum": ["outbound", "inbound", "both"] },
+        "depth": { "type": "integer", "minimum": 0, "maximum": 20 },
+        "relation_filters": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "assets": { "type": "array" },
+    "relations": { "type": "array" }
   }
 }

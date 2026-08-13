@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:skills:review-request:v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "capability_id", "capability_version", "review_id", "basis", "scope", "authorities"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "capability_id": { "const": "repository.change.review" },
+    "capability_version": { "const": "1.0.0" },
+    "review_id": { "type": "string", "pattern": "^review:[A-Za-z0-9._:-]+$" },
+    "basis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "repository_id"],
+      "properties": {
+        "mode": { "enum": ["worktree", "fixed-range", "package"] },
+        "repository_id": { "type": "string", "minLength": 1 },
+        "base_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "head_sha": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "package_ref": { "type": "string", "pattern": "^pkg:[A-Za-z0-9._:-]+$" },
+        "worktree_state_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "allOf": [
+        { "if": { "properties": { "mode": { "const": "fixed-range" } }, "required": ["mode"] }, "then": { "required": ["base_sha", "head_sha"] } },
+        { "if": { "properties": { "mode": { "const": "package" } }, "required": ["mode"] }, "then": { "required": ["package_ref"] } },
+        { "if": { "properties": { "mode": { "const": "worktree" } }, "required": ["mode"] }, "then": { "required": ["head_sha", "worktree_state_sha256"] } }
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["changed_paths", "included_paths", "excluded_paths"],
+      "properties": {
+        "changed_paths": { "$ref": "#/$defs/paths" },
+        "included_paths": { "$ref": "#/$defs/paths" },
+        "excluded_paths": { "$ref": "#/$defs/paths" }
+      }
+    },
+    "authorities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["standards_refs", "spec_refs", "acceptance_refs"],
+      "properties": {
+        "standards_refs": { "$ref": "#/$defs/refs" },
+        "spec_refs": { "$ref": "#/$defs/refs" },
+        "acceptance_refs": { "$ref": "#/$defs/refs" }
+      }
+    },
+    "graph_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["snapshot_ref", "impact_query_refs", "allowed_paths", "unresolved"],
+      "properties": {
+        "snapshot_ref": { "type": "string", "pattern": "^scan:[A-Za-z0-9._:-]+$" },
+        "impact_query_refs": { "$ref": "#/$defs/refs" },
+        "allowed_paths": { "$ref": "#/$defs/paths" },
+        "unresolved": { "$ref": "#/$defs/refs" }
+      }
+    },
+    "task_specific_criteria": { "$ref": "#/$defs/refs" }
+  },
+  "$defs": {
+    "path": { "type": "string", "minLength": 1, "pattern": "^(?!/|~|[A-Za-z]:[\\\\])(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$" },
+    "paths": { "type": "array", "uniqueItems": true, "items": { "$ref": "#/$defs/path" } },
+    "refs": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+  }
+}
