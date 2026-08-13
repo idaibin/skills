@@ -43,6 +43,10 @@ To implement one UI slice, read in order:
 Do not require sibling PRD or UI contracts. Keep unfinished task-local work and
 visual-evidence JSON under the repository's verified ignored task workspace, such as
 `.codex/artifacts/ui-<slice-id>/`, until durable publication is explicitly approved.
+Keep an unapproved candidate UI specification and its complete generation prompt
+under the repository's verified ignored `.codex/reviews/` convention. They are one
+candidate pair, not a second shared visual authority, and they never update
+`DESIGN.md` before explicit promotion approval.
 
 Durable UI indexes, Feature Specs, and `DESIGN.md` describe only the current accepted
 contract. Git stores their history. Candidate directions, comparison passes,

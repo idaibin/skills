@@ -51,6 +51,13 @@ browser_profile:
   provenance: <direct-observation|user-stated|tool-reported|unknown>
 capabilities:
   session_enumeration: <available|unavailable|unknown>
+  session_selection: <available|unavailable|unknown>
+  stable_session_identity: <available|unavailable|unknown>
+  group_enumeration: <available|unavailable|unknown>
+  group_selection: <available|unavailable|unknown>
+  stable_group_identity: <available|unavailable|unknown>
+  group_creation: <available|unavailable|unknown>
+  group_placement: <available|unavailable|unknown>
   tab_control: <available|unavailable|unknown>
   stable_tab_identity: <available|unavailable|unknown>
   managed_session_creation: <available|unavailable|unknown>
@@ -90,6 +97,21 @@ workspace evidence, login-state fingerprint, target origin, and required
 capability evidence remain unchanged. Re-capture after a session break, account
 or workspace change, login change, route change, browser reconnect, target
 origin change, or capability failure.
+
+For a configured user-local-browser workspace, a group label observed on a tab is
+not group enumeration or stable group identity. Require independent session and
+group enumeration, stable IDs, exact selection, and placement control whenever the
+resolved policy requires verified reuse or placement. If any required capability is
+`unavailable` or `unknown`, return `blocked` with `capability-unavailable` before
+`nameSession`, tab creation, group creation, navigation, or page operation. A browser
+reconnect invalidates evidence bound to the prior browser ID and requires a fresh
+snapshot; matching display names never bridge the two identities.
+
+When an enabled configured workspace is proven absent and `create_if_missing: true`,
+the preflight may return `creation-required` and authorize only the exact configured
+session or group creation supported by `managed_session_creation` or `group_creation`.
+Re-enumerate and rerun preflight before selection, placement, tab creation, navigation,
+or page action. A same-name observation without a stable ID is ambiguity, not absence.
 
 Imported browser data is initialization evidence only. Bookmarks and history may
 help locate a target, and saved credentials may help a user authenticate, but

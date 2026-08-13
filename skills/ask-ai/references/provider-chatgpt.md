@@ -56,10 +56,18 @@ of external review rounds.
    start with the Codex in-app browser. Use App-native first only when explicitly
    requested or configured and its Project/Quick Chat preflight passes.
 5. Before any submit, an unavailable primary may use only its configured same-provider
-   fallback. This fallback is task-local: the next task starts again from the stored
-   primary and reruns its preflight. An explicit local-browser request starts directly
-   in that browser and does not probe Codex in-app first.
+   fallback, and a user-local-browser fallback additionally requires current-request
+   authorization for the visible user-owned surface plus a task need for local-only
+   login, tab, extension, or download state. This fallback is task-local: the next task
+   starts again from the stored primary and reruns its preflight. An explicit
+   local-browser request starts directly in that browser and does not probe Codex in-app first.
 6. Use Package-only when no authorized route proves the required capability.
+
+Run the transport resolver from `browser-profile.md` before these live steps. When the
+review route selects a configured ChatGPT Project, require its own stable Project ID,
+ChatGPT URL origin, account, and conversation evidence. The same Gemini Notebook label
+is not identity evidence. A browser-selected result forbids `chatgptWorkCloud`, even
+when the in-app Browser currently has no open tab.
 
 If generic ChatGPT is used, report that the review is not project-bound.
 

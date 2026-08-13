@@ -27,6 +27,7 @@
     {"id": "product-spec-critical-stop", "skill": "product-spec", "class": "critical-stop", "prompt": "Define product acceptance, but required product facts are missing; stop.", "expected_owner": "product-spec", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
 
     {"id": "ui-spec-normal", "skill": "ui-spec", "class": "normal", "prompt": "Write a UI specification from the selected design source and visual contract.", "expected_owner": "ui-spec", "expected_outcome": "route"},
+    {"id": "ui-spec-candidate-direction", "skill": "ui-spec", "class": "normal", "prompt": "Ground this unapproved dashboard direction in the real source, then maintain one ignored candidate UI spec and one complete image-generation prompt before external exploration.", "expected_owner": "ui-spec", "expected_outcome": "route"},
     {"id": "ui-spec-boundary", "skill": "ui-spec", "class": "boundary", "prompt": "Edit the frontend source files and close the runtime UI difference.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
     {"id": "ui-spec-critical-stop", "skill": "ui-spec", "class": "critical-stop", "prompt": "Create the selected-source UI specification, but the visual source is unavailable; stop.", "expected_owner": "ui-spec", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
 
@@ -68,6 +69,10 @@
 
     {"id": "human-writing-normal", "skill": "human-writing", "class": "normal", "prompt": "Rewrite this source-grounded technical documentation without changing facts.", "expected_owner": "human-writing", "expected_outcome": "route"},
     {"id": "human-writing-boundary", "skill": "human-writing", "class": "boundary", "prompt": "Ask ChatGPT for an independent review of this fixed proposal.", "expected_owner": "ask-ai", "expected_outcome": "reroute"},
-    {"id": "human-writing-critical-stop", "skill": "human-writing", "class": "critical-stop", "prompt": "Rewrite this source-grounded article, but the source basis is missing; stop.", "expected_owner": "human-writing", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"}
+    {"id": "human-writing-critical-stop", "skill": "human-writing", "class": "critical-stop", "prompt": "Rewrite this source-grounded article, but the source basis is missing; stop.", "expected_owner": "human-writing", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
+
+    {"id": "workspace-taskboard-normal", "skill": "workspace-taskboard", "capability_id": "codex.workspace.taskboard", "class": "normal", "prompt": "Show the workspace task board, reuse a compatible task under this project root, and notify this project controller when workers finish.", "expected_owner": "workspace-taskboard", "expected_outcome": "route"},
+    {"id": "workspace-taskboard-boundary", "skill": "workspace-taskboard", "class": "boundary", "prompt": "Commit and push this reviewed branch to origin.", "expected_owner": "repo-delivery", "expected_outcome": "reroute"},
+    {"id": "workspace-taskboard-critical-stop", "skill": "workspace-taskboard", "class": "critical-stop", "prompt": "Manage this explicit task, but its resolved cwd escapes the verified project roots; stop because it is out of scope.", "expected_owner": "workspace-taskboard", "expected_stop": "out-of-scope-workspace", "expected_outcome": "stop"}
   ]
 }

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import sys
@@ -30,12 +31,18 @@ ASK_AI_DEFAULT_TOKENS = (
     "local_browser: <user-selected browser name>",
     "fallback: user-local-browser | codex-in-app-browser | package-only",
     "fallback applies only to the current task",
+    "Primary unavailability alone does not authorize touching Chrome",
     "context_routes:",
-    "name: <user-editable review Project/notebook name>",
+    "name: <optional generic review container name>",
     "name: <user-editable design Project/notebook name>",
     "policy: prefer-verified-persistent | require-verified-persistent",
     "fallback: new-standard-chat | package-only",
     "provider_targets:",
+    "chatgpt: {surface: project, name: <user-selected ChatGPT Project name>}",
+    "gemini: {surface: notebook, name: <user-selected Gemini Notebook name>}",
+    "selected_transport",
+    "forbidden_transports",
+    "chatgptWorkCloud: 0",
     "name: <user-editable image Project/notebook name>",
     "standard_chat:",
     "policy: allow-default | explicit-current-request-only",
@@ -167,8 +174,30 @@ OPS_BROWSER_WORKSPACE_TOKENS = (
     "nameSession",
     "Never derive its argument from a task title",
     "fresh uninspectable automation session",
+    "preflight-local-browser-workspace.py",
+    "stable group ID",
+    "two Chrome instances",
     "capability-unavailable",
     "preserve unrelated valid fields, then read back",
+)
+UI_SPEC_DESIGN_COMPLETENESS_TOKENS = (
+    "@google/design.md@0.4.0",
+    "9bf8eae67128b6cc55ad9bf86665767deb4c11cd",
+    "official-format-valid",
+    "ui-spec-design-completeness/1",
+    "ready-for-human-approval",
+    "awaiting-trusted-approval-verification",
+    "host-trusted",
+    "same exact Result Package",
+    "scripts/validate-design-md-completeness.py",
+    "PackageManifest binds bytes and basis",
+    "ui.contract.specify@1.1.0",
+    "forgeway-ui-design-completeness/1",
+    "gate:ui-design-complete",
+    "package-relative",
+    "byte length",
+    "approval_record_sha256",
+    "distinct canonical",
 )
 
 
@@ -193,6 +222,7 @@ MUTATION_CLASSES = {
     "browser-control",
     "client-control",
     "external-action",
+    "task-control",
 }
 MUTATION_CAPABILITIES = {
     "read-only": set(),
@@ -202,6 +232,7 @@ MUTATION_CAPABILITIES = {
     "browser-control": {"browser-control"},
     "client-control": {"client-control"},
     "external-action": {"external-provider"},
+    "task-control": {"task-control"},
 }
 CONTRACT_EFFECT_BY_MUTATION = {
     "read-only": set(),
@@ -211,6 +242,7 @@ CONTRACT_EFFECT_BY_MUTATION = {
     "browser-control": {"control-browser-state"},
     "client-control": {"control-client-state"},
     "external-action": {"invoke-external-provider"},
+    "task-control": {"control-task-state"},
 }
 CAPABILITY_EFFECTS = {
     "artifact-write": "write-artifact",
@@ -219,6 +251,8 @@ CAPABILITY_EFFECTS = {
     "browser-control": "control-browser-state",
     "client-control": "control-client-state",
     "external-provider": "invoke-external-provider",
+    "task-control": "control-task-state",
+    "registry-write": "write-control-registry",
 }
 
 
@@ -376,11 +410,15 @@ def ask_ai_defaults_errors(package: Path) -> list[str]:
     if not profile.is_file():
         return ["ask-ai: missing references/browser-profile.md"]
     text = normalized_contract_text(profile.read_text(encoding="utf-8"))
-    return [
+    errors = [
         f"ask-ai: browser-profile.md missing defaults token: {token}"
         for token in ASK_AI_DEFAULT_TOKENS
         if token not in text
     ]
+    resolver = package / "scripts" / "resolve_browser_transport.py"
+    if not resolver.is_file():
+        errors.append("ask-ai: missing scripts/resolve_browser_transport.py")
+    return errors
 
 
 def ops_browser_workspace_errors(package: Path) -> list[str]:
@@ -391,11 +429,34 @@ def ops_browser_workspace_errors(package: Path) -> list[str]:
     if not profile.is_file():
         return ["ops-browser: missing references/local-browser-workspaces.md"]
     text = normalized_contract_text(profile.read_text(encoding="utf-8"))
-    return [
+    errors = [
         f"ops-browser: local-browser-workspaces.md missing contract token: {token}"
         for token in OPS_BROWSER_WORKSPACE_TOKENS
         if token not in text
     ]
+    preflight = package / "scripts" / "preflight-local-browser-workspace.py"
+    if not preflight.is_file():
+        errors.append("ops-browser: missing scripts/preflight-local-browser-workspace.py")
+    return errors
+
+
+def ui_spec_design_completeness_errors(package: Path) -> list[str]:
+    """Keep format validity separate from adopted shared-authority completeness."""
+    if package.name != "ui-spec":
+        return []
+    contract = package / "references" / "design-md-contract.md"
+    checker = package / "scripts" / "validate-design-md-completeness.py"
+    if not contract.is_file():
+        return ["ui-spec: missing references/design-md-contract.md"]
+    text = normalized_contract_text(contract.read_text(encoding="utf-8"))
+    errors = [
+        f"ui-spec: design-md-contract.md missing completeness token: {token}"
+        for token in UI_SPEC_DESIGN_COMPLETENESS_TOKENS
+        if token not in text
+    ]
+    if not checker.is_file():
+        errors.append("ui-spec: missing scripts/validate-design-md-completeness.py")
+    return errors
 
 
 def ask_ai_cli_monitor_errors(package: Path) -> list[str]:
@@ -458,6 +519,52 @@ def ask_ai_provider_variant_errors(package: Path) -> list[str]:
         errors.append("ask-ai: provider_aliases example must state recipient-only semantics")
     if "Never cross-fallback between the global" not in text:
         errors.append("ask-ai: Qoder variants must forbid cross-variant fallback")
+    return errors
+
+
+def workspace_taskboard_errors(package: Path) -> list[str]:
+    if package.name != "workspace-taskboard":
+        return []
+    required = (
+        package / "SKILL.md",
+        package / "references" / "task-routing.md",
+        package / "references" / "control-contract.md",
+        package / "references" / "worker-protocol.md",
+        package / "assets" / "control-manifest.v1.schema.json",
+        package / "scripts" / "task_control.py",
+    )
+    missing = [path.relative_to(package).as_posix() for path in required if not path.is_file()]
+    if missing:
+        return [f"workspace-taskboard: missing required contract files: {missing}"]
+    text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in required
+        if path.suffix in {".md", ".py"}
+    )
+    tokens = (
+        "reuse_key", "list_threads", "read_thread", "list_projects",
+        "create_thread", "send_message_to_thread", "controller-rebind",
+        "REGISTRY_UNAVAILABLE", "BASIS_DRIFT", "user-local", "non-LLM consumer",
+        "compare-and-swap", "ready-for-delivery", "controlled-delivery",
+        "external effects", "canonical_project_root", "allowed_roots",
+        "OUT_OF_SCOPE_WORKSPACE", "PLACEMENT_UNVERIFIED", "CONTROLLER_UNRESOLVED",
+        "realpath", "projectless", "ChatGPT", "component-aware descendant",
+        "status-projection",
+    )
+    errors = [
+        f"workspace-taskboard: contract missing {token!r}"
+        for token in tokens
+        if token.lower() not in text.lower()
+    ]
+    try:
+        schema = json.loads(
+            (package / "assets" / "control-manifest.v1.schema.json").read_text(encoding="utf-8")
+        )
+        jsonschema.Draft202012Validator.check_schema(schema)
+        if schema.get("$id") != "urn:codex-host:workspace-taskboard-control:v1":
+            errors.append("workspace-taskboard: manifest schema has unexpected $id")
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError, jsonschema.SchemaError) as error:
+        errors.append(f"workspace-taskboard: invalid manifest schema: {error}")
     return errors
 
 
@@ -996,6 +1103,8 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
     errors.extend(ask_ai_untrusted_content_errors(package))
     errors.extend(ask_ai_app_native_relay_errors(package))
     errors.extend(ops_browser_workspace_errors(package))
+    errors.extend(ui_spec_design_completeness_errors(package))
+    errors.extend(workspace_taskboard_errors(package))
 
     eval_file = references / "eval-cases.md"
     if not eval_file.is_file():
@@ -1124,11 +1233,82 @@ def skill_contract_errors(entries: list[dict[str, object]]) -> list[str]:
                 errors.append(
                     f"skills-index.json: {name} capability {capability} must allow effect {effect}"
                 )
-        if mutation == "read-only" and any(
-            effect in set(allowed)
-            for effect in ("write-source", "write-artifact", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider")
-        ):
+        if mutation == "read-only" and set(allowed) & MUTATING_EFFECTS:
             errors.append(f"skills-index.json: {name} read-only contract allows a mutating effect")
+    return errors
+
+
+def workspace_taskboard_outcome_errors(root: Path) -> list[str]:
+    """Keep executable stop/failure outcomes closed with the v3 registry contract."""
+    script = root / "skills" / "workspace-taskboard" / "scripts" / "task_control.py"
+    index = root / "skills-index.json"
+    if not script.is_file() or not index.is_file():
+        return []
+    try:
+        tree = ast.parse(script.read_text(encoding="utf-8"))
+        payload = json.loads(index.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, SyntaxError, json.JSONDecodeError) as error:
+        return [f"workspace-taskboard: cannot validate executable outcomes: {error}"]
+
+    def static_strings(node: ast.AST) -> tuple[set[str], bool]:
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            return {node.value}, True
+        if isinstance(node, ast.IfExp):
+            left, left_ok = static_strings(node.body)
+            right, right_ok = static_strings(node.orelse)
+            return left | right, left_ok and right_ok
+        if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
+            values: set[str] = set()
+            resolved = True
+            for item in node.elts:
+                item_values, item_ok = static_strings(item)
+                values.update(item_values)
+                resolved = resolved and item_ok
+            return values, resolved
+        return set(), False
+
+    reachable = {"stop_state": set(), "failure_code": set()}
+    unresolved: list[str] = []
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Dict):
+            continue
+        for key, value in zip(node.keys, node.values):
+            if isinstance(key, ast.Constant) and key.value in reachable:
+                values, resolved = static_strings(value)
+                reachable[key.value].update(values)
+                if not resolved:
+                    unresolved.append(f"line {getattr(value, 'lineno', '?')} {key.value}")
+    package = next(
+        (item for item in payload.get("packages", []) if item.get("name") == "workspace-taskboard"),
+        None,
+    )
+    capabilities = [
+        item for item in payload.get("capabilities", [])
+        if item.get("package") == "workspace-taskboard"
+    ]
+    if not package or not capabilities:
+        return ["workspace-taskboard: missing package or capability outcome contract"]
+    declared_stops = set(package.get("stop_states", []))
+    declared_failures = {
+        item.get("code")
+        for capability in capabilities
+        for item in capability.get("failure_codes", [])
+        if isinstance(item, dict)
+    }
+    errors = [
+        f"workspace-taskboard: executable outcome is not statically closed: {item}"
+        for item in unresolved
+    ]
+    if reachable["stop_state"] != declared_stops:
+        errors.append(
+            "workspace-taskboard: stop state drift: "
+            f"executable={sorted(reachable['stop_state'])}, registry={sorted(declared_stops)}"
+        )
+    if reachable["failure_code"] != declared_failures:
+        errors.append(
+            "workspace-taskboard: failure code drift: "
+            f"executable={sorted(reachable['failure_code'])}, registry={sorted(declared_failures)}"
+        )
     return errors
 
 
@@ -1139,9 +1319,13 @@ CAPABILITY_MUTATION_EFFECT = {
     "browser-control": "control-browser-state",
     "client-control": "control-client-state",
     "external-action": "invoke-external-provider",
+    "task-control": "control-task-state",
 }
 
-MUTATING_EFFECTS = set(CAPABILITY_MUTATION_EFFECT.values()) | {"write-run-local-cache"}
+MUTATING_EFFECTS = set(CAPABILITY_MUTATION_EFFECT.values()) | {
+    "write-run-local-cache",
+    "write-control-registry",
+}
 
 
 def symbolic_scope_errors(capability_id: str, constraints: object) -> list[str]:
@@ -1385,6 +1569,7 @@ def validate(root: Path) -> list[str]:
     names = {path.name for path in packages}
     errors = catalog_errors(root, names)
     errors.extend(skill_index_errors(root, names))
+    errors.extend(workspace_taskboard_outcome_errors(root))
     for package in packages:
         errors.extend(package_errors(package, names))
     if not packages:

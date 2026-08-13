@@ -37,6 +37,7 @@ STOP_CLASSIFIERS = (
     ("missing-authorization", re.compile(r"authorization\s+(?:to\s+[^,;.]+\s+)?(?:is\s+)?(?:missing|not\s+granted)|not\s+authorized|authorization\s+is\s+not\s+granted", re.IGNORECASE)),
     ("scope-ambiguous", re.compile(r"(?:target\s+)?scope\s+is\s+ambiguous|ambiguous\s+scope", re.IGNORECASE)),
     ("capability-unavailable", re.compile(r"(?:required\s+)?capability\s+is\s+unavailable", re.IGNORECASE)),
+    ("out-of-scope-workspace", re.compile(r"outside\s+this\s+workspace|out\s+of\s+scope|cwd\s+differs", re.IGNORECASE)),
     ("provider-unavailable", re.compile(r"provider\s+is\s+unavailable", re.IGNORECASE)),
     ("runtime-unverified", re.compile(r"runtime\s+(?:is\s+)?(?:unverified|not\s+verified)", re.IGNORECASE)),
     ("unsafe-or-destructive", re.compile(r"unsafe\s+or\s+destructive|destructive\s+target", re.IGNORECASE)),

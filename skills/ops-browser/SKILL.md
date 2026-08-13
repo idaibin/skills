@@ -18,6 +18,12 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    user did not request. Verify the effective page viewport rather than treating a
    successful resize call as proof.
 2. Preflight only task-required capabilities and return the Capability Snapshot from `references/browser-operation-protocol.md`. Set unselected availability fields to `unknown` and explain `not assessed: outside selected preflight scope` in `gaps.reason`; expand the matrix only for authenticated, state-changing, transfer, delegated review, or explicitly non-interrupting work. For a user local-browser route, load [references/local-browser-workspaces.md](references/local-browser-workspaces.md) before initializing browser control, resolve control-session and tab-group policies independently, and preflight session reuse plus group enumeration/placement separately from login and page control.
+   Serialize the live workspace evidence and run
+   `python3 scripts/preflight-local-browser-workspace.py <evidence.json>` before any
+   controller setup or page action. Exit `10` permits only the exact configured
+   session or group creation named by `permitted_actions`; re-enumerate and rerun the
+   gate before any other action. Exit `20` is `capability-unavailable`; do not call
+   `nameSession`, create a tab/group, reconnect again, or continue by label.
 3. Before every action that would open or create a page, enumerate browser sessions and
    existing tabs when the available tool exposes them. Narrow candidates by browser
    surface, verified account/session, and task context, then prefer an exact URL within
@@ -148,4 +154,5 @@ ledger without making product or UI-contract decisions.
 - See [references/devtools-debugging.md](references/devtools-debugging.md) for localhost, test, and authorized production browser debugging.
 - See [references/browser-operation-protocol.md](references/browser-operation-protocol.md) for the shared Capability Snapshot, handoff schema, operation state machine, and degraded mode.
 - Read [references/local-browser-workspaces.md](references/local-browser-workspaces.md) when a user local-browser route must preserve a configured unified or operation-mapped tab group.
+- Run [scripts/preflight-local-browser-workspace.py](scripts/preflight-local-browser-workspace.py) for the executable local-browser reuse/placement gate.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for same-viewport/state capture, evidence levels, pass-scoped computed checks, and tab restoration; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).

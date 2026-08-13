@@ -64,7 +64,7 @@ documented owner and validator, and leave `SKILL.md` as the portable authority.
 
 `skills-index.json` is the catalog's provider-neutral repository discovery and
 execution-boundary source. Version 3 is the `capability-registry/3` contract:
-`packages[]` preserves the 16 package owners and `capabilities[]` declares a
+`packages[]` preserves the 17 package owners and `capabilities[]` declares a
 one-to-many set of stable `capability_id`/`capability_version` entries. Each capability
 declares accepted and produced schema references, preconditions/postconditions,
 `permission_contract` (maximum effects, confirmations, and symbolic scope
@@ -221,7 +221,7 @@ nearby non-trigger or boundary, and a quality/edge case. This catalog keeps them
 The repository also keeps one deterministic catalog matrix in
 `evals/skill-routing-cases.json`. Every package contributes a normal owner case, a
 nearest-boundary reroute, and a critical stop. `scripts/run-skill-routing-evals.py`
-validates complete 16-package coverage, executes owner routing, requires each critical
+validates complete 17-package coverage, executes owner routing, requires each critical
 stop prompt to carry an owning-Skill signal, verifies declared stop states, and rejects
 removal or owner drift. After the first baseline is published, CI resolves
 `SKILLS_BASE_SHA` (or the merge-base with `origin/main`) and reads the baseline from

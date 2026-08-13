@@ -2,7 +2,7 @@
 
 ## Contents
 
-1. Visual source gate
+1. Candidate or visual source gate
 2. Evidence boundary
 3. UI contract challenge
 4. Profile gate
@@ -11,15 +11,28 @@
 7. Artifact pass
 8. Evaluation and handoff
 
-## Visual Source Gate
+## Candidate Or Visual Source Gate
 
-Require one selected source: a user-selected Product Design result, supplied screenshot/mockup/frame, accepted current surface, or accepted shared-system revision. Record its stable identity, revision, selection/approval status, rights status, `use`, and `ignore` rules. If the user still needs alternatives, image generation, redesign, critique, or an exploratory prototype, stop and route that work to the host's Product Design capability when available.
+Require either a source-grounded user-directed candidate or one selected source: a
+user-selected Product Design result, supplied screenshot/mockup/frame, accepted
+current surface, or accepted shared-system revision. For an unapproved candidate,
+load `candidate-visual-direction.md`, create only the ignored candidate pair, and stop
+`Not Ready` before formal specification or implementation handoff. Route actual
+alternatives, generation, redesign, critique, or prototype work to the matching host
+capability; route a named external-model send to `ask-ai`.
+
+For a selected source, record its stable identity, revision, selection/approval
+status, rights status, `use`, and `ignore` rules, then continue below.
 
 A visual source proves appearance only. It does not prove exact tokens, component ownership, product behavior, API data, accessibility, responsive behavior, or runtime state. Resolve conflicts in favor of verified product facts and accepted live owners; do not silently repair the source by invention.
 
 ## Evidence Boundary
 
 Record confirmed product facts, available data/actions/states, current component and token owners, explicit exclusions, unresolved questions, and the source revision. Mark each specification decision `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, or `Not verified`. Keep the selected-source target, current runtime, and accepted target contract in separate fields.
+
+Resolve component and design-library mappings from live imports, wrappers, and
+consumers before naming them. Never promote a concept-only component or feature into
+the candidate, selected-source target, or product scope.
 
 ## UI Contract Challenge
 
@@ -132,6 +145,17 @@ Run lint for every changed `<design-root>/DESIGN.md`. Run diff against the previ
 update; record diff as `Not applicable` for the first accepted creation instead of
 inventing a baseline. If a required tool cannot run, mark the gate `Not verified` and
 keep the readiness result `Not Ready`.
+
+Official lint success is only `official-format-valid`. For first adoption and every
+Design System Spec, next run the package completeness checker from
+`design-md-contract.md`. It requires the eight canonical H2 sections in order, machine
+tokens or reviewed official omissions, prose-to-token application semantics, source
+binding, shared-component truth, and (for adopted stage) exact-hash approval binding.
+Only `ready-for-human-approval` may enter the approval request. The local adopted check
+stops at `awaiting-trusted-approval-verification`; only a host-trusted approval
+receipt bound to the exact Result Package may satisfy the downstream completeness
+gate. It does not rewrite the producer result. A PackageManifest alone binds bytes
+and basis but never upgrades either result.
 
 ## Evaluation And Handoff
 

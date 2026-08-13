@@ -37,6 +37,16 @@ producer, non-LLM consumer, semantic version, executable validator, drift policy
 retirement rule are evidenced; otherwise its absence is not a defect and Markdown
 remains authoritative.
 
+For first adoption, adopted shared-authority maintenance, or a Design System Spec,
+review official format lint and UI Spec completeness as separate gates. Require the
+official spec commit and CLI version, `ui-spec-design-completeness/1` result, machine
+token groups or concrete official omissions, source binding, and exact design-hash
+human approval for adopted status. Local `awaiting-trusted-approval-verification`
+without a satisfied consumer completeness claim is blocking. Require a host-trusted
+approval receipt bound to the same exact Result Package; it clears the consumer gate
+without rewriting the producer result. Lint zero and a matching PackageManifest prove
+neither completeness nor approval.
+
 ## Ownership identities
 
 Review canonical/source owner, build/deploy owner, runtime service identity, and

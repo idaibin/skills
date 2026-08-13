@@ -45,6 +45,13 @@ implementation authority.
    profile only when an OpenAPI/generated-client chain already exists or the task
    explicitly introduces one.
 6. Treat resolved `<design-root>/DESIGN.md` as the shared visual-semantic authority when adopted. Repository-native component, styling, theme, and generator configuration are implementation adapters and current execution facts, not competing semantic authorities. Verify their actual binding in live source/config; do not claim DESIGN.md automatically synchronizes implementation. Decide `reuse`, `extend`, `wrap`, or justified `new`, and record insufficient candidates or unresolved drift as `Not verified`.
+   Before implementing a shared-system change, require official-format evidence, the
+   `ui-spec-design-completeness/1` producer result, and a satisfied consumer
+   completeness claim produced from a host-trusted approval receipt bound to the
+   current design hash and same exact Result Package. Local
+   `awaiting-trusted-approval-verification` without that claim, PackageManifest
+   integrity, or lint zero alone is insufficient; hand a
+   missing/stale/incomplete authority back to `ui-spec` and stop that shared slice.
 7. For selected-source work, require a valid `spec-ready` artifact and stop before editing when the source is unavailable, the slice is `Partial`/`Not Ready`, target viewport/state is unresolved, or a P1 asset lacks an accepted owner and per-item fallback. Map every applicable acceptance ID to owner file/component, `reuse`/`extend`/`wrap`/justified `new`, asset/data owner, and static/runtime verification method; validate the artifact at `mapped` before editing. Keep source targets separate from current computed runtime values.
 8. Classify the existing UI and layout owners for the selected target, then load only the matching framework, styling, state/data, layout, and desktop-webview references. When geometry, spacing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the task-completion seam.
 9. Preserve already-correct behavior and visual ownership unless the task changes them. For a visually material greenfield surface, accepted redesign, theme/accent change, or anti-slop correction, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); for changed motion or interaction feedback, load [references/interaction-motion-quality.md](references/interaction-motion-quality.md). Do not activate either profile from frontend file types alone.

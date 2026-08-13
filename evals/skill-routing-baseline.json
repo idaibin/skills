@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "working-tree",
-  "fingerprint": "sha256:0d9c53998bed5f2e612000edec66fdbb5ef0d35f9b447166f59a84e600311171",
+  "basis": "8acce07858bb6899fbf123c73a25c0f5ad0cac69+workspace-taskboard-working-tree",
+  "fingerprint": "sha256:dd4ce45f6338c92273086c97bc961e9984cce3d2ddc60d1aa609b1ff62e55f28",
   "summary": {
-    "total": 51,
-    "passed": 51,
+    "total": 54,
+    "passed": 54,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -621,6 +621,42 @@
       "observed_owner": "human-writing",
       "expected_stop": "evidence-incomplete",
       "observed_stop": "evidence-incomplete",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "workspace-taskboard-normal",
+      "case_fingerprint": "sha256:588f1d986b7aa230b528a01b87c04913c23e2366f3011dfe034cc43ae0753cb9",
+      "class": "normal",
+      "skill": "workspace-taskboard",
+      "expected_owner": "workspace-taskboard",
+      "observed_owner": "workspace-taskboard",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "workspace-taskboard-boundary",
+      "case_fingerprint": "sha256:4a96ea1cbfceebe7cc45f8257fd6c90d19a8c24e267e76fe8e430b460ab9033f",
+      "class": "boundary",
+      "skill": "workspace-taskboard",
+      "expected_owner": "repo-delivery",
+      "observed_owner": "repo-delivery",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "workspace-taskboard-critical-stop",
+      "case_fingerprint": "sha256:16e0460310d1374cc2eff12decda3f3ff137412837acfafaf95d1ee67693fb27",
+      "class": "critical-stop",
+      "skill": "workspace-taskboard",
+      "expected_owner": "workspace-taskboard",
+      "observed_owner": "workspace-taskboard",
+      "expected_stop": "out-of-scope-workspace",
+      "observed_stop": "out-of-scope-workspace",
       "status": "passed",
       "failures": []
     }

@@ -4,12 +4,12 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:cd87515d061c6398fec4e20b4a2e1719e9ca5a2c6e22490600a5a9369c631c0e`
-- Host environment: Codex cloud workspace on Linux with Node.js 24; a disposable
-  Epic Stack checkout at commit `da819d69af1bb66b19cfee35ad81aa8502d0be05`;
-  headless Chromium supplied by `@sparticuz/chromium` and driven through
-  Playwright. No desktop-browser session/group inventory, host-routing model
-  invocation, or isolated Skill installation was run for this digest.
+- Package digest: `sha256:d3420173ead1f78776185e6dd4be73630b4094b1e7bb7c5d170a581998098657`
+- Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
+  completeness, routing, and package-source checks only. Installation was outside the
+  current authorization, so prior installed copies were not refreshed or promoted as
+  parity evidence. The refresh sent no provider message,
+  created no conversation, and opened, moved, renamed, or closed no browser tab/group.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -24,24 +24,26 @@ behavior certification and does not replace target-environment runtime validatio
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
-| Catalog discovery | Not verified | No fresh catalog discovery was run for this digest. |
+| Catalog discovery | Pass | The installer discovered the current local catalog and selected the three requested packages by exact name. This proves installer discovery, not implicit model routing. |
 | Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
 | Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
+| DESIGN.md completeness policy | Pass | Official 0.4.0 format lint and `ui-spec-design-completeness/1` regressions distinguish format validity from first-adoption readiness/adoption, bind source and approval record bytes by SHA-256, reject prose-only/token-dump/placeholders/stale approval, and detect concurrent DESIGN.md drift. This is policy evidence, not human approval. |
+| Forgeway DESIGN handoff contract | Pass | Offline validator/eval coverage binds `ui.contract.specify@1.1.0` to compatible consumer `forgeway-ui-design-completeness/1`, exact package-relative artifact hashes/byte lengths, and claim `gate:ui-design-complete`; producer status remains `awaiting-trusted-approval-verification`. Real host principal resolution, receipt adapter, and target DESIGN runtime were not exercised. |
 | Browser tab-lifecycle contract regression | Pass | Focused offline tests verify identity-first tab selection, explicit retention authority, recoverable task-tab ownership, and representative same-URL/different-session cases. This is static contract evidence, not a live browser canary. |
 | Browser backend handoff regression | Pass | Focused offline tests verify shared protocol copy parity, deterministic/agentic/CDP capability fields, action-shape and budget constraints, backend attribution, deterministic-first fixed writes, and the Ask AI provider-adapter links. `test_browser_operation_stability_contract` also covers complete negative evidence for attachment failure and stable-response evidence while keeping a lingering stop control as a separate gap. This is contract evidence, not live browser or provider behavior. |
-| Community feature specification | Pass | A bounded Epic Stack accessibility change was specified as product, UI, architecture, and task artifacts. The UI result correctly kept `DESIGN.md` not adopted because the change preserved existing visual semantics and introduced no shared design authority. |
-| Community behavior-first implementation | Pass | The focused Testing Library check was observed failing against the unchanged route because 21 technology-logo links had no accessible names; adding `aria-label` from the existing logo model made the same check pass. The target repository's original database-backed full Vitest setup remained environment-blocked and is not counted as passing. |
-| Fixed-basis frontend audit and review | Pass | Read-only audit and review used the exact two-file Worktree basis. Typecheck, lint, build, focused test, `git diff --check`, and scoped browser evidence passed; a separate pre-existing unnamed brand link was excluded rather than silently folded into the task result. |
-| Live headless-browser page operation | Pass | At 1280x720, Chromium resolved all 21 links by accessible role/name and expected href. axe-core scoped to the technology grid returned zero violations and `link-name` passed. This does not establish a reusable desktop session, tab-group control, two-pass visual closure, assistive-technology software behavior, or whole-page accessibility. |
-| Local-browser session/group capability | Not verified | Static contracts now keep control-session reuse and tab-group placement separate and stop when either required capability is unavailable. No fresh local-browser inventory or page operation was run for this digest. |
-| Isolated project-local install | Not verified | No fresh isolated install was run for this digest. |
-| Installed-copy parity | Not verified | No fresh isolated install exists for parity comparison on this digest. |
-| Installed package-local validator | Not verified | No installed-copy validator run was performed for this digest. |
-| Explicit host invocation | Not verified | No fresh host-routing model invocation was run for this digest. |
+| Community feature specification | Not rerun | Prior canary evidence is historical and is not promoted to this package digest. |
+| Community behavior-first implementation | Not rerun | Prior target-repository test/build evidence is historical and is not promoted to this package digest. |
+| Fixed-basis frontend audit and review | Not rerun | No external target Worktree audit was rerun for this digest. |
+| Live headless-browser page operation | Not rerun | No browser page operation was run for this digest. |
+| Local-browser session/group capability | Partial | Executable regressions cover two browser identities, stale-ID reconnect, stable reuse, duplicate names, label-only ambiguity, missing capabilities, exact create-required transitions, and each enabled-policy combination. No live user-local Chrome inventory or page operation was run. |
+| Global package install | Not rerun | Current synchronization authority excludes installation; prior installed copies are historical and were not refreshed for this digest. |
+| Installed-copy parity | Not verified | Package-source parity gates passed, but current installed-copy parity was not claimed because installation/readback was outside this synchronization run. |
+| Installed package-local validator | Not verified | The repository validator requires root catalog files that global package installation intentionally does not copy, so it cannot validate the installed directory as a standalone catalog. Source validation and installed-copy parity passed separately. |
+| Explicit host invocation | Not verified | No provider submit, image generation, or browser target discovery was run for this digest. Prior operations remain historical evidence only. |
 | Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
 | Critical stop routing | Not verified | No fresh host-routing model invocation was run for this digest. |
-| Browser capability stop gate | Not verified | No fresh host invocation was run for this digest. |
-| Browser two-pass visual closure | Not verified | One fresh headless-browser accessibility/runtime pass was run, but no same-state selected-source two-pass visual comparison was performed. |
+| Browser capability stop gate | Pass | Offline executable fixtures fail closed before naming, tab creation, group creation, or page action when stable selection or placement cannot be proven; creation is exposed only as an exact intermediate action followed by mandatory re-enumeration. This is not live Chrome capability evidence. |
+| Browser two-pass visual closure | Not verified | The generated image is exploratory evidence awaiting human approval; no frontend implementation or same-state selected-source browser comparison was performed. |
 
 ## Sanitized Scenario Ledger
 
@@ -54,7 +56,7 @@ behavior certification and does not replace target-environment runtime validatio
 | `visual-direction-01` | Existing settings redesign with one primary accent semantic role, independent state colors, optional dials, and dark mode only when the accepted contract selects it. | `ui-spec` records Preserve/Overhaul and accepted direction; `dev-frontend` implements; `audit-frontend` stays evidence-bound. | Not verified |
 | `nested-inset-01` | Outer content container already owns page inset while a standard inner panel also adds left/top padding and the scrollbar must stay flush right. | Trace shell → container → page → component → control, keep one owner per boundary, and verify effective insets by axis plus shared-owner sibling impact. | Not verified |
 | `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Target behavior pass; implicit host routing not verified |
-| `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Partial: live accessibility/runtime pass; no selected-source visual comparison |
+| `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Partial: in-app provider operation completed; no selected-source frontend visual comparison |
 | `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Not verified |
 | `browser-stop-01` | Request two same-viewport/state passes without an available browser capability. | `ops-browser`; exact viewport, screenshots, DOM geometry, computed styles, responsive states, both passes, and final visual completion are `Not verified`. | Not verified |
 
@@ -77,9 +79,8 @@ must demonstrate source approval, complete acceptance mapping, two same-viewport
 passes, computed runtime evidence, browser-state restoration, and an honest
 `Partial`/`Not Ready` verdict whenever required evidence is absent.
 
-No fresh host-routing model canary was run for this digest. Re-run explicit and
-implicit routing after authorization, host catalog changes, or global installation
-updates.
+No provider operation or implicit model-routing invocation was run for this digest;
+rerun either only with the corresponding authorization.
 
 ## External Security Provider Compatibility
 
@@ -97,10 +98,10 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Repository validation, focused static browser backend contracts, a community
-red-green frontend slice, fixed-basis review, and a live headless-browser accessibility
-operation pass. Catalog discovery, isolated Skill installation/parity, desktop-browser
-session/group capability, model routing, two-pass visual closure, whole-page
-accessibility, assistive-technology software, and deployment remain `Not verified`.
-The overall live behavior verdict remains `Not verified` because the scoped successes
-do not establish those missing runtime boundaries.
+Repository validation, DESIGN completeness, Forgeway handoff, and local-workspace
+offline gates passed. Current global installation/parity, live provider target
+discovery, user-local Chrome
+session/group capability, implicit model routing, effective model identity, human
+visual approval, frontend implementation, same-state browser acceptance,
+accessibility, and deployment remain `Not verified`. The overall live behavior verdict
+therefore remains `Not verified` beyond the scoped successes above.

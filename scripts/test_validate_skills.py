@@ -96,6 +96,37 @@ class ValidatorTests(unittest.TestCase):
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
 
+    def test_workspace_taskboard_contract_is_complete(self) -> None:
+        package = ROOT / "skills" / "workspace-taskboard"
+        self.assertEqual([], VALIDATOR.workspace_taskboard_errors(package))
+        self.assertEqual([], VALIDATOR.workspace_taskboard_outcome_errors(ROOT))
+
+    def test_workspace_taskboard_outcome_registry_drift_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "skills" / "workspace-taskboard" / "scripts"
+            target.mkdir(parents=True)
+            shutil.copy(ROOT / "skills" / "workspace-taskboard" / "scripts" / "task_control.py", target / "task_control.py")
+            payload = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+            package = next(item for item in payload["packages"] if item["name"] == "workspace-taskboard")
+            package["stop_states"].remove("archive-unverified")
+            (root / "skills-index.json").write_text(json.dumps(payload), encoding="utf-8")
+            errors = VALIDATOR.workspace_taskboard_outcome_errors(root)
+            self.assertTrue(any("stop state drift" in error for error in errors))
+
+    def test_workspace_taskboard_conditional_and_dynamic_outcomes_are_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "skills" / "workspace-taskboard" / "scripts"
+            target.mkdir(parents=True)
+            source = (ROOT / "skills" / "workspace-taskboard" / "scripts" / "task_control.py").read_text(encoding="utf-8")
+            source += "\ndef validator_probe(flag, value):\n    return {'stop_state': 'UNDECLARED_CONDITIONAL' if flag else 'basis-drift', 'failure_code': value}\n"
+            (target / "task_control.py").write_text(source, encoding="utf-8")
+            shutil.copy(ROOT / "skills-index.json", root / "skills-index.json")
+            errors = VALIDATOR.workspace_taskboard_outcome_errors(root)
+            self.assertTrue(any("UNDECLARED_CONDITIONAL" in error for error in errors))
+            self.assertTrue(any("not statically closed" in error for error in errors))
+
     def test_artifact_capability_requires_artifact_effect_for_control_owner(self) -> None:
         entry = {
             "name": "sample-browser",
@@ -109,11 +140,28 @@ class ValidatorTests(unittest.TestCase):
         errors = VALIDATOR.skill_contract_errors([entry])
         self.assertTrue(any("artifact-write must allow effect write-artifact" in error for error in errors))
 
+    def test_registry_write_requires_effect_and_read_only_rejects_registry_mutation(self) -> None:
+        base = {
+            "name": "sample-control", "owner": "sample-control", "mutation_class": "artifact-write",
+            "required_capabilities": ["filesystem-read", "artifact-write", "registry-write"],
+            "allowed_effects": ["read-repository", "write-artifact"],
+            "forbidden_effects": ["write-source", "write-git-state"], "stop_states": ["scope-ambiguous"],
+        }
+        errors = VALIDATOR.skill_contract_errors([base])
+        self.assertTrue(any("registry-write must allow effect write-control-registry" in error for error in errors))
+        base["mutation_class"] = "read-only"
+        base["required_capabilities"] = ["filesystem-read"]
+        base["allowed_effects"] = ["read-repository", "write-control-registry"]
+        errors = VALIDATOR.skill_contract_errors([base])
+        self.assertTrue(any("read-only contract allows a mutating effect" in error for error in errors))
+
     def test_ask_ai_defaults_require_strict_task_context_contract(self) -> None:
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         package = Path(temporary.name) / "ask-ai"
         (package / "references").mkdir(parents=True)
+        (package / "scripts").mkdir(parents=True)
+        (package / "scripts" / "resolve_browser_transport.py").write_text("# fixture\n", encoding="utf-8")
         profile = package / "references" / "browser-profile.md"
         profile.write_text(
             "browser_preference:\n"
@@ -121,13 +169,15 @@ class ValidatorTests(unittest.TestCase):
             "  local_browser: <user-selected browser name>\n"
             "  fallback: user-local-browser | codex-in-app-browser | package-only\n"
             "fallback applies only to the current task.\n"
+            "Primary unavailability alone does not authorize touching Chrome.\n"
             "context_routes:\n"
-            "  review:\n    name: <user-editable review Project/notebook name>\n"
+            "  review:\n    name: <optional generic review container name>\n"
             "    policy: prefer-verified-persistent | require-verified-persistent\n"
             "    fallback: new-standard-chat | package-only\n"
             "    provider_targets:\n"
-            "      chatgpt: {surface: project, name: <optional ChatGPT Project name>}\n"
-            "      gemini: {surface: notebook, name: <optional Gemini Notebook name>}\n"
+            "      chatgpt: {surface: project, name: <user-selected ChatGPT Project name>}\n"
+            "      gemini: {surface: notebook, name: <user-selected Gemini Notebook name>}\n"
+            "selected_transport\nforbidden_transports\nchatgptWorkCloud: 0\n"
             "  design:\n    name: <user-editable design Project/notebook name>\n"
             "    policy: prefer-verified-persistent | require-verified-persistent\n"
             "    fallback: new-standard-chat | package-only\n"
@@ -186,7 +236,7 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("codex-in-app-browser" in error for error in errors))
         self.assertTrue(any("user-selected browser" in error for error in errors))
         self.assertTrue(any("current task" in error for error in errors))
-        self.assertTrue(any("review Project/notebook" in error for error in errors))
+        self.assertTrue(any("generic review container" in error for error in errors))
         self.assertTrue(any("design Project/notebook" in error for error in errors))
         self.assertTrue(any("prefer-verified-persistent" in error for error in errors))
         self.assertTrue(any("provider_targets" in error for error in errors))
@@ -289,7 +339,30 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("require_verified_reuse" in error for error in errors))
             self.assertTrue(any("allow_unconfigured_sessions" in error for error in errors))
             self.assertTrue(any("nameSession" in error for error in errors))
+            self.assertTrue(any("preflight-local-browser-workspace.py" in error for error in errors))
+            self.assertTrue(any("stable group ID" in error for error in errors))
+            self.assertTrue(any("two Chrome instances" in error for error in errors))
             self.assertTrue(any("capability-unavailable" in error for error in errors))
+
+    def test_ui_spec_separates_format_from_completeness(self) -> None:
+        source = ROOT / "skills" / "ui-spec"
+        self.assertEqual([], VALIDATOR.ui_spec_design_completeness_errors(source))
+        with tempfile.TemporaryDirectory() as temporary:
+            package = Path(temporary) / "ui-spec"
+            (package / "references").mkdir(parents=True)
+            (package / "references" / "design-md-contract.md").write_text(
+                "@google/design.md@0.4.0\n", encoding="utf-8"
+            )
+            errors = VALIDATOR.ui_spec_design_completeness_errors(package)
+            self.assertTrue(any("9bf8eae" in error for error in errors))
+            self.assertTrue(any("official-format-valid" in error for error in errors))
+            self.assertTrue(any("ui-spec-design-completeness/1" in error for error in errors))
+            self.assertTrue(any("ready-for-human-approval" in error for error in errors))
+            self.assertTrue(any("validate-design-md-completeness.py" in error for error in errors))
+            self.assertTrue(any("ui.contract.specify@1.1.0" in error for error in errors))
+            self.assertTrue(any("forgeway-ui-design-completeness/1" in error for error in errors))
+            self.assertTrue(any("gate:ui-design-complete" in error for error in errors))
+            self.assertTrue(any("approval_record_sha256" in error for error in errors))
 
     def test_ask_ai_provider_aliases_are_optional_and_canonical(self) -> None:
         source = ROOT / "skills" / "ask-ai"
@@ -1052,7 +1125,7 @@ class ValidatorTests(unittest.TestCase):
     def test_v3_registry_has_one_to_many_capabilities_and_repo_map_modes(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         self.assertEqual(3, index["version"])
-        self.assertEqual(16, len(index["packages"]))
+        self.assertEqual(17, len(index["packages"]))
         self.assertGreater(len(index["capabilities"]), len(index["packages"]))
         repo_map = next(item for item in index["packages"] if item["name"] == "repo-map")
         self.assertEqual(

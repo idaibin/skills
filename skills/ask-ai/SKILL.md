@@ -111,6 +111,9 @@ not maintain a second public collaboration owner.
    labels as one `persistent-context` capability. Use Standard Chat when neither the
    current request nor local configuration selects a persistent context, then apply any
    matched route's configured policy and fallback.
+   Run that reference's machine transport resolver before browser operations and use
+   its `selected_transport`/`forbidden_transports` result; an empty tab inventory does
+   not change an available Codex in-app Browser into ChatGPT Native or Chrome.
    Never treat a conversation title or stored name as container proof.
 9. Create one round_id per review round, a new relay_turn_id per sequential provider
    turn, and a unique logical operation_id per actual create, submit, or capture. On a provider's

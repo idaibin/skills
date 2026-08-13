@@ -26,6 +26,7 @@ audit-rust
 ops-browser
 ops-client
 ask-ai
+workspace-taskboard
 human-writing
 ```
 
@@ -55,6 +56,7 @@ The publishable source directories are:
 - `skills/ops-browser`
 - `skills/ops-client`
 - `skills/ask-ai`
+- `skills/workspace-taskboard`
 - `skills/human-writing`
 
 ## Install

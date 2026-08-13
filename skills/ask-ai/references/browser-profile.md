@@ -26,12 +26,12 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
       fallback: user-local-browser | codex-in-app-browser | package-only
     context_routes:
       review:
-        name: <user-editable review Project/notebook name>
+        name: <optional generic review container name>
         policy: prefer-verified-persistent | require-verified-persistent
         fallback: new-standard-chat | package-only
         provider_targets:
-          chatgpt: {surface: project, name: <optional ChatGPT Project name>}
-          gemini: {surface: notebook, name: <optional Gemini Notebook name>}
+          chatgpt: {surface: project, name: <user-selected ChatGPT Project name>}
+          gemini: {surface: notebook, name: <user-selected Gemini Notebook name>}
       design:
         name: <user-editable design Project/notebook name>
         policy: prefer-verified-persistent | require-verified-persistent
@@ -146,6 +146,14 @@ local-browser request or a saved `user-local-browser` primary starts with that n
 browser, while a built-in-first preference probes Codex in-app again even when the
 previous task fell back locally.
 
+A configured `user-local-browser` fallback is eligible only when the current request
+explicitly authorizes that visible user-owned surface and the task requires state or a
+capability unavailable on the in-app browser, such as an exact existing login, tab,
+profile-bound extension, or user download context. Primary unavailability alone does
+not authorize touching Chrome. Otherwise stop at Package-only. Never use the fallback
+to bypass missing provider, recipient, account/workspace, model, conversation,
+authorization, or idempotency evidence.
+
 Do not write an unsupported provider, transport, surface, model, or capability merely
 because the schema can represent it. A durable preference selects order only: external
 send authorization and fresh route, identity, target, and capability evidence remain
@@ -208,11 +216,27 @@ storage, tools, context limits, or permissions. Require live provider capability
 stable container identity. Preserve the user's exact container name independently for
 each provider when configured names differ.
 
-`provider_targets` is an optional per-route override for providers whose container
-surface or configured name differs. Resolve the selected provider's exact override
-first, then the route-level `name`; never copy a ChatGPT Project label into Gemini or
+`provider_targets` is required for the `review` route and is the authority for its
+selected provider. Other routes may use it as an override when provider container
+surface or configured name differs; only those other routes fall back to route-level
+`name`. Never copy a ChatGPT Project label into Gemini or
 infer a Notebook name from another provider. Unknown provider or surface values block
 that override without changing the configured recipient.
+
+Even when the two configured review targets have the same label, they remain different
+identities: ChatGPT uses a Project and Gemini uses a Notebook. The label is only
+configuration. Verify each provider's stable container ID, URL origin, account, and
+conversation independently. Never copy one provider's ID, URL, tab, or evidence into
+the other provider's adapter.
+
+Before any browser operation, serialize the selected provider, current request,
+complete defaults, and fresh transport/target observations, then run
+`python3 skills/ask-ai/scripts/resolve_browser_transport.py <input.json>`. Its
+`ask-ai-transport-resolution/v1` output is the machine authority for
+`selected_transport` and `forbidden_transports`. An available Codex in-app Browser is
+still selected when `openTabs: []`; open only a task-owned tab after target discovery,
+or stop Package-only. This browser route requires `chatgptWorkCloud: 0` calls.
+Gemini browser work always forbids ChatGPT App-native and AGY CLI transports.
 
 For each authorized external action, first apply an explicit current-request target,
 then a matching configured route. If neither selects `persistent-context`, use

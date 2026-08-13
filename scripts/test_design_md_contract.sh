@@ -17,7 +17,7 @@ fi
 
 export npm_config_cache="${npm_config_cache:-${TMPDIR:-/tmp}/aicraft-design-md-npm-cache}"
 export npm_config_registry="${npm_config_registry:-https://registry.npmjs.org/}"
-design_md_cli=(npx --yes -p @google/design.md@0.3.0 designmd)
+design_md_cli=(npx --yes -p @google/design.md@0.4.0 designmd)
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/aicraft-design-md-XXXXXX")"
 trap 'rm -rf -- "$tmp_dir"' EXIT
@@ -237,6 +237,49 @@ if [[ $blocked_duplicate_count -ne "${#duplicate_h2_variants[@]}" ]]; then
 fi
 
 echo "synthetic duplicate H2 variants were rejected by hard-blocking duplicate H2 guard" >&2
+
+completeness_checker=(python3 skills/ui-spec/scripts/validate-design-md-completeness.py)
+source_artifact="scripts/fixtures/design-md-completeness/source-evidence.txt"
+source_hash="$(shasum -a 256 "$source_artifact" | awk '{print $1}')"
+complete_fixture="scripts/fixtures/design-md-completeness/complete.md"
+prose_fixture="scripts/fixtures/design-md-completeness/prose-only.md"
+
+"${completeness_checker[@]}" "$complete_fixture" \
+  --stage candidate \
+  --shared-components present \
+  --source-ref selected-source:contract-fixture \
+  --source-artifact "$source_artifact" \
+  --source-sha256 "$source_hash" \
+  --source-status approved >/dev/null
+
+prose_lint_output="$(run_designmd_lint "$prose_fixture")"
+prose_lint_status=$?
+if [[ $prose_lint_status -ne 0 ]]; then
+  echo "$prose_lint_output" >&2
+  echo "prose-only regression fixture must remain officially format-valid" >&2
+  exit 1
+fi
+if "${completeness_checker[@]}" "$prose_fixture" \
+  --stage candidate \
+  --shared-components present \
+  --source-ref selected-source:contract-fixture \
+  --source-artifact "$source_artifact" \
+  --source-sha256 "$source_hash" \
+  --source-status approved >/dev/null; then
+  echo "official lint success was incorrectly promoted to shared-authority completeness" >&2
+  exit 1
+fi
+
+if "${completeness_checker[@]}" "$design_md_path" \
+  --stage candidate \
+  --shared-components unknown \
+  --source-ref selected-source:template \
+  --source-artifact "$source_artifact" \
+  --source-sha256 "$source_hash" \
+  --source-status approved >/dev/null; then
+  echo "unfilled DESIGN.md starter must not be ready for approval" >&2
+  exit 1
+fi
 
 diff_output="$("${design_md_cli[@]}" diff "$design_md_path" "$design_md_path" --format json 2>&1)"
 if ! echo "$diff_output" | grep -qE '\"regression\"[[:space:]]*:[[:space:]]*false'; then

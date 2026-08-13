@@ -61,6 +61,13 @@ owner; do not invent one.
    directories, framework presence, or literals alone.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
 6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, trace nested effective padding by axis, and cover only the applicable task-completion seam. When the audit explicitly covers visual direction, an existing-surface redesign, theme/accent consistency, density, or anti-slop drift, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); require an accepted direction, analogue, measurement, or user impact rather than treating taste as a finding. When a resolved `<design-root>/DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
+   When adoption/completeness is in scope, verify official-format evidence separately
+   from the `ui-spec-design-completeness/1` result and exact design-hash approval. A
+   local `awaiting-trusted-approval-verification` result without a satisfied consumer
+   claim is blocking; only a host-trusted approval receipt bound to the same Result
+   Package clears it, without rewriting the producer result.
+   Do not use lint zero, current theme/CSS, or PackageManifest integrity to clear a
+   missing, untrusted, or `not-ready` shared authority.
 7. Trace only selected profiles without changing the repository. Do not perform shallow checks for excluded profiles merely to imply coverage. When code-quality concerns materially apply, load the shared code-quality reference with audit semantics and the selected framework/build reachability rules.
 8. Audit applicable loading, empty, error, partial, retry, optimistic, stale, cancellation, keyboard, focus, and long-task behavior within the selected profiles.
 9. Use non-mutating repository checks and request browser or real-client evidence only when a selected claim cannot be proven statically.

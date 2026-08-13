@@ -112,6 +112,16 @@ Starting or naming a host automation session is a browser-state action, not harm
 setup. A user statement that the target is already open means reuse the safely matching
 browser session and tab; it does not authorize a second control session, group, or tab.
 
+Before setup, serialize the selected browser ID, any stale/reconnected browser ID,
+resolved policies, capability states, stable session/group observations, selected IDs,
+and placement target into `local-browser-workspace-preflight/v1`, then run
+`python3 scripts/preflight-local-browser-workspace.py <evidence.json>`. Treat exit `20`
+as `capability-unavailable`. Exit `10` is `creation-required`: perform only the exact
+configured session or group creation whose result field is true, then re-enumerate and
+rerun the gate from new immutable evidence. It never permits `nameSession`, `tabs.new`,
+navigation, or page action. If creation completion is ambiguous, reconcile that same
+operation; do not retry or create another same-named workspace.
+
 - Enumerate reusable control sessions when the host exposes that capability. With
   `reuse_existing: true`, bind the one verified session matching the resolved name and
   browser identity before considering creation.
@@ -122,11 +132,19 @@ browser session and tab; it does not authorize a second control session, group, 
   the host creates a session implicitly during controller setup, record that creation
   separately and apply `create_if_missing` before setup whenever the host can expose
   the behavior.
+- When the resolved session is proven absent and `create_if_missing: true`, the gate
+  may permit only exact managed-session creation. It must prove zero same-name session
+  observations first; a label-only or duplicate observation blocks creation. Group
+  resolution waits until the new session has a stable identity and the gate is rerun.
 - With `allow_unconfigured_sessions: false`, never create or retain a convenience,
   per-task, per-agent, or per-provider session.
 - With `require_verified_reuse: true`, missing session enumeration, selection, or
   after-state identity is `capability-unavailable`; stop before page operation instead
   of naming the current session and claiming reuse.
+- After a browser disconnect, discard every session/group observation bound to the old
+  browser ID. Re-enumerate against the new browser ID and require stable session and
+  group identities plus explicit selection again. A same display name across two
+  Chrome instances is not continuity evidence.
 
 If the host requires a fresh uninspectable automation session for every task, it cannot
 satisfy verified unified-session reuse. Report `capability-unavailable`; do not create a
@@ -139,6 +157,8 @@ and record only title, URL, recency, and group metadata needed for selection. Do
 inspect unrelated page content.
 
 - Treat a tool-exposed `tabGroup` value as observation of that tab's current group.
+- A `tabGroup` label without independent group enumeration, a stable group ID, and an
+  exact selection operation cannot satisfy verified reuse or placement.
 - Treat session naming as a label only; it is not proof that the host reused, created,
   moved, or merged a browser tab group.
 - Create or move a tab only when the active host exposes that exact capability and the
@@ -146,9 +166,10 @@ inspect unrelated page content.
 - When `reuse_existing: true`, reuse an existing verified target group and a safe
   matching tab before considering creation.
 - When the resolved group does not exist and `create_if_missing: true`, create exactly
-  that configured group only when the active host exposes a verifiable group-create or
-  tab-placement operation. Re-enumerate afterward and require exactly one matching
-  target group.
+  that configured group only when the gate returns `creation-required` with
+  `create_group: true` and the active host exposes a verifiable group-create operation.
+  Re-enumerate afterward and require exactly one matching target group plus verified
+  selection and placement before creating or moving a tab.
 - When `allow_unconfigured_groups: false`, never create a convenience, inferred, or
   per-agent/session group. With `by-operation`, only names explicitly present in the
   map or its configured default are allowed.
@@ -156,6 +177,9 @@ inspect unrelated page content.
   placement cannot be verified.
 - When `require_verified_placement: true`, missing group enumeration or placement
   control is `capability-unavailable`; stop instead of guessing.
+- If two groups share the resolved name and the host cannot distinguish them by stable
+  identity, stop `capability-unavailable`; do not select by color, order, active tab,
+  or first match.
 
 If the resolved group is absent and creation or placement cannot be verified, return
 `capability-unavailable`; do not create an ungrouped tab or claim success from a

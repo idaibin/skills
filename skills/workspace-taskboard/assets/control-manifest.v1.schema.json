@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:codex-host:workspace-taskboard-control:v1",
+  "title": "Workspace Taskboard control manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "control_id", "project_id", "project_identity", "canonical_project_root", "allowed_roots_version", "allowed_roots", "current_controller_thread_id", "predecessor_thread_ids", "default_authorization_profile", "worker_mappings", "dependency_edges"],
+  "properties": {
+    "schema_version": {"const": "workspace-taskboard-control/v1"},
+    "control_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "project_identity": {"type": "string", "minLength": 1},
+    "canonical_project_root": {"type": "string", "minLength": 1},
+    "allowed_roots_version": {"type": "string", "minLength": 1},
+    "allowed_roots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "current_controller_thread_id": {"type": "string", "minLength": 1},
+    "predecessor_thread_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "default_authorization_profile": {"type": ["string", "null"], "enum": ["implementation", "controlled-delivery", null]},
+    "worker_mappings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reuse_key", "thread_id", "canonical_cwd", "project_identity", "responsibility", "rank", "closed"],
+        "properties": {
+          "reuse_key": {"type": "string", "minLength": 3},
+          "thread_id": {"type": "string", "minLength": 1},
+          "canonical_cwd": {"type": "string", "minLength": 1},
+          "project_identity": {"type": "string", "minLength": 1},
+          "responsibility": {"type": "string", "minLength": 1},
+          "rank": {"type": "number"},
+          "closed": {"type": "boolean"}
+        }
+      }
+    },
+    "dependency_edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["producer_reuse_key", "consumer_reuse_key"],
+        "properties": {
+          "producer_reuse_key": {"type": "string", "minLength": 3},
+          "consumer_reuse_key": {"type": "string", "minLength": 3}
+        }
+      }
+    }
+  }
+}

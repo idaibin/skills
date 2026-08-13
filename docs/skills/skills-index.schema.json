@@ -73,7 +73,9 @@
       "items": {"enum": [
         "filesystem-read", "filesystem-write", "source-write", "artifact-write",
         "git-read", "git-write", "command-runner", "browser-control", "client-control",
-        "visual-evidence", "external-provider", "text-authoring"
+        "visual-evidence", "external-provider", "text-authoring", "task-control",
+        "task-enumeration", "task-read", "task-create", "task-send", "task-wait",
+        "project-enumeration", "registry-read", "registry-write"
       ]}
     },
     "effects": {
@@ -83,7 +85,8 @@
       "items": {"enum": [
         "read-repository", "read-git-state", "read-source", "write-source", "write-artifact", "write-run-local-cache",
         "write-git-state", "control-browser-state", "control-client-state",
-        "invoke-external-provider", "emit-findings", "emit-handoff", "emit-draft"
+        "invoke-external-provider", "read-task-state", "control-task-state",
+        "write-control-registry", "emit-findings", "emit-handoff", "emit-draft"
       ]}
     },
     "stopStates": {
@@ -94,7 +97,7 @@
     },
     "mutationClass": {"enum": [
       "read-only", "artifact-write", "source-write", "git-write",
-      "browser-control", "client-control", "external-action"
+      "browser-control", "client-control", "external-action", "task-control"
     ]},
     "semver": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "schemaRef": {

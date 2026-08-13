@@ -1,0 +1,1 @@
+Approved visual source fixture for deterministic completeness-policy tests.

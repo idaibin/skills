@@ -1,6 +1,11 @@
 ---
 name: "Replace with accepted design-system name"
 description: "Replace with verified visual authority summary for the selected design system"
+colors: {}
+typography: {}
+spacing: {}
+rounded: {}
+components: {}
 ---
 
 ## Overview
@@ -10,18 +15,18 @@ description: "Replace with verified visual authority summary for the selected de
 
 ## Colors
 
-- Replace with approved color-token strategy in prose.
-- For each color role, reference verified source evidence.
+- Replace the empty `colors` map with approved machine tokens, then name at least one
+  token here in backticks and describe where it applies.
 
 ## Typography
 
-- Replace with approved typography hierarchy and usage rules.
-- Keep font scale and fallback choices from verified visual source only.
+- Replace the empty `typography` map with approved machine tokens, then bind named
+  tokens here to headings, body copy, labels, and fallback behavior.
 
 ## Layout
 
-- Replace with verified layout/spacing system and container behavior.
-- Record responsive breakpoints and content density rules.
+- Replace the empty `spacing` map with approved machine tokens, then bind named tokens
+  here to layout rhythm, component gaps, and container behavior.
 
 ## Elevation & Depth
 
@@ -29,12 +34,15 @@ description: "Replace with verified visual authority summary for the selected de
 
 ## Shapes
 
-- Replace with verified radius/shape and sizing guidance.
+- Replace the empty `rounded` map with approved machine tokens, then bind named tokens
+  here to specific surfaces and controls.
 
 ## Components
 
-- Replace with approved component families, states, and variant constraints.
-- Use shared component ownership and state vocabulary from accepted repository owner.
+- When shared component consumers exist, replace the empty `components` map with
+  component token entries and bind at least one entry here to its states and variants.
+- A genuinely unused group may instead move to frontmatter `omitted` as an object with
+  `section` and a concrete `reason`; repeat that reason verbatim in its standard section.
 
 ## Do's and Don'ts
 

@@ -61,7 +61,7 @@ When a request requires shared token/component change:
 
 - Update resolved `<design-root>/DESIGN.md` content.
 - Before handoff, run official lint and diff gates against the resolved design root:
-  - `npx -p @google/design.md@0.3.0 designmd lint --format json <design-root>/DESIGN.md`
-  - `npx -p @google/design.md@0.3.0 designmd diff <before-DESIGN.md> <design-root>/DESIGN.md --format json`
+  - `npx -p @google/design.md@0.4.0 designmd lint --format json <design-root>/DESIGN.md`
+  - `npx -p @google/design.md@0.4.0 designmd diff <before-DESIGN.md> <design-root>/DESIGN.md --format json`
 
 No additional machine artifact is required for this gate.

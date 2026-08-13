@@ -22,6 +22,12 @@ No host-native Gemini thread mapping is defined by this package. Do not relabel 
 generic host task, Google connector, search result, or API client as an independent
 Gemini review.
 
+Run the machine transport resolver from `browser-profile.md`. Gemini Web resolves to
+the Codex in-app Browser (or an explicitly authorized same-provider browser fallback),
+never ChatGPT App-native and never AGY CLI. For a configured review Notebook, the target
+must have its own stable Notebook ID, Gemini URL origin, account, and conversation;
+the same-named ChatGPT Project and all of its evidence are forbidden inputs.
+
 ## Target And Identity
 
 Before composing, resolve the provider-neutral browser preference from

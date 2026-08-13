@@ -9,7 +9,9 @@
 - **Shared visual semantics:** the resolved `<design-root>/DESIGN.md` when effective
   guidance, shared-system ownership, and actual consumers prove that boundary and it
   adopts the Google DESIGN.md contract. It owns shared tokens, component semantics,
-  variants, and cross-surface visual rules.
+  variants, and cross-surface visual rules. Official format lint alone is insufficient:
+  consumers require the applicable UI Spec completeness result and exact-hash approval
+  before treating it as adopted authority.
 - **Slice UI contract:** the accepted selected-source contract for one page, flow, or
   domain. It owns layout, component/token mapping, interaction, responsive and
   accessibility rules, and UI acceptance.
@@ -32,6 +34,13 @@ approval state.
 3. When UI contracts are relevant, resolve and read `<design-root>/DESIGN.md`, then
    the project-declared UI index when applicable and the target UI slice. Do not infer
    the design root from the Git root or treat generated metadata as shared authority.
+   When the boundary claims adoption, verify the official spec commit/CLI lint and
+   `ui-spec-design-completeness/1` result. A missing, `not-ready`, stale-hash,
+   format-only, or local `awaiting-trusted-approval-verification` result is blocking
+   and handed to `ui-spec`, not repaired from implementation source. Only a satisfied
+   consumer completeness claim produced from a host-trusted approval receipt bound to
+   the same exact Result Package clears adoption; the producer result remains
+   `awaiting-trusted-approval-verification`.
 4. Cross-check implementation and runtime evidence against those contracts without
    silently treating current code as approval for an unresolved product or visual
    decision.

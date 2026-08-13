@@ -128,6 +128,27 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         self.assertIn(".codex/artifacts/", text)
         self.assertNotIn("repository-root `DESIGN.md`", text)
 
+    def test_ui_candidate_lifecycle_stays_local_and_owner_bounded(self) -> None:
+        skill = self.read("skills/ui-spec/SKILL.md")
+        candidate = self.read(
+            "skills/ui-spec/references/candidate-visual-direction.md"
+        )
+        for required in (
+            ".codex/reviews/",
+            "candidate UI specification",
+            "complete generation prompt",
+            "content hashes",
+            "`ask-ai`",
+            "`DESIGN.md` unchanged",
+            "Not Ready for dev-frontend",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, skill + candidate)
+        self.assertIn("edit the candidate specification first", candidate)
+        self.assertIn("default state", candidate)
+        self.assertIn("separate interaction states", candidate)
+        self.assertIn("never send from\nthis Skill", candidate)
+
     def test_consumers_use_the_same_resolved_design_root(self) -> None:
         paths = (
             "protocols/specification-authorities-v1.md",
@@ -175,6 +196,24 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
     def test_design_template_has_no_date_like_version_default(self) -> None:
         template = self.read("skills/ui-spec/assets/DESIGN.md")
         self.assertNotIn("version:", template)
+
+    def test_design_completeness_handoff_keeps_producer_state_distinct(self) -> None:
+        contract = self.read("skills/ui-spec/references/design-md-contract.md")
+        self.assertIn("ui.contract.specify@1.1.0", contract)
+        self.assertIn("forgeway-ui-design-completeness/1", contract)
+        self.assertIn("gate:ui-design-complete", contract)
+        self.assertIn("package-relative paths", contract)
+        self.assertIn("approval_record_sha256", contract)
+        self.assertIn("does not mutate the producer result", contract)
+        for path in (
+            "skills/dev-frontend/references/eval-cases.md",
+            "skills/audit-frontend/references/eval-cases.md",
+            "skills/repo-review/references/eval-cases.md",
+        ):
+            with self.subTest(path=path):
+                consumer = self.read(path)
+                self.assertNotIn("ui-spec-design-completeness/1: complete", consumer)
+                self.assertNotIn("producer result `complete`", consumer)
 
 
 if __name__ == "__main__":

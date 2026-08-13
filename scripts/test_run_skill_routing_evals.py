@@ -24,7 +24,7 @@ class SkillRoutingEvalTests(unittest.TestCase):
         schema = RUNNER.load_json(RUNNER.DEFAULT_SCHEMA)
         self.assertEqual([], RUNNER.validate_case_contract(index, cases, schema))
         evaluated = RUNNER.evaluate(index, cases)
-        self.assertEqual(51, len(evaluated))
+        self.assertEqual(55, len(evaluated))
         self.assertTrue(all(case["status"] == "passed" for case in evaluated))
 
     def test_baseline_pass_cannot_disappear_change_definition_or_change_owner(self) -> None:
