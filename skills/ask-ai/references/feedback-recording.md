@@ -41,6 +41,27 @@ counts, short sanitized summaries, and evidence labels. Never include raw prompt
 responses, source, secrets, account names, URLs, filesystem paths, or browser-profile
 data.
 
+Task-effect metadata is additive and optional, so existing v1 events remain valid.
+Use `task_phase` (`plan`, `execute`, `review`, `verify`) and `task_class`
+(`frontend`, `backend`, `test`, `architecture`, `bug-diagnosis`, `bug-fix`,
+`design`, `tooling`, `cross-layer`, `other`) to classify comparable work. They may
+appear in any terminal-chain event once the task basis is known.
+
+Only a `verification-update` may record locally reconciled result fields:
+
+- `first_pass_outcome`: `accepted`, `rework-required`, `incomplete`, `failed`, or
+  `not-verified`;
+- `rework_rounds` and `unresolved_attempts`: non-negative integers;
+- `final_acceptance`: `accepted`, `accepted-with-gaps`, `rejected`, `incomplete`, or
+  `not-verified`;
+- `user_correction`: `none`, `clarification`, `scope-reset`, `boundary-reset`,
+  `rollback`, `acceptance-change`, or `not-verified`.
+
+These fields describe one verified round; they do not rank a model or provider. Do
+not change routing from one event. Require at least three comparable verified rounds
+across two distinct fixed bases inside the user-configured evidence window, and keep
+runtime availability separate from task quality.
+
 ## Completion And Failure
 
 The recorder validates configuration and event shape, rejects unknown fields and

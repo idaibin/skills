@@ -63,6 +63,13 @@ ALLOWED_FIELDS = REQUIRED_FIELDS | {
     "summary",
     "prompt_hypothesis",
     "next_experiment",
+    "task_phase",
+    "task_class",
+    "first_pass_outcome",
+    "rework_rounds",
+    "unresolved_attempts",
+    "final_acceptance",
+    "user_correction",
 }
 FORBIDDEN_KEY_PARTS = {"raw", "content", "secret", "token", "email", "url", "path"}
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
@@ -74,9 +81,56 @@ INTEGER_FIELDS = {
     "rejected_findings",
     "duplicate_findings",
     "not_verified_gaps",
+    "rework_rounds",
+    "unresolved_attempts",
 }
 LIST_FIELDS = {"review_modes"}
 STRING_FIELDS = ALLOWED_FIELDS - INTEGER_FIELDS - LIST_FIELDS
+ENUM_FIELDS = {
+    "task_phase": {"plan", "execute", "review", "verify"},
+    "task_class": {
+        "frontend",
+        "backend",
+        "test",
+        "architecture",
+        "bug-diagnosis",
+        "bug-fix",
+        "design",
+        "tooling",
+        "cross-layer",
+        "other",
+    },
+    "first_pass_outcome": {
+        "accepted",
+        "rework-required",
+        "incomplete",
+        "failed",
+        "not-verified",
+    },
+    "final_acceptance": {
+        "accepted",
+        "accepted-with-gaps",
+        "rejected",
+        "incomplete",
+        "not-verified",
+    },
+    "user_correction": {
+        "none",
+        "clarification",
+        "scope-reset",
+        "boundary-reset",
+        "rollback",
+        "acceptance-change",
+        "not-verified",
+    },
+}
+VERIFICATION_ONLY_FIELDS = {
+    "first_pass_outcome",
+    "rework_rounds",
+    "unresolved_attempts",
+    "final_acceptance",
+    "user_correction",
+}
 
 
 def load_config(path: Path) -> dict:
@@ -114,6 +168,13 @@ def validate_event(event: object) -> dict:
         raise ValueError("unsupported event schema")
     if event["event_type"] not in ALLOWED_EVENT_TYPES:
         raise ValueError("unsupported event type")
+    if event["event_type"] != "verification-update":
+        invalid = VERIFICATION_ONLY_FIELDS.intersection(event)
+        if invalid:
+            raise ValueError(
+                "verification-only fields require verification-update: "
+                + ", ".join(sorted(invalid))
+            )
     if not HEX_64.fullmatch(str(event["fixed_basis_hash"])):
         raise ValueError("fixed_basis_hash must be lowercase SHA-256")
     try:
@@ -138,6 +199,8 @@ def validate_event(event: object) -> dict:
             or any(not isinstance(item, str) or not item for item in value)
         ):
             raise ValueError(f"non-empty string list required: {key}")
+        if key in ENUM_FIELDS and value not in ENUM_FIELDS[key]:
+            raise ValueError(f"unsupported controlled value: {key}")
         values = value if key in LIST_FIELDS else [value]
         for item in values:
             if not isinstance(item, str):

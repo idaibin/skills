@@ -72,7 +72,8 @@ class AskAIProviderProfileTests(unittest.TestCase):
         for term in (
             "Configured Runtime Profiles",
             "user-owned `cli_profiles` record",
-            "must not embed provider versions, model IDs, executable paths",
+            "construct the smallest",
+            "negative option inventories",
             "profile_digest:",
             "repository-bound resume",
         ):
@@ -88,8 +89,9 @@ class AskAIProviderProfileTests(unittest.TestCase):
         adapter = self.read("skills/ask-ai/references/provider-adapter.md")
         evals = self.read("skills/ask-ai/references/eval-cases.md")
         for term in (
-            "installed help as a candidate contract",
-            "configured, reverified values",
+            "installed help as live candidate discovery",
+            "minimum options",
+            "task-local conformance evidence",
             "apply configured redaction",
             "Response prose",
             "host poll/yield expiry",
@@ -117,6 +119,7 @@ class AskAIProviderProfileTests(unittest.TestCase):
             "provider response says no active workspace is set",
             "CLI model attribution and vote eligibility",
             "CLI timeout semantics",
+            "CLI positive capability discovery",
         ):
             with self.subTest(scenario=scenario):
                 self.assertIn(scenario, evals)

@@ -73,8 +73,10 @@ coordinator must never concurrently rewrite the same progress or result file.
 - **Task:** coordinator-owned, frozen before submit, and the only task instruction the
   provider is told to read. Include task ID, exact repository/workspace, fixed basis,
   goal, allowed scope, exclusions, mode, permission boundary, expected outputs,
-  verification, stop conditions, and resolved role paths. Do not include hidden
-  reasoning or secrets.
+  verification, stop conditions, and resolved role paths. Grant autonomous exploration
+  inside that scope: the provider may read/search the workspace, choose its approach,
+  run task-relevant tools and checks, and use its native agents, Skills, or MCP surfaces
+  when the selected mode exposes them. Do not include hidden reasoning or secrets.
 - **Invocation:** coordinator-owned and persisted before process start. Include logical
   process/start/submit/capture IDs, provider, executable fingerprint, exact argv with
   redaction, requested model/reasoning, mode profile digest, workspace binding, task
@@ -105,15 +107,21 @@ Before starting the provider process:
    provider's verified workspace and permission boundary.
 3. Persist the invocation record in `prepared`, then transition it to `invoking`
    immediately before the one process start.
-4. Give the CLI only a minimal instruction to read the resolved task document and write
-   or emit the configured progress/result roles. Do not interpolate its contents into a
-   shell command or duplicate the full task in another prompt channel.
+4. Give the CLI only a minimal instruction equivalent to `Read <task-document> and
+   execute it completely.` The task document is the sole source for objective, scope,
+   authority, exclusions, acceptance, and result roles. Do not duplicate its body,
+   seed findings, prescribe commands or file traversal, add a tool allowlist, or
+   otherwise narrow the selected mode's native capabilities in another prompt channel.
 5. Capture the real process identity and the provider-issued session/conversation ID
    separately. A host PID is not a provider session.
 
 If task reachability, output writability, workspace binding, or the invocation record
 cannot be proven, stop before submit. Do not silently fall back from artifact handoff to
 an inline prompt.
+
+Full native capability does not widen authority: review remains disposable or
+externally read-only, execution retains only task-owned writes, and Git or external
+side effects still require their separate owner and authorization.
 
 ## Monitoring And Recovery
 

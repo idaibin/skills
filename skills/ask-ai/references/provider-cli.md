@@ -48,11 +48,13 @@ Before invocation, require:
 9. exit status, terminal provider event, response attribution, and session ID;
 10. a session-registry match before `continue`, `resume`, or `fork`.
 
-The invocation builder must consume a validated profile and construct an exact argument
-array. It must not embed provider versions, model IDs, executable paths, option order,
-poll intervals, package directories, output field names, or known-bad flags in the
-portable Skill. Canonical provider IDs, schema field names, and safety states are
-protocol constants, not user preferences.
+The invocation builder must discover the installed CLI's candidate surface from its
+current version/help output, consume a validated profile, and construct the smallest
+positive argument array required for this task. It must not embed provider versions,
+model IDs, executable paths, option order, poll intervals, package directories, output
+field names, or negative option inventories in the portable Skill or user defaults.
+Canonical provider IDs, schema field names, and safety states are protocol constants,
+not user preferences.
 
 Before the one authorized submit, also freeze an invocation record with the exact
 argument array, requested model/reasoning values, prompt/input transport, estimated
@@ -61,7 +63,9 @@ hard-process deadline or explicit no-deadline policy. Validate these separately:
 
 - **Argument binding:** prove prompt-bearing options consume the intended prompt, not
   the next option token. Treat help as a candidate contract until this exact ordering
-  succeeds on the installed build.
+  succeeds on the installed build. Probe an optional argument only when the current
+  task needs it; a failed-before-submit probe removes it from this invocation without
+  creating a durable disabled-option list.
 - **Input reachability:** every package/attachment path must be readable inside the
   selected `cwd` and permission policy. Otherwise move the ignored package under the
   repository review parent or use a bounded self-contained prompt before submit.
@@ -160,9 +164,13 @@ identity proof or permission to start another provider invocation.
 For durable CLI work, load [cli-artifact-handoff.md](cli-artifact-handoff.md). Resolve
 its artifact roles and writer ownership from the current request and user-owned
 configuration; do not hard-code paths, filenames, intervals, or provider output fields.
-Freeze one task document and tell the CLI only to read that resolved file. Persist the
-invocation barrier before process start, then monitor the same process/session plus its
-event, progress, partial-result, and final-result roles.
+Freeze one task document, tell the CLI only to read that resolved file, and direct it
+to execute the document completely. Do not repeat its objective, findings, steps,
+file inventory, commands, or tool restrictions in the invocation. Preserve the
+selected mode's full native capability set so the CLI can discover the workspace and
+choose its own task-scoped approach. Persist the invocation barrier before process
+start, then monitor the same process/session plus its event, progress, partial-result,
+and final-result roles.
 
 Completion requires both terminal process/provider evidence and a verified complete
 final result. A live process with no file change remains `running`; a final file without
@@ -215,13 +223,16 @@ atomically, and read it back. The two mode records must expose the same verified
 capability set and may differ only in persistence/mutation handling and the provider
 arguments required to enforce that difference.
 
-Treat installed help as a candidate contract. Before a material version change is
-trusted, run a no-submit argument-binding probe and the relevant conformance cases.
-When help advertises an option that the parser rejects, mark that configured option
-`unsupported` for the observed executable fingerprint; do not encode the option or
-version as a portable exception and do not keep guessing spellings. When a model and
-reasoning combination fails before submission, record that exact combination as
-incompatible in local evidence and rebuild only from configured, reverified values.
+Treat installed help as live candidate discovery, not permanent capability proof.
+Build each invocation from the help-advertised positive surface and the minimum options
+the task actually requires. Before a material version change is trusted, run the
+relevant isolated no-submit argument-binding probe and conformance cases. If a required
+option is rejected before submit, omit it from that invocation and retain the failure
+only in task-local conformance evidence; do not accumulate disabled or unsupported
+option inventories in user defaults or the portable Skill. Re-discover after executable
+changes. When a model and reasoning combination fails before submission, keep that
+attempt in task-local evidence and rebuild only from currently discovered, reverified
+values.
 
 Prompt paths are also runtime facts. Verify package reachability under the exact `cwd`
 and permission policy before the authorized submit. A provider log may contain account,

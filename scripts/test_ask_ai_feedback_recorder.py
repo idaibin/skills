@@ -35,6 +35,13 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
             "fixed_basis_hash": "a" * 64,
             "provider": "configured-provider",
             "local_verdict": "pass",
+            "task_phase": "review",
+            "task_class": "architecture",
+            "first_pass_outcome": "rework-required",
+            "rework_rounds": 1,
+            "unresolved_attempts": 0,
+            "final_acceptance": "accepted",
+            "user_correction": "none",
         }
 
     def tearDown(self) -> None:
@@ -78,6 +85,79 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
             with self.subTest(value=value):
                 self.event["summary"] = value
                 self.assertEqual(1, self.run_recorder().returncode)
+        self.assertFalse(self.log.exists())
+
+    def test_accepts_task_classification_before_local_reconciliation(self) -> None:
+        self.event["event_type"] = "response-captured"
+        for field in (
+            "first_pass_outcome",
+            "rework_rounds",
+            "unresolved_attempts",
+            "final_acceptance",
+            "user_correction",
+        ):
+            self.event.pop(field)
+        result = self.run_recorder()
+        self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_accepts_legacy_v1_events_without_task_effect_fields(self) -> None:
+        task_effect_fields = (
+            "task_phase",
+            "task_class",
+            "first_pass_outcome",
+            "rework_rounds",
+            "unresolved_attempts",
+            "final_acceptance",
+            "user_correction",
+        )
+        for event_type in ("response-captured", "verification-update"):
+            with self.subTest(event_type=event_type):
+                self.event["event_id"] = f"legacy:{event_type}:1:abcd"
+                self.event["event_type"] = event_type
+                for field in task_effect_fields:
+                    self.event.pop(field, None)
+                result = self.run_recorder()
+                self.assertEqual(0, result.returncode, result.stderr)
+
+    def test_rejects_result_fields_before_verification_update(self) -> None:
+        self.event["event_type"] = "response-captured"
+        result = self.run_recorder()
+        self.assertEqual(1, result.returncode)
+        self.assertIn("verification-only fields", result.stderr)
+        self.assertFalse(self.log.exists())
+
+    def test_rejects_unknown_controlled_values(self) -> None:
+        for field, value in (
+            ("task_phase", "planning"),
+            ("task_class", "security"),
+            ("first_pass_outcome", "mostly-good"),
+            ("final_acceptance", "pass"),
+            ("user_correction", "minor"),
+        ):
+            with self.subTest(field=field):
+                self.event[field] = value
+                result = self.run_recorder()
+                self.assertEqual(1, result.returncode)
+                self.assertIn("unsupported controlled value", result.stderr)
+                self.event = dict(self.event)
+                self.event.update(
+                    task_phase="review",
+                    task_class="architecture",
+                    first_pass_outcome="rework-required",
+                    final_acceptance="accepted",
+                    user_correction="none",
+                )
+        self.assertFalse(self.log.exists())
+
+    def test_rejects_invalid_rework_counts(self) -> None:
+        for field in ("rework_rounds", "unresolved_attempts"):
+            for value in (-1, 1.5, True, "1"):
+                with self.subTest(field=field, value=value):
+                    self.event[field] = value
+                    result = self.run_recorder()
+                    self.assertEqual(1, result.returncode)
+                    self.assertIn("non-negative integer", result.stderr)
+            self.event[field] = 0
         self.assertFalse(self.log.exists())
 
     def test_serializes_concurrent_appenders(self) -> None:
