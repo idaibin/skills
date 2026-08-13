@@ -148,6 +148,9 @@ class PublicContentHygieneTests(unittest.TestCase):
         )
         expected = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         self.assertIn(f"Package digest: `{expected}`", summary)
+        basis = summary.split("## Current Results", 1)[0]
+        for path in DIGEST.DEFAULT_SCOPE:
+            self.assertIn(f"`{Path(path).name}`", basis)
 
     def test_live_canary_digest_covers_every_installed_parity_package(self) -> None:
         expected = {
