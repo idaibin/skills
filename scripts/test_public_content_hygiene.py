@@ -6,6 +6,8 @@ from __future__ import annotations
 import json
 import importlib.util
 import re
+import shutil
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -164,6 +166,17 @@ class PublicContentHygieneTests(unittest.TestCase):
             with self.subTest(package=package):
                 narrowed = tuple(path for path in DIGEST.DEFAULT_SCOPE if path != package)
                 self.assertNotEqual(baseline, DIGEST.digest_paths(ROOT, narrowed))
+
+    def test_live_canary_digest_ignores_python_cache_files(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            for relative in DIGEST.DEFAULT_SCOPE:
+                shutil.copytree(ROOT / relative, root / relative)
+            baseline = DIGEST.digest_paths(root, DIGEST.DEFAULT_SCOPE)
+            cache = root / DIGEST.DEFAULT_SCOPE[0] / "scripts" / "__pycache__"
+            cache.mkdir(parents=True, exist_ok=True)
+            (cache / "generated.cpython-314.pyc").write_bytes(b"generated cache")
+            self.assertEqual(baseline, DIGEST.digest_paths(root, DIGEST.DEFAULT_SCOPE))
 
 
 if __name__ == "__main__":

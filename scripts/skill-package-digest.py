@@ -17,6 +17,12 @@ DEFAULT_SCOPE = (
     "skills/ops-browser",
     "skills/workspace-taskboard",
 )
+IGNORED_PARTS = {"__pycache__"}
+IGNORED_SUFFIXES = {".pyc", ".pyo"}
+
+
+def included_file(path: Path) -> bool:
+    return not (set(path.parts) & IGNORED_PARTS or path.suffix in IGNORED_SUFFIXES)
 
 
 def repo_root() -> Path:
@@ -24,15 +30,19 @@ def repo_root() -> Path:
 
 
 def digest_paths(root: Path, relative_paths: tuple[str, ...]) -> str:
+    root = root.resolve()
     digest = hashlib.sha256()
     files: list[Path] = []
     for relative in relative_paths:
         path = (root / relative).resolve()
-        path.relative_to(root.resolve())
+        path.relative_to(root)
         if path.is_file():
             files.append(path)
         elif path.is_dir():
-            files.extend(item for item in path.rglob("*") if item.is_file())
+            files.extend(
+                item for item in path.rglob("*")
+                if item.is_file() and included_file(item)
+            )
         else:
             raise FileNotFoundError(relative)
     for path in sorted(set(files), key=lambda item: item.relative_to(root).as_posix()):

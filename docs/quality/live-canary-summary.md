@@ -6,7 +6,7 @@
   `audit-frontend`, `repo-review`, `ops-browser`, and `workspace-taskboard` from one
   current Worktree snapshot. Behavior scenarios remain evidence-bounded per row and
   do not imply live invocation of every package in this digest scope.
-- Package digest: `sha256:0e223ab3db38f2c0d2a3d11b52ed8cb7814e1243fa7a00af1f9bf4ba4ab94e5e`
+- Package digest: `sha256:bfb6fc45dae92df708d081b68e9f8c19220ccad3b8abf1947973e772a7ec2260`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
   completeness, routing, source discovery, installation, and byte-parity checks. The
   seven changed consumer/owner packages were installed globally for Codex with Claude
