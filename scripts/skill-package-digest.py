@@ -10,10 +10,12 @@ from pathlib import Path
 
 DEFAULT_SCOPE = (
     "skills/ui-spec",
+    "skills/ask-ai",
     "skills/dev-frontend",
     "skills/audit-frontend",
     "skills/repo-review",
     "skills/ops-browser",
+    "skills/workspace-taskboard",
 )
 
 

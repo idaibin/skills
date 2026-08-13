@@ -4,7 +4,7 @@
 
 - Scope: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
   `ops-browser` from one current Worktree snapshot.
-- Package digest: `sha256:d3420173ead1f78776185e6dd4be73630b4094b1e7bb7c5d170a581998098657`
+- Package digest: `sha256:0e223ab3db38f2c0d2a3d11b52ed8cb7814e1243fa7a00af1f9bf4ba4ab94e5e`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
   completeness, routing, source discovery, installation, and byte-parity checks. The
   seven changed consumer/owner packages were installed globally for Codex with Claude

@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "8acce07858bb6899fbf123c73a25c0f5ad0cac69+workspace-taskboard-working-tree",
-  "fingerprint": "sha256:dd4ce45f6338c92273086c97bc961e9984cce3d2ddc60d1aa609b1ff62e55f28",
+  "basis": "74f590f308cec92dc567fd555c3815d0461b6143+sha256:b9232d5210a450404406f77c3a59a95a340c6254ad2801d2fb52b99b99e962bd",
+  "fingerprint": "sha256:b9232d5210a450404406f77c3a59a95a340c6254ad2801d2fb52b99b99e962bd",
   "summary": {
-    "total": 54,
-    "passed": 54,
+    "total": 55,
+    "passed": 55,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -231,6 +231,18 @@
     {
       "id": "ui-spec-normal",
       "case_fingerprint": "sha256:c679a1b12cc06c8d0b7992bd1a029ff9b43bd26ba4b012f033a9636845992493",
+      "class": "normal",
+      "skill": "ui-spec",
+      "expected_owner": "ui-spec",
+      "observed_owner": "ui-spec",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ui-spec-candidate-direction",
+      "case_fingerprint": "sha256:f5ca35426a21ef49d413ae0606f90e5c42616c24be23a3c597ba9508489f5120",
       "class": "normal",
       "skill": "ui-spec",
       "expected_owner": "ui-spec",

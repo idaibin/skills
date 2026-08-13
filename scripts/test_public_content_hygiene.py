@@ -149,6 +149,19 @@ class PublicContentHygieneTests(unittest.TestCase):
         expected = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         self.assertIn(f"Package digest: `{expected}`", summary)
 
+    def test_live_canary_digest_covers_every_installed_parity_package(self) -> None:
+        expected = {
+            "skills/ui-spec", "skills/ask-ai", "skills/ops-browser",
+            "skills/dev-frontend", "skills/audit-frontend", "skills/repo-review",
+            "skills/workspace-taskboard",
+        }
+        self.assertEqual(expected, set(DIGEST.DEFAULT_SCOPE))
+        baseline = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
+        for package in ("skills/ask-ai", "skills/workspace-taskboard"):
+            with self.subTest(package=package):
+                narrowed = tuple(path for path in DIGEST.DEFAULT_SCOPE if path != package)
+                self.assertNotEqual(baseline, DIGEST.digest_paths(ROOT, narrowed))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -27,6 +27,14 @@ class SkillRoutingEvalTests(unittest.TestCase):
         self.assertEqual(55, len(evaluated))
         self.assertTrue(all(case["status"] == "passed" for case in evaluated))
 
+    def test_published_baseline_covers_every_current_case(self) -> None:
+        cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)
+        baseline = RUNNER.load_json(ROOT / "evals" / "skill-routing-baseline.json")
+        self.assertEqual(
+            {case["id"] for case in cases["cases"]},
+            {case["id"] for case in baseline["cases"]},
+        )
+
     def test_baseline_pass_cannot_disappear_change_definition_or_change_owner(self) -> None:
         current = [
             {
