@@ -6,9 +6,9 @@
   `ops-browser` from one current Worktree snapshot.
 - Package digest: `sha256:d3420173ead1f78776185e6dd4be73630b4094b1e7bb7c5d170a581998098657`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
-  completeness, routing, and package-source checks only. Installation was outside the
-  current authorization, so prior installed copies were not refreshed or promoted as
-  parity evidence. The refresh sent no provider message,
+  completeness, routing, source discovery, installation, and byte-parity checks. The
+  seven changed consumer/owner packages were installed globally for Codex with Claude
+  Code symlinks and read back against source. The refresh sent no provider message,
   created no conversation, and opened, moved, renamed, or closed no browser tab/group.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
@@ -36,8 +36,8 @@ behavior certification and does not replace target-environment runtime validatio
 | Fixed-basis frontend audit and review | Not rerun | No external target Worktree audit was rerun for this digest. |
 | Live headless-browser page operation | Not rerun | No browser page operation was run for this digest. |
 | Local-browser session/group capability | Partial | Executable regressions cover two browser identities, stale-ID reconnect, stable reuse, duplicate names, label-only ambiguity, missing capabilities, exact create-required transitions, and each enabled-policy combination. No live user-local Chrome inventory or page operation was run. |
-| Global package install | Not rerun | Current synchronization authority excludes installation; prior installed copies are historical and were not refreshed for this digest. |
-| Installed-copy parity | Not verified | Package-source parity gates passed, but current installed-copy parity was not claimed because installation/readback was outside this synchronization run. |
+| Global package install | Pass | Current `ui-spec`, `ask-ai`, `ops-browser`, `dev-frontend`, `audit-frontend`, `repo-review`, and `workspace-taskboard` source packages installed globally for Codex; Claude Code targets resolve to their universal copies. This is not an isolated project-local install. |
+| Installed-copy parity | Pass | Recursive comparisons found no package-content drift for all seven installed packages after excluding source-only Python cache files; Claude Code symlink targets resolved to the same universal copies. |
 | Installed package-local validator | Not verified | The repository validator requires root catalog files that global package installation intentionally does not copy, so it cannot validate the installed directory as a standalone catalog. Source validation and installed-copy parity passed separately. |
 | Explicit host invocation | Not verified | No provider submit, image generation, or browser target discovery was run for this digest. Prior operations remain historical evidence only. |
 | Implicit routing | Not verified | No fresh host-routing model invocation was run for this digest. |
@@ -98,8 +98,8 @@ coverage. Do not compensate by embedding a partial scanner in `repo-review`,
 
 ## Verdict
 
-Repository validation, DESIGN completeness, Forgeway handoff, and local-workspace
-offline gates passed. Current global installation/parity, live provider target
+Repository validation, DESIGN completeness, Forgeway handoff, local-workspace offline
+gates, global installation, and installed-copy parity passed. Live provider target
 discovery, user-local Chrome
 session/group capability, implicit model routing, effective model identity, human
 visual approval, frontend implementation, same-state browser acceptance,
