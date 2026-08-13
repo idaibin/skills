@@ -26,7 +26,7 @@ Check in this order:
    technical text.
 2. User intent, target reader, requested language, and platform constraints.
 3. Author position, actor role, voice, and degree of confidence.
-4. Logic, structure, evidence placement, information density, and limitations.
+4. Authorized edit scope, then logic, structure, evidence placement, information density, and limitations.
 5. Natural rhythm, terminology, grammar, punctuation, links, and formatting.
 
 Do not trade a higher-priority requirement for smoother prose.
@@ -37,9 +37,11 @@ Do not trade a higher-priority requirement for smoother prose.
 2. Compare claims and protected text with the authoritative sources.
 3. Check title, description, body, code, tables, links, disclosures, and status terms
    for contradictions or omissions.
-4. List concrete defects with their severity and evidence.
-5. Resolve P0 and P1 defects before lower-severity editing.
-6. Re-read the finished artifact and stop when another change has no concrete reader
+4. Count explicit word, character, paragraph, section, or item constraints in the
+   requested unit; revise and recount until the artifact is inside the contract.
+5. List concrete defects with their severity and evidence.
+6. Resolve P0 and P1 defects before lower-severity editing.
+7. Re-read the finished artifact and stop when another change has no concrete reader
    benefit or would weaken facts, terminology, modality, or voice.
 
 ## Final Gate
@@ -55,9 +57,19 @@ Do not trade a higher-priority requirement for smoother prose.
   of the editing process.
 - The opening serves the reader's task, each section adds information, and the ending
   follows from the supported argument.
+- Lists group each main assertion with the condition, limit, exception, reason, or
+  consequence needed to interpret it, while independent checks and steps remain
+  separate.
 - Platform adaptation changes presentation without changing meaning or importing a
   stereotyped voice.
+- Diagnosis severity did not expand the authorized edit scope, and no style rule
+  changed the actor-action-object relation, completion state, or claim strength.
 - Missing evidence is omitted, qualified, or returned as the minimum typed gap rather
   than filled with plausible detail.
+- Explicit length limits are measured in their stated unit. Minimums are not met with
+  repetition or invention, and maximums are not treated as approximate.
+- When unsupported sections can be separated from supported ones, the useful safe
+  artifact is delivered; fill-ready placeholders appear only when the requested form
+  is a template or draft intended for later completion.
 
 Do not expose this assessment unless the user asks for it.

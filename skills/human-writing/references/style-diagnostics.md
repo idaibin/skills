@@ -6,6 +6,9 @@ Load this reference only when voice, rhythm, or template residue materially affe
 
 - [Voice Calibration](#voice-calibration)
 - [Cluster Diagnosis](#cluster-diagnosis)
+- [Semantic Compression](#semantic-compression)
+- [Semantic Units](#semantic-units)
+- [Edit Permission And Intensity](#edit-permission-and-intensity)
 - [Pattern Families](#pattern-families)
 - [Protected And Secondhand Text](#protected-and-secondhand-text)
 - [Research-Process Leakage](#research-process-leakage)
@@ -47,6 +50,43 @@ Parallel sentences, stable technical nouns, tables, and lists may be the cleares
 Repeated questions can mark the reader's next inference; repeated code can expose one controlled change; a long detour can eliminate a plausible wrong model; a heading-free passage can preserve a continuous derivation. Treat these as defects only when they fail to perform that job. Every editorial rule should name the reader failure it prevents rather than target a surface pattern.
 
 Do not turn frequent model habits into universal bans. Passive voice can keep the object of interest in focus; a dash can preserve a real cadence; an adverb, rhetorical question, list of three, or repeated technical noun can be the clearest choice. Rewrite only when the form contributes to a diagnosed cluster or weakens meaning, trust, rhythm, or reader comprehension.
+
+## Semantic Compression
+
+Some prose packs an observation, explanation, and judgment into one coined label, slogan, or metaphor. The defect is not figurative language itself. It is forcing the reader to decode which part is supported, which part is the author's interpretation, and which part is a recommendation.
+
+When that compression obscures the claim, unpack only the layers already present in the source:
+
+1. state the observable fact or event
+2. state the supported mechanism, cause, or relationship
+3. state the author's judgment, implication, or next action
+
+Keep an earned metaphor when it carries the author's voice and the surrounding text makes its referent clear. Never invent a mechanism to explain a clever phrase, and never turn an interpretation into a measured fact. If the source does not support a layer, preserve the ambiguity, qualify it, or ask for the missing fact.
+
+## Semantic Units
+
+When restructuring prose, count claims by meaning rather than by sentence, clause, or fact atom. A semantic unit has one main assertion and the dependent material needed to interpret its truth, scope, or use. Keep together:
+
+- a rule with its exception or stopping condition
+- a capability with its limitation and the caller's remaining responsibility
+- a primary or default choice with the permitted or required role of alternatives
+- a recommendation with the reason or evidence ceiling that qualifies it
+- a contrast whose second half prevents the first from being overstated
+- a decision with the consequence that explains what to do next
+
+Split only when each resulting item can stand alone without changing the source's logic or forcing the reader to reconstruct a relationship across neighboring bullets. Dependency is semantic, not merely topical or chronological: two independently triggered actions at different lifecycle stages remain separate. A caller responsibility that follows from a capability limit, or the action mandated when a stopping condition is met, stays with that limit or condition. As a quick check, imagine removing the neighboring sentence: if the main assertion becomes misleading, broader, or operationally incomplete, keep the bundle together; if it remains a complete instruction or finding, split it.
+
+Honor explicit granularity such as a fixed item count or a request for separate checks. But interpret `one item per claim` as one coherent semantic claim, not one bullet per sentence or clause: sentence boundaries alone do not make a limitation, resulting responsibility, or alternative role independent. Preserve truly parallel procedures, responsibilities, states, and checklist items as separate units. You may normalize line breaks or punctuation when that improves an existing list, but do not merge its independently actionable items merely to make it look less templated.
+
+## Edit Permission And Intensity
+
+Keep three decisions independent:
+
+- **diagnosis:** how serious and widespread the reader problem is
+- **intensity:** how much a permitted passage needs to change
+- **scope:** which sentences, sections, fields, or structural assets the user authorized changing
+
+A severe diagnosis does not authorize a full rewrite. A request to fix sentences does not authorize moving sections, and a request to preserve structure does not authorize converting prose to a list. A request to shorten does authorize proportionate selection, but not mutation of the author's position or removal of a fact the user required preserving. Apply the strongest useful edit inside the smallest authorized boundary. If a defect cannot be fixed there, leave the unresolved material intact; surface a blocker only when the request cannot be completed safely or its hard constraints conflict.
 
 ## Pattern Families
 

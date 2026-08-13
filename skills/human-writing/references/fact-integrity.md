@@ -118,7 +118,7 @@ Classify material claims as observed past, current state, committed plan, intend
 
 When delegation matters, preserve who proposes, executes, checks, recommends, approves, accepts, or publishes. AI drafting, implementation, checking, or preliminary validation does not imply final approval, acceptance, publication, or accountability. Preserve the supplied authority model and do not invent an approver when none is established.
 
-Modal terms are evidence-bearing. Preserve distinctions such as `我认为`, `可能`, `可以`, `应尽量`, `目标是`, `正在`, and `已经`. A smoother sentence that drops one of these terms may silently promote a principle into a guarantee, a capability into observed behavior, or a candidate into a commitment.
+Modal and scope-bearing terms are evidence-bearing. Preserve distinctions such as `我认为`, `可能`, `可以`, `应尽量`, `目标是`, `正在`, and `已经`, plus frequency, priority, exclusivity, extent, and lower-bound qualifiers such as `mainly`, `usually`, `often`, `first`, `only`, and `at least`. A smoother sentence that drops one of these terms may silently promote a principle into a guarantee, a capability into observed behavior, a primary use into an exclusive use, or a candidate into a commitment. During the fidelity pass, compare these short qualifiers explicitly for every retained or transformed claim; do not assume that retaining the surrounding noun and verb preserves scope. If an authorized summary omits the entire claim, verify that omission under the compression contract rather than restoring its qualifier alone.
 
 ## Whole-Artifact And Internal-Consistency Audit
 
