@@ -68,5 +68,8 @@ When a provider format changes, update the standard, validator, focused tests, a
 
 ## Skill Validation
 
-Use the validation matrix in `skills/AGENTS.md`. Always run `git diff --check` and
-report any runtime or external behavior that was not exercised.
+Use the validation matrix in `skills/AGENTS.md`. During iteration, run focused tests
+for the changed validator, protocol, route, or package plus exact-path
+`git diff --check`. Run the canonical full gate only for merge, release, catalog
+delivery, final fixed-basis acceptance, or an explicit full-regression request.
+Report any runtime or external behavior that was not exercised.

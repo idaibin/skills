@@ -31,19 +31,28 @@ the package set stays the same.
 
 ## Validation
 
-Use `bash scripts/check-skills.sh` as the single local validation entry point. On
-macOS it resolves and verifies Homebrew Python, refuses `/usr/bin/python3`, and uses
-`uv` with the pinned `requirements-dev.txt` when available. Other platforms use their
-configured `PYTHON_BIN` or `python3`.
+Use risk-tiered validation during development. The canonical full gate remains
+`bash scripts/check-skills.sh`; on macOS it resolves and verifies Homebrew Python,
+refuses `/usr/bin/python3`, and uses `uv` with the pinned
+`requirements-dev.txt` when available. Other platforms use their configured
+`PYTHON_BIN` or `python3`.
 
-For a bounded prose correction in one package:
+For a bounded prose correction in one package, run exact-path whitespace/link checks
+and the smallest directly affected validator or regression. Do not run the full gate
+after every prose edit.
 
 ```bash
-bash scripts/check-skills.sh
 git diff --check -- skills/<name>
 ```
 
-For metadata, package structure, shared protocols, multiple packages, or delivery:
+For a behavior, metadata, routing, schema, shared-protocol, or package-structure
+change, run the focused `scripts/test_*.py` cases and validators that cover the
+changed contract, plus shared-protocol sync checks when applicable. Expand to every
+affected consumer, but do not substitute an unrelated full suite for missing focused
+coverage.
+
+For merge, release, catalog delivery, final fixed-basis acceptance, or an explicit
+full-regression request, run:
 
 ```bash
 bash scripts/check-skills.sh
@@ -51,7 +60,8 @@ bash scripts/check-skills.sh
 
 For behavior changes, keep the repository routing matrix synchronized with the
 affected Skill's normal use, nearest non-trigger or owner boundary, and critical stop.
-`bash scripts/check-skills.sh` runs that deterministic matrix, its committed no-new-
-regression baseline, and a warning-only context report. Real host/model behavior still
+The full gate runs the deterministic routing matrix, its committed no-new-regression
+baseline, and a warning-only context report. Do not rerun it after an unchanged full
+pass unless the basis or relevant gate inputs changed. Real host/model behavior still
 requires representative live tasks when claimed; keep raw outputs only when they help
 improve the Skill. A formal cross-model benchmark remains optional.

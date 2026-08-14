@@ -16,6 +16,15 @@ emit a typed DeliveryReceipt only after target readback. Local commits without r
 readback remain local durability and do not imply delivered, deployed, or production-
 verified state.
 
+Persist the minimum typed PackageManifest and DeliveryReceipt metadata needed to
+detect scope, basis, target, and ref drift across steps or sessions. Store it in a
+Git-ignored task workspace such as `.codex/reviews/` or in the active Forgeway Run
+store; do not commit or upload it by default. Validation without persistence is
+acceptable only for a same-process read-only dry run that cannot cross a mutation
+boundary. Commit a sanitized receipt only when repository policy or the user
+explicitly requires durable audit or release evidence. Never retain raw prompts,
+provider responses, credentials, or long logs as delivery-contract fields.
+
 ## Workflow
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
@@ -96,6 +105,9 @@ verified state.
 - Never treat a milestone, fixup, or checkpoint as final review, merge readiness, release evidence, or remote backup.
 - Never substitute a direct validator or package-local test for the Skills repository's canonical gate, and never perform runtime installation inside Git delivery.
 - Do not create time-based or automatic WIP commits. Prefer a semantic milestone; use a checkpoint only for a named loss/recovery risk and never on a default or protected branch.
+- Do not rely on an in-memory or validation-only delivery contract across a commit,
+  push, integration, cleanup, process, or session boundary; persist the minimum typed
+  local record and verify its basis again before mutation.
 - A standing execution-durability plan is authorization, not automation: trigger only on verified semantic events inside its branch and owned scope. Stop and refresh authority when scope, branch, commit type, validation floor, or risk materially changes.
 - Every checkpoint must identify incomplete scope and a final disposition of split, absorb, or drop. Do not carry checkpoint-only history into final integration by accident.
 - Do not bind one fixup to multiple independent milestones or use fixup syntax when no later normalization is intended.
