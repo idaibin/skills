@@ -28,8 +28,8 @@ class FileRegistryFixture:
     def __init__(self, path: Path):
         self.path = path
         self._lock = threading.Lock()
-        self.notifications = []
-        self._notification_operations = set()
+        self.events = []
+        self._event_operations = set()
 
     def read(self):
         if not self.path.exists():
@@ -56,20 +56,20 @@ class FileRegistryFixture:
             os.replace(temporary, self.path)
             return {"applied": True, **record}
 
-    def send_if_current(self, plan):
-        """Model the adapter's atomic registry check and idempotent send boundary."""
+    def record_event_if_current(self, plan):
+        """Model the adapter's atomic registry check and idempotent board-event boundary."""
         with self._lock:
             current = self.read()
             if not current or current["manifest_digest"] != plan["expected_registry_digest"]:
-                return {"sent": False, "reason": "basis-drift"}
+                return {"recorded": False, "reason": "basis-drift"}
             controller = current["manifest"]["current_controller_thread_id"]
             if controller != plan["expected_controller_thread_id"]:
-                return {"sent": False, "reason": "controller-rebound"}
-            if plan["operation_id"] in self._notification_operations:
-                return {"sent": False, "reason": "already-sent"}
-            self._notification_operations.add(plan["operation_id"])
-            self.notifications.append({"operation_id": plan["operation_id"], "thread_id": controller})
-            return {"sent": True, "thread_id": controller}
+                return {"recorded": False, "reason": "controller-rebound"}
+            if plan["operation_id"] in self._event_operations:
+                return {"recorded": False, "reason": "already-recorded"}
+            self._event_operations.add(plan["operation_id"])
+            self.events.append({"operation_id": plan["operation_id"], "controller_thread_id": controller, "worker_thread_id": plan["worker_thread_id"], "unread": True})
+            return {"recorded": True, "controller_thread_id": controller}
 
 
 class WorkspaceTaskboardTests(unittest.TestCase):
@@ -358,17 +358,28 @@ class WorkspaceTaskboardTests(unittest.TestCase):
         self.assertEqual("unknown-profile", unknown["reason"])
         self.assertNotIn("messages", elevated)
 
-    def test_terminal_notification_targets_current_controller(self):
+    def test_terminal_notification_records_unread_board_event(self):
         current = self.manifest()
         result = CONTROL.notification_plan({"manifest": current, **self.scope(current), "observed_controller": self.candidate("controller-old", self.root, responsibility="controller"), "observed_worker": self.candidate("worker-a", self.frontend), "event_sequence": 2})
-        self.assertEqual("notify-via-adapter", result["action"])
+        self.assertEqual("record-board-event", result["action"])
         self.assertFalse(result["direct_host_send"])
-        self.assertFalse(result["send"])
+        self.assertFalse(result["inject_overview_message"])
+        self.assertTrue(result["unread"])
         current["worker_mappings"][0]["closed"] = True
         stopped = CONTROL.notification_plan({"manifest": current, **self.scope(current), "observed_controller": self.candidate("controller-old", self.root, responsibility="controller"), "observed_worker": self.candidate("worker-a", self.frontend)})
         self.assertEqual("BASIS_DRIFT", stopped["failure_code"])
 
-    def test_notification_adapter_prevents_send_after_controller_rebind(self):
+    def test_decision_and_authorization_events_open_structured_surfaces(self):
+        current = self.manifest()
+        base = {"manifest": current, **self.scope(current), "observed_controller": self.candidate("controller-old", self.root, responsibility="controller"), "observed_worker": self.candidate("worker-a", self.frontend), "event_sequence": 3}
+        decision = CONTROL.notification_plan({**base, "event_kind": "decision"})
+        approval = CONTROL.notification_plan({**base, "event_kind": "authorization"})
+        invalid = CONTROL.notification_plan({**base, "event_kind": "chat-message"})
+        self.assertEqual(("open-decision-panel", True), (decision["interaction"], decision["requires_user_action"]))
+        self.assertEqual(("open-native-approval", True), (approval["interaction"], approval["requires_user_action"]))
+        self.assertEqual("identity-incomplete", invalid["stop_state"])
+
+    def test_notification_adapter_prevents_event_after_controller_rebind(self):
         registry = FileRegistryFixture(self.root.parent / "notify-registry.json")
         initial = self.manifest()
         created = registry.cas(None, initial)
@@ -381,8 +392,8 @@ class WorkspaceTaskboardTests(unittest.TestCase):
         rebound["predecessor_thread_ids"] = ["controller-old"]
         rebound["current_controller_thread_id"] = "controller-new"
         self.assertTrue(registry.cas(created["manifest_digest"], rebound)["applied"])
-        self.assertEqual({"sent": False, "reason": "basis-drift"}, registry.send_if_current(plan))
-        self.assertEqual([], registry.notifications)
+        self.assertEqual({"recorded": False, "reason": "basis-drift"}, registry.record_event_if_current(plan))
+        self.assertEqual([], registry.events)
 
         rebound_scope = self.scope(rebound)
         rebound_plan = CONTROL.notification_plan({
@@ -390,9 +401,9 @@ class WorkspaceTaskboardTests(unittest.TestCase):
             "observed_controller": self.candidate("controller-new", self.root, responsibility="controller"),
             "observed_worker": self.candidate("worker-a", self.frontend), "event_sequence": 7,
         })
-        self.assertTrue(registry.send_if_current(rebound_plan)["sent"])
-        self.assertEqual("already-sent", registry.send_if_current(rebound_plan)["reason"])
-        self.assertEqual(["controller-new"], [item["thread_id"] for item in registry.notifications])
+        self.assertTrue(registry.record_event_if_current(rebound_plan)["recorded"])
+        self.assertEqual("already-recorded", registry.record_event_if_current(rebound_plan)["reason"])
+        self.assertEqual(["controller-new"], [item["controller_thread_id"] for item in registry.events])
 
     def test_stale_registry_snapshot_cannot_notify_or_close(self):
         stale = self.manifest()
@@ -468,6 +479,18 @@ class WorkspaceTaskboardTests(unittest.TestCase):
         )
         self.assertEqual("reserve-create", routed["action"])
 
+    def test_hide_card_is_presentation_only_and_worker_remains_reusable(self):
+        current = self.manifest()
+        hidden = CONTROL.visibility_plan({"manifest": current, **self.scope(current), "thread_id": "worker-a", "hidden": True})
+        self.assertEqual("hide-card", hidden["action"])
+        self.assertFalse(hidden["worker_lifecycle_changed"])
+        hidden_manifest = hidden["updated_manifest"]
+        self.assertTrue(hidden_manifest["worker_mappings"][0]["hidden"])
+        projection = CONTROL.status_projection({"manifest": hidden_manifest, **self.scope(hidden_manifest), "observed_threads": [self.candidate("worker-a", self.frontend)]})
+        self.assertEqual(([], 1), (projection["cards"], projection["hidden_count"]))
+        routed = self.route([self.candidate("worker-a", self.frontend)], worker_mappings=hidden_manifest["worker_mappings"])
+        self.assertEqual("reuse-existing", routed["action"])
+
     def test_status_projection_groups_and_turn_completed_not_finished(self):
         current = self.manifest()
         projection = CONTROL.status_projection({"manifest": current, **self.scope(current), "observed_threads": [self.candidate("worker-a", self.frontend, status="completed")], "worker_envelopes": []})
@@ -477,6 +500,9 @@ class WorkspaceTaskboardTests(unittest.TestCase):
         envelope = {"type": "worker-status", "schema_version": "workspace-taskboard-worker-status/v1", "control_id": "ctl-1", "worker_thread_id": "worker-a", "reuse_key": current["worker_mappings"][0]["reuse_key"], "status": "finished", "event_sequence": 2, "observed_at": "2026-08-13T00:00:00Z", "worker_basis_digest": CONTROL.worker_status_basis(current, current["worker_mappings"][0]), "allowed_roots_version": "readback-1", "canonical_cwd": CONTROL.canonical_path(str(self.frontend)), "recommended_next_action": "review"}
         finished = CONTROL.status_projection({"manifest": current, **self.scope(current), "observed_threads": [self.candidate("worker-a", self.frontend, status="completed")], "worker_envelopes": [envelope]})
         self.assertEqual("已结束", finished["cards"][0]["group"])
+        self.assertTrue(finished["cards"][0]["unread"])
+        read = CONTROL.status_projection({"manifest": current, **self.scope(current), "observed_threads": [self.candidate("worker-a", self.frontend, status="completed")], "worker_envelopes": [envelope], "last_read_sequences": {"worker-a": 2}})
+        self.assertFalse(read["cards"][0]["unread"])
         self.assertFalse(finished["updates_existing_message"])
 
     def test_live_only_status_requires_no_registry(self):

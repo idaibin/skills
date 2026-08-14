@@ -111,6 +111,12 @@ not maintain a second public collaboration owner.
    labels as one `persistent-context` capability. Use Standard Chat when neither the
    current request nor local configuration selects a persistent context, then apply any
    matched route's configured policy and fallback.
+   When a matched route requires a persistent context, wording such as “do not use the
+   current context”, “start from zero”, or “do not be influenced by the current
+   conversation” changes only the outbound task basis. It never authorizes leaving the
+   configured Project/notebook. Apply the route's `conversation_policy`; with
+   `new-per-task`, create exactly one new conversation inside the verified persistent
+   context and preserve its container attribution.
    Run that reference's machine transport resolver before browser operations and use
    its `selected_transport`/`forbidden_transports` result; an empty tab inventory does
    not change an available Codex in-app Browser into ChatGPT Native or Chrome.
@@ -122,7 +128,13 @@ not maintain a second public collaboration owner.
    create operation. A relay turn never shares one operation ID across create, attach,
    submit, or response capture. When a browser route is selected, delegate low-level
    actions through [browser-operation-protocol.md](references/browser-operation-protocol.md)
-   to ops-browser. Never resend an already submitted or ambiguous operation; retry
+   to ops-browser. For `user-local-browser`, carry the resolved workspace policy,
+   including its source, configured control-session/group names, naming/creation
+   permissions, and any controller requirement for task-specific session naming.
+   Provider, model, task, agent, emoji, page, and conversation labels are never browser
+   session or group names. A controller that requires task-specific naming conflicts
+   with unified reuse and must return `capability-unavailable` before setup; use only an
+   already authorized fallback, never a newly named group. Never resend an already submitted or ambiguous operation; retry
    only a proven failed-before-submit attempt with the original operation ID. For a
    running CLI operation, use the adaptive same-process monitoring contract in
    `provider-cli.md` and the artifact handoff when selected; a quiet observation
@@ -214,6 +226,14 @@ portable package. Low-level browser selectors are measured at runtime by ops-bro
   implication. Treat every generated or edited asset as a separately attributable output.
 - Never silently switch provider, account, workspace, conversation, transport, model,
   or reasoning mode. Current-request constraints override stored preferences.
+- Never interpret context-isolation wording as permission to leave a configured
+  persistent context. Exclude the current Codex conversation's candidate solution or
+  visual direction from the package as requested, while retaining the verified
+  Project/notebook and its archival boundary.
+- Never turn provider, model, review, task, agent, emoji, page, or conversation labels
+  into a browser session or tab-group name. A browser handoff must preserve the
+  resolved `ops-browser` workspace policy and stop before setup when the controller's
+  mandatory naming behavior conflicts with it.
 - A post-submit interruption or abnormal page is reconciliation, not retry authority.
 - Independent multi-provider comparison begins only after each response is captured or
   explicitly marked incomplete. Relay review requires attributed turns and explicit

@@ -24,7 +24,7 @@ class SkillRoutingEvalTests(unittest.TestCase):
         schema = RUNNER.load_json(RUNNER.DEFAULT_SCHEMA)
         self.assertEqual([], RUNNER.validate_case_contract(index, cases, schema))
         evaluated = RUNNER.evaluate(index, cases)
-        self.assertEqual(55, len(evaluated))
+        self.assertEqual(56, len(evaluated))
         self.assertTrue(all(case["status"] == "passed" for case in evaluated))
 
     def test_published_baseline_covers_every_current_case(self) -> None:

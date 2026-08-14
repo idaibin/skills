@@ -38,7 +38,7 @@ identity, installed adapters, or completed evidence.
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
 | `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |
-| `workspace-taskboard` | in-conversation task projection, routing, controller succession, notification, and dependencies inside one verified local project root | live Codex project/task state plus configured user-local control registry |
+| `workspace-taskboard` | in-conversation aggregation of independently scoped project controllers, direct task routing, controller succession, board events, and dependencies | live Codex project/task state plus configured user-local control registry |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
 
 ## Split Or Profile

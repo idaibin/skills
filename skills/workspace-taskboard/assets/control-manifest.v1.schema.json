@@ -29,7 +29,8 @@
           "project_identity": {"type": "string", "minLength": 1},
           "responsibility": {"type": "string", "minLength": 1},
           "rank": {"type": "number"},
-          "closed": {"type": "boolean"}
+          "closed": {"type": "boolean"},
+          "hidden": {"type": "boolean"}
         }
       }
     },

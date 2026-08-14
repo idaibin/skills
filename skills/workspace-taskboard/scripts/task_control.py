@@ -21,6 +21,7 @@ DISCUSSION_INTENTS = {"discussion", "planning", "architecture", "scope", "priori
 EXECUTION_INTENTS = {"implementation", "testing", "investigation", "review", "monitoring", "external-ai", "git-delivery"}
 WAITING_STATES = {"waiting-dependency", "awaiting-human-approval", "decision-needed", "blocked"}
 FINISHED_STATES = {"finished", "ready-for-delivery", "delivered"}
+BOARD_EVENT_KINDS = {"informational", "decision", "authorization"}
 SECRET_PATTERNS = (
     re.compile(r"\b(?:gh[pousr]_[A-Za-z0-9]{8,}|sk-[A-Za-z0-9_-]{8,})\b", re.IGNORECASE),
     re.compile(r"\b(?:password|passwd|token|secret|api[_-]?key)\s*[:=]\s*\S+", re.IGNORECASE),
@@ -519,13 +520,18 @@ def notification_plan(payload: dict[str, Any]) -> dict[str, Any]:
     event_sequence = payload.get("event_sequence")
     if not isinstance(event_sequence, int) or event_sequence < 0:
         return {"action": "blocked", "stop_state": "identity-incomplete", "missing": ["event_sequence"]}
-    operation_id = "notify:" + hashlib.sha256(f"{manifest['control_id']}:{worker['thread_id']}:{event_sequence}".encode()).hexdigest()
+    event_kind = payload.get("event_kind", "informational")
+    if event_kind not in BOARD_EVENT_KINDS:
+        return {"action": "blocked", "stop_state": "identity-incomplete", "missing": ["event_kind"]}
+    operation_id = "board-event:" + hashlib.sha256(f"{manifest['control_id']}:{worker['thread_id']}:{event_sequence}".encode()).hexdigest()
     return {
-        "action": "notify-via-adapter", "operation_id": operation_id,
+        "action": "record-board-event", "operation_id": operation_id,
         "expected_registry_digest": digest(manifest), "expected_controller_thread_id": controller["thread_id"],
-        "worker_thread_id": worker["thread_id"], "event_sequence": event_sequence,
-        "adapter_transition": "read-current-resolve-controller-and-send-once",
-        "direct_host_send": False, "send": False,
+        "worker_thread_id": worker["thread_id"], "event_sequence": event_sequence, "event_kind": event_kind,
+        "unread": True, "requires_user_action": event_kind in {"decision", "authorization"},
+        "interaction": "open-native-approval" if event_kind == "authorization" else "open-decision-panel" if event_kind == "decision" else "open-card-detail",
+        "adapter_transition": "read-current-resolve-project-and-record-once",
+        "direct_host_send": False, "inject_overview_message": False,
     }
 
 
@@ -560,6 +566,29 @@ def close_plan(payload: dict[str, Any]) -> dict[str, Any]:
         if item["thread_id"] == thread_id:
             item["closed"] = True
     return {"action": "close-card", "expected_manifest_digest": digest(manifest), "updated_manifest": updated, "updated_manifest_digest": digest(updated), "cas_required": True}
+
+
+def visibility_plan(payload: dict[str, Any]) -> dict[str, Any]:
+    """Hide or show a card without changing worker lifecycle or reuse eligibility."""
+    manifest = payload.get("manifest", {})
+    errors = validate_manifest(manifest)
+    if errors:
+        return {"action": "blocked", "stop_state": "manifest-invalid", "errors": errors}
+    snapshot_stop = _registry_snapshot_stop(payload, manifest)
+    if snapshot_stop:
+        return snapshot_stop
+    thread_id = payload.get("thread_id")
+    hidden = payload.get("hidden")
+    if not thread_id or not isinstance(hidden, bool):
+        return {"action": "blocked", "stop_state": "identity-incomplete", "missing": [name for name, value in (("thread_id", thread_id), ("hidden", hidden)) if value is None]}
+    mapping = next((item for item in manifest["worker_mappings"] if item.get("thread_id") == thread_id), None)
+    if not mapping:
+        return {"action": "blocked", "stop_state": "basis-drift", "failure_code": "BASIS_DRIFT"}
+    updated = json.loads(json.dumps(manifest))
+    for item in updated["worker_mappings"]:
+        if item["thread_id"] == thread_id:
+            item["hidden"] = hidden
+    return {"action": "hide-card" if hidden else "show-card", "thread_id": thread_id, "expected_manifest_digest": digest(manifest), "updated_manifest": updated, "updated_manifest_digest": digest(updated), "cas_required": True, "worker_lifecycle_changed": False}
 
 
 def worker_status_basis(manifest: dict[str, Any], mapping: dict[str, Any]) -> str:
@@ -622,6 +651,7 @@ def _live_status_projection(payload: dict[str, Any]) -> dict[str, Any]:
             "board_status": "unmapped", "recent_goal": _safe_display(state.get("recent_goal")),
             "recommended_next_action": "Restore or create a successor" if host_status == "archived" else "Read current task",
             "route": state.get("route"), "rank": 0, "group": "等待" if worker_status == "blocked" else "执行中",
+            "unread": False, "event_sequence": 0,
         })
     cards.sort(key=lambda item: (item["group"], item["title"], item["thread_id"] or ""))
     return {
@@ -645,8 +675,15 @@ def status_projection(payload: dict[str, Any]) -> dict[str, Any]:
     if stop or project is None or project.get("project_id") != manifest["project_id"] or roots != manifest["allowed_roots"] or project.get("allowed_roots_version") != manifest["allowed_roots_version"]:
         return {"action": "blocked", "stop_state": "basis-drift", "failure_code": "BASIS_DRIFT"}
     observed = {item.get("thread_id"): item for item in payload.get("observed_threads", []) if isinstance(item, dict)}
+    last_read = payload.get("last_read_sequences", {})
+    if not isinstance(last_read, dict):
+        last_read = {}
     cards: list[dict[str, Any]] = []
+    hidden_count = 0
     for mapping in manifest["worker_mappings"]:
+        if mapping.get("hidden"):
+            hidden_count += 1
+            continue
         state = observed.get(mapping["thread_id"])
         if state and not _in_scope(state, manifest["project_id"], manifest["allowed_roots"]):
             state = None
@@ -656,6 +693,10 @@ def status_projection(payload: dict[str, Any]) -> dict[str, Any]:
         semantic = envelope.get("status") if _valid_envelope(envelope, manifest, mapping) else "blocked" if host_status in {"unreachable", "archived"} else "queued"
         closed = bool(mapping.get("closed"))
         group = "已关闭" if closed else "已结束" if semantic in FINISHED_STATES else "等待" if semantic in WAITING_STATES else "执行中"
+        event_sequence = envelope.get("event_sequence", 0) if envelope else 0
+        read_sequence = last_read.get(mapping["thread_id"], 0)
+        if not isinstance(read_sequence, int) or read_sequence < 0:
+            read_sequence = 0
         cards.append({
             "title": _safe_display(state.get("title")) if state else "Not verified", "thread_id": mapping["thread_id"], "host_id": state.get("host_id") if state else None,
             "canonical_cwd": mapping["canonical_cwd"], "cwd_label": os.path.relpath(mapping["canonical_cwd"], manifest["canonical_project_root"]),
@@ -663,18 +704,20 @@ def status_projection(payload: dict[str, Any]) -> dict[str, Any]:
             "board_status": "closed" if closed else "open", "recent_goal": _safe_display(state.get("recent_goal")) if state else "Not verified",
             "recommended_next_action": envelope.get("recommended_next_action", "Read current task" if state else "Reconcile task reachability"),
             "route": state.get("route") if state else None, "rank": mapping.get("rank", 0), "group": group,
+            "event_sequence": event_sequence, "last_read_event_sequence": read_sequence,
+            "unread": event_sequence > read_sequence,
         })
     cards.sort(key=lambda item: (item["group"], item["rank"], item["title"], item["thread_id"]))
     return {
         "action": "status-projection", "project": {"project_id": manifest["project_id"], "project_identity": manifest["project_identity"], "canonical_project_root": manifest["canonical_project_root"], "allowed_roots": manifest["allowed_roots"]},
-        "cards": cards, "latest_single_panel": True, "updates_existing_message": False,
+        "cards": cards, "hidden_count": hidden_count, "latest_single_panel": True, "updates_existing_message": False,
         "capability_note": "The host has not exposed in-place message refresh; each status call returns a new current projection.",
     }
 
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("command", choices=("route", "create-readback", "resume", "notify", "close", "status", "validate-manifest"))
+    parser.add_argument("command", choices=("route", "create-readback", "resume", "notify", "close", "visibility", "status", "validate-manifest"))
     parser.add_argument("input", nargs="?", default="-")
     args = parser.parse_args()
     text = sys.stdin.read() if args.input == "-" else Path(args.input).read_text(encoding="utf-8")
@@ -684,6 +727,7 @@ def main() -> int:
     elif args.command == "resume": result = resume_plan(payload)
     elif args.command == "notify": result = notification_plan(payload)
     elif args.command == "close": result = close_plan(payload)
+    elif args.command == "visibility": result = visibility_plan(payload)
     elif args.command == "status": result = status_projection(payload)
     else:
         errors = validate_manifest(payload)

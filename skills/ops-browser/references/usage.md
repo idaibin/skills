@@ -13,7 +13,7 @@
 
 ## Summary
 
-Use `ops-browser` for browser-based operations where existing tabs, sessions, state, visual evidence, or artifacts matter. It covers inspection, visual/responsive verification, browser DevTools evidence, form filling, upload/download, and browser evidence collection. Prefer the non-interrupting Codex in-app Browser when it can satisfy the task without user-profile state; prefer a verified user local browser when an existing login, extension, download context, or exact user tab is required. Capability-check every requested evidence surface. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for code changes.
+Use `ops-browser` for browser-based operations where existing tabs, sessions, state, visual evidence, or artifacts matter. It covers inspection, visual/responsive verification, browser DevTools evidence, form filling, upload/download, and browser evidence collection. Unless the request fixes another surface, prefer the configured user local browser and reuse its verified existing session, workspace, and matching open page. Use the non-interrupting Codex in-app Browser as the next suitable surface when local control is unavailable or cannot satisfy a non-interruption requirement without GUI effects. Capability-check every requested evidence surface. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for code changes.
 
 ## Trigger Examples
 
@@ -63,6 +63,14 @@ never infer placement from session naming, create an unconfigured group, or leav
 ungrouped task tab. Apply the configured per-domain tab limit before opening, and close
 identity-matched task-created tabs after use unless explicitly retained.
 
+When the desktop is locked, retain this priority only if the configured workspace and
+a browser-native, extension, or loopback CDP endpoint were prepared before lock. The
+adapter must directly prove lock-safe tab enumeration and page control. It may reconnect
+transport to that exact endpoint when no browser launch, debugging enablement, profile
+import, window activation, or GUI automation is required. Reuse an existing matching
+page and never create a workspace while locked. Browser-native DOM/route/network
+evidence does not prove window visibility or screenshots.
+
 ## Execution Backend Selection
 
 Select the browser surface/session first from identity and state requirements, then select the execution backend. A backend is an action mechanism, not a new authority or session owner.
@@ -76,7 +84,7 @@ Select the browser surface/session first from identity and state requirements, t
 
 Use this decision order:
 
-1. Can the requested result be expressed as known navigation, semantic locators, inputs, and assertions? Use deterministic browser APIs or Playwright.
+1. Can the requested result be expressed against the selected existing local-browser tab as known navigation, semantic locators, inputs, and assertions? Use its deterministic browser-native API or Playwright binding.
 2. If not, is the remaining work open-ended discovery and read-only within a declared origin/task? An available LLM-driven browser agent may explore under a bounded budget.
 3. Does the task require a specific low-level Chromium capability absent from the selected higher-level backend? Use the smallest direct CDP operation.
 4. Otherwise stop or return degraded evidence; do not silently switch session, account, surface, or backend.

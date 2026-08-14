@@ -19,26 +19,47 @@ SPEC.loader.exec_module(PREFLIGHT)
 def ready_fixture() -> dict:
     return {
         "schema_version": "local-browser-workspace-preflight/v1",
+        "browser_surface": "user-local-browser",
         "selected_browser_id": "chrome-new",
         "reconnected_from_browser_id": "chrome-old",
         "browser_instances": [
             {"browser_id": "chrome-old", "available": False},
             {"browser_id": "chrome-new", "available": True},
         ],
+        "screen_session": "unlocked",
+        "lock_safe_required": False,
         "policy": {
+            "execution_profile": {"mode": "existing-user-profile"},
             "control_session": {
                 "enabled": True,
                 "name": "Shared Workspace",
                 "require_verified_reuse": True,
                 "create_if_missing": True,
+                "allow_name_session": True,
             },
             "tab_grouping": {
                 "enabled": True,
                 "name": "Shared Workspace",
                 "require_verified_placement": True,
                 "create_if_missing": True,
+                "allow_group_creation": True,
+            },
+            "locked_session": {
+                "enabled": True,
+                "allowed_backends": [
+                    "browser-native-control",
+                    "browser-extension-control",
+                    "direct-cdp",
+                ],
+                "allow_transport_reconnect": True,
+                "cdp": {
+                    "require_loopback_only": True,
+                    "require_dedicated_profile": True,
+                    "require_prelock_roundtrip": True,
+                },
             },
         },
+        "selected_backend": "browser-native-control",
         "capabilities": {
             "session_enumeration": "available",
             "session_selection": "available",
@@ -72,6 +93,209 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
         self.assertEqual("group-shared", result["resolved_group_id"])
         self.assertFalse(result["permitted_actions"]["name_session"])
         self.assertFalse(result["permitted_actions"]["create_tab"])
+
+    def test_non_local_surface_cannot_receive_chrome_grouping_policy(self) -> None:
+        fixture = ready_fixture()
+        fixture["browser_surface"] = "codex-in-app-browser"
+        with self.assertRaisesRegex(ValueError, "only to user-local-browser"):
+            PREFLIGHT.evaluate(fixture)
+
+    def test_dedicated_profile_is_ready_without_session_or_group(self) -> None:
+        fixture = ready_fixture()
+        fixture["policy"]["execution_profile"] = {
+            "mode": "dedicated-user-data-dir"
+        }
+        fixture["policy"]["control_session"] = {"enabled": False}
+        fixture["policy"]["tab_grouping"] = {"enabled": False}
+        fixture["capabilities"] = {
+            "dedicated_profile_identity": "available",
+            "loopback_endpoint_ready": "available",
+        }
+        fixture["observations"] = {}
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("ready", result["state"])
+        self.assertEqual(
+            "dedicated-user-data-dir", result["execution_profile_mode"]
+        )
+        self.assertIsNone(result["resolved_session_id"])
+        self.assertIsNone(result["resolved_group_id"])
+
+    def test_dedicated_profile_rejects_task_grouping(self) -> None:
+        fixture = ready_fixture()
+        fixture["policy"]["execution_profile"] = {
+            "mode": "dedicated-user-data-dir"
+        }
+        fixture["capabilities"].update(
+            {
+                "dedicated_profile_identity": "available",
+                "loopback_endpoint_ready": "available",
+            }
+        )
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "dedicated profile mode requires control session and grouping disabled",
+            result["reasons"],
+        )
+
+    def test_controller_required_task_name_stops_before_browser_action(self) -> None:
+        fixture = ready_fixture()
+        fixture["policy"]["control_session"]["allow_name_session"] = False
+        fixture["policy"]["tab_grouping"]["allow_group_creation"] = False
+        fixture["controller_constraints"] = {
+            "requires_task_specific_session_name": True,
+        }
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "controller task-specific session naming conflicts with configured workspace",
+            result["reasons"],
+        )
+        self.assertFalse(result["permitted_actions"]["name_session"])
+        self.assertFalse(result["permitted_actions"]["create_group"])
+
+    def test_disabled_session_creation_cannot_be_reenabled_by_capability(self) -> None:
+        fixture = ready_fixture()
+        fixture["policy"]["control_session"]["allow_name_session"] = False
+        fixture["observations"]["sessions"] = []
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn("configured session creation is disabled", result["reasons"])
+        self.assertFalse(result["permitted_actions"]["create_session"])
+
+    def test_disabled_group_creation_cannot_be_reenabled_by_capability(self) -> None:
+        fixture = ready_fixture()
+        fixture["policy"]["tab_grouping"]["allow_group_creation"] = False
+        fixture["observations"]["groups"] = []
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn("configured group creation is disabled", result["reasons"])
+        self.assertFalse(result["permitted_actions"]["create_group"])
+
+    def test_locked_session_reuses_preconnected_background_safe_workspace(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["lock_safe_required"] = True
+        fixture["capabilities"].update(
+            {
+                "preconnected_browser_control": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "available",
+            }
+        )
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("ready", result["state"])
+        self.assertTrue(result["lock_safe_ready"])
+
+    def test_locked_session_can_reconnect_prepared_loopback_cdp(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["lock_safe_required"] = True
+        fixture["selected_backend"] = "direct-cdp"
+        fixture["capabilities"].update(
+            {
+                "prepared_endpoint_available": "available",
+                "background_safe_transport_reconnect": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "available",
+                "cdp_loopback_only": "available",
+                "cdp_dedicated_profile": "available",
+                "cdp_prelock_roundtrip_verified": "available",
+            }
+        )
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("ready", result["state"])
+        self.assertTrue(result["lock_safe_ready"])
+        self.assertEqual("direct-cdp", result["selected_backend"])
+
+    def test_locked_cdp_without_prelock_roundtrip_stops(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["selected_backend"] = "direct-cdp"
+        fixture["capabilities"].update(
+            {
+                "prepared_endpoint_available": "available",
+                "background_safe_transport_reconnect": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "available",
+                "cdp_loopback_only": "available",
+                "cdp_dedicated_profile": "available",
+                "cdp_prelock_roundtrip_verified": "unknown",
+            }
+        )
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "required locked-session capability unavailable: cdp_prelock_roundtrip_verified",
+            result["reasons"],
+        )
+
+    def test_locked_session_cannot_launch_browser_or_import_profile(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["capabilities"].update(
+            {
+                "preconnected_browser_control": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "available",
+            }
+        )
+        fixture["controller_constraints"] = {
+            "requires_browser_launch": True,
+            "requires_profile_import": True,
+        }
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn("locked session cannot launch the browser", result["reasons"])
+        self.assertIn(
+            "locked session cannot import browser profile state", result["reasons"]
+        )
+
+    def test_locked_session_without_background_page_control_stops(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["capabilities"].update(
+            {
+                "preconnected_browser_control": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "unavailable",
+            }
+        )
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "required locked-session capability unavailable: background_safe_page_control",
+            result["reasons"],
+        )
+
+    def test_locked_session_never_creates_missing_workspace(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["observations"]["groups"] = []
+        fixture["capabilities"].update(
+            {
+                "preconnected_browser_control": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "available",
+            }
+        )
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "locked session requires an existing configured session and group",
+            result["reasons"],
+        )
+        self.assertFalse(result["permitted_actions"]["create_group"])
+
+    def test_required_lock_safety_with_unknown_screen_state_stops(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "unknown"
+        fixture["lock_safe_required"] = True
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "lock-safe operation requires a known screen-session state", result["reasons"]
+        )
 
     def test_reconnect_rejects_observations_from_stale_browser_id(self) -> None:
         fixture = ready_fixture()

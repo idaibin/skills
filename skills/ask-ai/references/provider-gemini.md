@@ -54,6 +54,9 @@ Then:
    append to, or submit mixed content. Use a new conversation inside the verified
    target only when the request permits it. Use Standard Chat only when the current
    request selects it or the matched local policy explicitly allows that fallback.
+   With `conversation_policy: new-per-task`, create exactly one new conversation inside
+   the verified Notebook. Clean-slate or context-isolation wording changes the task
+   package, not the Notebook target.
 
 If the page is clearly signed out, ask the user to sign in on the selected surface.
 Stop before credentials, MFA, consent, account switching, or permission grants.

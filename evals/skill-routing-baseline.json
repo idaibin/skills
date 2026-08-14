@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "74f590f308cec92dc567fd555c3815d0461b6143+sha256:b9232d5210a450404406f77c3a59a95a340c6254ad2801d2fb52b99b99e962bd",
-  "fingerprint": "sha256:b9232d5210a450404406f77c3a59a95a340c6254ad2801d2fb52b99b99e962bd",
+  "basis": "3d21394b9186be2470d33da4c804f8d3038623d8+sha256:bf4117d9511e765ed4dfd129088df68508c4cc05db0d68cd56946bc639e051a6",
+  "fingerprint": "sha256:bf4117d9511e765ed4dfd129088df68508c4cc05db0d68cd56946bc639e051a6",
   "summary": {
-    "total": 55,
-    "passed": 55,
+    "total": 56,
+    "passed": 56,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -639,6 +639,18 @@
     {
       "id": "workspace-taskboard-normal",
       "case_fingerprint": "sha256:588f1d986b7aa230b528a01b87c04913c23e2366f3011dfe034cc43ae0753cb9",
+      "class": "normal",
+      "skill": "workspace-taskboard",
+      "expected_owner": "workspace-taskboard",
+      "observed_owner": "workspace-taskboard",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "workspace-taskboard-multi-project",
+      "case_fingerprint": "sha256:0d511794e4c5a4f42a52e4b6373a19f8b38df30bc9317867252584080dd16a73",
       "class": "normal",
       "skill": "workspace-taskboard",
       "expected_owner": "workspace-taskboard",

@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Browser"
   short_description: "Operate browser surfaces with verified computed evidence"
-  default_prompt: "Use $ops-browser to select the verified browser surface and execution backend separately: prefer deterministic browser APIs or Playwright for specified repeatable work, allow a bounded LLM-driven browser agent only for open-ended read navigation, and use direct CDP only for a required low-level Chromium capability; verify capability, identity, target, authorization, and final postcondition, with unsupported claims marked Not verified."
+  default_prompt: "Use $ops-browser to prefer the configured user local browser and safely reuse its existing session, workspace, and matching open page unless the request fixes another surface. When locked, use only a preconnected browser-native control plane with proven background-safe capability; never use GUI input. Verify identity, target, authorization, and final postcondition, with unsupported claims marked Not verified."

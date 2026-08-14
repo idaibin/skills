@@ -18,6 +18,9 @@ Operate and verify real desktop client windows. Treat platform automation as ada
    - window-specific screenshot capture;
    - Accessibility/control-tree inspection and semantic actions;
    - background-safe operation without stealing mouse/focus;
+   - an app-owned non-UI control plane such as a documented CLI, authenticated local
+     HTTP/socket endpoint, or semantic IPC adapter, including its operation and auth
+     boundaries;
    - app launch/restart and permission state;
    - screen-session state as `unlocked`, `locked`, or `unknown`, with the evidence source.
 3. Apply the screen-session gate before any window operation. When locked, do not
@@ -27,6 +30,10 @@ Operate and verify real desktop client windows. Treat platform automation as ada
    action is background-safe and does not require those effects; otherwise enter
    Degraded Evidence for the blocked claim. Continue repository, source, process,
    runtime-source, and build verification that does not depend on the screen session.
+   Prefer a verified app-owned non-UI control plane for supported state reads or
+   explicitly authorized semantic actions. It must not activate a window, synthesize
+   GUI input, bypass authentication, or expose a generic command/eval surface. Its
+   result is application-control evidence, never real-window or visual evidence.
 4. If working from a repository, confirm whether it contains a desktop/client app by checking manifests and source layout such as `src-tauri/`, `tauri.conf.*`, Electron configs, native targets, package scripts, justfile tasks, or README run instructions.
 5. Confirm the startup command and runtime source before verification: dev command, debug bundle, release app, Electron/native run command, or `Not found`/`Not verified` when unclear.
 6. Select the platform adapter:
@@ -51,6 +58,7 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 - **Window Evidence:** prove process, runtime, real-window identity, platform adapter, and screenshot source.
 - **Interaction:** use Accessibility/control-tree paths before coordinate clicks.
 - **AI-Operable UI Evidence:** verify semantic controls and stable names so agents can identify critical actions reliably.
+- **Locked-session control plane:** use only a documented, authenticated app-owned CLI, local API/socket, or semantic IPC adapter that directly proves operation without waking, focusing, or GUI input. Keep window capture, Accessibility, and visual claims separate.
 - **Client Debug Evidence:** only after caller delegation of an already-isolated client-layer evidence request, reproduce on the verified real client instance, capture process/window/build/control evidence, test one client-layer hypothesis at a time, and return evidence to the caller without owning the final cross-system root cause.
 - **Degraded Evidence:** when the required platform adapter, permission, or screen-session-safe capability is missing, report only the evidence that can be proven and list exact blocked claims while continuing checks that do not depend on the blocked capability.
 
@@ -76,6 +84,10 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 - Do not assume Accessibility or screen-capture permission. Verify the action succeeds or mark it unavailable.
 - Never unlock the screen, wake the display, focus or activate a window, send keyboard input, move the pointer, or perform pointer/coordinate clicks while the screen session is `locked`. Treat `unknown` as insufficient authorization for an action that could require any of those effects.
 - A window identifier or capture API name alone does not prove lock-safe behavior. Require direct adapter evidence that the exact capture/read action remains background-safe in the current screen-session state, or use Degraded Evidence.
+- A running process or local port does not prove an app-owned control plane. Require
+  repository/runtime ownership, documented operations, authentication or same-user
+  access control, and a bounded semantic command set. Never add or use a generic shell,
+  JavaScript eval, SQL, or unrestricted IPC endpoint to bypass the lock screen.
 - Do not steal the user's mouse, move the pointer, activate unrelated windows, or coordinate-click unless no stable control path exists, the target window is revalidated, and the risk is acceptable.
 - Prefer semantic controls, accessible names, labels, roles, stable automation identifiers, and repository-supported test ids for critical controls.
 - On macOS, verify `CGWindowID`, owner/PID/title/bounds, and capture result before calling a screenshot real-window evidence.

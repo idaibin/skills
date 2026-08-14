@@ -79,6 +79,10 @@ If generic ChatGPT is used, report that the review is not project-bound.
   verified Project with that name. Apply its configured require/prefer policy and
   fallback. Never infer a Project from the saved label or create one without current
   authorization.
+- When that route uses `conversation_policy: new-per-task`, create exactly one new
+  conversation inside the verified Project. “Start from zero” or “ignore the current
+  context” excludes the current Codex discussion's candidate solution from the task
+  package; it never selects Quick Chat, Standard Chat, or a different Project.
 - Resolve `quick-chat` only when the user explicitly asks for Quick Chat, a
   projectless ChatGPT cloud task, or the equivalent host surface.
 - Resolve `standard-chat` when the current request explicitly selects it or when the

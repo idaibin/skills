@@ -76,6 +76,11 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     if record.get("schema_version") != "local-browser-workspace-preflight/v1":
         raise ValueError("unsupported schema_version")
 
+    if record.get("browser_surface") != "user-local-browser":
+        raise ValueError(
+            "local-browser workspace policy applies only to user-local-browser"
+        )
+
     selected_browser_id = record.get("selected_browser_id")
     if not isinstance(selected_browser_id, str) or not selected_browser_id:
         raise ValueError("selected_browser_id must be a non-empty string")
@@ -115,6 +120,15 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(observations, dict):
         raise ValueError("observations must be an object")
 
+    screen_session = record.get("screen_session", "unknown")
+    if screen_session not in {"unlocked", "locked", "unknown"}:
+        raise ValueError("screen_session must be unlocked, locked, or unknown")
+    lock_safe_required = record.get("lock_safe_required", False)
+    if not isinstance(lock_safe_required, bool):
+        raise ValueError("lock_safe_required must be a boolean")
+    if lock_safe_required and screen_session == "unknown":
+        reasons.append("lock-safe operation requires a known screen-session state")
+
     session_policy = policy.get("control_session")
     group_policy = policy.get("tab_grouping")
     if not isinstance(session_policy, dict) or not isinstance(group_policy, dict):
@@ -126,12 +140,113 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("tab_grouping.enabled must be a boolean")
     session_enabled = session_policy["enabled"]
     group_enabled = group_policy["enabled"]
+    execution_profile = policy.get(
+        "execution_profile", {"mode": "existing-user-profile"}
+    )
+    if not isinstance(execution_profile, dict):
+        raise ValueError("execution_profile must be an object")
+    execution_mode = execution_profile.get("mode")
+    if execution_mode not in {"existing-user-profile", "dedicated-user-data-dir"}:
+        raise ValueError("unsupported execution_profile.mode")
+    if execution_mode == "dedicated-user-data-dir":
+        if session_enabled or group_enabled:
+            reasons.append(
+                "dedicated profile mode requires control session and grouping disabled"
+            )
+        for capability in (
+            "dedicated_profile_identity",
+            "loopback_endpoint_ready",
+        ):
+            if capabilities.get(capability) != AVAILABLE:
+                reasons.append(f"required capability unavailable: {capability}")
     session_name = session_policy.get("name") if session_enabled else None
     group_name = group_policy.get("name") if group_enabled else None
     if session_enabled and (not isinstance(session_name, str) or not session_name):
         raise ValueError("control_session.name must be a non-empty string when enabled")
     if group_enabled and (not isinstance(group_name, str) or not group_name):
         raise ValueError("tab_grouping.name must be a non-empty string when enabled")
+    if session_enabled and not isinstance(session_policy.get("allow_name_session"), bool):
+        raise ValueError("control_session.allow_name_session must be a boolean when enabled")
+    if group_enabled and not isinstance(group_policy.get("allow_group_creation"), bool):
+        raise ValueError("tab_grouping.allow_group_creation must be a boolean when enabled")
+
+    controller_constraints = record.get("controller_constraints", {})
+    if not isinstance(controller_constraints, dict):
+        raise ValueError("controller_constraints must be an object")
+    requires_task_name = controller_constraints.get(
+        "requires_task_specific_session_name", False
+    )
+    if not isinstance(requires_task_name, bool):
+        raise ValueError(
+            "controller_constraints.requires_task_specific_session_name must be a boolean"
+        )
+    if session_enabled and requires_task_name:
+        reasons.append(
+            "controller task-specific session naming conflicts with configured workspace"
+        )
+
+    selected_backend = record.get("selected_backend", "not-applicable")
+    if not isinstance(selected_backend, str) or not selected_backend:
+        raise ValueError("selected_backend must be a non-empty string")
+    if screen_session == "locked":
+        lock_policy = policy.get("locked_session")
+        if not isinstance(lock_policy, dict):
+            raise ValueError("locked_session policy is required while locked")
+        if lock_policy.get("enabled") is not True:
+            reasons.append("locked-session local control is disabled")
+        allowed_backends = lock_policy.get("allowed_backends")
+        if not isinstance(allowed_backends, list) or not all(
+            isinstance(item, str) and item for item in allowed_backends
+        ):
+            raise ValueError("locked_session.allowed_backends must be a string list")
+        if selected_backend not in allowed_backends:
+            reasons.append("selected backend is not allowed while locked")
+        for capability in (
+            "background_safe_tab_enumeration",
+            "background_safe_page_control",
+        ):
+            if capabilities.get(capability) != AVAILABLE:
+                reasons.append(f"required locked-session capability unavailable: {capability}")
+
+        prepared_control = capabilities.get("preconnected_browser_control") == AVAILABLE
+        reconnect_allowed = lock_policy.get("allow_transport_reconnect") is True
+        prepared_reconnect = reconnect_allowed and all(
+            capabilities.get(capability) == AVAILABLE
+            for capability in (
+                "prepared_endpoint_available",
+                "background_safe_transport_reconnect",
+            )
+        )
+        if not prepared_control and not prepared_reconnect:
+            reasons.append("no prepared lock-safe browser control path is available")
+
+        prohibited_constraints = {
+            "requires_browser_launch": "locked session cannot launch the browser",
+            "requires_debug_enablement": "locked session cannot enable browser debugging",
+            "requires_gui_automation": "locked session cannot use GUI automation",
+            "requires_profile_import": "locked session cannot import browser profile state",
+        }
+        for key, reason in prohibited_constraints.items():
+            value = controller_constraints.get(key, False)
+            if not isinstance(value, bool):
+                raise ValueError(f"controller_constraints.{key} must be a boolean")
+            if value:
+                reasons.append(reason)
+
+        if selected_backend == "direct-cdp":
+            cdp_policy = lock_policy.get("cdp")
+            if not isinstance(cdp_policy, dict):
+                raise ValueError("locked_session.cdp policy is required for direct-cdp")
+            cdp_requirements = {
+                "require_loopback_only": "cdp_loopback_only",
+                "require_dedicated_profile": "cdp_dedicated_profile",
+                "require_prelock_roundtrip": "cdp_prelock_roundtrip_verified",
+            }
+            for policy_key, capability in cdp_requirements.items():
+                if cdp_policy.get(policy_key) is True and capabilities.get(capability) != AVAILABLE:
+                    reasons.append(
+                        f"required locked-session capability unavailable: {capability}"
+                    )
 
     sessions: list[dict[str, Any]] = []
     groups: list[dict[str, Any]] = []
@@ -165,18 +280,21 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             reasons.append("configured session observation is bound to the stale browser identity")
         elif len(named_sessions) == 0:
             if session_policy.get("create_if_missing") is True:
-                creation_capabilities = ("managed_session_creation", "session_selection")
-                missing = [
-                    capability
-                    for capability in creation_capabilities
-                    if capabilities.get(capability) != AVAILABLE
-                ]
-                if not missing:
-                    create_session = True
+                if session_policy.get("allow_name_session") is not True:
+                    reasons.append("configured session creation is disabled")
                 else:
-                    reasons.extend(
-                        f"required capability unavailable: {capability}" for capability in missing
-                    )
+                    creation_capabilities = ("managed_session_creation", "session_selection")
+                    missing = [
+                        capability
+                        for capability in creation_capabilities
+                        if capabilities.get(capability) != AVAILABLE
+                    ]
+                    if not missing:
+                        create_session = True
+                    else:
+                        reasons.extend(
+                            f"required capability unavailable: {capability}" for capability in missing
+                        )
             else:
                 reasons.append("configured session is absent and creation is disabled")
         elif len(named_sessions) != 1 or len(sessions) != 1:
@@ -254,18 +372,21 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             reasons.append("configured group observation is bound to the stale browser identity")
         elif len(named_groups) == 0:
             if group_policy.get("create_if_missing") is True:
-                creation_capabilities = ("group_creation", "group_selection", "group_placement")
-                missing = [
-                    capability
-                    for capability in creation_capabilities
-                    if capabilities.get(capability) != AVAILABLE
-                ]
-                if not missing:
-                    create_group = True
+                if group_policy.get("allow_group_creation") is not True:
+                    reasons.append("configured group creation is disabled")
                 else:
-                    reasons.extend(
-                        f"required capability unavailable: {capability}" for capability in missing
-                    )
+                    creation_capabilities = ("group_creation", "group_selection", "group_placement")
+                    missing = [
+                        capability
+                        for capability in creation_capabilities
+                        if capabilities.get(capability) != AVAILABLE
+                    ]
+                    if not missing:
+                        create_group = True
+                    else:
+                        reasons.extend(
+                            f"required capability unavailable: {capability}" for capability in missing
+                        )
             else:
                 reasons.append("configured group is absent and creation is disabled")
         elif len(named_groups) != 1 or len(groups) != 1:
@@ -279,6 +400,9 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             if observations.get("placement_target_group_id") != groups[0]["group_id"]:
                 reasons.append("tab placement target is not bound to the verified group identity")
 
+    if screen_session == "locked" and (create_session or create_group):
+        reasons.append("locked session requires an existing configured session and group")
+
     creation_required = not reasons and (create_session or create_group)
     ready = not reasons and not creation_required
     state = "ready" if ready else "creation-required" if creation_required else "capability-unavailable"
@@ -286,6 +410,10 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         "schema_version": "local-browser-workspace-preflight-result/v1",
         "state": state,
         "selected_browser_id": selected_browser_id,
+        "screen_session": screen_session,
+        "selected_backend": selected_backend,
+        "execution_profile_mode": execution_mode,
+        "lock_safe_ready": ready and screen_session == "locked",
         "resolved_session_id": sessions[0]["session_id"] if ready and session_enabled else None,
         "resolved_group_id": groups[0]["group_id"] if ready and group_enabled else None,
         "permitted_actions": {

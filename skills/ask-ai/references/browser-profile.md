@@ -29,6 +29,7 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
         name: <optional generic review container name>
         policy: prefer-verified-persistent | require-verified-persistent
         fallback: new-standard-chat | package-only
+        conversation_policy: reuse-verified | new-per-task
         provider_targets:
           chatgpt: {surface: project, name: <user-selected ChatGPT Project name>}
           gemini: {surface: notebook, name: <user-selected Gemini Notebook name>}
@@ -36,10 +37,12 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
         name: <user-editable design Project/notebook name>
         policy: prefer-verified-persistent | require-verified-persistent
         fallback: new-standard-chat | package-only
+        conversation_policy: reuse-verified | new-per-task
       image:
         name: <user-editable image Project/notebook name>
         policy: prefer-verified-persistent | require-verified-persistent
         fallback: new-standard-chat | package-only
+        conversation_policy: reuse-verified | new-per-task
     standard_chat:
       policy: allow-default | explicit-current-request-only
     cli_monitoring:
@@ -229,6 +232,12 @@ configuration. Verify each provider's stable container ID, URL origin, account, 
 conversation independently. Never copy one provider's ID, URL, tab, or evidence into
 the other provider's adapter.
 
+`conversation_policy` controls conversation reuse inside the resolved persistent
+container. `new-per-task` creates exactly one new conversation for the authorized task
+inside that verified container; `reuse-verified` reuses only an explicitly mapped
+conversation. It never changes the provider or container and does not authorize a
+second submit when creation or submission is ambiguous.
+
 Before any browser operation, serialize the selected provider, current request,
 complete defaults, and fresh transport/target observations, then run
 `python3 skills/ask-ai/scripts/resolve_browser_transport.py <input.json>`. Its
@@ -252,8 +261,11 @@ unknown, or conflicting policy/fallback combinations fail closed.
 means a new, blank, ordinary, Quick, or Standard Chat is legal only when the current
 request explicitly selects that surface; `allow-default` permits a matched
 `new-standard-chat` fallback and ordinary default routing. Wording that excludes
-current project or conversation facts changes the outbound package, not the target
-container; it does not by itself select a different surface.
+current conversation facts, asks for a clean-slate design, or says not to be influenced
+by the current discussion changes the outbound package, not the target container. It
+must not be interpreted as permission to use Standard Chat, Quick Chat, another
+Project/notebook, or another account. Apply `conversation_policy` inside the verified
+container.
 
 A `final-result-sync` target may name the same persistent container as a normal route.
 Keep the sync payload and receipt in their own verified conversation and preserve the

@@ -7,7 +7,7 @@ description: "Use when directly operating or verifying a specified page, capturi
 
 ## Overview
 
-Operate browser pages and collect evidence without conflating browser surfaces. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. This catalog classifies the host-provided Codex in-app Browser as a non-interrupting host surface; that classification is not an official public browser API guarantee and says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
+Operate browser pages and collect evidence without conflating browser surfaces. Unless the current request fixes another surface, prefer the configured user local browser and its safely matching already-open page. A configured dedicated Chrome user-data directory is itself the AI isolation boundary and does not require a task group or named control session. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. This catalog classifies the host-provided Codex in-app Browser as a non-interrupting fallback surface; that classification is not an official public browser API guarantee and says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
 
 ## Workflow
 
@@ -24,8 +24,31 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    session or group creation named by `permitted_actions`; re-enumerate and rerun the
    gate before any other action. Exit `20` is `capability-unavailable`; do not call
    `nameSession`, create a tab/group, reconnect again, or continue by label.
-3. Before every action that would open or create a page, enumerate browser sessions and
-   existing tabs when the available tool exposes them. Narrow candidates by browser
+   If the active controller requires a task-specific session name, include
+   `controller_constraints.requires_task_specific_session_name: true`; the route must
+   fail closed. Never satisfy that controller contract with a provider, task, agent,
+   emoji, page, or conversation label.
+   Record the screen session as `unlocked`, `locked`, or `unknown`. When locked, the
+   local route is eligible through an already connected controller or a prepared
+   browser-native, extension, or loopback CDP endpoint whose exact tab enumeration,
+   page control, and background-safe reconnect behavior are directly proven. A
+   reconnect may bind only that prepared endpoint; never launch Chrome, enable
+   debugging, import profile state, activate a window, or use keyboard, pointer,
+   Accessibility, coordinate, or Computer Use automation while locked. If lock-safe
+   control is required but the state or capability is unknown, stop or use an
+   explicitly permitted non-local fallback that does not require the local profile.
+3. Resolve surface priority before every action: an explicit current-request surface;
+   otherwise a valid configured user-local-browser preference; then a suitable Codex
+   in-app Browser; then an isolated managed browser when user-profile state is not
+   required. Within the selected local browser, resolve the configured control session
+   and group first, then enumerate browser sessions and
+   existing tabs when the available tool exposes them. Apply those Chrome workspace
+   constraints only to `user-local-browser`; an in-app, cloud/agent, or isolated
+   managed browser has its own tab/session model and never receives a configured
+   local-browser grouping policy. When the configured execution mode is
+   `dedicated-user-data-dir`, resolve and verify that exact profile/process/endpoint
+   first; control-session and grouping policies must be disabled because the complete
+   browser data root is AI-owned. Narrow candidates by browser
    surface, verified account/session, and task context, then prefer an exact URL within
    those candidates. URL matching never crosses an identity boundary. Reuse a safely
    matching tab and do not open another one. Open a new tab only when no safe match exists or when an
@@ -50,19 +73,23 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    with the same `operation_id`; do not reconstruct bridge policy locally. App-native
    ChatGPT Project/Thread operations never enter this Skill.
 5. Choose the surface mode, execution backend, and evidence plan independently based on capability, state ownership, and task determinism. Prefer deterministic browser/tool APIs or Playwright for specified, repeatable actions; use an LLM-driven browser agent such as browser-use only for open-ended navigation that cannot be expressed reliably in advance and only with a bounded action budget and external-write gate; use direct CDP only for a required Chromium-specific low-level capability that the higher-level route does not expose. Record the selected backend and reason, and load the backend-selection rules in [references/usage.md](references/usage.md). Backend selection never changes the selected session, identity, authorization, or evidence burden. For social, publishing, design-collaboration, development-collaboration, or admin sites, also select one generic operation pattern from `references/platform-operations.md`; load platform-specific detail only when it changes the action or proof boundary. For an Axure product-source inventory, load [references/axure-product-evidence.md](references/axure-product-evidence.md); for Lanhu selected-element measurements, load [references/lanhu-ui-evidence.md](references/lanhu-ui-evidence.md). For repeatable multi-route/state or element capture, load the optional manifest in [references/usage.md](references/usage.md); do not impose it on one-off inspection. For selected-source visual capture/comparison, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) and require caller-provided source identity, viewport/state, pass number, capture targets, computed checks, and state-restoration plan. For an already-isolated browser-layer failure, load `references/devtools-debugging.md`; route unexplained or cross-system root-cause requests back to the caller for diagnosis before browser operation.
-6. Reuse the evidence-bearing session and target tab when it can be identified safely.
+6. Reuse the evidence-bearing local session and target tab when it can be identified safely.
    Treat opening a page as disallowed until step 3 either finds no safe reusable tab or
    records the specific isolation/comparison reason. If the user requires no window,
-   mouse, or keyboard interruption, prefer the host-provided Codex in-app Browser,
-   which is classified as non-interrupting. For controlled Chrome, Computer Use,
+   mouse, or keyboard interruption, keep the configured local browser only when its
+   browser-native control plane directly proves background-safe operation; otherwise
+   use the host-provided Codex in-app Browser fallback when it can satisfy the task.
+   For controlled Chrome window automation, Computer Use,
    system accessibility/coordinate automation, or another visible/user-owned surface,
    require direct background-safety capability evidence; otherwise return Degraded
    Evidence or stop. Open an isolated managed page only when the task does not depend
    on unavailable user-profile state. A configured local-browser group is a placement
    constraint, not a hint: do not open, move, or retain a tab outside it when verified
-   placement is required. A required `nameSession`-style operation uses only the
-   resolved configured control-session name; it never uses a task label and proves
-   neither session reuse nor tab-group membership.
+   placement is required. Call a `nameSession`-style operation only when the resolved
+   policy explicitly permits it, and then only with the resolved configured
+   control-session name. With `allow_name_session: false`, do not call it even with the
+   configured name. It never uses a task label and proves neither session reuse nor
+   tab-group membership.
 7. Prefer browser/tool APIs, DOM inspection, roles, labels, test ids, and deterministic actions over manual guessing.
 8. Gather only evidence the tool can actually expose: UI state, DOM/accessibility, console, network, storage/auth state, screenshots, viewport behavior, downloads, route changes, or submitted payloads. For visual comparison, independently retain design and runtime captures, produce side-by-side/overlay/diff evidence, and read applicable computed font, final color/contrast, geometry, alignment, truncation, hover/focus, state, and breakpoint facts.
 9. Distinguish direct evidence from inference; mark unavailable or unchecked claims `Not verified`.
@@ -89,6 +116,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - **Form/Upload:** map controls semantically, verify source file/path and final state, and stop before unauthorized submission.
 - **Browser Debug Evidence:** for an already-isolated browser-layer evidence request, use the Codex in-app Browser debug profile in `references/devtools-debugging.md` when available; select only exposed DOM/accessibility, CSS/layout, Console, Network/resource, route, storage/auth, screenshot, viewport, and interaction evidence, then run one repeatable red/green loop.
 - **Agentic navigation:** for open-ended discovery where a deterministic action plan cannot be fixed in advance, constrain the LLM-driven browser backend to the declared origin/task, allowed read actions, step/action budget, and explicit stop conditions; require a deterministic verification step for the final claim.
+- **Locked-session local control:** reuse an existing configured local-browser workspace and target tab through an already connected controller or a prepared browser-native, extension, or loopback CDP endpoint. A prepared endpoint may be reconnected after lock without continuous page activity when browser/profile/target identity and the exact operation remain verifiable. Permit DOM, route, network, and semantic page actions only to the extent proven lock-safe; window visibility, screenshot, focus, keyboard, pointer, and client-window claims remain blocked unless independently proven.
 - **Degraded evidence:** when required browser capabilities are missing, perform only supported checks, state the blocked claims, and provide the exact artifact or manual action needed to continue.
 
 ## Do Not Use For
@@ -118,7 +146,18 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - Use direct CDP only when the selected Chromium session and required low-level event or domain cannot be reached through the higher-level backend. Keep raw protocol commands narrowly scoped; CDP connectivity alone does not prove page readiness, identity, or task completion.
 - For browser debug evidence, establish exact URL, steps, expected symptom, observed symptom, and red/green evidence before testing a browser-layer hypothesis.
 - Treat the host-provided Codex in-app Browser as catalog-classified non-interrupting. Do not present that classification as an official public API guarantee or extend it to controlled Chrome, Computer Use, system accessibility/coordinate automation, or other visible/user-owned routes; those require direct background-safety evidence when the user forbids window, mouse, or keyboard interruption.
-- Keep local-browser workspace configuration user-owned. Resolve explicit current-task grouping first, then a valid local record; never write a personal group name into the portable Skill, create extra groups for convenience, treat session naming as group placement proof, or bypass a required group with an ungrouped tab.
+- Local-browser preference never proves a live controller, tab, login, account, or
+  lock-safe capability. When the screen is locked, require an already connected
+  controller or a prepared browser-native, extension, or loopback CDP endpoint plus
+  direct evidence for the exact operation. Reconnecting transport to that exact
+  prepared endpoint is allowed only when it is background-safe and identity is
+  revalidated; never launch Chrome, enable remote debugging, import browser profile
+  state, activate its windows, or fall back to GUI automation in order to continue.
+- Keep local-browser workspace configuration user-owned. Resolve explicit current-task grouping first, then a valid local record; never write a personal group name into the portable Skill, create extra groups for convenience, treat session naming as group placement proof, or bypass a required group with an ungrouped tab. Provider, task, agent, emoji, page, and conversation labels are metadata only and must never become session or group names.
+- In `dedicated-user-data-dir` mode, use the configured launcher only while unlocked,
+  verify the exact profile process and loopback endpoint, and allow ungrouped tabs
+  because the profile boundary owns all tabs. While locked, never launch or recreate
+  the profile; reconnect only its already verified endpoint.
 - Treat readiness and product behavior as separate assertions. Retry only a bounded readiness probe when direct evidence shows setup is not ready and the probe has no external side effect; never retry a behavior assertion merely because it failed.
 - Test one browser hypothesis at a time. Do not bundle refresh, cache clearing, account switch, viewport changes, and code edits.
 - Confirm only direct browser facts such as the active URL, missing cookie, absent DOM control, console error, network response, or browser-enforced CORS failure. Return cross-system evidence to the caller; do not claim a final frontend-to-API-to-backend-to-database root cause or decide a permanent code fix.

@@ -1249,7 +1249,7 @@
       "capability_id": "codex.workspace.taskboard.status",
       "capability_version": "1.0.0",
       "package": "workspace-taskboard",
-      "description": "Read live Codex project and task state and render a read-only Workspace Taskboard status projection.",
+      "description": "Read live Codex project and task state and render a read-only multi-project Workspace Taskboard from independently verified project scopes.",
       "accepts": [{"schema": "urn:skills:task-orchestration-request:v1", "kind": "portable"}],
       "produces": [{"schema": "urn:skills:task-orchestration-result:v1", "kind": "portable"}],
       "preconditions": ["TASK_API_PREFLIGHTED", "ALLOWED_ROOTS_VERIFIED_FROM_PROJECT_READBACK"],
@@ -1269,7 +1269,7 @@
       "capability_id": "codex.workspace.taskboard",
       "capability_version": "1.0.0",
       "package": "workspace-taskboard",
-      "description": "Show and coordinate one scoped Workspace Taskboard with route, reuse, close, notification, and controller rebind.",
+      "description": "Aggregate independently scoped project controllers and coordinate direct dispatch, reuse, close, board events, unread state, and controller rebind.",
       "accepts": [
         {
           "schema": "urn:skills:task-orchestration-request:v1",
@@ -1299,7 +1299,7 @@
         "TASK_ACTION_READ_BACK_OR_MARKED_UNVERIFIED",
         "PROJECT_ROOT_CONTAINMENT_REVALIDATED",
         "CONTROL_MAPPING_VALIDATED",
-        "PROACTIVE_NOTIFICATION_ROUTE_BOUND"
+        "BOARD_EVENT_ROUTE_BOUND_WITHOUT_CHAT_INJECTION"
       ],
       "permission_contract": {
         "maximum_mutation_class": "task-control",

@@ -7,6 +7,17 @@ in the controller. Treat implementation, tests, investigation, review, monitorin
 external AI, and Git delivery as worker placement by default. Placement never broadens
 the request's mutation or external-effect authorization.
 
+## One-shot Project Scope
+
+The overview conversation does not own project files. Selecting a project creates one
+visible, one-shot scope token with `project_id`, `control_id`, project controller ID,
+canonical root, allowed-roots version, exact target cwd, authorization profile, and a stable
+dispatch operation ID. Treat the label as display only. On submit, validate the token against
+fresh project/controller readback, consume it once, and run this routing table immediately.
+Do not analyze or rewrite the task in the overview conversation. A missing, stale, or
+out-of-root token stops before send or create. Candidate ambiguity returns a structured
+existing-task/New-task chooser; it is a routing stop, not a model discussion.
+
 ## Root Filter
 
 Call project/list-read, thread/list-read, then resolve realpaths. Retain only local Codex

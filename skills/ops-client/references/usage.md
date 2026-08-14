@@ -66,6 +66,15 @@ be proven, leave the visual, Accessibility, or interaction claim in Degraded Evi
 Apply the same restraint to `unknown` whenever an operation could require a prohibited
 effect.
 
+For application state or semantic actions, prefer an app-owned non-UI control plane
+that was documented by the owning repository and can be attributed to the running
+client: a bounded CLI, authenticated same-user local HTTP/socket endpoint, or semantic
+IPC adapter. Verify its process/runtime ownership, supported operation, authentication
+boundary, before/after result, and cleanup. Do not use AppleScript GUI scripting,
+Accessibility actions, keyboard events, pointer events, a generic eval endpoint, or an
+unrestricted command bridge as a lock-screen workaround. Control-plane success proves
+only the application operation; it does not prove a visible window or current pixels.
+
 Classify lock impact separately from state:
 
 - `confirmed blocker`: direct platform or adapter evidence attributes the required

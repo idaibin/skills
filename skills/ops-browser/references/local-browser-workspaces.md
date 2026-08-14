@@ -34,6 +34,9 @@ action authorization.
 An authentication failure on one surface never proves another surface is authenticated.
 When the current request does not fix a surface, select the one that owns the required
 state and verify it live. An explicit current-request surface remains a hard constraint.
+The control-session and tab-group sections apply only to `user-local-browser`; never
+apply Chrome grouping to the Codex in-app Browser, cloud/agent browser, or an isolated
+managed browser.
 
 ## Configuration
 
@@ -41,31 +44,81 @@ state and verify it live. An explicit current-request surface remains a hard con
 schema_version: ops-browser-defaults/v1
 local_browser:
   product: <user-selected browser product>
+  surface_priority: preferred | fallback
+  execution_profile:
+    mode: existing-user-profile | dedicated-user-data-dir
+    name: <user-selected profile name>
+    user_data_dir: <local private absolute path>
+    profile_directory: <Chrome profile directory>
+    launcher: <local private launcher path>
+    login_bootstrap: <local private non-automated login launcher path>
+    probe: <local private readiness probe path>
+    launch_when_unlocked: true
+    require_existing_when_locked: true
+    cdp:
+      address: 127.0.0.1
+      port_strategy: fixed | devtools-active-port
+      port: <loopback port when fixed>
+      enabled: true
   control_session:
     enabled: true
-    strategy: unified | by-operation
+    strategy: unified | by-operation | dedicated-profile
     default_name: <user-selected control-session name>
     operation_names:
       <exact operation type>: <user-selected control-session name>
     require_verified_reuse: true
     create_if_missing: true
+    allow_name_session: true
     reuse_existing: true
     allow_unconfigured_sessions: false
   tab_grouping:
     enabled: true
-    strategy: unified | by-operation
+    strategy: unified | by-operation | dedicated-profile
     default_group: <user-selected group name>
     operation_groups:
       <exact operation type>: <user-selected group name>
     require_verified_placement: true
     create_if_missing: true
+    allow_group_creation: true
     reuse_existing: true
     allow_unconfigured_groups: false
     allow_ungrouped: false
     close_task_tabs_after_use: true
     max_open_tabs_per_domain: <positive integer>
+  locked_session:
+    enabled: true
+    require_prepared_control: true
+    allowed_backends: [browser-native-control, browser-extension-control, direct-cdp]
+    allow_transport_reconnect: true
+    prohibit_browser_launch: true
+    prohibit_debug_enablement: true
+    prohibit_profile_import: true
+    prohibit_window_activation: true
+    prohibit_keyboard_pointer: true
+    cdp:
+      require_loopback_only: true
+      require_dedicated_profile: true
+      require_prelock_roundtrip: true
+  profile_state:
+    reuse_existing: true
+    automatic_profile_copy: false
+    import_policy: user-mediated-only
 last_verified_at: <informational timestamp>
 ```
+
+`execution_profile.mode: dedicated-user-data-dir` makes the entire Chrome data root
+the AI isolation boundary. It does not inherit the default Chrome profile, cookies,
+credentials, extensions, or account state. The launcher may start it while unlocked;
+while locked, `require_existing_when_locked: true` permits only an already running,
+verified endpoint. `devtools-active-port` reads the task-owned `DevToolsActivePort`
+record instead of assuming a fixed port.
+
+Account sign-in and MFA use `login_bootstrap`, which launches the dedicated profile
+without CDP, automation flags, extension control, or GUI scripting. Never automate or
+observe credentials. After the user confirms sign-in, close that exact profile cleanly
+and start the ordinary launcher. A fixed loopback CDP port avoids the WebDriver signal
+associated with Chrome's zero-port automation mode, but it does not bypass provider
+risk controls or prove that sign-in will remain accepted.
 
 For both `control_session` and `tab_grouping`, `strategy: unified` requires the
 corresponding default name and an absent or empty operation map. With
@@ -74,9 +127,22 @@ then use its configured default only when no exact key exists. Session names, gr
 names, and operation keys are user-owned; the public Skill supplies no personal names
 or closed operation map.
 
+With `strategy: dedicated-profile`, set the corresponding section to `enabled: false`:
+all tabs in that browser data root are AI-owned, so a Chrome group or task-named host
+session adds no isolation. Never call `nameSession` or create a task/provider group in
+this mode.
+
 Set either section's `enabled: false` to disable only that policy. `last_verified_at`
 is informational and never proves that the browser, control session, group, tab, or
 login still exists.
+
+`surface_priority: preferred` makes the configured local browser the default only
+when the current request does not select another surface. It never overrides a hard
+surface constraint or missing live capability. The locked-session record permits a
+prepared browser-native, extension, or loopback CDP control plane. It may allow
+transport reconnection to that exact prepared endpoint, but never authorizes launching
+Chrome, enabling debugging, importing a profile, activating a window, or using GUI
+input.
 
 ## Configuration Changes
 
@@ -104,6 +170,9 @@ fails closed before opening, claiming, moving, or navigating a tab.
 Control-session policy selects the host automation-session identity and label; grouping
 selects tab placement. Neither selects an account, provider, Project,
 conversation, model, browser permission, external recipient, or write authorization.
+The execution-profile boundary is resolved first. When it is `dedicated-user-data-dir`,
+reuse or launch that exact profile while unlocked and apply no Chrome group requirement.
+When locked, the exact profile process and prepared endpoint must already exist.
 
 ## Control Session Gate
 
@@ -111,6 +180,9 @@ Resolve the control-session policy before initializing a local-browser controlle
 Starting or naming a host automation session is a browser-state action, not harmless
 setup. A user statement that the target is already open means reuse the safely matching
 browser session and tab; it does not authorize a second control session, group, or tab.
+When `allow_name_session: false`, never call a session-label operation, including with
+the configured name. When `allow_group_creation: false`, never create a group. These
+explicit denials take precedence over controller defaults and advertised capabilities.
 
 Before setup, serialize the selected browser ID, any stale/reconnected browser ID,
 resolved policies, capability states, stable session/group observations, selected IDs,
@@ -128,6 +200,10 @@ operation; do not retry or create another same-named workspace.
 - Call a required session-label operation such as `nameSession` only on the resolved
   session and only with the resolved configured name. Never derive its argument from a
   task title, provider, agent, emoji, page, or conversation name.
+- If the active controller requires a task-specific `nameSession` call, record
+  `controller_constraints.requires_task_specific_session_name: true` and fail the
+  preflight. Do not call it with the configured name as a workaround because some
+  controllers create a duplicate group even when the label matches.
 - Session naming does not create, select, reuse, merge, or verify a control session. If
   the host creates a session implicitly during controller setup, record that creation
   separately and apply `create_if_missing` before setup whenever the host can expose
@@ -155,6 +231,23 @@ same-named duplicate and do not weaken the tab-group policy to continue.
 Before opening or claiming a local-browser tab, enumerate available tabs when exposed
 and record only title, URL, recency, and group metadata needed for selection. Do not
 inspect unrelated page content.
+
+Record `screen_session` and `selected_backend` in preflight. With `locked`, require
+`background_safe_tab_enumeration` and `background_safe_page_control` plus either an
+already connected controller or a prepared endpoint whose transport can reconnect
+without launching Chrome, enabling debugging, importing profile state, activating a
+window, or using GUI automation. The configured session and group must already exist;
+creation is never permitted while locked. When a caller requires lock-safe behavior
+and the screen state is `unknown`, stop before page action. This gate can authorize
+browser-native page operations only; it cannot establish window visibility, screenshot,
+focus, keyboard, pointer, Accessibility, or coordinate evidence.
+
+For `direct-cdp`, additionally require a loopback-only endpoint, a dedicated automation
+profile, and a successful pre-lock round trip bound to the exact browser/profile. The
+browser and prepared endpoint may remain idle; continuous page activity is unnecessary.
+A transport reconnect after lock is allowed only to that prepared endpoint and must
+revalidate the browser, profile, target, and required capabilities. CDP availability
+does not authorize copying the user's default Chrome profile.
 
 - Treat a tool-exposed `tabGroup` value as observation of that tab's current group.
 - A `tabGroup` label without independent group enumeration, a stable group ID, and an
@@ -184,6 +277,12 @@ inspect unrelated page content.
 If the resolved group is absent and creation or placement cannot be verified, return
 `capability-unavailable`; do not create an ungrouped tab or claim success from a
 session label.
+
+Never copy a live Chrome profile, cookies, cache, saved credentials, history, or
+Keychain material into an automation profile. With `automatic_profile_copy: false`,
+authentication must come from a verified existing user-local-browser connection or a
+user-mediated sign-in/import into the dedicated profile. Imported navigation data is
+initialization help only and never proves current authentication or account identity.
 
 Before opening another tab, normalize the target to its hostname (an IP address or
 `localhost` remains its exact host) and count observed tabs for that host in the

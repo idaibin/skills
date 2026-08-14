@@ -73,6 +73,16 @@ capabilities:
   composer_inspection: <available|unavailable|unknown>
   response_completion: <available|unavailable|unknown>
   background_safe: <available|unavailable|unknown>
+  preconnected_browser_control: <available|unavailable|unknown>
+  prepared_endpoint_available: <available|unavailable|unknown>
+  background_safe_transport_reconnect: <available|unavailable|unknown>
+  background_safe_tab_enumeration: <available|unavailable|unknown>
+  background_safe_page_control: <available|unavailable|unknown>
+  cdp_loopback_only: <available|unavailable|unknown>
+  cdp_dedicated_profile: <available|unavailable|unknown>
+  cdp_prelock_roundtrip_verified: <available|unavailable|unknown>
+  dedicated_profile_identity: <available|unavailable|unknown>
+  loopback_endpoint_ready: <available|unavailable|unknown>
   deterministic_automation: <available|unavailable|unknown>
   agentic_navigation: <available|unavailable|unknown>
   direct_cdp: <available|unavailable|unknown>
@@ -106,6 +116,15 @@ resolved policy requires verified reuse or placement. If any required capability
 `nameSession`, tab creation, group creation, navigation, or page operation. A browser
 reconnect invalidates evidence bound to the prior browser ID and requires a fresh
 snapshot; matching display names never bridge the two identities.
+
+Local Chrome control-session and tab-group policy applies only to
+`user-local-browser`. It never applies to the Codex in-app Browser, cloud/agent
+browser, or an isolated managed browser. A locked local route may reconnect transport
+to an exact endpoint prepared before lock when the reconnect, tab enumeration, and
+page operations are directly proven background-safe. It may not launch Chrome, enable
+debugging, import profile state, activate a window, or use GUI automation. Direct CDP
+also requires a loopback-only endpoint, dedicated automation profile, and successful
+pre-lock round trip bound to the exact browser/profile.
 
 When an enabled configured workspace is proven absent and `create_if_missing: true`,
 the preflight may return `creation-required` and authorize only the exact configured
@@ -171,6 +190,13 @@ route:
   reasoning_mode: <preferred label|not-applicable|Not verified>
   reasoning_fallbacks:
     - <ordered authorized fallback label or none>
+local_workspace_policy:
+  policy_source: <validated local record|current-request override|not-applicable>
+  control_session_name: <resolved configured name|not-applicable>
+  tab_group_name: <resolved configured name|not-applicable>
+  allow_name_session: <true|false>
+  allow_group_creation: <true|false>
+  controller_requires_task_specific_session_name: <true|false|unknown>
 target:
   conversation_id: <stable id|create-one-authorized|Not verified>
   expected_url: <exact URL or Not verified>
@@ -219,6 +245,13 @@ their authorized fallback order. `ops-browser` verifies rendered controls and
 returns direct selection evidence. Stored labels are not capability proof. If a
 same-provider preference is unavailable, use only the first verified configured
 fallback or return `blocked`. Never change provider as an implicit fallback.
+
+For `user-local-browser`, the bridge must populate `local_workspace_policy` from the
+validated `ops-browser` policy before handoff. Provider, task, agent, emoji, page, and
+conversation labels never populate either name. If the controller requires a
+task-specific session name while the policy forbids naming or requires unified reuse,
+return `blocked` with `capability-unavailable` before controller setup or page action.
+Do not rename the configured session or create a provider-specific group to continue.
 
 ## Handoff Result
 

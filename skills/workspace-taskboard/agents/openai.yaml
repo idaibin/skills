@@ -1,4 +1,4 @@
 interface:
   display_name: "Workspace Taskboard"
-  short_description: "在一个项目根内委派、复用并显示 Codex 任务看板"
-  default_prompt: "Use $workspace-taskboard status to project the latest 工作区任务看板 for this verified local project."
+  short_description: "按验证项目 Scope 委派并显示多项目 Codex 会话看板"
+  default_prompt: "Use $workspace-taskboard status to project the latest multi-project 工作区任务看板 from independently verified local project controllers."

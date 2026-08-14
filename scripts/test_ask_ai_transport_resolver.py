@@ -35,6 +35,7 @@ def payload(provider: str, *, targets=None, tabs=None) -> dict:
                     "name": "generic route name must not win",
                     "policy": "require-verified-persistent",
                     "fallback": "package-only",
+                    "conversation_policy": "new-per-task",
                     "provider_targets": {
                         "chatgpt": {"surface": "project", "name": "Configured Review"},
                         "gemini": {"surface": "notebook", "name": "Configured Review"},
@@ -76,6 +77,7 @@ class AskAiTransportResolverTests(unittest.TestCase):
     def test_provider_target_overrides_generic_route_name(self) -> None:
         result = RESOLVER.resolve(payload("chatgpt", targets=[target("chatgpt")]))
         self.assertEqual("Configured Review", result["resolved_target"]["name"])
+        self.assertEqual("new-per-task", result["conversation_policy"])
 
     def test_cross_provider_identity_reuse_fails_closed(self) -> None:
         copied = target("gemini") | {"provider": "chatgpt", "stable_id": "chatgpt-project-1"}
@@ -169,6 +171,7 @@ class AskAiTransportResolverTests(unittest.TestCase):
         value = payload("chatgpt"); value["defaults"]["context_routes"]["review"]["policy"] = "bad"; mutations.append(value)
         value = payload("chatgpt"); value["defaults"]["context_routes"]["review"]["fallback"] = "bad"; mutations.append(value)
         value = payload("chatgpt"); value["defaults"]["context_routes"]["review"]["fallback"] = "new-standard-chat"; mutations.append(value)
+        value = payload("chatgpt"); value["defaults"]["context_routes"]["review"]["conversation_policy"] = "bad"; mutations.append(value)
         value = payload("chatgpt"); value["defaults"]["context_routes"]["review"]["provider_targets"]["other"] = {"surface": "project", "name": "x"}; mutations.append(value)
         value = payload("chatgpt"); value["defaults"]["context_routes"]["review"]["provider_targets"]["gemini"]["surface"] = "project"; mutations.append(value)
         for item in mutations:
