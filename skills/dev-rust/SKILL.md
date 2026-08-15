@@ -105,6 +105,9 @@ interface/schema contracts remain authoritative.
 - **Agent Runtime:** when selected, validate the legal state machine and uncertain-operation recovery, the single typed protocol/schema authority, bounded task/channel and cancellation behavior, distinct approval/policy/sandbox decisions, and durable log/projection or IPC gates that are actually in scope. Static types, generated schemas, local compilation, or host declarations do not prove target runtime, sandbox, client, or recovery behavior.
 - **Protocol-automation overlay:** only when selected, validate/rebuild the OpenAPI artifact, check clean idempotence and compatibility, regenerate owned clients, and run applicable backend conformance. Otherwise use repository-native API tests.
 - **Optional heavy tools:** Miri, sanitizers, fuzzing, stress, leak, and repeated-operation gates are never inherited merely from a target-specific change. Run them only when supported and relevant, or record why they were excluded.
+- **Full gate:** reserve workspace-wide builds/tests and release gates for merge,
+  release, deployment, final fixed-basis acceptance, explicit user requests, or when
+  no credible focused check exists for the actual risk.
 
 Do not claim Baseline or an overlay passed when a required tool, target, runtime, dataset, or external dependency was unavailable; mark the exact gap `Not verified`.
 

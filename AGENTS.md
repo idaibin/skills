@@ -58,6 +58,9 @@ under the repository's established `docs/` structure.
 - `scripts/report-skill-context.py` reports deterministic entrypoint and direct-
   reference context estimates as warnings; it does not claim exact model tokens or
   actual host loading behavior.
+- `scripts/test-repo-map-forgeway-e2e.mjs` verifies an explicitly supplied installed
+  `repo-map` package against an explicitly supplied Forgeway runtime adapter without
+  persisting executable paths in the portable Registry.
 - `scripts/sync-shared-protocols.py` keeps identical self-contained package protocols
   synchronized from `protocols/`.
 - `scripts/test_*.py` contains focused validator regressions.

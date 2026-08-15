@@ -105,6 +105,7 @@ names, endpoints, props, slots, or visual values.
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
+| Validation proportionality | Starts with the smallest credible lint/type/focused test or local build check, expands to affected consumers for shared contracts, and reserves full gates for merge/release/deployment/final acceptance, explicit requests, or absence of a credible focused check. | Runs a full build or full-repository suite by default for a bounded change, or uses a focused pass to claim release/runtime completion. |
 | Stack detection | Reads manifests/config/imports and reports actual framework and stack before choosing libraries or conventions. | Assumes a library or framework pattern is available because the user named it. |
 | Specification authority | Reads only applicable declared product/shared visual/slice UI authorities, classifies them by meaning rather than filename, and invokes an owner only for a required unresolved decision. | Treats root `PRD.md` as universal, loads sibling specs, or invokes `ui-spec` merely because `DESIGN.md` exists. |
 | DESIGN.md completeness consumer | Before a shared-system edit, requires producer status `awaiting-trusted-approval-verification` plus satisfied `forgeway-ui-design-completeness/1` claim `gate:ui-design-complete`, bound to the current approved design hash and same exact Result Package. | Treats lint zero, current CSS/theme, PackageManifest bytes, or a producer status rewritten to `complete` as complete shared authority. |

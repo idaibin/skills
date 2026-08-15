@@ -119,6 +119,9 @@ interface/schema authorities remain authoritative.
   behavior tests using the owning Wrapper or documented build command.
 - **Selected overlays:** add only the build, security, persistence, integration, and
   migration evidence required by the changed surface.
+- **Full gate:** reserve full multi-module builds, full-repository tests, and release
+  gates for merge, release, deployment, final fixed-basis acceptance, explicit user
+  requests, or when no credible focused check exists for the actual risk.
 - **Runtime gaps:** private artifact access, containers, databases, brokers,
   configuration centers, external services, unsupported JDKs, or missing Wrappers are
   explicit `Not verified` gaps, never simulated success. When vendor database or

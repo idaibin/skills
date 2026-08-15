@@ -102,6 +102,16 @@ implementation authority.
 - Do not claim selected-source visual completion from build/lint/typecheck, SCSS inspection, or one screenshot pass. Require the two-pass runtime gate and applicable computed geometry/style evidence.
 - Do not add speculative shared layers or incidental framework/tooling rewrites. Resolve route, dynamic import, registration, build, test, and external-consumer reachability before deleting apparently unused code.
 
+## Validation Model
+
+- **Iteration:** run the smallest credible repository-owned lint, type, focused test,
+  or local build check that covers the edited surface.
+- **Expansion:** add affected consumers and contract checks only when shared interfaces,
+  generated outputs, build configuration, runtime seams, or cross-module behavior changed.
+- **Full gate:** reserve full builds, full-repository tests, and release gates for merge,
+  release, deployment, final fixed-basis acceptance, explicit user requests, or the rare
+  case where no credible focused check exists for the actual risk.
+
 ## Output Contract
 
 Report capability `frontend.source.implement`, Run/input/result PackageManifest refs

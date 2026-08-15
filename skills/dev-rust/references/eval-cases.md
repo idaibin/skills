@@ -77,6 +77,7 @@ structure rules, validation expectations, or metadata.
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
+| Validation proportionality | Starts with crate/module-focused Baseline checks, composes only applicable overlays, and reserves workspace-wide/release gates for final lifecycle stages, explicit requests, or missing credible focused coverage. | Runs the entire workspace or heavy tools by default for a bounded Rust edit, or calls focused evidence release proof. |
 | Project grounding | Reads guidance, status, Cargo/toolchain/command sources, and identifies the project class. | Assumes versions, commands, or one universal layout. |
 | Specification readiness | Reads available requirements, acceptance criteria, non-goals, affected crates/modules/files, compatibility, and validation seams; uses host planning for unresolved complex work before editing. | Implements a complex ambiguous request without a usable specification or explicit assumptions. |
 | Behavior-first slices | When a stable public seam exists, works one failing behavior test and minimal vertical slice at a time; skips TDD with a stated reason when only brittle internal assertions are possible. | Writes horizontal test batches, duplicates implementation logic in expectations, or claims TDD without observing red before green. |
