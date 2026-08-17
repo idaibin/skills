@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Browser"
   short_description: "Operate browser surfaces with verified computed evidence"
-  default_prompt: "Use $ops-browser to prefer the configured user local browser and safely reuse its existing session, workspace, and matching open page unless the request fixes another surface. When locked, use only a preconnected browser-native control plane with proven background-safe capability; never use GUI input. Verify identity, target, authorization, and final postcondition, with unsupported claims marked Not verified."
+  default_prompt: "Use $ops-browser to operate or verify the requested page without interrupting the user's active browser work. Prefer the Codex in-app Browser for ordinary read-only inspection; use existing local-browser login state only through a proven background-safe route. Never activate, focus, raise, or switch a user window/tab without explicit current-task consent. Verify identity, target, authorization, and final postcondition; mark blocked claims Not verified."

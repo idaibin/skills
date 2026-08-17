@@ -1,13 +1,33 @@
 ---
 name: ops-browser
-description: "Use when directly operating or verifying a specified page, capturing same-state selected-source/runtime visual and computed evidence, or gathering evidence for an isolated browser-layer failure; require an available browser, verified target, and proven capability, not external-AI orchestration, desktop-client proof, or cross-system diagnosis."
+description: "Use when directly operating or verifying a specified page, capturing same-state visual/computed evidence, or gathering isolated browser-layer evidence, especially when existing login state, tabs, downloads, or non-interrupting background operation matter; require a verified target and proven capability, not external-AI orchestration, desktop-client proof, or cross-system diagnosis."
 ---
 
 # Ops Browser
 
 ## Overview
 
-Operate browser pages and collect evidence without conflating browser surfaces. Unless the current request fixes another surface, prefer the configured user local browser and its safely matching already-open page. A configured dedicated Chrome user-data directory is itself the AI isolation boundary and does not require a task group or named control session. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. This catalog classifies the host-provided Codex in-app Browser as a non-interrupting fallback surface; that classification is not an official public browser API guarantee and says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
+Operate browser pages and collect evidence without conflating browser surfaces or disturbing the user's active desktop work. Unless the current request fixes another surface, prefer the host-provided Codex in-app Browser for ordinary read-only inspection. Use a user local browser only when its exact login/profile/tab state is required and the selected control path is directly proven background-safe. A configured dedicated Chrome user-data directory is itself the AI isolation boundary and does not require a task group or named control session. The Codex in-app Browser, ChatGPT cloud/agent browser, controlled Chrome, and isolated managed automation have different state, login, download, visibility, and background guarantees. This catalog classifies the host-provided Codex in-app Browser as a non-interrupting surface; that classification is not an official public browser API guarantee and says nothing about which inspection features it exposes. Select evidence only from capabilities available in the active environment, and leave frontend code changes to `dev-frontend`.
+
+## Foreground-Safety Gate
+
+- Treat the user's visible browser focus, selected tab, window order, mouse, keyboard,
+  and current work as protected state. Read-only page access does not authorize changing
+  that state.
+- Prefer the Codex in-app Browser or a browser-native background interface. Use an
+  authenticated user-local tab only when that state is necessary and tab enumeration
+  plus the exact page operation are directly proven not to focus, raise, reveal, or
+  switch a user window.
+- Without explicit current-task consent, do not call or emulate foregrounding actions
+  such as CDP `Target.activateTarget` or `Page.bringToFront`, tab/window selection,
+  application `activate`, visible tab clicks, focus-changing keyboard shortcuts,
+  Computer Use, Accessibility/coordinate input, or opening a window that may raise the
+  browser. Treat unknown focus behavior as not background-safe.
+- Restoring the original tab or window afterward does not make an interruption
+  acceptable and is not evidence of non-interruption.
+- If required login state cannot be read through a proven background-safe route, keep
+  the claim `Not verified`. State the missing capability and ask before visible browser
+  control only when that visible operation is necessary to satisfy the request.
 
 ## Workflow
 
@@ -38,9 +58,13 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    control is required but the state or capability is unknown, stop or use an
    explicitly permitted non-local fallback that does not require the local profile.
 3. Resolve surface priority before every action: an explicit current-request surface;
-   otherwise a valid configured user-local-browser preference; then a suitable Codex
-   in-app Browser; then an isolated managed browser when user-profile state is not
-   required. Within the selected local browser, resolve the configured control session
+   otherwise a suitable Codex in-app Browser for ordinary read-only work; then a
+   browser-native background-safe user-local route when exact user-profile state is
+   required; then an isolated managed browser when user-profile state is not required.
+   Use a visible or focus-changing user-owned browser route only after explicit
+   current-task consent. A configured local-browser preference selects among eligible
+   local routes but never overrides this foreground-safety gate. Within the selected
+   local browser, resolve the configured control session
    and group first, then enumerate browser sessions and
    existing tabs when the available tool exposes them. Apply those Chrome workspace
    constraints only to `user-local-browser`; an in-app, cloud/agent, or isolated
@@ -79,7 +103,9 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
    mouse, or keyboard interruption, keep the configured local browser only when its
    browser-native control plane directly proves background-safe operation; otherwise
    use the host-provided Codex in-app Browser fallback when it can satisfy the task.
-   For controlled Chrome window automation, Computer Use,
+   Do not activate or select that tab merely to make it inspectable; require direct
+   evidence that the exact enumeration and page-control operations remain in the
+   background. For controlled Chrome window automation, Computer Use,
    system accessibility/coordinate automation, or another visible/user-owned surface,
    require direct background-safety capability evidence; otherwise return Degraded
    Evidence or stop. Open an isolated managed page only when the task does not depend
@@ -146,6 +172,11 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
 - Use direct CDP only when the selected Chromium session and required low-level event or domain cannot be reached through the higher-level backend. Keep raw protocol commands narrowly scoped; CDP connectivity alone does not prove page readiness, identity, or task completion.
 - For browser debug evidence, establish exact URL, steps, expected symptom, observed symptom, and red/green evidence before testing a browser-layer hypothesis.
 - Treat the host-provided Codex in-app Browser as catalog-classified non-interrupting. Do not present that classification as an official public API guarantee or extend it to controlled Chrome, Computer Use, system accessibility/coordinate automation, or other visible/user-owned routes; those require direct background-safety evidence when the user forbids window, mouse, or keyboard interruption.
+- Never infer background safety from CDP connectivity, a read-only goal, an inactive
+  target, or successful restoration afterward. Without explicit current-task consent,
+  block `Target.activateTarget`, `Page.bringToFront`, tab/window selection, application
+  activation, visible UI input, and any operation whose focus behavior is unknown.
+  Use the in-app Browser or a proven background API; otherwise return `Not verified`.
 - Local-browser preference never proves a live controller, tab, login, account, or
   lock-safe capability. When the screen is locked, require an already connected
   controller or a prepared browser-native, extension, or loopback CDP endpoint plus
@@ -158,7 +189,7 @@ Operate browser pages and collect evidence without conflating browser surfaces. 
   verify the exact profile process and loopback endpoint, and allow ungrouped tabs
   because the profile boundary owns all tabs. While locked, never launch or recreate
   the profile; reconnect only its already verified endpoint.
-- Treat readiness and product behavior as separate assertions. Retry only a bounded readiness probe when direct evidence shows setup is not ready and the probe has no external side effect; never retry a behavior assertion merely because it failed.
+- Treat readiness and product behavior as separate assertions. Retry only a bounded readiness probe when direct evidence shows setup is not ready and the probe has no external side effect; never retry a behavior assertion merely because it failed. For one unchanged observable acceptance, allow the initial check and at most one correction recheck. If the same acceptance fails again, stop further browser retries or caller-directed patch loops; freeze the exact surface/session/tab, reproduction, expected and observed states, and evidence, then return a diagnosis handoff to the caller. Do not switch to a local preview, another tab, or another browser surface and call that target acceptance.
 - Test one browser hypothesis at a time. Do not bundle refresh, cache clearing, account switch, viewport changes, and code edits.
 - Confirm only direct browser facts such as the active URL, missing cookie, absent DOM control, console error, network response, or browser-enforced CORS failure. Return cross-system evidence to the caller; do not claim a final frontend-to-API-to-backend-to-database root cause or decide a permanent code fix.
 - Use file upload only when attachment semantics are correct. Temporary files must use a task-specific path appropriate to the active environment; do not assume Desktop exists in remote/container runtimes.

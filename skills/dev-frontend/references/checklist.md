@@ -106,6 +106,11 @@ Use this checklist when implementing or reviewing frontend changes.
 - Remove touched hand-maintained DTOs only when the generated client owns the same
   contract and all consumers are migrated; do not leave competing type families.
 - Keep form validation, controlled state, table pagination, sorting, filtering, modal lifecycle, and drawer lifecycle aligned with existing local patterns.
+- For a page-level modal, Drawer, portal/Teleport, or overlay-host change, freeze the
+  exact host/container, route, entrypoint, and open state. Verify the outer mask blocks
+  background interaction, each affected entrypoint opens the same owned surface,
+  nested selectors/popovers remain usable above the parent layer without clipping,
+  dismissal restores the intended state, and keyboard focus returns to the owner.
 - Distinguish pending, failed, successful-empty, populated, and background-refresh
   states before defaulting async data to an empty collection. When cached successful
   data remains valid during a refresh failure, keep it visible and report the refresh
@@ -130,6 +135,11 @@ Use this checklist when implementing or reviewing frontend changes.
   breakpoint named by the spec.
 - Keep build/lint/typecheck and visual acceptance separate. Missing runtime coverage
   remains `Not verified` and prevents a visual-complete verdict.
+- Keep the target acceptance surface fixed across implementation and runtime checks.
+  A standalone preview or sibling route is separate evidence. For one unchanged
+  observable acceptance, run the initial check and at most one correction recheck; if
+  the same target acceptance fails again, stop patching, preserve the diff and direct
+  evidence, and return to diagnosis or one accountable handoff.
 
 - Run project-defined type, lint, test, build, formatter, or route checks that match the change.
 - Prefer non-mutating validation and use explicit fix/write commands only when rewrites are in scope.

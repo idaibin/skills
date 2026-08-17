@@ -33,7 +33,12 @@ action authorization.
 
 An authentication failure on one surface never proves another surface is authenticated.
 When the current request does not fix a surface, select the one that owns the required
-state and verify it live. An explicit current-request surface remains a hard constraint.
+state and verify it live. A stored `surface_priority: preferred` makes the local browser
+eligible only after the foreground-safety gate passes; it never authorizes tab/window
+activation, focus changes, or GUI input. When background-safe local control is unavailable,
+use the in-app Browser if its independent state suffices, otherwise return `Not verified`
+or obtain explicit current-task consent before visible control. Restoring focus afterward
+does not satisfy this gate. An explicit current-request surface remains a hard constraint.
 The control-session and tab-group sections apply only to `user-local-browser`; never
 apply Chrome grouping to the Codex in-app Browser, cloud/agent browser, or an isolated
 managed browser.

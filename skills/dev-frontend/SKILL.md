@@ -58,7 +58,21 @@ implementation authority.
 10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory visuals, generated code, or behavior without an honest seam.
 11. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. When duplication, dead/unused code, abstraction, coupling, or maintainability is material, load `references/code-quality.md` and remove only code made obsolete by this task.
 12. Update manifests, scripts, routes, tests, docs, indexes, generated files, and stale references for every affected structural change; remove only wrappers, declarations, overrides, or temporary patches made obsolete by the task.
-13. Run focused checks after each slice, then matching project-defined gates. For selected-source work, use `ops-browser` for two same-viewport/state comparisons and validate `pass-1` before `final`; missing required runtime coverage remains `Partial` or `Not Ready`. Compare pre/post Worktree state around validation and classify every new diff before continuing.
+13. Run focused checks after each slice, then matching project-defined gates. Before
+    runtime acceptance, freeze the exact target surface, host/container, route,
+    entrypoint, state, and observable acceptance; a standalone preview, sibling route,
+    or another browser surface is separate evidence. For a page-level modal, Drawer,
+    portal/Teleport, or overlay-host change, include the outer mask and blocked
+    background, every affected entrypoint, nested overlay usability, stacking/clipping,
+    dismissal, and focus restoration. For one unchanged observable acceptance, allow
+    the initial runtime check and at most one correction recheck. If the same target
+    acceptance fails again, stop the implementation loop, preserve the current diff,
+    freeze expected/observed evidence, and return to diagnosis or a single-owner
+    handoff instead of continuing speculative patches. For selected-source work, use
+    `ops-browser` for two same-viewport/state comparisons and validate `pass-1` before
+    `final`; missing required runtime coverage remains `Partial` or `Not Ready`.
+    Compare pre/post Worktree state around validation and classify every new diff
+    before continuing.
 14. When Forgeway delivery integration is active, require an immutable Run with the
     selected capability, input refs, exact scope, and input PackageManifest before
     mutation. Let the package producer fingerprint the resulting tracked/untracked

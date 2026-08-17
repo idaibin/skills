@@ -878,6 +878,9 @@
         "CDP",
         "deterministic browser automation",
         "agentic browser navigation",
+        "background browser operation",
+        "existing browser login state",
+        "foreground-safe browser control",
         "local browser workspace",
         "tab group"
       ],
