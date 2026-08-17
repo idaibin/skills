@@ -170,50 +170,27 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with capability `repository.change.review`, typed review-findings/Observation refs,
-Run, PackageManifest and graph query refs when integration is active, then mode/profile,
-basis, scope, exclusions, and validation, followed by severity-ranked P0-P3 findings
-labeled `Standards`, `Spec`, or both. Every finding includes location, requirement when
-available, evidence, impact, remediation, and verification. Security findings also
-state evidence status, proof gaps, and any provider/method used; `fixed` requires a new
-reviewed basis and replay of the original validation path. Include Standards and Spec
-verdicts; mark missing specification evidence `Not verified`. In the typed result,
-preserve the request `review_id` and basis; return exact finding counts,
-line-anchored quotes, contributing axes, scope violations, acceptance refs,
-executed/not-run checks, and limitations. A clean no-op has zero findings and zero
-blocking findings; it does not imply Spec compliance when no trustworthy spec exists.
-For the visual-completion profile, report schema validation,
-source/revision/approval, evidence coverage, both
-comparison passes, runtime geometry/style checks, breakpoint/state gaps, and whether
-the completion claim is supported. Add ownership labels, staged risks, logical groups,
-staging, and messages only for Worktree commit-readiness. Fixed-basis review includes
-resolved SHAs; release implications appear only when the Release profile was selected.
-Finish with the local verdict, separate external-review status when applicable,
-residual risk, and gaps. An explicitly requested independent external
-challenge/research may hand the fixed basis/question to `ask-ai`; it never implies
-sending. When a valid persisted final-result sync applies, report its separate
-receipt/incomplete state only after the frozen local verdict.
+Lead with capability `repository.change.review`, applicable typed/Run/PackageManifest
+refs, mode, basis, scope, exclusions, checks, and P0-P3 findings labeled `Standards`,
+`Spec`, or both. Preserve `review_id`, exact counts, locations, requirements, evidence,
+impact, remediation, verification, contributing axes, acceptance refs, and limitations.
+Report both verdicts; missing Spec authority stays `Not verified`, and a clean no-op
+does not imply compliance. For visual completion include schema validation,
+source/revision/approval, both comparison passes, runtime geometry/style checks,
+breakpoint/state gaps, and whether completion is supported. Add commit-readiness ownership/
+staging, resolved SHAs, or release implications only for selected profiles. Finish
+with the frozen local verdict, separate external status, residual risks, and gaps;
+external challenge or final sync never changes that verdict.
 
 ## References
 
-- See [references/usage.md](references/usage.md) for routing and mode examples.
-- See [references/worktree-checklist.md](references/worktree-checklist.md) for dirty-tree ownership and commit-readiness review.
-- See [references/checklist.md](references/checklist.md) for immutable basis, severity, and release review.
-- See [references/protocol-contracts.md](references/protocol-contracts.md) only for an existing or explicitly requested OpenAPI/generated-client review gate.
-- See [references/standards-and-spec.md](references/standards-and-spec.md) for independent Standards and Spec review axes.
-- Read [references/documentation-authority-review.md](references/documentation-authority-review.md)
-  when the basis changes authoritative documentation structure or claims a terminal
-  documentation rebuild.
-- Read [references/interaction-motion-review.md](references/interaction-motion-review.md)
-  only when the selected basis adds or changes motion, gesture behavior, transition
-  ownership, or user-visible interaction feedback.
-- Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for the conditional visual-completion profile; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
-- Read [references/code-quality.md](references/code-quality.md) when the basis
-  materially involves duplication, dead or unused code, abstractions, hidden
-  coupling, or maintainability.
-- See [references/codebase-design.md](references/codebase-design.md) only when the fixed change basis materially affects a public module/interface, seam, abstraction, locality, or testability.
-- Read [references/project-grounding.md](references/project-grounding.md) when the
-  review basis activates runtime/config, packaging, public integration, durable data,
-  replacement, auth/security, or cross-repository delivery risk.
-- See [references/worktree-examples.md](references/worktree-examples.md) for commit grouping examples.
-- See [references/eval-cases.md](references/eval-cases.md) for trigger, boundary, scenario, and quality evals.
+- Basis: [usage](references/usage.md), [Worktree](references/worktree-checklist.md),
+  [fixed basis](references/checklist.md), [Standards/Spec](references/standards-and-spec.md),
+  [examples](references/worktree-examples.md).
+- Conditional profiles: [protocols](references/protocol-contracts.md),
+  [documentation](references/documentation-authority-review.md),
+  [motion](references/interaction-motion-review.md),
+  [visual evidence](references/frontend-visual-evidence.md),
+  [code quality](references/code-quality.md), [design](references/codebase-design.md),
+  [grounding](references/project-grounding.md).
+- [Eval cases](references/eval-cases.md).

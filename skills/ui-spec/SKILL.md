@@ -172,18 +172,13 @@ verified` gap. Include at least:
 
 ## References
 
-- See [references/usage.md](references/usage.md) for routing and artifact examples.
-- See [references/workflow.md](references/workflow.md) for profile-specific specification and handoff details.
-- Read [references/candidate-visual-direction.md](references/candidate-visual-direction.md) when visual direction is not yet approved and a local candidate specification plus complete generation prompt must drive exploration.
-- Read [references/design-md-contract.md](references/design-md-contract.md) whenever
-  first adoption, adopted shared-authority evaluation, or a Design System Spec creates
-  or changes `DESIGN.md`; run its official-format and completeness gates in order.
-- See [references/visual-source.md](references/visual-source.md) when qualifying and translating the selected visual source.
-- Read [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md) only when visual direction, redesign mode, theme/accent policy, density, or anti-slop acceptance is material.
-- Read [references/frontend-layout-governance.md](references/frontend-layout-governance.md) when geometry, nested padding/insets, alignment, scrolling, or responsive ownership is material to the specification.
-- Read [references/measurement-normalization.md](references/measurement-normalization.md) when selected-element evidence contains repeated spacing measurements or an even-grid policy applies.
-- Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) when a selected source controls exact visual acceptance or a current runtime must be compared; validate each stage offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
-- See [references/multi-surface.md](references/multi-surface.md) when a request covers more than one page, flow, or business domain.
-- See [references/documentation-boundaries.md](references/documentation-boundaries.md) for durable UI locations, PRD links, and consumer reads.
-- See [references/evaluation-rubric.md](references/evaluation-rubric.md) for blockers and scoring.
-- See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.
+- Core: [usage](references/usage.md), [workflow](references/workflow.md),
+  [candidate direction](references/candidate-visual-direction.md),
+  [DESIGN.md](references/design-md-contract.md), [visual source](references/visual-source.md).
+- Visual detail: [direction](references/visual-direction-and-anti-slop.md),
+  [layout](references/frontend-layout-governance.md),
+  [measurement](references/measurement-normalization.md),
+  [evidence](references/frontend-visual-evidence.md).
+- Scope/output: [multi-surface](references/multi-surface.md),
+  [documentation](references/documentation-boundaries.md),
+  [rubric](references/evaluation-rubric.md), [evals](references/eval-cases.md).

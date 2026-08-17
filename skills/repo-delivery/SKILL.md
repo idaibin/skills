@@ -87,47 +87,40 @@ provider responses, credentials, or long logs as delivery-contract fields.
 
 ## Hard Rules
 
-- Do not make ordinary task changes directly on protected or default branches when repo guidance forbids it.
-- Do not infer staging or commit authorization from a review-only request.
+- Git mutation requires exact per-action authority or a still-valid bounded durability
+  plan. Review, grounding, implementation, risk, or local commit authority does not
+  imply stage, push, sync, integration, rewrite, cleanup, deletion, conflict handling,
+  pull-request, or `main` authority.
 - A grounding record may identify evidence gaps, but it never authorizes stage, commit, push,
-  integration, cleanup, or pull-request actions. Authorized Git delivery still requires
-  independent delivery authority for each requested mutation.
-- Do not infer milestone, fixup, or checkpoint authorization merely from a large, long-running, or risky implementation request. Git preservation may use exact per-action authority or one explicit bounded task-level plan; do not ask again for commits already covered by that plan.
-- Do not infer push, sync, branch-integration, cleanup, conflict-resolution, or branch-deletion authorization from a local commit request.
-- Do not infer that `main` is writable merely because local checkout permits a commit.
-- Review publication requires explicit commit and push authorization, a verified GitHub remote, a non-default and non-protected current branch, a fixed locally reviewed basis, and remote-ref proof. If any condition is absent, return the necessary files or review package to the caller instead of publishing.
-- Do not stage unrelated local changes.
-- Do not use `git add .`, `git add -A`, directory-wide adds, or wildcard adds unless the user explicitly approves that exact scope.
-- Do not commit when unrelated staged files are present.
-- Do not collapse multiple independent categories into one commit unless the user explicitly requests one commit.
-- Do not split one indivisible contract change merely to increase commit count.
-- Do not rewrite, force-push, squash, delete branches, change remotes, or alter upstream tracking unless the user requested it or repo guidance requires it for the delivery target.
-- Never treat a milestone, fixup, or checkpoint as final review, merge readiness, release evidence, or remote backup.
-- Never substitute a direct validator or package-local test for the Skills repository's canonical gate, and never perform runtime installation inside Git delivery.
-- Do not create time-based or automatic WIP commits. Prefer a semantic milestone; use a checkpoint only for a named loss/recovery risk and never on a default or protected branch.
-- Do not rely on an in-memory or validation-only delivery contract across a commit,
-  push, integration, cleanup, process, or session boundary; persist the minimum typed
-  local record and verify its basis again before mutation.
-- A standing execution-durability plan is authorization, not automation: trigger only on verified semantic events inside its branch and owned scope. Stop and refresh authority when scope, branch, commit type, validation floor, or risk materially changes.
-- Every checkpoint must identify incomplete scope and a final disposition of split, absorb, or drop. Do not carry checkpoint-only history into final integration by accident.
-- Do not bind one fixup to multiple independent milestones or use fixup syntax when no later normalization is intended.
-- Before history normalization, require a clean task worktree or isolate and fingerprint all remaining content. A tree SHA does not cover untracked or unrelated dirty files.
-- Record before and after tree SHAs and compare the complete expected task scope after normalization. Stop on any unexplained mismatch.
-- Do not rewrite a default, protected, shared, remotely consumed, or active-review branch unless exact ownership, rewrite, and remote-update authority are proven. Prefer merge-time squash or a clean integration branch when sharing is unknown.
-- Final review evidence applies only to the normalized immutable basis. Any later history or tree change requires a new fixed basis and review.
-- Never use review publication to update `main`, another default/protected branch, create a pull request, force-push, or imply external reviewer approval.
-- Never use force push as an automatic response to non-fast-forward rejection. Re-read remote state and report the divergence first.
-- Do not rebase or merge over a dirty worktree without an explicit safe plan for local changes.
-- Preserve user-provided commit text verbatim.
-- Prefer exact path or hunk staging; verify the staged diff before every commit.
-- Keep one commit to one logical intent; do not mix a second category merely because it is already modified.
-- Do not choose squash merely because it is convenient. Record why preserved commits or a squash best represents the reviewed source range.
-- Do not preserve WIP, fixup, conflict-only, or validation-repair commits as important history when they can be safely folded into their owning intent.
-- Do not cherry-pick a subset of another branch unless partial integration is explicit and every omitted commit is accounted for.
-- Verify remote success from the updated ref or commit SHA, not only from a successful command exit.
-- If remote state changed after review or validation, stop and reassess before pushing or updating a target branch.
-- Say `Not verified` when validation, branch protection, permissions, remote refs, CI, deployed state, or branch cleanup were not checked.
-- Do not create or update pull requests; this workflow stops after the requested Git ref and cleanup state are verified.
+  integration, cleanup, or pull-request actions.
+- Preserve unrelated work. Stage exact paths/hunks, inspect the cached diff, and stop
+  on unrelated staged files. Do not use `git add .`, `git add -A`, broad directories,
+  or wildcards without explicit approval.
+- Keep one commit per logical intent; neither split indivisible contracts nor combine
+  independent categories unless one commit is explicitly required. Preserve exact
+  user-provided commit text.
+- Milestones/fixups/checkpoints are durability only. No automatic/time-based WIP
+  commits; checkpoints require a named loss risk and final split/absorb/drop disposition,
+  and fixups bind exactly one reachable milestone when normalization is intended.
+- Persist the minimum typed delivery state across mutation/session boundaries and
+  reverify scope, basis, branch, validation floor, and authority before continuing.
+- Never replace the Skills canonical gate with a package-local test or install runtime
+  Skills inside Git delivery.
+- Rewrite only a proven-owned non-default, non-protected, unshared branch with exact
+  authority, clean/isolate-fingerprinted state, recoverable before SHA, and before/after
+  tree proof. Any later tree/history change invalidates final review evidence.
+- Choose preserve/squash/cherry-pick from policy and explicit scope, account for every
+  omitted commit, and do not carry WIP/fixup/conflict/validation-repair history merely
+  for convenience.
+- Do not rebase/merge over unexplained dirty state or force-push after rejection.
+  Re-read divergence and reassess when remote state changed.
+- Review publication also requires explicit commit/push authority, verified GitHub
+  remote, fixed reviewed basis, non-default/non-protected branch, and remote-ref proof.
+  It never updates `main`, creates a PR, force-pushes, or implies reviewer approval.
+- Verify remote success from the updated ref/SHA, not command exit. Mark unchecked
+  validation, policy, permissions, remote refs, CI, deployment, and cleanup `Not verified`.
+- Do not create or update pull requests; stop after the authorized Git ref and cleanup
+  state are verified.
 
 ## Output Contract
 
@@ -147,11 +140,7 @@ secrets and unrelated personal data.
 
 ## References
 
-- See [references/usage.md](references/usage.md) for trigger guidance and mode examples.
-- See [references/execution-durability.md](references/execution-durability.md) for milestone, fixup, and exceptional checkpoint gates.
-- See [references/history-normalization.md](references/history-normalization.md) for rewrite safety, tree proof, and final-basis review.
-- See [references/checklist.md](references/checklist.md) for delivery and verification details.
-- See [references/delivery-report.md](references/delivery-report.md) for the compact handoff/report template.
-- See [references/resolving-merge-conflicts.md](references/resolving-merge-conflicts.md) only for an authorized in-progress merge/rebase conflict.
-- See [references/skills-release.md](references/skills-release.md) only for an accepted Skills catalog delivery.
-- See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.
+- [Usage](references/usage.md), [durability](references/execution-durability.md),
+  [normalization](references/history-normalization.md), [checklist](references/checklist.md),
+  [report](references/delivery-report.md), [conflicts](references/resolving-merge-conflicts.md),
+  [Skills release](references/skills-release.md), [evals](references/eval-cases.md).

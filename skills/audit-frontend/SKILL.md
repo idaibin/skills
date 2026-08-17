@@ -142,35 +142,17 @@ commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
 
 ## References
 
-- Read [architecture-and-ownership.md](references/architecture-and-ownership.md) for discovery, directories, routes, pages, and file responsibility.
-- Read [specification-authorities.md](references/specification-authorities.md) when
-  product requirements, resolved `<design-root>/DESIGN.md`, slice UI contracts, or their drift are in
-  the selected audit scope.
-- Read [frontend-layout-governance.md](references/frontend-layout-governance.md)
-  for evidence and false-positive rules when Component/Layout is selected.
-- Read [visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md) only when the selected audit covers visual direction, redesign mode, theme/accent consistency, density, or anti-slop drift.
-- Read [design-md-compliance.md](references/design-md-compliance.md) only when an
-  applicable Component/Layout audit includes resolved `<design-root>/DESIGN.md` consistency.
-- Read [frontend-visual-evidence.md](references/frontend-visual-evidence.md) when a selected source or visual-completion claim is in scope; validate staged evidence offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
-- Read [framework-profiles.md](references/framework-profiles.md) for React, Vue Composition, Vue Options, and repository-native audit rules.
-- Read [component-system.md](references/component-system.md) when selected Architecture/Reuse or Component/Layout work examines primitives, feature components, composition, variants, or reuse decisions.
-- Read [state-data-and-forms.md](references/state-data-and-forms.md) for state classes, requests, caching, feedback states, services, schemas, and forms.
-- Read [styling-and-layout.md](references/styling-and-layout.md) for tokens, spacing, responsive layout, Console density, DOM, and CSS ownership.
-- Read [styling-systems.md](references/styling-systems.md) for Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, shadcn/ui, and mixed-stack audit rules.
-- Read [desktop-tauri.md](references/desktop-tauri.md) for frontend adapters, commands, Rust boundaries, windows, shortcuts, progress, and cancellation.
-- Read [accessibility-and-performance.md](references/accessibility-and-performance.md) for keyboard/focus checks and evidence-based performance review.
-- Read [build-tooling.md](references/build-tooling.md) when package scripts,
-  bundler configuration, Vite/Rolldown, framework build behavior, or deployment
-  output is selected.
-- Read [code-quality.md](references/code-quality.md) when duplication,
-  dead/unused code, abstraction quality, hidden coupling, or maintainability is
-  materially in scope.
-- Read [review-checklist.md](references/review-checklist.md) for the profile-driven audit sequence.
-- Read [anti-patterns.md](references/anti-patterns.md) for detectable failure patterns and corrective decisions.
-- Read [reference-corpus.md](references/reference-corpus.md) for official source evidence, adopted rules, and rejected cargo-cult choices.
-- Read [usage.md](references/usage.md) for trigger, routing, and profile examples.
-- Read [eval-cases.md](references/eval-cases.md) for trigger, non-trigger, scenario, quality, and scoring evals.
-- See [references/codebase-design.md](references/codebase-design.md) only for a selected public-module, seam, abstraction, locality, or testability audit.
-- Read [references/project-grounding.md](references/project-grounding.md) when a
-  selected frontend audit crosses runtime/config, API/auth, durable state,
-  compatibility, desktop/native, or cross-repository boundaries.
+- Ownership and authority: [architecture](references/architecture-and-ownership.md),
+  [specs](references/specification-authorities.md), [layout](references/frontend-layout-governance.md),
+  [visual direction](references/visual-direction-and-anti-slop.md),
+  [DESIGN.md](references/design-md-compliance.md), [visual evidence](references/frontend-visual-evidence.md).
+- Stack profiles: [framework](references/framework-profiles.md),
+  [components](references/component-system.md), [state/data/forms](references/state-data-and-forms.md),
+  [layout/style](references/styling-and-layout.md), [styling systems](references/styling-systems.md),
+  [Tauri](references/desktop-tauri.md), [accessibility/performance](references/accessibility-and-performance.md),
+  [build](references/build-tooling.md).
+- Review depth: [code quality](references/code-quality.md),
+  [codebase design](references/codebase-design.md), [grounding](references/project-grounding.md),
+  [checklist](references/review-checklist.md), [anti-patterns](references/anti-patterns.md),
+  [sources](references/reference-corpus.md), [usage](references/usage.md),
+  [evals](references/eval-cases.md).

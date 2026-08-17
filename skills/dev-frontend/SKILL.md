@@ -7,7 +7,7 @@ description: "Use when a frontend change must be implemented or refactored acros
 
 ## Overview
 
-Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear layout ownership, and explicit verification. Detect the actual framework before applying framework-specific rules. Use `ops-browser` for web runtime evidence and `ops-client` for real desktop-window proof.
+Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear layout ownership, and explicit verification. Detect the framework first. Use `ops-browser` for web runtime evidence and `ops-client` for desktop-window proof.
 
 Consume `urn:skills:frontend-change-request:v1`; the portable output is
 `urn:skills:source-change-result:v1`. When supplied, consume
@@ -89,16 +89,15 @@ implementation authority.
 
 ## Do Not Use For
 
-- First-pass repository discovery, real commands, or entry points; use `repo-map`.
-- Planning-only requests without authorized frontend source changes; use the host's built-in planning.
-- Shared cross-functional business language/rule or lifecycle conflicts; use `domain-modeling`. Route feature-local behavior, states, and acceptance to `product-spec`.
-- UI specification, selected-source translation, shared visual contracts, task briefs, tokens, mappings, or acceptance rules without source edits; use `ui-spec`.
-- Dirty-tree ownership, mixed-hunk review, staging plans, or commit readiness; use `repo-review`.
-- Actual staging, commit creation, rebase/squash, push, or delivery; use `repo-delivery` after review.
-- Systematic frontend architecture, reuse, state/data, accessibility, performance, or Tauri-boundary audit without requested edits; use `audit-frontend`.
-- Browser operation, screenshots, console, network, downloads, uploads, or runtime evidence collection; use `ops-browser`.
-- Desktop-client launch review, CGWindowID proof, real-window screenshots, or native runtime operation; use `ops-client`.
-- Diagnosis-only requests without authorized frontend source changes; use the host's built-in diagnosis under effective instructions.
+- Discovery routes to `repo-map`; planning/diagnosis without source authority stays
+  with the host.
+- Shared domain conflicts route to `domain-modeling`; feature behavior/acceptance to
+  `product-spec`; UI contracts and selected-source translation without edits to `ui-spec`.
+- Worktree review and commit readiness route to `repo-review`; staging, commits,
+  rewrite, push, and delivery to `repo-delivery`.
+- Systematic frontend audit without edits routes to `audit-frontend`.
+- Web page operation/evidence routes to `ops-browser`; real desktop-client/window
+  operation and proof to `ops-client`.
 
 ## Hard Rules
 
@@ -128,41 +127,23 @@ implementation authority.
 
 ## Output Contract
 
-Report capability `frontend.source.implement`, Run/input/result PackageManifest refs
-when integration is active, typed source-change result/Observation refs, scope;
-detected project, stack, and ownership boundaries; applicable authorities and existing
-owners; selected frontend risks; reuse or new-surface decision; changed files and
-contracts; validation; Worktree drift and its disposition; excluded work; and `Not
-verified` gaps. When applicable, add selected-source readiness, acceptance-to-owner
-mapping, both visual review passes, and evidence artifacts under selected risks and
-validation. If the user explicitly requests independent external review/research,
-hand one fixed basis/question to `ask-ai`; never send implicitly.
+Report capability `frontend.source.implement`, applicable Run/PackageManifest and typed
+result refs, scope, project/stack/ownership, authorities, risks, reuse decision,
+changed files/contracts, validation, Worktree drift, exclusions, and `Not verified`
+gaps. When applicable include selected-source mapping, both visual passes, and evidence.
+Send a fixed basis to `ask-ai` only when independent external review is explicit.
 
 ## References
 
-- See [references/usage.md](references/usage.md) for trigger guidance and examples.
-- See [references/checklist.md](references/checklist.md) for implementation and review checks.
-- See [references/specification-authorities.md](references/specification-authorities.md)
-  when resolving product requirements, resolved `<design-root>/DESIGN.md`, slice UI contracts, and
-  owner handoffs before implementation.
-- See [references/frontend-layout-governance.md](references/frontend-layout-governance.md)
-  when geometry, spacing, sizing, overflow, scrolling, layering, or responsive
-  behavior is material to the change.
-- Read [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md) only for a visually material greenfield surface, accepted redesign, theme/accent change, density decision, or anti-slop correction.
-- Read [references/interaction-motion-quality.md](references/interaction-motion-quality.md)
-  only when the change adds or changes motion, gesture behavior, transition ownership,
-  or user-visible interaction feedback.
-- Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for staged selected-source mapping and the two-pass visual gate; validate each stage offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json). See [references/frontend-visual-gate-example.md](references/frontend-visual-gate-example.md) for a sanitized synthetic example.
-- See [references/protocol-contracts.md](references/protocol-contracts.md) only for an existing or explicitly requested OpenAPI/generated-client chain.
-- See [references/behavior-first.md](references/behavior-first.md) when a stable public seam supports vertical red-green slices.
-- See [references/codebase-design.md](references/codebase-design.md) only when the change materially affects a public module/interface, seam, cross-caller abstraction, or testability.
-- See [references/framework-profiles.md](references/framework-profiles.md) for React, Vue Composition, Vue Options, and repository-native framework rules.
-- See [references/styling-systems.md](references/styling-systems.md) for Tailwind, CSS Modules, Sass/Less, CSS-in-JS, Ant Design, shadcn/ui, and mixed-stack rules.
-- See [references/stack-guidelines.md](references/stack-guidelines.md) for toolchain, routing, layout, and desktop-webview boundaries.
-- See [references/code-quality.md](references/code-quality.md) when the requested
-  change materially involves duplication, dead/unused code, abstraction
-  quality, hidden coupling, or maintainability.
-- Read [references/project-grounding.md](references/project-grounding.md) when the
-  selected frontend change crosses runtime/config, API/auth, persistence,
-  compatibility, desktop/native, or cross-repository boundaries.
-- See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.
+- Core: [usage](references/usage.md), [checklist](references/checklist.md),
+  [authorities](references/specification-authorities.md), [layout](references/frontend-layout-governance.md),
+  [grounding](references/project-grounding.md).
+- Visual: [direction](references/visual-direction-and-anti-slop.md),
+  [motion](references/interaction-motion-quality.md),
+  [evidence](references/frontend-visual-evidence.md),
+  [example](references/frontend-visual-gate-example.md).
+- Implementation profiles: [protocols](references/protocol-contracts.md),
+  [behavior first](references/behavior-first.md), [codebase design](references/codebase-design.md),
+  [frameworks](references/framework-profiles.md), [styling](references/styling-systems.md),
+  [stack](references/stack-guidelines.md), [code quality](references/code-quality.md),
+  [evals](references/eval-cases.md).
