@@ -38,7 +38,6 @@ identity, installed adapters, or completed evidence.
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
 | `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |
-| `workspace-taskboard` | in-conversation aggregation of independently scoped project controllers, direct task routing, controller succession, board events, and dependencies | live Codex project/task state plus configured user-local control registry |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
 
 ## Split Or Profile
@@ -89,12 +88,6 @@ Common sequence, when needed:
 ```text
 repo-map -> domain-modeling/product-spec -> ui-spec/dev-* -> repo-review -> repo-delivery
 ```
-
-`workspace-taskboard` coordinates long-lived visible tasks only when every managed task
-resolves inside the controller's host-verified project roots. A different saved project
-requires a separate controller/control ID. It routes work and bounded handoffs; it never absorbs the
-implementation, review, delivery, browser/client, or external-provider authority of a
-worker. `adaptive-collaboration` remains the owner for in-turn subagents.
 
 For an explicitly authorized `ask-ai` sequential relay, keep the frozen basis and
 external-action boundary intact: all configured providers must approve the same

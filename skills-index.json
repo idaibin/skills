@@ -27,8 +27,6 @@
       "urn:skills:runtime-observation:v1",
       "urn:skills:rust-change-request:v1",
       "urn:skills:source-change-result:v1",
-      "urn:skills:task-orchestration-request:v1",
-      "urn:skills:task-orchestration-result:v1",
       "urn:skills:task-request:v1",
       "urn:skills:ui-contract:v1",
       "urn:skills:ui-request:v1",
@@ -36,8 +34,7 @@
       "urn:skills:writing-request:v1"
     ],
     "known_local": [
-      "urn:forgeway:repository-asset-snapshot:v1",
-      "urn:codex-host:workspace-taskboard-control:v1"
+      "urn:forgeway:repository-asset-snapshot:v1"
     ]
   },
   "categories": {
@@ -68,10 +65,6 @@
     "collaboration": {
       "title": "External AI Collaboration",
       "description": "Authorized named external-AI collaboration through a verified provider route, or a safe local request package."
-    },
-    "task-orchestration": {
-      "title": "Task Orchestration",
-      "description": "Durable user-owned Codex task routing and controller succession inside one verified local project root and its allowed descendants."
     },
     "writing": {
       "title": "Writing Extension",
@@ -1100,104 +1093,6 @@
       ]
     },
     {
-      "name": "workspace-taskboard",
-      "category": "task-orchestration",
-      "owner": "workspace-taskboard",
-      "mutation_class": "task-control",
-      "required_capabilities": [
-        "task-control",
-        "task-enumeration",
-        "task-read",
-        "task-create",
-        "task-send",
-        "task-wait",
-        "project-enumeration",
-        "registry-read",
-        "registry-write"
-      ],
-      "allowed_effects": [
-        "read-task-state",
-        "control-task-state",
-        "write-control-registry",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "identity-incomplete",
-        "intent-uncertain",
-        "candidate-ambiguous",
-        "archived-candidate",
-        "closed-candidate",
-        "capability-unavailable",
-        "registry-unavailable",
-        "authorization-profile-required",
-        "basis-drift",
-        "submission-uncertain",
-        "out-of-scope-workspace",
-        "placement-unverified",
-        "controller-unresolved",
-        "project-unverified",
-        "manifest-invalid",
-        "archive-unverified"
-      ],
-      "intents": [
-        "show the Workspace Taskboard status projection",
-        "default Workspace Taskboard execution requests to a worker card",
-        "queue a prompt to an explicitly identified Workspace Taskboard card",
-        "reuse a compatible Workspace Taskboard card by durable identity",
-        "resume a Workspace Taskboard controller and rebind worker cards",
-        "receive proactive Workspace Taskboard status and dependency handoffs"
-      ],
-      "keywords": [
-        "workspace taskboard",
-        "workspace task board",
-        "project task board",
-        "project root tasks",
-        "existing project task",
-        "queue to workspace task",
-        "reuse project task",
-        "project controller resume",
-        "workspace controller takeover",
-        "controller rebind",
-        "control_id",
-        "工作区任务看板",
-        "项目任务面板",
-        "管理项目内多个会话",
-        "发给已有会话",
-        "排队到这个会话",
-        "复用项目任务",
-        "源码修改默认委派",
-        "完成后通知当前会话",
-        "恢复项目总控",
-        "接管项目总控",
-        "新建项目任务"
-      ],
-      "excludes": [
-        "in-turn subagent collaboration",
-        "cross-project or global taskboard management",
-        "projectless remote or ChatGPT tasks",
-        "project implementation",
-        "Git delivery",
-        "browser or desktop operation",
-        "external provider session management"
-      ],
-      "related": [
-        "repo-delivery",
-        "ops-browser",
-        "ask-ai"
-      ],
-      "capability_ids": [
-        "codex.workspace.taskboard.status",
-        "codex.workspace.taskboard"
-      ]
-    },
-    {
       "name": "human-writing",
       "category": "writing",
       "owner": "human-writing",
@@ -1248,151 +1143,6 @@
     }
   ],
   "capabilities": [
-    {
-      "capability_id": "codex.workspace.taskboard.status",
-      "capability_version": "1.0.0",
-      "package": "workspace-taskboard",
-      "description": "Read live Codex project and task state and render a read-only multi-project Workspace Taskboard from independently verified project scopes.",
-      "accepts": [{"schema": "urn:skills:task-orchestration-request:v1", "kind": "portable"}],
-      "produces": [{"schema": "urn:skills:task-orchestration-result:v1", "kind": "portable"}],
-      "preconditions": ["TASK_API_PREFLIGHTED", "ALLOWED_ROOTS_VERIFIED_FROM_PROJECT_READBACK"],
-      "postconditions": ["LIVE_STATUS_PROJECTED_WITHOUT_MUTATION"],
-      "permission_contract": {
-        "maximum_mutation_class": "read-only",
-        "maximum_effects": ["read-task-state"],
-        "forbidden_effects": ["control-task-state", "write-control-registry", "write-source", "write-git-state", "control-browser-state", "control-client-state", "invoke-external-provider"],
-        "required_confirmations": [],
-        "symbolic_scope_constraints": ["verified-project-root", "worker-task-set"]
-      },
-      "failure_codes": [{"code": "CAPABILITY_MISSING", "recoverable": true, "recovery": "enable-required-task-read-operation"}, {"code": "PLACEMENT_UNVERIFIED", "recoverable": true, "recovery": "re-read-and-verify-local-project-placement"}, {"code": "BASIS_DRIFT", "recoverable": true, "recovery": "re-read-project-manifest-and-worker-state"}],
-      "evidence_requirements": ["live_project_and_task_readback", "validated_manifest_if_persistent_cards_are_requested"],
-      "adapter_binding": {"policy": "runtime-only", "portable_fields_forbidden": ["provider", "model", "cli_path", "executable"]}
-    },
-    {
-      "capability_id": "codex.workspace.taskboard",
-      "capability_version": "1.0.0",
-      "package": "workspace-taskboard",
-      "description": "Aggregate independently scoped project controllers and coordinate direct dispatch, reuse, close, board events, unread state, and controller rebind.",
-      "accepts": [
-        {
-          "schema": "urn:skills:task-orchestration-request:v1",
-          "kind": "portable"
-        }
-      ],
-      "produces": [
-        {
-          "schema": "urn:skills:task-orchestration-result:v1",
-          "kind": "portable"
-        },
-        {
-          "schema": "urn:codex-host:workspace-taskboard-control:v1",
-          "kind": "local"
-        }
-      ],
-      "preconditions": [
-        "TASK_API_PREFLIGHTED",
-        "CONTROLLER_CANONICAL_PROJECT_ROOT_BOUND",
-        "ALLOWED_ROOTS_VERIFIED_FROM_PROJECT_READBACK",
-        "CANDIDATES_FILTERED_TO_PROJECT_ROOTS",
-        "IDENTITY_RESOLVED_OR_EXPLICIT_THREAD_ID",
-        "AUTHORIZATION_PROFILE_RESOLVED_FOR_START",
-        "REGISTRY_ADAPTER_VERIFIED_FOR_PERSISTENT_CONTROL"
-      ],
-      "postconditions": [
-        "TASK_ACTION_READ_BACK_OR_MARKED_UNVERIFIED",
-        "PROJECT_ROOT_CONTAINMENT_REVALIDATED",
-        "CONTROL_MAPPING_VALIDATED",
-        "BOARD_EVENT_ROUTE_BOUND_WITHOUT_CHAT_INJECTION"
-      ],
-      "permission_contract": {
-        "maximum_mutation_class": "task-control",
-        "maximum_effects": [
-          "read-task-state",
-          "control-task-state",
-          "write-control-registry",
-          "emit-handoff"
-        ],
-        "forbidden_effects": [
-          "write-source",
-          "write-git-state",
-          "control-browser-state",
-          "control-client-state",
-          "invoke-external-provider"
-        ],
-        "required_confirmations": [
-          "explicit-archive-or-restore",
-          "explicit-external-effect"
-        ],
-        "symbolic_scope_constraints": [
-          "control-id",
-          "worker-task-set",
-          "user-local-registry"
-        ]
-      },
-      "failure_codes": [
-        {
-          "code": "CAPABILITY_MISSING",
-          "recoverable": true,
-          "recovery": "enable-required-task-operation"
-        },
-        {
-          "code": "REGISTRY_UNAVAILABLE",
-          "recoverable": true,
-          "recovery": "configure-reliable-user-local-registry-adapter"
-        },
-        {
-          "code": "BASIS_DRIFT",
-          "recoverable": true,
-          "recovery": "re-read-manifest-and-worker-state"
-        },
-        {
-          "code": "OUT_OF_SCOPE_WORKSPACE",
-          "recoverable": true,
-          "recovery": "use-a-controller-bound-to-the-target-project-roots"
-        },
-        {
-          "code": "PLACEMENT_UNVERIFIED",
-          "recoverable": true,
-          "recovery": "enable-project-placement-readback-and-reconciliation"
-        },
-        {
-          "code": "CONTROLLER_UNRESOLVED",
-          "recoverable": true,
-          "recovery": "read-and-verify-the-current-project-controller-task"
-        },
-        {
-          "code": "CLOSED_TASK",
-          "recoverable": true,
-          "recovery": "create-a-successor-or-explicitly-restore-the-task"
-        },
-        {
-          "code": "ARCHIVE_UNVERIFIED",
-          "recoverable": true,
-          "recovery": "read-back-attributed-archive-state-before-closing"
-        },
-        {
-          "code": "SUBMISSION_UNCERTAIN",
-          "recoverable": true,
-          "recovery": "reconcile-the-original-create-operation-without-resubmitting"
-        }
-      ],
-      "evidence_requirements": [
-        "controller_and_task_resolved_realpaths",
-        "local_codex_saved_project_and_versioned_allowed_roots",
-        "candidate_enumeration_and_readback",
-        "manifest_validation_and_compare-and-swap_digest",
-        "dispatch_or_rebind_receipts"
-      ],
-      "adapter_binding": {
-        "policy": "runtime-only",
-        "portable_fields_forbidden": [
-          "provider",
-          "model",
-          "cli_path",
-          "executable"
-        ]
-      }
-    },
     {
       "capability_id": "repository.asset.scan",
       "capability_version": "1.0.0",

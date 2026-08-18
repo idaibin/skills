@@ -3,10 +3,10 @@
 ## Basis
 
 - Digest/install-parity scope: `ui-spec`, `ask-ai`, `dev-frontend`,
-  `audit-frontend`, `repo-review`, `ops-browser`, and `workspace-taskboard` from one
+  `audit-frontend`, `repo-review`, and `ops-browser` from one
   current Worktree snapshot. Behavior scenarios remain evidence-bounded per row and
   do not imply live invocation of every package in this digest scope.
-- Package digest: `sha256:d69849d217cb209106ca6c46cc2916c2611f112e8046b3aeecea64aaf872de66`
+- Package digest: `sha256:ac74b4de55f94af8b03dea9dc42aee9cc041aaf38ac2acf9c7ca4e042a4a0c1d`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
   completeness, routing, and source-discovery checks. Global installation and
   installed-copy parity were not rerun for this digest. The refresh sent no provider

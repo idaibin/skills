@@ -15,7 +15,6 @@ DEFAULT_SCOPE = (
     "skills/audit-frontend",
     "skills/repo-review",
     "skills/ops-browser",
-    "skills/workspace-taskboard",
 )
 IGNORED_PARTS = {"__pycache__"}
 IGNORED_SUFFIXES = {".pyc", ".pyo"}

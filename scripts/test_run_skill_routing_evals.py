@@ -24,7 +24,7 @@ class SkillRoutingEvalTests(unittest.TestCase):
         schema = RUNNER.load_json(RUNNER.DEFAULT_SCHEMA)
         self.assertEqual([], RUNNER.validate_case_contract(index, cases, schema))
         evaluated = RUNNER.evaluate(index, cases)
-        self.assertEqual(56, len(evaluated))
+        self.assertEqual(52, len(evaluated))
         self.assertTrue(all(case["status"] == "passed" for case in evaluated))
 
     def test_published_baseline_covers_every_current_case(self) -> None:
@@ -76,6 +76,23 @@ class SkillRoutingEvalTests(unittest.TestCase):
         self.assertTrue(any("definition changed" in error for error in errors))
         self.assertTrue(any("owner changed" in error for error in errors))
         self.assertTrue(any("case removed" in error for error in errors))
+
+    def test_retired_skill_cases_may_leave_the_baseline(self) -> None:
+        baseline = {
+            "cases": [
+                {
+                    "id": "retired-normal",
+                    "skill": "retired-skill",
+                    "case_fingerprint": "sha256:retired",
+                    "status": "passed",
+                    "observed_owner": "retired-skill",
+                }
+            ]
+        }
+        self.assertEqual(
+            [],
+            RUNNER.regression_errors([], baseline, retired_skills={"retired-skill"}),
+        )
 
     def test_unrelated_critical_stop_prompt_fails_execution_signal(self) -> None:
         index = RUNNER.load_json(RUNNER.DEFAULT_INDEX)

@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 17 available Skills:
+Browse the 16 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -57,7 +57,6 @@ and other supported agents.
 | `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
 | `ops-client` | Operate and verify real desktop-client processes and windows. |
 | `ask-ai` | Prepare or run explicitly authorized external-AI review, research, relay, and image workflows. |
-| `workspace-taskboard` | Show and coordinate Codex task cards within one verified local project root. |
 | `human-writing` | Draft, rewrite, diagnose, and adapt source-grounded writing without changing its facts or voice. |
 
 ## How They Work Together
@@ -75,7 +74,6 @@ change review       -> repo-review
 Git delivery        -> repo-delivery
 browser/client proof -> ops-browser / ops-client
 external AI         -> ask-ai
-project task board  -> workspace-taskboard
 ```
 
 Handoffs transfer scoped evidence, not permission. For example, implementation does

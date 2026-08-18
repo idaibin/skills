@@ -91,27 +91,6 @@ class SearchSkillsTests(unittest.TestCase):
     def test_unmatched_query_returns_no_results(self) -> None:
         self.assertEqual([], SEARCH.search(self.index, "calendar meeting schedule"))
 
-    def test_workspace_taskboard_bilingual_intents_find_owner(self) -> None:
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        for query in (
-            "工作区任务看板，完成后通知当前会话",
-            "发给已有会话",
-            "排队到这个会话",
-            "复用项目任务",
-            "源码修改默认委派到 worker",
-            "恢复项目总控",
-            "take over the project controller and rebind workers",
-            "show the workspace task board for this project",
-        ):
-            with self.subTest(query=query):
-                self.assertEqual("workspace-taskboard", SEARCH.search(index, query)[0]["owner"])
-
-    def test_workspace_taskboard_read_only_status_capability_routes(self) -> None:
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        result = SEARCH.search(index, "show the workspace taskboard status read-only")[0]
-        self.assertEqual("workspace-taskboard", result["owner"])
-        self.assertIn("codex.workspace.taskboard.status", result["capability_ids"])
-
     def test_explicit_exclusion_routes_ui_spec_to_its_owner(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         results = SEARCH.search(index, "UI specification")

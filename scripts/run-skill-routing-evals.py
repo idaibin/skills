@@ -191,8 +191,11 @@ def evaluate(
 
 
 def regression_errors(
-    current: list[dict[str, object]], baseline: dict[str, object]
+    current: list[dict[str, object]],
+    baseline: dict[str, object],
+    retired_skills: set[str] | None = None,
 ) -> list[str]:
+    retired_skills = retired_skills or set()
     current_by_id = {str(case["id"]): case for case in current}
     errors: list[str] = []
     old_cases = baseline.get("cases")
@@ -208,7 +211,8 @@ def regression_errors(
         case_id = str(old.get("id"))
         new = current_by_id.get(case_id)
         if new is None:
-            errors.append(f"baseline case removed: {case_id}")
+            if str(old.get("skill")) not in retired_skills:
+                errors.append(f"baseline case removed: {case_id}")
         elif new.get("status") != "passed":
             errors.append(f"baseline case regressed: {case_id}")
         elif new.get("case_fingerprint") != old.get("case_fingerprint"):
@@ -259,8 +263,30 @@ def main() -> int:
     contract_errors = validate_case_contract(index, cases, schema)
     evaluated = [] if contract_errors else evaluate(index, cases)
     baseline = load_baseline(args)
+    current_skills = {
+        str(entry["name"]) for entry in SEARCH.package_entries(index)
+    }
+    baseline_skills = {
+        str(case["skill"])
+        for case in baseline.get("cases", [])
+        if isinstance(case, dict) and case.get("skill")
+    } if baseline is not None else set()
+    candidate_baseline = load_json(ROOT / "evals" / "skill-routing-baseline.json")
+    candidate_baseline_skills = {
+        str(case["skill"])
+        for case in candidate_baseline.get("cases", [])
+        if isinstance(case, dict) and case.get("skill")
+    }
+    retired_skills = (
+        (baseline_skills - current_skills)
+        & (baseline_skills - candidate_baseline_skills)
+    )
     regressions = (
-        regression_errors(evaluated, baseline)
+        regression_errors(
+            evaluated,
+            baseline,
+            retired_skills=retired_skills,
+        )
         if baseline is not None and not contract_errors
         else []
     )

@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import argparse
-import ast
 import json
 import re
 import sys
@@ -519,52 +518,6 @@ def ask_ai_provider_variant_errors(package: Path) -> list[str]:
         errors.append("ask-ai: provider_aliases example must state recipient-only semantics")
     if "Never cross-fallback between the global" not in text:
         errors.append("ask-ai: Qoder variants must forbid cross-variant fallback")
-    return errors
-
-
-def workspace_taskboard_errors(package: Path) -> list[str]:
-    if package.name != "workspace-taskboard":
-        return []
-    required = (
-        package / "SKILL.md",
-        package / "references" / "task-routing.md",
-        package / "references" / "control-contract.md",
-        package / "references" / "worker-protocol.md",
-        package / "assets" / "control-manifest.v1.schema.json",
-        package / "scripts" / "task_control.py",
-    )
-    missing = [path.relative_to(package).as_posix() for path in required if not path.is_file()]
-    if missing:
-        return [f"workspace-taskboard: missing required contract files: {missing}"]
-    text = "\n".join(
-        path.read_text(encoding="utf-8")
-        for path in required
-        if path.suffix in {".md", ".py"}
-    )
-    tokens = (
-        "reuse_key", "list_threads", "read_thread", "list_projects",
-        "create_thread", "send_message_to_thread", "controller-rebind",
-        "REGISTRY_UNAVAILABLE", "BASIS_DRIFT", "user-local", "non-LLM consumer",
-        "compare-and-swap", "ready-for-delivery", "controlled-delivery",
-        "external effects", "canonical_project_root", "allowed_roots",
-        "OUT_OF_SCOPE_WORKSPACE", "PLACEMENT_UNVERIFIED", "CONTROLLER_UNRESOLVED",
-        "realpath", "projectless", "ChatGPT", "component-aware descendant",
-        "status-projection",
-    )
-    errors = [
-        f"workspace-taskboard: contract missing {token!r}"
-        for token in tokens
-        if token.lower() not in text.lower()
-    ]
-    try:
-        schema = json.loads(
-            (package / "assets" / "control-manifest.v1.schema.json").read_text(encoding="utf-8")
-        )
-        jsonschema.Draft202012Validator.check_schema(schema)
-        if schema.get("$id") != "urn:codex-host:workspace-taskboard-control:v1":
-            errors.append("workspace-taskboard: manifest schema has unexpected $id")
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError, jsonschema.SchemaError) as error:
-        errors.append(f"workspace-taskboard: invalid manifest schema: {error}")
     return errors
 
 
@@ -1104,8 +1057,6 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
     errors.extend(ask_ai_app_native_relay_errors(package))
     errors.extend(ops_browser_workspace_errors(package))
     errors.extend(ui_spec_design_completeness_errors(package))
-    errors.extend(workspace_taskboard_errors(package))
-
     eval_file = references / "eval-cases.md"
     if not eval_file.is_file():
         errors.append(f"{package.name}: missing references/eval-cases.md")
@@ -1235,80 +1186,6 @@ def skill_contract_errors(entries: list[dict[str, object]]) -> list[str]:
                 )
         if mutation == "read-only" and set(allowed) & MUTATING_EFFECTS:
             errors.append(f"skills-index.json: {name} read-only contract allows a mutating effect")
-    return errors
-
-
-def workspace_taskboard_outcome_errors(root: Path) -> list[str]:
-    """Keep executable stop/failure outcomes closed with the v3 registry contract."""
-    script = root / "skills" / "workspace-taskboard" / "scripts" / "task_control.py"
-    index = root / "skills-index.json"
-    if not script.is_file() or not index.is_file():
-        return []
-    try:
-        tree = ast.parse(script.read_text(encoding="utf-8"))
-        payload = json.loads(index.read_text(encoding="utf-8"))
-    except (OSError, UnicodeDecodeError, SyntaxError, json.JSONDecodeError) as error:
-        return [f"workspace-taskboard: cannot validate executable outcomes: {error}"]
-
-    def static_strings(node: ast.AST) -> tuple[set[str], bool]:
-        if isinstance(node, ast.Constant) and isinstance(node.value, str):
-            return {node.value}, True
-        if isinstance(node, ast.IfExp):
-            left, left_ok = static_strings(node.body)
-            right, right_ok = static_strings(node.orelse)
-            return left | right, left_ok and right_ok
-        if isinstance(node, (ast.List, ast.Tuple, ast.Set)):
-            values: set[str] = set()
-            resolved = True
-            for item in node.elts:
-                item_values, item_ok = static_strings(item)
-                values.update(item_values)
-                resolved = resolved and item_ok
-            return values, resolved
-        return set(), False
-
-    reachable = {"stop_state": set(), "failure_code": set()}
-    unresolved: list[str] = []
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.Dict):
-            continue
-        for key, value in zip(node.keys, node.values):
-            if isinstance(key, ast.Constant) and key.value in reachable:
-                values, resolved = static_strings(value)
-                reachable[key.value].update(values)
-                if not resolved:
-                    unresolved.append(f"line {getattr(value, 'lineno', '?')} {key.value}")
-    package = next(
-        (item for item in payload.get("packages", []) if item.get("name") == "workspace-taskboard"),
-        None,
-    )
-    capabilities = [
-        item for item in payload.get("capabilities", [])
-        if item.get("package") == "workspace-taskboard"
-    ]
-    if not package or not capabilities:
-        return ["workspace-taskboard: missing package or capability outcome contract"]
-    declared_stops = set(package.get("stop_states", []))
-    declared_failures = {
-        item.get("code")
-        for capability in capabilities
-        for item in capability.get("failure_codes", [])
-        if isinstance(item, dict)
-    }
-    errors = [
-        f"workspace-taskboard: executable outcome is not statically closed: {item}"
-        for item in unresolved
-    ]
-    if reachable["stop_state"] != declared_stops:
-        errors.append(
-            "workspace-taskboard: stop state drift: "
-            f"executable={sorted(reachable['stop_state'])}, registry={sorted(declared_stops)}"
-        )
-    if reachable["failure_code"] != declared_failures:
-        errors.append(
-            "workspace-taskboard: failure code drift: "
-            f"executable={sorted(reachable['failure_code'])}, registry={sorted(declared_failures)}"
-        )
     return errors
 
 
@@ -1571,7 +1448,6 @@ def validate(root: Path) -> list[str]:
     names = {path.name for path in packages}
     errors = catalog_errors(root, names)
     errors.extend(skill_index_errors(root, names))
-    errors.extend(workspace_taskboard_outcome_errors(root))
     for package in packages:
         errors.extend(package_errors(package, names))
     if not packages:

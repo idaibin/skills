@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "3d21394b9186be2470d33da4c804f8d3038623d8+sha256:bf4117d9511e765ed4dfd129088df68508c4cc05db0d68cd56946bc639e051a6",
-  "fingerprint": "sha256:bf4117d9511e765ed4dfd129088df68508c4cc05db0d68cd56946bc639e051a6",
+  "basis": "package-retirement/2026-08-18",
+  "fingerprint": "sha256:f4aa9815d335d41e720f606e0f6a9e2d100b62a99414857040db25f0a48c8e25",
   "summary": {
-    "total": 56,
-    "passed": 56,
+    "total": 52,
+    "passed": 52,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -633,54 +633,6 @@
       "observed_owner": "human-writing",
       "expected_stop": "evidence-incomplete",
       "observed_stop": "evidence-incomplete",
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "workspace-taskboard-normal",
-      "case_fingerprint": "sha256:588f1d986b7aa230b528a01b87c04913c23e2366f3011dfe034cc43ae0753cb9",
-      "class": "normal",
-      "skill": "workspace-taskboard",
-      "expected_owner": "workspace-taskboard",
-      "observed_owner": "workspace-taskboard",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "workspace-taskboard-multi-project",
-      "case_fingerprint": "sha256:0d511794e4c5a4f42a52e4b6373a19f8b38df30bc9317867252584080dd16a73",
-      "class": "normal",
-      "skill": "workspace-taskboard",
-      "expected_owner": "workspace-taskboard",
-      "observed_owner": "workspace-taskboard",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "workspace-taskboard-boundary",
-      "case_fingerprint": "sha256:4a96ea1cbfceebe7cc45f8257fd6c90d19a8c24e267e76fe8e430b460ab9033f",
-      "class": "boundary",
-      "skill": "workspace-taskboard",
-      "expected_owner": "repo-delivery",
-      "observed_owner": "repo-delivery",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "workspace-taskboard-critical-stop",
-      "case_fingerprint": "sha256:16e0460310d1374cc2eff12decda3f3ff137412837acfafaf95d1ee67693fb27",
-      "class": "critical-stop",
-      "skill": "workspace-taskboard",
-      "expected_owner": "workspace-taskboard",
-      "observed_owner": "workspace-taskboard",
-      "expected_stop": "out-of-scope-workspace",
-      "observed_stop": "out-of-scope-workspace",
       "status": "passed",
       "failures": []
     }

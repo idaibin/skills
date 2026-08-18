@@ -96,37 +96,6 @@ class ValidatorTests(unittest.TestCase):
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
 
-    def test_workspace_taskboard_contract_is_complete(self) -> None:
-        package = ROOT / "skills" / "workspace-taskboard"
-        self.assertEqual([], VALIDATOR.workspace_taskboard_errors(package))
-        self.assertEqual([], VALIDATOR.workspace_taskboard_outcome_errors(ROOT))
-
-    def test_workspace_taskboard_outcome_registry_drift_fails(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            target = root / "skills" / "workspace-taskboard" / "scripts"
-            target.mkdir(parents=True)
-            shutil.copy(ROOT / "skills" / "workspace-taskboard" / "scripts" / "task_control.py", target / "task_control.py")
-            payload = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-            package = next(item for item in payload["packages"] if item["name"] == "workspace-taskboard")
-            package["stop_states"].remove("archive-unverified")
-            (root / "skills-index.json").write_text(json.dumps(payload), encoding="utf-8")
-            errors = VALIDATOR.workspace_taskboard_outcome_errors(root)
-            self.assertTrue(any("stop state drift" in error for error in errors))
-
-    def test_workspace_taskboard_conditional_and_dynamic_outcomes_are_checked(self) -> None:
-        with tempfile.TemporaryDirectory() as temporary:
-            root = Path(temporary)
-            target = root / "skills" / "workspace-taskboard" / "scripts"
-            target.mkdir(parents=True)
-            source = (ROOT / "skills" / "workspace-taskboard" / "scripts" / "task_control.py").read_text(encoding="utf-8")
-            source += "\ndef validator_probe(flag, value):\n    return {'stop_state': 'UNDECLARED_CONDITIONAL' if flag else 'basis-drift', 'failure_code': value}\n"
-            (target / "task_control.py").write_text(source, encoding="utf-8")
-            shutil.copy(ROOT / "skills-index.json", root / "skills-index.json")
-            errors = VALIDATOR.workspace_taskboard_outcome_errors(root)
-            self.assertTrue(any("UNDECLARED_CONDITIONAL" in error for error in errors))
-            self.assertTrue(any("not statically closed" in error for error in errors))
-
     def test_artifact_capability_requires_artifact_effect_for_control_owner(self) -> None:
         entry = {
             "name": "sample-browser",
@@ -1125,7 +1094,7 @@ class ValidatorTests(unittest.TestCase):
     def test_v3_registry_has_one_to_many_capabilities_and_repo_map_modes(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         self.assertEqual(3, index["version"])
-        self.assertEqual(17, len(index["packages"]))
+        self.assertEqual(16, len(index["packages"]))
         self.assertGreater(len(index["capabilities"]), len(index["packages"]))
         repo_map = next(item for item in index["packages"] if item["name"] == "repo-map")
         self.assertEqual(
