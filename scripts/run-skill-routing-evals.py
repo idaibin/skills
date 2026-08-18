@@ -34,6 +34,7 @@ SEARCH = load_search_module()
 
 STOP_CLASSIFIERS = (
     ("basis-drift", re.compile(r"(?:fixed\s+)?basis\s+(?:sha\s+)?(?:is\s+)?(?:unavailable|changed|drifted)|basis\s+sha\s+is\s+unavailable", re.IGNORECASE)),
+    ("strategy-unresolved", re.compile(r"(?:history\s+)?strategy\s+(?:was\s+|is\s+)?(?:not\s+selected|unresolved)|no\s+(?:history\s+)?strategy\s+(?:was\s+|is\s+)?selected", re.IGNORECASE)),
     ("missing-authorization", re.compile(r"authorization\s+(?:to\s+[^,;.]+\s+)?(?:is\s+)?(?:missing|not\s+granted)|not\s+authorized|authorization\s+is\s+not\s+granted", re.IGNORECASE)),
     ("scope-ambiguous", re.compile(r"(?:target\s+)?scope\s+is\s+ambiguous|ambiguous\s+scope", re.IGNORECASE)),
     ("capability-unavailable", re.compile(r"(?:required\s+)?capability\s+is\s+unavailable", re.IGNORECASE)),

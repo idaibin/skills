@@ -33,6 +33,11 @@ provider responses, credentials, or long logs as delivery-contract fields.
 4. Inspect existing local refs. Fetch or otherwise refresh remote state only for an explicitly authorized push, sync, branch-integration, history-rewrite assessment, or remote-refresh target; a local-commit-only request leaves remote state `Not verified`.
 5. Confirm each target through either exact per-action authorization or a bounded task-level execution-durability plan. A standing plan records the task branch, owned scope, allowed milestone/fixup/checkpoint types, event triggers, validation floor, message policy, and push policy; matching commits may proceed without asking again. Scope expansion, a new commit type, failed safety gates, rewrite, push, integration, or cleanup requires fresh authority.
 6. Confirm branch policy and permissions: task/default/protected status, upstream and known sharing/review state, force-push restrictions, required checks, branch naming, and every unknown that changes safety.
+   For branch synchronization or integration, resolve the history strategy before the
+   first Git mutation. Use repository policy or explicit user intent to choose
+   fast-forward, merge, rebase, squash, or cherry-pick. If two or more materially
+   different strategies remain valid and none is selected, stop as
+   `strategy-unresolved`; do not default to merge or rebase.
 7. For **Execution Durability**, require exact per-action authority or a still-valid bounded task plan plus an exact separable scope. Classify it as a completed semantic milestone, a correction owned by one reachable milestone, or an exceptional checkpoint permitted by the plan before a concrete loss/recovery risk. Reuse implementation evidence, run focused validation when possible, stage only exact paths/hunks, inspect the complete cached diff, commit, then report remaining and unrelated Worktree content. Continue under the same plan only while its branch, scope, triggers, and safety gates still match; push remains separately authorized.
 8. For ordinary reviewed local commits, require the accepted review basis and ownership
    to match the immutable PackageManifest when one is supplied; regenerate through its
@@ -112,6 +117,9 @@ provider responses, credentials, or long logs as delivery-contract fields.
 - Choose preserve/squash/cherry-pick from policy and explicit scope, account for every
   omitted commit, and do not carry WIP/fixup/conflict/validation-repair history merely
   for convenience.
+- Do not begin branch sync or integration while its history strategy is unresolved.
+  A tool default, previous command habit, or the fact that merge is non-destructive is
+  not a strategy decision; stop before mutation and request the missing choice.
 - Do not rebase/merge over unexplained dirty state or force-push after rejection.
   Re-read divergence and reassess when remote state changed.
 - Review publication also requires explicit commit/push authority, verified GitHub

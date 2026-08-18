@@ -1,6 +1,6 @@
 ---
 name: dev-java
-description: "Use when Java source or Java-owned Maven/Gradle configuration must be implemented, migrated, or refactored across Spring services, HTTP/security boundaries, persistence, transactions, messaging, scheduling, caches, tests, or configuration; owns source edits and validation, not non-Java JVM work, audit-only, fixed-basis review, or Git delivery."
+description: "Use when Java source or Java-owned Maven/Gradle configuration must be implemented, migrated, or refactored across Spring services, HTTP/security boundaries, explicit code-first or contract-first OpenAPI, persistence, transactions, messaging, scheduling, caches, tests, or configuration; owns source edits and validation, not non-Java JVM work, audit-only, fixed-basis review, or Git delivery."
 ---
 
 # Java Implementation
@@ -56,17 +56,24 @@ interface/schema authorities remain authoritative.
      remote clients, retries, idempotency, shutdown, or observability.
    - **Migration/compatibility:** JDK, Spring Boot, `javax`/`jakarta`, database,
      framework, packaging, or language-port changes.
+   - **Protocol automation:** an existing OpenAPI/generated-client pipeline or an
+     explicitly requested code-first/contract-first adoption. Ordinary controller
+     changes preserve the repository-native route/DTO/test authority.
 7. Load [Java engineering](references/java-engineering.md) for every task. Load
    [behavior-first](references/behavior-first.md) when a stable public seam supports a
    red-capable vertical slice. Load [codebase design](references/codebase-design.md)
    for public module/interface or testability changes, and [code quality](references/code-quality.md)
    only when duplication, dead code, coupling, or maintainability materially applies.
+   Load [protocol contracts](references/protocol-contracts.md) only when Protocol
+   automation applies.
 8. Decide in order: reuse, extend, adapt the nearest reference, or create new. Record
    why an existing controller, service, repository, DTO, mapper, event, client, or
    configuration owner cannot safely own a new declaration.
 9. Trace the complete contract and dependency chain before editing. Keep one native
-   API/schema authority; do not introduce OpenAPI, a new persistence abstraction, or a
-   module framework merely because it appears in a reference project.
+   API/schema authority; when Protocol automation applies, select code-first or
+   contract-first and resolve draft/authoritative state before editing. Otherwise do
+   not introduce OpenAPI, a new persistence abstraction, or a module framework merely
+   because it appears in a reference project.
 10. Implement the smallest coherent slice using local naming, dependency direction,
     exception, logging, transaction, security, configuration, and test conventions.
 11. Update every affected manifest, registration, generated source, migration,
@@ -118,7 +125,9 @@ interface/schema authorities remain authoritative.
 - **Baseline:** repository-defined format/static checks, compilation, and focused
   behavior tests using the owning Wrapper or documented build command.
 - **Selected overlays:** add only the build, security, persistence, integration, and
-  migration evidence required by the changed surface.
+  migration evidence required by the changed surface. For Protocol automation, add
+  structural validation, generation/idempotence when applicable, compatibility, and
+  backend request/response/error conformance.
 - **Full gate:** reserve full multi-module builds, full-repository tests, and release
   gates for merge, release, deployment, final fixed-basis acceptance, explicit user
   requests, or when no credible focused check exists for the actual risk.
@@ -142,8 +151,8 @@ interface/schema authorities remain authoritative.
 
 Report capability `java.source.implement`, Run/input/result PackageManifest refs when
 integration is active, typed source-change result/Observation refs, scope, Git/build
-root, project class, JDK/build/framework evidence, selected
-overlays, reuse/new decision, changed contract chain, security and transaction impact,
+root, project class, JDK/build/framework evidence, selected overlays, interface
+authority/state, reuse/new decision, changed contract chain, security and transaction impact,
 Baseline/overlay validation, before/after Worktree state, and exact gaps. For each
 overlay, report applicability as `Affected` or `Not applicable`, then report evidence
 status separately as `Verified`, `Failed`, or `Not verified`. Use `Not found`
@@ -161,4 +170,6 @@ only for a searched-for repository fact that is absent.
 - Read [project grounding](references/project-grounding.md) when a change activates
   runtime/config, packaging, public contract, durable data, replacement,
   auth/security, or cross-repository risks.
+- Read [protocol contracts](references/protocol-contracts.md) only for an existing or
+  explicitly requested code-first/contract-first OpenAPI chain.
 - See [eval cases](references/eval-cases.md) for routing and quality scenarios.

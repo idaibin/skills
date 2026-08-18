@@ -1,4 +1,4 @@
 interface:
   display_name: "Java Implementation"
-  short_description: "Implement Java and Spring with evidence-based risk gates"
-  default_prompt: "Use $dev-java to implement scoped Java or Spring changes with repository-pinned toolchains, secure boundaries, and risk-matched validation."
+  short_description: "Implement Java, Spring, and OpenAPI contracts safely"
+  default_prompt: "Use $dev-java to implement scoped Java or Spring changes, including explicit code-first or contract-first OpenAPI, with repository-pinned toolchains and risk-matched validation."

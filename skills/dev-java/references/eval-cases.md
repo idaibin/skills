@@ -6,6 +6,7 @@
 | --- | --- |
 | `Implement this Spring service transaction and tests.` | Trigger `dev-java`; resolve build/JDK and select Persistence/transaction. |
 | `Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.` | Trigger Runtime/config grounding, resolve precedence and artifact/target boundaries, and block a global workaround until its scope is proven. |
+| `Implement this accepted contract-first OpenAPI YAML in Spring and verify the request, response, and error wire contract.` | Trigger `dev-java` with Protocol automation; keep the YAML as the single contract-first authority. |
 
 ## Non-Trigger Eval
 
@@ -33,6 +34,10 @@
 | Validation drift | Captures before/after tracked state and separates generated task output, unexpected command drift, and unrelated work. | Runs an apply-mode formatter and silently absorbs or reverts resulting files. |
 | Reactive boundary | Checks blocking calls, Reactor Context, transaction model, demand/cancellation, retry, and cleanup for an affected WebFlux path. | Treats MVC thread-local and transaction assumptions as valid in Reactor. |
 | Thread context | Propagates only required context and restores or removes manually managed ThreadLocal/MDC state in a finally path. | Leaves tenant/security context attached to pooled threads. |
+| Protocol activation | Uses OpenAPI rules only for an existing pipeline or explicit adoption and otherwise preserves native controller/DTO/test authority. | Introduces OpenAPI merely because a Java endpoint changes. |
+| Contract-first authority | Treats owner acceptance of the exact YAML scope/version/hash as the draft-to-authoritative transition, then implements Java conformance without a parallel hand-written contract. | Requires implementation before authority, calls an unowned AI-readable YAML authoritative, or lets annotations and YAML drift independently. |
+| Operation completeness | Verifies parameter location, request requiredness, non-empty response schemas, enums/nullability/constraints, and confirmed errors while keeping frontend behavior out. | Treats POST as body automatically, omits a consumed response, or copies page/error-handling prose into OpenAPI. |
+| Protocol evidence | Separates structural validation, compatibility, backend conformance, generated consumer, and runtime/deployment evidence. | Calls YAML parsing or Java compilation complete interface verification. |
 
 ## Edge Cases
 

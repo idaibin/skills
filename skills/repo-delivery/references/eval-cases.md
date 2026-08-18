@@ -17,6 +17,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | `This branch was rejected as non-fast-forward; inspect divergence and tell me the safe delivery path.` | Should trigger branch-state handling. | Remote divergence before mutation. |
 | `Squash this completed branch into main and push main.` | Should trigger only after branch policy and explicit direct-main permission are verified. | High-risk target-branch delivery. |
 | `Sync this branch to remote; do not switch branches.` | Should trigger `repo-delivery`. | Branch-specific remote sync. |
+| `Rebase or merge this feature branch with main; both are permitted, but no history strategy was selected.` | Trigger `repo-delivery`, inspect read-only state, then stop `strategy-unresolved` before mutation. | A branch-sync request does not select a history strategy. |
 | `After verification, delete the temporary branch.` | Should trigger cleanup mode. | Delivery cleanup. |
 | `Integrate this reviewed branch into main; preserve meaningful commits when their boundaries are clean, otherwise squash noisy history.` | Should trigger Branch integration and record the evidence-based history strategy. | Integration shape is conditional, not automatically squash. |
 | `This rebase is already conflicted; trace both sides' intent, resolve each hunk, run checks, and continue the rebase, but do not push.` | Trigger conditional conflict resolution with bounded authorization. | Existing Git operation needs intent-preserving mutation. |

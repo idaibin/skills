@@ -18,6 +18,7 @@
 - `Migrate this service from Spring Boot 2 to 3 and account for javax/jakarta compatibility.`
 - `Add Redis idempotency to this consumer and prove retry and expiry behavior.`
 - `Refactor this Maven module boundary without changing external API behavior.`
+- `Implement this accepted contract-first OpenAPI YAML in Spring controllers and DTOs, then prove request, response, and error conformance.`
 
 ## Non-Triggers
 
@@ -38,6 +39,8 @@
 - Redis consumer: Baseline + Integration/runtime; add Persistence when durable state changes.
 - Spring Boot 2 to 3: Baseline + Migration/compatibility plus every affected domain overlay.
 - Build plugin only: Baseline + Build/toolchain.
+- Existing or explicitly requested OpenAPI chain: Baseline + Protocol automation and
+  every affected Web/security or compatibility overlay.
 
 ## Output
 

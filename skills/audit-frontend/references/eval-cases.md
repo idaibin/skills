@@ -14,6 +14,7 @@
 | --- | --- |
 | `Audit a TanStack Router Console feature for architecture/reuse and query-state contracts; leave accessibility out of scope.` | Trigger `audit-frontend` with Architecture/Reuse and State/Data/Contracts profiles. |
 | `Audit a Vue 3 feature for reactivity loss, watcher loops, composable lifetime, Pinia ownership, and Router contracts.` | Trigger State/Data/Contracts with the Vue Composition API framework profile. |
+| `This attached API contract explicitly replaces the stale repository copy; audit the frontend against the replacement without editing files.` | Freeze the incoming contract as the audit basis, report local-copy drift, and remain read-only. |
 | `Under repo-review, perform a read-only specialist audit of only the changed Vue SFCs for state, lifecycle, accessibility, and performance.` | Trigger bounded `audit-frontend`; keep `repo-review` as local Git-change review owner. |
 | `Under repo-review, inspect only the changed frontend paths for resolved design-root DESIGN.md plus the target UI Spec drift and accessibility.` | Trigger bounded `audit-frontend`; keep `repo-review` as repository/range review owner. |
 | `Audit this DESIGN.md-bound table for token/component reuse, density, scroll, responsive, and accessibility drift.` | Trigger Component/Layout with the bounded DESIGN.md evidence chain; require runtime evidence for rendered claims. |

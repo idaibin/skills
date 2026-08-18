@@ -42,6 +42,12 @@ owner; do not invent one.
    architecture, and coordinating review owner when delegated. This inspection
    snapshot does not turn the audit into change attribution.
 2. Consume a compatible graph asset/consumer/impact query or perform a targeted live inventory of route/page entry, owning feature, analogous screens, UI primitives, layout/tokens, data/cache, forms/schema, state/store, tests, docs, and desktop adapter. Reject stale or mismatched graph results; a query miss never proves absence, and a derived Markdown view is not review evidence. Load `references/specification-authorities.md` when a selected profile depends on Product/UI contracts; resolve them by meaning rather than filename, consume Product Markdown, UI Markdown, and resolved `DESIGN.md` before comparing current source, and hand off only unresolved decisions required by the audit outcome. If a structured non-LLM projection is in scope, verify its named owner, producer, non-LLM consumer, semantic version, executable validator, drift policy, and retirement rule. Inspect current validator evidence, consumer read path, and Markdown/source parity without regenerating or repairing the projection. Missing lifecycle evidence, duplicate authority facts, stale routes/components, or source drift become findings only when concrete impact is established; otherwise report `Not verified`. When no real projection exists, do not require project YAML/JSON, schema, or validator files.
+   When the user supplies a new or replacement external contract, freeze that artifact
+   and the stated replacement relation as part of the inspection basis before reading
+   the older local copy. Audit against the selected incoming authority and report local
+   drift; because this Skill is read-only, never land or overwrite the document. Stop
+   on ambiguous owner or competing versions instead of reviewing a knowingly
+   superseded basis.
 3. Classify the product surface as Web, high-density Console, or Tauri Desktop. Select exactly one framework profile per audited boundary: **React**, **Vue Composition**, **Vue Options**, or **Repository-native Other**. Select only styling profiles present in scope: **Tailwind**, **CSS Modules**, **Sass/Less**, **CSS-in-JS**, **Ant Design**, **shadcn/ui**, or a documented local system.
 4. Select one or more audit profiles; explicitly mark the rest `Out of scope`:
    - **Architecture/reuse:** routes, features, shared layers, dependency direction, reuse, abstractions, structural lifecycle, and docs.

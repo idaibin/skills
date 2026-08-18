@@ -21,6 +21,7 @@
     {"id": "repo-delivery-normal", "skill": "repo-delivery", "class": "normal", "prompt": "Commit these reviewed changes locally and push the branch to origin.", "expected_owner": "repo-delivery", "expected_outcome": "route"},
     {"id": "repo-delivery-boundary", "skill": "repo-delivery", "class": "boundary", "prompt": "Review this fixed commit and do not change Git state.", "expected_owner": "repo-review", "expected_outcome": "reroute"},
     {"id": "repo-delivery-critical-stop", "skill": "repo-delivery", "class": "critical-stop", "prompt": "Commit and push this reviewed branch, but authorization is not granted; stop.", "expected_owner": "repo-delivery", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+    {"id": "repo-delivery-strategy-stop", "skill": "repo-delivery", "class": "critical-stop", "prompt": "Rebase or merge this feature branch with main; both are permitted, but no history strategy was selected, so stop before Git mutation.", "expected_owner": "repo-delivery", "expected_stop": "strategy-unresolved", "expected_outcome": "stop"},
 
     {"id": "product-spec-normal", "skill": "product-spec", "class": "normal", "prompt": "Turn this ambiguous feature into behavior, states, rules, and acceptance criteria.", "expected_owner": "product-spec", "expected_outcome": "route"},
     {"id": "product-spec-boundary", "skill": "product-spec", "class": "boundary", "prompt": "Translate the selected visual source into a traceable UI specification.", "expected_owner": "ui-spec", "expected_outcome": "reroute"},

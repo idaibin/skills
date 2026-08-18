@@ -285,6 +285,7 @@
       "stop_states": [
         "missing-authorization",
         "scope-ambiguous",
+        "strategy-unresolved",
         "basis-drift",
         "evidence-incomplete",
         "capability-unavailable",
@@ -569,7 +570,8 @@
       ],
       "intents": [
         "implement, migrate, or refactor Java source and Java-owned Spring configuration",
-        "change Maven or Gradle builds, APIs, security, transactions, persistence, integrations, or runtime behavior"
+        "change Maven or Gradle builds, APIs, security, transactions, persistence, integrations, or runtime behavior",
+        "implement an explicitly selected code-first or contract-first OpenAPI authority in Java"
       ],
       "keywords": [
         "Java implementation",
@@ -579,6 +581,8 @@
         "JPA",
         "transaction",
         "Spring Security",
+        "OpenAPI",
+        "contract-first",
         "migration"
       ],
       "excludes": [
@@ -1521,7 +1525,7 @@
     },
     {
       "capability_id": "repository.git.deliver",
-      "capability_version": "1.0.0",
+      "capability_version": "1.1.0",
       "package": "repo-delivery",
       "description": "Perform separately authorized Git delivery.",
       "accepts": [
@@ -1538,7 +1542,8 @@
       ],
       "preconditions": [
         "SCOPE_RESOLVED",
-        "BASIS_CURRENT"
+        "BASIS_CURRENT",
+        "HISTORY_STRATEGY_RESOLVED_WHEN_APPLICABLE"
       ],
       "postconditions": [
         "TYPED_OUTPUT_EMITTED"
@@ -1581,6 +1586,11 @@
           "code": "AUTHORIZATION_REQUIRED",
           "recoverable": true,
           "recovery": "obtain-explicit-user-authorization"
+        },
+        {
+          "code": "STRATEGY_UNRESOLVED",
+          "recoverable": true,
+          "recovery": "select-history-strategy-before-mutation"
         }
       ],
       "evidence_requirements": [
@@ -1857,7 +1867,7 @@
     },
     {
       "capability_id": "java.source.implement",
-      "capability_version": "1.0.0",
+      "capability_version": "1.1.0",
       "package": "dev-java",
       "description": "Implement an authorized Java source change.",
       "accepts": [

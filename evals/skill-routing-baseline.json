@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "package-retirement/2026-08-18",
-  "fingerprint": "sha256:f4aa9815d335d41e720f606e0f6a9e2d100b62a99414857040db25f0a48c8e25",
+  "basis": "contract-and-delivery-gates/2026-08-18",
+  "fingerprint": "sha256:250874ebeb4ea12a9494fe6402e605303a34940c59a673fc40f798ca5a46fca7",
   "summary": {
-    "total": 52,
-    "passed": 52,
+    "total": 53,
+    "passed": 53,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -189,6 +189,18 @@
       "observed_owner": "repo-delivery",
       "expected_stop": "missing-authorization",
       "observed_stop": "missing-authorization",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "repo-delivery-strategy-stop",
+      "case_fingerprint": "sha256:47e59feb8771f019ba17bc08225291c3bbf56d8b1bc269de501f4f89d59f1af3",
+      "class": "critical-stop",
+      "skill": "repo-delivery",
+      "expected_owner": "repo-delivery",
+      "observed_owner": "repo-delivery",
+      "expected_stop": "strategy-unresolved",
+      "observed_stop": "strategy-unresolved",
       "status": "passed",
       "failures": []
     },

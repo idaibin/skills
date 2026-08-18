@@ -32,6 +32,13 @@ implementation authority.
    Do not require page YAML, component JSON, a project schema, or a validator for
    ordinary implementation.
 4. Confirm acceptance criteria, non-goals, affected contracts/files, and validation seams from usable approved requirements. Consume existing contracts directly; hand unresolved product decisions to `product-spec` or required selected-source/shared visual decisions to `ui-spec` without treating either Skill as a file detector. When an applicable UI Feature Spec declares a viewport acceptance matrix, consume it without copying its schema: exercise required entries, select optional entries only when useful and in scope, and treat excluded entries only as outside the current acceptance scope, never as proof of unsupported behavior. A newer explicit user viewport constraint overrides a stale artifact. For complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
+   When the user supplies a new or replacement external contract, freeze its identity
+   and replacement intent before reading implementation conclusions from an older local
+   copy. If the repository requires a local canonical copy and the requested scope
+   authorizes that document change, update it first; otherwise consume the supplied
+   authority directly and report the local copy as stale. Stop on ambiguous owner,
+   target path, or competing versions instead of silently overwriting or auditing the
+   superseded artifact.
    When the change reaches API/gateway/auth, environment/build/deploy, durable state,
    desktop/native integration, replacement compatibility, or another repository,
    load [project grounding](references/project-grounding.md) and close the activated
