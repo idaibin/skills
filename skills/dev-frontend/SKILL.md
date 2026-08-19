@@ -1,166 +1,116 @@
 ---
 name: dev-frontend
-description: "Use when a frontend change must be implemented or refactored across UI, state, data, styling, build/tooling, accessibility, performance, or desktop integration, including mapped two-pass visual closure for an accepted selected source; owns source edits and validation, not audit-only, browser-only, UI-spec, or Git delivery."
+description: "Use when an authorized frontend change must be implemented or refactored; owns frontend source edits and risk-matched validation, not audit-only work, UI specification, browser/client operation, or Git delivery."
 ---
 
 # Frontend Implementation
 
 ## Overview
 
-Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear layout ownership, and explicit verification. Detect the framework first. Use `ops-browser` for web runtime evidence and `ops-client` for desktop-window proof.
+Implement the requested frontend behavior in the repository's existing stack. Reuse
+the nearest proven component, hook, service, style, and page structure by default;
+extend before creating, and create only when current owners cannot satisfy the task.
 
-Default to the repository's current components, patterns, and owners. Reuse directly
-when behavior and ownership match; otherwise extend or adapt the nearest proven
-implementation. Create a new component, helper, or layer only after a targeted search
-shows why existing candidates are insufficient. Reuse does not mean premature shared
-abstraction: keep feature-local behavior local until real consumers justify a stable
-shared owner.
-
-Consume `urn:skills:frontend-change-request:v1`; the portable output is
-`urn:skills:source-change-result:v1`. When supplied, consume
-typed Task/requirement refs, authority refs, a compatible Asset Graph snapshot/query
-result, and an exact input PackageManifest; native source and contracts remain the
-implementation authority.
+Consume `urn:skills:frontend-change-request:v1` and produce
+`urn:skills:source-change-result:v1`. Typed Task, authority, graph, or package inputs
+are used when supplied; they do not replace current source and repository contracts.
 
 ## Workflow
 
-1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
-2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions. Read [references/checklist.md](references/checklist.md) for every implementation and complete its Required Context, Reuse-First Gate, and applicable Page And Feature Ownership checks before creating files or choosing component boundaries.
-3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When usable authorities apply, load the minimum chain in this order: effective instructions, product requirements or product Feature Spec, selected-source UI Feature Spec, resolved `<design-root>/DESIGN.md`, a compatible Repository Asset Graph query result when available, then live source/config before editing. Load `references/specification-authorities.md`, resolve authorities by meaning rather than filename, and read only the target-slice facts needed for this change. Missing optional artifacts do not create ceremony, but separately report each missing authority as `Not verified` when it affects behavior or acceptance. A missing graph never blocks bounded live discovery, and a graph miss never proves absence. For selected-source visual work, also read the selected-source evidence and [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md).
-   If a real non-LLM UI projection is already maintained, consume it only as bounded
-   composition/state navigation after the applicable Product Markdown, UI Markdown,
-   and `DESIGN.md`. Require a named owner, producer, non-LLM consumer, semantic
-   version, executable validator, drift policy, and retirement rule. Run the
-   repository-defined non-mutating validator before relying on it, then recheck its
-   referenced routes, components, states, and consumers in current source. Update a
-   task-owned projection only through its declared producer; never hand-edit it or
-   promote it above Markdown or source. If lifecycle evidence, validation, or
-   Markdown/source parity is missing, do not rely on it and report `Not verified`.
-   Do not require page YAML, component JSON, a project schema, or a validator for
-   ordinary implementation.
-4. Confirm acceptance criteria, non-goals, affected contracts/files, and validation seams from usable approved requirements. Consume existing contracts directly; hand unresolved product decisions to `product-spec` or required selected-source/shared visual decisions to `ui-spec` without treating either Skill as a file detector. When an applicable UI Feature Spec declares a viewport acceptance matrix, consume it without copying its schema: exercise required entries, select optional entries only when useful and in scope, and treat excluded entries only as outside the current acceptance scope, never as proof of unsupported behavior. A newer explicit user viewport constraint overrides a stale artifact. For complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
-   When the user supplies a new or replacement external contract, freeze its identity
-   and replacement intent before reading implementation conclusions from an older local
-   copy. If the repository requires a local canonical copy and the requested scope
-   authorizes that document change, update it first; otherwise consume the supplied
-   authority directly and report the local copy as stale. Stop on ambiguous owner,
-   target path, or competing versions instead of silently overwriting or auditing the
-   superseded artifact.
-   When the change reaches API/gateway/auth, environment/build/deploy, durable state,
-   desktop/native integration, replacement compatibility, or another repository,
-   load [project grounding](references/project-grounding.md) and close the activated
-   signal-to-evidence chain before editing. Do not let a dev proxy, mock, literal,
-   local build, or same-change UI contract stand in for the real behavior owner.
-5. Use graph asset/consumer/impact queries only to navigate and bound the read set,
-   then verify routes, UI, state, services, tests, analogous implementations, and live
-   theme/adapters in source and config. Reject a stale or mismatched snapshot; never
-   substitute a derived Markdown render for the typed query result. For API callers,
-   follow the repository's existing client/type authority. Load the protocol-contract
-   profile only when an OpenAPI/generated-client chain already exists or the task
-   explicitly introduces one.
-6. Treat resolved `<design-root>/DESIGN.md` as the shared visual-semantic authority when adopted. Repository-native component, styling, theme, and generator configuration are implementation adapters and current execution facts, not competing semantic authorities. Verify their actual binding in live source/config; do not claim DESIGN.md automatically synchronizes implementation. Decide `reuse`, `extend`, `wrap`, or justified `new` for each affected page region before editing. Record the candidates checked, the selected owner, and why any new surface is necessary; unresolved candidate ownership or drift is `Not verified`.
-   Before implementing a shared-system change, require official-format evidence, the
-   `ui-spec-design-completeness/1` producer result, and a satisfied consumer
-   completeness claim produced from a host-trusted approval receipt bound to the
-   current design hash and same exact Result Package. Local
-   `awaiting-trusted-approval-verification` without that claim, PackageManifest
-   integrity, or lint zero alone is insufficient; hand a
-   missing/stale/incomplete authority back to `ui-spec` and stop that shared slice.
-7. For selected-source work, require a valid `spec-ready` artifact and stop before editing when the source is unavailable, the slice is `Partial`/`Not Ready`, target viewport/state is unresolved, or a P1 asset lacks an accepted owner and per-item fallback. Map every applicable acceptance ID to owner file/component, `reuse`/`extend`/`wrap`/justified `new`, asset/data owner, and static/runtime verification method; validate the artifact at `mapped` before editing. Keep source targets separate from current computed runtime values.
-8. Classify the existing UI and layout owners for the selected target, then load only the matching framework, styling, state/data, layout, and desktop-webview references. When geometry, spacing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the task-completion seam.
-9. Preserve already-correct behavior and visual ownership unless the task changes them. For a visually material greenfield surface, accepted redesign, theme/accent change, or anti-slop correction, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); for changed motion or interaction feedback, load [references/interaction-motion-quality.md](references/interaction-motion-quality.md). Do not activate either profile from frontend file types alone.
-10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory visuals, generated code, or behavior without an honest seam.
-11. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. A route/page shell owns route context, page-level navigation, composition, and genuinely shared orchestration; it must not accumulate section-specific API calls, forms, tables, drawers, validation, or lifecycle branches. When multiple tabs or sections have independent business state, actions, validation, data loading, or lifecycles, keep each in a feature component and render them from a thin shell. Treat those signals, repeated business branches, or one file owning multiple capabilities as material maintainability risk: load `references/code-quality.md`, define the intended owners, and remove only code made obsolete by this task. File length alone is a signal, not proof or a universal split threshold.
-12. Update manifests, scripts, routes, tests, docs, indexes, generated files, and stale references for every affected structural change; remove only wrappers, declarations, overrides, or temporary patches made obsolete by the task.
-13. Run focused checks after each slice, then matching project-defined gates. Before
-    runtime acceptance, freeze the exact target surface, host/container, route,
-    entrypoint, state, and observable acceptance; a standalone preview, sibling route,
-    or another browser surface is separate evidence. For a page-level modal, Drawer,
-    portal/Teleport, or overlay-host change, include the outer mask and blocked
-    background, every affected entrypoint, nested overlay usability, stacking/clipping,
-    dismissal, and focus restoration. For one unchanged observable acceptance, allow
-    the initial runtime check and at most one correction recheck. If the same target
-    acceptance fails again, stop the implementation loop, preserve the current diff,
-    freeze expected/observed evidence, and return to diagnosis or a single-owner
-    handoff instead of continuing speculative patches. For selected-source work, use
-    `ops-browser` for two same-viewport/state comparisons and validate `pass-1` before
-    `final`; missing required runtime coverage remains `Partial` or `Not Ready`.
-    Compare pre/post Worktree state around validation and classify every new diff
-    before continuing.
-14. When Forgeway delivery integration is active, require an immutable Run with the
-    selected capability, input refs, exact scope, and input PackageManifest before
-    mutation. Let the package producer fingerprint the resulting tracked/untracked
-    files after each Attempt, and bind command/browser/artifact results as typed
-    Observations to that exact result package. A retry that changes the package makes
-    prior downstream observations stale; never rewrite them or emit a Receipt here.
+1. Read effective repository guidance, identify the real frontend root, package
+   manager, runtime, target route/component, and current Worktree state.
+2. Read only the authorities and source needed for the target slice. Start with the
+   user requirement and current implementation; use Product/UI specs and the resolved
+   `<design-root>/DESIGN.md` only when they apply. A missing optional artifact or graph
+   does not create a prerequisite ceremony.
+3. Complete the [reuse and page-ownership checklist](references/checklist.md): search
+   existing components and analogous pages, choose `reuse`, `extend`, `wrap`, or a
+   justified `new` owner, and keep route/tab shells declarative. Independent tabs or
+   sections with their own data, actions, forms, validation, or lifecycle belong in
+   feature components instead of one large conditional page.
+4. Confirm the observable acceptance, non-goals, affected contracts, and smallest
+   credible validation seam. Load [project grounding](references/project-grounding.md)
+   only when the change crosses a real API/auth, environment/build, durable-data,
+   desktop/native, compatibility, deployment, or cross-repository boundary. Keep
+   unrelated risk classes out of scope.
+5. Make the smallest coherent source change. Preserve established framework, routing,
+   state/data, component, styling, and test owners; do not introduce a parallel stack
+   or speculative shared layer.
+6. Run the nearest focused repository-owned check during iteration. Expand only for a
+   changed shared contract, generated/build chain, runtime boundary, or affected
+   consumer. Reserve full builds and full suites for final delivery, release,
+   deployment, explicit requests, or when no narrower credible check exists.
+7. Report changed owners, reuse decisions, validation, remaining Worktree content, and
+   every applicable runtime or external gap as `Not verified`. Source implementation
+   does not authorize browser/client operation or Git delivery.
 
-## Modes
+## Conditional Profiles
 
-- **Targeted implementation:** make a requested frontend change without broad layout or stack changes.
-- **Structure and style simplification:** reduce wrapper DOM, repeated utilities, duplicated CSS, unclear layout ownership, and competing scroll/overflow rules.
-- **Implementation self-check:** verify the edited frontend surface for component-system, import, style, layout, ownership, route, and framework-native state drift.
-- **Stack alignment:** preserve or deliberately align the repository-native framework, component, styling, routing, state/data, build, and desktop-webview owners.
+- **Selected visual source:** load [authorities](references/specification-authorities.md)
+  and [visual evidence](references/frontend-visual-evidence.md) only when an accepted
+  source and implementation-ready UI contract actually govern the task. Map applicable
+  acceptance IDs before editing; use `ops-browser` or `ops-client` for required runtime
+  evidence. Two-pass same-state comparison is a visual-completion gate, not a default
+  requirement for ordinary frontend changes.
+- **Layout or responsive behavior:** load
+  [layout governance](references/frontend-layout-governance.md) when geometry,
+  overflow, scrolling, layering, or breakpoints materially change.
+- **Protocol or generated client:** load [protocol contracts](references/protocol-contracts.md)
+  only for an existing or explicitly introduced contract chain.
+- **Behavior-first implementation:** load [behavior first](references/behavior-first.md)
+  when a stable public seam can support one red-capable check per behavior.
+- **Framework, styling, state, desktop, tooling, quality:** load only the matching
+  [framework](references/framework-profiles.md), [styling](references/styling-systems.md),
+  [stack](references/stack-guidelines.md), or [code-quality](references/code-quality.md)
+  profile required by the current change.
+- **Forgeway integration:** when an immutable Run and input PackageManifest are
+  supplied, bind the changed result and observations to that basis. Do not require a
+  Forgeway Run for normal repository development.
 
-## Do Not Use For
-
-- Discovery routes to `repo-map`; planning/diagnosis without source authority stays
-  with the host.
-- Shared domain conflicts route to `domain-modeling`; feature behavior/acceptance to
-  `product-spec`; UI contracts and selected-source translation without edits to `ui-spec`.
-- Worktree review and commit readiness route to `repo-review`; staging, commits,
-  rewrite, push, and delivery to `repo-delivery`.
-- Systematic frontend audit without edits routes to `audit-frontend`.
-- Web page operation/evidence routes to `ops-browser`; real desktop-client/window
-  operation and proof to `ops-client`.
+For a maintained non-LLM UI projection: Require a named owner, producer, non-LLM
+consumer, semantic version, executable validator, drift policy, and retirement rule.
+Run the repository-defined non-mutating validator before relying on it, then verify
+referenced routes and components in current source. Otherwise ignore the projection
+rather than creating or repairing one for ordinary implementation.
 
 ## Hard Rules
 
-- Follow repository-pinned Node/package-manager versions, lockfile, dependency policy, script names, directory names, and file naming. Do not upgrade or normalize them during unrelated UI work.
-- Do not introduce a parallel UI kit, CSS system, routing pattern, state layer, API helper, icon library, or form library when an existing one covers the need.
-- Existing repository components, adapters, hooks/composables, stores, utilities, tokens, and interaction patterns are the default implementation path. A new owner requires targeted search evidence and a behavior or ownership reason; preference, convenience, or different naming is insufficient.
-- Keep multi-section page shells declarative. Do not place independent tab/section business implementations behind large conditional branches in one page file; give each independently stateful business section a feature owner and keep shared orchestration at the nearest common parent.
-- When the repository has a credible test seam, preserve component ownership with a focused structural or behavior test: prove that the shell composes the intended feature owners and does not import section-specific APIs or duplicate established shared components. Do not add brittle line-count or markup-snapshot tests as substitutes.
-- Do not elevate an implementation adapter, local theme/config, generated component source, or current runtime into a second visual-semantic authority. They prove only their current implementation binding; report design-to-adapter drift or unexercised behavior as `Not verified` until evidenced.
-- Load and apply only the selected framework, styling, build/tooling, protocol,
-  behavior-first, conditional code-quality, or codebase-design references. Do
-  not cross-apply another stack profile.
-- Prefer non-mutating `lint`, `typecheck`, `test`, `check`, build, and formatting validation. A command name or documented intent is not proof that the checkout stayed unchanged: compare pre/post Worktree state when the tool may generate or rewrite files, disclose unexpected drift, and never absorb it into the task silently. Run known write-mode generators in an isolated copy when practical. Restore a task-owned validation side effect only when its exact prior content is known and the complete current diff is attributable to that validation with no concurrent or mixed ownership; otherwise preserve the diff, stop, and route ownership reconciliation to `repo-review`.
-- Mark unchecked visual, responsive, console, network, runtime, or accessibility behavior as `Not verified`.
-- Treat loading, empty, error, permission, partial/stale, retry, cancellation, and
-  offline/runtime-failure behavior as contract questions only when reachable for the
-  selected data or integration path; do not impose every state on styling-only work.
-- Do not claim selected-source visual completion from build/lint/typecheck, SCSS inspection, or one screenshot pass. Require the two-pass runtime gate and applicable computed geometry/style evidence.
-- Do not add speculative shared layers or incidental framework/tooling rewrites. Resolve route, dynamic import, registration, build, test, and external-consumer reachability before deleting apparently unused code.
+- Follow repository-pinned versions, lockfiles, scripts, directories, and dependency
+  policy; do not normalize unrelated tooling.
+- Existing components, adapters, stores, utilities, tokens, and interaction patterns
+  are the default. A new owner needs a targeted search and a concrete behavior or
+  ownership reason.
+- Keep page/tab shells responsible for navigation and composition, not section-specific
+  APIs, forms, tables, drawers, validation, and lifecycle branches.
+- Prefer non-mutating validation. Compare Worktree state around tools that may generate
+  or rewrite files and never absorb unexplained drift.
+- A build, lint pass, source inspection, or browser preview proves only its own layer.
+  Mark unexercised visual, responsive, accessibility, network, desktop, deployment, and
+  production behavior `Not verified`.
+- Stop on missing source-edit authorization, an unresolved governing contract, or a
+  second failure of the same frozen runtime acceptance; preserve evidence and return to
+  diagnosis instead of adding speculative patches.
+- Do not stage, commit, push, deploy, or open a pull request from this Skill.
 
-## Validation Model
+## Output
 
-- **Iteration:** run the smallest credible repository-owned lint, type, focused test,
-  or local build check that covers the edited surface.
-- **Expansion:** add affected consumers and contract checks only when shared interfaces,
-  generated outputs, build configuration, runtime seams, or cross-module behavior changed.
-- **Full gate:** reserve full builds, full-repository tests, and release gates for merge,
-  release, deployment, final fixed-basis acceptance, explicit user requests, or the rare
-  case where no credible focused check exists for the actual risk.
-
-## Output Contract
-
-Report capability `frontend.source.implement`, applicable Run/PackageManifest and typed
-result refs, scope, project/stack/ownership, authorities, risks, reuse decision,
-changed files/contracts, validation, Worktree drift, exclusions, and `Not verified`
-gaps. When applicable include selected-source mapping, both visual passes, and evidence.
-Send a fixed basis to `ask-ai` only when independent external review is explicit.
+Return capability `frontend.source.implement` with scope, project/stack, authority and
+reuse decisions, changed files/contracts, focused and expanded validation, Worktree
+drift, exclusions, and `Not verified` gaps. Include visual mapping and runtime passes
+only when the selected-source profile was active.
 
 ## References
 
 - Core: [usage](references/usage.md), [checklist](references/checklist.md),
-  [authorities](references/specification-authorities.md), [layout](references/frontend-layout-governance.md),
-  [grounding](references/project-grounding.md).
-- Visual: [direction](references/visual-direction-and-anti-slop.md),
+  [authorities](references/specification-authorities.md),
+  [grounding](references/project-grounding.md), [evals](references/eval-cases.md).
+- Conditional: [layout](references/frontend-layout-governance.md),
+  [visual direction](references/visual-direction-and-anti-slop.md),
   [motion](references/interaction-motion-quality.md),
-  [evidence](references/frontend-visual-evidence.md),
-  [example](references/frontend-visual-gate-example.md).
-- Implementation profiles: [protocols](references/protocol-contracts.md),
-  [behavior first](references/behavior-first.md), [codebase design](references/codebase-design.md),
+  [visual evidence](references/frontend-visual-evidence.md),
+  [visual example](references/frontend-visual-gate-example.md),
+  [protocols](references/protocol-contracts.md),
+  [behavior first](references/behavior-first.md),
+  [codebase design](references/codebase-design.md),
   [frameworks](references/framework-profiles.md), [styling](references/styling-systems.md),
-  [stack](references/stack-guidelines.md), [code quality](references/code-quality.md),
-  [evals](references/eval-cases.md).
+  [stack](references/stack-guidelines.md), [quality](references/code-quality.md).
