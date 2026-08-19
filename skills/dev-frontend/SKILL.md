@@ -9,6 +9,13 @@ description: "Use when a frontend change must be implemented or refactored acros
 
 Implement frontend changes with existing-stack alignment, minimal DOM/CSS, clear layout ownership, and explicit verification. Detect the framework first. Use `ops-browser` for web runtime evidence and `ops-client` for desktop-window proof.
 
+Default to the repository's current components, patterns, and owners. Reuse directly
+when behavior and ownership match; otherwise extend or adapt the nearest proven
+implementation. Create a new component, helper, or layer only after a targeted search
+shows why existing candidates are insufficient. Reuse does not mean premature shared
+abstraction: keep feature-local behavior local until real consumers justify a stable
+shared owner.
+
 Consume `urn:skills:frontend-change-request:v1`; the portable output is
 `urn:skills:source-change-result:v1`. When supplied, consume
 typed Task/requirement refs, authority refs, a compatible Asset Graph snapshot/query
@@ -18,7 +25,7 @@ implementation authority.
 ## Workflow
 
 1. Read effective repository guidance first, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present.
-2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions.
+2. Identify the frontend project class, app boundary, package manager, runtime pin, script contract, directory/naming standard, and documented exceptions. Read [references/checklist.md](references/checklist.md) for every implementation and complete its Required Context, Reuse-First Gate, and applicable Page And Feature Ownership checks before creating files or choosing component boundaries.
 3. Identify the target page, route, screen, component, framework, UI type, visual source, and required states before editing. When usable authorities apply, load the minimum chain in this order: effective instructions, product requirements or product Feature Spec, selected-source UI Feature Spec, resolved `<design-root>/DESIGN.md`, a compatible Repository Asset Graph query result when available, then live source/config before editing. Load `references/specification-authorities.md`, resolve authorities by meaning rather than filename, and read only the target-slice facts needed for this change. Missing optional artifacts do not create ceremony, but separately report each missing authority as `Not verified` when it affects behavior or acceptance. A missing graph never blocks bounded live discovery, and a graph miss never proves absence. For selected-source visual work, also read the selected-source evidence and [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md).
    If a real non-LLM UI projection is already maintained, consume it only as bounded
    composition/state navigation after the applicable Product Markdown, UI Markdown,
@@ -51,7 +58,7 @@ implementation authority.
    follow the repository's existing client/type authority. Load the protocol-contract
    profile only when an OpenAPI/generated-client chain already exists or the task
    explicitly introduces one.
-6. Treat resolved `<design-root>/DESIGN.md` as the shared visual-semantic authority when adopted. Repository-native component, styling, theme, and generator configuration are implementation adapters and current execution facts, not competing semantic authorities. Verify their actual binding in live source/config; do not claim DESIGN.md automatically synchronizes implementation. Decide `reuse`, `extend`, `wrap`, or justified `new`, and record insufficient candidates or unresolved drift as `Not verified`.
+6. Treat resolved `<design-root>/DESIGN.md` as the shared visual-semantic authority when adopted. Repository-native component, styling, theme, and generator configuration are implementation adapters and current execution facts, not competing semantic authorities. Verify their actual binding in live source/config; do not claim DESIGN.md automatically synchronizes implementation. Decide `reuse`, `extend`, `wrap`, or justified `new` for each affected page region before editing. Record the candidates checked, the selected owner, and why any new surface is necessary; unresolved candidate ownership or drift is `Not verified`.
    Before implementing a shared-system change, require official-format evidence, the
    `ui-spec-design-completeness/1` producer result, and a satisfied consumer
    completeness claim produced from a host-trusted approval receipt bound to the
@@ -63,7 +70,7 @@ implementation authority.
 8. Classify the existing UI and layout owners for the selected target, then load only the matching framework, styling, state/data, layout, and desktop-webview references. When geometry, spacing, overflow, scrolling, layering, or responsive behavior is material, load `references/frontend-layout-governance.md` and identify the task-completion seam.
 9. Preserve already-correct behavior and visual ownership unless the task changes them. For a visually material greenfield surface, accepted redesign, theme/accent change, or anti-slop correction, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); for changed motion or interaction feedback, load [references/interaction-motion-quality.md](references/interaction-motion-quality.md). Do not activate either profile from frontend file types alone.
 10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory visuals, generated code, or behavior without an honest seam.
-11. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. When duplication, dead/unused code, abstraction, coupling, or maintainability is material, load `references/code-quality.md` and remove only code made obsolete by this task.
+11. Implement with the smallest component, DOM, CSS, and ownership surface that matches existing patterns. A route/page shell owns route context, page-level navigation, composition, and genuinely shared orchestration; it must not accumulate section-specific API calls, forms, tables, drawers, validation, or lifecycle branches. When multiple tabs or sections have independent business state, actions, validation, data loading, or lifecycles, keep each in a feature component and render them from a thin shell. Treat those signals, repeated business branches, or one file owning multiple capabilities as material maintainability risk: load `references/code-quality.md`, define the intended owners, and remove only code made obsolete by this task. File length alone is a signal, not proof or a universal split threshold.
 12. Update manifests, scripts, routes, tests, docs, indexes, generated files, and stale references for every affected structural change; remove only wrappers, declarations, overrides, or temporary patches made obsolete by the task.
 13. Run focused checks after each slice, then matching project-defined gates. Before
     runtime acceptance, freeze the exact target surface, host/container, route,
@@ -110,6 +117,9 @@ implementation authority.
 
 - Follow repository-pinned Node/package-manager versions, lockfile, dependency policy, script names, directory names, and file naming. Do not upgrade or normalize them during unrelated UI work.
 - Do not introduce a parallel UI kit, CSS system, routing pattern, state layer, API helper, icon library, or form library when an existing one covers the need.
+- Existing repository components, adapters, hooks/composables, stores, utilities, tokens, and interaction patterns are the default implementation path. A new owner requires targeted search evidence and a behavior or ownership reason; preference, convenience, or different naming is insufficient.
+- Keep multi-section page shells declarative. Do not place independent tab/section business implementations behind large conditional branches in one page file; give each independently stateful business section a feature owner and keep shared orchestration at the nearest common parent.
+- When the repository has a credible test seam, preserve component ownership with a focused structural or behavior test: prove that the shell composes the intended feature owners and does not import section-specific APIs or duplicate established shared components. Do not add brittle line-count or markup-snapshot tests as substitutes.
 - Do not elevate an implementation adapter, local theme/config, generated component source, or current runtime into a second visual-semantic authority. They prove only their current implementation binding; report design-to-adapter drift or unexercised behavior as `Not verified` until evidenced.
 - Load and apply only the selected framework, styling, build/tooling, protocol,
   behavior-first, conditional code-quality, or codebase-design references. Do

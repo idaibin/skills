@@ -7,6 +7,7 @@ Use this checklist when implementing or reviewing frontend changes.
 - [Required Context](#required-context)
 - [Reuse-First Gate](#reuse-first-gate)
 - [Stack And Structure](#stack-and-structure)
+- [Page And Feature Ownership](#page-and-feature-ownership)
 - [Framework Profile](#framework-profile)
 - [DOM And Layout Ownership](#dom-and-layout-ownership)
 - [Styling](#styling)
@@ -52,6 +53,26 @@ Use this checklist when implementing or reviewing frontend changes.
 - Extract a shared component or package only after identifying real consumers, named ownership, stable props/API, shared tests, and consumer validation.
 - Preserve path aliases and import ordering conventions.
 - Keep local UI state local unless the app already uses a global store or route/query layer for the same responsibility.
+
+## Page And Feature Ownership
+
+- Treat the route/page file as a shell when it coordinates multiple independently
+  stateful business tabs or sections. The shell may own route context, page-level
+  navigation, component selection, and genuinely shared data or locks.
+- Give a tab or section its own feature component when it owns an independent API
+  flow, form, table, drawer/dialog, validation rules, action lifecycle, or loading and
+  error state. Do not implement those sections as large conditional branches in the
+  page shell.
+- Keep shared orchestration at the nearest common parent and pass the smallest stable
+  props/events or repository-native context. Do not duplicate shared loading, user
+  selection, permission, or lookup owners inside every section.
+- Split by business ownership and change reason, not by arbitrary line count, one
+  component per file dogma, or visual fragments with no independent behavior.
+- Before extracting a cross-feature shared component, prove real consumers and a
+  stable common contract. Otherwise keep the component inside its feature directory.
+- When a credible test seam exists, add a focused invariant that the shell composes
+  the intended feature components and does not own their API/form/table/drawer logic.
+  Prefer import/consumer or public-behavior evidence over full-markup snapshots.
 
 ## Framework Profile
 
