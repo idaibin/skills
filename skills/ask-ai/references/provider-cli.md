@@ -5,6 +5,7 @@
 - [Boundary](#boundary)
 - [Shared Execution Contract](#shared-execution-contract)
 - [Native Execution Modes](#native-execution-modes)
+- [Version Drift And Conformance Receipts](#version-drift-and-conformance-receipts)
 - [Adaptive Monitoring](#adaptive-monitoring)
 - [Artifact Handoff](#artifact-handoff)
 - [First-Tier Providers](#first-tier-providers)
@@ -128,9 +129,42 @@ boundary, mark the mode `Not verified` and return Package-only.
 
 Canary operations have their own operation and session records. They never consume a
 formal review turn, authorize a formal submit, or become the session registry entry for
-later work. A stale executable fingerprint or mode profile blocks formal submission
-until a new canary passes; while stale, return Package-only with the required canary
-instead of using old or guessed arguments.
+later work.
+
+## Version Drift And Conformance Receipts
+
+Persist a bounded, user-owned conformance receipt after a successful capability canary.
+Key it by canonical provider, resolved executable path, exact executable fingerprint,
+validated profile digest, and native mode. Record the exact version, verification time,
+method (`live-canary` or `compatible-drift`), covered capability and permission scope,
+and any receipt from which evidence was inherited. Write the receipt atomically and
+read it back before treating it as current.
+
+At every preflight, perform only the cheap read-only comparison first:
+
+- When the exact fingerprint and profile digest match a valid receipt, reuse it. Do not
+  rerun the discovery probe or canary, and do not emit a stale-profile warning. Task-time
+  repository, workspace, attribution, and terminal checks still apply.
+- When only the executable fingerprint or exact version changed, run one no-submit
+  compatibility probe for that new fingerprint. A change is eligible for
+  `compatible-drift` only when provider identity, required help surface, argument
+  binding, profile digest, native mode, permission strategy, isolation boundary,
+  workspace semantics, output framing, attribution fields, terminal vocabulary, and
+  resume semantics remain compatible with a prior live-canary receipt. SemVer alone is
+  never compatibility proof. Persist the inherited receipt for the new fingerprint;
+  subsequent invocations reuse it without another prompt or probe.
+- Treat a changed profile digest, provider identity, required option, argument binding,
+  permission or persistence behavior, output or terminal contract, workspace or resume
+  semantics, missing prior live-canary evidence, or an observed runtime regression as
+  material drift. Run the smallest relevant isolated canary at most once per new
+  fingerprint and profile digest, then persist its result.
+
+A discovery-only or Package-only request may persist discovery evidence, but it cannot
+mint runtime conformance without an already valid compatible receipt. A failed or
+pending result blocks formal submission for that exact key; reuse the recorded result
+instead of repeating the same probe on every task. Retry only after a relevant input
+changes or the user explicitly requests it. Never carry a receipt across providers,
+executable paths, profile digests, native modes, or incompatible capability scopes.
 
 ## Adaptive Monitoring
 
@@ -225,9 +259,9 @@ arguments required to enforce that difference.
 
 Treat installed help as live candidate discovery, not permanent capability proof.
 Build each invocation from the help-advertised positive surface and the minimum options
-the task actually requires. Before a material version change is trusted, run the
-relevant isolated no-submit argument-binding probe and conformance cases. If a required
-option is rejected before submit, omit it from that invocation and retain the failure
+the task actually requires. Apply the Version Drift And Conformance Receipts lifecycle
+after executable or profile changes; do not rerun a passed check for the same exact key.
+If a required option is rejected before submit, omit it from that invocation and retain the failure
 only in task-local conformance evidence; do not accumulate disabled or unsupported
 option inventories in user defaults or the portable Skill. Re-discover after executable
 changes. When a model and reasoning combination fails before submission, keep that
