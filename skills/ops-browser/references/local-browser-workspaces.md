@@ -50,6 +50,14 @@ schema_version: ops-browser-defaults/v1
 local_browser:
   product: <user-selected browser product>
   surface_priority: preferred | fallback
+  routing:
+    default_surface: codex-in-app-browser | user-local-browser
+    authenticated_fallback: user-local-browser | codex-in-app-browser | none
+    local_development:
+      surface: user-local-browser
+      workspace: <user-selected logical workspace label>
+      reuse_existing: true
+      create_if_missing: true
   execution_profile:
     mode: existing-user-profile | dedicated-user-data-dir
     name: <user-selected profile name>
@@ -92,18 +100,18 @@ local_browser:
     max_open_tabs_per_domain: <positive integer>
   locked_session:
     enabled: true
-    require_prepared_control: true
+    require_prepared_control: true | false
     allowed_backends: [browser-native-control, browser-extension-control, direct-cdp]
     allow_transport_reconnect: true
-    prohibit_browser_launch: true
-    prohibit_debug_enablement: true
+    prohibit_browser_launch: true | false
+    prohibit_debug_enablement: true | false
     prohibit_profile_import: true
     prohibit_window_activation: true
     prohibit_keyboard_pointer: true
     cdp:
       require_loopback_only: true
       require_dedicated_profile: true
-      require_prelock_roundtrip: true
+      require_prelock_roundtrip: true | false
   profile_state:
     reuse_existing: true
     automatic_profile_copy: false
@@ -113,10 +121,11 @@ last_verified_at: <informational timestamp>
 
 `execution_profile.mode: dedicated-user-data-dir` makes the entire Chrome data root
 the AI isolation boundary. It does not inherit the default Chrome profile, cookies,
-credentials, extensions, or account state. The launcher may start it while unlocked;
-while locked, `require_existing_when_locked: true` permits only an already running,
-verified endpoint. `devtools-active-port` reads the task-owned `DevToolsActivePort`
-record instead of assuming a fixed port.
+credentials, extensions, or account state. The launcher may start it while unlocked.
+While locked, `require_existing_when_locked: true` permits only an already running,
+verified endpoint; `false` permits one policy-authorized background launch and CDP
+initialization followed by complete current-state revalidation. `devtools-active-port`
+reads the task-owned `DevToolsActivePort` record instead of assuming a fixed port.
 
 Account sign-in and MFA use `login_bootstrap`, which launches the dedicated profile
 without CDP, automation flags, extension control, or GUI scripting. Never automate or
@@ -144,10 +153,19 @@ login still exists.
 `surface_priority: preferred` makes the configured local browser the default only
 when the current request does not select another surface. It never overrides a hard
 surface constraint or missing live capability. The locked-session record permits a
-prepared browser-native, extension, or loopback CDP control plane. It may allow
-transport reconnection to that exact prepared endpoint, but never authorizes launching
-Chrome, enabling debugging, importing a profile, activating a window, or using GUI
-input.
+browser-native, extension, or loopback CDP control plane. When browser launch or debug
+initialization is not prohibited, it authorizes one background setup attempt without
+unlocking, waking, activating, foregrounding, or GUI input.
+
+`routing.default_surface` selects the ordinary unqualified route. When
+`authenticated_fallback` is configured, first verify that the default surface lacks the
+required login, then inspect the fallback surface and continue there only after its
+target login is directly verified. `routing.local_development` overrides the ordinary
+route for loopback and explicitly identified local dev/preview pages. Reuse a safe tab
+matching environment, account, and origin before creating one. A workspace label such
+as `AI_dev` is routing metadata unless the active background controller independently
+exposes native Chrome group enumeration and placement; never foreground the browser to
+manufacture group evidence.
 
 ## Configuration Changes
 
@@ -176,8 +194,10 @@ Control-session policy selects the host automation-session identity and label; g
 selects tab placement. Neither selects an account, provider, Project,
 conversation, model, browser permission, external recipient, or write authorization.
 The execution-profile boundary is resolved first. When it is `dedicated-user-data-dir`,
-reuse or launch that exact profile while unlocked and apply no Chrome group requirement.
-When locked, the exact profile process and prepared endpoint must already exist.
+reuse or launch that exact profile and apply no Chrome group requirement. While locked,
+reuse or reconnect first. If `require_existing_when_locked` is false and launch/debug
+initialization is permitted, attempt one background setup and revalidate the resulting
+profile and endpoint before page action.
 
 ## Control Session Gate
 
@@ -194,10 +214,11 @@ resolved policies, capability states, stable session/group observations, selecte
 and placement target into `local-browser-workspace-preflight/v1`, then run
 `python3 scripts/preflight-local-browser-workspace.py <evidence.json>`. Treat exit `20`
 as `capability-unavailable`. Exit `10` is `creation-required`: perform only the exact
-configured session or group creation whose result field is true, then re-enumerate and
-rerun the gate from new immutable evidence. It never permits `nameSession`, `tabs.new`,
-navigation, or page action. If creation completion is ambiguous, reconcile that same
-operation; do not retry or create another same-named workspace.
+configured session or group creation whose result field is true. Exit `11` is
+`setup-required`: perform exactly one `background_browser_setup`, then rerun with
+`background_setup_attempted: true` and fresh evidence. Neither state permits
+`nameSession`, `tabs.new`, navigation, or page action. If setup or creation completion
+is ambiguous, do not retry.
 
 Preserve the preflight input, result, exit state, and timestamps in the same fixed
 evidence package as the later Capability Snapshot and requested action. When a ready
@@ -246,20 +267,17 @@ and record only title, URL, recency, and group metadata needed for selection. Do
 inspect unrelated page content.
 
 Record `screen_session` and `selected_backend` in preflight. With `locked`, require
-`background_safe_tab_enumeration` and `background_safe_page_control` plus either an
-already connected controller or a prepared endpoint whose transport can reconnect
-without launching Chrome, enabling debugging, importing profile state, activating a
-window, or using GUI automation. The configured session and group must already exist;
-creation is never permitted while locked. When a caller requires lock-safe behavior
-and the screen state is `unknown`, stop before page action. This gate can authorize
-browser-native page operations only; it cannot establish window visibility, screenshot,
-focus, keyboard, pointer, Accessibility, or coordinate evidence.
+`background_safe_tab_enumeration` and `background_safe_page_control` plus an existing
+connection, a reconnectable endpoint, or one policy-permitted background setup attempt.
+The setup must not unlock, wake, activate, foreground, or use GUI input. When a caller
+requires lock-safe behavior and the screen state is `unknown`, stop before page action.
+This gate cannot establish window visibility, screenshot, focus, keyboard, pointer,
+Accessibility, or coordinate evidence.
 
-For `direct-cdp`, additionally require a loopback-only endpoint, a dedicated automation
-profile, and a successful pre-lock round trip bound to the exact browser/profile. The
-browser and prepared endpoint may remain idle; continuous page activity is unnecessary.
-A transport reconnect after lock is allowed only to that prepared endpoint and must
-revalidate the browser, profile, target, and required capabilities. CDP availability
+For `direct-cdp`, require a loopback-only endpoint and a dedicated automation profile.
+When `require_prelock_roundtrip` is false, current-session proof of the exact profile,
+endpoint, target enumeration, background-safe transport, and page control is sufficient.
+After a background launch or reconnect, revalidate that complete chain. CDP availability
 does not authorize copying the user's default Chrome profile.
 
 - Treat a tool-exposed `tabGroup` value as observation of that tab's current group.

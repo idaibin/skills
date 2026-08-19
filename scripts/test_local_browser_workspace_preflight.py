@@ -46,12 +46,18 @@ def ready_fixture() -> dict:
             },
             "locked_session": {
                 "enabled": True,
+                "require_prepared_control": True,
                 "allowed_backends": [
                     "browser-native-control",
                     "browser-extension-control",
                     "direct-cdp",
                 ],
                 "allow_transport_reconnect": True,
+                "prohibit_browser_launch": True,
+                "prohibit_debug_enablement": True,
+                "prohibit_profile_import": True,
+                "prohibit_window_activation": True,
+                "prohibit_keyboard_pointer": True,
                 "cdp": {
                     "require_loopback_only": True,
                     "require_dedicated_profile": True,
@@ -208,7 +214,7 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
         self.assertTrue(result["lock_safe_ready"])
         self.assertEqual("direct-cdp", result["selected_backend"])
 
-    def test_locked_cdp_without_prelock_roundtrip_stops(self) -> None:
+    def test_locked_cdp_without_prelock_roundtrip_continues_when_not_required(self) -> None:
         fixture = ready_fixture()
         fixture["screen_session"] = "locked"
         fixture["selected_backend"] = "direct-cdp"
@@ -223,12 +229,9 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
                 "cdp_prelock_roundtrip_verified": "unknown",
             }
         )
+        fixture["policy"]["locked_session"]["cdp"]["require_prelock_roundtrip"] = False
         result = PREFLIGHT.evaluate(fixture)
-        self.assertEqual("capability-unavailable", result["state"])
-        self.assertIn(
-            "required locked-session capability unavailable: cdp_prelock_roundtrip_verified",
-            result["reasons"],
-        )
+        self.assertEqual("ready", result["state"])
 
     def test_locked_session_cannot_launch_browser_or_import_profile(self) -> None:
         fixture = ready_fixture()
@@ -246,10 +249,128 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
         }
         result = PREFLIGHT.evaluate(fixture)
         self.assertEqual("capability-unavailable", result["state"])
-        self.assertIn("locked session cannot launch the browser", result["reasons"])
+        self.assertIn("locked-session policy prohibits browser launch", result["reasons"])
         self.assertIn(
-            "locked session cannot import browser profile state", result["reasons"]
+            "locked-session policy prohibits browser profile import", result["reasons"]
         )
+
+    def test_locked_session_allows_one_background_setup_when_policy_permits(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["selected_backend"] = "direct-cdp"
+        fixture["browser_instances"][1]["available"] = False
+        fixture["policy"]["execution_profile"] = {
+            "mode": "dedicated-user-data-dir",
+            "require_existing_when_locked": False,
+        }
+        fixture["policy"]["control_session"] = {"enabled": False}
+        fixture["policy"]["tab_grouping"] = {"enabled": False}
+        fixture["policy"]["locked_session"]["prohibit_browser_launch"] = False
+        fixture["policy"]["locked_session"]["prohibit_debug_enablement"] = False
+        fixture["policy"]["locked_session"]["require_prepared_control"] = False
+        fixture["policy"]["locked_session"]["cdp"]["require_prelock_roundtrip"] = False
+        fixture["capabilities"] = {"background_safe_browser_setup": "available"}
+        fixture["observations"] = {}
+        fixture["controller_constraints"] = {
+            "requires_browser_launch": True,
+            "requires_debug_enablement": True,
+        }
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("setup-required", result["state"])
+        self.assertTrue(result["permitted_actions"]["background_browser_setup"])
+        self.assertFalse(result["permitted_actions"]["claim_verified_tab"])
+
+    def test_locked_session_does_not_retry_failed_background_setup(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["selected_backend"] = "direct-cdp"
+        fixture["background_setup_attempted"] = True
+        fixture["browser_instances"][1]["available"] = False
+        fixture["policy"]["execution_profile"] = {
+            "mode": "dedicated-user-data-dir",
+            "require_existing_when_locked": False,
+        }
+        fixture["policy"]["control_session"] = {"enabled": False}
+        fixture["policy"]["tab_grouping"] = {"enabled": False}
+        fixture["policy"]["locked_session"]["prohibit_browser_launch"] = False
+        fixture["policy"]["locked_session"]["prohibit_debug_enablement"] = False
+        fixture["policy"]["locked_session"]["require_prepared_control"] = False
+        fixture["policy"]["locked_session"]["cdp"]["require_prelock_roundtrip"] = False
+        fixture["capabilities"] = {"background_safe_browser_setup": "available"}
+        fixture["observations"] = {}
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertFalse(result["permitted_actions"]["background_browser_setup"])
+        self.assertIn(
+            "background browser setup already attempted without a verified endpoint",
+            result["reasons"],
+        )
+
+    def test_locked_background_setup_requires_window_activation_to_remain_prohibited(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["selected_backend"] = "direct-cdp"
+        fixture["browser_instances"][1]["available"] = False
+        fixture["policy"]["execution_profile"] = {
+            "mode": "dedicated-user-data-dir",
+            "require_existing_when_locked": False,
+        }
+        fixture["policy"]["control_session"] = {"enabled": False}
+        fixture["policy"]["tab_grouping"] = {"enabled": False}
+        fixture["policy"]["locked_session"]["prohibit_browser_launch"] = False
+        fixture["policy"]["locked_session"]["prohibit_debug_enablement"] = False
+        fixture["policy"]["locked_session"]["require_prepared_control"] = False
+        fixture["policy"]["locked_session"]["prohibit_window_activation"] = False
+        fixture["policy"]["locked_session"]["cdp"]["require_prelock_roundtrip"] = False
+        fixture["capabilities"] = {"background_safe_browser_setup": "available"}
+        fixture["observations"] = {}
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertFalse(result["permitted_actions"]["background_browser_setup"])
+
+    def test_locked_background_setup_rejects_gui_automation(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["capabilities"].update(
+            {
+                "preconnected_browser_control": "available",
+                "background_safe_tab_enumeration": "available",
+                "background_safe_page_control": "available",
+            }
+        )
+        fixture["controller_constraints"] = {"requires_gui_automation": True}
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn("locked-session policy prohibits GUI automation", result["reasons"])
+
+    def test_locked_session_ready_after_background_setup_revalidation(self) -> None:
+        fixture = ready_fixture()
+        fixture["screen_session"] = "locked"
+        fixture["selected_backend"] = "direct-cdp"
+        fixture["background_setup_attempted"] = True
+        fixture["policy"]["execution_profile"] = {
+            "mode": "dedicated-user-data-dir",
+            "require_existing_when_locked": False,
+        }
+        fixture["policy"]["control_session"] = {"enabled": False}
+        fixture["policy"]["tab_grouping"] = {"enabled": False}
+        fixture["policy"]["locked_session"]["prohibit_browser_launch"] = False
+        fixture["policy"]["locked_session"]["prohibit_debug_enablement"] = False
+        fixture["policy"]["locked_session"]["require_prepared_control"] = False
+        fixture["policy"]["locked_session"]["cdp"]["require_prelock_roundtrip"] = False
+        fixture["capabilities"] = {
+            "preconnected_browser_control": "available",
+            "background_safe_tab_enumeration": "available",
+            "background_safe_page_control": "available",
+            "cdp_loopback_only": "available",
+            "cdp_dedicated_profile": "available",
+            "dedicated_profile_identity": "available",
+            "loopback_endpoint_ready": "available",
+        }
+        fixture["observations"] = {}
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("ready", result["state"])
+        self.assertTrue(result["lock_safe_ready"])
 
     def test_locked_session_without_background_page_control_stops(self) -> None:
         fixture = ready_fixture()
@@ -339,6 +460,7 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
         self.assertEqual("capability-unavailable", result["state"])
         self.assertEqual(
             {
+                "background_browser_setup": False,
                 "claim_verified_tab": False,
                 "name_session": False,
                 "create_tab": False,

@@ -8,10 +8,11 @@ description: "Use when directly operating or verifying a specified page, capturi
 ## Overview
 
 Operate or verify browser pages without conflating in-app, user-local, cloud/agent,
-or isolated browser state. Prefer the Codex in-app Browser for ordinary read-only work.
-Use a user-local browser only when its exact profile state is necessary and the selected
-control path is proven background-safe. Collect only evidence the active surface can
-expose; route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
+or isolated browser state. Prefer the Codex in-app Browser for ordinary work. When that
+surface lacks required authentication, check a configured local CDP route and continue
+there only after verifying the target login. Route local development pages to the
+configured local CDP workspace. Collect only evidence the active surface can expose;
+route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 
 ## Foreground-Safety Gate
 
@@ -34,9 +35,17 @@ expose; route frontend edits to `dev-frontend` and desktop-client proof to `ops-
    unchecked fields `unknown`. For user-local routes, load
    [local-browser-workspaces.md](references/local-browser-workspaces.md), serialize
    live evidence, and run `python3 scripts/preflight-local-browser-workspace.py
-   <evidence.json>` before setup or page actions. Exit `10` permits only listed setup;
-   re-enumerate and rerun. Exit `20` stops the route. Record screen lock state and fail
-   closed when the exact locked-session operation is not proven safe. If the controller
+   <evidence.json>` before setup or page actions. Exit `10` permits only listed workspace
+   creation. Exit `11` permits exactly one `background_browser_setup`; record that
+   consumed permit in the task-local ledger, then rerun with
+   `background_setup_attempted: true` and fresh evidence. Never resend the initial
+   preflight after an attempted setup. Exit `20` stops the
+   route. Record screen lock state and fail
+   closed when the exact locked-session operation is not proven safe. Lock state alone
+   and missing pre-lock history are not stop conditions. Reuse or reconnect first; if
+   policy permits, attempt one background dedicated-profile launch and loopback CDP
+   initialization without unlocking, waking, activating, foregrounding, or GUI input,
+   then revalidate the complete current route. If the controller
    requires task-specific naming, set
    `controller_constraints.requires_task_specific_session_name: true` and fail closed.
    When foreground safety needs a live canary, run it only after a ready preflight on
@@ -44,9 +53,14 @@ expose; route frontend edits to `dev-frontend` and desktop-client proof to `ops-
    the requested action. Keep preflight, canary, snapshot, action, after-state, and
    cleanup timestamps in one fixed evidence package; later evidence cannot
    retroactively verify an earlier action.
-3. Select the explicit surface, else the in-app Browser for ordinary read-only work,
-   else a proven background-safe user-local route when profile state is required, else
-   an isolated browser. Local preferences never override foreground safety. Apply
+3. Select the explicit surface, else the in-app Browser for ordinary work. If required
+   authentication is absent there, inspect the configured local CDP surface and switch
+   only after verifying its target login. Route localhost, loopback, configured local
+   development hosts, and explicit local dev/preview tasks to the configured local CDP
+   workspace. Reuse a safe same-environment/account/origin tab before creating one; use
+   the configured `AI_dev` workspace label, but do not foreground Chrome merely to prove
+   or create a native tab group. Then use an isolated browser only when profile state is
+   unnecessary. Local preferences never override foreground safety. Apply
    session/group rules only to user-local routes; `dedicated-user-data-dir` uses its
    verified profile/process/endpoint instead. Narrow candidates by verified account/session
    before URL; URL matching never crosses an identity boundary.
@@ -89,7 +103,7 @@ expose; route frontend edits to `dev-frontend` and desktop-client proof to `ops-
 - **Form/Upload:** map controls semantically, verify source file/path and final state, and stop before unauthorized submission.
 - **Browser Debug Evidence:** for an already-isolated browser-layer evidence request, use the Codex in-app Browser debug profile in `references/devtools-debugging.md` when available; select only exposed DOM/accessibility, CSS/layout, Console, Network/resource, route, storage/auth, screenshot, viewport, and interaction evidence, then run one repeatable red/green loop.
 - **Agentic navigation:** for open-ended discovery where a deterministic action plan cannot be fixed in advance, constrain the LLM-driven browser backend to the declared origin/task, allowed read actions, step/action budget, and explicit stop conditions; require a deterministic verification step for the final claim.
-- **Locked-session local control:** reuse an existing configured local-browser workspace and target tab through an already connected controller or a prepared browser-native, extension, or loopback CDP endpoint. A prepared endpoint may be reconnected after lock without continuous page activity when browser/profile/target identity and the exact operation remain verifiable. Permit DOM, route, network, and semantic page actions only to the extent proven lock-safe; window visibility, screenshot, focus, keyboard, pointer, and client-window claims remain blocked unless independently proven.
+- **Locked-session local control:** reuse or reconnect first. If policy permits, attempt one background dedicated-profile launch and loopback CDP initialization without unlocking, waking, activating, foregrounding, or GUI input. Require current profile, endpoint, target-enumeration, and page-control evidence; do not require historical pre-lock activity.
 - **Degraded evidence:** when required browser capabilities are missing, perform only supported checks, state the blocked claims, and provide the exact artifact or manual action needed to continue.
 
 ## Do Not Use For
@@ -112,8 +126,9 @@ expose; route frontend edits to `dev-frontend` and desktop-client proof to `ops-
 - Preserve `ask-ai` handoff authority, route, fallback order, and `operation_id`; return
   `blocked` or `ambiguous` instead of switching provider, session, model, or surface.
 - Never infer background safety from CDP connectivity, read-only intent, inactive state,
-  or later restoration. While locked, use only an already connected or prepared
-  endpoint whose exact operation and identity are proven lock-safe.
+  or later restoration. While locked, verify the current profile, endpoint, target,
+  tab enumeration, and exact page operation. Never unlock, wake, activate, foreground,
+  or use GUI input.
 - Keep user-local workspace names and grouping user-owned. Never turn provider, task,
   agent, emoji, page, or conversation labels into session/group names, and never treat
   session naming as placement proof.

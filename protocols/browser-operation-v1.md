@@ -76,6 +76,7 @@ capabilities:
   preconnected_browser_control: <available|unavailable|unknown>
   prepared_endpoint_available: <available|unavailable|unknown>
   background_safe_transport_reconnect: <available|unavailable|unknown>
+  background_safe_browser_setup: <available|unavailable|unknown>
   background_safe_tab_enumeration: <available|unavailable|unknown>
   background_safe_page_control: <available|unavailable|unknown>
   cdp_loopback_only: <available|unavailable|unknown>
@@ -130,18 +131,27 @@ snapshot; matching display names never bridge the two identities.
 
 Local Chrome control-session and tab-group policy applies only to
 `user-local-browser`. It never applies to the Codex in-app Browser, cloud/agent
-browser, or an isolated managed browser. A locked local route may reconnect transport
-to an exact endpoint prepared before lock when the reconnect, tab enumeration, and
-page operations are directly proven background-safe. It may not launch Chrome, enable
-debugging, import profile state, activate a window, or use GUI automation. Direct CDP
-also requires a loopback-only endpoint, dedicated automation profile, and successful
-pre-lock round trip bound to the exact browser/profile.
+browser, or an isolated managed browser. A locked local route reuses or reconnects
+first. When the validated policy permits browser launch and debug initialization,
+`background_safe_browser_setup` may authorize exactly one dedicated-profile background
+setup before page action. It must not unlock or wake the screen, activate or foreground
+a window, import profile state, or use GUI input. The preflight returns `setup-required`
+and permits only `background_browser_setup`; after the attempt, recapture all capability
+and identity evidence and rerun preflight. A failed attempt is not retried. Direct CDP
+requires a loopback-only endpoint and dedicated automation profile; require a pre-lock
+round trip only when the active policy sets `require_prelock_roundtrip: true`.
 
 When an enabled configured workspace is proven absent and `create_if_missing: true`,
 the preflight may return `creation-required` and authorize only the exact configured
 session or group creation supported by `managed_session_creation` or `group_creation`.
 Re-enumerate and rerun preflight before selection, placement, tab creation, navigation,
 or page action. A same-name observation without a stable ID is ambiguity, not absence.
+
+When a locked dedicated browser is absent and background setup is explicitly allowed,
+the preflight may return `setup-required` and authorize only one background browser/CDP
+setup. It must return `capability-unavailable` after an unsuccessful or already-attempted
+setup, and it must return `ready` only after fresh profile, endpoint, target, tab
+enumeration, and page-control evidence succeeds.
 
 Imported browser data is initialization evidence only. Bookmarks and history may
 help locate a target, and saved credentials may help a user authenticate, but

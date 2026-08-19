@@ -13,6 +13,7 @@ from typing import Any
 READY = 0
 INVALID_INPUT = 2
 CREATION_REQUIRED = 10
+SETUP_REQUIRED = 11
 CAPABILITY_UNAVAILABLE = 20
 AVAILABLE = "available"
 
@@ -93,8 +94,9 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         for item in instances
         if isinstance(item, dict) and item.get("browser_id") == selected_browser_id
     ]
-    if len(selected_instances) != 1 or selected_instances[0].get("available") is not True:
-        reasons.append("selected browser identity is not uniquely available")
+    selected_browser_available = (
+        len(selected_instances) == 1 and selected_instances[0].get("available") is True
+    )
 
     reconnected_from = record.get("reconnected_from_browser_id")
     if reconnected_from is not None:
@@ -153,12 +155,6 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             reasons.append(
                 "dedicated profile mode requires control session and grouping disabled"
             )
-        for capability in (
-            "dedicated_profile_identity",
-            "loopback_endpoint_ready",
-        ):
-            if capabilities.get(capability) != AVAILABLE:
-                reasons.append(f"required capability unavailable: {capability}")
     session_name = session_policy.get("name") if session_enabled else None
     group_name = group_policy.get("name") if group_enabled else None
     if session_enabled and (not isinstance(session_name, str) or not session_name):
@@ -188,6 +184,10 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     selected_backend = record.get("selected_backend", "not-applicable")
     if not isinstance(selected_backend, str) or not selected_backend:
         raise ValueError("selected_backend must be a non-empty string")
+    background_setup_attempted = record.get("background_setup_attempted", False)
+    if not isinstance(background_setup_attempted, bool):
+        raise ValueError("background_setup_attempted must be a boolean")
+    background_setup_required = False
     if screen_session == "locked":
         lock_policy = policy.get("locked_session")
         if not isinstance(lock_policy, dict):
@@ -201,13 +201,6 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("locked_session.allowed_backends must be a string list")
         if selected_backend not in allowed_backends:
             reasons.append("selected backend is not allowed while locked")
-        for capability in (
-            "background_safe_tab_enumeration",
-            "background_safe_page_control",
-        ):
-            if capabilities.get(capability) != AVAILABLE:
-                reasons.append(f"required locked-session capability unavailable: {capability}")
-
         prepared_control = capabilities.get("preconnected_browser_control") == AVAILABLE
         reconnect_allowed = lock_policy.get("allow_transport_reconnect") is True
         prepared_reconnect = reconnect_allowed and all(
@@ -217,23 +210,44 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
                 "background_safe_transport_reconnect",
             )
         )
-        if not prepared_control and not prepared_reconnect:
-            reasons.append("no prepared lock-safe browser control path is available")
+        background_setup_allowed = (
+            execution_mode == "dedicated-user-data-dir"
+            and execution_profile.get("require_existing_when_locked") is False
+            and lock_policy.get("require_prepared_control") is False
+            and capabilities.get("background_safe_browser_setup") == AVAILABLE
+            and lock_policy.get("prohibit_browser_launch") is False
+            and lock_policy.get("prohibit_debug_enablement") is False
+            and lock_policy.get("prohibit_window_activation") is True
+            and lock_policy.get("prohibit_keyboard_pointer") is True
+            and lock_policy.get("prohibit_profile_import") is True
+        )
 
         prohibited_constraints = {
-            "requires_browser_launch": "locked session cannot launch the browser",
-            "requires_debug_enablement": "locked session cannot enable browser debugging",
-            "requires_gui_automation": "locked session cannot use GUI automation",
-            "requires_profile_import": "locked session cannot import browser profile state",
+            "requires_browser_launch": (
+                "prohibit_browser_launch",
+                "locked-session policy prohibits browser launch",
+            ),
+            "requires_debug_enablement": (
+                "prohibit_debug_enablement",
+                "locked-session policy prohibits browser debugging enablement",
+            ),
+            "requires_gui_automation": (
+                "prohibit_keyboard_pointer",
+                "locked-session policy prohibits GUI automation",
+            ),
+            "requires_profile_import": (
+                "prohibit_profile_import",
+                "locked-session policy prohibits browser profile import",
+            ),
         }
-        for key, reason in prohibited_constraints.items():
+        for key, (policy_key, reason) in prohibited_constraints.items():
             value = controller_constraints.get(key, False)
             if not isinstance(value, bool):
                 raise ValueError(f"controller_constraints.{key} must be a boolean")
-            if value:
+            if value and lock_policy.get(policy_key) is not False:
                 reasons.append(reason)
 
-        if selected_backend == "direct-cdp":
+        if selected_backend == "direct-cdp" and selected_browser_available:
             cdp_policy = lock_policy.get("cdp")
             if not isinstance(cdp_policy, dict):
                 raise ValueError("locked_session.cdp policy is required for direct-cdp")
@@ -247,6 +261,70 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
                     reasons.append(
                         f"required locked-session capability unavailable: {capability}"
                     )
+
+        if not selected_browser_available:
+            if background_setup_attempted:
+                reasons.append("background browser setup already attempted without a verified endpoint")
+            elif not background_setup_allowed:
+                reasons.append("no policy-authorized background browser setup path is available")
+            elif selected_backend != "direct-cdp":
+                reasons.append("background browser setup requires direct-cdp")
+            else:
+                cdp_policy = lock_policy.get("cdp")
+                if not isinstance(cdp_policy, dict):
+                    raise ValueError("locked_session.cdp policy is required for direct-cdp")
+                if cdp_policy.get("require_loopback_only") is not True:
+                    reasons.append("background browser setup requires loopback-only CDP")
+                if cdp_policy.get("require_dedicated_profile") is not True:
+                    reasons.append("background browser setup requires a dedicated profile")
+                if cdp_policy.get("require_prelock_roundtrip") is not False:
+                    reasons.append("background browser setup requires pre-lock roundtrip disabled")
+                if not reasons:
+                    background_setup_required = True
+        else:
+            for capability in (
+                "background_safe_tab_enumeration",
+                "background_safe_page_control",
+            ):
+                if capabilities.get(capability) != AVAILABLE:
+                    reasons.append(
+                        f"required locked-session capability unavailable: {capability}"
+                    )
+            if not prepared_control and not prepared_reconnect:
+                reasons.append("no current lock-safe browser control path is available")
+
+    if not selected_browser_available and not background_setup_required:
+        reasons.append("selected browser identity is not uniquely available")
+
+    if background_setup_required:
+        return {
+            "schema_version": "local-browser-workspace-preflight-result/v1",
+            "state": "setup-required",
+            "selected_browser_id": selected_browser_id,
+            "screen_session": screen_session,
+            "selected_backend": selected_backend,
+            "execution_profile_mode": execution_mode,
+            "lock_safe_ready": False,
+            "resolved_session_id": None,
+            "resolved_group_id": None,
+            "permitted_actions": {
+                "background_browser_setup": True,
+                "claim_verified_tab": False,
+                "name_session": False,
+                "create_tab": False,
+                "create_session": False,
+                "create_group": False,
+            },
+            "reasons": [],
+        }
+
+    if execution_mode == "dedicated-user-data-dir":
+        for capability in (
+            "dedicated_profile_identity",
+            "loopback_endpoint_ready",
+        ):
+            if capabilities.get(capability) != AVAILABLE:
+                reasons.append(f"required capability unavailable: {capability}")
 
     sessions: list[dict[str, Any]] = []
     groups: list[dict[str, Any]] = []
@@ -417,6 +495,7 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         "resolved_session_id": sessions[0]["session_id"] if ready and session_enabled else None,
         "resolved_group_id": groups[0]["group_id"] if ready and group_enabled else None,
         "permitted_actions": {
+            "background_browser_setup": False,
             "claim_verified_tab": ready,
             "name_session": False,
             "create_tab": False,
@@ -443,6 +522,8 @@ def main() -> int:
         return READY
     if result["state"] == "creation-required":
         return CREATION_REQUIRED
+    if result["state"] == "setup-required":
+        return SETUP_REQUIRED
     return CAPABILITY_UNAVAILABLE
 
 
