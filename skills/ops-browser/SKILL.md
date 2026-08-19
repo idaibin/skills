@@ -39,6 +39,11 @@ expose; route frontend edits to `dev-frontend` and desktop-client proof to `ops-
    closed when the exact locked-session operation is not proven safe. If the controller
    requires task-specific naming, set
    `controller_constraints.requires_task_specific_session_name: true` and fail closed.
+   When foreground safety needs a live canary, run it only after a ready preflight on
+   the identity-matched existing target, then refresh the Capability Snapshot before
+   the requested action. Keep preflight, canary, snapshot, action, after-state, and
+   cleanup timestamps in one fixed evidence package; later evidence cannot
+   retroactively verify an earlier action.
 3. Select the explicit surface, else the in-app Browser for ordinary read-only work,
    else a proven background-safe user-local route when profile state is required, else
    an isolated browser. Local preferences never override foreground safety. Apply

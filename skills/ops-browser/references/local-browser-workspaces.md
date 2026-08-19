@@ -199,6 +199,14 @@ rerun the gate from new immutable evidence. It never permits `nameSession`, `tab
 navigation, or page action. If creation completion is ambiguous, reconcile that same
 operation; do not retry or create another same-named workspace.
 
+Preserve the preflight input, result, exit state, and timestamps in the same fixed
+evidence package as the later Capability Snapshot and requested action. When a ready
+route still needs a live foreground-safety canary, bind one non-mutating canary to the
+same profile, endpoint, backend, and identity-matched existing target; record its
+method and before/after focus evidence, then capture the Snapshot before the requested
+operation. Never run the requested operation first and use a later preflight, canary,
+or Snapshot to approve it retroactively.
+
 - Enumerate reusable control sessions when the host exposes that capability. With
   `reuse_existing: true`, bind the one verified session matching the resolved name and
   browser identity before considering creation.

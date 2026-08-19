@@ -108,6 +108,17 @@ capability evidence remain unchanged. Re-capture after a session break, account
 or workspace change, login change, route change, browser reconnect, target
 origin change, or capability failure.
 
+For a user-local route whose acceptance depends on foreground safety, retain one
+ordered pre-action evidence chain. The local-workspace preflight must finish before
+the requested page operation. If the exact background-safe operation can only be
+established by a live canary, first require a ready preflight and an identity-matched
+existing target, then run one non-mutating canary through the same profile, endpoint,
+target, and backend. Capture or refresh the Capability Snapshot after that canary and
+before the requested operation. The fixed evidence package must preserve timestamps,
+the preflight input/result and exit state, canary method/result, snapshot ID, target
+identity, requested action, after-state, and cleanup. A preflight or snapshot produced
+after the requested operation cannot retroactively verify that operation.
+
 For a configured user-local-browser workspace, a group label observed on a tab is
 not group enumeration or stable group identity. Require independent session and
 group enumeration, stable IDs, exact selection, and placement control whenever the
