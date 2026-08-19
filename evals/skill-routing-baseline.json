@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "contract-and-delivery-gates/2026-08-18",
-  "fingerprint": "sha256:250874ebeb4ea12a9494fe6402e605303a34940c59a673fc40f798ca5a46fca7",
+  "basis": "dev-typescript/2026-08-20",
+  "fingerprint": "sha256:aa4f4b97c67fbfb1d01301d985fc5e1770553e02d45408c2b37c42827d37cb4e",
   "summary": {
-    "total": 53,
-    "passed": 53,
+    "total": 56,
+    "passed": 56,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -319,6 +319,42 @@
       "skill": "dev-frontend",
       "expected_owner": "dev-frontend",
       "observed_owner": "dev-frontend",
+      "expected_stop": "missing-authorization",
+      "observed_stop": "missing-authorization",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-typescript-normal",
+      "case_fingerprint": "sha256:43f09e73a3d0d5c7c8d741f345b76b9965048bccd8415c011af59d8403144e49",
+      "class": "normal",
+      "skill": "dev-typescript",
+      "expected_owner": "dev-typescript",
+      "observed_owner": "dev-typescript",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-typescript-boundary",
+      "case_fingerprint": "sha256:55241fa975e76aa686eba3a3052ddee6649fbb307b8755344a947b67d7c5b67c",
+      "class": "boundary",
+      "skill": "dev-typescript",
+      "expected_owner": "dev-frontend",
+      "observed_owner": "dev-frontend",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-typescript-critical-stop",
+      "case_fingerprint": "sha256:836fe3576959a16eb2c5a661ead5772020809bc8c903eb28f39057f019ba89c8",
+      "class": "critical-stop",
+      "skill": "dev-typescript",
+      "expected_owner": "dev-typescript",
+      "observed_owner": "dev-typescript",
       "expected_stop": "missing-authorization",
       "observed_stop": "missing-authorization",
       "status": "passed",

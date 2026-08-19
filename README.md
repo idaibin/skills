@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 16 available Skills:
+Browse the 17 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -47,6 +47,7 @@ and other supported agents.
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
+| `dev-typescript` | Implement non-browser TypeScript and JavaScript services, CLIs, workers, MCP servers, libraries, and scripts across Node.js, Bun, and Deno. |
 | `dev-java` | Implement Java and Spring changes against the repository's real build and runtime contracts. |
 | `dev-rust` | Implement Rust features and refactors with ownership, safety, and behavior evidence. |
 | `audit-frontend` | Audit a bounded frontend surface without modifying it. |
@@ -68,7 +69,7 @@ task genuinely crosses an authority boundary.
 unknown repository -> repo-map
 unclear product     -> domain-modeling / product-spec
 UI contract         -> ui-spec -> dev-frontend
-source change       -> matching dev-* owner
+source change       -> matching dev-* owner (`dev-typescript` for non-browser TS/JS)
 bounded audit       -> matching audit-* owner
 change review       -> repo-review
 Git delivery        -> repo-delivery
