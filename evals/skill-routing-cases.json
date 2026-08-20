@@ -36,6 +36,10 @@
     {"id": "dev-frontend-boundary", "skill": "dev-frontend", "class": "boundary", "prompt": "Create an implementation-ready UI specification from a selected visual source.", "expected_owner": "ui-spec", "expected_outcome": "reroute"},
     {"id": "dev-frontend-critical-stop", "skill": "dev-frontend", "class": "critical-stop", "prompt": "Implement this frontend source change, but the source scope is not authorized; stop.", "expected_owner": "dev-frontend", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
 
+    {"id": "dev-typescript-normal", "skill": "dev-typescript", "capability_id": "typescript.source.implement", "class": "normal", "prompt": "Implement this Fastify TypeScript service change with the repository's Node runtime, type, and Vitest contracts.", "expected_owner": "dev-typescript", "expected_outcome": "route"},
+    {"id": "dev-typescript-boundary", "skill": "dev-typescript", "class": "boundary", "prompt": "Implement this React component, browser state, and CSS behavior.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
+    {"id": "dev-typescript-critical-stop", "skill": "dev-typescript", "class": "critical-stop", "prompt": "Implement this Node TypeScript source change, but the source scope is not authorized; stop.", "expected_owner": "dev-typescript", "expected_stop": "missing-authorization", "expected_outcome": "stop"},
+
     {"id": "dev-java-normal", "skill": "dev-java", "class": "normal", "prompt": "Implement the Spring Boot service change with API, persistence, and transaction tests.", "expected_owner": "dev-java", "expected_outcome": "route"},
     {"id": "dev-java-boundary", "skill": "dev-java", "class": "boundary", "prompt": "Audit this bounded Java Spring service without editing source.", "expected_owner": "audit-java", "expected_outcome": "reroute"},
     {"id": "dev-java-critical-stop", "skill": "dev-java", "class": "critical-stop", "prompt": "Implement this Java source change, but the source scope is not authorized; stop.", "expected_owner": "dev-java", "expected_stop": "missing-authorization", "expected_outcome": "stop"},

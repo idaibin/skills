@@ -29,6 +29,7 @@ identity, installed adapters, or completed evidence.
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and two-pass visual closure | source files |
+| `dev-typescript` | requested non-browser TypeScript/JavaScript implementation for Node.js, Bun, or Deno | source files |
 | `dev-java` | requested Java/Spring implementation and migration | source files |
 | `dev-rust` | requested Rust implementation | source files |
 | `audit-frontend` | bounded frontend audit profiles, including selected-source visual fidelity | read-only |
@@ -50,8 +51,9 @@ Create a new Skill only when all are materially distinct:
 4. independently useful output.
 
 Otherwise add a focused reference/profile to the existing owner. React and Vue remain
-inside frontend Skills; Java/Spring and Rust subsystem checks remain inside their
-language Skills. A future Python Skill should appear only after repeated real
+inside frontend Skills; Node.js, Bun, and Deno remain runtime profiles inside
+`dev-typescript`; Java/Spring and Rust subsystem checks remain inside their language
+Skills. A future Python Skill should appear only after repeated real
 implementation work shows that its workflow and domain knowledge justify an
 independently maintained package. Java reached that threshold through repeated Maven
 and Gradle work across legacy Java 8/Spring Boot 2 and modern Java 17+/Spring Boot 3+
@@ -67,7 +69,7 @@ reachability and semantics; owner Skills apply the stage meaning:
 | --- | --- |
 | `repo-review` | Did the fixed basis introduce, expand, expose, or directly depend on the issue? |
 | `audit-frontend` / `audit-java` / `audit-rust` | What currently exists inside the declared profile and path scope? |
-| `dev-frontend` / `dev-java` / `dev-rust` | How does the authorized change avoid the issue and remove only what it makes obsolete? |
+| `dev-frontend` / `dev-typescript` / `dev-java` / `dev-rust` | How does the authorized change avoid the issue and remove only what it makes obsolete? |
 
 Duplication, dead/unused code, over-design, pass-through layers, and hidden
 coupling are findings only after reachability, concrete impact, precise owner,
@@ -130,8 +132,8 @@ push actions. Without those conditions, the external-review owner supplies only 
 necessary files or review package. Review publication never creates a pull request,
 updates `main`, force-pushes, or counts as reviewer approval.
 
-This is not mandatory ceremony. A known Java or Rust implementation can start directly
-with `dev-java` or `dev-rust`. `repo-review` evaluates correctness, security, performance, and
+This is not mandatory ceremony. A known non-browser TypeScript/JavaScript, Java, or Rust implementation can start directly
+with `dev-typescript`, `dev-java`, or `dev-rust`. `repo-review` evaluates correctness, security, performance, and
 maintainability together on its selected basis. Security risk does not create a new
 catalog Skill or mandatory external dependency.
 

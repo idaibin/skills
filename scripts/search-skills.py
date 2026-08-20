@@ -1141,6 +1141,7 @@ STACK_OWNER = {
     "rust": {"dev-rust", "audit-rust"},
     "java": {"dev-java", "audit-java"},
     "frontend": {"dev-frontend", "audit-frontend"},
+    "typescript": {"dev-typescript"},
 }
 OWNER_ALIASES = {
     "ui-spec": {"ui specification"},
@@ -1164,8 +1165,10 @@ def task_stack(query: str) -> str | None:
         return "rust"
     if tokens & {"java", "spring", "maven", "gradle"}:
         return "java"
-    if tokens & {"frontend", "react", "vue", "css", "typescript", "javascript"}:
+    if tokens & {"frontend", "react", "vue", "svelte", "css", "dom", "browser"}:
         return "frontend"
+    if tokens & {"typescript", "javascript", "node", "nodejs", "bun", "deno", "fastify"}:
+        return "typescript"
     return None
 
 

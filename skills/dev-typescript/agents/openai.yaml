@@ -1,0 +1,4 @@
+interface:
+  display_name: "TypeScript Implementation"
+  short_description: "Implement server-side TypeScript across runtimes"
+  default_prompt: "Use $dev-typescript to implement this scoped non-browser TypeScript or JavaScript change against the repository's actual Node.js, Bun, or Deno contracts and validation gates."

@@ -18,6 +18,7 @@ repo-review
 repo-delivery
 ui-spec
 dev-frontend
+dev-typescript
 dev-java
 dev-rust
 audit-frontend
@@ -47,6 +48,7 @@ The publishable source directories are:
 - `skills/repo-delivery`
 - `skills/ui-spec`
 - `skills/dev-frontend`
+- `skills/dev-typescript`
 - `skills/dev-java`
 - `skills/dev-rust`
 - `skills/audit-frontend`
@@ -123,6 +125,15 @@ This set covers the shared `frontend-visual-evidence/v1` handoff: `ui-spec` owns
 traceable targets, `dev-frontend` owns implementation and two-pass closure,
 `ops-browser` owns capture/computed evidence, `audit-frontend` owns current-surface
 findings, and `repo-review` owns fixed-basis completion review.
+
+TypeScript service, CLI, worker, or engineering-tool implementation:
+
+```bash
+npx skills@latest add idaibin/skills \
+  --skill dev-typescript repo-review
+```
+
+Node.js, Bun, and Deno are runtime profiles inside `dev-typescript`, not separate packages.
 
 Rust implementation and audit:
 

@@ -28,6 +28,7 @@
       "urn:skills:rust-change-request:v1",
       "urn:skills:source-change-result:v1",
       "urn:skills:task-request:v1",
+      "urn:skills:typescript-change-request:v1",
       "urn:skills:ui-contract:v1",
       "urn:skills:ui-request:v1",
       "urn:skills:writing-output:v1",
@@ -52,7 +53,7 @@
     },
     "implementation": {
       "title": "Implementation",
-      "description": "Authorized frontend, Java, and Rust source changes."
+      "description": "Authorized frontend, non-browser TypeScript/JavaScript, Java, and Rust source changes."
     },
     "specialist-audit": {
       "title": "Specialist Audit",
@@ -534,6 +535,72 @@
       ],
       "capability_ids": [
         "frontend.source.implement"
+      ]
+    },
+    {
+      "name": "dev-typescript",
+      "category": "implementation",
+      "owner": "dev-typescript",
+      "mutation_class": "source-write",
+      "required_capabilities": [
+        "filesystem-read",
+        "filesystem-write",
+        "source-write",
+        "command-runner",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-source",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "unsafe-or-destructive"
+      ],
+      "intents": [
+        "implement or refactor non-browser TypeScript or JavaScript source",
+        "change Node.js, Bun, or Deno services, APIs, CLIs, MCP servers, workers, libraries, or engineering scripts",
+        "preserve runtime, package-manager, module, type, schema, async, and test contracts"
+      ],
+      "keywords": [
+        "TypeScript implementation",
+        "JavaScript service",
+        "Node.js",
+        "Bun",
+        "Deno",
+        "Fastify",
+        "Hono",
+        "CLI",
+        "MCP server",
+        "worker",
+        "Vitest",
+        "Zod"
+      ],
+      "excludes": [
+        "browser UI and frontend source",
+        "read-only TypeScript audit",
+        "fixed-basis review",
+        "Git delivery"
+      ],
+      "related": [
+        "dev-frontend",
+        "repo-map",
+        "repo-review"
+      ],
+      "capability_ids": [
+        "typescript.source.implement"
       ]
     },
     {
@@ -1795,6 +1862,84 @@
       "accepts": [
         {
           "schema": "urn:skills:frontend-change-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:source-change-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "SOURCE_SCOPE_REMAINS_BOUNDED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "source-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "emit-findings",
+          "emit-handoff",
+          "write-source"
+        ],
+        "forbidden_effects": [
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "typescript.source.implement",
+      "capability_version": "1.0.0",
+      "package": "dev-typescript",
+      "description": "Implement an authorized non-browser TypeScript or JavaScript source change.",
+      "accepts": [
+        {
+          "schema": "urn:skills:typescript-change-request:v1",
           "kind": "portable"
         }
       ],
