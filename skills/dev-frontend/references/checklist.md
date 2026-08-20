@@ -5,6 +5,7 @@ Use this checklist when implementing or reviewing frontend changes.
 ## Contents
 
 - [Required Context](#required-context)
+- [Contract Freeze Gate](#contract-freeze-gate)
 - [Reuse-First Gate](#reuse-first-gate)
 - [Stack And Structure](#stack-and-structure)
 - [Page And Feature Ownership](#page-and-feature-ownership)
@@ -29,6 +30,32 @@ Use this checklist when implementing or reviewing frontend changes.
 - Map every applicable acceptance ID to owner file/component,
   reuse/extend/wrap/new, asset/data owner, and static/runtime verification before
   editing. Do not copy browser-computed current values into the source target.
+
+## Contract Freeze Gate
+
+- Before the final freeze, run a bounded search of the target owner, analogous
+  consumers, reusable component/service/store owners, and nearest focused check. Then
+  record the smallest executable contract for the target slice: a task-local revision,
+  observable acceptance, explicit non-goals, governing authority, affected
+  owner/consumer, reuse decision, and the focused check that can fail before the change.
+- For API-backed behavior, resolve from the native contract and current call chain only
+  the fields changed by, depended on by, or decisive to acceptance: applicable method
+  and path, request placement and omission/default rules, trigger/cache timing, success
+  and business-error semantics, permission/data scope, representative caller, and the
+  owner of required runtime proof. Unchanged non-decisive fields inherit the current
+  verified owner; a local UI-state fix does not require an unrelated backend survey.
+- Treat documents, backend handlers/DTOs, generated clients, current adapters, and
+  screenshots as different evidence layers. Use the repository-declared authority;
+  when they conflict, stop the affected implementation and name the field and owner
+  that must resolve it.
+- Do not preserve a guessed or obsolete contract through a safety fallback. A fallback
+  is allowed only when an existing reachable consumer, durable compatibility rule, or
+  explicit product contract requires it and its activation is testable.
+- A user correction that changes scope, acceptance, or an interface field creates a new
+  task-local freeze revision. Reject in-flight or delayed delegated results that target
+  the old revision. Inventory and reconcile any old-revision hunks already landed in
+  the Worktree before new implementation starts; do not turn the revision into a
+  repository schema, durable authority, or migration mechanism.
 
 ## Reuse-First Gate
 

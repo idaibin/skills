@@ -23,16 +23,21 @@ are used when supplied; they do not replace current source and repository contra
    user requirement and current implementation; use Product/UI specs and the resolved
    `<design-root>/DESIGN.md` only when they apply. A missing optional artifact or graph
    does not create a prerequisite ceremony.
-3. Complete the [reuse and page-ownership checklist](references/checklist.md): search
-   existing components and analogous pages, choose `reuse`, `extend`, `wrap`, or a
-   justified `new` owner, and keep route/tab shells declarative. Independent tabs or
-   sections with their own data, actions, forms, validation, or lifecycle belong in
-   feature components instead of one large conditional page.
-4. Confirm the observable acceptance, non-goals, affected contracts, and smallest
-   credible validation seam. Load [project grounding](references/project-grounding.md)
-   only when the change crosses a real API/auth, environment/build, durable-data,
-   desktop/native, compatibility, deployment, or cross-repository boundary. Keep
-   unrelated risk classes out of scope.
+3. Complete a bounded search for the current owner, analogous consumer, and reusable
+   component before choosing an implementation owner. Collect only the contract facts
+   changed by, depended on by, or decisive to acceptance for the target slice. Load
+   [project grounding](references/project-grounding.md) only when the change crosses a
+   real API/auth, environment/build, durable-data, desktop/native, compatibility,
+   deployment, or cross-repository boundary. Keep unrelated risk classes out of scope.
+4. Use the [reuse and page-ownership checklist](references/checklist.md) to freeze one
+   task-local contract revision before editing: observable acceptance, non-goals,
+   affected owners/contracts, reuse decision, and smallest credible validation seam.
+   For API-backed behavior, resolve every decisive field from the governing contract
+   and current call chain; unchanged non-decisive fields inherit their current verified
+   owner. Stop rather than infer an unresolved decisive field. A correction creates a
+   new revision: reject delayed work for the old revision and reconcile any landed old
+   hunks before implementation resumes. Keep route/tab shells declarative; independent
+   stateful sections belong in feature components rather than a large conditional page.
 5. Make the smallest coherent source change. Preserve established framework, routing,
    state/data, component, styling, and test owners; do not introduce a parallel stack
    or speculative shared layer.
@@ -80,6 +85,10 @@ rather than creating or repairing one for ordinary implementation.
 - Existing components, adapters, stores, utilities, tokens, and interaction patterns
   are the default. A new owner needs a targeted search and a concrete behavior or
   ownership reason.
+- An API filename, legacy prose example, frontend wrapper default, or screenshot is not
+  sufficient authority for method/path, parameter placement, trigger timing, or
+  success semantics. Resolve decisive contract fields before implementation and keep
+  unavailable runtime proof `Not verified` rather than compensating with fallback code.
 - Keep page/tab shells responsible for navigation and composition, not section-specific
   APIs, forms, tables, drawers, validation, and lifecycle branches.
 - Prefer non-mutating validation. Compare Worktree state around tools that may generate
