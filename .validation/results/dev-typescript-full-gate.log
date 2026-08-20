@@ -1,4 +1,4 @@
-target_sha=5ec0b5705f6dc973cd61bd50484f330d3f81a351
+target_sha=463b8000afed61650fe242aa59758ca7f7460430
 base_sha=f34ff9143024f9337cd6fe5cb90ce48f25d76c16
 runner_os=Linux
 git=git version 2.55.0
@@ -9,20 +9,31 @@ npm=10.9.2
 ## canonical_full_gate
 $ bash scripts/check-skills.sh
 validation python: /opt/hostedtoolcache/Python/3.12.14/x64/bin/python3.12
-stale generated protocol: skills/dev-typescript/references/behavior-first.md
-stale generated protocol: skills/dev-typescript/references/codebase-design.md
-stale generated protocol: skills/dev-typescript/references/code-quality.md
-stale generated protocol: skills/dev-typescript/references/project-grounding.md
-run python3 scripts/sync-shared-protocols.py to refresh generated copies
-exit_code=1
+shared protocol copies are current
+validated 17 Skill packages
+routing baseline: f34ff9143024f9337cd6fe5cb90ce48f25d76c16 (immutable Git authority)
+skill routing evals: 56/56 passed; contract_errors=0 regressions=0
+skill context report: 17 skills; warnings=0
+validated frontend visual evidence: skills/dev-frontend/assets/frontend-visual-evidence.example.json
+..................................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 322 tests in 8.666s
+
+OK
+{"status": "not-verified", "error": "source artifact changed during validation; result is stale"}
+duplicate H2 guard rejection in design_duplicate_overview__Overview.md:
+Overview
+duplicate H2 guard rejection in design_duplicate_overview____Overview.md:
+Overview
+duplicate H2 guard rejection in design_duplicate_overview__Overview_.md:
+Overview
+synthetic duplicate H2 variants were rejected by hard-blocking duplicate H2 guard
+design md contract regression checks passed
+exit_code=0
 
 ## committed_whitespace_check
 $ git show --check --format= HEAD
-skills/dev-typescript/references/behavior-first.md:27: new blank line at EOF.
-skills/dev-typescript/references/code-quality.md:128: new blank line at EOF.
-skills/dev-typescript/references/codebase-design.md:21: new blank line at EOF.
-skills/dev-typescript/references/project-grounding.md:176: new blank line at EOF.
-exit_code=2
+exit_code=0
 
 ## worktree_diff_check
 $ git diff --exit-code

@@ -3,13 +3,13 @@
   "repository": "idaibin/skills",
   "validation_branch": "validation/dev-typescript-full-gate-20260820",
   "target_branch": "codex/dev-typescript",
-  "target_commit": "5ec0b5705f6dc973cd61bd50484f330d3f81a351",
+  "target_commit": "463b8000afed61650fe242aa59758ca7f7460430",
   "routing_base_commit": "f34ff9143024f9337cd6fe5cb90ce48f25d76c16",
   "gate": "bash scripts/check-skills.sh + committed/worktree diff checks",
   "runner": "ubuntu-24.04",
-  "status": "fail",
-  "exit_code": 1,
-  "generated_at_utc": "2026-08-20T04:56:56Z",
+  "status": "pass",
+  "exit_code": 0,
+  "generated_at_utc": "2026-08-20T05:01:26Z",
   "log_path": ".validation/results/dev-typescript-full-gate.log",
-  "log_sha256": "8dccb5cdb0cf0432df75d4f282c773d81421c08d9d1b65cfe529c7a3da075c44"
+  "log_sha256": "e65c79c229e667cb1b92a7e591e6af9617c5ec2ca2b272d4ab0c6f64d73c4f46"
 }
