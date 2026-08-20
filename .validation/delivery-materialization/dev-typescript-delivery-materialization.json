@@ -1,0 +1,19 @@
+{
+  "schema_version": "ai-engineering-lab/delivery-materialization/v1",
+  "repository": "idaibin/skills",
+  "main_commit": "f371e0933684205376f0e1818e833a2a58eea486",
+  "candidate_commit": "463b8000afed61650fe242aa59758ca7f7460430",
+  "delivery_branch": "validation/dev-typescript-delivery-candidate-20260820",
+  "delivery_commit": "0d6039345d646c4d4795da7de22aa9b257930a59",
+  "delivery_tree": "17564de5ba561f9da2f2001042b3e4b3850e1844",
+  "expected_tree": "17564de5ba561f9da2f2001042b3e4b3850e1844",
+  "parents": [
+    "f371e0933684205376f0e1818e833a2a58eea486",
+    "463b8000afed61650fe242aa59758ca7f7460430"
+  ],
+  "canonical_gate": "pass",
+  "status": "pass",
+  "generated_at_utc": "2026-08-20T06:38:32Z",
+  "log_path": ".validation/delivery-materialization/dev-typescript-delivery-materialization.log",
+  "log_sha256": "a7fbad6e9e0d2faba25a4ed7c0980ac0199e21e2ad92389f6d126deecfa81206"
+}
