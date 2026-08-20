@@ -23,6 +23,7 @@ def route_config() -> dict:
         "rules": [
             {
                 "id": "portal-ai-dev",
+                "enabled": True,
                 "priority": 100,
                 "match": {
                     "any": [
@@ -51,6 +52,7 @@ def route_config() -> dict:
             },
             {
                 "id": "chatgpt-web-review",
+                "enabled": True,
                 "priority": 90,
                 "match": {
                     "any": [
@@ -116,6 +118,31 @@ class LocalBrowserRouteResolverTests(unittest.TestCase):
         )
         self.assertEqual("chatgpt-web-review", result["rule_id"])
 
+    def test_explicit_request_text_outranks_project_root(self) -> None:
+        config = route_config()
+        config["rules"][1]["priority"] = 200
+        config["rules"][1]["match"]["any"].append({"keywords": ["ChatGPT 审查"]})
+        result = RESOLVER.resolve(
+            config,
+            request(cwd="/workspace/portal/app", text="请执行 ChatGPT 审查"),
+        )
+        self.assertEqual("chatgpt-web-review", result["rule_id"])
+        self.assertEqual(["keywords"], result["matched_fields"])
+
+    def test_disabled_matching_rule_is_ignored(self) -> None:
+        config = route_config()
+        config["rules"][1]["enabled"] = False
+        result = RESOLVER.resolve(
+            config, request(operation_type="chatgpt-web-chat-review")
+        )
+        self.assertEqual("no-match", result["state"])
+
+    def test_enabled_must_be_boolean(self) -> None:
+        config = route_config()
+        config["rules"][0]["enabled"] = "false"
+        with self.assertRaisesRegex(ValueError, "enabled must be a boolean"):
+            RESOLVER.resolve(config, request(url="http://portal.example.test"))
+
     def test_unmatched_request_uses_defaults(self) -> None:
         result = RESOLVER.resolve(
             route_config(), request(url="https://example.org/docs")
@@ -127,6 +154,15 @@ class LocalBrowserRouteResolverTests(unittest.TestCase):
         config = route_config()
         config["rules"][0]["route"]["cdp"]["address"] = "192.0.2.10"
         with self.assertRaisesRegex(ValueError, "loopback-only"):
+            RESOLVER.resolve(config, request(url="http://portal.example.test"))
+
+    def test_target_match_order_rejects_unknown_or_missing_boundaries(self) -> None:
+        config = route_config()
+        config["rules"][0]["route"]["target_match_order"] = [
+            "profile",
+            "exact-url",
+        ]
+        with self.assertRaisesRegex(ValueError, "target_match_order must be"):
             RESOLVER.resolve(config, request(url="http://portal.example.test"))
 
 

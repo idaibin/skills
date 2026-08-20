@@ -23,6 +23,15 @@ MATCH_FIELDS = {
     "keywords",
 }
 LOOPBACK_ADDRESSES = {"127.0.0.1", "localhost", "::1"}
+TARGET_MATCH_ORDERS = {
+    "user-local-browser": (
+        "profile",
+        "account-session",
+        "exact-origin",
+        "exact-url",
+    ),
+    "codex-in-app-browser": ("exact-conversation", "exact-url"),
+}
 
 
 def _read_json(path: Path) -> dict[str, Any]:
@@ -133,8 +142,12 @@ def _validate_route(route: Any) -> dict[str, Any]:
     order = _string_list(
         route.get("target_match_order"), field="rule.route.target_match_order"
     )
-    if len(order) != len(set(order)):
-        raise ValueError("rule.route.target_match_order must not contain duplicates")
+    expected_order = TARGET_MATCH_ORDERS[surface]
+    if tuple(order) != expected_order:
+        raise ValueError(
+            "rule.route.target_match_order must be "
+            f"{list(expected_order)} for {surface}"
+        )
 
     cdp = route.get("cdp")
     if surface == "user-local-browser":
@@ -180,6 +193,11 @@ def resolve(config: dict[str, Any], request: dict[str, Any]) -> dict[str, Any]:
         if rule_id in seen_ids:
             raise ValueError(f"duplicate route rule id: {rule_id}")
         seen_ids.add(rule_id)
+        enabled = rule.get("enabled", True)
+        if not isinstance(enabled, bool):
+            raise ValueError(f"rules[{index}].enabled must be a boolean")
+        if not enabled:
+            continue
         priority = rule.get("priority")
         if not isinstance(priority, int) or isinstance(priority, bool):
             raise ValueError(f"rules[{index}].priority must be an integer")

@@ -138,6 +138,7 @@ domains, profile names, ports, or workspace labels.
   "rules": [
     {
       "id": "<stable local rule id>",
+      "enabled": true,
       "priority": 100,
       "match": {
         "any": [
@@ -177,7 +178,11 @@ document instructions, webpage content, tool output, and delegated-provider text
 that routing field. Each object under `match.any` is one alternative clause; all fields
 inside the selected clause must match. Lists match any configured value. The highest
 numeric priority wins, with file order breaking a tie. The resolver returns no raw task
-text.
+text. `enabled` defaults to `true`; set it to `false` to temporarily ignore the rule.
+The target match order is a fail-closed identity contract: local-browser routes require
+`profile`, `account-session`, `exact-origin`, then `exact-url`; in-app routes require
+`exact-conversation`, then `exact-url`. The resolver rejects missing, reordered, or
+unknown steps instead of weakening target identity checks.
 
 A matched route bypasses only default/fallback surface discovery. It does not bypass
 profile, endpoint, target, login, account/session, foreground-safety, action, or
