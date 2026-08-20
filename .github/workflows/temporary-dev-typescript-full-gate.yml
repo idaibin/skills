@@ -4,27 +4,22 @@ on:
   push:
     branches:
       - validation/dev-typescript-full-gate-20260820
+    paths:
+      - .github/workflows/temporary-dev-typescript-full-gate.yml
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   full-gate:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - name: Check out immutable candidate
+      - name: Check out validation branch
         uses: actions/checkout@v4
         with:
-          ref: 5ec0b5705f6dc973cd61bd50484f330d3f81a351
+          ref: validation/dev-typescript-full-gate-20260820
           fetch-depth: 0
-
-      - name: Verify immutable basis
-        shell: bash
-        run: |
-          set -euo pipefail
-          test "$(git rev-parse HEAD)" = "5ec0b5705f6dc973cd61bd50484f330d3f81a351"
-          git cat-file -e "f34ff9143024f9337cd6fe5cb90ce48f25d76c16^{commit}"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,29 +32,117 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.13.0"
-          cache: npm
 
       - name: Install Python validation dependencies
         shell: bash
         run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
 
-      - name: Run canonical Skills gate
+      - name: Run immutable candidate gate
+        id: validation
         shell: bash
         env:
-          PYTHON_BIN: python3
-          SKILLS_BASE_SHA: f34ff9143024f9337cd6fe5cb90ce48f25d76c16
+          TARGET_SHA: 5ec0b5705f6dc973cd61bd50484f330d3f81a351
+          BASE_SHA: f34ff9143024f9337cd6fe5cb90ce48f25d76c16
         run: |
           set -euo pipefail
-          set -o pipefail
-          bash scripts/check-skills.sh 2>&1 | tee skills-full-gate.log
-          git show --check --format= HEAD
-          git diff --exit-code
+          candidate="$RUNNER_TEMP/dev-typescript-candidate"
+          result_dir="$GITHUB_WORKSPACE/.validation/results"
+          log="$result_dir/dev-typescript-full-gate.log"
+          result="$result_dir/dev-typescript-full-gate.json"
+          mkdir -p "$result_dir"
+          git cat-file -e "$TARGET_SHA^{commit}"
+          git cat-file -e "$BASE_SHA^{commit}"
+          git worktree add --detach "$candidate" "$TARGET_SHA"
 
-      - name: Upload validation log
+          overall=0
+          run_check() {
+            local label="$1"
+            shift
+            printf '\n## %s\n$' "$label" >> "$log"
+            printf ' %q' "$@" >> "$log"
+            printf '\n' >> "$log"
+            set +e
+            "$@" >> "$log" 2>&1
+            local code=$?
+            set -e
+            printf 'exit_code=%s\n' "$code" >> "$log"
+            if [[ "$code" -ne 0 ]]; then
+              overall=1
+            fi
+          }
+
+          : > "$log"
+          {
+            echo "target_sha=$TARGET_SHA"
+            echo "base_sha=$BASE_SHA"
+            echo "runner_os=$RUNNER_OS"
+            echo "git=$(git --version)"
+            echo "python=$(python3 --version 2>&1)"
+            echo "node=$(node --version)"
+            echo "npm=$(npm --version)"
+          } >> "$log"
+
+          pushd "$candidate" >/dev/null
+          export PYTHON_BIN=python3
+          export SKILLS_BASE_SHA="$BASE_SHA"
+          run_check canonical_full_gate bash scripts/check-skills.sh
+          run_check committed_whitespace_check git show --check --format= HEAD
+          run_check worktree_diff_check git diff --exit-code
+          popd >/dev/null
+
+          log_sha256="$(sha256sum "$log" | awk '{print $1}')"
+          generated_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          python3 - "$result" "$overall" "$generated_at" "$log_sha256" <<'PY'
+          import json
+          import os
+          import sys
+
+          path, status, generated_at, log_sha256 = sys.argv[1:]
+          payload = {
+              "schema_version": "ai-engineering-lab/full-gate-result/v1",
+              "repository": "idaibin/skills",
+              "validation_branch": "validation/dev-typescript-full-gate-20260820",
+              "target_branch": "codex/dev-typescript",
+              "target_commit": os.environ["TARGET_SHA"],
+              "routing_base_commit": os.environ["BASE_SHA"],
+              "gate": "bash scripts/check-skills.sh + committed/worktree diff checks",
+              "runner": "ubuntu-24.04",
+              "status": "pass" if status == "0" else "fail",
+              "exit_code": int(status),
+              "generated_at_utc": generated_at,
+              "log_path": ".validation/results/dev-typescript-full-gate.log",
+              "log_sha256": log_sha256,
+          }
+          with open(path, "w", encoding="utf-8") as handle:
+              json.dump(payload, handle, ensure_ascii=False, indent=2)
+              handle.write("\n")
+          PY
+
+          git worktree remove --force "$candidate"
+          echo "gate_status=$overall" >> "$GITHUB_OUTPUT"
+
+      - name: Publish immutable validation evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .validation/results/dev-typescript-full-gate.json .validation/results/dev-typescript-full-gate.log
+          git commit -m "test(validation): record dev-typescript full gate [skip ci]"
+          git push origin HEAD:validation/dev-typescript-full-gate-20260820
+
+      - name: Upload validation evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: dev-typescript-full-gate-log
-          path: skills-full-gate.log
-          if-no-files-found: ignore
+          name: dev-typescript-full-gate-evidence
+          path: .validation/results/dev-typescript-full-gate.*
+          if-no-files-found: error
           retention-days: 14
+
+      - name: Enforce gate result
+        if: always()
+        shell: bash
+        run: |
+          test "${{ steps.validation.outputs.gate_status }}" = "0"
