@@ -41,7 +41,7 @@ jobs:
         id: validation
         shell: bash
         env:
-          TARGET_SHA: 5ec0b5705f6dc973cd61bd50484f330d3f81a351
+          TARGET_SHA: 463b8000afed61650fe242aa59758ca7f7460430
           BASE_SHA: f34ff9143024f9337cd6fe5cb90ce48f25d76c16
         run: |
           set -euo pipefail
