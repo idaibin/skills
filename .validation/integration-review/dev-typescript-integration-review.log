@@ -1,0 +1,79 @@
+main_sha=f371e0933684205376f0e1818e833a2a58eea486
+candidate_sha=463b8000afed61650fe242aa59758ca7f7460430
+merge_base_sha=f34ff9143024f9337cd6fe5cb90ce48f25d76c16
+runner_os=Linux
+git=git version 2.54.0
+python=Python 3.12.13
+node=v22.13.0
+npm=10.9.2
+Auto-merging scripts/test_validate_skills.py
+Merge made by the 'ort' strategy.
+ INSTALL.md                                         |  11 ++
+ README.md                                          |   5 +-
+ docs/standards/skill-routing.md                    |  12 +-
+ evals/skill-routing-baseline.json                  |  44 +++++-
+ evals/skill-routing-cases.json                     |   4 +
+ scripts/search-skills.py                           |   5 +-
+ scripts/sync-shared-protocols.py                   |   4 +
+ scripts/test_run_skill_routing_evals.py            |   2 +-
+ scripts/test_validate_skills.py                    |   2 +-
+ skills-index.json                                  | 147 ++++++++++++++++-
+ skills.sh.json                                     |   3 +-
+ skills/dev-typescript/SKILL.md                     |  71 +++++++++
+ skills/dev-typescript/agents/openai.yaml           |   4 +
+ skills/dev-typescript/references/behavior-first.md |  26 +++
+ skills/dev-typescript/references/checklist.md      |  26 +++
+ skills/dev-typescript/references/code-quality.md   | 127 +++++++++++++++
+ .../dev-typescript/references/codebase-design.md   |  20 +++
+ skills/dev-typescript/references/eval-cases.md     |  31 ++++
+ .../dev-typescript/references/project-grounding.md | 175 +++++++++++++++++++++
+ .../dev-typescript/references/runtime-profiles.md  |  31 ++++
+ skills/dev-typescript/references/usage.md          |  20 +++
+ 21 files changed, 754 insertions(+), 16 deletions(-)
+ create mode 100644 skills/dev-typescript/SKILL.md
+ create mode 100644 skills/dev-typescript/agents/openai.yaml
+ create mode 100644 skills/dev-typescript/references/behavior-first.md
+ create mode 100644 skills/dev-typescript/references/checklist.md
+ create mode 100644 skills/dev-typescript/references/code-quality.md
+ create mode 100644 skills/dev-typescript/references/codebase-design.md
+ create mode 100644 skills/dev-typescript/references/eval-cases.md
+ create mode 100644 skills/dev-typescript/references/project-grounding.md
+ create mode 100644 skills/dev-typescript/references/runtime-profiles.md
+ create mode 100644 skills/dev-typescript/references/usage.md
+
+## canonical_full_gate
+$ bash scripts/check-skills.sh
+validation python: /opt/hostedtoolcache/Python/3.12.13/x64/bin/python3.12
+shared protocol copies are current
+validated 17 Skill packages
+routing baseline: f371e0933684205376f0e1818e833a2a58eea486 (immutable Git authority)
+skill routing evals: 56/56 passed; contract_errors=0 regressions=0
+skill context report: 17 skills; warnings=0
+validated frontend visual evidence: skills/dev-frontend/assets/frontend-visual-evidence.example.json
+.................................................................................................................................................................................................................................................................................................................................................
+----------------------------------------------------------------------
+Ran 337 tests in 8.164s
+
+OK
+{"status": "not-verified", "error": "source artifact changed during validation; result is stale"}
+duplicate H2 guard rejection in design_duplicate_overview__Overview.md:
+Overview
+duplicate H2 guard rejection in design_duplicate_overview____Overview.md:
+Overview
+duplicate H2 guard rejection in design_duplicate_overview__Overview_.md:
+Overview
+synthetic duplicate H2 variants were rejected by hard-blocking duplicate H2 guard
+design md contract regression checks passed
+exit_code=0
+
+## integration_diff_whitespace
+$ git diff --check f371e0933684205376f0e1818e833a2a58eea486 HEAD
+exit_code=0
+
+## committed_merge_check
+$ git show --check --format= HEAD
+exit_code=0
+
+## clean_worktree
+$ bash -c test\ -z\ \"\$\(git\ status\ --porcelain\)\"
+exit_code=0

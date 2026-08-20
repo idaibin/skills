@@ -1,0 +1,18 @@
+{
+  "schema_version": "ai-engineering-lab/integration-review/v1",
+  "repository": "idaibin/skills",
+  "validation_branch": "validation/dev-typescript-integration-review-20260820",
+  "main_commit": "f371e0933684205376f0e1818e833a2a58eea486",
+  "candidate_branch": "codex/dev-typescript",
+  "candidate_commit": "463b8000afed61650fe242aa59758ca7f7460430",
+  "merge_base_commit": "f34ff9143024f9337cd6fe5cb90ce48f25d76c16",
+  "merge_status": "clean",
+  "conflicts": [],
+  "merged_commit": "9cff369bae345f561a76c858f157f18cd1e247b4",
+  "merged_tree": "17564de5ba561f9da2f2001042b3e4b3850e1844",
+  "canonical_gate": "pass",
+  "status": "pass",
+  "generated_at_utc": "2026-08-20T05:37:52Z",
+  "log_path": ".validation/integration-review/dev-typescript-integration-review.log",
+  "log_sha256": "f2ad17c140d7c677bf52c07d237fbc08c1dddfe4aa53d9668f1858b9cc401db5"
+}
