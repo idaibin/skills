@@ -24,4 +24,3 @@ For one behavior at a time:
 6. repeat with the next behavior.
 
 Avoid horizontal batches of imagined tests followed by a broad implementation. Mock only true external boundaries; never mock the behavior owner being verified. A passing test that was never observed red is validation evidence, not red-green evidence.
-

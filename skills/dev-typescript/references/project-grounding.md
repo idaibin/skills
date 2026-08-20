@@ -173,4 +173,3 @@ current behavior.
 - A large diff increases sampling and decomposition needs but size alone never blocks.
   Split review by independent contracts when one basis changes specification, schema,
   runtime, API, and consumers together.
-

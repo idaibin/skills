@@ -18,4 +18,3 @@ Load this reference only when a change or review materially affects a public mod
 - Deepen or replace a shallow pass-through when evidence shows scattered knowledge; do not add another wrapper layer around it.
 - Keep implementation detail private and make required invariants, errors, ordering, and lifecycle visible at the public interface.
 - Apply the deletion test before preserving an abstraction and the public-interface test before approving its verification strategy.
-
