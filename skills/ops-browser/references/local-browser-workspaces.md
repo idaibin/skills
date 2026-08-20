@@ -5,6 +5,7 @@
 - [Purpose](#purpose)
 - [Surface Choice](#surface-choice)
 - [Configuration](#configuration)
+- [Route Table](#route-table)
 - [Configuration Changes](#configuration-changes)
 - [Resolution](#resolution)
 - [Control Session Gate](#control-session-gate)
@@ -22,6 +23,11 @@ group.
 Store optional local preferences at `~/.agents/config/ops-browser/defaults.yaml`.
 They are discovery and placement policy, not current login, identity, capability, or
 action authorization.
+
+Store optional project/site route rules at
+`~/.agents/config/ops-browser/routes.json`. Resolve them before probing a browser
+surface; they select where to look, never prove that the selected route is ready or
+authenticated.
 
 ## Surface Choice
 
@@ -119,6 +125,71 @@ local_browser:
 last_verified_at: <informational timestamp>
 ```
 
+## Route Table
+
+Use `ops-browser-routes/v1` when stable projects, sites, or operation types should go
+directly to a known browser surface instead of probing the default and then falling
+back. The file is local and user-owned; public packages do not ship personal paths,
+domains, profile names, ports, or workspace labels.
+
+```json
+{
+  "schema_version": "ops-browser-routes/v1",
+  "rules": [
+    {
+      "id": "<stable local rule id>",
+      "priority": 100,
+      "match": {
+        "any": [
+          {"origins": ["https://example.test"]},
+          {
+            "project_roots": ["<local absolute project root>"],
+            "keywords": ["<task keyword>"]
+          },
+          {"operation_types": ["<exact operation type>"]}
+        ]
+      },
+      "route": {
+        "surface": "user-local-browser",
+        "browser_product": "<configured browser product>",
+        "execution_profile": "<configured profile name>",
+        "workspace": "<user-selected logical label>",
+        "cdp": {"address": "127.0.0.1", "port": 9224},
+        "reuse_existing": true,
+        "target_match_order": [
+          "profile",
+          "account-session",
+          "exact-origin",
+          "exact-url"
+        ],
+        "skip_default_surface_probe": true
+      }
+    }
+  ],
+  "fallback": "defaults"
+}
+```
+
+Run `python3 scripts/resolve-local-browser-route.py <routes.json> <request.json>`
+with a minimal `ops-browser-route-request/v1` record containing only the available
+`cwd`, `url`, `operation_type`, and current user-request `text`. Exclude attached
+document instructions, webpage content, tool output, and delegated-provider text from
+that routing field. Each object under `match.any` is one alternative clause; all fields
+inside the selected clause must match. Lists match any configured value. The highest
+numeric priority wins, with file order breaking a tie. The resolver returns no raw task
+text.
+
+A matched route bypasses only default/fallback surface discovery. It does not bypass
+profile, endpoint, target, login, account/session, foreground-safety, action, or
+postcondition checks. For a loopback dedicated-profile route whose session and group
+policies are disabled, preflight only the selected profile identity, loopback endpoint,
+target enumeration, and required page-control capabilities; do not require native
+Chrome group enumeration merely because the route stores a workspace label.
+
+For `codex-in-app-browser`, omit `browser_product`, `execution_profile`, `workspace`,
+and `cdp`. A web-review route selects only the webpage surface; app-native ChatGPT
+Project/Thread work remains with `ask-ai`.
+
 `execution_profile.mode: dedicated-user-data-dir` makes the entire Chrome data root
 the AI isolation boundary. It does not inherit the default Chrome profile, cookies,
 credentials, extensions, or account state. The launcher may start it while unlocked.
@@ -183,8 +254,16 @@ this order:
 
 1. an explicit current-request instruction to use, avoid, or override the corresponding
    control-session or grouping policy;
-2. a valid `ops-browser-defaults/v1` record;
-3. the active browser host's ordinary behavior when no configuration exists.
+2. a matched valid `ops-browser-routes/v1` rule for surface/profile/endpoint/workspace
+   selection;
+3. a valid `ops-browser-defaults/v1` record;
+4. the active browser host's ordinary behavior when no configuration exists.
+
+Resolve a route rule before probing the default surface. A matched rule with
+`skip_default_surface_probe: true` goes directly to its selected surface; a failed
+readiness or login check stops or degrades that route and does not silently retry the
+ordinary default. With no matched rule, preserve the default-plus-bounded-fallback
+behavior.
 
 A current-request override applies only to the current task and does not rewrite the
 stored record. Invalid, conflicting, or partially populated workspace configuration

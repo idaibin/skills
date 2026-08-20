@@ -158,6 +158,10 @@ ASK_AI_CLI_HANDOFF_TOKENS = (
 )
 OPS_BROWSER_WORKSPACE_TOKENS = (
     "schema_version: ops-browser-defaults/v1",
+    '"schema_version": "ops-browser-routes/v1"',
+    "resolve-local-browser-route.py",
+    "skip_default_surface_probe",
+    "highest numeric priority wins",
     "control_session:",
     "default_name: <user-selected control-session name>",
     "require_verified_reuse: true",
@@ -440,6 +444,9 @@ def ops_browser_workspace_errors(package: Path) -> list[str]:
     preflight = package / "scripts" / "preflight-local-browser-workspace.py"
     if not preflight.is_file():
         errors.append("ops-browser: missing scripts/preflight-local-browser-workspace.py")
+    route_resolver = package / "scripts" / "resolve-local-browser-route.py"
+    if not route_resolver.is_file():
+        errors.append("ops-browser: missing scripts/resolve-local-browser-route.py")
     return errors
 
 

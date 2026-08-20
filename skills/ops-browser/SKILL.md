@@ -30,12 +30,18 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    evidence. Use `1920 x 1080` CSS pixels only for ordinary desktop work without a
    requested viewport; otherwise follow [usage](references/usage.md) and verify the
    effective viewport.
-2. Preflight only required capabilities with the Capability Snapshot in
-   [browser-operation-protocol.md](references/browser-operation-protocol.md). Keep
-   unchecked fields `unknown`. For user-local routes, load
-   [local-browser-workspaces.md](references/local-browser-workspaces.md), serialize
-   live evidence, and run `python3 scripts/preflight-local-browser-workspace.py
-   <evidence.json>` before setup or page actions. Exit `10` permits only listed workspace
+2. Resolve the browser surface before probing it. An explicit current-request route
+   wins. Otherwise, when `~/.agents/config/ops-browser/routes.json` exists, load
+   [local-browser-workspaces.md](references/local-browser-workspaces.md), serialize the
+   bounded request fields, and run `python3 scripts/resolve-local-browser-route.py
+   <routes.json> <request.json>`. A matched rule fixes the surface, profile/endpoint,
+   workspace label, reuse policy, and priority; skip probing the ordinary default and
+   fallback surfaces. With no match, use the ordinary defaults. Then preflight only
+   capabilities required by the selected route with the Capability Snapshot in
+   [browser-operation-protocol.md](references/browser-operation-protocol.md); keep
+   unchecked fields `unknown`. For a selected user-local route, serialize live evidence
+   and run `python3 scripts/preflight-local-browser-workspace.py <evidence.json>` before
+   setup or page actions. Exit `10` permits only listed workspace
    creation. Exit `11` permits exactly one `background_browser_setup`; record that
    consumed permit in the task-local ledger, then rerun with
    `background_setup_attempted: true` and fresh evidence. Never resend the initial
@@ -53,14 +59,16 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    the requested action. Keep preflight, canary, snapshot, action, after-state, and
    cleanup timestamps in one fixed evidence package; later evidence cannot
    retroactively verify an earlier action.
-3. Select the explicit surface, else the in-app Browser for ordinary work. If required
-   authentication is absent there, inspect the configured local CDP surface and switch
-   only after verifying its target login. Route localhost, loopback, configured local
-   development hosts, and explicit local dev/preview tasks to the configured local CDP
-   workspace. Reuse a safe same-environment/account/origin tab before creating one; use
-   the configured `AI_dev` workspace label, but do not foreground Chrome merely to prove
-   or create a native tab group. Then use an isolated browser only when profile state is
-   unnecessary. Local preferences never override foreground safety. Apply
+3. Select the resolved surface. For an unmatched ordinary task, use the in-app Browser;
+   if required authentication is absent there, inspect the configured local CDP surface
+   and switch only after verifying its target login. For a matched route, do not test a
+   different surface first. Route localhost, loopback, configured local development
+   hosts, and explicit local dev/preview tasks to the configured local CDP workspace.
+   Reuse a safe same-environment/account/origin tab before creating one. In dedicated
+   profile mode, treat a workspace label such as `AI_dev` as user-facing routing metadata
+   and match by verified profile, account/session, origin, then exact URL; native Chrome
+   group evidence is not required. Then use an isolated browser only when profile state
+   is unnecessary. Local preferences never override foreground safety. Apply
    session/group rules only to user-local routes; `dedicated-user-data-dir` uses its
    verified profile/process/endpoint instead. Narrow candidates by verified account/session
    before URL; URL matching never crosses an identity boundary.
@@ -171,5 +179,6 @@ ledger without making product or UI-contract decisions.
 - See [references/devtools-debugging.md](references/devtools-debugging.md) for localhost, test, and authorized production browser debugging.
 - See [references/browser-operation-protocol.md](references/browser-operation-protocol.md) for the shared Capability Snapshot, handoff schema, operation state machine, and degraded mode.
 - Read [references/local-browser-workspaces.md](references/local-browser-workspaces.md) when a user local-browser route must preserve a configured unified or operation-mapped tab group.
+- Run [scripts/resolve-local-browser-route.py](scripts/resolve-local-browser-route.py) before surface probing when a local route table exists.
 - Run [scripts/preflight-local-browser-workspace.py](scripts/preflight-local-browser-workspace.py) for the executable local-browser reuse/placement gate.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for same-viewport/state capture, evidence levels, pass-scoped computed checks, and tab restoration; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).
