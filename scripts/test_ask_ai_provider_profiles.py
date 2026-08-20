@@ -72,6 +72,32 @@ class AskAIProviderProfileTests(unittest.TestCase):
             with self.subTest(term=term):
                 self.assertIn(term, profile)
 
+    def test_web_payload_and_local_cli_directory_boundaries_are_distinct(self) -> None:
+        skill = self.read("skills/ask-ai/SKILL.md")
+        cli = self.read("skills/ask-ai/references/provider-cli.md")
+        handoff = self.read("skills/ask-ai/references/cli-artifact-handoff.md")
+        adapter = self.read("skills/ask-ai/references/provider-adapter.md")
+        evals = self.read("skills/ask-ai/references/eval-cases.md")
+
+        self.assertIn("For Web/browser/App-native send", skill)
+        self.assertIn("smallest self-contained redacted request", skill)
+        self.assertIn("bind the exact verified repository or Worktree root", skill)
+        self.assertIn("complete-directory read, search", cli)
+        for text in (cli, handoff, adapter, evals):
+            with self.subTest(source=text[:40]):
+                normalized = " ".join(text.split())
+                self.assertTrue(
+                    "complete-directory" in normalized
+                    or "complete selected directory" in normalized
+                )
+                self.assertTrue(
+                    "file allowlist" in normalized
+                    or "read allowlist" in normalized
+                    or "file list" in normalized
+                )
+        self.assertIn("parent/home", cli)
+        self.assertIn("persistent writes still require", cli)
+
     def test_cli_profile_is_local_version_bound_and_repository_safe(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         for term in (
@@ -88,6 +114,25 @@ class AskAIProviderProfileTests(unittest.TestCase):
         for forbidden in ("`zcode 0.16.1`", "claude-opus-4-6-thinking", "gemini-3.1-pro-high"):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, profile)
+
+    def test_cli_execution_is_delegated_but_result_verification_stays_primary(self) -> None:
+        skill = self.read("skills/ask-ai/SKILL.md")
+        cli = self.read("skills/ask-ai/references/provider-cli.md")
+        handoff = self.read("skills/ask-ai/references/cli-artifact-handoff.md")
+        adapter = self.read("skills/ask-ai/references/provider-adapter.md")
+        profile = self.read("skills/ask-ai/references/browser-profile.md")
+
+        self.assertIn("runtime-verified executor", skill)
+        self.assertIn("exactly one process start", cli)
+        self.assertIn("provider result content remains unread by the executor", cli)
+        self.assertIn("do not silently run locally or substitute another executor", cli)
+        self.assertIn(
+            "primary coordinator independently retrieves and reads",
+            " ".join(handoff.split()),
+        )
+        self.assertIn("result_reader: <primary-coordinator", adapter)
+        self.assertIn("execution_delegation: required | optional | disabled", profile)
+        self.assertIn("executor_result_access: metadata-only", profile)
 
     def test_cli_regressions_cover_model_attribution_and_known_invocation_drift(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")

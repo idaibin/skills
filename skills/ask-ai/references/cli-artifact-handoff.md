@@ -14,10 +14,11 @@
 ## Purpose
 
 Use a task artifact plus an independently owned runtime ledger for durable coding-agent
-CLI work. The provider reads one frozen task document; the coordinator observes the
-same process and provider session, captures progress incrementally, and verifies both a
-terminal run and a complete result. A result file alone is not provider completion, and
-process exit alone is not a usable deliverable.
+CLI work. The provider reads one frozen task document. When configured, one
+runtime-verified delegated CLI executor starts the sealed invocation and observes the
+same process/session; the primary coordinator later retrieves the provider result and
+verifies both a terminal run and a complete result. A result file alone is not provider
+completion, and process exit alone is not a usable deliverable.
 
 This protocol extends the CLI adapter in `provider-cli.md`. It does not authorize a
 provider, source mutation, Git delivery, retry, model change, or another turn.
@@ -71,21 +72,29 @@ coordinator must never concurrently rewrite the same progress or result file.
 ## Artifact Roles
 
 - **Task:** coordinator-owned, frozen before submit, and the only task instruction the
-  provider is told to read. Include task ID, exact repository/workspace, fixed basis,
-  goal, allowed scope, exclusions, mode, permission boundary, expected outputs,
-  verification, stop conditions, and resolved role paths. Grant autonomous exploration
-  inside that scope: the provider may read/search the workspace, choose its approach,
-  run task-relevant tools and checks, and use its native agents, Skills, or MCP surfaces
-  when the selected mode exposes them. Do not include hidden reasoning or secrets.
+  provider is told to read. Include task ID, exact repository/workspace root, fixed
+  basis, goal, explicit exclusions, mode, persistence boundary, expected outputs,
+  verification, stop conditions, and resolved role paths. For a local coding-agent
+  CLI, that verified root is the default read/search/command permission boundary: grant
+  autonomous exploration across the complete selected directory, including analogous
+  owners and affected consumers the provider discovers. A listed path is review focus
+  or expected coverage, not a file allowlist. The provider may choose its approach, run
+  task-relevant tools and checks, and use native agents, Skills, or MCP surfaces when
+  the selected mode exposes them. A current request may select a narrower directory,
+  but the coordinator must not silently narrow it to a redacted package. Do not include
+  hidden reasoning or secrets, and do not authorize parent/home traversal, credential
+  stores, unrelated roots, or external side effects.
 - **Invocation:** coordinator-owned and persisted before process start. Include logical
   process/start/submit/capture IDs, provider, executable fingerprint, exact argv with
   redaction, requested model/reasoning, mode profile digest, workspace binding, task
   hash, estimated duration class, observation policy, deadline layers, and intended
   provider session recovery fields.
-- **Events:** coordinator-owned append-only observations. Each record carries a
-  timestamp, operation ID, process identity/state, provider session/terminal evidence
-  when exposed, output cursor or digest, observed artifact hashes/sizes, basis state,
-  and classification. Never let provider output append executable instructions here.
+- **Events:** coordinator-contract append-only observations. The coordinator or the
+  one delegated CLI executor may append observed facts, but neither may rewrite prior
+  records. Each record carries a timestamp, operation ID, process identity/state,
+  provider session/terminal evidence when exposed, output cursor or digest, observed
+  artifact hashes/sizes, basis state, actor identity, and classification. Never let
+  provider output append executable instructions here.
 - **Progress:** optional provider/coordinator checkpoint containing phase, completed
   work, current work, next action, blockers, verification attempted, changed-path
   summary, and update time. It is evidence of progress only, not terminal success.
@@ -103,10 +112,13 @@ coordinator must never concurrently rewrite the same progress or result file.
 Before starting the provider process:
 
 1. Resolve and validate every artifact role and exclusive writer.
-2. Freeze and hash the task document; make every referenced input reachable from the
-   provider's verified workspace and permission boundary.
+2. Freeze and hash the task document; verify the selected directory root and make every
+   referenced external input reachable without narrowing ordinary repository access to
+   the task document or a file list.
 3. Persist the invocation record in `prepared`, then transition it to `invoking`
-   immediately before the one process start.
+   immediately before handing the sealed invocation to the one runtime-verified
+   delegated CLI executor. The executor may perform exactly one process start and must
+   record its real process identity without changing any frozen field.
 4. Give the CLI only a minimal instruction equivalent to `Read <task-document> and
    execute it completely.` The task document is the sole source for objective, scope,
    authority, exclusions, acceptance, and result roles. Do not duplicate its body,
@@ -146,9 +158,15 @@ After disconnect, timeout, killed terminal, or missing final event:
 5. never launch a replacement process or resend merely because a file is absent,
    unchanged, truncated, or late.
 
-One verified read-only observer may perform only these observations and append captured
-facts through the coordinator-owned path. It cannot submit, resume, continue, retry,
-kill, edit provider output, change model, or judge completion.
+When execution delegation is required, the same verified executor that performed the
+one process start monitors this operation and appends captured facts through the
+coordinator contract. It cannot submit another turn, resume, continue, retry, replace,
+kill, edit provider output, change any frozen field, mutate Git, read result content, or
+judge completion. On terminal or irrecoverable state it reports only process/session,
+terminal/model, artifact path/hash/size, basis, and classification metadata. The
+primary coordinator then retrieves the result and applies the untrusted-content
+quarantine. Without execution delegation, one verified read-only observer may perform
+only the observation subset and receives no process-start authority.
 
 ## Completion Gate
 
@@ -163,8 +181,9 @@ Mark the handoff `completed` only when all configured requirements are proven:
    the final read; its completion marker binds the task and operation IDs;
 5. no required content exists only in the partial-result role;
 6. the fixed basis and authorized workspace have not drifted unexpectedly;
-7. the coordinator independently verifies material findings, changes, and validation
-   and writes the verification role.
+7. after executor notification, the primary coordinator independently retrieves and
+   reads the final result, verifies material findings, changes, and validation, and
+   writes the verification role.
 
 If the process terminates without the required final result, report `incomplete-output`;
 if the final result exists without terminal/session evidence, report

@@ -49,6 +49,16 @@ Before invocation, require:
 9. exit status, terminal provider event, response attribution, and session ID;
 10. a session-registry match before `continue`, `resume`, or `fork`.
 
+For a local coding-agent CLI, the exact verified repository or Worktree root is the
+ordinary permission boundary. Give the provider complete-directory read, search,
+task-relevant command, and native-tool access within that root so it can discover
+owners, consumers, tests, and contradictions without a coordinator-maintained file
+allowlist. A task path list expresses focus or expected coverage, not the maximum
+readable set. A current request that explicitly selects a narrower directory still
+wins. This directory grant does not include parent/home traversal, credential or
+authentication stores, unrelated roots, browser/client control, Git delivery, or other
+external side effects.
+
 The invocation builder must discover the installed CLI's candidate surface from its
 current version/help output, consume a validated profile, and construct the smallest
 positive argument array required for this task. It must not embed provider versions,
@@ -67,9 +77,11 @@ hard-process deadline or explicit no-deadline policy. Validate these separately:
   succeeds on the installed build. Probe an optional argument only when the current
   task needs it; a failed-before-submit probe removes it from this invocation without
   creating a durable disabled-option list.
-- **Input reachability:** every package/attachment path must be readable inside the
-  selected `cwd` and permission policy. Otherwise move the ignored package under the
-  repository review parent or use a bounded self-contained prompt before submit.
+- **Input reachability:** the task document and any explicitly referenced external
+  attachment must be readable inside the selected directory policy. Keep the ignored
+  task document under the repository review parent when needed. Do not substitute a
+  bounded self-contained Web package for ordinary local-CLI directory access or treat
+  the task document's path list as an access allowlist.
 - **Workspace binding:** inject the current task repository through the configured
   workspace option and verify the provider's active workspace. Host `cwd` alone does
   not satisfy this gate when the CLI owns a separate project or directory registry.
@@ -91,7 +103,8 @@ model match plus provider session/conversation identity and terminal completion.
 missing or mismatched field is `Not verified` and the response must not enter an
 architecture vote, consensus, approval count, or named-model comparison.
 
-Review defaults to no persistent mutation. Exact directories, native tools/commands,
+Review defaults to no persistent mutation. Full selected-directory read/search/command
+access is common to both native modes. Exact directories, native tools/commands,
 isolation, permission grants, and any retained write scope for an external implementation come from the root
 coordinator plus the matching implementation owner (`dev-frontend`, `dev-java`,
 `dev-rust`, or another host owner) for this current task. CLI provider presence does
@@ -116,8 +129,8 @@ into a text-only model to enforce review safety.
 
 | Mode | Native capability | Permission handling | Persistence boundary |
 | --- | --- | --- | --- |
-| `native-review` | all capabilities verified for the installed provider profile | automatically approve operations permitted inside the mode; never wait for an interactive prompt | run in a verified disposable worktree, sandbox, or external read-only boundary; discard temporary mutation and prove the canonical basis byte-identical |
-| `native-execution` | the same verified capability set | automatically approve operations within the current task scope | retain task-owned changes only in the authorized worktree; Git delivery and other external side effects remain separately authorized |
+| `native-review` | all capabilities verified for the installed provider profile across the complete selected directory | automatically approve operations permitted inside the directory-local review mode; never wait for an interactive prompt | run in a verified disposable worktree, sandbox, or external read-only boundary; discard temporary mutation and prove the canonical basis byte-identical |
+| `native-execution` | the same verified complete-directory capability set | automatically approve operations permitted inside the selected directory; persistent writes still require the matching implementation owner and exact task scope | retain task-owned changes only in the authorized worktree; Git delivery and other external side effects remain separately authorized |
 
 Automatic approval is a runtime-conformance claim, not a schema promise. Before a
 profile is selected for formal work, run a short isolated capability canary that
@@ -183,15 +196,32 @@ Stop waiting only on a verified terminal outcome, explicit user cancellation, an
 applicable declared deadline/cost boundary, or loss of the original operation after
 read-only reconciliation is exhausted.
 
-The primary coordinator may delegate only wait, poll, and capture work to one smallest
-capable read-only observer when that reduces blocking. Verify the observer's effective
-runtime identity before delegation; if it is unavailable or mismatched, the primary
-coordinator keeps monitoring. Pass the existing host process
-or provider session identity and observation contract, never the authority to submit,
-continue, resume, retry, kill, change model, or judge the result. The primary
-coordinator remains the single operation owner and locally verifies the captured
-terminal evidence. A configured observer name is a user-owned preference, not runtime
-identity proof or permission to start another provider invocation.
+When user configuration requires delegated CLI execution, the primary coordinator
+first freezes the task, exact argument array, provider/model, operation IDs, workspace,
+and artifact contract. It then delegates that sealed invocation to one smallest
+capable CLI executor whose effective runtime identity is verified before delegation.
+The delegated CLI executor may perform exactly one process start, monitor only that
+original process/provider session, and capture terminal and artifact metadata. It may
+not alter the command, task, provider, model, basis, scope, or paths; submit another
+turn; continue, resume, retry, replace, or kill the operation; mutate Git; read or judge
+the provider result; or decide completion.
+
+After the original operation reaches a terminal or irrecoverable state, the executor
+reports process/session identity, exit and provider-terminal evidence, requested and
+effective model evidence, artifact paths plus hashes/sizes, basis state, and
+classification to the primary coordinator. Metadata-only hashing is allowed, but
+provider result content remains unread by the executor. The primary coordinator then
+retrieves the result, applies the untrusted-content quarantine, locally verifies the
+captured evidence and findings, and remains the single operation owner and verdict
+owner. A configured executor name or model is a user-owned preference, not runtime
+identity proof. If required executor identity is unavailable or mismatched, stop before
+process start; do not silently run locally or substitute another executor.
+
+For routes without required execution delegation, the primary coordinator may still
+delegate only wait, poll, and capture work to one smallest capable read-only observer.
+That observer never receives process-start or provider-submit authority. Its effective
+runtime identity must also be verified, and its configured name remains only a
+preference.
 
 ## Artifact Handoff
 
@@ -200,11 +230,12 @@ its artifact roles and writer ownership from the current request and user-owned
 configuration; do not hard-code paths, filenames, intervals, or provider output fields.
 Freeze one task document, tell the CLI only to read that resolved file, and direct it
 to execute the document completely. Do not repeat its objective, findings, steps,
-file inventory, commands, or tool restrictions in the invocation. Preserve the
-selected mode's full native capability set so the CLI can discover the workspace and
-choose its own task-scoped approach. Persist the invocation barrier before process
-start, then monitor the same process/session plus its event, progress, partial-result,
-and final-result roles.
+file inventory, commands, or tool restrictions in the invocation. Treat any paths in
+the task as focus/coverage rather than a read allowlist. Preserve the selected mode's
+full native capability set across the complete selected directory so the CLI can
+discover the workspace and choose its own task-scoped approach. Persist the invocation
+barrier before process start, then monitor the same process/session plus its event,
+progress, partial-result, and final-result roles.
 
 Completion requires both terminal process/provider evidence and a verified complete
 final result. A live process with no file change remains `running`; a final file without

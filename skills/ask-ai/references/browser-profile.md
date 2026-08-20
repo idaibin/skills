@@ -49,6 +49,12 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
       strategy: adaptive
       short_task_poll_hint_seconds: <positive seconds>
       long_task_poll_hint_seconds: <positive seconds>
+      execution_delegation: required | optional | disabled
+      preferred_cli_executor: <user-selected execution role | none>
+      required_executor_runtime_model: <exact runtime model | none>
+      require_executor_runtime_identity: true
+      executor_result_access: metadata-only
+      result_reader: primary-coordinator
       preferred_wait_observer: <user-selected read-only role | none>
       require_observer_runtime_identity: true
     artifact_handoff:
@@ -166,12 +172,16 @@ Never store secrets, cookies, tokens, browser storage, email addresses, display 
 or raw profile data. A Project/notebook name, URL, conversation identifier, model,
 reasoning mode, tab, or timestamp is a hint until reverified.
 
-`cli_monitoring` is optional user configuration for observation cadence, not a timeout
-or retry policy. `strategy: adaptive` selects intervals from the task's estimated
-duration and observed progress. The short and long values are positive scheduling
-hints, not success deadlines. `preferred_wait_observer` may name one user-selected
-read-only role; verify that role's effective runtime identity before attributing it,
-and keep the primary coordinator as the operation owner.
+`cli_monitoring` is optional user configuration for execution delegation and observation
+cadence, not a timeout or retry policy. `strategy: adaptive` selects intervals from the
+task's estimated duration and observed progress. The short and long values are positive
+scheduling hints, not success deadlines. With `execution_delegation: required`, verify
+the preferred executor's effective runtime model before handing it the sealed one-start
+invocation; mismatch or absence stops before launch. `executor_result_access:
+metadata-only` keeps provider-result reading and verdict ownership with the primary
+coordinator. `preferred_wait_observer` remains available only for routes where the
+primary coordinator started the CLI itself. Configured role/model names are preferences,
+not runtime identity proof.
 
 `artifact_handoff` is optional user configuration for durable CLI task/result exchange.
 Every role is user-configurable and resolves under one verified ignored task-local

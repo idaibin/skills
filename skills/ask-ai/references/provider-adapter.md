@@ -60,6 +60,9 @@ operations:
   reconcile_submission: <verified operation|unavailable>
 execution:
   executable_or_origin: <absolute executable path|verified origin|not-applicable>
+  cli_executor: <verified runtime role and model|not-applicable|Not verified>
+  process_start_actor: <primary-coordinator|delegated-cli-executor|not-applicable|Not verified>
+  result_reader: <primary-coordinator|not-applicable|Not verified>
   version_or_surface: <exact version/surface|Not verified>
   cwd: <absolute project path|not-applicable|Not verified>
   requested_model: <exact model id|provider default|not-applicable>
@@ -99,6 +102,12 @@ Provider aliases are resolved before creating this record. The adapter may not c
 the provider, authorization, package, round, relay limit, model requirement, or
 fallback order selected by the coordinator.
 
+For a delegated CLI route, `cli_executor` records live runtime identity, not the
+configured preference alone. The executor may launch the one frozen invocation and
+capture metadata, but `result_reader` remains the primary coordinator: only it enters
+the untrusted-content quarantine, reads the provider result, verifies findings, and
+owns the verdict.
+
 ## Capability States
 
 - `supported` means the required path was verified on the current provider, account,
@@ -125,7 +134,11 @@ For CLI or ACP, `discover_target` includes executable identity and version;
 stdout/event framing plus exit status; and `reconcile_submission` must distinguish a
 process that never started from one that may have submitted remotely. A shell exit
 code alone does not prove response attribution or that requested tools were read-only.
-The adapter also records the exact argument array, proves that prompt-bearing options
+The adapter also proves that a local CLI receives complete-directory read, search,
+task-relevant command, and native-tool access under the exact selected repository or
+Worktree root, with task paths treated as focus rather than a file allowlist. It rejects
+parent/home traversal, credential stores, unrelated roots, and persistence beyond the
+selected native mode. The adapter records the exact argument array, proves that prompt-bearing options
 bind the intended prompt rather than a following flag, and verifies that every input
 file is reachable from the selected `cwd` and permission strategy before submit. The
 adapter proves the complete native capability set is exposed in both execution modes,

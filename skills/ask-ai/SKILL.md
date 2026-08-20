@@ -65,17 +65,22 @@ not maintain a second public collaboration owner.
    is live evidence, not authorization. For image review, generation, editing, or visual
    exploration, load [image-routing.md](references/image-routing.md) and select exactly
    one requested image capability.
-7. Build the smallest self-contained redacted request. For durable/multipart work,
-   write `.codex/reviews/<review-id>-package.md` under the verified ignored parent;
-   create its response ledger only for an authorized round or explicit empty-ledger
-   request. Record provider, basis, facts, questions, evidence, exclusions, and output
-   contract without seeding conclusions. Package-only stops. Manual relay returns the
-   copy-ready prompt and records `awaiting-user-relay` with zero external action;
-   reconcile that fingerprint before any duplicate relay.
-   For durable coding-agent CLI work, load
-   [cli-artifact-handoff.md](references/cli-artifact-handoff.md), freeze its task and
-   invocation barrier, then instruct the CLI only to read that task. Do not duplicate
-   the body or narrow native tools. Package-only never launches it.
+7. Select the payload boundary by transport. For Web/browser/App-native send, upload,
+   API, or manual relay, build the smallest self-contained redacted request. For
+   durable/multipart work, write `.codex/reviews/<review-id>-package.md` under the
+   verified ignored parent; create its response ledger only for an authorized round or
+   explicit empty-ledger request. Record provider, basis, facts, questions, evidence,
+   exclusions, and output contract without seeding conclusions. Package-only stops.
+   Manual relay returns the copy-ready prompt and records `awaiting-user-relay` with
+   zero external action; reconcile that fingerprint before any duplicate relay.
+   For a local coding-agent CLI, bind the exact verified repository or Worktree root;
+   do not replace it with the outbound package or treat task paths as a file allowlist.
+   Load [cli-artifact-handoff.md](references/cli-artifact-handoff.md) for directory
+   permissions, exclusions, isolation, and the frozen task/invocation barrier. Hand the
+   sealed invocation to the configured runtime-verified executor, which starts once,
+   monitors the original operation, and reports metadata without reading the result.
+   The primary coordinator then retrieves, quarantines, and verifies the result. Stop
+   before launch on required executor mismatch. Package-only never launches the CLI.
 8. Load [provider-adapter.md](references/provider-adapter.md), build its live adapter
    record, then load only the selected provider reference:
    - [provider-chatgpt.md](references/provider-chatgpt.md)

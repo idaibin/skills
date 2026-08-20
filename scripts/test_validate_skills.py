@@ -158,6 +158,12 @@ class ValidatorTests(unittest.TestCase):
             "  strategy: adaptive\n"
             "  short_task_poll_hint_seconds: <positive seconds>\n"
             "  long_task_poll_hint_seconds: <positive seconds>\n"
+            "  execution_delegation: required | optional | disabled\n"
+            "  preferred_cli_executor: <user-selected execution role | none>\n"
+            "  required_executor_runtime_model: <exact runtime model | none>\n"
+            "  require_executor_runtime_identity: true\n"
+            "  executor_result_access: metadata-only\n"
+            "  result_reader: primary-coordinator\n"
             "  preferred_wait_observer: <user-selected read-only role | none>\n"
             "  require_observer_runtime_identity: true\n"
             "artifact_handoff:\n"
@@ -240,7 +246,7 @@ class ValidatorTests(unittest.TestCase):
         ):
             self.assertIn(mode, protocol)
 
-    def test_ask_ai_cli_monitoring_is_adaptive_and_single_owner(self) -> None:
+    def test_ask_ai_cli_monitoring_is_adaptive_delegated_and_single_owner(self) -> None:
         source = ROOT / "skills" / "ask-ai"
         self.assertEqual([], VALIDATOR.ask_ai_cli_monitor_errors(source))
         with tempfile.TemporaryDirectory() as temporary:
@@ -252,8 +258,9 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("one minute" in error for error in errors))
             self.assertTrue(any("five" in error for error in errors))
             self.assertTrue(any("not fixed limits" in error for error in errors))
-            self.assertTrue(any("read-only observer" in error for error in errors))
+            self.assertTrue(any("delegated CLI executor" in error for error in errors))
             self.assertTrue(any("runtime identity" in error for error in errors))
+            self.assertTrue(any("retrieves the result" in error for error in errors))
 
     def test_ask_ai_cli_artifact_handoff_is_durable_and_completion_safe(self) -> None:
         source = ROOT / "skills" / "ask-ai"
