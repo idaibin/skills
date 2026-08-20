@@ -1,0 +1,191 @@
+name: Temporary dev-typescript integration review
+
+on:
+  push:
+    branches:
+      - validation/dev-typescript-integration-review-20260820
+    paths:
+      - .github/workflows/temporary-dev-typescript-integration-review.yml
+
+permissions:
+  contents: write
+
+jobs:
+  integration-review:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out validation branch
+        uses: actions/checkout@v4
+        with:
+          ref: validation/dev-typescript-integration-review-20260820
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+
+      - name: Install validation dependencies
+        shell: bash
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt
+
+      - name: Simulate integration and run canonical gate
+        id: review
+        shell: bash
+        env:
+          MAIN_SHA: f371e0933684205376f0e1818e833a2a58eea486
+          CANDIDATE_SHA: 463b8000afed61650fe242aa59758ca7f7460430
+          MERGE_BASE_SHA: f34ff9143024f9337cd6fe5cb90ce48f25d76c16
+        run: |
+          set -euo pipefail
+          worktree="$RUNNER_TEMP/dev-typescript-integration"
+          result_dir="$GITHUB_WORKSPACE/.validation/integration-review"
+          log="$result_dir/dev-typescript-integration-review.log"
+          result="$result_dir/dev-typescript-integration-review.json"
+          conflicts="$result_dir/dev-typescript-conflicts.txt"
+          mkdir -p "$result_dir"
+          : > "$log"
+          : > "$conflicts"
+
+          git cat-file -e "$MAIN_SHA^{commit}"
+          git cat-file -e "$CANDIDATE_SHA^{commit}"
+          git cat-file -e "$MERGE_BASE_SHA^{commit}"
+          test "$(git merge-base "$MAIN_SHA" "$CANDIDATE_SHA")" = "$MERGE_BASE_SHA"
+          git worktree add --detach "$worktree" "$MAIN_SHA"
+
+          overall=0
+          merge_status="not-run"
+          gate_status="not-run"
+          merged_commit=""
+          merged_tree=""
+
+          run_check() {
+            local label="$1"
+            shift
+            printf '\n## %s\n$' "$label" >> "$log"
+            printf ' %q' "$@" >> "$log"
+            printf '\n' >> "$log"
+            set +e
+            "$@" >> "$log" 2>&1
+            local code=$?
+            set -e
+            printf 'exit_code=%s\n' "$code" >> "$log"
+            if [[ "$code" -ne 0 ]]; then
+              overall=1
+            fi
+            return "$code"
+          }
+
+          pushd "$worktree" >/dev/null
+          git config user.name "integration-review[bot]"
+          git config user.email "integration-review@users.noreply.github.com"
+          {
+            echo "main_sha=$MAIN_SHA"
+            echo "candidate_sha=$CANDIDATE_SHA"
+            echo "merge_base_sha=$MERGE_BASE_SHA"
+            echo "runner_os=$RUNNER_OS"
+            echo "git=$(git --version)"
+            echo "python=$(python3 --version 2>&1)"
+            echo "node=$(node --version)"
+            echo "npm=$(npm --version)"
+          } >> "$log"
+
+          set +e
+          git merge --no-ff --no-edit "$CANDIDATE_SHA" >> "$log" 2>&1
+          merge_code=$?
+          set -e
+          if [[ "$merge_code" -ne 0 ]]; then
+            merge_status="conflict"
+            overall=1
+            git diff --name-only --diff-filter=U | sort -u > "$conflicts"
+            git status --short >> "$log" 2>&1 || true
+            git merge --abort || true
+          else
+            merge_status="clean"
+            merged_commit="$(git rev-parse HEAD)"
+            merged_tree="$(git rev-parse HEAD^{tree})"
+            export PYTHON_BIN=python3
+            export SKILLS_BASE_SHA="$MAIN_SHA"
+            if run_check canonical_full_gate bash scripts/check-skills.sh; then
+              gate_status="pass"
+            else
+              gate_status="fail"
+            fi
+            run_check integration_diff_whitespace git diff --check "$MAIN_SHA" HEAD || true
+            run_check committed_merge_check git show --check --format= HEAD || true
+            run_check clean_worktree bash -c 'test -z "$(git status --porcelain)"' || true
+          fi
+          popd >/dev/null
+
+          conflict_count="$(grep -cve '^$' "$conflicts" || true)"
+          generated_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          log_sha256="$(sha256sum "$log" | awk '{print $1}')"
+          export merge_status gate_status merged_commit merged_tree conflict_count generated_at log_sha256 overall
+          python3 - "$result" "$conflicts" <<'PY'
+          import json
+          import os
+          import sys
+
+          result_path, conflicts_path = sys.argv[1:]
+          with open(conflicts_path, encoding="utf-8") as handle:
+              conflicts = [line.strip() for line in handle if line.strip()]
+          payload = {
+              "schema_version": "ai-engineering-lab/integration-review/v1",
+              "repository": "idaibin/skills",
+              "validation_branch": "validation/dev-typescript-integration-review-20260820",
+              "main_commit": os.environ["MAIN_SHA"],
+              "candidate_branch": "codex/dev-typescript",
+              "candidate_commit": os.environ["CANDIDATE_SHA"],
+              "merge_base_commit": os.environ["MERGE_BASE_SHA"],
+              "merge_status": os.environ["merge_status"],
+              "conflicts": conflicts,
+              "merged_commit": os.environ["merged_commit"] or None,
+              "merged_tree": os.environ["merged_tree"] or None,
+              "canonical_gate": os.environ["gate_status"],
+              "status": "pass" if os.environ["overall"] == "0" else "fail",
+              "generated_at_utc": os.environ["generated_at"],
+              "log_path": ".validation/integration-review/dev-typescript-integration-review.log",
+              "log_sha256": os.environ["log_sha256"],
+          }
+          with open(result_path, "w", encoding="utf-8") as handle:
+              json.dump(payload, handle, ensure_ascii=False, indent=2)
+              handle.write("\n")
+          PY
+
+          git worktree remove --force "$worktree"
+          echo "review_status=$overall" >> "$GITHUB_OUTPUT"
+
+      - name: Persist integration evidence
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f .validation/integration-review/dev-typescript-integration-review.json \
+            .validation/integration-review/dev-typescript-integration-review.log \
+            .validation/integration-review/dev-typescript-conflicts.txt
+          git commit -m "test(integration): record dev-typescript main integration review [skip ci]"
+          git push origin HEAD:validation/dev-typescript-integration-review-20260820
+
+      - name: Upload integration evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dev-typescript-integration-review-evidence
+          path: .validation/integration-review/dev-typescript-*
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce integration review
+        if: always()
+        shell: bash
+        run: test "${{ steps.review.outputs.review_status }}" = "0"
