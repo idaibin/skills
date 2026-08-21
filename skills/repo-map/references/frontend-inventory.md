@@ -17,3 +17,16 @@ For reuse or impact queries, return the canonical definition, export/registratio
 owner/provider root, representative consumers, states proven by current source, scan
 basis, and unresolved/conflict records. A query miss means `Not found in this
 snapshot`; perform bounded live discovery before recommending `new`.
+
+For a frontend implementation-navigation query, keep the result to one task slice:
+
+- target route/entry and owning package/component;
+- canonical definition and nearest reusable analogue;
+- representative registration/render/API/state chain needed for the requested change;
+- proven affected consumers and the closest focused test/static-check entry points;
+- snapshot basis, included scope/exclusions, staleness, and unresolved/conflicting edges.
+
+If the caller already has a maintained exact file/owner/function match, do not query;
+return control for current-source verification. Otherwise, do not return a general
+component inventory, refresh the snapshot, or render Markdown unless separately
+requested. A map record is navigation, not live authority.

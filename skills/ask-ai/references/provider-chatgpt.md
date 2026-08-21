@@ -284,6 +284,11 @@ For a multipart artifact set, verify the manifest counts and SHA-256 values befo
 
 Capture external ChatGPT text into `<repo-root>/.codex/reviews/<review-id>-response.md` by attributed App-native `read_thread` extraction, direct page extraction, download, or selected response text. Use the same review ID as the outbound package. Name generated reports or images `<review-id>-<type>.<ext>` directly under `.codex/reviews/` and record their paths plus the submitted prompt and operation attribution in the response file; do not put the outbound package in this file. Screenshots are supporting evidence only. Keep the raw files local-private and ignored; if repository delivery is explicitly requested, apply the visibility policy in `usage.md` and create a separate sanitized durable copy before staging.
 
+For browser transport, the pre-submit capture gate and final receipt in the shared
+browser-operation protocol are mandatory. A visible ChatGPT response is not complete
+until its stable conversation/container identity, non-truncated content, character
+count, content/file hashes, atomic finalization, and final-path readback are recorded.
+
 For live-browser review, also capture the declared target URL, reviewer browser surface, viewport when relevant, screenshot/source or observed-state evidence, actions taken, confirmation points, and `Not verified` gaps. Do not treat transport-browser screenshots of the ChatGPT UI as proof of the target page.
 
 Accept a response only when it can be tied to:

@@ -23,6 +23,10 @@ Use this checklist when implementing or reviewing frontend changes.
 - Identify actual package manager, scripts, frontend app boundary, target screen, route, component, framework, UI type, visual source, style system, and runtime proof requirement.
 - Identify the frontend project class, pinned runtime/package manager, lockfile, dependency policy, script contract, directory/naming standard, and documented exceptions.
 - Inspect only target page, component, route, service, hook or composable, store, type, style, shared UI, and layout owner files needed for the request.
+- When the current record already matches the exact file, owner, and function, verify
+  that target directly and do not invoke `repo-map`. For a cross-owner reuse/impact
+  question, consume at most one bounded query from an existing compatible snapshot.
+  If none exists, use bounded current-source discovery rather than scanning/rendering.
 - Check existing imports and nearby patterns before adding libraries, aliases, icons, helpers, or components.
 - For selected-source work, read the current product/UI slice, resolved `<design-root>/DESIGN.md`,
   selected-source evidence, delta rows, and readiness. Stop on unavailable source,
@@ -38,6 +42,9 @@ Use this checklist when implementing or reviewing frontend changes.
   record the smallest executable contract for the target slice: a task-local revision,
   observable acceptance, explicit non-goals, governing authority, affected
   owner/consumer, reuse decision, and the focused check that can fail before the change.
+- Freeze the navigation path after verifying the owner and decisive chain. Do not repeat
+  map queries or broad source discovery after freeze unless current source contradicts
+  the basis or a real check failure exposes an ownership error.
 - For API-backed behavior, resolve from the native contract and current call chain only
   the fields changed by, depended on by, or decisive to acceptance: applicable method
   and path, request placement and omission/default rules, trigger/cache timing, success
@@ -174,6 +181,21 @@ Use this checklist when implementing or reviewing frontend changes.
 
 ## Validation
 
+- For a one-owner local style, template, icon, copy, or similarly bounded component
+  change with no API/state/public/shared/build/runtime impact, batch the edits and use
+  the running dev/compiler diagnostics as the first signal. If they remain clean,
+  finish with local diff inspection and `git diff --check`; tests remain `Not verified`.
+  Do not add a red test, repeat checks, run a full build/suite, or add browser/review
+  ceremony by default.
+- During bounded iteration, never run bare aggregate test commands such as `npm test`,
+  `npm run test`, `pnpm test`, `yarn test`, `bun test`, or equivalents. Explicitly name
+  the affected test file/package/project or a repository-owned focused script.
+- If no credible focused test exists, keep tests `Not verified`; do not use that gap as
+  permission for a full suite.
+- Do not run a full build or full suite during implementation. Leave it for an
+  authorized merge/release/deployment/final-basis gate or an explicit user request,
+  stating the trigger, exact command, and scope before execution.
+
 - For selected-source visual work, run two same-viewport/state comparison passes:
   capture and compare, read computed geometry/style, fix confirmed findings, then
   recapture and reinspect.
@@ -189,7 +211,8 @@ Use this checklist when implementing or reviewing frontend changes.
   the same target acceptance fails again, stop patching, preserve the diff and direct
   evidence, and return to diagnosis or one accountable handoff.
 
-- Run project-defined type, lint, test, build, formatter, or route checks that match the change.
+- Run project-defined type, lint, test, build, formatter, or route checks only at a
+  logical slice boundary, before handoff, or after a real error; keep them focused.
 - Prefer non-mutating validation and use explicit fix/write commands only when rewrites are in scope.
 - Snapshot branch-aware Worktree state before a validation command that may generate or rewrite files, then compare status and diff afterward. Classify new changes as requested source, expected task-owned generated output, validation side effect, or unrelated/user-owned work.
 - Do not assume `build`, `check`, `dev`, or another read-like command preserved the checkout. Run a known writer in an isolated copy when practical. Never stage or retain validation drift merely because the command exited successfully; restore it only when the exact pre-state is known and the complete current diff is proven task-owned with no concurrent or mixed hunk. Otherwise preserve the diff and stop for `repo-review` ownership reconciliation.

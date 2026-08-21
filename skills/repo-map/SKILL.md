@@ -49,7 +49,14 @@ gateway/registration alias as separate fields when they differ.
 5. For `repository.asset.query`, consume an exact compatible snapshot reference and a
    bounded query such as asset lookup, relationship traversal, consumer lookup, reverse
    impact, authority conflict, or drift. Preserve the snapshot basis in the result; a
-   query against a stale basis is labeled stale rather than silently refreshed.
+   query against a stale basis is labeled stale rather than silently refreshed. If the
+   caller already has a maintained record that matches the exact current file, owner,
+   and function for the requested feature, return control without running a query; the
+   implementation owner verifies that target directly in current source. For an
+   unresolved cross-owner implementation edge, return only one compact slice: owner,
+   entry, decisive registration/call path, affected consumers, focused check, basis,
+   scope/exclusions, and unresolved conflicts. This is navigation, not a new sidecar or
+   implementation authority.
 6. Before any absence claim, report the searched scope, extractor coverage, unresolved
    records, and exclusions. A query miss means `Not found in this snapshot`, not proof
    that no implementation exists.
@@ -71,6 +78,8 @@ gateway/registration alias as separate fields when they differ.
 - **Asset scan:** produce or incrementally refresh a validated graph snapshot.
 - **Asset query:** answer bounded identity, relation, authority, reuse, consumer, impact,
   coverage, unresolved, conflict, or drift questions against one snapshot.
+- **Implementation navigation query:** answer one unresolved owner, reuse, consumer,
+  or impact edge from an existing compatible snapshot; never scan or implement.
 - **Derived render:** create a disposable Markdown/HTML navigation view from a typed
   result. Deleting the view must not lose graph facts.
 
@@ -81,6 +90,11 @@ gateway/registration alias as separate fields when they differ.
 - Never make Markdown the authoritative scan result or a required delivery gate.
 - Never treat directory enumeration or a selective reading path as complete repository
   cognition.
+- Never scan, refresh, or render a map merely because a task-local implementation needs
+  navigation. Use an existing compatible snapshot for one bounded unresolved edge; if
+  none exists, let the implementation owner use targeted current source.
+- Never query merely to reconfirm an already matched same-file, same-owner, same-function
+  record.
 - Never copy Product, design, UI, source-contract, schema, or runtime bodies into the
   graph; store stable identity, location, hash, authority role, and edges.
 - Never infer runtime success, review approval, delivery, deployment, or production

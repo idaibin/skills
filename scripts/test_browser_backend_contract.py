@@ -45,6 +45,12 @@ class BrowserBackendContractTests(unittest.TestCase):
             "backend:",
             "selection_reason:",
             "budget_used:",
+            "worker_runtime_model:",
+            "ownership_key:",
+            "response_capture:",
+            "response_container_id:",
+            "file_sha256:",
+            "readback_verified:",
         ):
             with self.subTest(term=term):
                 self.assertIn(term, protocol)

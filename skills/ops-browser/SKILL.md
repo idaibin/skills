@@ -39,7 +39,11 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    fallback surfaces. With no match, use the ordinary defaults. Then preflight only
    capabilities required by the selected route with the Capability Snapshot in
    [browser-operation-protocol.md](references/browser-operation-protocol.md); keep
-   unchecked fields `unknown`. For a selected user-local route, serialize live evidence
+   unchecked fields `unknown`. When durable defaults select a fixed local application
+   bundle, invoke or reuse that exact bundle directly. Do not enumerate or probe other
+   browser products, profiles, launchers, or fallback surfaces. Perform one readback of
+   the configured profile, endpoint, and target on that fixed route; if it fails, stop
+   `Not verified` instead of discovering an alternative. For a selected user-local route, serialize live evidence
    and run `python3 scripts/preflight-local-browser-workspace.py <evidence.json>` before
    setup or page actions. Exit `10` permits only listed workspace
    creation. Exit `11` permits exactly one `background_browser_setup`; record that
@@ -79,6 +83,15 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    authority. Record creation intent before opening and bind the created identity after
    re-enumeration. Bookmarks, history, and saved credentials assist discovery/login
    only; they do not prove identity, authorization, or operation state.
+   A Codex in-app Browser operation must first claim an exact existing user tab or
+   create one real task tab; ambient state, screenshots, cached page content, or a
+   static DOM capture do not substitute for a live tab. When two or more independent
+   in-app tabs are required, dispatch them once as one concurrent batch with one
+   verified Luna worker per stable tab identity. Each worker owns only its tab, target,
+   action ledger, and cleanup. Do not silently fall back to serial execution; stop
+   `Not verified` when independent ownership or runtime identity cannot be proven. Keep
+   one owner and serial execution for the same tab, conversation, writer, or operations
+   with real ordering dependencies.
 5. For an `ask-ai` handoff, validate the request and Capability Snapshot, preserve its
    `operation_id`, and return the matching protocol result. Do not operate app-native
    ChatGPT Projects/Threads here.
@@ -157,6 +170,10 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
   console for client logs; network for requests/responses; storage for stored state;
   file checks for downloads. Keep source-extracted, visually inferred, and runtime-
   computed values distinct.
+- In-app Browser operations require a real claimed or task-created tab and direct live
+  control/readback evidence. Fixed local-application routing is authoritative: invoke
+  only the exact configured application bundle, perform one fixed-route readback, and
+  do not run product, profile, launcher, or fallback discovery after that selection.
 - A two-pass visual gate requires two independently recorded matching viewport/state
   rounds. Mark unsupported runtime, identity, cleanup, or background claims `Not verified`.
 

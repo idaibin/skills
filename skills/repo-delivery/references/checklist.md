@@ -4,6 +4,7 @@
 
 - [Required Evidence](#required-evidence)
 - [Staging And Commit](#staging-and-commit)
+- [Parallel Current-Branch Delivery](#parallel-current-branch-delivery)
 - [Execution Durability](#execution-durability)
 - [Final History Normalization](#final-history-normalization)
 - [Merge Or Rebase Conflicts](#merge-or-rebase-conflicts)
@@ -37,8 +38,9 @@ does not authorize staging or committing.
   require the applicable final review verdict and its referenced final visual-evidence
   artifact. Consume the evidence; do not capture screenshots, operate a browser/client,
   or issue a new visual verdict.
-- Inspect staged diff before every commit.
-- Verify final local and remote state after delivery.
+- Run cached `diff --check`, stat, and name-status before each commit; inspect content
+  hunks only when scope is mixed, changed since review, or otherwise unresolved.
+- Verify final local and remote refs once after delivery.
 
 ## Staging And Commit
 
@@ -54,6 +56,21 @@ does not authorize staging or committing.
 - Record the resulting commit hash.
 - Recheck the remaining dirty tree after every category so later commits cannot absorb already delivered or unrelated content.
 - Stop after a local commit unless push or another Git target was separately authorized.
+
+## Parallel Current-Branch Delivery
+
+- Use only when commit, same-branch synchronization/rebase, and push are all authorized.
+- Start one commit owner for exact staging and local commit, and one remote owner for
+  fetching the named branch and reporting its exact SHA/divergence.
+- The commit owner is the only Worktree/index/`HEAD` writer. The remote owner must not
+  checkout, pull, rebase, stage, commit, or change the current branch.
+- After both finish, use one writer to rebase the local commit onto the fetched exact
+  remote ref. Use `git pull --rebase` only when the prefetched ref cannot be trusted or
+  consumed directly.
+- The same writer owns all conflict resolution. Resolve only established task-owned
+  intent, run the smallest affected check, continue, push, and compare remote SHA once.
+- Fall back to one execution agent/composite transaction when Git locks, repository
+  policy, shared state, or host isolation makes the parallel preparation unsafe.
 
 ## Execution Durability
 
@@ -101,7 +118,8 @@ does not authorize staging or committing.
 - Fetch before comparing or integrating remote state.
 - Do not rebase, merge, force-push, or change upstream unless the delivery target requires it.
 - Use `--force-with-lease` only when rewrite delivery is explicitly requested and repo guidance permits it.
-- Verify remote refs after push with `git ls-remote`, `git status --short --branch`, or an equivalent repo-defined command.
+- Verify the pushed remote ref once, preferably inside the same bounded transaction;
+  do not return to the model between push and readback.
 
 ## Review Publication
 

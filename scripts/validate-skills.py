@@ -57,6 +57,18 @@ ASK_AI_DEFAULT_TOKENS = (
     "result_reader: primary-coordinator",
     "preferred_wait_observer: <user-selected read-only role | none>",
     "require_observer_runtime_identity: true",
+    "browser_delegation:",
+    "strategy: parallel-per-provider | sequential",
+    "preferred_executor: <user-selected browser worker role | none>",
+    "max_parallel_providers: <positive integer>",
+    "one_owner_per_tab: true",
+    "executor_result_access: capture-only",
+    "browser_capture:",
+    'package: "{review_id}-package.md"',
+    'response_partial: "{review_id}-response.partial.md"',
+    'response_final: "{review_id}-response.final.md"',
+    "require_prepare_readback: true",
+    "require_capture_receipt: true",
     "artifact_handoff:",
     "workspace_parent: <verified ignored task-local parent>",
     "layout: flat-prefixed",
@@ -436,6 +448,9 @@ def ask_ai_defaults_errors(package: Path) -> list[str]:
     resolver = package / "scripts" / "resolve_browser_transport.py"
     if not resolver.is_file():
         errors.append("ask-ai: missing scripts/resolve_browser_transport.py")
+    capture = package / "scripts" / "browser_capture_artifacts.py"
+    if not capture.is_file():
+        errors.append("ask-ai: missing scripts/browser_capture_artifacts.py")
     return errors
 
 

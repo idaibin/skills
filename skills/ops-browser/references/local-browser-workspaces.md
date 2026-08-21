@@ -53,9 +53,24 @@ managed browser.
 
 ```yaml
 schema_version: ops-browser-defaults/v1
+in_app_browser:
+  require_live_tab: true
+  multi_tab:
+    strategy: parallel-per-tab
+    preferred_executor: luna_worker
+    required_executor_runtime_model: gpt-5.6-luna
+    require_runtime_identity: true
+    one_owner_per_tab: true
+    serial_fallback: disabled
 local_browser:
   product: <user-selected browser product>
   surface_priority: preferred | fallback
+  fixed_application:
+    name: <user-selected application name>
+    bundle_path: <local private absolute .app path>
+    discovery: disabled
+    fallback: none
+    post_launch_verification: single-fixed-route-readback
   routing:
     default_surface: codex-in-app-browser | user-local-browser
     authenticated_fallback: user-local-browser | codex-in-app-browser | none
@@ -232,6 +247,18 @@ surface constraint or missing live capability. The locked-session record permits
 browser-native, extension, or loopback CDP control plane. When browser launch or debug
 initialization is not prohibited, it authorizes one background setup attempt without
 unlocking, waking, activating, foregrounding, or GUI input.
+
+When `fixed_application` is present, its bundle path resolves local-browser selection
+without product, profile, launcher, or fallback discovery. Invoke or reuse that exact
+application, then perform one current-state readback of its configured profile,
+endpoint, and target. A failed readback stops `Not verified`; it does not reopen
+surface discovery.
+
+For the in-app Browser, `require_live_tab: true` means every page operation owns a real
+claimed or task-created tab identity. With `parallel-per-tab`, two or more independent
+tabs are dispatched together, one verified executor per tab, and have no serial
+fallback. Tabs that share a conversation, writer, mutable state, or ordering dependency
+remain under one owner and execute serially.
 
 `routing.default_surface` selects the ordinary unqualified route. When
 `authenticated_fallback` is configured, first verify that the default surface lacks the

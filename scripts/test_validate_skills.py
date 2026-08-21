@@ -131,6 +131,7 @@ class ValidatorTests(unittest.TestCase):
         (package / "references").mkdir(parents=True)
         (package / "scripts").mkdir(parents=True)
         (package / "scripts" / "resolve_browser_transport.py").write_text("# fixture\n", encoding="utf-8")
+        (package / "scripts" / "browser_capture_artifacts.py").write_text("# fixture\n", encoding="utf-8")
         profile = package / "references" / "browser-profile.md"
         profile.write_text(
             "browser_preference:\n"
@@ -166,6 +167,18 @@ class ValidatorTests(unittest.TestCase):
             "  result_reader: primary-coordinator\n"
             "  preferred_wait_observer: <user-selected read-only role | none>\n"
             "  require_observer_runtime_identity: true\n"
+            "browser_delegation:\n"
+            "  strategy: parallel-per-provider | sequential\n"
+            "  preferred_executor: <user-selected browser worker role | none>\n"
+            "  max_parallel_providers: <positive integer>\n"
+            "  one_owner_per_tab: true\n"
+            "  executor_result_access: capture-only\n"
+            "browser_capture:\n"
+            "  package: \"{review_id}-package.md\"\n"
+            "  response_partial: \"{review_id}-response.partial.md\"\n"
+            "  response_final: \"{review_id}-response.final.md\"\n"
+            "  require_prepare_readback: true\n"
+            "  require_capture_receipt: true\n"
             "artifact_handoff:\n"
             "  workspace_parent: <verified ignored task-local parent>\n"
             "  layout: flat-prefixed\n"
@@ -218,6 +231,8 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("image Project/notebook" in error for error in errors))
         self.assertTrue(any("allow-default" in error for error in errors))
         self.assertTrue(any("cli_monitoring" in error for error in errors))
+        self.assertTrue(any("browser_delegation" in error for error in errors))
+        self.assertTrue(any("browser_capture" in error for error in errors))
         self.assertTrue(any("artifact_handoff" in error for error in errors))
         self.assertTrue(any("cli_profile" in error for error in errors))
         self.assertTrue(any("persistent-context" in error for error in errors))

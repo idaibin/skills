@@ -121,6 +121,11 @@ not maintain a second public collaboration owner.
    running CLI operation, use the adaptive same-process monitoring contract in
    `provider-cli.md` and the artifact handoff when selected; a quiet observation
    interval or unchanged progress file is not a failure or retry trigger.
+   Before any browser submit, run the configured browser-capture artifact gate to
+   precreate and read back package, invocation, events, response-partial, and
+   response-final files. Gate failure stops at Package-only. After capture, accept
+   completion only after atomic finalization, SHA-256 verification, and final-path
+   readback; otherwise record `completion-not-verified` without resend.
 10. For ordinary multi-provider work, follow **Multi-Provider Independence** in
     [provider-routing.md](references/provider-routing.md). Only an explicitly requested
     relay workflow may include the immediately preceding provider response; follow

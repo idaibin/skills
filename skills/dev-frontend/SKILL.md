@@ -24,7 +24,12 @@ are used when supplied; they do not replace current source and repository contra
    `<design-root>/DESIGN.md` only when they apply. A missing optional artifact or graph
    does not create a prerequisite ceremony.
 3. Complete a bounded search for the current owner, analogous consumer, and reusable
-   component before choosing an implementation owner. Collect only the contract facts
+   component before choosing an implementation owner. If the supplied context already
+   identifies the same maintained file, owner, and function for this feature, use that
+   record directly and verify the target in current source; do not call `repo-map`.
+   Only when a cross-owner reuse or impact edge remains unresolved may an existing
+   compatible `repo-map` snapshot serve one bounded navigation query. Never scan,
+   refresh, or render a map for task-local implementation. Collect only the contract facts
    changed by, depended on by, or decisive to acceptance for the target slice. Load
    [project grounding](references/project-grounding.md) only when the change crosses a
    real API/auth, environment/build, durable-data, desktop/native, compatibility,
@@ -41,13 +46,51 @@ are used when supplied; they do not replace current source and repository contra
 5. Make the smallest coherent source change. Preserve established framework, routing,
    state/data, component, styling, and test owners; do not introduce a parallel stack
    or speculative shared layer.
-6. Run the nearest focused repository-owned check during iteration. Expand only for a
-   changed shared contract, generated/build chain, runtime boundary, or affected
-   consumer. Reserve full builds and full suites for final delivery, release,
-   deployment, explicit requests, or when no narrower credible check exists.
+6. Batch a coherent development slice before validating it. Treat a running dev server,
+   compiler, type checker, or repository diagnostic stream as the first feedback loop;
+   do not run a check after every edit while that signal remains clean. At slice
+   completion, before handoff, or after a real error, run one nearest focused check.
+   Expand only for a changed shared contract, generated/build chain, runtime boundary,
+   or affected consumer. Do not run a full build or full suite during implementation.
+   A full gate belongs to an explicitly authorized merge/release/deployment/final-basis
+   workflow or an explicit user request, and its reason, command, and scope must be
+   stated first. If no narrower credible check exists, use current dev diagnostics plus
+   a targeted static or diff check and report tests `Not verified`; do not escalate.
 7. Report changed owners, reuse decisions, validation, remaining Worktree content, and
    every applicable runtime or external gap as `Not verified`. Source implementation
    does not authorize browser/client operation or Git delivery.
+
+## Sol Coordination Path
+
+Sol freezes the execution plan once after owner and contract resolution. It should not
+alternate one operation, one wait, and one new reasoning pass.
+
+1. Keep a known one-owner micro change in the fast path.
+2. When two or more independently verifiable work packages exist, dispatch them
+   together with disjoint ownership and continue parent coordination in parallel.
+3. When an execution chain has three or more deterministic stages, such as status,
+   focused check, stage, commit, rebase, push, and ref readback, give the whole chain to
+   one execution agent or one bounded repository-owned script. Do not split mutable Git
+   state across concurrent writers.
+4. Sol performs one final reconciliation against the frozen acceptance boundary and
+   stops. Reopen discovery only for contradictory current source or a real failure.
+
+## Small Change Fast Path
+
+Use this path for one known owner and a local style, template, icon, copy, or similarly
+bounded component change with no API, state/data, public/shared contract, generation,
+build, deployment, or production-behavior change.
+
+1. Perform one targeted lookup and one minimal patch. Batch adjacent edits before one
+   completion checkpoint; never validate after each edit.
+2. If an already running dev/compiler diagnostic remains clean, finish with a local
+   diff inspection and `git diff --check`. A new test run is optional and should occur
+   only for changed observable behavior, an existing focused regression, a real dev
+   error, or an explicit request. Report tests `Not verified` when they were not run.
+3. Never run bare aggregate test commands or a full build/suite. Do not add a red test
+   for pure style/template/icon/copy changes.
+4. Stop after the checkpoint. Do not add memory/history lookup, repeated source search,
+   browser acceptance, delegation, independent review, or another identical check.
 
 ## Conditional Profiles
 
@@ -106,7 +149,8 @@ rather than creating or repairing one for ordinary implementation.
 Return capability `frontend.source.implement` with scope, project/stack, authority and
 reuse decisions, changed files/contracts, focused and expanded validation, Worktree
 drift, exclusions, and `Not verified` gaps. Include visual mapping and runtime passes
-only when the selected-source profile was active.
+only when the selected-source profile was active. Keep successful command output to a
+result summary; include relevant log tails only for failures.
 
 ## References
 

@@ -51,6 +51,32 @@ def stable_response_acceptable(evidence: dict[str, object]) -> bool:
     )
 
 
+def persisted_capture_acceptable(receipt: dict[str, object]) -> bool:
+    content = receipt.get("content")
+    artifact = receipt.get("artifact")
+    return (
+        isinstance(receipt.get("conversation_id"), str)
+        and bool(receipt["conversation_id"])
+        and isinstance(receipt.get("response_container_id"), str)
+        and bool(receipt["response_container_id"])
+        and isinstance(content, dict)
+        and content.get("complete") is True
+        and content.get("truncated") is False
+        and isinstance(content.get("character_count"), int)
+        and not isinstance(content.get("character_count"), bool)
+        and content["character_count"] >= 0
+        and isinstance(content.get("sha256"), str)
+        and len(content["sha256"]) == 64
+        and isinstance(artifact, dict)
+        and isinstance(artifact.get("path"), str)
+        and bool(artifact["path"])
+        and isinstance(artifact.get("file_sha256"), str)
+        and len(artifact["file_sha256"]) == 64
+        and artifact.get("atomic_write") == "verified"
+        and artifact.get("readback_verified") is True
+    )
+
+
 class BrowserOperationStabilityContractTests(unittest.TestCase):
     def read(self, relative: str) -> str:
         return (ROOT / relative).read_text(encoding="utf-8")
@@ -118,6 +144,40 @@ class BrowserOperationStabilityContractTests(unittest.TestCase):
             )
         )
 
+    def test_persisted_capture_requires_every_receipt_field(self) -> None:
+        receipt = {
+            "conversation_id": "conversation-1",
+            "response_container_id": "response-1",
+            "content": {
+                "complete": True,
+                "truncated": False,
+                "character_count": 4,
+                "sha256": "a" * 64,
+            },
+            "artifact": {
+                "path": ".codex/reviews/review-response.final.md",
+                "file_sha256": "b" * 64,
+                "atomic_write": "verified",
+                "readback_verified": True,
+            },
+        }
+        self.assertTrue(persisted_capture_acceptable(receipt))
+        for field in ("conversation_id", "response_container_id", "content", "artifact"):
+            with self.subTest(missing=field):
+                incomplete = dict(receipt)
+                incomplete.pop(field)
+                self.assertFalse(persisted_capture_acceptable(incomplete))
+        self.assertFalse(
+            persisted_capture_acceptable(
+                {**receipt, "content": {**receipt["content"], "truncated": True}}
+            )
+        )
+        self.assertFalse(
+            persisted_capture_acceptable(
+                {**receipt, "artifact": {**receipt["artifact"], "readback_verified": False}}
+            )
+        )
+
     def test_canonical_contract_and_generated_owners_keep_the_rules(self) -> None:
         canonical = self.normalized("protocols/browser-operation-v1.md")
         for token in (
@@ -130,6 +190,9 @@ class BrowserOperationStabilityContractTests(unittest.TestCase):
             "same sanitized content hash",
             "lingering control remains a separate `Not verified` terminal-UI gap",
             "Capture the accepted response once and stop",
+            "fixed package, invocation, events, response-partial, and response-final paths",
+            "atomic_write: verified",
+            "completion-not-verified",
         ):
             with self.subTest(token=token):
                 self.assertIn(token, canonical)

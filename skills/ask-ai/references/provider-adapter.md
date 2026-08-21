@@ -86,6 +86,7 @@ reuse:
 completion:
   signal: <direct provider-owned evidence|Not verified>
   attribution: <stable response container evidence|Not verified>
+  persistence_receipt: <browser-operation response_capture receipt|not-applicable|Not verified>
 gaps:
   - <capability or operation>: <reason>
 ```
@@ -155,6 +156,10 @@ provider output, not independent verification of any claim.
 Each state-changing operation receives its own `operation_id`. The adapter returns
 direct precondition, action, side-effect, postcondition, completion, and attribution
 evidence. Provider success text is not evidence of completion or correct attribution.
+For browser capture, `capture_response` is complete only when the shared browser
+protocol's response receipt proves stable conversation/container attribution,
+non-truncated content, atomic final write, SHA-256 values, and final-path readback.
+Missing persistence evidence is `completion-not-verified`, not a provider result.
 
 ## Reuse And Recovery
 

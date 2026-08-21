@@ -286,9 +286,12 @@ round_id: <same request round id>
 relay_turn_id: <same request relay turn id>
 attempt: <same request attempt>
 capability_snapshot_id: <same snapshot id>
-state: <preflighted|ready|created|attached|submitted|acknowledged|captured|cleaned|completed|failed-before-submit|blocked|ambiguous>
+state: <preflighted|ready|created|attached|submitted|acknowledged|captured|completion-not-verified|cleaned|completed|failed-before-submit|blocked|ambiguous>
 execution:
   backend: <host-browser-api|playwright|llm-browser-agent|cdp|manual>
+  worker_role: <primary-coordinator|delegated-worker-role|not-applicable>
+  worker_runtime_model: <provider-owned runtime model|Not verified|not-applicable>
+  ownership_key: <provider/browser/session/tab/operation binding|not-applicable>
   selection_reason: <direct capability and task-shape evidence>
   budget_used: <steps/actions or not-applicable>
 before:
@@ -301,6 +304,19 @@ side_effect:
   evidence: <direct evidence or Not verified>
 after:
   - <verified URL, attachment, acknowledgement, response, or cleanup state>
+response_capture:
+  conversation_id: <stable conversation id|Not verified|not-applicable>
+  response_container_id: <stable assistant-response container id|Not verified|not-applicable>
+  content:
+    complete: <true|false|Not verified>
+    truncated: <true|false|Not verified>
+    character_count: <non-negative integer|Not verified>
+    sha256: <64 lowercase hex|Not verified>
+  artifact:
+    path: <exact persisted response path|Not verified|not-applicable>
+    file_sha256: <64 lowercase hex|Not verified|not-applicable>
+    atomic_write: <verified|failed|Not verified|not-applicable>
+    readback_verified: <true|false|Not verified|not-applicable>
 retained_evidence:
   - <identifier or path>
 cleanup:
@@ -346,6 +362,24 @@ resend. Empty, truncated, changing, differently attributed, or target-drifted sa
 remain completion `Not verified` or `ambiguous` as required by the route state. Capture
 the accepted response once and stop.
 
+For `capture-response`, browser observation alone cannot enter `captured`. Before any
+submit, the bridge must have created and read back the fixed package, invocation,
+events, response-partial, and response-final paths under one verified ignored parent.
+If that persistence gate fails, stop at Package-only before external action. The
+browser operator may write only the pre-authorized response-partial artifact; the
+bridge owns atomic promotion to the response-final path and the final receipt.
+
+The bridge accepts `captured` only when `response_capture` contains a stable
+conversation ID and response-container ID, `complete: true`, `truncated: false`, the
+exact Unicode character count and captured-content SHA-256, plus the final artifact
+path, its file SHA-256, `atomic_write: verified`, and `readback_verified: true`.
+Compute the content hash from the exact captured visible response bytes and the file
+hash from the final persisted bytes; do not substitute one without checking both.
+Missing, contradictory, truncated, empty, non-atomic, unreadable, or hash-mismatched
+evidence returns `completion-not-verified`, never `captured` or `completed`. Use
+`ambiguous` instead only when the target, attribution, or external side effect itself
+cannot be reconciled.
+
 ## Operation State Machine
 
 The bridge records the previous state before accepting a result. Legal
@@ -358,9 +392,10 @@ transitions are:
 | `ready` | `created`, `attached`, `submitted`, `captured`, `cleaned`, `failed-before-submit`, `blocked`, `ambiguous` |
 | `created` | `acknowledged`, `completed`, `ambiguous` |
 | `attached` | `acknowledged`, `completed`, `ambiguous` |
-| `submitted` | `acknowledged`, `completed`, `ambiguous` |
-| `acknowledged` | `completed`, `ambiguous` |
+| `submitted` | `acknowledged`, `completion-not-verified`, `ambiguous` |
+| `acknowledged` | `captured`, `completion-not-verified`, `ambiguous` |
 | `captured` | `completed`, `ambiguous` |
+| `completion-not-verified` | `captured`, `ambiguous` only after read-only reconciliation of the same conversation and response container |
 | `cleaned` | `completed`, `ambiguous` |
 | `completed` | terminal |
 | `failed-before-submit` | `ready` only for a new attempt with the same operation ID, incremented `attempt`, bridge authorization, and proof of no side effect; otherwise stop |
@@ -388,6 +423,12 @@ side effect occurred. The bridge keeps an operation ledger keyed by
 - mark uncertain submission state `ambiguous` and stop for reconciliation;
 - use a new ID only for a genuinely new authorized action, never to bypass an
   ambiguous or already-submitted operation.
+
+`completion-not-verified` never permits resend, regeneration, a replacement
+conversation, or a new capture operation ID. Resume only the original read-only
+capture against the same provider, account, conversation, response container, tab,
+and precreated artifact paths. For a `capture-response` operation, `completed` is
+legal only after `captured` with the complete persistence receipt above.
 
 One `round_id` groups the many operation IDs that make up an external review
 round. For sequential relay, one `relay_turn_id` nests inside that round and

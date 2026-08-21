@@ -8,8 +8,8 @@ description: "Use when reviewed repository changes are explicitly authorized for
 ## Overview
 
 Deliver an already understood and reviewed change through the shortest safe Git path.
-Ordinary delivery is the default: verify scope and branch, stage exact paths, inspect
-the staged diff, perform only authorized actions, and read back the final refs.
+Ordinary delivery is the default: freeze scope and branch once, execute the authorized
+Git chain as one bounded transaction, and read back the final refs once.
 
 Consume `urn:skills:delivery-request:v1` and produce
 `urn:skills:delivery-receipt:v1` only after the requested target is read back. A local
@@ -17,25 +17,41 @@ commit is local durability, not remote delivery, deployment, or production proof
 
 ## Workflow
 
-1. Read repository guidance and run `git status --short --branch`. Identify branch,
-   upstream, staged/unstaged/untracked content, unrelated work, and the exact authorized
-   Git actions.
-2. For push, synchronization, integration, or cleanup, fetch the relevant remote refs
-   and compare divergence. For a local commit only, do not add remote work.
-3. Use the accepted review basis and exact path/hunk scope. Re-review only when the
-   basis changed, ownership is unclear, mixed hunks exist, or the requested final gate
-   requires it. Do not repeat implementation checks merely because delivery started.
-4. Choose the history shape before mutation. Follow repository policy or explicit user
-   intent; if merge, rebase, squash, or cherry-pick remain materially different valid
-   choices, stop as `strategy-unresolved`.
-5. Stage only the accepted paths or hunks and inspect cached stat, name-status, and full
-   diff. Keep one semantic outcome together; split only independently useful changes.
-6. Commit, push, integrate, synchronize, or clean up only as authorized. Resolve
-   conflicts only when conflict edits, staging, continuation, and follow-up actions are
-   all in scope.
-7. Verify final branch, status, log/tree, remaining Worktree content, and requested
-   local/remote refs. Report every unexecuted runtime, CI, deployment, or production
-   check as `Not verified`.
+1. **Compact preflight:** read effective guidance and run one branch-aware status. Freeze
+   authorization, branch/upstream, exact paths or hunks, accepted validation basis, and
+   history strategy. Fetch only when a remote action needs fresh divergence. Stop on
+   unrelated staged content, mixed ownership, or unresolved strategy.
+2. **One transaction:** reuse unchanged implementation/review validation. Stage exact
+   paths or hunks, run cached `diff --check`, and inspect only cached stat and
+   name-status. Do not print or reread the full cached diff unless mixed/unreviewed hunks
+   make content inspection necessary. Then perform the authorized commit/rebase/push
+   chain without returning to the model between successful steps. Prefer
+   `scripts/compact-delivery.sh` for an ordinary exact-path commit with optional rebase
+   and push; otherwise use one equivalent bounded command or one execution agent.
+3. **One readback:** after the chain, read local branch/SHA/status and, after push, the
+   actual remote ref in the same execution. Compare the final SHA once. Do not perform
+   per-file remote comparisons unless a named manifest, generated artifact contract,
+   or explicit user request requires them. Report unchecked CI, deployment, runtime,
+   or production state as `Not verified`.
+
+## Parallel Current-Branch Delivery
+
+When the authorized outcome is to commit current changes, synchronize the same remote
+branch, rebase, and push, use two preparatory owners in parallel:
+
+1. **Commit owner:** the only Worktree/index/`HEAD` writer. It stages the exact accepted
+   scope, performs cached checks, and creates the local commit.
+2. **Remote owner:** owns only remote-ref preparation. It fetches the named remote branch
+   and returns its exact SHA/divergence without touching the Worktree, index, or `HEAD`.
+3. After both complete, one writer verifies their bases and runs `git rebase` against
+   the fetched exact remote ref; `git pull --rebase` is acceptable when no reliable
+   prefetched ref is available. This final phase is single-writer, never parallel.
+4. On conflict, the same writer resolves only conflicts whose local and remote intent
+   is established, runs the smallest affected check, continues the rebase, pushes, and
+   performs one remote-SHA readback. Stop on unrelated or ambiguous conflict ownership.
+
+If the host cannot isolate the commit and remote-ref owners safely, keep one execution
+agent and one composite transaction rather than risk concurrent Git state mutation.
 
 For same-process ordinary delivery, current Git evidence is sufficient. Persist a
 minimal PackageManifest/receipt record only when Forgeway integration, a cross-session
@@ -71,6 +87,9 @@ workflow, or repository policy actually requires resumable typed state.
   rewrite a default/protected/shared branch.
 - Do not rerun unchanged full validation after an accepted final-basis pass. Rerun only
   when the basis changed or the repository's final delivery policy requires it.
+- Keep successful delivery output to branch, commit SHA, pushed ref/SHA, staged-file
+  count, remaining-entry count, and any `Not verified` boundary. Expand command output
+  only on failure.
 - Verify remote success from the actual remote ref, not a command exit or local
   tracking ref.
 - Never create or update a pull request, tag, release, deployment, or registry
@@ -91,3 +110,4 @@ DeliveryReceipt only when its target readback exists; otherwise state why none e
   [normalization](references/history-normalization.md),
   [conflicts](references/resolving-merge-conflicts.md),
   [Skills release](references/skills-release.md).
+- Ordinary exact-path transaction helper: [compact-delivery.sh](scripts/compact-delivery.sh).

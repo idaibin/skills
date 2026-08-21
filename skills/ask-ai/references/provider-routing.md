@@ -334,8 +334,22 @@ For an explicitly authorized provider set:
 6. Capture every response or explicit incomplete state before comparison.
 7. Let Codex verify and deduplicate findings against the fixed local basis.
 
-Parallel execution is optional. Independence comes from input, operation, attribution,
-and evaluation isolation, not from concurrency or an assumed incognito browser.
+When two or more provider rounds are independent and the host exposes verified
+delegation, dispatch them concurrently with exactly one browser worker per provider
+tab. Give each worker a fixed provider, account/context, stable tab identity, package
+hash, operation ledger, response-partial path, and stop condition. A configured Luna
+worker may own the provider's navigate/compose/submit/wait/capture lifecycle only after
+its effective runtime model is verified; fixed submits still use a deterministic
+browser backend rather than an open-ended browser-agent write.
+
+Parallel workers must not share a tab, conversation, composer, operation ID, artifact
+writer role, response evidence, or provider target lock. Browser/profile setup,
+reconnect, tab creation/closure, account changes, and model/mode changes remain
+serialized under one browser-mutation owner. If stable tab identity, independent
+writer ownership, or background-safe concurrent page control is unavailable, run the
+provider rounds sequentially. Sequential relay is always ordered, never parallel.
+Independence comes from input, operation, attribution, and evaluation isolation, not
+from concurrency or an assumed incognito browser.
 
 ## Relay Review
 

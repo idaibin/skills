@@ -57,6 +57,28 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
       result_reader: primary-coordinator
       preferred_wait_observer: <user-selected read-only role | none>
       require_observer_runtime_identity: true
+    browser_delegation:
+      strategy: parallel-per-provider | sequential
+      preferred_executor: <user-selected browser worker role | none>
+      required_executor_runtime_model: <exact runtime model | none>
+      require_executor_runtime_identity: true
+      max_parallel_providers: <positive integer>
+      one_owner_per_tab: true
+      executor_result_access: capture-only
+      result_reader: primary-coordinator
+    browser_capture:
+      enabled: true
+      workspace_parent: <verified ignored task-local parent>
+      layout: flat-prefixed
+      roles:
+        package: "{review_id}-package.md"
+        invocation: "{review_id}-invocation.json"
+        events: "{review_id}-events.jsonl"
+        response_partial: "{review_id}-response.partial.md"
+        response_final: "{review_id}-response.final.md"
+      finalization: atomic-replace
+      require_prepare_readback: true
+      require_capture_receipt: true
     artifact_handoff:
       enabled: true
       workspace_parent: <verified ignored task-local parent>
@@ -189,6 +211,21 @@ parent; `flat-prefixed` keeps related files under that parent without creating a
 subdirectory. Exactly one writer owns each progress/result role. The setting changes
 artifact transport only: it does not authorize invocation, mutation, retry, or Git
 delivery. Load `cli-artifact-handoff.md` for its launch, recovery, and completion gates.
+
+`browser_delegation` is optional user configuration for independent multi-provider
+browser rounds. `parallel-per-provider` assigns one verified worker to one stable
+provider tab and ledger; it does not authorize the send. Verify the worker's effective
+runtime model before dispatch. The worker may capture raw provider output but does not
+interpret it or own the verdict; the primary coordinator remains the only result
+reader. Shared browser/profile mutations and sequential relay remain serialized.
+
+`browser_capture` is the mandatory persistence gate when enabled. Before submit, run
+`scripts/browser_capture_artifacts.py prepare` and require a successful readback of all
+five fixed roles. Any failure returns Package-only before external action. The browser
+worker writes only `response_partial`; after attribution and completion evidence, the
+primary runs `finalize`, which atomically promotes `response_final`, records content
+and file hashes, and verifies final-path readback. Missing receipt fields remain
+`completion-not-verified` and never authorize resend.
 
 `provider_aliases` and `model_aliases` are routing conveniences only. Resolve aliases
 to a canonical recipient and an exact installed model identifier before invocation;
