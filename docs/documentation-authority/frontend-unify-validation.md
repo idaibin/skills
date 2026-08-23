@@ -57,8 +57,8 @@ non-conforming consumer rather than implying the UI already follows the native o
   `frontend-unify/DESIGN.md` with `@google/design.md@0.3.0`.
 - Formal project docs contain no JSON/YAML evidence, dated integration status,
   Skill-development plan, personal absolute path, or task validation timeline.
-- Skill validation: 16 packages, 48/48 routing cases, and 174 tests passed; shared
-  protocol synchronization and DESIGN contract guards passed.
+- Skill validation used the catalog-wide package and routing suites; shared protocol
+  synchronization and DESIGN contract guards passed.
 - Independent mutual review on the repaired basis returned no actionable findings.
 - Published `main` and local `main` resolve to the same commit.
 - All files in globally installed `product-spec`, `ui-spec`, `repo-map`, and
