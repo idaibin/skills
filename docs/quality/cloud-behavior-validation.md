@@ -88,8 +88,8 @@ git diff --check
 
 Record the complete output and exit codes. Confirm:
 
-- 16 packages validate;
-- 48 routing cases pass with zero contract errors and regressions;
+- all catalog packages validate;
+- the current routing case matrix passes with zero contract errors and regressions;
 - context warnings are zero;
 - the unit and DESIGN.md regressions pass;
 - the routing baseline is read from the immutable baseline ref after publication.
