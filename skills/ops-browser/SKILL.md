@@ -30,91 +30,41 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    evidence. Use `1920 x 1080` CSS pixels only for ordinary desktop work without a
    requested viewport; otherwise follow [usage](references/usage.md) and verify the
    effective viewport.
-2. Resolve the browser surface before probing it. An explicit current-request route
-   wins. Otherwise, when `~/.agents/config/ops-browser/routes.json` exists, load
-   [local-browser-workspaces.md](references/local-browser-workspaces.md), serialize the
-   bounded request fields, and run `python3 scripts/resolve-local-browser-route.py
-   <routes.json> <request.json>`. A matched rule fixes the surface, profile/endpoint,
-   workspace label, reuse policy, and priority; skip probing the ordinary default and
-   fallback surfaces. With no match, use the ordinary defaults. Then preflight only
-   capabilities required by the selected route with the Capability Snapshot in
-   [browser-operation-protocol.md](references/browser-operation-protocol.md); keep
-   unchecked fields `unknown`. When durable defaults select a fixed local application
-   bundle, invoke or reuse that exact bundle directly. Do not enumerate or probe other
-   browser products, profiles, launchers, or fallback surfaces. Perform one readback of
-   the configured profile, endpoint, and target on that fixed route; if it fails, stop
-   `Not verified` instead of discovering an alternative. For a selected user-local route, serialize live evidence
-   and run `python3 scripts/preflight-local-browser-workspace.py <evidence.json>` before
-   setup or page actions. Exit `10` permits only listed workspace
-   creation. Exit `11` permits exactly one `background_browser_setup`; record that
-   consumed permit in the task-local ledger, then rerun with
-   `background_setup_attempted: true` and fresh evidence. Never resend the initial
-   preflight after an attempted setup. Exit `20` stops the
-   route. Record screen lock state and fail
-   closed when the exact locked-session operation is not proven safe. Lock state alone
-   and missing pre-lock history are not stop conditions. Reuse or reconnect first; if
-   policy permits, attempt one background dedicated-profile launch and loopback CDP
-   initialization without unlocking, waking, activating, foregrounding, or GUI input,
-   then revalidate the complete current route. If the controller
-   requires task-specific naming, set
-   `controller_constraints.requires_task_specific_session_name: true` and fail closed.
-   When foreground safety needs a live canary, run it only after a ready preflight on
-   the identity-matched existing target, then refresh the Capability Snapshot before
-   the requested action. Keep preflight, canary, snapshot, action, after-state, and
-   cleanup timestamps in one fixed evidence package; later evidence cannot
-   retroactively verify an earlier action.
-3. Select the resolved surface. For an unmatched ordinary task, use the in-app Browser;
-   if required authentication is absent there, inspect the configured local CDP surface
-   and switch only after verifying its target login. For a matched route, do not test a
-   different surface first. Route localhost, loopback, configured local development
-   hosts, and explicit local dev/preview tasks to the configured local CDP workspace.
-   Reuse a safe same-environment/account/origin tab before creating one. In dedicated
-   profile mode, treat a workspace label such as `AI_dev` as user-facing routing metadata
-   and match by verified profile, account/session, origin, then exact URL; native Chrome
-   group evidence is not required. Then use an isolated browser only when profile state
-   is unnecessary. Local preferences never override foreground safety. Apply
-   session/group rules only to user-local routes; `dedicated-user-data-dir` uses its
-   verified profile/process/endpoint instead. Narrow candidates by verified account/session
-   before URL; URL matching never crosses an identity boundary.
-4. Reuse an identity-matched tab. Open at most one task tab only when reuse is unsafe or
-   independent state/comparison requires isolation. Keep a task-local tab ledger that
-   records task key, browser surface/session identity, tab identity, target fingerprint,
-   ownership evidence, purpose, lifecycle state, cleanup disposition, and retention
-   authority. Record creation intent before opening and bind the created identity after
-   re-enumeration. Bookmarks, history, and saved credentials assist discovery/login
-   only; they do not prove identity, authorization, or operation state.
-   A Codex in-app Browser operation must first claim an exact existing user tab or
-   create one real task tab; ambient state, screenshots, cached page content, or a
-   static DOM capture do not substitute for a live tab. When two or more independent
-   in-app tabs are required, dispatch them once as one concurrent batch with one
-   verified Luna worker per stable tab identity. Each worker owns only its tab, target,
-   action ledger, and cleanup. Do not silently fall back to serial execution; stop
-   `Not verified` when independent ownership or runtime identity cannot be proven. Keep
-   one owner and serial execution for the same tab, conversation, writer, or operations
-   with real ordering dependencies.
+2. Resolve the surface before probing it. An explicit route wins; otherwise load
+   [local-browser-workspaces.md](references/local-browser-workspaces.md) and run the
+   route resolver when its table exists, then use the ordinary default only when no
+   rule matches. A matched route fixes surface, profile/endpoint, workspace, reuse,
+   and fallback policy; do not discover alternatives. Read back the fixed profile,
+   endpoint, and target once, then preflight only required capabilities with the
+   Capability Snapshot in [browser-operation-protocol.md](references/browser-operation-protocol.md).
+   For user-local routes, run the local-workspace preflight before setup or page
+   actions. Honor its `10`/`11`/`20` outcomes, allowing at most the one explicitly
+   authorized background setup and fresh revalidation. Never unlock, wake, activate,
+   foreground, use GUI input, or use later evidence to prove an earlier action.
+3. Select only the resolved surface. For ordinary unmatched work prefer the in-app
+   Browser; use the configured local CDP workspace for localhost or when its verified
+   login is required. Reuse a safe tab matching profile, account/session, origin, and
+   URL before creating one. Keep user-local session/group rules separate from the
+   verified `dedicated-user-data-dir` profile. URL matching never crosses identity.
+4. Claim an exact live tab or create at most one task tab when reuse is unsafe. Record
+   the task-local tab ledger before opening and bind the created identity after
+   re-enumeration; screenshots, cached DOM, history, and saved credentials are not
+   proof. Batch only independent in-app tabs with one owner per stable identity; keep
+   dependent work serial and return `Not verified` when ownership is unclear.
 5. For an `ask-ai` handoff, validate the request and Capability Snapshot, preserve its
    `operation_id`, and return the matching protocol result. Do not operate app-native
    ChatGPT Projects/Threads here.
-6. Select backend independently: deterministic browser APIs or Playwright for fixed
-   actions; a bounded browser agent only for genuinely open-ended navigation; direct
-   CDP only for a required low-level Chromium capability. Load the applicable usage,
-   platform, Axure, Lanhu, visual-evidence, or debugging reference; backend choice does
-   not change identity, authorization, or proof requirements.
-   For a fixed route, known controls, repeatable capture, regression check, or external write, prefer deterministic APIs or Playwright.
-7. Prefer DOM/accessibility, roles, labels, test ids, and deterministic actions. Gather
-   only exposed UI, DOM, console, network, storage/auth, screenshot, viewport,
-   download, route, or payload evidence. Keep source targets and runtime-computed facts
-   distinct; label inference and unchecked claims `Not verified`.
-8. Before external writes or sensitive actions, revalidate account, target, action,
-   authorization, prior operation state, and expected postcondition. Stop on uncertain
-   prior side effects, credentials/MFA/consent, destructive or irreversible actions,
-   and any unapproved scope expansion.
-9. Reconcile the task-local tab ledger before finishing. Resume ownership only from the
-   same revalidated browser surface/session, tab identity, and target fingerprint;
-   otherwise mark ownership `Not verified`. Retain a task-created tab only when the user explicitly
-   requested it; otherwise close identity-matched task-created tabs and verify duplicates are gone.
-   Never close a pre-existing user tab without authority. Restore recorded user state
-   where possible and report unsupported or remaining changes.
+6. Choose the narrowest backend: deterministic APIs or Playwright for fixed actions,
+   a bounded agent only for open-ended navigation, and CDP only for a required low-level
+   capability. Load the applicable reference. Prefer semantic selectors and collect only
+   exposed UI, DOM, console, network, storage/auth, screenshot, viewport, download,
+   route, or payload evidence; separate runtime facts from inference.
+7. Before a write or sensitive action, revalidate account, target, authorization,
+   prior operation state, and postcondition; stop for uncertain side effects,
+   credentials/MFA/consent, destructive actions, or scope expansion. Reconcile the tab
+   ledger at finish, resume only from revalidated identity, close task-created tabs
+   unless retention was requested, never close a pre-existing tab without authority,
+   and report restoration gaps.
 
 ## Modes
 
