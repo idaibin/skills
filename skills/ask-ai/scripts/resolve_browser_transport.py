@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resolve one provider-specific Ask AI browser transport without external action."""
+"""Resolve one provider-specific browser transport without external action."""
 
 from __future__ import annotations
 

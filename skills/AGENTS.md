@@ -63,5 +63,14 @@ affected Skill's normal use, nearest non-trigger or owner boundary, and critical
 The full gate runs the deterministic routing matrix, its committed no-new-regression
 baseline, and a warning-only context report. Do not rerun it after an unchanged full
 pass unless the basis or relevant gate inputs changed. Real host/model behavior still
-requires representative live tasks when claimed; keep raw outputs only when they help
-improve the Skill. A formal cross-model benchmark remains optional.
+requires representative live tasks when claimed. For a new or materially changed
+behavior, a real-failure repair, or an improvement claim, run the actual Agent on a
+fixed targeted prompt set and capture JSONL trace plus task artifacts. Cover explicit
+and implicit/contextual use, the nearest non-trigger, an applicable valid no-op, and the
+critical stop; score observable selection, process, outputs/effects, honest stop state,
+and efficiency separately. Keep public cases synthetic and project-neutral, keep raw
+business/project evidence ignored or private, and require human confirmation before
+replacing the maintained basis. Static gate counts cannot substitute for this live
+capability result. An explicitly requested independent provider/model remains a
+required live case dimension: absent or mismatched provider evidence is `Not verified`,
+not a waived pass. A formal cross-model benchmark remains optional.

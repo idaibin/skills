@@ -120,10 +120,10 @@ class PublicContentHygieneTests(unittest.TestCase):
             / "frontend-visual-evidence.example.json"
         )
         payload = json.loads(fixture.read_text(encoding="utf-8"))
-        self.assertTrue(payload["task_id"].startswith("fixture-generic-"))
-        self.assertEqual("Approved desktop visual reference", payload["selected_source"]["identity"])
-        self.assertEqual("source-revision-001", payload["selected_source"]["revision"])
-        self.assertEqual("authorized reviewer", payload["selected_source"]["approval"]["approved_by"])
+        self.assertEqual("synthetic-visual-evidence-example", payload["task_id"])
+        self.assertEqual("Synthetic selected visual reference", payload["selected_source"]["identity"])
+        self.assertEqual("synthetic-source-001", payload["selected_source"]["revision"])
+        self.assertEqual("synthetic approver", payload["selected_source"]["approval"]["approved_by"])
 
     def test_visual_fixture_has_no_duplicate_json_keys(self) -> None:
         fixture = (
@@ -143,6 +143,26 @@ class PublicContentHygieneTests(unittest.TestCase):
             return result
 
         json.loads(fixture.read_text(encoding="utf-8"), object_pairs_hook=reject_duplicates)
+
+    def test_live_agent_cases_and_fixture_are_synthetic(self) -> None:
+        cases_path = ROOT / "evals/live-agent-cases.json"
+        fixture_root = ROOT / "evals/fixtures/live-agent-dev-frontend"
+        payload = json.loads(cases_path.read_text(encoding="utf-8"))
+        self.assertEqual("skill-live-agent-cases/v1", payload["schema_version"])
+        self.assertEqual("evals/fixtures/live-agent-dev-frontend", payload["fixture_root"])
+        self.assertEqual(
+            {"explicit", "implicit"},
+            {case["mode"] for case in payload["cases"]},
+        )
+        self.assertTrue((fixture_root / "AGENTS.md").is_file())
+        self.assertTrue((fixture_root / "src/components/neutral-panel.ts").is_file())
+        for path in [cases_path, *fixture_root.rglob("*")]:
+            if not path.is_file():
+                continue
+            text = path.read_text(encoding="utf-8")
+            self.assertNotRegex(text, HOME_PATH)
+            self.assertNotRegex(text, r"https?://")
+            self.assertNotIn(".." + "/", text)
 
     def test_live_canary_summary_matches_current_package_digest(self) -> None:
         summary = (ROOT / "docs" / "quality" / "live-canary-summary.md").read_text(

@@ -9,6 +9,7 @@
 - [Adaptive Monitoring](#adaptive-monitoring)
 - [Artifact Handoff](#artifact-handoff)
 - [First-Tier Providers](#first-tier-providers)
+- [Google Antigravity Defaults](#google-antigravity-defaults)
 - [Configured Runtime Profiles](#configured-runtime-profiles)
 - [Session Registry](#session-registry)
 - [Safety And Recovery](#safety-and-recovery)
@@ -263,6 +264,28 @@ Do not rank these providers by advertised model quality. Select a named provider
 use a user-approved default only when its distinctive capability is required. ACP may
 replace provider-specific process parsing only after the installed agent proves the
 needed ACP session, permission, event, completion, and recovery behavior.
+
+## Google Antigravity Defaults
+
+When Google Antigravity is selected and the current request does not name a model,
+resolve the configured `Flash` alias to its exact installed model identifier. This is
+the default for both review and execution. Select AGY Opus only when the current
+request explicitly names `AGY Opus`; review complexity, severity, risk, older defaults,
+and executor preference never upgrade Flash to Opus. Any other exact model explicitly
+named in a later current request remains a hard current-request requirement.
+
+For the verified AGY CLI profile, start from the exact selected repository or Worktree
+root and pass that same absolute root through the installed workspace option such as
+`--add-dir`. Use the installed non-interactive permission option, currently
+`--dangerously-skip-permissions`, so the provider can read, search, use native tools,
+and run task-relevant commands across the complete selected directory without waiting
+for prompts. Build the exact argv from current help and the user-owned profile; do not
+interpolate it through a shell.
+
+This is a directory capability boundary, not broader authority. Review mutations stay
+disposable, execution retains only task-owned writes authorized by the matching owner,
+and parent/Home traversal, credential stores, unrelated roots, Git delivery, browser
+actions, and external side effects remain denied unless separately authorized.
 
 ### Qoder Variant Boundary
 

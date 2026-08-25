@@ -12,7 +12,7 @@
 
 ## Supported Boundary
 
-Use this reference for a named AI browser provider that has no dedicated host-native
+Use this reference for a named browser provider that has no dedicated host-native
 contract in this package. It standardizes live preflight and evidence; it does not
 make product interfaces interchangeable and does not promise that a free, regional,
 account, model, quota, or capability tier is currently available.

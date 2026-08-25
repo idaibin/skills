@@ -1,5 +1,12 @@
 # Feedback Recording
 
+## Contents
+
+- [Boundary](#boundary)
+- [Terminal Chain](#terminal-chain)
+- [Return Gate](#return-gate)
+- [Completion And Failure](#completion-and-failure)
+
 ## Boundary
 
 Use this reference only after an authorized external-AI round reaches local
@@ -37,7 +44,9 @@ python3 <ask-ai-skill>/scripts/record_feedback.py \
 The event must use `schema_version: ask-ai-feedback/v1`, a deterministic `event_id`,
 one allowed terminal `event_type`, ISO-8601 `timestamp`, `feedback_id`, `review_id`,
 `round_id`, `fixed_basis_hash`, and provider. Use only controlled metadata, hashes,
-counts, short sanitized summaries, and evidence labels. Never include raw prompts,
+counts, strict opaque identifiers, SHA-256 values, and controlled evidence labels.
+New events do not accept free-text summary, hypothesis, or experiment fields. Existing
+append-only history remains readable but is not rewritten or used as authority. Never include raw prompts,
 responses, source, secrets, account names, URLs, filesystem paths, or browser-profile
 data.
 
@@ -61,6 +70,23 @@ These fields describe one verified round; they do not rank a model or provider. 
 not change routing from one event. Require at least three comparable verified rounds
 across two distinct fixed bases inside the user-configured evidence window, and keep
 runtime availability separate from task quality.
+
+## Return Gate
+
+After local reconciliation and before returning the assembled result:
+
+1. Resolve the user-owned configuration once. Missing, invalid, or disabled feedback is
+   `feedback-not-applicable`; do not create a default configuration.
+2. If enabled, compare the round's deterministic event identities with the append-only
+   log and attempt each applicable missing terminal-chain event exactly once, in order.
+3. Report `feedback-recorded` only after successful recorder exit and matching log
+   readback. Otherwise report `feedback-deferred` with the ordinary review artifact as
+   the evidence owner.
+
+Do not backfill attribution, terminal state, or acceptance from a requested alias,
+response prose, host process exit, or the feedback log itself. The ordinary provider
+ledger remains authoritative; this gate only prevents an enabled metadata recorder
+from being silently skipped.
 
 ## Completion And Failure
 

@@ -66,7 +66,7 @@ authority; the handoff references them and never copies shared token semantics.
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
    - **Design System Spec (conditional):** only when shared tokens, reusable component meaning/variants, state vocabulary, or cross-surface visual rules must change.
 7. In Design System Spec, keep `<design-root>/DESIGN.md` as the only durable shared visual output; Feature Specs reference it instead of copying shared semantics.
-8. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Name reusable and page-defining components only after checking current source and the project map when one exists; keep props, slots, events, types, and copied token values out of the page contract. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply.
+8. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Name reusable and page-defining components only after checking current source and the project map when one exists; keep props, slots, events, types, SVG path data, source paths, and copied token values out of the page contract. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply. When icons must be SVG or shared iconography changes, load [references/svg-icon-system.md](references/svg-icon-system.md), resolve the actual icon owner/library and rights, and specify semantic role, family, rendering, state, accessibility, and fallback without generating SVG source.
 9. Add a traceable delta table for every material visual difference: acceptance ID, selected-source target, current runtime, target contract, priority, shared-or-local owner, evidence IDs, verification, and applicable asset owner/fallback.
 10. For every slice and multi-slice task, add one `Ready for dev-frontend <slice>`, `Partial`, or `Not Ready` verdict. Do not issue `Ready` when the selected source is unavailable or unapproved, rights/use are insufficient, target viewport/state is uncertain, a P1 asset has no accepted owner/fallback, or an exact proposed value lacks owner approval.
 11. For a shared `DESIGN.md` change, follow [references/design-md-contract.md](references/design-md-contract.md) for lint, diff, duplicate-heading, and explicit derived-export gates. Missing required evidence remains `Not verified` and keeps the affected slice `Not Ready`.
@@ -124,6 +124,8 @@ authority; the handoff references them and never copies shared token semantics.
 - Verify both candidate paths, ignore status, and hashes after edits and before
   handoff; any change makes the prior handoff stale.
 - Do not generate or edit images, build prototype code, or edit product source.
+- Do not generate or edit SVG source. Define its visual, ownership, safety,
+  accessibility, and acceptance contract, then route implementation to `dev-frontend`.
 - Do not invent metrics, features, routes, permissions, states, backend behavior, or runtime evidence.
 - Do not treat pixels as proof of exact tokens, component ownership, behavior, accessibility, or implementation feasibility.
 - Do not activate Design System Spec merely because a feature reuses existing tokens or components.
@@ -169,6 +171,9 @@ verified` gap. Include at least:
   including required/optional/excluded entries, size, environment, state, and
   acceptance-evidence source; hand the same matrix to `dev-frontend`,
   `audit-frontend`, and `ops-browser`/`ops-client` without redefining its schema
+- when SVG icons apply: shared-or-local disposition, semantic role-to-owner mapping,
+  approved family/render/state and coloring rules, rights, accessibility, accepted
+  isolated fallback or evidenced `None`, and focused gallery/runtime acceptance
 
 ## References
 
@@ -177,6 +182,7 @@ verified` gap. Include at least:
   [DESIGN.md](references/design-md-contract.md), [visual source](references/visual-source.md).
 - Visual detail: [direction](references/visual-direction-and-anti-slop.md),
   [layout](references/frontend-layout-governance.md),
+  [SVG icons](references/svg-icon-system.md),
   [measurement](references/measurement-normalization.md),
   [evidence](references/frontend-visual-evidence.md).
 - Scope/output: [multi-surface](references/multi-surface.md),

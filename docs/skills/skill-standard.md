@@ -232,10 +232,55 @@ an invalid/unavailable base or a v2 base missing its baseline fails closed. This
 the critical-stop check is a deterministic classifier/contract check, not proof that a
 host model followed the Skill or actually stopped at runtime.
 
-Run those scenarios when behavior changes. Compare with the previous version or no
-Skill when the result is genuinely uncertain or when making an improvement claim.
-Repeated model campaigns, preregistration, and directory-wide behavior certification
-are not required for publishing. `scripts/report-skill-context.py` does maintain a
+Static routing, schema, prose, fixture, and package gates are necessary but never prove
+live Skill capability. Run a fixed live-agent evaluation when creating a Skill,
+materially changing routing/process/output/effect behavior, repairing a demonstrated
+real failure, or claiming that one revision is better. For one mature Skill, keep a
+small targeted set of roughly 10-20 prompts and grow it from observed failures. A
+bounded correction may begin with the smallest representative subset, but it MUST
+include the affected case plus its nearest non-trigger and critical-stop control.
+
+Each live case records at least: stable case ID, prompt, expected trigger, excluded
+nearest owners, required and forbidden actions, required artifacts/evidence, expected
+stop state, and human verdict/failure reason. Cover explicit invocation,
+implicit/contextual invocation, nearest negative control, a valid no-op or no-finding
+case when applicable, and critical stops. Public committed cases MUST be synthetic and
+project-neutral; raw business/project prompts, paths, accounts, and payloads remain in
+ignored or private run-local evidence and are distilled into neutral regressions.
+When a case explicitly requires an independent provider/model, preserve that exact
+requirement. Provider absence, a different provider/model, or a missing attributed
+result makes the provider-dependent claim `Not verified`; it is never silently waived
+or counted as a passing case.
+An execution receipt is host-side correlation only and cannot establish that claim by
+itself. For executable providers, independently parse provider-owned structured events
+for the exact model, session/conversation, terminal state, and provider workspace
+scope. Require explicit provider channel/canonical identity, exactly one ordered init
+and terminal result, and a result binding operation, prompt-or-basis digest, frozen
+basis, and non-empty final artifact hash/bytes. Cross-check those facts against an
+executor receipt that binds process exit, artifact/events hashes, executable
+fingerprint/version, profile, native mode, and model-evidence locator. Non-JSON/prose
+logs, missing/reordered/duplicate events, mismatched identity/model/scope, incomplete
+result binding, receipt metadata mismatch, or substituted artifacts fail closed; the
+standalone result validator must replay the same evidence check.
+
+Run the actual agent on a fixed basis, preferably through `codex exec --json`, and
+retain the trace needed to verify Skill selection, tool/command order, outputs, file or
+external effects, honest `Not verified`/stop behavior, command thrashing, elapsed time,
+and token use when exposed. Use deterministic graders for observable trace events and
+artifacts. Use a separate read-only `--output-schema` rubric only for qualitative
+requirements. A model grader, aggregate score, or longer answer MUST NOT clear a
+critical safety, authority, false-completion, or nearest-owner regression.
+
+Compare baseline and candidate with the same frozen prompt, model, reasoning setting,
+permissions, capability set, repository state, and starting environment. The human
+maintainer makes the replacement decision; a higher average score alone is not
+acceptance. Generated evaluation artifacts use a disposable directory or task-owned
+fixture and do not require a Git Worktree. Modify the requested Skill in the current
+local checkout unless the user explicitly requests another Worktree.
+
+Repeated cross-model campaigns, preregistration, and directory-wide behavior
+certification remain optional unless the requested claim needs them.
+`scripts/report-skill-context.py` does maintain a
 portable character-based warning report for entrypoints and directly linked runtime
 references. Its four-characters-per-token estimate is a comparison signal, not an
 exact tokenizer or proof of which references a host loaded. Promote a warning to a

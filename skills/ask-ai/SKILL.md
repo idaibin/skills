@@ -75,6 +75,13 @@ not maintain a second public collaboration owner.
    zero external action; reconcile that fingerprint before any duplicate relay.
    For a local coding-agent CLI, bind the exact verified repository or Worktree root;
    do not replace it with the outbound package or treat task paths as a file allowlist.
+   Grant the selected CLI its complete native read/search/task-relevant command surface
+   across that whole selected directory, with non-interactive permission handling;
+   this never includes parent/Home traversal, credential stores, unrelated roots, Git
+   delivery, or other external side effects. For Google Antigravity, use the configured
+   Flash model for review and execution when the current request omits a model. Select
+   AGY Opus only when the current request explicitly names AGY Opus; never infer it from
+   review complexity, risk, or a legacy stored default.
    Load [cli-artifact-handoff.md](references/cli-artifact-handoff.md) for directory
    permissions, exclusions, isolation, and the frozen task/invocation barrier. Hand the
    sealed invocation to the configured runtime-verified executor, which starts once,
@@ -93,7 +100,8 @@ not maintain a second public collaboration owner.
    transports. Apply [image-routing.md](references/image-routing.md) before an image upload,
    generation, edit, or capture. Require live image-capability evidence in addition to
    the ordinary provider route evidence.
-   Require the adapter's live target, identity, required operations, input, submit,
+   Require the adapter's live target kind, stable target ID or exact URL, surface,
+   account/workspace, browser Profile/extension and tab identity when applicable, required operations, input, submit,
    completion, attribution, and reuse/recovery evidence;
    otherwise return Package-only or Not found/Not verified without external action.
    Apply CLI permissions and isolation from `provider-cli.md`; review retains no source
@@ -126,6 +134,12 @@ not maintain a second public collaboration owner.
    response-final files. Gate failure stops at Package-only. After capture, accept
    completion only after atomic finalization, SHA-256 verification, and final-path
    readback; otherwise record `completion-not-verified` without resend.
+   For ChatGPT/Codex Project browser work, classify `project-work` separately from
+   `cloud-environment-settings`. A Project Work/chat operation never navigates to
+   `/codex/cloud/settings/environment`; only an explicit environment configuration
+   request may select that settings target. Preserve exactly one canonical restoration
+   record and fingerprint from `ops-browser`; an old or conflicting restoration record
+   invalidates completion.
 10. For ordinary multi-provider work, follow **Multi-Provider Independence** in
     [provider-routing.md](references/provider-routing.md). Only an explicitly requested
     relay workflow may include the immediately preceding provider response; follow
@@ -146,11 +160,14 @@ not maintain a second public collaboration owner.
     decisions, publication, Git mutation, defaults migration, or any other external
     turn outside the explicitly authorized round, relay limit, or final-sync operation
     only with separate authorization.
-    When a user-owned `ask-ai-feedback/v1` record explicitly enables local feedback,
-    load [feedback-recording.md](references/feedback-recording.md) and append the
-    terminal metadata events after local reconciliation. Recording failure is
-    `feedback-deferred`; it never changes the provider outcome, authorizes a retry, or
-    delays returning the result.
+    Before returning any round that reached proven or ambiguous submit, resolve the
+    user-owned `ask-ai-feedback/v1` configuration. When enabled, load
+    [feedback-recording.md](references/feedback-recording.md), append each applicable
+    missing terminal-chain event once after local reconciliation, and read back the
+    matching event identity. Report `feedback-recorded`, `feedback-deferred`, or
+    `feedback-not-applicable`; never silently skip an enabled recorder. Recording state
+    does not upgrade provider attribution, completion, or local acceptance. Failure
+    never authorizes a retry, resend, or delayed provider outcome.
 
 ## Provider Boundary
 
@@ -187,6 +204,9 @@ outside the portable package.
 - Never silently switch provider, account, workspace, container, conversation,
   transport, model, or reasoning. Preserve configured persistent context even when the
   outbound package excludes current-conversation ideas.
+- Verify target kind, target ID/URL, surface, account/workspace, applicable Profile/extension,
+  and tab identity before navigation or action. Project Work/chat and Codex Cloud
+  environment settings are different target kinds and never substitute for each other.
 - Preserve `ops-browser` workspace policy; never derive browser session/group names
   from provider, model, task, agent, emoji, page, or conversation labels.
 - Reconcile post-submit interruption under the original operation; do not retry or
@@ -203,7 +223,8 @@ outside the portable package.
 ## Output Contract
 
 Report the Codex-first decision, fixed basis, provider, authorization, capability,
-verified route, operation states, attributed output, local verification, cleanup,
+verified route and target kind/ID-or-URL, operation states, attributed output, local verification, cleanup,
+canonical restoration fingerprint/readback,
 owner, blockers, and gaps. Add image attribution, relay turn/verdict/stop state, or
 final-sync target/hash/receipt only when applicable. State that Package-only performed
 no external action and final sync cannot change the frozen verdict.

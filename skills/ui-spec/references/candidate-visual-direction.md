@@ -11,6 +11,8 @@ Record:
 
 - real product purpose, page/flow scope, data, actions, states, and exclusions;
 - current reusable and page-defining components plus their source owners;
+- current icon library/wrapper and asset owners, semantic roles, rights, family/style,
+  SVG requirement, and any approved fallback;
 - verified framework/library mappings, such as an existing wrapper to its Ant Design
   primitive, and every mapping that remains `proposed` or `Not verified`;
 - accepted current shared semantics and implementation constraints;
@@ -33,13 +35,15 @@ Maintain exactly one current pair for the candidate revision:
 The candidate specification records status/revision, human owner, source basis,
 product boundaries, `use`/`ignore`, design direction, source-backed component/library
 mapping, foundations, surface composition, default state, separate interaction states,
-responsive/accessibility rules, generation acceptance, and `Not Ready` gaps. Use
+responsive/accessibility rules, applicable SVG icon role/style constraints, generation
+acceptance, and `Not Ready` gaps. Use
 project-native filenames; do not require a schema or a universal template.
 
 The prompt repeats the whole current generation request in one artifact: output count
 and format, exact viewport/theme/locale/default state, real product content and
 exclusions, layout, current component/library mapping, visual semantics, applicable
-interaction-state constraints, accessibility/craft requirements, and strong negative
+interaction-state constraints, icon semantics and visual family without inventing
+SVG paths, accessibility/craft requirements, and strong negative
 constraints. It must be usable without reading prior external conversation.
 
 ## Revision Order And Identity

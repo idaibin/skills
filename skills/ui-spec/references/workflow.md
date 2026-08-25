@@ -69,10 +69,17 @@ Translate the selected source into implementable decisions:
 
 - page regions, hierarchy, layout/scroll/focus ownership, dimensions, density, overflow, and target sizes;
 - semantic colors, typography roles, spacing, geometry, surfaces, assets, copy, and localization behavior;
+- stable page-shell regions such as header, navigation, content, and overlays, including
+  their ownership and responsive/scroll behavior without imposing universal dimensions;
 - current components/tokens to `reuse`, bounded adaptations, and justified new declarations;
 - loading, empty, error, populated, permission, validation, success, disabled, hover, focus, and reduced-motion behavior where applicable;
 - state transitions, action ownership, feedback placement, and precedence between independent async domains;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
+
+When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in
+the adopted `DESIGN.md` and page-local role/placement/state mapping in the Feature
+Spec. Exact viewBox, stroke, size, and color values require accepted evidence; the
+implementation owner, not `ui-spec`, produces the SVG source.
 
 For the primary task, specify only applicable task-completion geometry: critical
 actions, scroll and overlay ownership, intermediate-width behavior, state geometry,
@@ -161,7 +168,9 @@ and basis but never upgrades either result.
 
 Run source identity, product truth, rights, required-state, mapping, responsive,
 viewport-matrix, accessibility, overflow, approval, and implementation-budget gates
-per slice. Then compare source fidelity, task completion, information structure,
+per slice. When SVG icons apply, also run icon owner, rights, family consistency,
+render/state, safety, accessibility, fallback, and gallery-acceptance gates. Then
+compare source fidelity, task completion, information structure,
 interaction completeness, engineering fit, and evidence completeness. Emit one
 readiness verdict per slice and mark an incomplete multi-surface result `Partial`.
 Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved gaps

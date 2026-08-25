@@ -72,6 +72,9 @@ receipt bound to different bytes or basis is stale and cannot clear the gate.
    tokens, or use official `omitted` objects with a concrete reason for each group.
    When shared component consumers exist, `components` must contain entries; omission
    is allowed only after proving that the boundary has no shared component consumer.
+   When shared SVG iconography exists, bind its approved family, canonical geometry,
+   rendering/state, coloring strategy, accessibility, owner/rights, and fallback under
+   `## Components` as `### Iconography`; do not add a ninth H2 authority section.
 4. Keep exactly the eight canonical H2 headings in canonical order. Put project-local
    detail under their H3/body, and bind every token group to application semantics in
    the corresponding section.

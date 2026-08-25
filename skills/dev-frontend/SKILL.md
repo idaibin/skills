@@ -52,6 +52,10 @@ are used when supplied; they do not replace current source and repository contra
    completion, before handoff, or after a real error, run one nearest focused check.
    Expand only for a changed shared contract, generated/build chain, runtime boundary,
    or affected consumer. Do not run a full build or full suite during implementation.
+   For a confirmation, keep, or no-op request, select the focused check for the current
+   accepted baseline; do not run a post-change check that only applies after an authorized
+   change. If that focused check fails, do not report `completed`: report the failure or
+   `Not verified`, preserve its evidence, then diagnose or stop.
    A full gate belongs to an explicitly authorized merge/release/deployment/final-basis
    workflow or an explicit user request, and its reason, command, and scope must be
    stated first. If no narrower credible check exists, use current dev diagnostics plus

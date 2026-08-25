@@ -60,9 +60,6 @@ ALLOWED_FIELDS = REQUIRED_FIELDS | {
     "local_verdict",
     "decision_usefulness",
     "outcome",
-    "summary",
-    "prompt_hypothesis",
-    "next_experiment",
     "task_phase",
     "task_class",
     "first_pass_outcome",
@@ -73,6 +70,8 @@ ALLOWED_FIELDS = REQUIRED_FIELDS | {
 }
 FORBIDDEN_KEY_PARTS = {"raw", "content", "secret", "token", "email", "url", "path"}
 HEX_64 = re.compile(r"^[0-9a-f]{64}$")
+OPAQUE_METADATA = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:+-]{0,127}$")
+DOMAIN_LIKE = re.compile(r"(?:^|[^A-Za-z0-9-])(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}(?:$|[^A-Za-z0-9-])")
 INTEGER_FIELDS = {
     "event_version",
     "prompt_artifact_size",
@@ -86,6 +85,13 @@ INTEGER_FIELDS = {
 }
 LIST_FIELDS = {"review_modes"}
 STRING_FIELDS = ALLOWED_FIELDS - INTEGER_FIELDS - LIST_FIELDS
+HASH_FIELDS = {
+    "fixed_basis_hash",
+    "conversation_fingerprint",
+    "prompt_artifact_hash",
+    "response_artifact_hash",
+}
+OPAQUE_FIELDS = STRING_FIELDS - {"schema_version", "timestamp"} - HASH_FIELDS
 ENUM_FIELDS = {
     "task_phase": {"plan", "execute", "review", "verify"},
     "task_class": {
@@ -205,10 +211,20 @@ def validate_event(event: object) -> dict:
         for item in values:
             if not isinstance(item, str):
                 continue
+            if key == "schema_version":
+                continue
             if len(item) > 240 or "\n" in item or "\r" in item:
                 raise ValueError(f"unsafe text value: {key}")
             if item.startswith(("/", "~", "file:", "http:", "https:")) or "://" in item:
                 raise ValueError(f"path or URL value forbidden: {key}")
+            if "@" in item or "\\" in item or "/" in item or DOMAIN_LIKE.search(item):
+                raise ValueError(f"PII, domain, or path-like value forbidden: {key}")
+            if key in HASH_FIELDS and not HEX_64.fullmatch(item):
+                raise ValueError(f"lowercase SHA-256 required: {key}")
+            if (key in OPAQUE_FIELDS or key in LIST_FIELDS) and not OPAQUE_METADATA.fullmatch(item):
+                raise ValueError(f"opaque metadata identifier required: {key}")
+            if key not in HASH_FIELDS and re.fullmatch(r"[A-Za-z0-9_-]{32,}", item):
+                raise ValueError(f"token-like value forbidden: {key}")
     return event
 
 

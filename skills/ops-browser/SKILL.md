@@ -8,10 +8,10 @@ description: "Use when directly operating or verifying a specified page, capturi
 ## Overview
 
 Operate or verify browser pages without conflating in-app, user-local, cloud/agent,
-or isolated browser state. Prefer the Codex in-app Browser for ordinary work. When that
-surface lacks required authentication, check a configured local CDP route and continue
-there only after verifying the target login. Route local development pages to the
-configured local CDP workspace. Collect only evidence the active surface can expose;
+or isolated browser state. Resolve the configured surface for each task. Use a connected
+Chrome extension route when existing user-profile state or a named native tab group is
+required, and continue only after verifying the browser, group, target, and account.
+Collect only evidence the active surface can expose;
 route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 
 ## Foreground-Safety Gate
@@ -26,36 +26,37 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 
 ## Workflow
 
-1. Fix the target URL/environment, account/session need, goal, viewport, and required
-   evidence. Use `1920 x 1080` CSS pixels only for ordinary desktop work without a
+1. Fix `target_kind`, stable target ID or exact URL, browser surface, account/session,
+   browser product/profile/connector when applicable, tab identity, goal, viewport,
+   and required evidence before navigation or page action. A label, last-active tab,
+   route default, or similar URL does not satisfy this target-binding gate. Use
+   `1920 x 1080` CSS pixels only for ordinary desktop work without a
    requested viewport; otherwise follow [usage](references/usage.md) and verify the
    effective viewport.
 2. Resolve the browser surface before probing it. An explicit current-request route
-   wins. Otherwise, when `~/.agents/config/ops-browser/routes.json` exists, load
+   wins. When
+   `~/.agents/config/ops-browser/routes.json` exists, load
    [local-browser-workspaces.md](references/local-browser-workspaces.md), serialize the
    bounded request fields, and run `python3 scripts/resolve-local-browser-route.py
-   <routes.json> <request.json>`. A matched rule fixes the surface, profile/endpoint,
+   <routes.json> <request.json>`. A matched rule fixes the surface, existing profile,
+   extension connector,
    workspace label, reuse policy, and priority; skip probing the ordinary default and
    fallback surfaces. With no match, use the ordinary defaults. Then preflight only
    capabilities required by the selected route with the Capability Snapshot in
    [browser-operation-protocol.md](references/browser-operation-protocol.md); keep
-   unchecked fields `unknown`. When durable defaults select a fixed local application
-   bundle, invoke or reuse that exact bundle directly. Do not enumerate or probe other
-   browser products, profiles, launchers, or fallback surfaces. Perform one readback of
-   the configured profile, endpoint, and target on that fixed route; if it fails, stop
-   `Not verified` instead of discovering an alternative. For a selected user-local route, serialize live evidence
+   unchecked fields `unknown`. For a selected user-local route, select only the
+   configured Chrome extension connector and existing user Profile. Perform one
+   readback of the connector, browser family, Profile, native group, and target; if it
+   fails, stop `Not verified` instead of starting another browser, Profile, or fallback.
+   Treat a configured application path, bundle identity, release channel, and product
+   allowlist as a closed identity boundary. When managed browser downloads are prohibited,
+   do not enumerate, install, download, or launch another browser binary as a substitute.
+   Serialize live evidence
    and run `python3 scripts/preflight-local-browser-workspace.py <evidence.json>` before
-   setup or page actions. Exit `10` permits only listed workspace
-   creation. Exit `11` permits exactly one `background_browser_setup`; record that
-   consumed permit in the task-local ledger, then rerun with
-   `background_setup_attempted: true` and fresh evidence. Never resend the initial
-   preflight after an attempted setup. Exit `20` stops the
-   route. Record screen lock state and fail
-   closed when the exact locked-session operation is not proven safe. Lock state alone
-   and missing pre-lock history are not stop conditions. Reuse or reconnect first; if
-   policy permits, attempt one background dedicated-profile launch and loopback CDP
-   initialization without unlocking, waking, activating, foregrounding, or GUI input,
-   then revalidate the complete current route. If the controller
+   setup or page actions. Exit `10` permits only listed configured workspace creation;
+   exit `20` stops the route. Record screen lock state and fail closed when the exact
+   locked-session operation is not proven safe. Never launch a browser or enable a
+   debugging endpoint to recover the route. If the controller
    requires task-specific naming, set
    `controller_constraints.requires_task_specific_session_name: true` and fail closed.
    When foreground safety needs a live canary, run it only after a ready preflight on
@@ -63,25 +64,20 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    the requested action. Keep preflight, canary, snapshot, action, after-state, and
    cleanup timestamps in one fixed evidence package; later evidence cannot
    retroactively verify an earlier action.
-3. Select the resolved surface. For an unmatched ordinary task, use the in-app Browser;
-   if required authentication is absent there, inspect the configured local CDP surface
-   and switch only after verifying its target login. For a matched route, do not test a
-   different surface first. Route localhost, loopback, configured local development
-   hosts, and explicit local dev/preview tasks to the configured local CDP workspace.
-   Reuse a safe same-environment/account/origin tab before creating one. In dedicated
-   profile mode, treat a workspace label such as `AI_dev` as user-facing routing metadata
-   and match by verified profile, account/session, origin, then exact URL; native Chrome
-   group evidence is not required. Then use an isolated browser only when profile state
-   is unnecessary. Local preferences never override foreground safety. Apply
-   session/group rules only to user-local routes; `dedicated-user-data-dir` uses its
-   verified profile/process/endpoint instead. Narrow candidates by verified account/session
-   before URL; URL matching never crosses an identity boundary.
+3. Select the resolved surface. For a matched user-local route, connect through the
+   configured Chrome extension and reuse a safe tab in the exact native group, matching
+   Profile, verified account/session, environment, origin, then URL. Do not treat a workspace
+   label or automation-session name as native-group proof. If no identity-matched tab
+   exists and verified group placement is unavailable, stop before opening a tab.
+   Local preferences never override foreground safety, and URL matching never crosses an identity boundary.
 4. Reuse an identity-matched tab. Open at most one task tab only when reuse is unsafe or
    independent state/comparison requires isolation. Keep a task-local tab ledger that
    records task key, browser surface/session identity, tab identity, target fingerprint,
    ownership evidence, purpose, lifecycle state, cleanup disposition, and retention
    authority. Record creation intent before opening and bind the created identity after
-   re-enumeration. Bookmarks, history, and saved credentials assist discovery/login
+   re-enumeration. For every executable single-tab action, record one owner ID/role, browser
+   and session IDs, tab ID, target fingerprint, exclusive ownership, and direct readback;
+   do not act on a tab with missing, shared, stale, or unverified owner binding. Bookmarks, history, and saved credentials assist discovery/login
    only; they do not prove identity, authorization, or operation state.
    A Codex in-app Browser operation must first claim an exact existing user tab or
    create one real task tab; ambient state, screenshots, cached page content, or a
@@ -109,7 +105,12 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    authorization, prior operation state, and expected postcondition. Stop on uncertain
    prior side effects, credentials/MFA/consent, destructive or irreversible actions,
    and any unapproved scope expansion.
-9. Reconcile the task-local tab ledger before finishing. Resume ownership only from the
+9. Reconcile the task-local tab ledger before finishing. Keep exactly one canonical
+   restoration record for the operation, bound to the verified target fields and a
+   SHA-256 fingerprint of its canonical before-state plus authorized restoration plan.
+   Completion requires a matching post-restoration readback. Any older record for the
+   same operation or any conflicting record/fingerprint invalidates `completed`; reconcile
+   to one current record or report restoration and completion `Not verified`. Resume ownership only from the
    same revalidated browser surface/session, tab identity, and target fingerprint;
    otherwise mark ownership `Not verified`. Retain a task-created tab only when the user explicitly
    requested it; otherwise close identity-matched task-created tabs and verify duplicates are gone.
@@ -124,7 +125,7 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 - **Form/Upload:** map controls semantically, verify source file/path and final state, and stop before unauthorized submission.
 - **Browser Debug Evidence:** for an already-isolated browser-layer evidence request, use the Codex in-app Browser debug profile in `references/devtools-debugging.md` when available; select only exposed DOM/accessibility, CSS/layout, Console, Network/resource, route, storage/auth, screenshot, viewport, and interaction evidence, then run one repeatable red/green loop.
 - **Agentic navigation:** for open-ended discovery where a deterministic action plan cannot be fixed in advance, constrain the LLM-driven browser backend to the declared origin/task, allowed read actions, step/action budget, and explicit stop conditions; require a deterministic verification step for the final claim.
-- **Locked-session local control:** reuse or reconnect first. If policy permits, attempt one background dedicated-profile launch and loopback CDP initialization without unlocking, waking, activating, foregrounding, or GUI input. Require current profile, endpoint, target-enumeration, and page-control evidence; do not require historical pre-lock activity.
+- **Locked-session local control:** reuse or reconnect only through the prepared Chrome extension. Require current browser/Profile, group, target-enumeration, and background-safe page-control evidence; never launch or foreground a browser to recover the route.
 - **Degraded evidence:** when required browser capabilities are missing, perform only supported checks, state the blocked claims, and provide the exact artifact or manual action needed to continue.
 
 ## Do Not Use For
@@ -146,7 +147,7 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
   evidence. Name the surface and never transfer state or proof across surfaces.
 - Preserve `ask-ai` handoff authority, route, fallback order, and `operation_id`; return
   `blocked` or `ambiguous` instead of switching provider, session, model, or surface.
-- Never infer background safety from CDP connectivity, read-only intent, inactive state,
+- Never infer background safety from extension connectivity, CDP availability, read-only intent, inactive state,
   or later restoration. While locked, verify the current profile, endpoint, target,
   tab enumeration, and exact page operation. Never unlock, wake, activate, foreground,
   or use GUI input.
@@ -171,17 +172,18 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
   file checks for downloads. Keep source-extracted, visually inferred, and runtime-
   computed values distinct.
 - In-app Browser operations require a real claimed or task-created tab and direct live
-  control/readback evidence. Fixed local-application routing is authoritative: invoke
-  only the exact configured application bundle, perform one fixed-route readback, and
-  do not run product, profile, launcher, or fallback discovery after that selection.
+  control/readback evidence. A selected user-local route is authoritative: use only its
+  configured Chrome connector, existing Profile, native group, and verified target.
+  Failed connector, Profile, group, target, account, or tab verification ends
+  `Not verified`; never start a compatibility browser or Profile.
 - A two-pass visual gate requires two independently recorded matching viewport/state
   rounds. Mark unsupported runtime, identity, cleanup, or background claims `Not verified`.
 
 ## Output Contract
 
-By default, report the selected surface/mode, target and identity evidence, direct
+By default, report the selected surface/mode, target kind/ID-or-URL and identity evidence, direct
 observations, selected execution backend and reason, actions, validation, cleanup,
-and `Not verified` gaps. For delegated,
+canonical restoration-record fingerprint/readback, and `Not verified` gaps. For delegated,
 state-changing, transfer, debug, or selected-source comparison work, also return the Capability Snapshot, matching
 `operation_id`, before/action/side-effect/after evidence, protocol state, retained
 artifacts, and blocked or ambiguous claims required by the selected reference. For

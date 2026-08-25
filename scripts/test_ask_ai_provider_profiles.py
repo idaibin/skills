@@ -115,6 +115,23 @@ class AskAIProviderProfileTests(unittest.TestCase):
             with self.subTest(forbidden=forbidden):
                 self.assertNotIn(forbidden, profile)
 
+    def test_agy_defaults_to_flash_with_complete_directory_permissions(self) -> None:
+        skill = self.read("skills/ask-ai/SKILL.md")
+        profile = self.read("skills/ask-ai/references/provider-cli.md")
+        evals = self.read("skills/ask-ai/references/eval-cases.md")
+        for text in (skill, profile, evals):
+            normalized = " ".join(text.split())
+            self.assertIn("Flash", normalized)
+            self.assertTrue(
+                "complete selected directory" in normalized
+                or "complete-directory" in normalized
+                or "whole selected directory" in normalized
+            )
+        self.assertIn("Select AGY Opus only when", profile)
+        self.assertIn("--add-dir", profile)
+        self.assertIn("--dangerously-skip-permissions", profile)
+        self.assertIn("Do not select Pro, Sonnet, or Opus from task complexity", evals)
+
     def test_cli_execution_is_delegated_but_result_verification_stays_primary(self) -> None:
         skill = self.read("skills/ask-ai/SKILL.md")
         cli = self.read("skills/ask-ai/references/provider-cli.md")

@@ -29,6 +29,7 @@
 
     {"id": "ui-spec-normal", "skill": "ui-spec", "class": "normal", "prompt": "Write a UI specification from the selected design source and visual contract.", "expected_owner": "ui-spec", "expected_outcome": "route"},
     {"id": "ui-spec-candidate-direction", "skill": "ui-spec", "class": "normal", "prompt": "Ground this unapproved dashboard direction in the real source, then maintain one ignored candidate UI spec and one complete image-generation prompt before external exploration.", "expected_owner": "ui-spec", "expected_outcome": "route"},
+    {"id": "ui-spec-svg-icon-system", "skill": "ui-spec", "class": "normal", "prompt": "Turn this accepted admin shell into a fixed UI contract and specify its navigation and action icons as an accessible SVG system without editing frontend source.", "expected_owner": "ui-spec", "expected_outcome": "route"},
     {"id": "ui-spec-boundary", "skill": "ui-spec", "class": "boundary", "prompt": "Edit the frontend source files and close the runtime UI difference.", "expected_owner": "dev-frontend", "expected_outcome": "reroute"},
     {"id": "ui-spec-critical-stop", "skill": "ui-spec", "class": "critical-stop", "prompt": "Create the selected-source UI specification, but the visual source is unavailable; stop.", "expected_owner": "ui-spec", "expected_stop": "evidence-incomplete", "expected_outcome": "stop"},
 

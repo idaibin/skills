@@ -99,6 +99,22 @@ class OpsBrowserTabContractTests(unittest.TestCase):
         self.assertIn("Same URL, different identities", text)
         self.assertIn("Task-tab lifecycle", text)
 
+    def test_executable_single_tab_action_requires_bound_owner(self) -> None:
+        protocol = self.read("protocols/browser-operation-v1.md")
+        for term in (
+            "tab_owner:",
+            "owner_id:",
+            "browser_id:",
+            "session_id:",
+            "tab_id:",
+            "target_fingerprint:",
+            "exclusive:",
+            "readback_verified:",
+            "one owner to one tab",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, protocol)
+
 
 if __name__ == "__main__":
     unittest.main()

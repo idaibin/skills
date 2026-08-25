@@ -99,8 +99,7 @@ Option handling:
 - Follow `provider-chatgpt.md` for explicit routing, versioned durable preferences,
   capability/source preflight, exact target mapping, model/reasoning evidence, and
   browser fallback. When no durable record exists, try App-native first only when the
-  verified Project/Quick Chat mapping passes. Preserve a legacy built-in-first record
-  until an explicitly authorized `ask-chatgpt-defaults/v2` migration.
+  verified Project/Quick Chat mapping passes.
 - Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.

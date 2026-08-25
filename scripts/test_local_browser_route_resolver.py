@@ -36,10 +36,11 @@ def route_config() -> dict:
                 },
                 "route": {
                     "surface": "user-local-browser",
-                    "browser_product": "Google Chrome Beta",
-                    "execution_profile": "AI-Exec",
-                    "workspace": "AI_dev",
-                    "cdp": {"address": "127.0.0.1", "port": 9224},
+                    "browser_product": "Google Chrome",
+                    "execution_profile": "Default",
+                    "workspace": "AI_Dev",
+                    "connector": "plugin://chrome@openai-bundled",
+                    "browser_selector": "chrome",
                     "reuse_existing": True,
                     "target_match_order": [
                         "profile",
@@ -78,14 +79,17 @@ def request(**overrides: str) -> dict:
 
 
 class LocalBrowserRouteResolverTests(unittest.TestCase):
-    def test_portal_origin_goes_directly_to_local_cdp(self) -> None:
+    def test_portal_origin_goes_directly_to_chrome_extension(self) -> None:
         result = RESOLVER.resolve(
             route_config(), request(url="http://portal.example.test/manage")
         )
         self.assertEqual("matched", result["state"])
         self.assertEqual("portal-ai-dev", result["rule_id"])
         self.assertEqual("user-local-browser", result["surface"])
-        self.assertEqual(9224, result["route"]["cdp"]["port"])
+        self.assertEqual("chrome", result["route"]["browser_selector"])
+        self.assertEqual(
+            "plugin://chrome@openai-bundled", result["route"]["connector"]
+        )
         self.assertTrue(result["route"]["skip_default_surface_probe"])
 
     def test_project_and_keyword_clause_requires_both(self) -> None:
@@ -150,10 +154,19 @@ class LocalBrowserRouteResolverTests(unittest.TestCase):
         self.assertEqual("no-match", result["state"])
         self.assertEqual("defaults", result["fallback"])
 
-    def test_local_route_rejects_non_loopback_cdp(self) -> None:
+    def test_local_route_rejects_non_chrome_connector(self) -> None:
         config = route_config()
-        config["rules"][0]["route"]["cdp"]["address"] = "192.0.2.10"
-        with self.assertRaisesRegex(ValueError, "loopback-only"):
+        config["rules"][0]["route"]["connector"] = "plugin://browser@example"
+        with self.assertRaisesRegex(ValueError, "Chrome plugin"):
+            RESOLVER.resolve(config, request(url="http://portal.example.test"))
+
+    def test_local_route_rejects_unsupported_cdp_field(self) -> None:
+        config = route_config()
+        config["rules"][0]["route"]["cdp"] = {
+            "address": "127.0.0.1",
+            "port": 9000,
+        }
+        with self.assertRaisesRegex(ValueError, "cdp is unsupported"):
             RESOLVER.resolve(config, request(url="http://portal.example.test"))
 
     def test_target_match_order_rejects_unknown_or_missing_boundaries(self) -> None:

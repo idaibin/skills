@@ -13,7 +13,6 @@ from typing import Any
 READY = 0
 INVALID_INPUT = 2
 CREATION_REQUIRED = 10
-SETUP_REQUIRED = 11
 CAPABILITY_UNAVAILABLE = 20
 AVAILABLE = "available"
 
@@ -72,6 +71,20 @@ def _validate_observations(values: Any, *, label: str, stable_id_key: str) -> No
             )
 
 
+def _required_binding(record: dict[str, Any], key: str) -> dict[str, Any]:
+    value = record.get(key)
+    if not isinstance(value, dict):
+        raise ValueError(f"{key} must be an object")
+    return value
+
+
+def _required_string(value: dict[str, Any], key: str, *, label: str) -> str:
+    result = value.get(key)
+    if not isinstance(result, str) or not result:
+        raise ValueError(f"{label}.{key} must be a non-empty string")
+    return result
+
+
 def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     reasons: list[str] = []
     if record.get("schema_version") != "local-browser-workspace-preflight/v1":
@@ -97,6 +110,54 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     selected_browser_available = (
         len(selected_instances) == 1 and selected_instances[0].get("available") is True
     )
+
+    connector = _required_binding(record, "extension_connector")
+    connector_id = _required_string(connector, "connector_id", label="extension_connector")
+    if connector.get("connected") is not True:
+        raise ValueError("extension_connector.connected must be true")
+    if _required_string(connector, "browser_id", label="extension_connector") != selected_browser_id:
+        raise ValueError("extension_connector.browser_id must match selected_browser_id")
+
+    profile = _required_binding(record, "browser_profile")
+    profile_id = _required_string(profile, "profile_id", label="browser_profile")
+    if profile.get("existing_user_profile") is not True:
+        raise ValueError("browser_profile.existing_user_profile must be true")
+    if _required_string(profile, "browser_id", label="browser_profile") != selected_browser_id:
+        raise ValueError("browser_profile.browser_id must match selected_browser_id")
+
+    account_session = _required_binding(record, "account_session")
+    account_session_id = _required_string(
+        account_session, "account_session_id", label="account_session"
+    )
+    if account_session.get("verified") is not True:
+        raise ValueError("account_session.verified must be true")
+    if _required_string(account_session, "browser_id", label="account_session") != selected_browser_id:
+        raise ValueError("account_session.browser_id must match selected_browser_id")
+    if _required_string(account_session, "profile_id", label="account_session") != profile_id:
+        raise ValueError("account_session.profile_id must match browser_profile.profile_id")
+
+    target = _required_binding(record, "target")
+    _required_string(target, "target_kind", label="target")
+    target_id_or_url = _required_string(target, "target_id_or_url", label="target")
+    target_fingerprint = _required_string(target, "target_fingerprint", label="target")
+    if _required_string(target, "browser_id", label="target") != selected_browser_id:
+        raise ValueError("target.browser_id must match selected_browser_id")
+    if _required_string(target, "profile_id", label="target") != profile_id:
+        raise ValueError("target.profile_id must match browser_profile.profile_id")
+    if _required_string(target, "account_session_id", label="target") != account_session_id:
+        raise ValueError("target.account_session_id must match verified account_session")
+
+    tab = _required_binding(record, "tab")
+    tab_id = _required_string(tab, "tab_id", label="tab")
+    if _required_string(tab, "browser_id", label="tab") != selected_browser_id:
+        raise ValueError("tab.browser_id must match selected_browser_id")
+    if _required_string(tab, "profile_id", label="tab") != profile_id:
+        raise ValueError("tab.profile_id must match browser_profile.profile_id")
+    if _required_string(tab, "account_session_id", label="tab") != account_session_id:
+        raise ValueError("tab.account_session_id must match verified account_session")
+    if _required_string(tab, "target_fingerprint", label="tab") != target_fingerprint:
+        raise ValueError("tab.target_fingerprint must match target.target_fingerprint")
+    tab_group_id = _required_string(tab, "native_group_id", label="tab")
 
     reconnected_from = record.get("reconnected_from_browser_id")
     if reconnected_from is not None:
@@ -148,13 +209,8 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(execution_profile, dict):
         raise ValueError("execution_profile must be an object")
     execution_mode = execution_profile.get("mode")
-    if execution_mode not in {"existing-user-profile", "dedicated-user-data-dir"}:
-        raise ValueError("unsupported execution_profile.mode")
-    if execution_mode == "dedicated-user-data-dir":
-        if session_enabled or group_enabled:
-            reasons.append(
-                "dedicated profile mode requires control session and grouping disabled"
-            )
+    if execution_mode != "existing-user-profile":
+        raise ValueError("execution_profile.mode must be existing-user-profile")
     session_name = session_policy.get("name") if session_enabled else None
     group_name = group_policy.get("name") if group_enabled else None
     if session_enabled and (not isinstance(session_name, str) or not session_name):
@@ -184,10 +240,6 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     selected_backend = record.get("selected_backend", "not-applicable")
     if not isinstance(selected_backend, str) or not selected_backend:
         raise ValueError("selected_backend must be a non-empty string")
-    background_setup_attempted = record.get("background_setup_attempted", False)
-    if not isinstance(background_setup_attempted, bool):
-        raise ValueError("background_setup_attempted must be a boolean")
-    background_setup_required = False
     if screen_session == "locked":
         lock_policy = policy.get("locked_session")
         if not isinstance(lock_policy, dict):
@@ -201,6 +253,8 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("locked_session.allowed_backends must be a string list")
         if selected_backend not in allowed_backends:
             reasons.append("selected backend is not allowed while locked")
+        if lock_policy.get("prohibit_debug_enablement") is not True:
+            reasons.append("locked-session policy must prohibit browser debugging enablement")
         prepared_control = capabilities.get("preconnected_browser_control") == AVAILABLE
         reconnect_allowed = lock_policy.get("allow_transport_reconnect") is True
         prepared_reconnect = reconnect_allowed and all(
@@ -210,18 +264,6 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
                 "background_safe_transport_reconnect",
             )
         )
-        background_setup_allowed = (
-            execution_mode == "dedicated-user-data-dir"
-            and execution_profile.get("require_existing_when_locked") is False
-            and lock_policy.get("require_prepared_control") is False
-            and capabilities.get("background_safe_browser_setup") == AVAILABLE
-            and lock_policy.get("prohibit_browser_launch") is False
-            and lock_policy.get("prohibit_debug_enablement") is False
-            and lock_policy.get("prohibit_window_activation") is True
-            and lock_policy.get("prohibit_keyboard_pointer") is True
-            and lock_policy.get("prohibit_profile_import") is True
-        )
-
         prohibited_constraints = {
             "requires_browser_launch": (
                 "prohibit_browser_launch",
@@ -244,44 +286,10 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             value = controller_constraints.get(key, False)
             if not isinstance(value, bool):
                 raise ValueError(f"controller_constraints.{key} must be a boolean")
-            if value and lock_policy.get(policy_key) is not False:
+            if value and (key == "requires_debug_enablement" or lock_policy.get(policy_key) is not False):
                 reasons.append(reason)
 
-        if selected_backend == "direct-cdp" and selected_browser_available:
-            cdp_policy = lock_policy.get("cdp")
-            if not isinstance(cdp_policy, dict):
-                raise ValueError("locked_session.cdp policy is required for direct-cdp")
-            cdp_requirements = {
-                "require_loopback_only": "cdp_loopback_only",
-                "require_dedicated_profile": "cdp_dedicated_profile",
-                "require_prelock_roundtrip": "cdp_prelock_roundtrip_verified",
-            }
-            for policy_key, capability in cdp_requirements.items():
-                if cdp_policy.get(policy_key) is True and capabilities.get(capability) != AVAILABLE:
-                    reasons.append(
-                        f"required locked-session capability unavailable: {capability}"
-                    )
-
-        if not selected_browser_available:
-            if background_setup_attempted:
-                reasons.append("background browser setup already attempted without a verified endpoint")
-            elif not background_setup_allowed:
-                reasons.append("no policy-authorized background browser setup path is available")
-            elif selected_backend != "direct-cdp":
-                reasons.append("background browser setup requires direct-cdp")
-            else:
-                cdp_policy = lock_policy.get("cdp")
-                if not isinstance(cdp_policy, dict):
-                    raise ValueError("locked_session.cdp policy is required for direct-cdp")
-                if cdp_policy.get("require_loopback_only") is not True:
-                    reasons.append("background browser setup requires loopback-only CDP")
-                if cdp_policy.get("require_dedicated_profile") is not True:
-                    reasons.append("background browser setup requires a dedicated profile")
-                if cdp_policy.get("require_prelock_roundtrip") is not False:
-                    reasons.append("background browser setup requires pre-lock roundtrip disabled")
-                if not reasons:
-                    background_setup_required = True
-        else:
+        if selected_browser_available:
             for capability in (
                 "background_safe_tab_enumeration",
                 "background_safe_page_control",
@@ -293,38 +301,8 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
             if not prepared_control and not prepared_reconnect:
                 reasons.append("no current lock-safe browser control path is available")
 
-    if not selected_browser_available and not background_setup_required:
+    if not selected_browser_available:
         reasons.append("selected browser identity is not uniquely available")
-
-    if background_setup_required:
-        return {
-            "schema_version": "local-browser-workspace-preflight-result/v1",
-            "state": "setup-required",
-            "selected_browser_id": selected_browser_id,
-            "screen_session": screen_session,
-            "selected_backend": selected_backend,
-            "execution_profile_mode": execution_mode,
-            "lock_safe_ready": False,
-            "resolved_session_id": None,
-            "resolved_group_id": None,
-            "permitted_actions": {
-                "background_browser_setup": True,
-                "claim_verified_tab": False,
-                "name_session": False,
-                "create_tab": False,
-                "create_session": False,
-                "create_group": False,
-            },
-            "reasons": [],
-        }
-
-    if execution_mode == "dedicated-user-data-dir":
-        for capability in (
-            "dedicated_profile_identity",
-            "loopback_endpoint_ready",
-        ):
-            if capabilities.get(capability) != AVAILABLE:
-                reasons.append(f"required capability unavailable: {capability}")
 
     sessions: list[dict[str, Any]] = []
     groups: list[dict[str, Any]] = []
@@ -477,6 +455,8 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
                 reasons.append("configured group selection is not proven")
             if observations.get("placement_target_group_id") != groups[0]["group_id"]:
                 reasons.append("tab placement target is not bound to the verified group identity")
+            if tab_group_id != groups[0]["group_id"]:
+                reasons.append("tab native group is not bound to the verified group identity")
 
     if screen_session == "locked" and (create_session or create_group):
         reasons.append("locked session requires an existing configured session and group")
@@ -490,12 +470,17 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         "selected_browser_id": selected_browser_id,
         "screen_session": screen_session,
         "selected_backend": selected_backend,
+        "connector_id": connector_id,
+        "profile_id": profile_id,
+        "account_session_id": account_session_id,
+        "target_id_or_url": target_id_or_url,
+        "target_fingerprint": target_fingerprint,
+        "tab_id": tab_id,
         "execution_profile_mode": execution_mode,
         "lock_safe_ready": ready and screen_session == "locked",
         "resolved_session_id": sessions[0]["session_id"] if ready and session_enabled else None,
         "resolved_group_id": groups[0]["group_id"] if ready and group_enabled else None,
         "permitted_actions": {
-            "background_browser_setup": False,
             "claim_verified_tab": ready,
             "name_session": False,
             "create_tab": False,
@@ -522,8 +507,6 @@ def main() -> int:
         return READY
     if result["state"] == "creation-required":
         return CREATION_REQUIRED
-    if result["state"] == "setup-required":
-        return SETUP_REQUIRED
     return CAPABILITY_UNAVAILABLE
 
 
