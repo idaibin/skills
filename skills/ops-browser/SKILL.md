@@ -47,7 +47,7 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 
 3. Select only the resolved surface. For ordinary unmatched work prefer the in-app
    Browser; use the configured local CDP workspace for localhost or when its verified
-   login is required. Reuse a safe tab matching profile, account/session, origin, and
+   login is required. Reuse only a tab with verified account/session evidence. Reuse a safe tab matching profile, account/session, origin, and
    URL before creating one. Keep user-local session/group rules separate from the
    verified `dedicated-user-data-dir` profile. URL matching never crosses an identity boundary.
 4. Reuse an identity-matched tab. Open at most one task tab only when reuse is unsafe or
@@ -73,8 +73,8 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    credentials/MFA/consent, destructive actions, or scope expansion. Reconcile the
    task-local tab ledger before finishing. Resume ownership only from the same
    revalidated browser surface/session, tab identity, and target fingerprint; otherwise
-   mark ownership `Not verified`. Close identity-matched task-created tabs unless the
-   user explicitly requested it; restore authorized state and report gaps. Never close
+   mark ownership `Not verified`. Retain a task-created tab only when the user explicitly requested it; otherwise close
+   identity-matched task-created tabs, restore authorized state, and report gaps. Never close
    a pre-existing user tab without authority.
 
 ## Modes
