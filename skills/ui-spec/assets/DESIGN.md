@@ -44,6 +44,15 @@ components: {}
 - A genuinely unused group may instead move to frontmatter `omitted` as an object with
   `section` and a concrete `reason`; repeat that reason verbatim in its standard section.
 
+### Iconography
+
+- When shared SVG iconography applies, bind the approved icon family and owner to its
+  canonical geometry, rendering sizes, visual states, accepted coloring strategy,
+  accessibility, rights, and isolated fallback or evidenced `None` disposition.
+- Keep exact viewBox, live area, stroke, cap/join, and size values source-backed or
+  explicitly proposed; do not treat the starter's absence of values as permission to
+  invent a universal icon system.
+
 ## Do's and Don'ts
 
 - Do: keep implementation choices aligned to `DESIGN.md` scope and approved tokens.

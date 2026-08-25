@@ -25,6 +25,10 @@ Reject when any applicable blocker is present:
 15. critical actions, scroll/overlay ownership, state geometry, or long-content and
     intermediate-width behavior can materially affect task completion but lack an
     acceptance rule or justified exclusion.
+16. SVG icons apply, but semantic roles, actual owner/library, rights, coherent family,
+    rendering/state and source-backed coloring rules, accessibility, safe delivery
+    constraints, accepted isolated fallback or evidenced `None` disposition, or
+    focused acceptance are missing or invented.
 
 ## Weighted Score
 
@@ -51,6 +55,8 @@ Use source identity, product facts, and resolved `<design-root>/DESIGN.md` as pr
   source hash, and exact approval binding when adopted
 - official DESIGN.md diff result and regression status
 - per-slice source coverage and per-slice readiness
+- applicable SVG icon role/owner/rights mapping plus gallery and same-state runtime
+  acceptance status
 
 Mark runtime execution, console/network screenshots, and deployment as `Not verified` unless
 owned by the implementation and operations workflow.
@@ -68,7 +74,7 @@ Report each item by name; do not collapse them into a prose `Ready` label.
 | 4 | DESIGN.md completeness | applicable shared authority reports `ready-for-human-approval` before approval; local binding remains `awaiting-trusted-approval-verification`; downstream host-trusted exact-package evidence satisfies its completeness claim without rewriting the producer result |
 | 5 | Delta table complete | every material visual difference has a row with acceptance ID, source target, current runtime, target contract, priority, owner, evidence IDs, verification, and asset owner/fallback |
 | 6 | Viewport matrix complete | every required viewport/state entry is present with no missing required items; justified exclusions are named |
-| 7 | P1 asset owner | every P1 asset has an accepted owner or fallback |
+| 7 | P1 asset and icon owner | every P1 asset and applicable SVG icon role has an accepted owner, rights status, and either an accepted isolated fallback or evidenced `None` disposition; icon family/render/state/color/accessibility acceptance is complete |
 | 8 | Required state coverage | loading, empty, error, populated, permission, focus, responsive, overflow, localization, and reduced-motion rules are present or justified-excluded |
 | 9 | Evidence levels | every claim uses `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, or `Not verified`; no untagged claim |
 

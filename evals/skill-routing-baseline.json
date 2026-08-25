@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "dev-typescript/2026-08-20",
-  "fingerprint": "sha256:aa4f4b97c67fbfb1d01301d985fc5e1770553e02d45408c2b37c42827d37cb4e",
+  "basis": "working-tree",
+  "fingerprint": "sha256:33fe61a4690c6b91567c510248cbe36eed80a246e65d5f590627c60e37ebe43b",
   "summary": {
-    "total": 56,
-    "passed": 56,
+    "total": 57,
+    "passed": 57,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -255,6 +255,18 @@
     {
       "id": "ui-spec-candidate-direction",
       "case_fingerprint": "sha256:f5ca35426a21ef49d413ae0606f90e5c42616c24be23a3c597ba9508489f5120",
+      "class": "normal",
+      "skill": "ui-spec",
+      "expected_owner": "ui-spec",
+      "observed_owner": "ui-spec",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ui-spec-svg-icon-system",
+      "case_fingerprint": "sha256:0e184c245a770a3d05857293bbd7c49998feae4a794ccc88726301322332087b",
       "class": "normal",
       "skill": "ui-spec",
       "expected_owner": "ui-spec",
