@@ -71,6 +71,22 @@ def _validate_observations(values: Any, *, label: str, stable_id_key: str) -> No
             )
 
 
+def _observed_tab_ids(values: Any) -> set[str]:
+    if not isinstance(values, list):
+        raise ValueError("observations.target_tabs must be a list")
+    result: set[str] = set()
+    for index, value in enumerate(values):
+        if isinstance(value, str) and value:
+            result.add(value)
+        elif isinstance(value, dict) and isinstance(value.get("tab_id"), str) and value["tab_id"]:
+            result.add(value["tab_id"])
+        else:
+            raise ValueError(
+                f"observations.target_tabs[{index}] must be a tab id or object with tab_id"
+            )
+    return result
+
+
 def _required_binding(record: dict[str, Any], key: str) -> dict[str, Any]:
     value = record.get(key)
     if not isinstance(value, dict):
@@ -147,17 +163,25 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     if _required_string(target, "account_session_id", label="target") != account_session_id:
         raise ValueError("target.account_session_id must match verified account_session")
 
-    tab = _required_binding(record, "tab")
-    tab_id = _required_string(tab, "tab_id", label="tab")
-    if _required_string(tab, "browser_id", label="tab") != selected_browser_id:
-        raise ValueError("tab.browser_id must match selected_browser_id")
-    if _required_string(tab, "profile_id", label="tab") != profile_id:
-        raise ValueError("tab.profile_id must match browser_profile.profile_id")
-    if _required_string(tab, "account_session_id", label="tab") != account_session_id:
-        raise ValueError("tab.account_session_id must match verified account_session")
-    if _required_string(tab, "target_fingerprint", label="tab") != target_fingerprint:
-        raise ValueError("tab.target_fingerprint must match target.target_fingerprint")
-    tab_group_id = _required_string(tab, "native_group_id", label="tab")
+    target_tab_state = record.get("target_tab_state", "present")
+    if target_tab_state not in {"present", "absent"}:
+        raise ValueError("target_tab_state must be present or absent")
+    tab_id: str | None = None
+    tab_group_id: str | None = None
+    if target_tab_state == "present":
+        tab = _required_binding(record, "tab")
+        tab_id = _required_string(tab, "tab_id", label="tab")
+        if _required_string(tab, "browser_id", label="tab") != selected_browser_id:
+            raise ValueError("tab.browser_id must match selected_browser_id")
+        if _required_string(tab, "profile_id", label="tab") != profile_id:
+            raise ValueError("tab.profile_id must match browser_profile.profile_id")
+        if _required_string(tab, "account_session_id", label="tab") != account_session_id:
+            raise ValueError("tab.account_session_id must match verified account_session")
+        if _required_string(tab, "target_fingerprint", label="tab") != target_fingerprint:
+            raise ValueError("tab.target_fingerprint must match target.target_fingerprint")
+        tab_group_id = _required_string(tab, "native_group_id", label="tab")
+    elif record.get("tab") is not None:
+        raise ValueError("tab must be omitted or null when target_tab_state is absent")
 
     reconnected_from = record.get("reconnected_from_browser_id")
     if reconnected_from is not None:
@@ -182,6 +206,9 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("capabilities must be an object")
     if not isinstance(observations, dict):
         raise ValueError("observations must be an object")
+    observed_target_tab_ids = _observed_tab_ids(observations.get("target_tabs"))
+    if target_tab_state == "present" and tab_id not in observed_target_tab_ids:
+        reasons.append("target tab identity is not proven by current enumeration")
 
     screen_session = record.get("screen_session", "unknown")
     if screen_session not in {"unlocked", "locked", "unknown"}:
@@ -221,6 +248,12 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("control_session.allow_name_session must be a boolean when enabled")
     if group_enabled and not isinstance(group_policy.get("allow_group_creation"), bool):
         raise ValueError("tab_grouping.allow_group_creation must be a boolean when enabled")
+    if group_enabled and not isinstance(
+        group_policy.get("create_tab_if_target_missing", False), bool
+    ):
+        raise ValueError(
+            "tab_grouping.create_tab_if_target_missing must be a boolean when enabled"
+        )
 
     controller_constraints = record.get("controller_constraints", {})
     if not isinstance(controller_constraints, dict):
@@ -308,6 +341,7 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
     groups: list[dict[str, Any]] = []
     create_session = False
     create_group = False
+    create_tab = False
 
     if session_enabled:
         _validate_observations(
@@ -455,13 +489,29 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
                 reasons.append("configured group selection is not proven")
             if observations.get("placement_target_group_id") != groups[0]["group_id"]:
                 reasons.append("tab placement target is not bound to the verified group identity")
-            if tab_group_id != groups[0]["group_id"]:
-                reasons.append("tab native group is not bound to the verified group identity")
+            if target_tab_state == "present":
+                if tab_group_id != groups[0]["group_id"]:
+                    reasons.append("tab native group is not bound to the verified group identity")
+            else:
+                if observed_target_tab_ids:
+                    reasons.append("target tab absence is not proven by current enumeration")
+                if group_policy.get("create_tab_if_target_missing") is not True:
+                    reasons.append("target tab is absent and creation is disabled")
+                for capability in (
+                    "tab_enumeration",
+                    "tab_creation",
+                    "stable_tab_identity",
+                    "group_placement",
+                ):
+                    if capabilities.get(capability) != AVAILABLE:
+                        reasons.append(f"required capability unavailable: {capability}")
+                if not reasons:
+                    create_tab = True
 
-    if screen_session == "locked" and (create_session or create_group):
-        reasons.append("locked session requires an existing configured session and group")
+    if screen_session == "locked" and (create_session or create_group or create_tab):
+        reasons.append("locked session requires an existing configured session, group, and tab")
 
-    creation_required = not reasons and (create_session or create_group)
+    creation_required = not reasons and (create_session or create_group or create_tab)
     ready = not reasons and not creation_required
     state = "ready" if ready else "creation-required" if creation_required else "capability-unavailable"
     return {
@@ -483,7 +533,7 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         "permitted_actions": {
             "claim_verified_tab": ready,
             "name_session": False,
-            "create_tab": False,
+            "create_tab": creation_required and create_tab,
             "create_session": creation_required and create_session,
             "create_group": creation_required and create_group,
         },

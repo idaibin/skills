@@ -37,7 +37,7 @@ def route_config() -> dict:
                 "route": {
                     "surface": "user-local-browser",
                     "browser_product": "Google Chrome",
-                    "execution_profile": "Default",
+                    "execution_profile": "extension-connected-current",
                     "workspace": "AI_Dev",
                     "connector": "plugin://chrome@openai-bundled",
                     "browser_selector": "chrome",
@@ -91,6 +91,9 @@ class LocalBrowserRouteResolverTests(unittest.TestCase):
             "plugin://chrome@openai-bundled", result["route"]["connector"]
         )
         self.assertTrue(result["route"]["skip_default_surface_probe"])
+        self.assertEqual(
+            "extension-connected-current", result["route"]["execution_profile"]
+        )
 
     def test_project_and_keyword_clause_requires_both(self) -> None:
         matched = RESOLVER.resolve(

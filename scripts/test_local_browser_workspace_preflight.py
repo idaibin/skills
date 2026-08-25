@@ -32,7 +32,7 @@ def ready_fixture() -> dict:
             "browser_id": "chrome-new",
         },
         "browser_profile": {
-            "profile_id": "Default",
+            "profile_id": "Bruce",
             "existing_user_profile": True,
             "browser_id": "chrome-new",
         },
@@ -40,14 +40,14 @@ def ready_fixture() -> dict:
             "account_session_id": "account-session-verified",
             "verified": True,
             "browser_id": "chrome-new",
-            "profile_id": "Default",
+            "profile_id": "Bruce",
         },
         "target": {
             "target_kind": "url",
             "target_id_or_url": "https://example.test/target",
             "target_fingerprint": "target-fingerprint",
             "browser_id": "chrome-new",
-            "profile_id": "Default",
+            "profile_id": "Bruce",
             "account_session_id": "account-session-verified",
         },
         "tab": {
@@ -55,7 +55,7 @@ def ready_fixture() -> dict:
             "native_group_id": "group-shared",
             "target_fingerprint": "target-fingerprint",
             "browser_id": "chrome-new",
-            "profile_id": "Default",
+            "profile_id": "Bruce",
             "account_session_id": "account-session-verified",
         },
         "screen_session": "unlocked",
@@ -75,6 +75,7 @@ def ready_fixture() -> dict:
                 "require_verified_placement": True,
                 "create_if_missing": True,
                 "allow_group_creation": True,
+                "create_tab_if_target_missing": True,
             },
             "locked_session": {
                 "enabled": True,
@@ -99,6 +100,9 @@ def ready_fixture() -> dict:
             "group_creation": "available",
             "group_placement": "available",
             "managed_session_creation": "available",
+            "tab_enumeration": "available",
+            "tab_creation": "available",
+            "stable_tab_identity": "available",
         },
         "observations": {
             "sessions": [
@@ -118,6 +122,7 @@ def ready_fixture() -> dict:
             "selected_session_id": "session-shared",
             "selected_group_id": "group-shared",
             "placement_target_group_id": "group-shared",
+            "target_tabs": ["tab-target"],
         },
     }
 
@@ -177,6 +182,47 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
         self.assertEqual("creation-required", result["state"])
         self.assertTrue(result["permitted_actions"]["create_group"])
         self.assertFalse(result["permitted_actions"]["claim_verified_tab"])
+
+    def test_missing_target_tab_can_request_one_grouped_tab(self) -> None:
+        fixture = ready_fixture()
+        fixture["target_tab_state"] = "absent"
+        fixture["tab"] = None
+        fixture["observations"]["target_tabs"] = []
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("creation-required", result["state"])
+        self.assertTrue(result["permitted_actions"]["create_tab"])
+        self.assertFalse(result["permitted_actions"]["claim_verified_tab"])
+        self.assertEqual("Bruce", result["profile_id"])
+
+    def test_missing_target_tab_requires_current_empty_enumeration(self) -> None:
+        fixture = ready_fixture()
+        fixture["target_tab_state"] = "absent"
+        fixture["tab"] = None
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn(
+            "target tab absence is not proven by current enumeration", result["reasons"]
+        )
+
+    def test_missing_target_tab_stops_when_creation_is_disabled(self) -> None:
+        fixture = ready_fixture()
+        fixture["target_tab_state"] = "absent"
+        fixture["tab"] = None
+        fixture["observations"]["target_tabs"] = []
+        fixture["policy"]["tab_grouping"]["create_tab_if_target_missing"] = False
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertIn("target tab is absent and creation is disabled", result["reasons"])
+
+    def test_present_target_requires_fresh_tab_enumeration(self) -> None:
+        fixture = ready_fixture()
+        fixture["observations"]["target_tabs"] = []
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertFalse(result["permitted_actions"]["claim_verified_tab"])
+        self.assertIn(
+            "target tab identity is not proven by current enumeration", result["reasons"]
+        )
 
     def test_locked_session_reuses_prepared_extension(self) -> None:
         fixture = ready_fixture()

@@ -68,17 +68,16 @@ local_browser:
       surface: user-local-browser
       workspace: <user-selected logical label>
       reuse_existing: true
-      create_if_missing: false
+      create_if_missing: true
   execution_profile:
     mode: existing-user-profile
-    name: <existing Profile name>
-    profile_directory: <existing Chrome Profile directory>
+    selection: extension-connected-current
     launch_when_unlocked: false
     require_existing_when_locked: true
   extension_control:
     enabled: true
     install_target: existing-profile-only
-    profile: <existing Profile name>
+    profile_selection: extension-connected-current
     connector: <Chrome plugin connector>
     browser_selector: chrome
     cdp_transport: chrome.debugger
@@ -104,6 +103,7 @@ local_browser:
     require_verified_placement: true
     create_if_missing: true
     allow_group_creation: true
+    create_tab_if_target_missing: true
     reuse_existing: true
     allow_unconfigured_groups: false
     allow_ungrouped: false
@@ -126,8 +126,11 @@ local_browser:
 last_verified_at: <informational timestamp>
 ```
 
-`execution_profile.mode` accepts only `existing-user-profile`. The selected connector
-must bind the browser family `chrome` and the configured existing Profile. Never copy
+`execution_profile.mode` accepts only `existing-user-profile`.
+`extension-connected-current` selects the existing Profile reported by the connected
+extension at runtime; it is not a literal Profile name and must not be rewritten to
+`Default`. The selected connector must bind the browser family `chrome` and that
+observed existing Profile. Never copy
 cookies, cache, credentials, history, Keychain material, or Profile files. Never start
 another browser or Profile to recover a failed connector.
 
@@ -168,7 +171,7 @@ directly to a known surface.
       "route": {
         "surface": "user-local-browser",
         "browser_product": "<configured Chrome product>",
-        "execution_profile": "<configured existing Profile>",
+        "execution_profile": "extension-connected-current",
         "workspace": "<user-selected logical label>",
         "connector": "<Chrome plugin connector>",
         "browser_selector": "chrome",
@@ -213,9 +216,9 @@ page, or conversation labels.
 
 Before browser setup, serialize one closed identity chain into
 `local-browser-workspace-preflight/v1`: connected extension connector, selected browser
-identity,
-existing Profile, verified account/session, target kind plus stable ID or exact URL and
-target fingerprint, exact tab identity, and native group identity. Bind every element to
+identity, extension-reported existing Profile, verified account/session, target kind plus stable ID or exact URL and
+target fingerprint, target-tab state, and native group identity. When the target tab is
+present, include its exact identity. Bind every element to
 the selected browser and Profile; bind the target and tab to the verified account/session;
 bind the tab to the target fingerprint and resolved native group. Also serialize the
 stale/reconnected identity, policies, capabilities, group/session observations, selected
@@ -223,17 +226,21 @@ IDs, and placement target, then run
 `python3 scripts/preflight-local-browser-workspace.py <evidence.json>`.
 
 - Exit `0`: the configured existing workspace is ready.
-- Exit `10`: perform only the explicitly permitted configured session/group creation,
+- Exit `10`: perform only the explicitly permitted configured session/group/tab creation,
   then re-enumerate and rerun preflight.
 - Exit `20`: stop `capability-unavailable` before claiming, creating, moving, or
   navigating a tab.
+- Exit `2`: the evidence record is invalid or incomplete; stop and report `Not verified`.
 
 ## Capability Gate
 
-Require one current connected Chrome extension identity, the configured existing Profile,
-a verified account/session, target, exact tab identity, and native group. Missing any
-member of this chain makes the input invalid: it cannot return `ready` or authorize
-`claim_verified_tab`. Enumerate only tab title, URL, recency, and group metadata needed
+Require one current connected Chrome extension identity, its reported existing Profile,
+a verified account/session, target, and native group. A present target also requires an
+exact tab identity. When current enumeration proves the target absent,
+`target_tab_state: absent`, an empty `observations.target_tabs`, and available tab creation, stable identity,
+and group-placement capabilities may return `creation-required` with only `create_tab`.
+After creation, re-enumerate and rerun with the exact tab binding; only that second pass
+may authorize `claim_verified_tab`. Enumerate only tab title, URL, recency, and group metadata needed
 for target selection; do not inspect unrelated page content.
 
 For strict grouping:
@@ -241,7 +248,8 @@ For strict grouping:
 - Require independent group enumeration, stable group identity, exact group selection,
   and verifiable placement.
 - Reuse an existing identity-matched tab in the configured group before considering
-  creation.
+  creation. A missing page alone is not a stop condition when the group is unique and
+  one-tab creation plus placement and readback are supported.
 - A group label from one tab is observation only; it is not unique group identity.
 - Session naming is not native-group placement proof.
 - Create or move a tab only when the host exposes that exact operation and after-state

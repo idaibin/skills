@@ -41,11 +41,13 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    <routes.json> <request.json>`. A matched rule fixes the surface, existing profile,
    extension connector,
    workspace label, reuse policy, and priority; skip probing the ordinary default and
-   fallback surfaces. With no match, use the ordinary defaults. Then preflight only
+   fallback surfaces. `execution_profile: extension-connected-current` means the
+   Profile reported by the connected extension; it is a selection strategy, not a
+   Profile display name such as `Default`. With no match, use the ordinary defaults. Then preflight only
    capabilities required by the selected route with the Capability Snapshot in
    [browser-operation-protocol.md](references/browser-operation-protocol.md); keep
    unchecked fields `unknown`. For a selected user-local route, select only the
-   configured Chrome extension connector and existing user Profile. Perform one
+   configured Chrome extension connector and its currently connected existing user Profile. Perform one
    readback of the connector, browser family, Profile, native group, and target; if it
    fails, stop `Not verified` instead of starting another browser, Profile, or fallback.
    Treat a configured application path, bundle identity, release channel, and product
@@ -68,10 +70,15 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    configured Chrome extension and reuse a safe tab in the exact native group, matching
    Profile, verified account/session, environment, origin, then URL. Do not treat a workspace
    label or automation-session name as native-group proof. If no identity-matched tab
-   exists and verified group placement is unavailable, stop before opening a tab.
+   exists, prefer reuse. If the native group is uniquely verified but the target page
+   is absent, preflight may permit one new target tab; create it directly in that group,
+   re-enumerate, and rerun preflight before navigation or page action. Stop only when
+   the group/placement/create/readback chain is unavailable or ambiguous.
    Local preferences never override foreground safety, and URL matching never crosses an identity boundary.
-4. Reuse an identity-matched tab. Open at most one task tab only when reuse is unsafe or
-   independent state/comparison requires isolation. Keep a task-local tab ledger that
+4. Reuse an identity-matched tab. Open at most one task tab when the verified target is
+   absent, reuse is unsafe, or independent state/comparison requires isolation. A newly
+   opened tab must be placed in the resolved native group and re-enumerated before use.
+   Keep a task-local tab ledger that
    records task key, browser surface/session identity, tab identity, target fingerprint,
    ownership evidence, purpose, lifecycle state, cleanup disposition, and retention
    authority. Record creation intent before opening and bind the created identity after
@@ -173,9 +180,10 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
   computed values distinct.
 - In-app Browser operations require a real claimed or task-created tab and direct live
   control/readback evidence. A selected user-local route is authoritative: use only its
-  configured Chrome connector, existing Profile, native group, and verified target.
-  Failed connector, Profile, group, target, account, or tab verification ends
-  `Not verified`; never start a compatibility browser or Profile.
+  configured Chrome connector, extension-reported existing Profile, native group, and
+  verified target. Failed connector, Profile, group, account, placement, or post-create
+  tab verification ends `Not verified`; an enumerated missing target may use the single
+  permitted grouped-tab creation path. Never start a compatibility browser or Profile.
 - A two-pass visual gate requires two independently recorded matching viewport/state
   rounds. Mark unsupported runtime, identity, cleanup, or background claims `Not verified`.
 
