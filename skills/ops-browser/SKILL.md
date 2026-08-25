@@ -32,17 +32,17 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    CSS pixels only for ordinary desktop work without a requested viewport; otherwise
    follow [usage](references/usage.md) and verify the effective viewport.
 
-2. Resolve the surface before probing it. An explicit route wins; otherwise load
+2. Resolve the surface before probing it. An explicit current-request route wins; otherwise load
    [local-browser-workspaces.md](references/local-browser-workspaces.md) and run the
    route resolver when its table exists, then use the ordinary default only when no
    rule matches. A matched route fixes surface, existing Profile/endpoint, workspace,
-   reuse, and fallback policy; do not discover alternatives. Read back browser family,
-   Profile, connector, endpoint, and target once, then preflight only required
+   reuse, and fallback policy; do not discover alternatives. Read back the configured Chrome extension,
+   existing user Profile, browser family, connector, endpoint, and target once, then preflight only required
    capabilities with the Capability Snapshot in
    [browser-operation-protocol.md](references/browser-operation-protocol.md). For
    user-local routes, run the local-workspace preflight before actions; honor its
    `10`/`11`/`20` outcomes and fail closed on screen lock, missing identity, or
-   task-specific naming requirements. Never enumerate, download, install, launch, unlock,
+   task-specific naming requirements; otherwise stop `Not verified`. Never enumerate, download, install, launch, unlock,
    wake, activate, foreground, use GUI input, or use later evidence to prove an earlier action.
 
 3. Select only the resolved surface. For ordinary unmatched work prefer the in-app
@@ -61,7 +61,7 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 5. For an `ask-ai` handoff, validate the request and Capability Snapshot, preserve its
    `operation_id`, and return the matching protocol result. Do not operate app-native
    ChatGPT Projects/Threads here.
-6. Choose the narrowest backend: deterministic APIs or Playwright for fixed actions,
+6. Choose the narrowest backend. For a fixed route, known controls, repeatable capture, regression check, or external write, prefer deterministic APIs or Playwright. Use deterministic APIs or Playwright for fixed actions,
    a bounded agent only for open-ended navigation, and CDP only for a required low-level
    capability. Load the applicable reference. Prefer semantic selectors and collect only
    exposed UI, DOM, console, network, storage/auth, screenshot, viewport, download,
