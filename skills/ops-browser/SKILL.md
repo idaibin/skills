@@ -49,12 +49,14 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    Browser; use the configured local CDP workspace for localhost or when its verified
    login is required. Reuse a safe tab matching profile, account/session, origin, and
    URL before creating one. Keep user-local session/group rules separate from the
-   verified `dedicated-user-data-dir` profile. URL matching never crosses identity.
-4. Claim an exact live tab or create at most one task tab when reuse is unsafe. Record
-   the task-local ledger before opening and bind the created identity after
-   re-enumeration; include task key, surface/session, tab, target fingerprint, owner,
-   purpose, lifecycle, cleanup, retention authority, and direct readback. Screenshots,
-   cached DOM, history, and saved credentials are not proof. Batch only independent
+   verified `dedicated-user-data-dir` profile. URL matching never crosses an identity boundary.
+4. Reuse an identity-matched tab. Open at most one task tab only when reuse is unsafe or
+   independent state/comparison requires isolation. Keep a task-local tab ledger that
+   records task key, browser surface/session identity, tab identity, target fingerprint,
+   ownership evidence, purpose, lifecycle state, cleanup disposition, retention authority.
+   Record creation intent before opening and bind the created identity after re-enumeration.
+   For every executable single-tab action, record owner and direct readback; do not act on
+   a tab with missing, shared, stale, or unverified owner binding. Batch only independent
    in-app tabs with one owner per stable identity; keep dependent work serial and return
    `Not verified` when ownership is unclear.
 
@@ -68,10 +70,12 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    route, or payload evidence; separate runtime facts from inference.
 7. Before a write or sensitive action, revalidate account, target, authorization,
    prior operation state, and postcondition; stop for uncertain side effects,
-   credentials/MFA/consent, destructive actions, or scope expansion. Reconcile the tab
-   ledger at finish, resume only from revalidated identity, close task-created tabs
-   unless retention was requested, never close a pre-existing tab without authority,
-   and report restoration gaps.
+   credentials/MFA/consent, destructive actions, or scope expansion. Reconcile the
+   task-local tab ledger before finishing. Resume ownership only from the same
+   revalidated browser surface/session, tab identity, and target fingerprint; otherwise
+   mark ownership `Not verified`. Close identity-matched task-created tabs unless the
+   user explicitly requested it; restore authorized state and report gaps. Never close
+   a pre-existing user tab without authority.
 
 ## Modes
 
