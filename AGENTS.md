@@ -75,4 +75,10 @@ Use the validation matrix in `skills/AGENTS.md`. During iteration, run focused t
 for the changed validator, protocol, route, or package plus exact-path
 `git diff --check`. Run the canonical full gate only for merge, release, catalog
 delivery, final fixed-basis acceptance, or an explicit full-regression request.
-Report any runtime or external behavior that was not exercised.
+For a behavior or quality claim, also run the fixed live-Agent cases required by
+`docs/skills/skill-standard.md`, capture actual trace/artifacts, and report selection,
+process, outcome/effect, stop honesty, and efficiency separately. Report any runtime
+or external behavior that was not exercised; syntax, package, and deterministic
+routing passes alone are not capability proof. Preserve any explicitly requested
+independent provider/model in its live case; absent or mismatched provider evidence is
+`Not verified` rather than an implicit exemption.

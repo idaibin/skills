@@ -22,7 +22,6 @@ MATCH_FIELDS = {
     "operation_types",
     "keywords",
 }
-LOOPBACK_ADDRESSES = {"127.0.0.1", "localhost", "::1"}
 TARGET_MATCH_ORDERS = {
     "user-local-browser": (
         "profile",
@@ -149,24 +148,35 @@ def _validate_route(route: Any) -> dict[str, Any]:
             f"{list(expected_order)} for {surface}"
         )
 
-    cdp = route.get("cdp")
     if surface == "user-local-browser":
-        for field in ("browser_product", "execution_profile", "workspace"):
+        for field in (
+            "browser_product",
+            "execution_profile",
+            "workspace",
+            "connector",
+            "browser_selector",
+        ):
             if not isinstance(route.get(field), str) or not route[field].strip():
                 raise ValueError(f"rule.route.{field} is required for user-local-browser")
-        if not isinstance(cdp, dict):
-            raise ValueError("rule.route.cdp is required for user-local-browser")
-        if cdp.get("address") not in LOOPBACK_ADDRESSES:
-            raise ValueError("rule.route.cdp.address must be loopback-only")
-        port = cdp.get("port")
-        if not isinstance(port, int) or isinstance(port, bool) or not 1 <= port <= 65535:
-            raise ValueError("rule.route.cdp.port must be an integer from 1 to 65535")
+        if route["browser_selector"] != "chrome":
+            raise ValueError("rule.route.browser_selector must be chrome")
+        if not route["connector"].startswith("plugin://chrome@"):
+            raise ValueError("rule.route.connector must select the Chrome plugin")
+        if "cdp" in route:
+            raise ValueError("rule.route.cdp is unsupported for user-local-browser")
     elif any(
         field in route
-        for field in ("browser_product", "execution_profile", "workspace", "cdp")
+        for field in (
+            "browser_product",
+            "execution_profile",
+            "workspace",
+            "connector",
+            "browser_selector",
+            "cdp",
+        )
     ):
         raise ValueError(
-            "codex-in-app-browser routes must not declare local profile or CDP fields"
+            "codex-in-app-browser routes must not declare local browser fields"
         )
     return route
 

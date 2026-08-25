@@ -63,13 +63,13 @@ never infer placement from session naming, create an unconfigured group, or leav
 ungrouped task tab. Apply the configured per-domain tab limit before opening, and close
 identity-matched task-created tabs after use unless explicitly retained.
 
-When the desktop is locked, retain this priority only if the configured workspace and
-a browser-native, extension, or loopback CDP endpoint were prepared before lock. The
-adapter must directly prove lock-safe tab enumeration and page control. It may reconnect
-transport to that exact endpoint when no browser launch, debugging enablement, profile
-import, window activation, or GUI automation is required. Reuse an existing matching
-page and never create a workspace while locked. Browser-native DOM/route/network
-evidence does not prove window visibility or screenshots.
+When the desktop is locked, retain this priority only if the configured Chrome
+extension connection and workspace already exist. The adapter must directly prove
+lock-safe tab enumeration and page control, and may reconnect only that prepared
+extension transport. Never launch a browser, enable a debugging endpoint, import a
+Profile, activate a window, or use GUI automation. Reuse an existing matching page and
+never create a workspace while locked. Browser-native DOM/route/network evidence does
+not prove window visibility or screenshots.
 
 ## Execution Backend Selection
 

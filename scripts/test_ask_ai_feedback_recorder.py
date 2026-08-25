@@ -80,6 +80,41 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
         self.assertEqual(1, self.run_recorder().returncode)
         self.assertFalse(self.log.exists())
 
+    def test_rejects_pii_relative_paths_domains_and_token_like_values(self) -> None:
+        for field, value in (
+            ("local_verdict", "alice" + "@" + "example.invalid"),
+            ("response_artifact_id", ".codex/reviews/raw-response.md"),
+            ("response_artifact_id", "C:\\Users\\example\\response.md"),
+            ("completion_evidence", "review.example.com"),
+            ("model_evidence", "a" * 40),
+        ):
+            with self.subTest(field=field, value=value):
+                event = dict(self.event)
+                event[field] = value
+                self.event = event
+                self.assertEqual(1, self.run_recorder().returncode)
+                self.event = dict(self.event)
+                self.event.pop(field, None)
+        self.assertFalse(self.log.exists())
+
+    def test_requires_hash_fields_to_be_lowercase_sha256(self) -> None:
+        for field in ("conversation_fingerprint", "prompt_artifact_hash", "response_artifact_hash"):
+            with self.subTest(field=field):
+                self.event[field] = "not-a-fingerprint"
+                self.assertEqual(1, self.run_recorder().returncode)
+                self.event.pop(field)
+        self.assertFalse(self.log.exists())
+
+    def test_rejects_retired_free_text_fields_for_new_events(self) -> None:
+        for field in ("summary", "prompt_hypothesis", "next_experiment"):
+            with self.subTest(field=field):
+                self.event[field] = "sanitized text"
+                result = self.run_recorder()
+                self.assertEqual(1, result.returncode)
+                self.assertIn("unknown fields", result.stderr)
+                self.event.pop(field)
+        self.assertFalse(self.log.exists())
+
     def test_rejects_null_nested_and_invalid_scalar_types(self) -> None:
         for value in (None, {"nested": "value"}, 7):
             with self.subTest(value=value):

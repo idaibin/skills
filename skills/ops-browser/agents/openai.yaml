@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Browser"
   short_description: "Operate browser surfaces with verified computed evidence"
-  default_prompt: "Use $ops-browser to operate or verify the requested page without interrupting the user's active browser work. Default to the Codex in-app Browser, use AI-Exec CDP for authenticated fallback and AI_dev local development, and while locked allow one non-foreground launch/CDP setup followed by current capability verification."
+  default_prompt: "Use $ops-browser to operate or verify the requested page without interrupting the user's active browser work. Resolve the configured surface, reuse an identity-matched tab through the connected Chrome extension when local Profile state is required, verify native-group placement, and stop if background-safe control is unavailable."

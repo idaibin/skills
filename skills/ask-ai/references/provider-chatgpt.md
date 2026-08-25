@@ -63,6 +63,19 @@ of external review rounds.
    local-browser request starts directly in that browser and does not probe Codex in-app first.
 6. Use Package-only when no authorized route proves the required capability.
 
+Before navigation, classify the browser target independently from transport:
+
+- `project-work` is a verified ChatGPT/Codex Project Work or chat task, bound to its
+  stable Project/conversation/task ID or exact Work/chat URL.
+- `cloud-environment-settings` is the Codex Cloud environment configuration surface.
+  Select it only when the current request explicitly asks to inspect or change an
+  environment configuration. `/codex/cloud/settings/environment` is valid only for
+  this target kind and is forbidden for `project-work`.
+
+For either kind, verify the target ID or exact URL, rendered surface, account/workspace,
+selected browser/Profile/extension route, and tab identity before action. Similar labels,
+shared account state, or being inside the same product do not bridge the kinds.
+
 Run the transport resolver from `browser-profile.md` before these live steps. When the
 review route selects a configured ChatGPT Project, require its own stable Project ID,
 ChatGPT URL origin, account, and conversation evidence. The same Gemini Notebook label
@@ -101,8 +114,8 @@ If generic ChatGPT is used, report that the review is not project-bound.
 
 Read explicit per-request settings first, then the ChatGPT section and
 `browser_preference` described in [browser-profile.md](browser-profile.md). A valid
-Ask AI v1 ChatGPT section may prefer `codex-app-native`, `browser`, or `manual`;
-`desktop-built-in-browser` is a compatible built-in-first alias. Missing, unknown, or
+Ask AI v1 ChatGPT section may prefer `codex-app-native`, `browser`, or `manual`.
+Missing, unknown, or
 ambiguous values fail closed. Changing defaults requires explicit instruction. Availability
 is not authorization, and stored values are not current identity, capability, model,
 or reasoning evidence.
@@ -245,14 +258,18 @@ preference selects a named local browser:
 
 Do not save a selected tab, profile, executable path, or URL as a default. A stored
 browser product name controls route order only and must be freshly preflighted.
+When the current request selects `user-local-browser`, this is a mandatory route, not
+that preference: use only its configured Chrome connector, existing Profile, native
+group, and identity-matched tab. Stop `Not verified` on failure without launching a
+browser, creating a Profile or group, using an ungrouped tab, or changing surfaces.
 
 ## Browser Capability Routing
 
 After an external send is explicitly authorized:
 
 1. Preflight the browser capabilities actually exposed by the environment.
-2. Use `ops-browser` as the low-level browser operator for session/tab selection, navigation, Chat/Work and model/reasoning selection, composer/upload inspection, submission, completion evidence, and response extraction. The bridge continues to own package scope, authorization, surface, preferences and fallback order, round count, conversation attribution, and archive paths.
-3. Verify configured Project URL/rendered identity, Chat/Work interface, and model/reasoning selection before submit. Reuse the mapped ChatGPT Project conversation when available.
+2. Use `ops-browser` as the low-level browser operator for session/tab selection, navigation, Chat/Work and model/reasoning selection, composer/upload inspection, submission, completion evidence, and response extraction. The bridge continues to own package scope, authorization, target kind, surface, preferences and fallback order, round count, conversation attribution, and archive paths.
+3. Verify target kind, configured Project/task ID or exact URL, rendered Chat/Work or environment-settings surface, account/workspace, applicable Profile/extension, native group, tab identity, and model/reasoning selection before action. Reuse the mapped ChatGPT Project conversation when available. Never use the environment-settings route to recover or locate Project Work.
 4. If the verified Project has no conversation and the user authorized sending, open the Project landing page and create exactly one conversation. Verify its stable URL/ID and empty composer state before submit when exposed. If the surface assigns identity only on first submit, record the pre-send Project/account evidence, make the one authorized submit, then verify and store the resulting URL/ID before accepting the response or continuing. Do not create a conversation for Package-only requests.
 5. Otherwise open the configured Project URL or a standard chat through the selected capability.
 6. Ask the user to sign in inside that controlled browser when authentication is required.
@@ -314,6 +331,15 @@ ChatGPT page from direct evidence as one of:
 - clearly unauthenticated: ask the user to sign in in the controlled browser;
 - abnormal or indeterminate: blank, partially rendered, stalled, showing an
   error, or otherwise lacking enough evidence for either state above.
+
+Create one canonical restoration record before the first recovery or state-changing
+page action. Bind it to the operation ID, target kind and ID/URL, surface,
+account/workspace fingerprint, applicable browser Profile/extension, tab identity,
+before-state, and authorized restoration plan; compute a SHA-256
+`restoration_fingerprint` over those canonical fields. Completion requires its matching
+post-restoration readback. If an older record for the operation or a conflicting target,
+before-state, or fingerprint is present, completion is invalid: reconcile to one current
+record or return `completion-not-verified` without choosing by recency or merging records.
 
 For an abnormal or indeterminate page, use `ops-browser` for one bounded
 recovery action: refresh the exact same URL, then re-verify the active route,

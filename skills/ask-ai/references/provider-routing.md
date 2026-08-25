@@ -129,13 +129,6 @@ ChatGPT Project, Gemini Notebook, and verified provider Project/Space/Collection
 surfaces to the canonical `persistent-context` capability; when no explicit or
 configured persistent context applies, use the provider's ordinary Standard Chat.
 
-The old `~/.agents/config/ask-chatgpt/defaults.yaml` record and
-`ask-chatgpt-defaults/v2` schema remain ChatGPT-only compatibility input. Read them only
-after ChatGPT is selected or legacy ask-chatgpt wording is used. Do not reinterpret
-them as provider-neutral defaults or migrate, rewrite, or delete them without explicit
-authorization; follow [browser-profile.md](browser-profile.md) for their fail-closed
-route meaning.
-
 ## Fallback
 
 Fallback may change transport inside the same provider only when:

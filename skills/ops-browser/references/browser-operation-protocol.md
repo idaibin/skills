@@ -28,7 +28,7 @@ snapshot_id: cap-<stable-task-scope>
 captured_at: <ISO-8601 or Not verified>
 route:
   provider: <chatgpt|gemini|deepseek|kimi|other|not-applicable>
-  browser_mode: <codex-in-app-browser|user-local-browser|desktop-built-in-browser|current-chrome-explicit|chatgpt-cloud-browser|standalone-playwright-explicit|isolated-managed-session|manual>
+  browser_mode: <codex-in-app-browser|user-local-browser|chatgpt-cloud-browser|standalone-playwright-explicit|isolated-managed-session|manual>
   browser_name: <user-selected browser product or not-applicable>
   browser_id: <stable id or Not verified>
   session_id: <stable id or Not verified>
@@ -76,17 +76,10 @@ capabilities:
   preconnected_browser_control: <available|unavailable|unknown>
   prepared_endpoint_available: <available|unavailable|unknown>
   background_safe_transport_reconnect: <available|unavailable|unknown>
-  background_safe_browser_setup: <available|unavailable|unknown>
   background_safe_tab_enumeration: <available|unavailable|unknown>
   background_safe_page_control: <available|unavailable|unknown>
-  cdp_loopback_only: <available|unavailable|unknown>
-  cdp_dedicated_profile: <available|unavailable|unknown>
-  cdp_prelock_roundtrip_verified: <available|unavailable|unknown>
-  dedicated_profile_identity: <available|unavailable|unknown>
-  loopback_endpoint_ready: <available|unavailable|unknown>
   deterministic_automation: <available|unavailable|unknown>
   agentic_navigation: <available|unavailable|unknown>
-  direct_cdp: <available|unavailable|unknown>
 evidence:
   - <tool result, stable identifier, or direct observation>
 gaps:
@@ -99,9 +92,7 @@ Use `chatgpt-cloud-browser` for the ChatGPT cloud/agent browser surface and
 not come from a user browser profile.
 Use `codex-in-app-browser` for the host-controlled Codex browser and
 `user-local-browser` only for the exact browser product resolved by the current
-request or durable preference. Existing `desktop-built-in-browser` and
-`current-chrome-explicit` values remain valid for read-only recovery; normalize them
-to `codex-in-app-browser` or a named `user-local-browser` before a new action.
+request or durable preference.
 
 Reuse a snapshot only while its route, browser/session identity, account and
 workspace evidence, login-state fingerprint, target origin, and required
@@ -121,37 +112,33 @@ identity, requested action, after-state, and cleanup. A preflight or snapshot pr
 after the requested operation cannot retroactively verify that operation.
 
 For a configured user-local-browser workspace, a group label observed on a tab is
-not group enumeration or stable group identity. Require independent session and
-group enumeration, stable IDs, exact selection, and placement control whenever the
-resolved policy requires verified reuse or placement. If any required capability is
-`unavailable` or `unknown`, return `blocked` with `capability-unavailable` before
-`nameSession`, tab creation, group creation, navigation, or page operation. A browser
-reconnect invalidates evidence bound to the prior browser ID and requires a fresh
-snapshot; matching display names never bridge the two identities.
+not group enumeration or stable group identity. The executable local preflight input is
+closed only when it binds a connected extension connector, selected browser and existing
+Profile, verified account/session, target kind plus stable ID or exact URL and target
+fingerprint, exact tab identity, and native group identity. Every binding must agree on
+the selected browser/Profile; target and tab must agree on the verified account/session;
+and tab must agree on target fingerprint and native group. Require independent session
+and group enumeration, stable IDs, exact selection, and placement control whenever the
+resolved policy requires verified reuse or placement. Missing, stale, ambiguous, or
+inconsistent input cannot return `ready` or authorize `claim_verified_tab`. If any
+required capability is `unavailable` or `unknown`, return `blocked` with
+`capability-unavailable` before `nameSession`, tab creation, group creation, navigation,
+or page operation. A browser reconnect invalidates evidence bound to the prior browser
+ID and requires a fresh snapshot; matching display names never bridge the two identities.
 
 Local Chrome control-session and tab-group policy applies only to
 `user-local-browser`. It never applies to the Codex in-app Browser, cloud/agent
-browser, or an isolated managed browser. A locked local route reuses or reconnects
-first. When the validated policy permits browser launch and debug initialization,
-`background_safe_browser_setup` may authorize exactly one dedicated-profile background
-setup before page action. It must not unlock or wake the screen, activate or foreground
-a window, import profile state, or use GUI input. The preflight returns `setup-required`
-and permits only `background_browser_setup`; after the attempt, recapture all capability
-and identity evidence and rerun preflight. A failed attempt is not retried. Direct CDP
-requires a loopback-only endpoint and dedicated automation profile; require a pre-lock
-round trip only when the active policy sets `require_prelock_roundtrip: true`.
+browser, or an isolated managed browser. A locked local route reuses or reconnects only
+through its prepared Chrome extension. Require the current browser/Profile, native
+group, target, background-safe tab enumeration, and page control. A missing prepared
+connection stops before browser launch, debug enablement or initialization, window activation,
+Profile import, or GUI input.
 
 When an enabled configured workspace is proven absent and `create_if_missing: true`,
 the preflight may return `creation-required` and authorize only the exact configured
 session or group creation supported by `managed_session_creation` or `group_creation`.
 Re-enumerate and rerun preflight before selection, placement, tab creation, navigation,
 or page action. A same-name observation without a stable ID is ambiguity, not absence.
-
-When a locked dedicated browser is absent and background setup is explicitly allowed,
-the preflight may return `setup-required` and authorize only one background browser/CDP
-setup. It must return `capability-unavailable` after an unsuccessful or already-attempted
-setup, and it must return `ready` only after fresh profile, endpoint, target, tab
-enumeration, and page-control evidence succeeds.
 
 Imported browser data is initialization evidence only. Bookmarks and history may
 help locate a target, and saved credentials may help a user authenticate, but
@@ -292,6 +279,15 @@ execution:
   worker_role: <primary-coordinator|delegated-worker-role|not-applicable>
   worker_runtime_model: <provider-owned runtime model|Not verified|not-applicable>
   ownership_key: <provider/browser/session/tab/operation binding|not-applicable>
+  tab_owner:
+    owner_id: <stable worker or coordinator identity|Not verified|not-applicable>
+    owner_role: <primary-coordinator|delegated-worker-role|not-applicable>
+    browser_id: <stable browser id|Not verified|not-applicable>
+    session_id: <stable session id|Not verified|not-applicable>
+    tab_id: <stable tab id|Not verified|not-applicable>
+    target_fingerprint: <sanitized target fingerprint|Not verified|not-applicable>
+    exclusive: <true|false|Not verified|not-applicable>
+    readback_verified: <true|false|Not verified|not-applicable>
   selection_reason: <direct capability and task-shape evidence>
   budget_used: <steps/actions or not-applicable>
 before:
@@ -321,10 +317,32 @@ retained_evidence:
   - <identifier or path>
 cleanup:
   - <removed or retained task state>
+restoration:
+  record_id: <one current operation-bound record id|Not verified>
+  canonical: <true|false|Not verified>
+  fingerprint: <SHA-256 of canonical before-state and authorized restoration plan|Not verified>
+  post_readback:
+    verified: <true|false|Not verified>
+    target_fingerprint: <sanitized target fingerprint|Not verified>
+    observed_at: <ISO-8601 or Not verified>
 error:
   kind: <none|capability|identity|composer|attachment|submission|completion|interruption>
   detail: <sanitized detail>
 ```
+
+For every executable single-tab operation, `execution.tab_owner` is required and
+`owner_id`, `browser_id`, `session_id`, `tab_id`, target fingerprint, exclusive
+ownership, and direct readback must bind one owner to one tab. `ownership_key` is a
+compact correlation value, not a replacement for those fields. If any required binding
+is missing, stale, shared, or cannot be read back, return `blocked` or `ambiguous`; do
+not execute or claim a tab-owned result. `not-applicable` is valid only when no browser
+tab action was attempted.
+
+`restoration` is the canonical completion receipt. It has exactly one current
+operation-bound record, a fingerprint over the verified target and canonical before-state
+plus authorized restoration plan, and a matching post-restoration readback. Older,
+duplicate, conflicting, or fingerprint-mismatched records make restoration and completion
+`Not verified`.
 
 ## Attachment Failure Evidence
 
@@ -394,7 +412,7 @@ transitions are:
 | `attached` | `acknowledged`, `completed`, `ambiguous` |
 | `submitted` | `acknowledged`, `completion-not-verified`, `ambiguous` |
 | `acknowledged` | `captured`, `completion-not-verified`, `ambiguous` |
-| `captured` | `completed`, `ambiguous` |
+| `captured` | `completed` only with the canonical restoration receipt and matching post-readback, `ambiguous` |
 | `completion-not-verified` | `captured`, `ambiguous` only after read-only reconciliation of the same conversation and response container |
 | `cleaned` | `completed`, `ambiguous` |
 | `completed` | terminal |
@@ -429,6 +447,11 @@ conversation, or a new capture operation ID. Resume only the original read-only
 capture against the same provider, account, conversation, response container, tab,
 and precreated artifact paths. For a `capture-response` operation, `completed` is
 legal only after `captured` with the complete persistence receipt above.
+
+For every `captured -> completed` transition, the bridge must validate the result's
+canonical `restoration` record, fingerprint, and matching `post_readback.verified: true`
+in addition to the capture persistence receipt. Without that receipt, remain `captured`
+or return `completion-not-verified`; never mark the operation `completed`.
 
 One `round_id` groups the many operation IDs that make up an external review
 round. For sequential relay, one `relay_turn_id` nests inside that round and

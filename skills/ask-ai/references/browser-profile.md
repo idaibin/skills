@@ -4,7 +4,6 @@
 
 - [Purpose](#purpose)
 - [Ask AI Record](#ask-ai-record)
-- [ChatGPT Legacy Record](#chatgpt-legacy-record)
 - [Route Evidence](#route-evidence)
 - [Reset](#reset)
 
@@ -166,10 +165,6 @@ Store new records at ~/.agents/config/ask-ai/defaults.yaml using:
 `user-local-browser` primary or fallback is valid only with a non-empty
 `local_browser`; store the browser product name, never a profile, tab, executable path,
 or URL. Primary and fallback must differ; `manual` performs no fallback.
-`desktop-built-in-browser` remains a compatible Ask AI v1 alias for
-`browser` plus `codex-in-app-browser` and should be normalized only during an explicitly
-authorized config edit.
-
 The primary route is retried from a fresh capability preflight on every new task. A
 fallback applies only to the current task and never rewrites, demotes, or learns a new
 default. An explicit current-request route skips probing other routes. Thus an explicit
@@ -324,30 +319,6 @@ for a route, not current identity proof. A stored URL is eligible only when its 
 container name still matches the resolved route; otherwise stop and rediscover by name.
 The record does not authorize creating a container, sending content, changing accounts,
 or selecting a different route.
-
-## ChatGPT Legacy Record
-
-The old `~/.agents/config/ask-chatgpt/defaults.yaml` record remains ChatGPT-only input.
-Recognize `ask-chatgpt-defaults/v2` and older unversioned records only after the
-provider is resolved to ChatGPT or the request explicitly uses legacy ask-chatgpt
-wording.
-
-For `ask-chatgpt-defaults/v2`, require `default_transport_mode`:
-
-- `codex-app-native` or `desktop-built-in-browser` selects which verified ChatGPT
-  route is tried first;
-- `manual` stops before external action;
-- missing or unknown values block external action pending explicit repair.
-
-For an unversioned legacy record, preserve built-in-first behavior for missing mode,
-`desktop-built-in-browser`, and `capability-auto`; stop for `manual`,
-`chatgpt-cloud-browser`, an unknown value, or an ambiguous versioned field. Treat
-`current-chrome-explicit` and `standalone-playwright-explicit` as non-authorizing hints.
-
-Do not reinterpret, copy, rewrite, or delete a legacy record automatically. Migration
-to one complete Ask AI v1 record is a persistent configuration change and requires
-explicit authorization, readback verification, and an explicit retain/remove decision
-for the legacy record.
 
 ## Route Evidence
 

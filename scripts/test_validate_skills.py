@@ -238,7 +238,7 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("persistent-context" in error for error in errors))
         self.assertTrue(any("write it atomically" in error for error in errors))
 
-    def test_ask_ai_browser_preference_is_task_scoped_and_legacy_recoverable(self) -> None:
+    def test_ask_ai_browser_preference_is_task_scoped(self) -> None:
         profile = (
             ROOT / "skills" / "ask-ai" / "references" / "browser-profile.md"
         ).read_text(encoding="utf-8")
@@ -250,14 +250,11 @@ class ValidatorTests(unittest.TestCase):
         )
         self.assertIn("fresh capability preflight on every new task", profile)
         self.assertIn("fallback applies only to the current task", profile)
-        self.assertIn("ask-chatgpt-defaults/v2", profile)
-        self.assertIn("requires\nexplicit authorization", profile)
+        self.assertIn("explicitly authorizes that visible user-owned surface", profile)
         self.assertIn("does not probe Codex in-app first", chatgpt)
         for mode in (
             "codex-in-app-browser",
             "user-local-browser",
-            "desktop-built-in-browser",
-            "current-chrome-explicit",
         ):
             self.assertIn(mode, protocol)
 
@@ -317,25 +314,23 @@ class ValidatorTests(unittest.TestCase):
             profile.write_text("schema_version: ops-browser-defaults/v1\n", encoding="utf-8")
             errors = VALIDATOR.ops_browser_workspace_errors(package)
             self.assertTrue(any("unified | by-operation" in error for error in errors))
-            self.assertTrue(any("user-selected group name" in error for error in errors))
+            self.assertTrue(any("user-selected native group name" in error for error in errors))
             self.assertTrue(any("create_if_missing" in error for error in errors))
             self.assertTrue(any("reuse_existing" in error for error in errors))
             self.assertTrue(any("allow_unconfigured_groups" in error for error in errors))
             self.assertTrue(any("allow_ungrouped" in error for error in errors))
             self.assertTrue(any("close_task_tabs_after_use" in error for error in errors))
             self.assertTrue(any("max_open_tabs_per_domain" in error for error in errors))
-            self.assertTrue(any("session naming" in error for error in errors))
-            self.assertTrue(any("control_session" in error for error in errors))
-            self.assertTrue(any("control-session name" in error for error in errors))
-            self.assertTrue(any("require_verified_reuse" in error for error in errors))
-            self.assertTrue(any("allow_unconfigured_sessions" in error for error in errors))
-            self.assertTrue(any("nameSession" in error for error in errors))
+            self.assertTrue(any("existing-user-profile" in error for error in errors))
+            self.assertTrue(any("Chrome plugin connector" in error for error in errors))
+            self.assertTrue(any("browser_selector" in error for error in errors))
+            self.assertTrue(any("no_profile_creation" in error for error in errors))
             self.assertTrue(any("preflight-local-browser-workspace.py" in error for error in errors))
             self.assertTrue(any("ops-browser-routes/v1" in error for error in errors))
             self.assertTrue(any("resolve-local-browser-route.py" in error for error in errors))
             self.assertTrue(any("skip_default_surface_probe" in error for error in errors))
-            self.assertTrue(any("stable group ID" in error for error in errors))
-            self.assertTrue(any("two Chrome instances" in error for error in errors))
+            self.assertTrue(any("stable group identity" in error for error in errors))
+            self.assertTrue(any("selected browser identity" in error for error in errors))
             self.assertTrue(any("capability-unavailable" in error for error in errors))
 
     def test_ui_spec_separates_format_from_completeness(self) -> None:
