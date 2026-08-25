@@ -5,6 +5,13 @@ appearance or when a review claims visual completion. It joins specification,
 implementation, browser evidence, audit, and fixed-basis review without changing
 their owners or mutation boundaries.
 
+This reusable protocol, its schema, validator, and committed examples are
+project-neutral: they contain no project, brand, page, domain-field,
+design-platform, or business defaults. Real source identities, paths, component
+names, URLs, copy, data roles, measurements, and approval facts belong only in a
+task artifact. A validating example demonstrates structure and evidence semantics;
+it never supplies a reusable target contract for a project.
+
 ## Contents
 
 - [Owner Gates](#owner-gates)
@@ -15,6 +22,7 @@ their owners or mutation boundaries.
 - [Required Runtime Coverage](#required-runtime-coverage)
 - [Degraded Evidence](#degraded-evidence)
 - [Handoff Artifact](#handoff-artifact)
+- [Capture Closure And Restoration](#capture-closure-and-restoration)
 - [Completion Rule](#completion-rule)
 
 ## Owner Gates
@@ -146,6 +154,14 @@ evidence IDs and a reason:
 - responsive behavior at the desktop target and every key breakpoint named by the
   slice contract.
 
+Freeze those required viewport/state pairs in `required_runtime_matrix` before runtime
+acceptance. Each target has a stable ID and a canonical fingerprint of its viewport and
+state. `responsive_breakpoints: verified` requires distinct browser-computed evidence
+for every frozen target; repeating one viewport does not cover another breakpoint.
+Matrix evidence must bind its target ID, viewport/state/fingerprint, and task-owned
+artifact bytes. The ordinary two-pass selected-source comparison may satisfy one matrix
+target; additional breakpoints use separately artifact-bound matrix evidence.
+
 Generic placeholders are not normal product assets. A fallback may cover one missing
 or failed item only when the contract permits it; it must not replace all product
 logos, thumbnails, covers, or QR codes.
@@ -222,6 +238,55 @@ cite final-pass browser evidence tagged with the same runtime category, viewport
 state. One geometry observation cannot satisfy assets, font, contrast, focus, states,
 or responsive coverage.
 
+## Capture Closure And Restoration
+
+`Complete` additionally requires `capture_closure`. It is a generic evidence
+closure, not a product, page, or design-platform schema. For every design and
+runtime capture in every comparison pass, it records the capture ID, pass, role,
+artifact locator, manifest SHA-256, content-summary SHA-256, viewport, state, and
+target fingerprint. The capture fields in the review and every browser-computed
+evidence item for that runtime pass MUST match that closure record exactly.
+
+Each closure record carries an embedded canonical `capture_manifest` and
+`content_summary`; their SHA-256 values are computed from UTF-8 JSON with sorted
+keys and compact separators, not accepted as caller-supplied labels. The manifest
+must restate the capture ID/pass/role/artifact/artifact SHA-256/byte length/
+viewport/state/target fingerprint; the summary must restate the capture ID,
+artifact, artifact SHA-256, and byte length. The same hash and length MUST appear
+in the visual-review capture, its browser-computed evidence, and the canonical
+final restoration receipt. Artifact locators MUST use
+the task-owned `artifact://task/<task_id>/...` namespace. This protocol does not
+read arbitrary local paths: a missing or unparsable embedded record fails closed.
+The target fingerprint is the same canonical SHA-256 computation over exactly
+`viewport` and `state`, so a changed target with an old fingerprint is invalid.
+
+For `Complete`, `artifact_contents` is the validator's only controlled resolver:
+each task-owned locator maps to embedded base64 bytes. Every closed capture records
+the SHA-256 and byte length of those resolved bytes; replacing bytes while retaining
+the locator fails validation. Updating only a local capture record's hash/length
+without regenerating its manifest, summary, browser evidence, and receipt also
+fails. The validator never resolves filesystem paths, URLs, or a locator outside
+that task namespace.
+
+The closure target viewport, state, and fingerprint MUST match every closed
+capture. A stale or substituted screenshot, structured evidence record, document,
+or content summary therefore cannot be combined with another pass to claim
+completion. A target viewport/state/fingerprint mismatch is a closure failure, not
+a visual exception.
+
+`restoration_receipts` preserves prior restoration records as `superseded` when
+needed, but exactly one receipt may have status `final`. Its ID MUST equal
+`canonical_final_receipt_id` and it MUST bind the final runtime capture's pass,
+target fingerprint, manifest SHA-256, and content-summary SHA-256. Old or
+conflicting final receipts cannot jointly establish a final state.
+The canonical final receipt also binds a non-empty operation ID, the raw
+pre-capture browser state (`tab_id`, URL, viewport, and scroll), explicitly
+authorized restoration actions, and a post-operation readback in that same
+structure. The post-operation browser state MUST equal `before_state` exactly;
+the capture target viewport/state is evidence context, not the restoration target.
+Its canonical SHA-256 is recomputed after excluding the hash field itself; a
+receipt cannot establish finality by merely repeating a pass number.
+
 ## Completion Rule
 
 Visual completion requires all of:
@@ -237,7 +302,8 @@ Visual completion requires all of:
 A `Complete` artifact additionally requires an approved source, `Ready` readiness,
 final-pass `browser-computed` evidence matching the pass viewport/state for every
 verified runtime category, a passing final review, empty remaining-gap and
-`not_verified` lists, and closure of every P0/P1 finding.
+`not_verified` lists, closure of every P0/P1 finding, a consistent capture closure,
+and one canonical final restoration receipt.
 
 Otherwise report `Partial` or `Not Ready`. Final reporting lists fixed items, remaining
 deltas, `Not verified`, changed files, evidence artifacts, validation, branch/commit,
