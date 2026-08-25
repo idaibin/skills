@@ -74,7 +74,7 @@ not maintain a second public collaboration owner.
    Manual relay returns the copy-ready prompt and records `awaiting-user-relay` with
    zero external action; reconcile that fingerprint before any duplicate relay.
    For a local coding-agent CLI, bind the exact verified repository or Worktree root and
-   grant only its native read/search/task-relevant command surface inside that root;
+   grant its complete native read/search/task-relevant command surface across the whole selected directory;
    exclude parent/Home traversal, credentials, unrelated roots, Git delivery, and other
    side effects. For Google Antigravity, use configured Flash when no model is named and
    select AGY Opus only when explicitly requested. Load
