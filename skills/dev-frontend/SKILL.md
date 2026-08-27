@@ -22,7 +22,11 @@ are used when supplied; they do not replace current source and repository contra
 2. Read only the authorities and source needed for the target slice. Start with the
    user requirement and current implementation; use Product/UI specs and the resolved
    `<design-root>/DESIGN.md` only when they apply. A missing optional artifact or graph
-   does not create a prerequisite ceremony.
+   does not create a prerequisite ceremony. Treat declared Product behavior readiness
+   and UI visual/interaction readiness as independent axes: when both lanes apply,
+   require both matching slice verdicts to be ready before editing. One `Ready` verdict
+   never upgrades the other; route a conflict or blocker to its semantic owner rather
+   than choosing between authorities.
 3. Complete a bounded search for the current owner, analogous consumer, and reusable
    component before choosing an implementation owner. If the supplied context already
    identifies the same maintained file, owner, and function for this feature, use that

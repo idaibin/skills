@@ -577,6 +577,20 @@ class ValidatorTests(unittest.TestCase):
         self.assertNotIn("ChatGPT then Gemini", text)
         self.assertNotIn("fixed bare-command contract", text)
 
+    def test_ask_ai_local_codex_bridge_uses_dynamic_runtime_preflight(self) -> None:
+        package = ROOT / "skills" / "ask-ai"
+        adapter = (package / "references" / "provider-adapter.md").read_text(
+            encoding="utf-8"
+        )
+        usage = (package / "references" / "usage.md").read_text(encoding="utf-8")
+        evals = (package / "references" / "eval-cases.md").read_text(encoding="utf-8")
+        combined = "\n".join((adapter, usage, evals))
+        self.assertIn("local Codex CLI execution slice", adapter)
+        self.assertIn("config and model cache without a\nschema error", adapter)
+        self.assertIn("package-manager-owned executable", usage)
+        self.assertIn("Block only the local-execution slice", evals)
+        self.assertIn("do not hardcode a version number", combined)
+
     def test_owner_handoffs_do_not_freeze_an_incomplete_language_subset(self) -> None:
         product_spec = (ROOT / "skills" / "product-spec" / "SKILL.md").read_text(
             encoding="utf-8"

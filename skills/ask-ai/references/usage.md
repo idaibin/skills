@@ -103,6 +103,11 @@ Option handling:
 - Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.
+- If an explicitly authorized bridge turn will start local Codex CLI, first resolve the
+  package-manager-owned executable, read back its exact version, and run one no-submit
+  config/model-cache load. A schema warning or ownership mismatch blocks that local
+  execution slice as `Not verified`; do not hardcode a version number, resubmit the
+  external review, or treat the external result as failed.
 - A Project supplies context, not evidence: every pass still fixes its basis and sends a self-contained package.
 - Let `ask-ai` own provider selection, package, send authorization, transport,
   surface, round count, context/conversation mapping, and response archive. Use

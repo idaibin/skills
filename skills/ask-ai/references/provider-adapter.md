@@ -148,6 +148,15 @@ persistence boundary—not a text prompt—enforces whether writes survive. A ho
 process/session identifier is transport evidence only; never record it as the provider
 conversation or session ID.
 
+When the bridge explicitly authorizes a local Codex CLI execution slice, preflight the
+resolved `codex` executable separately from external-provider adapters. Read back its
+absolute path and exact version, require the installed package-manager owner to match,
+and run one no-submit command that loads the current config and model cache without a
+schema error. Do not hardcode a Codex version in the portable Skill or user defaults.
+An unavailable, owner-mismatched, or schema-incompatible Codex runtime blocks only the
+local-execution slice; it does not retroactively invalidate a completed external review
+or authorize another provider submission.
+
 For Web research, capability proof also records the selected research mode, corpus or
 source controls, provider-owned completion state, report/container identity, and
 whether citations expose resolvable original targets. A citation list is captured

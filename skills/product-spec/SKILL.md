@@ -72,6 +72,9 @@ claiming implementation or delivery state.
    product-decision blocker (a missing user or business choice) from an
    environment or preflight validation blocker (a build, install, or toolchain
    gap that prevents running the oracle); do not collapse either into `Ready`.
+   This verdict is the Product behavior/readiness axis only. It neither proves nor
+   upgrades UI readiness; when a UI lane applies, implementation requires its own
+   `ui-spec` verdict for the same slice.
 8. Hand off only the unresolved owner that must act now: deep cross-context domain
    work to `domain-modeling`, shared visual-system contracts to `ui-spec`, source
    changes to the matching `dev-*`, and review to `repo-review` when requested.

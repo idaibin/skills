@@ -6,17 +6,16 @@
   `audit-frontend`, `repo-review`, and `ops-browser` from one
   current source-checkout snapshot. Behavior scenarios remain evidence-bounded per row and
   do not imply live invocation of every package in this digest scope.
-- Package digest: `sha256:1074930208c8d6cdb29c49a8f4800f41f149b55a62db59dd07ebf5338826bb60`
+- Package digest: `sha256:39a2878c01a3554f29b9b677d6ec45fa21004fdec79a3e68e8a074d2d184040f`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
   completeness, routing, source-discovery, and disposable synthetic live-Agent checks.
   An explicitly authorized AGY Flash final review ran once against a fixed disposable
   checkout copy. Provider-owned JSONL proved the exact model and conversation, but its
   terminal event was `ERROR` after an invalid artifact-path write; the provider case is
-  therefore `Not verified` and was not retried. For this digest, a targeted current
-  live-Agent run covered explicit source change, nearest non-trigger, and critical stop:
-  the latter two passed; the source change and focused check succeeded but the required
-  source-owner observation was absent, so that case remains Partial. Global installation,
-  installed-copy parity, and live browser operation were not rerun for this digest.
+  therefore `Not verified` and was not retried. After focused source validation, the six
+  changed public packages were installed from this local catalog into the Codex global
+  Skill directory and matched source byte-for-byte, excluding interpreter cache files.
+  Live browser operation was not rerun.
 - Raw checkout paths, accounts, prompts, session identifiers, and repository refs are
   intentionally omitted from this durable summary.
 - Recompute the digest with `python3 scripts/skill-package-digest.py`. A package
@@ -31,8 +30,8 @@ behavior certification and does not replace target-environment runtime validatio
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
 | Repository package validation | Pass | `bash scripts/check-skills.sh` validates structure, metadata, links, synchronized protocols, the visual-evidence fixture, and current unit regressions. The test count comes from command output and is not copied into this durable record. |
-| Disposable live-Agent capability matrix | Partial | On the current hardened runner, the nearest non-trigger and missing-authorization critical stop passed. The explicit source change produced the correct two-file diff and passed its focused check, but strict source-owner observation was not captured. Implicit, no-op, provider, and browser cases were not rerun for this digest. |
-| Catalog discovery | Not rerun | Package names and catalog entries were unchanged, but installer discovery was not rerun for this digest. |
+| Disposable live-Agent capability matrix | Partial | On the hardened current runner, explicit source change and missing-authorization early stop passed strict evidence gates. The implicit change completed correctly but did not prove a full current-owner read; the nearest non-trigger produced the correct stop but exceeded its tool budget after an environment preflight failure; the no-op produced the correct baseline result but did not prove complete candidate-Skill loading or owner inspection. The provider case was correctly classified `not-verified`. |
+| Catalog discovery | Pass | The installer discovered the current local catalog and selected the six requested packages by exact name. This proves installer discovery, not implicit model routing. |
 | Visual-direction contract regression | Pass | Focused offline tests verify conditional dark mode, one primary accent semantic role with independent state colors, Preserve/Overhaul boundaries, contextual layout repetition, and nested inset ownership by axis. This is contract evidence, not model or browser behavior. |
 | Documentation-evidence lifecycle regression | Pass | Focused offline tests verify resolved design-root ownership, ignored task-evidence placement, the complete structured-projection lifecycle, and the distinction between locator-only navigation and copied authority. This is static contract evidence, not host-routing or browser proof. |
 | DESIGN.md completeness policy | Pass | Official 0.4.0 format lint and `ui-spec-design-completeness/1` regressions distinguish format validity from first-adoption readiness/adoption, bind source and approval record bytes by SHA-256, reject prose-only/token-dump/placeholders/stale approval, and detect concurrent DESIGN.md drift. This is policy evidence, not human approval. |
@@ -44,11 +43,11 @@ behavior certification and does not replace target-environment runtime validatio
 | Fixed-basis frontend audit and review | Not rerun | No external target Worktree audit was rerun for this digest. |
 | Live headless-browser page operation | Not rerun | No browser page operation was run for this digest. |
 | Local-browser session/group capability | Partial | Executable regressions cover two browser identities, stale-ID reconnect, stable reuse, duplicate names, label-only ambiguity, missing capabilities, exact create-required transitions, and each enabled-policy combination. No live user-local Chrome inventory or page operation was run. |
-| Global package install | Not rerun | No installation was authorized or performed for this digest. |
-| Installed-copy parity | Not verified | The installed copies were not refreshed, so prior parity evidence does not apply to this digest. |
-| Installed package-local validator | Not verified | No current installed-copy validation was attempted. Repository source validation remains a separate result. |
-| Explicit host invocation | Partial | The explicit source change and focused check succeeded, but strict source-owner observation was absent. The missing-authorization case passed. No retry was used to manufacture a clean terminal. |
-| Implicit routing | Partial | The current nearest non-trigger selected `ui-spec` and stopped `evidence-incomplete` within budget. Implicit implementation and no-op cases were not rerun for this digest. |
+| Global package install | Pass | After focused source validation, the six changed packages were installed non-interactively from the validated local catalog for Codex: `ui-spec`, `ask-ai`, `dev-frontend`, `audit-frontend`, `repo-review`, and `ops-browser`. |
+| Installed-copy parity | Pass | Recursive source-to-installed comparison passed for those six packages; interpreter cache directories and bytecode were excluded as non-package runtime artifacts. |
+| Installed package-local validator | Not verified | The repository validator requires root catalog files that global package installation intentionally does not copy, so it cannot validate the installed directory as a standalone catalog. Source validation and installed-copy parity passed separately. |
+| Explicit host invocation | Partial | The fresh explicit change and missing-authorization cases passed. The no-op behavior and focused check were correct, but strict Skill-loading and owner-read provenance were not proven. The AGY result remains `Not verified` because its provider terminal event was `ERROR`. |
+| Implicit routing | Partial | Fresh routing selected the correct owners and produced the intended behavior, but the implementation case lacked a full current-owner read and the nearest non-trigger exceeded the fixed efficiency budget after one failed environment preflight. |
 | Critical stop routing | Pass | The synthetic missing-source-write-authorization case read the complete candidate Skill, stopped before source inspection or editing, preserved zero source/Git/external effects, and reported `missing-authorization`. This does not prove every critical stop in the catalog. |
 | Browser capability stop gate | Pass | Offline executable fixtures fail closed before naming, tab creation, group creation, or page action when stable selection or placement cannot be proven; creation is exposed only as an exact intermediate action followed by mandatory re-enumeration. This is not live Chrome capability evidence. |
 | Browser two-pass visual closure | Not verified | The generated image is exploratory evidence awaiting human approval; no frontend implementation or same-state selected-source browser comparison was performed. |
@@ -57,7 +56,7 @@ behavior certification and does not replace target-environment runtime validatio
 
 | Case | Trigger shape | Expected owner or stop | Result |
 | --- | --- | --- | --- |
-| `explicit-owner-01` | Explicitly select the frontend implementation owner for a bounded synthetic change. | `dev-frontend`; source and matching contract change, followed by the focused check. | Partial: change and focused check passed; source-owner observation missing |
+| `explicit-owner-01` | Explicitly select the frontend implementation owner for a bounded synthetic change. | `dev-frontend`; source and matching contract change, followed by the focused check. | Pass |
 | `implicit-spec-01` | Approved visual source to implementation-ready contract, no code edit; unapproved-source stop variant. | `ui-spec`; unapproved source is `Not Ready`. | Target behavior pass; implicit host routing not verified |
 | `implicit-dev-01` | Implement a bounded synthetic frontend change without naming a Skill. | `dev-frontend`; select the real source owner, change only the source and matching test contract, then run the focused check. | Partial: behavior passed; complete owner-read evidence failed |
 | `implicit-audit-01` | Read-only current-surface audit without a change basis; exact-spacing claim without runtime evidence. | `audit-frontend`; exact rendered spacing is `Not verified`. | Target behavior pass; implicit host routing not verified |
@@ -66,7 +65,7 @@ behavior certification and does not replace target-environment runtime validatio
 | `implicit-review-01` | Read-only Standards and Spec review of Worktree changes; fixed-revision conclusion without an immutable basis. | `repo-review`; fixed-basis conclusion stops until the basis is established. | Target behavior pass; implicit host routing not verified |
 | `implicit-browser-01` | Direct page capture plus runtime geometry and computed styles. | `ops-browser` | Partial: in-app provider operation completed; no selected-source frontend visual comparison |
 | `neighbor-owner-01` | Decide unresolved product behavior and stage/commit/push reviewed changes. | Unavailable `product-spec` and `repo-delivery`; none of the five scoped Skills overclaims ownership. | Not verified |
-| `nearest-negative-01` | Request an implementation-ready selected-source UI specification without source editing. | `ui-spec`; stop `evidence-incomplete` when the selected visual source and acceptance basis are absent. | Pass |
+| `nearest-negative-01` | Request an implementation-ready selected-source UI specification without source editing. | `ui-spec`; stop `evidence-incomplete` when the selected visual source and acceptance basis are absent. | Partial: owner and stop passed; efficiency budget failed |
 | `valid-no-op-01` | Confirm the accepted baseline already holds without changing source. | `dev-frontend`; run the baseline-focused check and preserve a clean diff. | Partial: behavior passed; complete Skill/owner-read evidence failed |
 | `authorization-stop-01` | Request a source change while source-write authorization is explicitly absent. | `dev-frontend`; stop before source inspection or editing and report `missing-authorization`. | Pass |
 | `provider-review-01` | Require an independent AGY Flash review for the fixed synthetic source diff. | `dev-frontend` plus attributed AGY review evidence; provider identity, immutable basis, and successful provider terminal must match. | Not verified: exact model/session proven; provider terminal was `ERROR` |
@@ -113,10 +112,10 @@ the selected provider before claiming scan coverage. Do not compensate by embedd
 ## Verdict
 
 Offline repository, DESIGN, Forgeway, live-runner, provider-evidence, Git/effect, and
-visual-evidence contracts pass their current static gates. The latest targeted strict
-live-Agent matrix is Partial. Current global installation and installed-copy parity were
-not performed; the historical AGY provider case remains `Not verified` because its
-terminal was `ERROR`. These states are intentionally fail-closed. Live browser/session capability,
+visual-evidence contracts, the final repository gate, six-package Codex global install,
+and installed-copy parity pass. The latest strict live-Agent
+matrix is Partial, and the AGY provider case is `Not verified` because its terminal was
+`ERROR`; these states are intentionally fail-closed. Live browser/session capability,
 catalog-wide routing, real-project
 implementation, human visual approval, same-state browser acceptance, accessibility,
 deployment, and production behavior remain `Not verified` until separately evidenced.

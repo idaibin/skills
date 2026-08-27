@@ -43,7 +43,21 @@ class VisualDirectionContractTests(unittest.TestCase):
             with self.subTest(skill=skill):
                 entrypoint = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
                 self.assertIn("references/visual-direction-and-anti-slop.md", entrypoint)
-                self.assertIn("references/frontend-layout-governance.md", entrypoint)
+    def test_scene_archetypes_contract_covers_five_core_scenes_and_negative_rules(self) -> None:
+        archetype_doc = ROOT / "skills" / "ui-spec" / "references" / "scene-archetypes.md"
+        self.assertTrue(archetype_doc.is_file())
+        text = archetype_doc.read_text(encoding="utf-8")
+        self.assertIn("## Contents", text)
+        self.assertIn("## Archetype Governance Rules", text)
+        self.assertIn("Negative Constraint Enforcement", text)
+        self.assertIn("DTCG Token Mapping", text)
+        self.assertIn("Modern SaaS Dark Dashboard", text)
+        self.assertIn("Minimalist Bento Grid", text)
+        self.assertIn("3D Claymorphic Card", text)
+        self.assertIn("Mobile iOS Archetype", text)
+        self.assertIn("Technical OG / Satori Card", text)
+        self.assertIn("1200 x 630", text)
+        self.assertIn("44pt", text)
 
 
 if __name__ == "__main__":
