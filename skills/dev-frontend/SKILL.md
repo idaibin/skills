@@ -64,21 +64,6 @@ are used when supplied; they do not replace current source and repository contra
    every applicable runtime or external gap as `Not verified`. Source implementation
    does not authorize browser/client operation or Git delivery.
 
-## Sol Coordination Path
-
-Sol freezes the execution plan once after owner and contract resolution. It should not
-alternate one operation, one wait, and one new reasoning pass.
-
-1. Keep a known one-owner micro change in the fast path.
-2. When two or more independently verifiable work packages exist, dispatch them
-   together with disjoint ownership and continue parent coordination in parallel.
-3. When an execution chain has three or more deterministic stages, such as status,
-   focused check, stage, commit, rebase, push, and ref readback, give the whole chain to
-   one execution agent or one bounded repository-owned script. Do not split mutable Git
-   state across concurrent writers.
-4. Sol performs one final reconciliation against the frozen acceptance boundary and
-   stops. Reopen discovery only for contradictory current source or a real failure.
-
 ## Small Change Fast Path
 
 Use this path for one known owner and a local style, template, icon, copy, or similarly

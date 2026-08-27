@@ -88,13 +88,15 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    only; they do not prove identity, authorization, or operation state.
    A Codex in-app Browser operation must first claim an exact existing user tab or
    create one real task tab; ambient state, screenshots, cached page content, or a
-   static DOM capture do not substitute for a live tab. When two or more independent
-   in-app tabs are required, dispatch them once as one concurrent batch with one
-   verified Luna worker per stable tab identity. Each worker owns only its tab, target,
-   action ledger, and cleanup. Do not silently fall back to serial execution; stop
-   `Not verified` when independent ownership or runtime identity cannot be proven. Keep
-   one owner and serial execution for the same tab, conversation, writer, or operations
-   with real ordering dependencies.
+   static DOM capture do not substitute for a live tab. Keep one verified owner per tab
+   identity. When a verified multi-tab policy exists, resolve it before scheduling.
+   Without one, use the host's ordinary safe scheduler: one owner processes independent
+   tabs serially with a separate identity and action ledger for each tab. Parallelize
+   only when the host can prove isolated owners; use one owner serially when no policy
+   overrides that default or when policy permits the fallback. If policy requires unavailable parallel execution, return a
+   scheduling `capability-unavailable` stop without downgrading browser evidence already
+   gathered. Use `Not verified` only when the required tab, target, ownership, or
+   runtime identity itself cannot be proven.
 5. For an `ask-ai` handoff, validate the request and Capability Snapshot, preserve its
    `operation_id`, and return the matching protocol result. Do not operate app-native
    ChatGPT Projects/Threads here.

@@ -145,6 +145,16 @@ browser version stops `Not verified` unless the current request explicitly chang
 `last_verified_at` is informational. It does not prove the connector, Profile, native
 group, tab, login, account, or foreground safety still exists.
 
+When `in_app_browser.multi_tab` exists, resolve it before assigning work.
+`serial_fallback: disabled` blocks serial scheduling when the configured parallel
+executor or runtime identity is unavailable; report `capability-unavailable` for the
+remaining operation while keeping already gathered browser evidence at its observed
+level. When serial fallback is enabled, one verified owner may process independent tabs
+serially. Without a verified multi-tab policy, use the host's ordinary safe scheduling
+and default to one verified owner processing independent tabs serially, with distinct
+tab identities and action ledgers. In every mode, missing tab, target, ownership, or
+runtime identity evidence remains `Not verified`.
+
 ## Route Table
 
 Use `ops-browser-routes/v1` when stable projects, sites, or operation types should go
