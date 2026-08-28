@@ -1,5 +1,13 @@
 # Eval Cases
 
+## Contents
+
+- Trigger Eval
+- Non-Trigger Eval
+- Scenario Eval
+- Quality Eval
+- Scoring
+
 ## Trigger Eval
 
 | Prompt | Expected |
@@ -22,6 +30,7 @@
 | `The current runtime geometry differs from exact values in the approved source inspect panel.` | Keep source target and browser-computed runtime in separate delta columns; use inspect-panel values as `source-extracted` and do not call current geometry already aligned. |
 | `Lanhu shows the same card gap as 16px three times and 17px once; use the default even-grid policy.` | Preserve all four source-extracted values, cluster only the same semantic gap, and target 16px with the recorded user policy; do not rewrite the 17px observation. |
 | `Specify the catalog page with SearchBar, CatalogCard, DownloadDialog, and shared states; the project has component guidance and a concise project map.` | Keep page composition, page states, and interaction in the UI slice; use the guidance and project map to reach source owners, leave props/slots/events and tokens in their owners, and require live-source revalidation before implementation. |
+| `Specify a page in a project whose adoption record declares components/ui, a Registry, and generated tokens.` | Keep page composition and states in the Feature Spec, shared semantics in resolved `DESIGN.md`, component APIs in source/types, and Registry/token lifecycle in their declared owners; do not copy them into a page JSON/YAML. |
 | `Specify the dashboard UI from this accepted project screenshot.` | Trigger `ui-spec` with the screenshot as the selected visual source; a versioned project-owned screenshot referenced in the README is an accepted current UI surface. |
 | `Turn this accepted admin shell into a fixed UI contract and require all navigation and action icons as SVG.` | Trigger `ui-spec`; separate shared tokens/icon family into adopted `DESIGN.md` from page-local header/sidebar/content/state composition, resolve the real icon owner and rights, and specify SVG role/render/state/accessibility/fallback acceptance without writing SVG source. |
 
@@ -80,6 +89,7 @@
 | Delta traceability | keeps source target, current runtime, and accepted contract separate with evidence IDs and uses design inspect values before screenshot estimates | promotes runtime computed values into source targets or summarizes them as safe-to-preserve design values |
 | Measurement normalization | Retains every raw source value and evidence ID, records cluster semantics and policy authority, and normalizes `[16,16,16,17]` to a 16px target only under the bounded even-grid rule. | Erases the outlier, treats screenshot pixels as exact, mixes properties, or normalizes non-spacing measurements by default. |
 | Design-system gate | shared changes require `@google/design.md@0.4.0` format lint, `ui-spec-design-completeness/1`, diff when updating, and regression review | promotes lint zero to completeness, requests approval for a known-incomplete first adoption, or emits Ready without closure |
+| Adopted component/token boundary | References the adoption record and human component contract for ownership, leaves props and token values in source owners, and records project-native validation/runtime evidence separately. | Creates a second Registry for AI, copies generated tokens into the page spec, or lets static gates prove rendered behavior. |
 | Format-valid prose-only false positive | official lint may report zero for prose-only frontmatter and unknown H2; completeness must return `not-ready` | treats official syntax/structure success as adopted shared authority |
 | First-adoption completeness | canonical eight H2 sections stay in order; colors/typography/spacing/rounded and applicable components use machine tokens or concrete official omissions; prose names token application semantics and source hash closes | accepts aliases/unknown H2 as replacements, empty omission reasons, token dumps, or current CSS as self-approving target |
 | Accessibility and responsive contract | defines focus, overflow, reduced-motion, localization, and acceptance for each slice | skips accessibility/responsive rules in contracts |

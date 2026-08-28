@@ -138,6 +138,12 @@ the design capture and implementation capture independently inspectable even whe
 overlay/diff is produced. Record tool, viewport, state, zoom, scroll position, artifact
 path/ID, and evidence limitations for every capture.
 
+Whole-image RMSE, pixel similarity, perceptual distance, or another aggregate image
+metric is diagnostic only. It may help locate drift but cannot independently pass or
+fail the visual gate; critical states, assets, accessibility, computed styles, and
+geometry require their own contract-bound checks. A numeric tolerance comes from the
+accepted slice contract or baseline and is never inferred as a universal pixel rule.
+
 ## Required Runtime Coverage
 
 Record each category as `verified`, `failed`, `Not verified`, or `not-applicable`, with

@@ -96,6 +96,12 @@ build, deployment, or production-behavior change.
 - **Layout or responsive behavior:** load
   [layout governance](references/frontend-layout-governance.md) when geometry,
   overflow, scrolling, layering, or breakpoints materially change.
+- **Project-owned UI governance:** load
+  [UI components and tokens](references/ui-components-and-tokens.md) only when the
+  change adds or modifies a shared UI component, direct third-party UI dependency,
+  structured token source/generated output, Component Registry, or adoption record.
+  Use the project's native validator and stop on stale or conflicting ownership;
+  ordinary feature composition does not activate this profile.
 - **Protocol or generated client:** load [protocol contracts](references/protocol-contracts.md)
   only for an existing or explicitly introduced contract chain.
 - **Behavior-first implementation:** load [behavior first](references/behavior-first.md)
@@ -151,6 +157,7 @@ result summary; include relevant log tails only for failures.
   [authorities](references/specification-authorities.md),
   [grounding](references/project-grounding.md), [evals](references/eval-cases.md).
 - Conditional: [layout](references/frontend-layout-governance.md),
+  [UI components and tokens](references/ui-components-and-tokens.md),
   [visual direction](references/visual-direction-and-anti-slop.md),
   [motion](references/interaction-motion-quality.md),
   [visual evidence](references/frontend-visual-evidence.md),

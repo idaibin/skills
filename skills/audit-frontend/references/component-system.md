@@ -1,5 +1,13 @@
 # Component System And Reuse
 
+## Contents
+
+- Reuse Decision
+- Primitive And Feature Boundaries
+- shadcn/ui And Local Systems
+- Console Components
+- Adopted UI Boundary And Token Pipeline
+
 Evidence basis: Twenty's dedicated UI package, Outline's reusable components
 versus scene-owned components, Appwrite's consistent Console library, and
 shadcn/ui's registry, composition trees, variants, slots, and Radix primitives.
@@ -80,3 +88,23 @@ external black box:
 For tables, filters, pagination, action bars, dialogs, empty states, and toasts,
 search for the Console-wide implementation first. Page-local copies are allowed
 only when their interaction contract is genuinely feature-specific.
+
+## Adopted UI Boundary And Token Pipeline
+
+When the inspected project declares an adoption record, audit it against live source
+rather than assuming `components/ui` or a Registry exists everywhere:
+
+- trace restricted third-party imports to declared adapter roots and bounded escape
+  hatches; broad disables or undeclared business imports are boundary drift;
+- compare the human component contract, Registry source/public imports, files on disk,
+  exports, dependencies, and real consumers without treating the Registry as the props
+  or runtime authority;
+- verify `Component -> Semantic -> Primitive`, generated output parity, business-only
+  Semantic consumption, component-token owner containment, and rejection of unknown,
+  cyclic, bypass, or authored CSS self-references;
+- distinguish static validator evidence from keyboard, focus, responsive, theme, and
+  rendered visual evidence. Whole-image similarity metrics are diagnostic and cannot
+  replace critical state, computed-style, geometry, or accessibility checks.
+
+If the project has no adopted structured Registry or token pipeline, do not create a
+finding merely because those optional assets are absent.

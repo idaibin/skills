@@ -55,6 +55,13 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    A projection is relevant only when a named owner, producer, non-LLM consumer,
    semantic version, executable validator, drift policy, and retirement rule are evidenced;
    otherwise reject it as copied authority.
+   For a basis that changes an adopted project-owned UI component boundary, third-party
+   adapter, Component Registry, or structured token pipeline, load
+   [UI components and tokens](references/ui-components-and-tokens.md) and verify the
+   adoption record,
+   public imports, live source coverage, generated drift gate, bounded exceptions, and
+   project-native negative tests. Do not require these optional assets in an unadopted
+   project or let their static pass replace runtime evidence.
    For applicable runtime, packaging, integration, durable-data, replacement,
    auth/security, or cross-repository risk, load
    [project grounding](references/project-grounding.md) and bind its evidence to this
@@ -192,5 +199,6 @@ external challenge or final sync never changes that verdict.
   [motion](references/interaction-motion-review.md),
   [visual evidence](references/frontend-visual-evidence.md),
   [code quality](references/code-quality.md), [design](references/codebase-design.md),
+  [UI components and tokens](references/ui-components-and-tokens.md),
   [grounding](references/project-grounding.md).
 - [Eval cases](references/eval-cases.md).

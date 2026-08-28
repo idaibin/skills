@@ -80,6 +80,16 @@ def valid_noop_findings() -> dict:
 
 
 class ReviewContractTests(unittest.TestCase):
+    def test_adopted_ui_governance_requires_behavioral_closure(self) -> None:
+        skill = (ROOT / "skills/repo-review/SKILL.md").read_text(encoding="utf-8")
+        design = (ROOT / "skills/repo-review/references/ui-components-and-tokens.md").read_text(encoding="utf-8")
+        evals = (ROOT / "skills/repo-review/references/eval-cases.md").read_text(encoding="utf-8")
+        normalized_design = " ".join(design.split())
+        self.assertIn("project-native negative tests", skill)
+        self.assertIn("optional Registry or token pipeline is `Not applicable`", normalized_design)
+        self.assertIn("Whole-image similarity is diagnostic only", normalized_design)
+        self.assertIn("marker-only documentation", evals)
+
     def test_request_and_noop_result_validate(self) -> None:
         jsonschema.Draft202012Validator(REQUEST_SCHEMA).validate(valid_request())
         jsonschema.Draft202012Validator(FINDINGS_SCHEMA).validate(valid_noop_findings())

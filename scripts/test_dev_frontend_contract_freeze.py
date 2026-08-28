@@ -20,6 +20,9 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
         cls.evals = (
             ROOT / "skills/dev-frontend/references/eval-cases.md"
         ).read_text(encoding="utf-8")
+        cls.ui_governance = (
+            ROOT / "skills/dev-frontend/references/ui-components-and-tokens.md"
+        ).read_text(encoding="utf-8")
 
     def test_reuse_search_precedes_the_final_freeze(self) -> None:
         search = self.skill.index("Complete a bounded search")
@@ -38,6 +41,14 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
         self.assertIn("Reject in-flight or delayed delegated results", self.checklist)
         self.assertIn("Inventory and reconcile any old-revision hunks", self.checklist)
         self.assertIn("one old hunk already landed", self.evals)
+
+    def test_adopted_ui_governance_is_conditional_and_project_native(self) -> None:
+        self.assertIn("ordinary feature composition does not activate this profile", self.skill)
+        self.assertIn("Do not require these assets", self.ui_governance)
+        self.assertIn("Component -> Semantic -> Primitive", self.ui_governance)
+        self.assertIn("authored CSS custom-property\n   self-reference", self.ui_governance)
+        self.assertIn("project-native gate", self.ui_governance)
+        self.assertIn("Adopted UI governance", self.evals)
 
 
 if __name__ == "__main__":

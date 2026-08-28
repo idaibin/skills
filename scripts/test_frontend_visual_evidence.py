@@ -81,6 +81,7 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.schema = json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
         cls.fixture = json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
+        cls.protocol = (ROOT / "protocols/frontend-visual-evidence-v1.md").read_text(encoding="utf-8")
 
     def errors(self, payload: dict[str, object]) -> list[str]:
         return VALIDATOR.schema_errors(payload, self.schema)
@@ -195,6 +196,11 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         self.assertEqual([], self.errors(self.fixture))
         self.assertEqual([], VALIDATOR.semantic_errors(self.fixture))
         VALIDATOR.validate_artifact(FIXTURE_PATH, SCHEMA_PATH)
+
+    def test_aggregate_image_metrics_are_diagnostic_only(self) -> None:
+        self.assertIn("Whole-image RMSE", self.protocol)
+        self.assertIn("diagnostic only", self.protocol)
+        self.assertIn("never inferred as a universal pixel rule", self.protocol)
 
     def test_committed_fixture_is_portable(self) -> None:
         self.assertEqual([], portable_fixture_errors(self.fixture))

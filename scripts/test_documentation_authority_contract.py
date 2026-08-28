@@ -197,6 +197,14 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         template = self.read("skills/ui-spec/assets/DESIGN.md")
         self.assertNotIn("version:", template)
 
+    def test_ui_governance_keeps_page_registry_and_source_authorities_separate(self) -> None:
+        ui_evals = self.read("skills/ui-spec/references/eval-cases.md")
+        audit_components = self.read("skills/audit-frontend/references/component-system.md")
+        self.assertIn("Registry/token lifecycle in their declared owners", ui_evals)
+        self.assertIn("without treating the Registry as the props", audit_components)
+        self.assertIn("Whole-image similarity metrics are diagnostic", audit_components)
+        self.assertIn("optional assets are absent", audit_components)
+
     def test_design_completeness_handoff_keeps_producer_state_distinct(self) -> None:
         contract = self.read("skills/ui-spec/references/design-md-contract.md")
         self.assertIn("ui.contract.specify@1.1.0", contract)
