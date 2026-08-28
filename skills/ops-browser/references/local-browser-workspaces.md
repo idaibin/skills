@@ -253,6 +253,12 @@ After creation, re-enumerate and rerun with the exact tab binding; only that sec
 may authorize `claim_verified_tab`. Enumerate only tab title, URL, recency, and group metadata needed
 for target selection; do not inspect unrelated page content.
 
+Target-tab absence by itself never blocks the configured route. Reuse the verified tab
+when present; otherwise create exactly one tab directly in the verified configured
+group and open the requested target. Block only when the selected browser/extension
+identity or a required Profile, account, group, creation, placement, or readback
+capability is unavailable or ambiguous.
+
 For strict grouping:
 
 - Require independent group enumeration, stable group identity, exact group selection,

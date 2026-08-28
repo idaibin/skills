@@ -40,27 +40,17 @@ authority; the handoff references them and never copies shared token semantics.
      `ops-browser` without operating the browser here. If neither a source-grounded
      candidate brief nor a selected/accepted source exists, stop as
      `evidence-incomplete` instead of fabricating one.
-4. For the accepted-contract stage, resolve whether the proven visual boundary has adopted `DESIGN.md` from effective
-   guidance, build ownership, and shared consumers. When adopted, resolve the approved
-   `<design-root>` and require `<design-root>/DESIGN.md` as that boundary's single
-   source of truth for shared visual semantics; a monorepo does not imply automatic
-   parent/child inheritance or one file per application. When the boundary has not
-   adopted `DESIGN.md`, a Feature Spec that preserves existing shared semantics may
-   use the accepted current surface and repository-native visual owners, record
-   `DESIGN.md: Not adopted (not required for this slice)`, and continue without
-   creating a new shared authority. First adoption is required only when the user
-   explicitly requests it or the selected slice changes shared visual semantics. For
-   first adoption, copy
-   [assets/DESIGN.md](assets/DESIGN.md) as the structural starter, replace every
-   placeholder from verified sources, then load
-   [references/design-md-contract.md](references/design-md-contract.md). Official lint
-   proves format only. Run the package completeness checker before requesting approval;
-   a first-adoption candidate must be `ready-for-human-approval`. The local adopted
-   check stops at `awaiting-trusted-approval-verification`; only a host-trusted
-   approval receipt bound to the exact Result Package may satisfy the downstream
-   `gate:ui-design-complete` claim. It never rewrites the producer result to
-   `complete`. A later content-hash change
-   makes the approval stale and returns `Not Ready`.
+4. For an accepted contract, resolve `DESIGN.md` adoption from effective guidance,
+   build ownership, and shared consumers. An adopted boundary uses its approved
+   `<design-root>/DESIGN.md` as the sole shared visual-semantic authority; monorepo
+   nesting implies neither inheritance nor one file per app. A local slice that
+   preserves shared semantics may instead record
+   `DESIGN.md: Not adopted (not required for this slice)`. Require first adoption only
+   when requested or when shared semantics change. Then load
+   [references/design-md-contract.md](references/design-md-contract.md), use
+   [assets/DESIGN.md](assets/DESIGN.md) as the verified-source starter, and follow its
+   completeness and trusted-approval gates. Format lint alone is insufficient;
+   changed content makes approval stale and the slice `Not Ready`.
 5. Define implementation slices: one Feature Spec per confirmed page/flow/domain; for multiple independent domains, create one shared index plus one independently loadable contract per slice and load [references/multi-surface.md](references/multi-surface.md).
 6. Select one profile:
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
@@ -91,15 +81,13 @@ authority; the handoff references them and never copies shared token semantics.
 14. When a compatible Repository Asset Graph is available, resolve shared-design,
     feature-UI, route, component, and consumer refs and reject duplicate active
     authority claims. Never invent graph IDs or turn the graph into visual authority.
-15. When Forgeway delivery integration is active, bind the invocation to an immutable
-    Run input and input PackageManifest/basis. Let the package producer fingerprint
-    authorized artifact writes, then attach the UI contract and visual-evidence
-    payload as typed Observations against that exact result package. For adopted
-    DESIGN authority, emit package-relative DESIGN.md, completeness JSON,
-    selected-source artifact, and approval-record paths with hashes and byte lengths;
-    the compatible consumer is `forgeway-ui-design-completeness/1` and its claim is
-    `gate:ui-design-complete`. A `Ready` verdict or satisfied gate is not a review,
-    delivery, deployment, or production Receipt.
+15. When Forgeway integration is active, bind the immutable Run input and
+    PackageManifest/basis, fingerprint authorized outputs, and attach typed UI-contract
+    and visual-evidence Observations to that exact result package. For adopted DESIGN
+    authority, follow [references/design-md-contract.md](references/design-md-contract.md)
+    for package-relative artifacts, hashes, byte lengths, compatible consumer, and
+    claim. `Ready` or a satisfied gate is not review, delivery, deployment, or
+    production proof.
 
 ## Profiles
 

@@ -6,7 +6,7 @@
   `audit-frontend`, `repo-review`, and `ops-browser` from one
   current source-checkout snapshot. Behavior scenarios remain evidence-bounded per row and
   do not imply live invocation of every package in this digest scope.
-- Package digest: `sha256:8e9f3710f85ca9fe31b3885198ab8d9a14adf3648d960a672fe6129b3a546009`
+- Package digest: `sha256:498ef2b1fb393df88d61f46de21b671ba6acb726a06a49801ff25b1e883b68f8`
 - Host environment: Codex desktop on macOS. This digest refresh ran offline contract,
   completeness, routing, source-discovery, and disposable synthetic live-Agent checks.
   An explicitly authorized AGY Flash final review ran once against a fixed disposable
