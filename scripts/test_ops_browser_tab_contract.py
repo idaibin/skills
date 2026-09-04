@@ -30,7 +30,7 @@ class OpsBrowserTabContractTests(unittest.TestCase):
         return re.sub(r"\s+", " ", self.read(relative))
 
     def tab_ledger_fields(self) -> str:
-        text = self.normalized("skills/ops-browser/SKILL.md")
+        text = self.normalized("skills/ops-browser/references/tab-lifecycle.md")
         match = re.search(
             r"task-local tab ledger .*? records (?P<fields>.*?)\. Record creation intent",
             text,
@@ -41,7 +41,7 @@ class OpsBrowserTabContractTests(unittest.TestCase):
 
     def test_tab_selection_is_identity_first(self) -> None:
         for path in (
-            "skills/ops-browser/SKILL.md",
+            "skills/ops-browser/references/tab-lifecycle.md",
             "skills/ops-browser/references/usage.md",
         ):
             text = self.read(path)
@@ -68,7 +68,7 @@ class OpsBrowserTabContractTests(unittest.TestCase):
                 )
 
     def test_reconciliation_revalidates_identity_and_fingerprint(self) -> None:
-        text = self.normalized("skills/ops-browser/SKILL.md")
+        text = self.normalized("skills/ops-browser/references/tab-lifecycle.md")
         match = re.search(
             r"Reconcile the task-local tab ledger before finishing\.(?P<reconcile>.*?)"
             r"Never close a pre-existing user tab",
@@ -89,9 +89,9 @@ class OpsBrowserTabContractTests(unittest.TestCase):
                 self.assertIn(term, reconcile)
 
     def test_retention_requires_explicit_request(self) -> None:
-        skill = self.read("skills/ops-browser/SKILL.md")
+        lifecycle = self.read("skills/ops-browser/references/tab-lifecycle.md")
         usage = self.read("skills/ops-browser/references/usage.md")
-        self.assertIn("only when the user explicitly", skill)
+        self.assertIn("only when the user explicitly", lifecycle)
         self.assertIn("unless the user explicitly requested a delivery tab", usage)
 
     def test_behavior_evals_cover_identity_and_lifecycle(self) -> None:

@@ -10,6 +10,9 @@ When inactive, report protocol-automation gates `Not applicable`.
 
 ## Select One Authority
 
+Read [shared OpenAPI governance](openapi-contract-governance.md) before applying the
+Rust-specific implementation chain.
+
 When active, discover and record exactly one authoring authority:
 
 - **Code-first**: Rust route, DTO, and contract declarations are authoritative;

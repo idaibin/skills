@@ -9,6 +9,9 @@ consumer, and test chain and report OpenAPI `Not applicable`.
 
 ## Fixed Contract Basis
 
+Read [shared OpenAPI governance](openapi-contract-governance.md) before applying this
+fixed-basis review profile.
+
 Before findings, record:
 
 - review mode and immutable Git basis or complete Worktree state;

@@ -10,6 +10,10 @@ When inactive, report generated-contract checks `Not applicable`.
 
 ## Consumer Boundary
 
+Read [shared OpenAPI governance](openapi-contract-governance.md) when the profile is
+active. The frontend consumes the accepted/generated wire authority; it does not decide
+missing backend security, validation, error, or conditional-schema semantics.
+
 When active, consume repository-owned TypeScript client/types generated from the
 normalized OpenAPI artifact. Frontend code must not depend on backend language or
 framework annotations.

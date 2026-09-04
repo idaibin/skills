@@ -171,20 +171,37 @@ class PublicContentHygieneTests(unittest.TestCase):
         expected = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         self.assertIn(f"Package digest: `{expected}`", summary)
         basis = summary.split("## Current Results", 1)[0]
-        for path in DIGEST.DEFAULT_SCOPE:
-            self.assertIn(f"`{Path(path).name}`", basis)
+        self.assertIn("all 17 packages", basis)
+        self.assertIn("`skills-index.json`", basis)
 
     def test_live_canary_digest_covers_every_installed_parity_package(self) -> None:
-        expected = {
-            "skills/ui-spec", "skills/ask-ai", "skills/ops-browser",
-            "skills/dev-frontend", "skills/audit-frontend", "skills/repo-review",
-        }
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        expected = {f"skills/{package['name']}" for package in index["packages"]}
+        self.assertEqual(17, len(expected))
         self.assertEqual(expected, set(DIGEST.DEFAULT_SCOPE))
         baseline = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
-        for package in ("skills/ask-ai", "skills/ops-browser"):
+        for package in DIGEST.DEFAULT_SCOPE:
             with self.subTest(package=package):
                 narrowed = tuple(path for path in DIGEST.DEFAULT_SCOPE if path != package)
                 self.assertNotEqual(baseline, DIGEST.digest_paths(ROOT, narrowed))
+
+    def test_installed_parity_detects_each_package_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            installed_root = Path(temporary)
+            for relative in DIGEST.DEFAULT_SCOPE:
+                shutil.copytree(ROOT / relative, installed_root / relative)
+            baseline = DIGEST.file_hashes(ROOT, DIGEST.DEFAULT_SCOPE)
+            self.assertEqual(baseline, DIGEST.file_hashes(installed_root, DIGEST.DEFAULT_SCOPE))
+            for relative in DIGEST.DEFAULT_SCOPE:
+                with self.subTest(package=relative):
+                    skill_file = installed_root / relative / "SKILL.md"
+                    original = skill_file.read_text(encoding="utf-8")
+                    skill_file.write_text(original + "\nsynthetic drift\n", encoding="utf-8")
+                    self.assertNotEqual(
+                        baseline,
+                        DIGEST.file_hashes(installed_root, DIGEST.DEFAULT_SCOPE),
+                    )
+                    skill_file.write_text(original, encoding="utf-8")
 
     def test_live_canary_digest_ignores_python_cache_files(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

@@ -11,8 +11,19 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 
 ## Workflow
 
-1. Identify the specified client target and action scope: app name, repository path, package/app directory, process, PID, visible window, platform, requested evidence, and whether observation, capture, launch, restart, focus, or a named semantic interaction is explicitly authorized.
-2. Run a capability preflight and record available/unavailable/unknown for:
+1. Identify the specified client target and action scope: app name, known aliases,
+   bundle/package identifier, repository path, package/app directory, process, PID,
+   visible window, platform, requested evidence, and whether observation, capture,
+   launch, restart, focus, or a named semantic interaction is explicitly authorized.
+2. Keep application-presence states separate. Record which installation locations or
+   registries, process sources, windows, and menu/status surfaces were actually checked.
+   Resolve known display-name, bundle-name, helper-process, and executable aliases before
+   reporting a match or absence, using only discovery routes allowed by the selected
+   adapter. Tool-specific targeting and discovery rules take precedence over generic
+   platform suggestions. Use `installed`, `running`, `window observed`, and `menu/status
+   item observed` only for the layer directly proved; otherwise say `not found in the
+   checked sources` or `Not verified`.
+3. Run a capability preflight and record available/unavailable/unknown for:
    - process enumeration and runtime-source inspection;
    - window enumeration with stable window identifiers;
    - window-specific screenshot capture;
@@ -23,7 +34,7 @@ Operate and verify real desktop client windows. Treat platform automation as ada
      boundaries;
    - app launch/restart and permission state;
    - screen-session state as `unlocked`, `locked`, or `unknown`, with the evidence source.
-3. Apply the screen-session gate before any window operation. When locked, do not
+4. Apply the screen-session gate before any window operation. When locked, do not
    unlock or wake the display, focus or activate a window, send keyboard input, move
    the pointer, or click through pointer/coordinate automation. Permit window-level
    capture or inspection only when the selected adapter directly proves that exact
@@ -34,22 +45,31 @@ Operate and verify real desktop client windows. Treat platform automation as ada
    explicitly authorized semantic actions. It must not activate a window, synthesize
    GUI input, bypass authentication, or expose a generic command/eval surface. Its
    result is application-control evidence, never real-window or visual evidence.
-4. If working from a repository, confirm whether it contains a desktop/client app by checking manifests and source layout such as `src-tauri/`, `tauri.conf.*`, Electron configs, native targets, package scripts, justfile tasks, or README run instructions.
-5. Confirm the startup command and runtime source before verification: dev command, debug bundle, release app, Electron/native run command, or `Not found`/`Not verified` when unclear.
-6. Select the platform adapter:
+5. If working from a repository, confirm whether it contains a desktop/client app by checking manifests and source layout such as `src-tauri/`, `tauri.conf.*`, Electron configs, native targets, package scripts, justfile tasks, or README run instructions.
+6. Confirm the startup command and runtime source before verification: dev command, debug bundle, release app, Electron/native run command, or `Not found`/`Not verified` when unclear.
+7. Select the platform adapter:
    - **macOS:** identify process/PID and matching `CGWindowID`; capture with `screencapture -x -l<CGWindowID>` when available; use macOS Accessibility for semantic controls.
    - **Windows:** require an available UI Automation/window-capture adapter and stable HWND/process evidence; otherwise use Degraded Evidence mode.
    - **Linux:** require an available AT-SPI/window-manager capture adapter and stable window/process evidence; otherwise use Degraded Evidence mode.
-7. Identify the exact real window by process owner, PID, title, bounds, and platform identifier. Do not substitute browser preview evidence.
-8. Capture and inspect the real window using the selected adapter before making visual claims.
-9. Within the explicitly authorized action scope, prefer background-safe Accessibility/control-tree actions on named controls over coordinate clicks. Verification or capture alone never authorizes pressing a control.
-10. When rebuild/restart is explicitly authorized for the exact client target, apply
+8. Identify the exact real window by process owner, PID, title, bounds, and platform identifier. Do not substitute browser preview evidence.
+9. Capture and inspect the real window using the selected adapter before making visual claims.
+10. Within the explicitly authorized action scope, prefer background-safe Accessibility/control-tree actions on named controls over coordinate clicks. Verification or capture alone never authorizes pressing a control.
+11. Classify every interaction result from the tool's explicit terminal evidence:
+    `succeeded`, `failed`, `cancelled/not executed`, or `outcome unknown`. A cancelled
+    or unexecuted call does not prove that the user denied a permission prompt. Claim
+    permission denial only when the tool or platform reports that exact cause. After an
+    ambiguous result, inspect the current target state before deciding whether the action
+    took effect. If the authorized goal remains incomplete, make at most one bounded,
+    low-impact recovery through a verified alternative semantic path. Do not repeat an
+    unknown-side-effect action. Continue independently safe checks, and report the exact
+    terminal state and unresolved UI state when recovery is unavailable.
+12. When rebuild/restart is explicitly authorized for the exact client target, apply
     the startup-safety gate, rebuild/restart after relevant UI, bundle, native, or
     Accessibility changes, and then re-verify. Without that authorization, preserve
     the running client, continue independently safe checks, and report new-build
     runtime verification as `Not verified`.
-11. Report unsupported platform claims explicitly rather than emulating them with a browser page or cropped screenshot.
-12. Use Client Debug Evidence only when the caller supplies an already-isolated client-layer reproduction whose requested output is direct client evidence. Otherwise route unexplained or cross-system root-cause requests back to the caller for diagnosis before operating the client. For an accepted evidence task, verify the real process/window/build source, collect direct client evidence, clean disposable task state, and return the evidence to the caller.
+13. Report unsupported platform claims explicitly rather than emulating them with a browser page or cropped screenshot.
+14. Use Client Debug Evidence only when the caller supplies an already-isolated client-layer reproduction whose requested output is direct client evidence. Otherwise route unexplained or cross-system root-cause requests back to the caller for diagnosis before operating the client. For an accepted evidence task, verify the real process/window/build source, collect direct client evidence, clean disposable task state, and return the evidence to the caller.
 
 ## Modes
 
@@ -82,6 +102,13 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 - Do not treat browser previews, dev server pages, region screenshots, or app-like web tabs as desktop-client evidence unless the user explicitly asks for browser-only checking.
 - Do not start or restart a client before confirming the startup command source and whether it could disturb an existing app instance, active window, unsaved state, or user workflow.
 - Do not assume Accessibility or screen-capture permission. Verify the action succeeds or mark it unavailable.
+- Do not translate `cancelled`, `not executed`, transport interruption, or an unknown
+  terminal result into `permission denied` or `user rejected`. Preserve the tool's exact
+  result unless direct evidence establishes the cause.
+- Do not stop and ask the user to perform a routine reversible recovery while the
+  existing authorization still covers a verified safe path. Revalidate state, try one
+  bounded alternative when available, and stop only when the remaining path is unsafe,
+  consequential, unsupported, or outside scope.
 - Never unlock the screen, wake the display, focus or activate a window, send keyboard input, move the pointer, or perform pointer/coordinate clicks while the screen session is `locked`. Treat `unknown` as insufficient authorization for an action that could require any of those effects.
 - A window identifier or capture API name alone does not prove lock-safe behavior. Require direct adapter evidence that the exact capture/read action remains background-safe in the current screen-session state, or use Degraded Evidence.
 - A running process or local port does not prove an app-owned control plane. Require
@@ -93,6 +120,18 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 - On macOS, verify `CGWindowID`, owner/PID/title/bounds, and capture result before calling a screenshot real-window evidence.
 - On Windows or Linux, require the platform adapter's stable window/process identifier and capture provenance; do not reuse macOS terminology or commands.
 - If only a process can be proven, do not infer that the requested window is visible, current, or running the new build.
+- Absence from a running-process list proves only that no matching process was observed.
+  Absence from a menu bar, status area, Dock, taskbar, or window inventory proves only
+  absence from that inspected surface. Do not conclude that an app is uninstalled until
+  the platform's relevant installation sources have been checked under resolved aliases;
+  even then report the checked scope instead of a universal machine-wide absence.
+- When a client-operation adapter requires the user-supplied app name to be attempted
+  first, follow that contract. Do not open Finder, Spotlight, or another GUI search as an
+  alias-resolution workaround. Adapter-provided inventory may supply one documented
+  bundle/package retry after the named attempt fails. An independently authorized
+  read-only installation audit may inspect platform inventory outside the UI adapter,
+  but report it as separate system evidence and never as proof that the adapter targeted
+  or opened the app.
 - For code changes that add accessibility or automation surfaces, use `dev-frontend` or the relevant native implementation skill; return here for runtime verification.
 - Re-verify the target process, runtime source, and window after rebuild/restart; stale windows do not prove current code.
 - Confirm only direct client facts. Do not claim a final cause across frontend, IPC, Rust, database, packaging, or platform layers, and do not decide a permanent fix; return the evidence to the caller.
@@ -102,7 +141,7 @@ Operate and verify real desktop client windows. Treat platform automation as ada
 
 ## Output Contract
 
-Report platform and selected adapter, screen-session state and evidence source, screen-session impact classification, capability preflight, specified client target, authorized action scope, repository/client ownership evidence, startup command or `Not found`, target process/runtime, stable real-window identity, screenshot source/provenance, interaction method, Client Debug Evidence and handoff owner when relevant, permission or adapter gaps, unaffected checks that continued, restart/rebuild status, cleanup status, and all `Not supported` or `Not verified` claims.
+Report platform and selected adapter, screen-session state and evidence source, screen-session impact classification, capability preflight, specified client target and resolved aliases, authorized action scope, checked installation/process/window/menu sources, repository/client ownership evidence, startup command or `Not found`, target process/runtime, stable real-window identity, screenshot source/provenance, interaction method, exact interaction terminal state and bounded recovery, Client Debug Evidence and handoff owner when relevant, permission or adapter gaps, unaffected checks that continued, restart/rebuild status, cleanup status, and all `Not supported` or `Not verified` claims.
 
 ## References
 

@@ -9,6 +9,19 @@ from pathlib import Path
 
 
 PROTOCOLS = {
+    Path("protocols/frontend-css-governance-v1.md"): (
+        Path("skills/dev-frontend/references/frontend-css-governance.md"),
+        Path("skills/audit-frontend/references/frontend-css-governance.md"),
+        Path("skills/repo-review/references/frontend-css-governance.md"),
+    ),
+    Path("protocols/openapi-contract-governance-v1.md"): (
+        Path("skills/dev-frontend/references/openapi-contract-governance.md"),
+        Path("skills/dev-java/references/openapi-contract-governance.md"),
+        Path("skills/dev-rust/references/openapi-contract-governance.md"),
+        Path("skills/audit-frontend/references/openapi-contract-governance.md"),
+        Path("skills/audit-java/references/openapi-contract-governance.md"),
+        Path("skills/repo-review/references/openapi-contract-governance.md"),
+    ),
     Path("protocols/frontend-visual-evidence-v1.md"): (
         Path("skills/ui-spec/references/frontend-visual-evidence.md"),
         Path("skills/dev-frontend/references/frontend-visual-evidence.md"),

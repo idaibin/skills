@@ -928,12 +928,15 @@
       "intents": [
         "operate or verify a specified browser page",
         "capture same-state visual and computed browser evidence",
+        "record an authorized browser interaction with native browser capture",
         "preserve a configurable unified or operation-mapped local-browser tab workspace"
       ],
       "keywords": [
         "browser operation",
         "runtime verification",
         "screenshot",
+        "browser recording",
+        "WebM",
         "computed style",
         "viewport",
         "web page",
@@ -2383,9 +2386,9 @@
     },
     {
       "capability_id": "browser.runtime.operate",
-      "capability_version": "1.0.0",
+      "capability_version": "1.1.0",
       "package": "ops-browser",
-      "description": "Operate an authorized browser session and capture evidence.",
+      "description": "Operate an authorized browser session and capture visual, computed, or native recording evidence.",
       "accepts": [
         {
           "schema": "urn:skills:browser-operation-request:v1",

@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Client"
   short_description: "Verify desktop apps without disrupting user sessions"
-  default_prompt: "Use $ops-client to verify a specified real desktop client or perform only an explicitly authorized client action. When locked, prefer a documented authenticated app-owned CLI/local control plane and never wake, focus, or synthesize GUI input; keep application-control evidence separate from real-window evidence."
+  default_prompt: "Use $ops-client to verify a specified real desktop client or perform only an explicitly authorized client action. Keep installation, running, window, and menu/status evidence separate. Preserve cancelled or unexecuted tool results without guessing permission denial, re-read safe state, and use at most one verified low-impact recovery within scope. When locked, prefer a documented authenticated app-owned CLI/local control plane and never wake, focus, or synthesize GUI input; keep application-control evidence separate from real-window evidence."

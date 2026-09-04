@@ -44,28 +44,16 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    basis matches the package, and recheck referenced source. A stale graph, query miss,
    or derived map view is never review proof or proof of no downstream impact.
 4. In Worktree mode, inventory full status but deeply classify only the requested scope and necessary interface closure. Classify every changed file and mixed hunk only for requested commit-readiness.
-5. Trace relevant registrations, callers, types, data shaping, persistence, generated
-   artifacts, runtime config, tests, docs, CI/deploy, and stale references. Select the
-   protocol-contract profile only for an existing OpenAPI/generated-client pipeline or
-   an explicit contract gate. For a selected-source or visual-completion claim, load
-   [frontend visual evidence](references/frontend-visual-evidence.md) and validate the
-   required handoff plus cited artifacts. For Product/UI/DESIGN/project-map authority
-   changes, load [documentation authority](references/documentation-authority-review.md),
-   resolve `<design-root>/DESIGN.md`, and keep Product/UI/DESIGN/Map ownership distinct.
+5. Trace registrations, callers, types, data shaping, persistence, generated artifacts,
+   runtime config, tests, docs, CI/deploy, and stale references. Load only applicable
+   conditional references listed below. For Product/UI/DESIGN/project-map changes, load
+   [documentation authority](references/documentation-authority-review.md), resolve
+   `<design-root>/DESIGN.md`, and keep Product/UI/DESIGN/Map ownership distinct.
    A projection is relevant only when a named owner, producer, non-LLM consumer,
    semantic version, executable validator, drift policy, and retirement rule are evidenced;
    otherwise reject it as copied authority.
-   For a basis that changes an adopted project-owned UI component boundary, third-party
-   adapter, Component Registry, or structured token pipeline, load
-   [UI components and tokens](references/ui-components-and-tokens.md) and verify the
-   adoption record,
-   public imports, live source coverage, generated drift gate, bounded exceptions, and
-   project-native negative tests. Do not require these optional assets in an unadopted
-   project or let their static pass replace runtime evidence.
-   For applicable runtime, packaging, integration, durable-data, replacement,
-   auth/security, or cross-repository risk, load
-   [project grounding](references/project-grounding.md) and bind its evidence to this
-   basis; do not widen scope from signals alone.
+   Adopted component/token review must retain project-native negative tests; optional
+   assets remain `Not applicable` when the project has not adopted them.
 6. Evaluate two independent axes:
    - **Standards:** repository guidance, architecture, correctness, security, performance, maintainability, and applicable domain conventions.
    - **Spec:** originating requirements, decisions, acceptance criteria, missing behavior, wrong behavior, and unrequested scope.
@@ -74,16 +62,8 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
    basis is intent evidence unless an independent authority or prior approved contract
    establishes it. It cannot by itself clear replacement, compatibility, migration,
    rollout, or rollback risk.
-   For material security claims, apply
-   [Standards and Spec](references/standards-and-spec.md), keeping evidence confidence
-   separate from severity. For visual/UI-contract changes, trace product authority ->
-   selected-source UI authority -> DESIGN.md -> adapters -> runtime evidence. Load
-   [interaction and motion](references/interaction-motion-review.md) only for changed
-   motion, gesture, transition ownership, or user-visible feedback. Load
-   [code quality](references/code-quality.md) only when its maintainability signals
-   materially apply, and attribute them to the fixed basis. Use compatible graph
-   queries only for navigation/impact bounding; keep missing authority and runtime
-   proof independently `Not verified`.
+   Use [Standards and Spec](references/standards-and-spec.md) for axis-specific evidence,
+   security confidence, frontend authority tracing, and conditional profile routing.
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
 8. Select only applicable profiles. Delegate bounded frontend, Java, or Rust work only
    when requested or necessary. Route security-only work to a host security workflow.
@@ -98,18 +78,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
     affected checks; a verdict from the old basis cannot clear new changes.
 12. Produce semantic groups, commit messages, and exact staging guidance only when the Worktree commit-readiness profile was requested. Add the Release profile only for an explicit release candidate/readiness question.
 13. Report exclusions, residual risks, failed checks, and every `Not found` or `Not verified` gap. Keep an authorized external-review status separate from the local verdict: a submitted request with no attributed response neither creates nor clears a finding.
-14. Freeze the local verdict before optional post-terminal action. An explicitly
-    persisted `ask-ai` `final-result-sync` receives only that sanitized frozen result;
-    its outcome is not review evidence and cannot change the verdict.
-15. When Forgeway delivery integration is active, bind the review capability, exact
-    input/result PackageManifest, graph snapshot/query refs, scope, and spec refs to an
-    immutable Run. Import every local or accepted external finding/result as a typed
-    Observation against that exact package. A new Attempt/result package makes prior
-    downstream review observations stale; never rewrite them or hand-edit a Gate.
-    The portable result separately reports `scope_assessment` and `spec_assessment`:
-    graph impact can bound a static search but never authorizes scope expansion, and
-    missing trustworthy acceptance authority remains `not-verified` rather than being
-    inferred from source or tests.
+14. Freeze the local verdict before optional external retention or Forgeway delivery
+    integration. Load [review integration](references/review-integration.md) only when
+    either path is active; neither path may change the frozen local verdict.
 
 ## Modes
 
@@ -160,14 +131,10 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Do not activate frontend design compliance merely because a repository contains
   frontend files. It is conditional on visual or UI-contract change scope, does not
   create another review profile, and does not require `audit-frontend`.
-- Do not approve a selected-source visual-completion claim from build/lint/typecheck, source CSS, current-runtime similarity, or one screenshot. Require traceable source targets, complete implementation mapping, two same-viewport/state comparison passes, computed runtime evidence, and every specified breakpoint/state required by the contract; otherwise report `Partial` or `Not Ready`.
-- Do not require OpenAPI for ordinary REST changes. When the protocol-contract
-  profile applies, fix its Git/authority/artifact basis and replay write-mode
-  generation only in an isolated copy; otherwise review the repository-native
-  route/DTO/client/test chain and mark OpenAPI `Not applicable`.
-- Do not approve a documentation rebuild while durable docs still contain
-  superseded decisions, task-time evidence, duplicate authorities, stale indexes,
-  Skill-development reports, or machine sidecars without proven lifecycle owners.
+- Apply visual completion, OpenAPI, frontend CSS/components, documentation authority,
+  motion, code quality, and project-grounding gates only through their applicable
+  references. Static checks never replace required runtime evidence, and optional
+  profiles remain `Not applicable` when their activation conditions are absent.
 - Distinguish a real sample-repository defect (`fail` verdict with a P0-P3 finding)
   from a Skill failure (the review process itself broke) and from `Not verified`
   (basis or evidence is incomplete). A real defect is a finding with reachable
@@ -177,17 +144,12 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 
 ## Output Contract
 
-Lead with capability `repository.change.review`, applicable typed/Run/PackageManifest
-refs, mode, basis, scope, exclusions, checks, and P0-P3 findings labeled `Standards`,
-`Spec`, or both. Preserve `review_id`, exact counts, locations, requirements, evidence,
-impact, remediation, verification, contributing axes, acceptance refs, and limitations.
-Report both verdicts; missing Spec authority stays `Not verified`, and a clean no-op
-does not imply compliance. For visual completion include schema validation,
-source/revision/approval, both comparison passes, runtime geometry/style checks,
-breakpoint/state gaps, and whether completion is supported. Add commit-readiness ownership/
-staging, resolved SHAs, or release implications only for selected profiles. Finish
-with the frozen local verdict, separate external status, residual risks, and gaps;
-external challenge or final sync never changes that verdict.
+Lead with capability, typed refs, mode, basis, scope, exclusions, checks, and P0-P3
+findings labeled `Standards`, `Spec`, or both. Preserve finding evidence, impact,
+remediation, verification, acceptance refs, and limitations. Report both verdicts;
+missing Spec authority stays `Not verified`. Add profile-specific evidence only when
+that profile was selected. Finish with the frozen local verdict, separate external
+status, residual risks, and gaps.
 
 ## References
 
@@ -195,10 +157,13 @@ external challenge or final sync never changes that verdict.
   [fixed basis](references/checklist.md), [Standards/Spec](references/standards-and-spec.md),
   [examples](references/worktree-examples.md).
 - Conditional profiles: [protocols](references/protocol-contracts.md),
+  [OpenAPI governance](references/openapi-contract-governance.md),
+  [frontend CSS governance](references/frontend-css-governance.md),
   [documentation](references/documentation-authority-review.md),
   [motion](references/interaction-motion-review.md),
   [visual evidence](references/frontend-visual-evidence.md),
   [code quality](references/code-quality.md), [design](references/codebase-design.md),
   [UI components and tokens](references/ui-components-and-tokens.md),
   [grounding](references/project-grounding.md).
+- Integration: [external evidence, final-result sync, and Forgeway](references/review-integration.md).
 - [Eval cases](references/eval-cases.md).

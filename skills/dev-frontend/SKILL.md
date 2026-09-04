@@ -96,6 +96,9 @@ build, deployment, or production-behavior change.
 - **Layout or responsive behavior:** load
   [layout governance](references/frontend-layout-governance.md) when geometry,
   overflow, scrolling, layering, or breakpoints materially change.
+- **Maintained CSS/Sass/Less:** load [CSS governance](references/frontend-css-governance.md)
+  when spacing ownership, cascade cleanup, flex/grid choice, or rendered wrapper
+  structure materially changes.
 - **Project-owned UI governance:** load
   [UI components and tokens](references/ui-components-and-tokens.md) only when the
   change adds or modifies a shared UI component, direct third-party UI dependency,
@@ -157,12 +160,14 @@ result summary; include relevant log tails only for failures.
   [authorities](references/specification-authorities.md),
   [grounding](references/project-grounding.md), [evals](references/eval-cases.md).
 - Conditional: [layout](references/frontend-layout-governance.md),
+  [CSS governance](references/frontend-css-governance.md),
   [UI components and tokens](references/ui-components-and-tokens.md),
   [visual direction](references/visual-direction-and-anti-slop.md),
   [motion](references/interaction-motion-quality.md),
   [visual evidence](references/frontend-visual-evidence.md),
   [visual example](references/frontend-visual-gate-example.md),
   [protocols](references/protocol-contracts.md),
+  [OpenAPI governance](references/openapi-contract-governance.md),
   [behavior first](references/behavior-first.md),
   [codebase design](references/codebase-design.md),
   [frameworks](references/framework-profiles.md), [styling](references/styling-systems.md),

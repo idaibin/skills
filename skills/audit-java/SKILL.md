@@ -141,4 +141,8 @@ readiness verdict.
 - Read [project grounding](references/project-grounding.md) when the selected audit
   activates runtime/config, packaging, public contract, durable data, replacement,
   auth/security, or cross-repository risks.
+- Read [protocol contracts](references/protocol-contracts.md) when the selected Java
+  surface owns or implements an adopted OpenAPI contract.
+- Read [OpenAPI governance](references/openapi-contract-governance.md) with that
+  profile for synchronized cross-language contract rules.
 - See [eval cases](references/eval-cases.md) for routing and finding-quality scenarios.

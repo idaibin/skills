@@ -6,6 +6,8 @@
 - [Trigger Examples](#trigger-examples)
 - [Non-Triggers](#non-triggers)
 - [Operation Notes](#operation-notes)
+- [Application Presence](#application-presence)
+- [Interaction Outcome and Recovery](#interaction-outcome-and-recovery)
 - [Screen-Session Gate](#screen-session-gate)
 - [macOS Adapter](#macos-adapter)
 - [Windows Adapter](#windows-adapter)
@@ -51,6 +53,46 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
 - For code edits that add semantic controls, labels, or stable selectors, use `dev-frontend`; then return here for real-window proof.
 - For Electron apps, first prove the real desktop runtime/window when the task asks for client evidence; use browser tooling only for plain web-preview behavior or after the real app identity is established.
 - Enter Client Debug Evidence only after the caller supplies an already-isolated client-layer evidence request. Otherwise route unexplained failures back to the caller for diagnosis before client operation. Reproduce only on the verified target process/window/build, return direct evidence, remove disposable probes and launched test instances, and retain referenced screenshots/logs/traces until embedded, archived, or accepted by the handoff owner. Do not infer a final cause across frontend, IPC, Rust, database, packaging, or platform layers.
+
+## Application Presence
+
+Treat installation, execution, window visibility, and menu/status presence as separate
+claims. Start with the user-supplied name, then resolve available display names, bundle or
+package identifiers, executable names, and helper processes through routes permitted by
+the selected adapter. Record every source checked. A tool-specific targeting contract
+takes precedence over the generic platform inventory suggestions below.
+
+On macOS, an installation check may include the applicable application directories and
+Launch Services or Spotlight inventory. Process enumeration establishes only whether a
+matching process was observed. Window, Dock, and menu-bar inspection establishes only
+visibility in that surface. Equivalent platform registries or package/application
+inventories are required on Windows and Linux. If the checked sources have no match, say
+`not found in the checked sources` and name them; do not report a machine-wide
+`not installed` conclusion from a process or menu inventory.
+
+For the Computer Use adapter, attempt the app exactly as named by the user first. Do not
+open Finder, Spotlight, or another GUI search to resolve that name. If the named attempt
+fails and the adapter exposes an application inventory, use it only for the adapter's
+documented bundle-identifier retry. If the task separately authorizes an installation
+audit, read-only system inventory may be checked outside Computer Use without launching
+search UI; keep that evidence separate from the adapter result. When neither route proves
+the app identity, report the named attempt and checked inventory as `Not verified` rather
+than guessing an alias or declaring the app uninstalled.
+
+## Interaction Outcome and Recovery
+
+Use the tool's terminal result as the source for the action outcome. Keep `cancelled` or
+`not executed` distinct from a tool-reported permission denial, platform authorization
+failure, ordinary action failure, and an outcome that cannot be determined. Do not invent
+a cause such as the user rejecting a permission prompt.
+
+After a cancelled or ambiguous action, read the current target state when that read is
+safe. If the authorized reversible goal remains incomplete, use at most one verified
+alternative semantic path, such as a named close action instead of a cancelled key event.
+Do not retry an action whose side effect may already have occurred. When no safe recovery
+exists, return the exact terminal result and mark the resulting UI state `Not verified`.
+Do not shift a routine recovery to the user merely because the first adapter call did not
+run.
 
 ## Screen-Session Gate
 

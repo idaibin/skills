@@ -65,8 +65,11 @@ owner; do not invent one.
    repository, load [project grounding](references/project-grounding.md) and bound
    the audit through its signal-to-evidence chain. Do not activate it from frontend
    directories, framework presence, or literals alone.
+   When State/data/contracts reaches an adopted OpenAPI or generated-client chain,
+   load [protocol contracts](references/protocol-contracts.md) and audit only the
+   frontend consumer boundary.
 5. Map each selected responsibility to its page, feature, primitive, hook/composable, service, store, schema, local type, or desktop adapter owner.
-6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, trace nested effective padding by axis, and cover only the applicable task-completion seam. When the audit explicitly covers visual direction, an existing-surface redesign, theme/accent consistency, density, or anti-slop drift, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); require an accepted direction, analogue, measurement, or user impact rather than treating taste as a finding. When a resolved `<design-root>/DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
+6. Compare the target with direct reuse candidates, the nearest analogous feature, documented contracts, and the existing component/layout system. When Architecture/Reuse or Component/Layout examines component APIs, variants, or composition, load `references/component-system.md`. For a selected Component/Layout profile, load `references/frontend-layout-governance.md`, name the relevant geometry/scroll/layer owners, trace nested effective padding by axis, and cover only the applicable task-completion seam. When maintained CSS/Sass/Less ownership, cascade, flex/grid choice, or wrapper structure is in scope, also load [CSS governance](references/frontend-css-governance.md). When the audit explicitly covers visual direction, an existing-surface redesign, theme/accent consistency, density, or anti-slop drift, load [references/visual-direction-and-anti-slop.md](references/visual-direction-and-anti-slop.md); require an accepted direction, analogue, measurement, or user impact rather than treating taste as a finding. When a resolved `<design-root>/DESIGN.md` contract is relevant, also load `references/design-md-compliance.md` for the bounded contract-to-runtime chain. For Selected-source visual fidelity, load [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md), keep source targets distinct from browser-computed runtime, and require reviewable source/runtime comparison plus computed evidence for exact runtime claims.
    When adoption/completeness is in scope, verify official-format evidence separately
    from the `ui-spec-design-completeness/1` result and exact design-hash approval. A
    local `awaiting-trusted-approval-verification` result without a satisfied consumer
@@ -155,6 +158,9 @@ commands/runtime evidence, and all `Not found` or `Not verified` residual risks.
 - Stack profiles: [framework](references/framework-profiles.md),
   [components](references/component-system.md), [state/data/forms](references/state-data-and-forms.md),
   [layout/style](references/styling-and-layout.md), [styling systems](references/styling-systems.md),
+  [CSS governance](references/frontend-css-governance.md),
+  [protocol contracts](references/protocol-contracts.md),
+  [OpenAPI governance](references/openapi-contract-governance.md),
   [Tauri](references/desktop-tauri.md), [accessibility/performance](references/accessibility-and-performance.md),
   [build](references/build-tooling.md).
 - Review depth: [code quality](references/code-quality.md),

@@ -172,4 +172,6 @@ only for a searched-for repository fact that is absent.
   auth/security, or cross-repository risks.
 - Read [protocol contracts](references/protocol-contracts.md) only for an existing or
   explicitly requested code-first/contract-first OpenAPI chain.
+- Read [OpenAPI governance](references/openapi-contract-governance.md) with that
+  protocol overlay; it is the synchronized cross-language rule source.
 - See [eval cases](references/eval-cases.md) for routing and quality scenarios.

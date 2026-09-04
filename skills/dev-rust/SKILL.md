@@ -129,6 +129,8 @@ send implicitly.
 - See [references/usage.md](references/usage.md) for trigger guidance and examples.
 - See [references/checklist.md](references/checklist.md) for implementation and review checks.
 - See [references/protocol-contracts.md](references/protocol-contracts.md) only when Protocol automation is selected.
+- See [references/openapi-contract-governance.md](references/openapi-contract-governance.md)
+  with that protocol profile for synchronized cross-language OpenAPI rules.
 - See [references/behavior-first.md](references/behavior-first.md) when a stable public seam supports vertical red-green slices.
 - See [references/codebase-design.md](references/codebase-design.md) only when the change materially affects a public module/interface, seam, cross-caller abstraction, or testability.
 - See [references/best-practices.md](references/best-practices.md) for idiomatic Rust API, ownership, error, test, docs, performance, dispatch, and concurrency rules.

@@ -1,6 +1,6 @@
 ---
 name: ops-browser
-description: "Use when directly operating or verifying a specified page, capturing same-state visual/computed evidence, or gathering isolated browser-layer evidence, especially when existing login state, tabs, downloads, or non-interrupting background operation matter; require a verified target and proven capability, not external-AI orchestration, desktop-client proof, or cross-system diagnosis."
+description: "Use when directly operating or verifying a specified page, capturing screenshots or browser-native recordings, collecting same-state visual/computed evidence, or gathering isolated browser-layer evidence, especially when existing login state, tabs, downloads, or non-interrupting background operation matter; require a verified target and proven capability, not external-AI orchestration, desktop-client proof, or cross-system diagnosis."
 ---
 
 # Ops Browser
@@ -46,46 +46,29 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    wake, activate, foreground, use GUI input, or use later evidence to prove an earlier action.
 
 3. Select only the resolved surface. For ordinary unmatched work prefer the in-app
-   Browser; use the configured local CDP workspace for localhost or when its verified
-   login is required. Reuse only a tab with verified account/session evidence. Reuse a safe tab matching profile, account/session, origin, and
-   URL before creating one. Keep user-local session/group rules separate from the
-   verified `dedicated-user-data-dir` profile. URL matching never crosses an identity boundary.
-4. Reuse an identity-matched tab. For a configured user-local group, target-tab absence
-   is a creation branch, not a stop: reuse the verified target tab when present;
-   otherwise create exactly one target tab in the verified group, open the requested
-   target, re-enumerate, and rerun preflight before claim or action. Stop only when the
-   configured browser/extension identity or a required profile, account, group,
-   creation, placement, or readback capability is unavailable or ambiguous. Open at
-   most one task tab only when reuse is unsafe or independent state/comparison requires
-   isolation. Keep a task-local tab ledger that
-   records task key, browser surface/session identity, tab identity, target fingerprint,
-   ownership evidence, purpose, lifecycle state, cleanup disposition, retention authority.
-   Record creation intent before opening and bind the created identity after re-enumeration.
-   For every executable single-tab action, record owner and direct readback; do not act on
-   a tab with missing, shared, stale, or unverified owner binding. Batch only independent
-   in-app tabs with one owner per stable identity; keep dependent work serial and return
-   `Not verified` when ownership is unclear.
+   Browser; use the configured local CDP workspace only when localhost or verified login
+   state requires it. Keep user-local Profile/group policy in
+   [local browser workspaces](references/local-browser-workspaces.md).
+4. Load [tab identity and lifecycle](references/tab-lifecycle.md) before reuse, creation,
+   action, or cleanup. Bind every action to a verified tab owner and target fingerprint;
+   keep ambiguous ownership `Not verified`.
 5. For an `ask-ai` handoff, validate the request and Capability Snapshot, preserve its
    `operation_id`, and return the matching protocol result. Do not operate app-native
    ChatGPT Projects/Threads here.
 6. Choose the narrowest backend. For a fixed route, known controls, repeatable capture, regression check, or external write, prefer deterministic APIs or Playwright. Use deterministic APIs or Playwright for fixed actions,
    a bounded agent only for open-ended navigation, and CDP only for a required low-level
    capability. Load the applicable reference. Prefer semantic selectors and collect only
-   exposed UI, DOM, console, network, storage/auth, screenshot, viewport, download,
+   exposed UI, DOM, console, network, storage/auth, screenshot, browser-native recording, viewport, download,
    route, or payload evidence; separate runtime facts from inference.
 7. Before a write or sensitive action, revalidate account, target, authorization,
    prior operation state, and postcondition; stop for uncertain side effects,
-   credentials/MFA/consent, destructive actions, or scope expansion. Reconcile the
-   task-local tab ledger before finishing. Resume ownership only from the same
-   revalidated browser surface/session, tab identity, and target fingerprint; otherwise
-   mark ownership `Not verified`. Retain a task-created tab only when the user explicitly requested it; otherwise close
-   identity-matched task-created tabs, restore authorized state, and report gaps. Never close
-   a pre-existing user tab without authority.
+   credentials/MFA/consent, destructive actions, or scope expansion. Finish through the
+   tab-lifecycle reconciliation and cleanup contract.
 
 ## Modes
 
 - **Inspect/Verify:** confirm page, environment, rendered state, account/session evidence, and requested behavior.
-- **Visual/Responsive:** check only the resolved viewport set for overflow, clipping, dialogs, tables, hover/focus, and reachable feedback states.
+- **Visual/Responsive:** check only the resolved viewport set for overflow, clipping, dialogs, tables, hover/focus, and reachable feedback states. Capture screenshots for stable visual states; use browser-native recording only when motion or an operation sequence is part of the requested evidence.
 - **Selected-source comparison:** capture the design and runtime at the same viewport/state for one declared pass, create side-by-side/overlay/diff evidence, return computed DOM/CSS facts, and restore browser state. The caller owns fixes and verdict.
 - **Form/Upload:** map controls semantically, verify source file/path and final state, and stop before unauthorized submission.
 - **Browser Debug Evidence:** for an already-isolated browser-layer evidence request, use the Codex in-app Browser debug profile in `references/devtools-debugging.md` when available; select only exposed DOM/accessibility, CSS/layout, Console, Network/resource, route, storage/auth, screenshot, viewport, and interaction evidence, then run one repeatable red/green loop.
@@ -101,10 +84,8 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 - Real Tauri, Electron, or native desktop-client runtime/window proof; use `ops-client`.
 - Frontend code changes, component architecture, or UI implementation; use `dev-frontend`. UI specification decisions belong to `ui-spec`.
 - Cross-system root-cause coordination for intermittent or unexplained failures; use the host's built-in diagnosis, which may delegate bounded browser reproduction and evidence collection here.
-- Repository onboarding or map discovery; use `repo-map`.
-- Future implementation planning; use the host's built-in planning.
-- Local dirty-tree review or commit readiness; use `repo-review`.
-- Review of a fixed browser-facing code change, including token or authorization risks; use `repo-review`.
+- Repository discovery or review belongs to `repo-map` or `repo-review`; future planning
+  belongs to the host planner.
 - Browser-only evidence when the user explicitly requested a real desktop app window.
 - App-native ChatGPT Project/Thread discovery, creation, messaging, response reads, lifecycle tracking, or model-evidence policy; use `ask-ai`. This is not browser operation.
 - External-AI collaboration orchestration, provider selection, package construction, send authorization, round counting, conversation attribution, or response archiving; use `ask-ai`. This skill may perform only the low-level webpage actions that its coordinator explicitly routes to a browser.
@@ -139,15 +120,14 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
   console for client logs; network for requests/responses; storage for stored state;
   file checks for downloads. Keep source-extracted, visually inferred, and runtime-
   computed values distinct.
-- In-app Browser operations require a real claimed or task-created tab and direct live
-  control/readback evidence. Fixed local-application routing is authoritative: invoke
-  only the exact configured application bundle and connector, use the extension-reported
-  existing Profile and verified native group, and perform one fixed-route readback
-  without product, Profile, launcher, or fallback discovery. Reuse a verified target
-  tab; when enumeration proves it absent, use the single permitted grouped-tab creation
-  path and re-enumerate before action. Missing target alone is not a stop condition.
-  Failed browser/connector identity, Profile, account, group, placement, or post-create
-  tab verification ends `Not verified`; never start a compatibility browser or Profile.
+- For recording work, load the Browser-Native Recording section in
+  [usage](references/usage.md#browser-native-recording). Require native job, tab, and
+  artifact evidence; preserve the accepted interaction and target; keep missing or
+  substitute evidence `Not verified`.
+- For in-app and configured local-browser operation, apply
+  [local browser workspaces](references/local-browser-workspaces.md) and
+  [tab lifecycle](references/tab-lifecycle.md). Never recover by switching products,
+  Profiles, connectors, groups, or fallback routes outside the resolved contract.
 - A two-pass visual gate requires two independently recorded matching viewport/state
   rounds. Mark unsupported runtime, identity, cleanup, or background claims `Not verified`.
 
@@ -156,7 +136,8 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 By default, report the selected surface/mode, target kind/ID-or-URL and identity
 evidence, direct observations, selected execution backend and reason, actions,
 validation, cleanup, canonical restoration fingerprint/readback, and `Not verified`
-gaps. For delegated,
+gaps. When recording was requested, also report its verified tab identity, native job
+state, final artifact path, and any missing evidence dimensions. For delegated,
 state-changing, transfer, debug, or selected-source comparison work, also return the Capability Snapshot, matching
 `operation_id`, before/action/side-effect/after evidence, protocol state, retained
 artifacts, and blocked or ambiguous claims required by the selected reference. For
@@ -171,6 +152,7 @@ ledger without making product or UI-contract decisions.
 - See [references/devtools-debugging.md](references/devtools-debugging.md) for localhost, test, and authorized production browser debugging.
 - See [references/browser-operation-protocol.md](references/browser-operation-protocol.md) for the shared Capability Snapshot, handoff schema, operation state machine, and degraded mode.
 - Read [references/local-browser-workspaces.md](references/local-browser-workspaces.md) when a user local-browser route must preserve a configured unified or operation-mapped tab group.
+- Read [references/tab-lifecycle.md](references/tab-lifecycle.md) for identity-first tab reuse, creation, ownership, reconciliation, retention, and cleanup.
 - Run [scripts/resolve-local-browser-route.py](scripts/resolve-local-browser-route.py) before surface probing when a local route table exists.
 - Run [scripts/preflight-local-browser-workspace.py](scripts/preflight-local-browser-workspace.py) for the executable local-browser reuse/placement gate.
 - Read [references/frontend-visual-evidence.md](references/frontend-visual-evidence.md) for same-viewport/state capture, evidence levels, pass-scoped computed checks, and tab restoration; validate staged handoffs offline with `python3 scripts/validate-frontend-visual-evidence.py <artifact.json>` and [assets/frontend-visual-evidence.schema.json](assets/frontend-visual-evidence.schema.json).

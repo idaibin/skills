@@ -2,11 +2,14 @@
 
 ## Basis
 
-- Digest scope: `ui-spec`, `ask-ai`, `dev-frontend`, `audit-frontend`,
-  `repo-review`, and `ops-browser` from the current source checkout.
-- Package digest: `sha256:bde5a0567ec6f7dc7285f44118e629822542a342621f1e5183981c5417aae10a`
-- Change focus: conditional project-owned UI component and Design Token governance,
-  project-native negative gates, and aggregate-image metrics as diagnostic evidence.
+- Digest scope: all 17 packages declared by `skills-index.json` from the current source
+  checkout; the index is the package-set authority.
+- Package digest: `sha256:128b6a698ff699042497067b020af2371f5fac00a4b1193db48c2ef783a49bf2`
+- Change focus: synchronized frontend CSS and OpenAPI governance, self-contained thin
+  adapters for implementation/audit/review owners, frontend contract-consumer audit,
+  browser-native recording, desktop-client cancellation recovery plus application
+  presence evidence boundaries, and functional entrypoint splits for browser routing,
+  tab lifecycle, and repository-review profiles/integration.
 - Raw project paths, user data, provider sessions, and task transcripts are excluded.
 
 This summary is bounded to the commands and synthetic cases below. A changed package
@@ -16,19 +19,20 @@ digest invalidates it until the same scope is revalidated and this record is ref
 
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
-| Package structure | Pass | `scripts/validate-skills.py` validates all 17 packages; `quick_validate.py` passes for the five changed/generated package surfaces. |
-| Shared protocol parity | Pass | `scripts/sync-shared-protocols.py --check` confirms the visual-evidence protocol and generated Skill copies are identical. |
-| Focused governance regressions | Pass | 70 focused unit cases cover implementation, UI/document authority, review closure, and frontend visual evidence. |
+| Package structure | Pass | `scripts/validate-skills.py` validates all 17 packages and their direct reference links. |
+| Shared protocol parity | Pass | `scripts/sync-shared-protocols.py --check` confirms CSS, OpenAPI, visual-evidence, and other generated Skill copies match their protocol sources. |
+| Focused regressions | Pass | 90 focused unit cases cover browser recording, tab/backend contracts, Skill routing, repository-review contracts, implementation, UI/document authority, review closure, and frontend visual evidence. |
+| Entrypoint context budget | Pass | All 17 Skill entrypoints are below the 4,000-token warning threshold; `ops-browser` estimates 3,394 and `repo-review` 3,239. |
 | Project-owned UI activation | Pass, static | Evals require the adoption profile only for shared component, third-party adapter, structured token, Registry, or adoption-record changes; ordinary feature composition and unadopted projects remain outside the profile. |
 | Authority separation | Pass, static | Evals keep `DESIGN.md`, Feature Specs, component source/types, Registry projections, generated token outputs, and runtime evidence in distinct owners. |
 | Negative governance behavior | Pass, static | Contracts require project-native failures for restricted-import bypass, stale Registry/source/public imports, token cycles/bypass/self-reference, and generated drift. Target-project execution remains separate evidence. |
 | Visual metric boundary | Pass, static | Shared protocol states that RMSE, pixel similarity, and perceptual distance are diagnostic only and cannot replace state, accessibility, computed-style, or geometry evidence. |
 | Independent forward review | Pass, static | A read-only reviewer exercised adopted implementation, unadopted composition, fixed-basis governance review, and low-RMSE/incomplete-runtime scenarios; no actionable findings. This is not live host/model execution proof. |
-| Final catalog gate | Pass | `bash scripts/check-skills.sh` passed 417 unit regressions, 57/57 routing cases, protocol parity, context checks, package validation, and the remaining catalog gates on this Worktree. |
+| Final catalog gate | Pass | `bash scripts/check-skills.sh` passed 422 unit regressions, 57/57 routing cases, protocol parity, context checks, package validation, and the remaining catalog gates on this Worktree. |
 | Live-Agent behavior | Not rerun | No current-digest host/model invocation was executed; static Skill and Eval results do not prove model behavior. |
-| Browser or desktop runtime | Not rerun | No current-digest browser/client operation or selected-source comparison was executed. |
-| Global package install | Not performed | Source changes were not installed into the global Skill directory in this task. |
-| Installed-copy parity | Not verified | Prior-digest installation parity is historical and is not promoted to this digest. |
+| Browser or desktop runtime | Not rerun for ops changes | Prior project-bounded portal consumer evidence does not verify browser-native recording or desktop cancellation recovery in the current change. |
+| Global package install | Not rerun | The current source digest was not installed globally; source-repository upgrade and installed-copy mutation remain separate scopes. |
+| Installed-copy parity | Not rerun | Current-digest parity against the global installed packages was not claimed because no current-digest install was performed. |
 
 ## Sanitized Scenario Ledger
 
@@ -44,6 +48,6 @@ digest invalidates it until the same scope is revalidated and this record is ref
 ## Verdict
 
 The current source packages contain the intended conditional governance; focused and
-final catalog regressions pass. Live-Agent behavior, global installation,
-installed-copy parity, browser/runtime acceptance, deployment, and production behavior
-remain `Not verified` as listed above.
+final catalog regressions pass. Live-Agent behavior, browser-native recording, desktop
+cancellation recovery, current-digest global installation, all-package installed-copy
+parity, deployment, and production behavior remain `Not verified` as listed above.
