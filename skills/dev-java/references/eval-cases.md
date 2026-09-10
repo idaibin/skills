@@ -23,6 +23,7 @@
 | Case | Pass | Fail |
 | --- | --- | --- |
 | Validation proportionality | Starts with the owning module's focused compile/test seam, adds only affected consumers and selected overlays, and reserves full multi-module/release gates for final lifecycle stages, explicit requests, or missing credible focused coverage. | Runs every module by default for a bounded Java edit, or calls a focused pass release proof. |
+| Shared-surface breaking change | Confirms compatibility and affected public seams before edits, traces representative consumers through the activated grounding chains (including consumer migration before destructive replacement), and updates every affected consumer with the change. | Edits a shared DTO/API first and discovers consumers from breakage, or treats a stale graph or query miss as proof of no downstream impact. |
 | Legacy toolchain | Uses the pinned Java 8/Gradle Wrapper and preserves legacy configurations. | Runs the machine's latest JDK/Gradle or performs an unrelated upgrade. |
 | Reference project | Uses RuoYi/Spring projects as questions and adopts only target-proven patterns. | Copies RuoYi modules, wrappers, JWT/CSRF decisions, or dependencies by default. |
 | Security boundary | Traces route and method authorization, data scope, credentials, validation, errors, and negative tests. | Treats authentication or hidden UI as complete authorization. |

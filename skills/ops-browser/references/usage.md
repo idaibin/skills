@@ -101,17 +101,31 @@ dragging, or an ordered browser interaction. Before starting, verify the selecte
 browser surface, exact tab identity, target URL/state, viewport, and that the active
 adapter advertises native recording plus a retrievable artifact. Keep one recording
 job bound to that tab, retain its stable job identity across status checks, and accept
-completion only from the native terminal state plus the returned artifact path.
+recording-job completion only from the native terminal state plus the returned artifact path.
 
 Treat method discovery, argument acceptance, and runtime functionality as separate
 facts. Use only methods and argument shapes exposed by the active adapter's current
 documentation or schema. When branch-specific recording documentation is unavailable
 or the current surface has no prior successful recording evidence, run at most one
-short no-action canary. After start, require an active recording state and revalidate the same tab,
+short no-action canary, only if native recording is exposed. Reuse a successful canary
+for the same adapter/surface unless its capability or behavior changes. After start, require an active recording state and revalidate the same tab,
 URL/state, and effective viewport before the first business interaction.
 If the page resets, becomes blank, recording completes immediately, or capture reports
 an error, reconcile or cancel that job once and mark recording `Not verified`; do not
 start a sequence of replacement jobs.
+
+After recording-job completion, the browser owner checks the artifact is nonempty,
+opens/decodes, shows the exact target page, and preserves the required action sequence
+without unexplained gaps. Read-only probing or decoding is allowed; it does not
+permit creating a substitute recording. A returned path alone proves neither playback
+nor correct content. If playback inspection is unavailable, record that layer as
+`Not verified` and continue other authorized work.
+
+The delivery coordinator presents the requested artifact through the supported
+attachment mechanism and checks presentation/accessibility to the extent observable.
+Local playback does not prove attachment rendering or recipient access. Never infer
+that the user opened it; report unobservable recipient access without defaulting to
+a confirmation request. Keep generation, content/playback, and delivery evidence separate.
 
 Capture screenshots for the key initial, intermediate, and final states required by
 the acceptance matrix. A video does not replace screenshots for key states and does not
@@ -173,6 +187,14 @@ satisfy acceptance for the requested target.
 - Do not reuse one persistent web conversation for unrelated tasks just because the tab is still open. Do not create a new conversation for follow-up work when an active session record already exists.
 - Prefer selectors, roles, labels, DOM state, console, network, and storage evidence.
 - Match evidence to the claim: use screenshots for visual/layout state, DOM or accessibility data for selectors and rendered text, console logs for client errors, network records for request/response behavior, storage/auth state for account/session claims, and file checks for downloads.
+- For real-page acceptance, apply the applicable UI-specification size before
+  capture: size the Codex in-app Browser page to `1920 x 1080` for desktop
+  acceptance; for mobile acceptance, set the phone `dimensions` to an iOS device
+  profile such as iPhone 15 Pro Max (`430 x 932` CSS pixels) or the
+  specification's named iOS device. An explicitly requested dimension still wins.
+  Verify the effective viewport, record it with the acceptance evidence, and when
+  the active surface cannot apply phone dimensions, report the viewport gap as
+  `Not verified` instead of substituting an arbitrary device.
 - For an ordinary desktop browser operation with no requested viewport, responsive
   category, accepted matrix, or explicit repository convention, use the package
   default `1920 x 1080` CSS pixels. When the task supplies viewport context, resolve

@@ -28,6 +28,7 @@
 | `Security-review commit X as a change set against its parent.` | Prefer the available host security diff-scan workflow; this is a security-only Git-backed review. |
 | `Run a professional security diff scan for this fixed range.` | Prefer the available host security diff-scan workflow; do not collapse its scan phases into `repo-review`. |
 | `Integrate this completed security-provider report into the broader review of the same fixed range.` | Trigger `repo-review`; verify report attribution, basis, native evidence, and proof gaps before mapping status or affecting the broader verdict. |
+| `Integrate this completed external review; the provider ran with permission-skipping launch flags and only a read-only prompt.` | Trigger `repo-review`; integrate only after basis-matched local verification, record execution containment as `prompt-constrained`, and never present the result as sandbox-isolation proof. |
 | `Review this branch against both repository standards and the originating specification.` | Trigger two-axis `repo-review`. |
 | `Review this selected-source frontend change and verify whether its visual-complete claim is supported.` | Trigger `repo-review` with the conditional visual-completion profile and require the structured evidence plus cited runtime artifacts. |
 | `Review this fixed range's OpenAPI authority, compatibility diff, generated client, backend conformance, consumer states, and clean CI.` | Trigger `repo-review` with protocol-contract profile. |

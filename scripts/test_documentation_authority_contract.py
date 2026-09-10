@@ -207,12 +207,14 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
 
     def test_design_completeness_handoff_keeps_producer_state_distinct(self) -> None:
         contract = self.read("skills/ui-spec/references/design-md-contract.md")
-        self.assertIn("ui.contract.specify@1.1.0", contract)
-        self.assertIn("forgeway-ui-design-completeness/1", contract)
-        self.assertIn("gate:ui-design-complete", contract)
-        self.assertIn("package-relative paths", contract)
-        self.assertIn("approval_record_sha256", contract)
+        handoff = self.read("skills/ui-spec/references/forgeway-handoff.md")
+        self.assertIn("ui.contract.specify@1.1.0", handoff)
+        self.assertIn("forgeway-ui-design-completeness/1", handoff)
+        self.assertIn("gate:ui-design-complete", handoff)
+        self.assertIn("package-relative", handoff)
+        self.assertIn("approval_record_sha256", handoff)
         self.assertIn("does not mutate the producer result", contract)
+        self.assertIn("forgeway-handoff.md", contract)
         for path in (
             "skills/dev-frontend/references/eval-cases.md",
             "skills/audit-frontend/references/eval-cases.md",

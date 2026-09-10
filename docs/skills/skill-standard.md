@@ -195,6 +195,12 @@ is long: first sharpen completion criteria and disclose conditional reference, t
 split only when an independently useful invocation or a proven sequence failure needs
 a separate context boundary.
 
+Keep environment-specific preflight in project verifiers first. Consider a shared
+reference only after two independent projects have exercised the same semantics,
+with a stable owner, actual consumer, and less total maintenance than local checks.
+Two uses alone do not require extraction; similar commands with different acceptance
+meaning remain project-owned. Extend an existing reference before creating an entry.
+
 ## Skill Boundaries
 
 Create a new public Skill only when the user intent, authority boundary, workflow, and

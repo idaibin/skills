@@ -50,13 +50,15 @@ authority; the handoff references them and never copies shared token semantics.
    [references/design-md-contract.md](references/design-md-contract.md), use
    [assets/DESIGN.md](assets/DESIGN.md) as the verified-source starter, and follow its
    completeness and trusted-approval gates. Format lint alone is insufficient;
-   changed content makes approval stale and the slice `Not Ready`.
+   changed DESIGN.md content makes its approval stale and dependent slices `Not Ready`.
+   Keep page-local changes in their Feature Spec; do not rewrite unchanged shared
+   semantics merely to synchronize documents. Existing exact-content approval rules remain.
 5. Define implementation slices: one Feature Spec per confirmed page/flow/domain; for multiple independent domains, create one shared index plus one independently loadable contract per slice and load [references/multi-surface.md](references/multi-surface.md).
 6. Select one profile:
    - **Feature Spec (default):** reuse current shared systems unless shared semantics truly change.
    - **Design System Spec (conditional):** only when shared tokens, reusable component meaning/variants, state vocabulary, or cross-surface visual rules must change.
 7. In Design System Spec, keep `<design-root>/DESIGN.md` as the only durable shared visual output; Feature Specs reference it instead of copying shared semantics.
-8. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Name reusable and page-defining components only after checking current source and the project map when one exists; keep props, slots, events, types, SVG path data, source paths, and copied token values out of the page contract. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply. When standardizing a scene layout archetype, load [references/scene-archetypes.md](references/scene-archetypes.md). When icons must be SVG or shared iconography changes, load [references/svg-icon-system.md](references/svg-icon-system.md), resolve the actual icon owner/library and rights, and specify semantic role, family, rendering, state, accessibility, and fallback without generating SVG source.
+8. Translate the selected source into concrete layout, state, interaction, and accessibility specifications for each slice. Name reusable and page-defining components only after checking current source and the project map when one exists; keep props, slots, events, types, SVG path data, source paths, and copied token values out of the page contract. Use the exact evidence levels `source-extracted`, `browser-computed`, `visually-inferred`, `proposed`, and `Not verified`. Load the visual-direction, layout-governance, measurement-normalization, and viewport workflow references only when their named conditions apply. Load [layout governance](references/frontend-layout-governance.md) also for changed state transitions, competing inputs, focus, or hit testing; reuse its affected interaction matrix in the existing UI contract. When standardizing a scene layout archetype, load [references/scene-archetypes.md](references/scene-archetypes.md). When icons must be SVG or shared iconography changes, load [references/svg-icon-system.md](references/svg-icon-system.md), resolve the actual icon owner/library and rights, and specify semantic role, family, rendering, state, accessibility, and fallback without generating SVG source.
 9. Add a traceable delta table for every material visual difference: acceptance ID, selected-source target, current runtime, target contract, priority, shared-or-local owner, evidence IDs, verification, and applicable asset owner/fallback.
 10. For every slice and multi-slice task, add one `Ready for dev-frontend <slice>`, `Partial`, or `Not Ready` verdict. Do not issue `Ready` when the selected source is unavailable or unapproved, rights/use are insufficient, target viewport/state is uncertain, a P1 asset has no accepted owner/fallback, or an exact proposed value lacks owner approval.
     This verdict is the UI visual/interaction readiness axis only. It neither proves
@@ -84,7 +86,7 @@ authority; the handoff references them and never copies shared token semantics.
 15. When Forgeway integration is active, bind the immutable Run input and
     PackageManifest/basis, fingerprint authorized outputs, and attach typed UI-contract
     and visual-evidence Observations to that exact result package. For adopted DESIGN
-    authority, follow [references/design-md-contract.md](references/design-md-contract.md)
+    authority, follow [references/forgeway-handoff.md](references/forgeway-handoff.md)
     for package-relative artifacts, hashes, byte lengths, compatible consumer, and
     claim. `Ready` or a satisfied gate is not review, delivery, deployment, or
     production proof.
@@ -171,7 +173,8 @@ verified` gap. Include at least:
 
 - Core: [usage](references/usage.md), [workflow](references/workflow.md),
   [candidate direction](references/candidate-visual-direction.md),
-  [DESIGN.md](references/design-md-contract.md), [visual source](references/visual-source.md).
+  [DESIGN.md](references/design-md-contract.md),
+  [Forgeway handoff](references/forgeway-handoff.md), [visual source](references/visual-source.md).
 - Visual detail: [direction](references/visual-direction-and-anti-slop.md),
   [layout](references/frontend-layout-governance.md),
   [SVG icons](references/svg-icon-system.md),

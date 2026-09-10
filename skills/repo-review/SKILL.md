@@ -67,7 +67,9 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 7. Keep the two evidence passes independent. They may run in parallel only when delegation is available, both scopes are read-only and fixed, and the coordinator can verify and integrate their results.
 8. Select only applicable profiles. Delegate bounded frontend, Java, or Rust work only
    when requested or necessary. Route security-only work to a host security workflow.
-   Verify completed provider evidence against this basis before integrating it.
+   Verify completed provider evidence against this basis before integrating it, and
+   record its execution containment grade (`sandbox-isolated` or `prompt-constrained`)
+   per [review integration](references/review-integration.md).
 9. Resolve documented path mismatches at the selected basis. If a path or parent is
    absent, ascend to the nearest existing ancestor and search only the relevant
    subtree; report graph drift for a later `repository.asset.scan` refresh without

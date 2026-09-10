@@ -85,6 +85,11 @@ actually needs another owner to act now. Handoffs transfer bounded context, neve
 authorization. Planning and diagnosis use host capabilities and repository instructions
 unless they acquire specialized reusable knowledge that warrants a Skill.
 
+A phase boundary does not revoke authority already supplied by the user. The
+coordinator continues the remaining authorized steps through their owners without
+reconfirmation. A missing evidence layer blocks only dependent claims or actions;
+it neither grants new permissions nor makes the whole requested outcome complete.
+
 Common sequence, when needed:
 
 ```text

@@ -12,6 +12,9 @@ components: {}
 
 - Replace this section with a concise, verified summary of brand intent and audience.
 - Keep prose factual and linked to accepted product ownership.
+- Keep the finished file implementable without the codebase: an implementer holding
+  only this file should produce on-brand UI, with every named token bound to real
+  surfaces, states, and fallback behavior.
 
 ## Colors
 

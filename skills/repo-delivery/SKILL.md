@@ -37,7 +37,9 @@ commit is local durability, not remote delivery, deployment, or production proof
 ## Parallel Current-Branch Delivery
 
 When the authorized outcome is to commit current changes, synchronize the same remote
-branch, rebase, and push, use two preparatory owners in parallel:
+branch, rebase, and push, default to one writer executing these stages sequentially.
+Use two preparatory owners only when delegation is authorized, their state can be
+isolated safely, and the expected benefit exceeds coordination cost:
 
 1. **Commit owner:** the only Worktree/index/`HEAD` writer. It stages the exact accepted
    scope, performs cached checks, and creates the local commit.
@@ -59,6 +61,20 @@ workflow, or repository policy actually requires resumable typed state.
 
 ## Conditional Paths
 
+- **Branch-owned environment configuration:** when integrating between environment
+  branches, freeze the source and target SHAs and inventory the target-owned manifest,
+  endpoint, package identity, native plugin, push/vendor-channel, signing, and native
+  resource paths before mutation. Prefer business-only commits. If a historical commit
+  mixes business and environment changes, apply it without committing, restore the
+  target-owned paths from the frozen target SHA, and inspect the final name-status and
+  configuration diff before committing. Never resolve a configuration conflict by
+  accepting the whole source file merely because the syntax is valid.
+- **Shared-branch restoration:** verify that the requested version maps to an actual
+  commit. If it does not, record the selected baseline and explicitly allowed safety
+  differences, create and read back a recoverable archive ref for displaced history,
+  then restore with a normal forward commit. Do not force-push or rewrite the shared
+  branch; after push, compare the actual remote SHA and the final tree against the
+  declared baseline.
 - **Large-task durability:** use [execution durability](references/execution-durability.md)
   only for an authorized semantic milestone, targeted fixup, or exceptional checkpoint
   on a non-default task branch. These commits do not imply review or merge readiness.

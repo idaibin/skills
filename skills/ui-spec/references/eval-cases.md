@@ -1,5 +1,9 @@
 # Eval Cases
 
+For a page-local copy change that preserves shared semantics, update only its applicable
+Feature Spec. Preserve unchanged DESIGN.md bytes and approval. If shared DESIGN.md
+content actually changes, require the existing exact-content human approval gate.
+
 ## Contents
 
 - Trigger Eval

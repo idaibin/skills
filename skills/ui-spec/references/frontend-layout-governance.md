@@ -7,12 +7,14 @@
 - [Nested Inset Contract](#nested-inset-contract)
 - [Evidence and Findings](#evidence-and-findings)
 - [Task-Completion Seam](#task-completion-seam)
+- [Affected Interaction Matrix](#affected-interaction-matrix)
 - [Validation Proportionality](#validation-proportionality)
 
 ## Scope and Ownership
 
 Use this protocol only when layout geometry, spacing, sizing, overflow, scrolling,
-layering, or responsive behavior is material to the requested implementation or
+layering, responsive behavior, state transitions, competing inputs, focus, or hit
+testing is material to the requested implementation or
 audit. It provides shared vocabulary and evidence rules; it is not a CSS guide,
 design-token table, breakpoint catalog, or framework recipe.
 
@@ -104,6 +106,21 @@ For affected surfaces, trace the smallest applicable set:
 - keyboard focus, zoom/reflow, and touch targets are checked when applicable;
 - desktop-webview claims use a real application window when native chrome, window
   size, zoom, or platform behavior can affect the result.
+
+## Affected Interaction Matrix
+
+Use an interaction matrix only when the change affects state transitions, competing
+inputs, focus, or hit testing. Reuse the existing Product/UI contract and record only
+changed cases; a color-only or other unaffected edit does not trigger a new matrix.
+For each affected case, record state, input method, hit region, input priority, focus,
+disabled conditions, applicable mobile size, and expected observable result. Mark
+inapplicable fields rather than inventing requirements or project-specific values.
+
+`ui-spec` owns expected behavior in the existing UI contract; `dev-frontend` maps the
+changed cases to implementation and focused checks; `ops-browser` or `ops-client`
+provides runtime evidence and `audit-frontend` checks that evidence. This is not a new
+schema, viewport matrix, approval gate, or reason to reapprove an accepted contract.
+Keep business semantics and concrete dimensions in project documents.
 
 ## Validation Proportionality
 

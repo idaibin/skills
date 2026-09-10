@@ -4,7 +4,7 @@
 
 - Digest scope: all 17 packages declared by `skills-index.json` from the current source
   checkout; the index is the package-set authority.
-- Package digest: `sha256:128b6a698ff699042497067b020af2371f5fac00a4b1193db48c2ef783a49bf2`
+- Package digest: `sha256:5fbebf3c32a8bfa1f527b491b0c0ddb390448899f723d95577143a79162e2849`
 - Change focus: synchronized frontend CSS and OpenAPI governance, self-contained thin
   adapters for implementation/audit/review owners, frontend contract-consumer audit,
   browser-native recording, desktop-client cancellation recovery plus application

@@ -28,9 +28,12 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
 
 1. Fix target kind, stable target ID or exact URL, browser surface, account/session,
    applicable product/profile/connector, tab identity, goal, viewport, and evidence.
-   A label, last-active tab, or route default is not target proof. Use `1920 x 1080`
-   CSS pixels only for ordinary desktop work without a requested viewport; otherwise
-   follow [usage](references/usage.md) and verify the effective viewport.
+   A label, last-active tab, or route default is not target proof. For real-page
+   acceptance, apply the applicable UI-specification size: `1920 x 1080` on the
+   Codex in-app Browser for desktop, or an iOS phone profile such as iPhone 15 Pro
+   Max for mobile. Otherwise use `1920 x 1080` CSS pixels only for ordinary desktop
+   work without a requested viewport; follow [usage](references/usage.md) and
+   verify the effective viewport.
 
 2. Resolve the surface before probing it. An explicit current-request route wins; otherwise load
    [local-browser-workspaces.md](references/local-browser-workspaces.md) and run the
@@ -42,7 +45,10 @@ route frontend edits to `dev-frontend` and desktop-client proof to `ops-client`.
    [browser-operation-protocol.md](references/browser-operation-protocol.md). For
    user-local routes, run the local-workspace preflight before actions; honor its
    `10`/`11`/`20` outcomes and fail closed on screen lock, missing identity, or
-   task-specific naming requirements; otherwise stop `Not verified`. Never enumerate, download, install, launch, unlock,
+   task-specific naming requirements; otherwise stop `Not verified`. Allow only proven
+   background-safe tab/window metadata enumeration within the resolved surface/Profile/endpoint
+   to identify the target; do not inspect unrelated page content or discover alternative Profiles.
+   Never download, install, launch, unlock,
    wake, activate, foreground, use GUI input, or use later evidence to prove an earlier action.
 
 3. Select only the resolved surface. For ordinary unmatched work prefer the in-app

@@ -185,16 +185,11 @@ Use this checklist when implementing or reviewing frontend changes.
   change with no API/state/public/shared/build/runtime impact, batch the edits and use
   the running dev/compiler diagnostics as the first signal. If they remain clean,
   finish with local diff inspection and `git diff --check`; tests remain `Not verified`.
-  Do not add a red test, repeat checks, run a full build/suite, or add browser/review
-  ceremony by default.
-- During bounded iteration, never run bare aggregate test commands such as `npm test`,
-  `npm run test`, `pnpm test`, `yarn test`, `bun test`, or equivalents. Explicitly name
-  the affected test file/package/project or a repository-owned focused script.
-- If no credible focused test exists, keep tests `Not verified`; do not use that gap as
-  permission for a full suite.
-- Do not run a full build or full suite during implementation. Leave it for an
-  authorized merge/release/deployment/final-basis gate or an explicit user request,
-  stating the trigger, exact command, and scope before execution.
+  Do not add red tests or repeat checks by default. End the implementation phase here,
+  then continue any already-authorized browser acceptance or review through its owner.
+- Select focused checks and expensive-run preflight under the existing
+  [implementation workflow](../SKILL.md#workflow); do not duplicate its gates here.
+  A local build is not release or runtime acceptance.
 
 - For selected-source visual work, run two same-viewport/state comparison passes:
   capture and compare, read computed geometry/style, fix confirmed findings, then

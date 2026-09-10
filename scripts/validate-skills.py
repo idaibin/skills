@@ -477,12 +477,20 @@ def ui_spec_design_completeness_errors(package: Path) -> list[str]:
     if package.name != "ui-spec":
         return []
     contract = package / "references" / "design-md-contract.md"
+    handoff = package / "references" / "forgeway-handoff.md"
     checker = package / "scripts" / "validate-design-md-completeness.py"
     if not contract.is_file():
         return ["ui-spec: missing references/design-md-contract.md"]
-    text = normalized_contract_text(contract.read_text(encoding="utf-8"))
-    errors = [
-        f"ui-spec: design-md-contract.md missing completeness token: {token}"
+    errors = []
+    if not handoff.is_file():
+        errors.append("ui-spec: missing references/forgeway-handoff.md")
+    text = normalized_contract_text(
+        contract.read_text(encoding="utf-8")
+        + "\n"
+        + (handoff.read_text(encoding="utf-8") if handoff.is_file() else "")
+    )
+    errors += [
+        f"ui-spec: design-md contract set missing completeness token: {token}"
         for token in UI_SPEC_DESIGN_COMPLETENESS_TOKENS
         if token not in text
     ]

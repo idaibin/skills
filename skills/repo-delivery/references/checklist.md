@@ -60,7 +60,9 @@ does not authorize staging or committing.
 ## Parallel Current-Branch Delivery
 
 - Use only when commit, same-branch synchronization/rebase, and push are all authorized.
-- Start one commit owner for exact staging and local commit, and one remote owner for
+- Default to one writer executing the authorized chain sequentially. Only when
+  delegation is authorized, safe, and worth its coordination cost, start one commit
+  owner for exact staging and local commit, and one remote owner for
   fetching the named branch and reporting its exact SHA/divergence.
 - The commit owner is the only Worktree/index/`HEAD` writer. The remote owner must not
   checkout, pull, rebase, stage, commit, or change the current branch.

@@ -1,5 +1,9 @@
 # Eval Cases
 
+When the user already authorized review followed by fixes, conclude and attribute the
+review before returning to the implementation owner. Do not request the same fix
+authorization again. A review-only request still does not authorize source edits.
+
 ## Contents
 
 - [Trigger Eval](#trigger-eval)

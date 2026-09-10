@@ -50,23 +50,36 @@ are used when supplied; they do not replace current source and repository contra
 5. Make the smallest coherent source change. Preserve established framework, routing,
    state/data, component, styling, and test owners; do not introduce a parallel stack
    or speculative shared layer.
+   For legacy or native-wrapper frontends, first identify whether a directive selects a
+   platform, build mode, or runtime environment. Never reinterpret platform guards such
+   as uni-app `APP-PLUS` as development/production selection. When environment identity
+   is branch-owned, preserve the target branch's manifest, endpoints, native plugins,
+   signing settings, and vendor-channel values; do not add a parallel environment map,
+   wrapper build script, or package-manager policy unless the accepted task changes that
+   architecture.
 6. Batch a coherent development slice before validating it. Treat a running dev server,
    compiler, type checker, or repository diagnostic stream as the first feedback loop;
    do not run a check after every edit while that signal remains clean. At slice
    completion, before handoff, or after a real error, run one nearest focused check.
    Expand only for a changed shared contract, generated/build chain, runtime boundary,
-   or affected consumer. Do not run a full build or full suite during implementation.
+   or affected consumer, or when no narrower credible check exists.
    For a confirmation, keep, or no-op request, select the focused check for the current
    accepted baseline; do not run a post-change check that only applies after an authorized
    change. If that focused check fails, do not report `completed`: report the failure or
    `Not verified`, preserve its evidence, then diagnose or stop.
-   A full gate belongs to an explicitly authorized merge/release/deployment/final-basis
-   workflow or an explicit user request, and its reason, command, and scope must be
-   stated first. If no narrower credible check exists, use current dev diagnostics plus
-   a targeted static or diff check and report tests `Not verified`; do not escalate.
+   Before an expensive run, use low-cost static and boundary checks that can expose
+   deterministic blockers. A blocker stops only dependent acceptance runs; a warning
+   does not. An already-authorized minimal diagnostic run may investigate the blocker,
+   but cannot count as acceptance. Keep platform/path/process checks in the project verifier.
+   When no narrower credible check exists, run the existing local build or suite once
+   if it can verify the changed behavior; state its reason, command, and scope first.
+   Preserve separate authorization for substantial extra cost, dependency installation,
+   production access, and external effects. If no supported check can establish the
+   claim, report that evidence gap; do not repeat unchanged checks.
 7. Report changed owners, reuse decisions, validation, remaining Worktree content, and
-   every applicable runtime or external gap as `Not verified`. Source implementation
-   does not authorize browser/client operation or Git delivery.
+   every applicable runtime or external gap as `Not verified`. The coordinator continues
+   browser/client acceptance or Git delivery through its owner when already authorized
+   by the request or effective instructions; source implementation grants no new authority.
 
 ## Small Change Fast Path
 
@@ -80,10 +93,11 @@ build, deployment, or production-behavior change.
    diff inspection and `git diff --check`. A new test run is optional and should occur
    only for changed observable behavior, an existing focused regression, a real dev
    error, or an explicit request. Report tests `Not verified` when they were not run.
-3. Never run bare aggregate test commands or a full build/suite. Do not add a red test
-   for pure style/template/icon/copy changes.
-4. Stop after the checkpoint. Do not add memory/history lookup, repeated source search,
-   browser acceptance, delegation, independent review, or another identical check.
+3. Avoid aggregate tests or builds unless they are the only credible check under the
+   workflow above. Do not add a red test for pure style/template/icon/copy changes.
+4. End this implementation stage after the checkpoint. Continue already-authorized
+   acceptance and delivery through their owners; do not add unrelated investigation,
+   delegation, review, or repeated checks, or omit requested runtime acceptance.
 
 ## Conditional Profiles
 
@@ -93,9 +107,10 @@ build, deployment, or production-behavior change.
   acceptance IDs before editing; use `ops-browser` or `ops-client` for required runtime
   evidence. Two-pass same-state comparison is a visual-completion gate, not a default
   requirement for ordinary frontend changes.
-- **Layout or responsive behavior:** load
+- **Layout or affected interaction:** load
   [layout governance](references/frontend-layout-governance.md) when geometry,
-  overflow, scrolling, layering, or breakpoints materially change.
+  overflow, scrolling, layering, breakpoints, state transitions, competing inputs,
+  focus, or hit testing materially change.
 - **Maintained CSS/Sass/Less:** load [CSS governance](references/frontend-css-governance.md)
   when spacing ownership, cascade cleanup, flex/grid choice, or rendered wrapper
   structure materially changes.
@@ -136,6 +151,10 @@ rather than creating or repairing one for ordinary implementation.
   unavailable runtime proof `Not verified` rather than compensating with fallback code.
 - Keep page/tab shells responsible for navigation and composition, not section-specific
   APIs, forms, tables, drawers, validation, and lifecycle branches.
+- Treat reveal state for masked sensitive values as an explicit interaction contract.
+  For a list intended to show at most one value, opening a new row must atomically hide
+  the previous row; validate both the newly opened row and the prior row after the same
+  transition rather than checking only the clicked item.
 - Prefer non-mutating validation. Compare Worktree state around tools that may generate
   or rewrite files and never absorb unexplained drift.
 - A build, lint pass, source inspection, or browser preview proves only its own layer.

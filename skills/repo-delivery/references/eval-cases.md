@@ -1,5 +1,9 @@
 # Eval Cases
 
+For an authorized same-branch commit/rebase/push, one writer may execute the chain
+without delegation. Existing action-specific authorization persists across phases;
+commit-only authority still stops before push.
+
 Use these cases when changing `repo-delivery` triggers, modes, staging rules, push behavior, divergence handling, squash workflow, cleanup rules, or metadata.
 
 ## Trigger Eval
