@@ -87,7 +87,7 @@ another: when both apply, read each. Missing optional artifacts do not add cerem
 but a missing product authority or UI authority that affects behavior or acceptance is
 separately `Not verified`; missing runtime/browser evidence is a distinct
 rendered-behavior `Not verified`. Do not infer exact visual values from pixels, make
-this a mandatory `audit-frontend` handoff, or open a parallel review entry point.
+this a mandatory `repo-audit` handoff, or open a parallel review entry point.
 
 When the basis adds or changes motion, gesture behavior, transition ownership, or
 user-visible interaction feedback, load `interaction-motion-review.md` inside this

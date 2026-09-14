@@ -105,7 +105,7 @@ authority; the handoff references them and never copies shared token semantics.
 - Sending prompts, assets, or follow-up instructions to a named external model; use `ask-ai` with the frozen local artifacts.
 - Unresolved product behavior, permissions, failure semantics, or acceptance; use `product-spec`.
 - Frontend source changes or refactors; use `dev-frontend` with the accepted specification.
-- Read-only frontend implementation audits; use `audit-frontend`.
+- Read-only frontend implementation audits; use `repo-audit`.
 - Browser screenshots, console/network evidence, or desktop-window operation; use `ops-browser` or `ops-client`.
 - Git staging, commits, pushes, or branch cleanup; use `repo-delivery` after review.
 
@@ -164,7 +164,7 @@ verified` gap. Include at least:
 - per-slice viewport acceptance matrix or a justified `Not applicable` verdict,
   including required/optional/excluded entries, size, environment, state, and
   acceptance-evidence source; hand the same matrix to `dev-frontend`,
-  `audit-frontend`, and `ops-browser`/`ops-client` without redefining its schema
+  `repo-audit`, and `ops-browser`/`ops-client` without redefining its schema
 - when SVG icons apply: shared-or-local disposition, semantic role-to-owner mapping,
   approved family/render/state and coloring rules, rights, accessibility, accepted
   isolated fallback or evidenced `None`, and focused gallery/runtime acceptance

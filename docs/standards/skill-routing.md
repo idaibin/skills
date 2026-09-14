@@ -27,14 +27,13 @@ identity, installed adapters, or completed evidence.
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
+| `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and two-pass visual closure | source files |
 | `dev-typescript` | requested non-browser TypeScript/JavaScript implementation for Node.js, Bun, or Deno | source files |
 | `dev-java` | requested Java/Spring implementation and migration | source files |
 | `dev-rust` | requested Rust implementation | source files |
-| `audit-frontend` | bounded frontend audit profiles, including selected-source visual fidelity | read-only |
-| `audit-java` | bounded Java/Spring audit profiles | read-only |
-| `audit-rust` | bounded Rust audit profiles | read-only |
+| `repo-audit` | bounded existing frontend, Java, and Rust audit profiles, including selected-source visual fidelity | read-only |
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
@@ -68,7 +67,7 @@ reachability and semantics; owner Skills apply the stage meaning:
 | Owner | Quality question |
 | --- | --- |
 | `repo-review` | Did the fixed basis introduce, expand, expose, or directly depend on the issue? |
-| `audit-frontend` / `audit-java` / `audit-rust` | What currently exists inside the declared profile and path scope? |
+| `repo-audit` | What currently exists inside the declared language profile and path scope? |
 | `dev-frontend` / `dev-typescript` / `dev-java` / `dev-rust` | How does the authorized change avoid the issue and remove only what it makes obsolete? |
 
 Duplication, dead/unused code, over-design, pass-through layers, and hidden
@@ -82,8 +81,8 @@ scan inside `repo-review`.
 
 Start with the closest owner. Add a handoff only when the user's requested outcome
 actually needs another owner to act now. Handoffs transfer bounded context, never
-authorization. Planning and diagnosis use host capabilities and repository instructions
-unless they acquire specialized reusable knowledge that warrants a Skill.
+authorization. Ephemeral planning and diagnosis use host capabilities and repository
+instructions. Durable task decomposition and ledger reconciliation use `to-task`.
 
 A phase boundary does not revoke authority already supplied by the user. The
 coordinator continues the remaining authorized steps through their owners without
@@ -93,7 +92,7 @@ it neither grants new permissions nor makes the whole requested outcome complete
 Common sequence, when needed:
 
 ```text
-repo-map -> domain-modeling/product-spec -> ui-spec/dev-* -> repo-review -> repo-delivery
+repo-map -> domain-modeling/product-spec/ui-spec -> to-task -> dev-* -> repo-review -> repo-delivery
 ```
 
 For an explicitly authorized `ask-ai` sequential relay, keep the frozen basis and
@@ -145,8 +144,8 @@ catalog Skill or mandatory external dependency.
 For security-sensitive review, keep three levels distinct:
 
 - ordinary change review stays inside `repo-review`;
-- `audit-java`, `audit-rust`, or `audit-frontend` supplies bounded domain evidence only when its
-  language/framework semantics are independently necessary;
+- `repo-audit` supplies bounded domain evidence only when its language/framework
+  semantics are independently necessary;
 - a security-only Git-backed review, vulnerability scan, complete security coverage,
   attack-path analysis, or PoC validation uses an available host security provider.
 
@@ -164,7 +163,7 @@ source/config before editing. The two Feature Spec types have separate authoriti
 when both apply they are both read, while missing optional artifacts remain separate
 `Not verified` gaps only when they affect behavior or acceptance. The resolved `DESIGN.md`
 owns shared visual semantics; themes and component libraries are implementation adapters. A
-Component/Layout `audit-frontend` profile may trace that contract to adapters,
+Component/Layout `repo-audit` frontend profile may trace that contract to adapters,
 components/consumers, and runtime evidence. `repo-review` keeps the sole
 change-basis gateway and adds this check only for visual or UI-contract changes.
 

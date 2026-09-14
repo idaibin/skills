@@ -40,7 +40,7 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | User prompt | Expected result | Why |
 | --- | --- | --- |
 | `Understand this repository's real commands and entry points first.` | Should prefer `repo-map`. | Repository mapping. |
-| `Split this future feature into tasks and owners.` | Should not trigger this Skill; use the host's built-in planning. | Forward planning. |
+| `Split this accepted feature into tasks and owners in the project ledger.` | Should not trigger this Skill; route to `to-task`. | Durable forward planning. |
 | `Review all dirty changes and propose commit groups.` | Should prefer `repo-review`. | Pre-delivery review scope is not clear. |
 | `Review this diff and give me a commit message, but do not change Git state.` | Should prefer `repo-review`. | Review-only request without delivery authorization. |
 | `Review this endpoint diff for authorization risk.` | Should prefer `repo-review`. | Fixed-basis review, not Git mutation. |

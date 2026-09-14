@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 17 available Skills:
+Browse the 16 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -46,13 +46,12 @@ and other supported agents.
 | `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
+| `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
 | `dev-typescript` | Implement non-browser TypeScript and JavaScript services, CLIs, workers, MCP servers, libraries, and scripts across Node.js, Bun, and Deno. |
 | `dev-java` | Implement Java and Spring changes against the repository's real build and runtime contracts. |
 | `dev-rust` | Implement Rust features and refactors with ownership, safety, and behavior evidence. |
-| `audit-frontend` | Audit a bounded frontend surface without modifying it. |
-| `audit-java` | Audit Java and Spring architecture, security, transactions, persistence, and integration. |
-| `audit-rust` | Audit Rust ownership, concurrency, persistence, performance, memory, and unsafe boundaries. |
+| `repo-audit` | Audit an existing frontend, Java, or Rust surface read-only through language profiles. |
 | `repo-review` | Review a Worktree, commit, range, or verified package on a fixed evidence basis. |
 | `repo-delivery` | Commit, integrate, push, and clean up reviewed changes with explicit Git authorization. |
 | `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
@@ -69,8 +68,9 @@ task genuinely crosses an authority boundary.
 unknown repository -> repo-map
 unclear product     -> domain-modeling / product-spec
 UI contract         -> ui-spec -> dev-frontend
+accepted contracts  -> to-task -> matching implementation owner
 source change       -> matching dev-* owner (`dev-typescript` for non-browser TS/JS)
-bounded audit       -> matching audit-* owner
+bounded audit       -> repo-audit (frontend / Java / Rust profile)
 change review       -> repo-review
 Git delivery        -> repo-delivery
 browser/client proof -> ops-browser / ops-client

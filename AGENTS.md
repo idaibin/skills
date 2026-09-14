@@ -9,13 +9,14 @@ This file defines how AI agents should work on this repository. It is not the pr
 - Do not switch into installation mode just because this repository contains `skills/`.
 - Use `repo-map` for separate repository mapping, reuse inventory, or docs/code alignment.
 - Use `domain-modeling` when shared cross-functional business language or rules conflict; load lifecycle or bounded-context depth only when that shared ambiguity requires it. Route feature-local behavior and acceptance to `product-spec`.
-- Use the host's built-in planning for requirement readiness, technical design, task decomposition, acceptance criteria, and validation gates.
+- Use `to-task` when accepted Product/UI/architecture contracts or later findings need technical decomposition or reconciliation into a durable task ledger with dependencies, acceptance/evidence gates, status, blockers, and next action. It does not execute or schedule tasks. Use host planning for ephemeral reasoning that does not need a maintained task artifact.
 - For concrete failures, follow the effective personal or repository diagnosis rules before permanent remediation; use the matching implementation skill only when a source change is requested.
 - Use `dev-frontend`, `dev-typescript`, `dev-java`, or `dev-rust` for requested code changes according to the actual owner.
-- Use `audit-frontend`, `audit-java`, or `audit-rust` for bounded read-only domain audits. Use
-  `repo-review` for a fixed Worktree or immutable change basis, including changes
-  involving authentication, authorization, secrets, untrusted input, or other
-  security risks; assess those risks as part of the ordinary Standards axis.
+- Use `repo-audit` for bounded read-only frontend, Java, or Rust audits of existing
+  surfaces without a change basis. Use `repo-review` for a fixed Worktree or immutable
+  change basis, including changes involving authentication, authorization, secrets,
+  untrusted input, or other security risks; assess those risks as part of the
+  ordinary Standards axis.
 - Use `repo-review` for read-only review of the current Worktree/index, a fixed immutable SHA/range, or a verified review package. Resolve pull requests to fixed base/head SHAs; apply Release only as a conditional profile over a fixed basis.
 - Use `ask-ai` for local external-AI packages or explicitly authorized review, research, visual exploration, and decision challenge with ChatGPT, Gemini, DeepSeek, Kimi, or another named provider after the Codex-first gate; use `ops-browser` only for delegated low-level browser operations.
 - Use `repo-delivery` for categorized commits by default, explicit single commits, pushes, evidence-based branch integration, cleanup, and other Git mutations.

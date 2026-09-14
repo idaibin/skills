@@ -94,6 +94,93 @@ class SkillRoutingEvalTests(unittest.TestCase):
             RUNNER.regression_errors([], baseline, retired_skills={"retired-skill"}),
         )
 
+    def test_rerouted_boundary_case_migrates_via_retired_observed_owner(self) -> None:
+        baseline = {
+            "cases": [
+                {
+                    "id": "dev-java-boundary",
+                    "skill": "dev-java",
+                    "case_fingerprint": "sha256:old",
+                    "status": "passed",
+                    "observed_owner": "audit-java",
+                },
+                {
+                    "id": "repo-map-normal",
+                    "skill": "repo-map",
+                    "case_fingerprint": "sha256:same",
+                    "status": "passed",
+                    "observed_owner": "repo-map",
+                },
+            ]
+        }
+        current = [
+            {
+                "id": "dev-java-audit-reroute",
+                "skill": "dev-java",
+                "case_fingerprint": "sha256:new",
+                "status": "passed",
+                "observed_owner": "repo-audit",
+            },
+            {
+                "id": "repo-map-normal",
+                "skill": "repo-map",
+                "case_fingerprint": "sha256:same",
+                "status": "passed",
+                "observed_owner": "repo-map",
+            },
+        ]
+        self.assertEqual(
+            [],
+            RUNNER.regression_errors(current, baseline, retired_skills={"audit-java"}),
+        )
+
+    def test_active_case_removal_definition_change_and_owner_drift_still_fail(self) -> None:
+        baseline = {
+            "cases": [
+                {
+                    "id": "keep-normal",
+                    "skill": "repo-map",
+                    "case_fingerprint": "sha256:same",
+                    "status": "passed",
+                    "observed_owner": "repo-map",
+                },
+                {
+                    "id": "drift-normal",
+                    "skill": "repo-map",
+                    "case_fingerprint": "sha256:fp",
+                    "status": "passed",
+                    "observed_owner": "repo-map",
+                },
+                {
+                    "id": "active-removed-normal",
+                    "skill": "repo-map",
+                    "case_fingerprint": "sha256:x",
+                    "status": "passed",
+                    "observed_owner": "repo-map",
+                },
+            ]
+        }
+        current = [
+            {
+                "id": "keep-normal",
+                "skill": "repo-map",
+                "case_fingerprint": "sha256:changed",
+                "status": "passed",
+                "observed_owner": "repo-map",
+            },
+            {
+                "id": "drift-normal",
+                "skill": "repo-map",
+                "case_fingerprint": "sha256:fp",
+                "status": "passed",
+                "observed_owner": "dev-frontend",
+            },
+        ]
+        errors = RUNNER.regression_errors(current, baseline, retired_skills={"audit-java"})
+        self.assertTrue(any("definition changed" in error for error in errors))
+        self.assertTrue(any("owner changed" in error for error in errors))
+        self.assertTrue(any("case removed" in error for error in errors))
+
     def test_unrelated_critical_stop_prompt_fails_execution_signal(self) -> None:
         index = RUNNER.load_json(RUNNER.DEFAULT_INDEX)
         cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)

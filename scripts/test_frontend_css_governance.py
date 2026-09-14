@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT / "protocols/frontend-css-governance-v1.md"
 COPIES = (
     ROOT / "skills/dev-frontend/references/frontend-css-governance.md",
-    ROOT / "skills/audit-frontend/references/frontend-css-governance.md",
+    ROOT / "skills/repo-audit/references/frontend-css-governance.md",
     ROOT / "skills/repo-review/references/frontend-css-governance.md",
 )
 

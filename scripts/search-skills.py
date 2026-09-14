@@ -1138,9 +1138,9 @@ IMPLEMENTATION_RE = re.compile(
 )
 AUDIT_RE = re.compile(r"\b(?:audit|review|inspect|assess)\b|(?:审计|审查|检查|评估)", re.IGNORECASE)
 STACK_OWNER = {
-    "rust": {"dev-rust", "audit-rust"},
-    "java": {"dev-java", "audit-java"},
-    "frontend": {"dev-frontend", "audit-frontend"},
+    "rust": {"dev-rust", "repo-audit"},
+    "java": {"dev-java", "repo-audit"},
+    "frontend": {"dev-frontend", "repo-audit"},
     "typescript": {"dev-typescript"},
 }
 OWNER_ALIASES = {
@@ -1154,6 +1154,14 @@ def query_clauses(query: str) -> list[str]:
     return [part.strip() for part in CLAUSE_SPLIT_RE.split(query) if part.strip()]
 
 
+STACK_TOKENS = {
+    "rust": ("rust", "cargo", "tokio", "tauri"),
+    "java": ("java", "spring", "maven", "gradle"),
+    "frontend": ("frontend", "react", "vue", "svelte", "css", "dom", "browser", "前端"),
+    "typescript": ("typescript", "javascript", "node", "nodejs", "bun", "deno", "fastify"),
+}
+
+
 def task_stack(query: str) -> str | None:
     """Return an explicit implementation/audit stack when the request names one."""
     affirmative = "; ".join(
@@ -1161,14 +1169,11 @@ def task_stack(query: str) -> str | None:
     )
     normalized = normalize(affirmative)
     tokens = set(normalized.split())
-    if tokens & {"rust", "cargo", "tokio", "tauri"}:
-        return "rust"
-    if tokens & {"java", "spring", "maven", "gradle"}:
-        return "java"
-    if tokens & {"frontend", "react", "vue", "svelte", "css", "dom", "browser"}:
-        return "frontend"
-    if tokens & {"typescript", "javascript", "node", "nodejs", "bun", "deno", "fastify"}:
-        return "typescript"
+    for stack, hints in STACK_TOKENS.items():
+        if tokens & set(hints) or any(
+            contains_cjk(hint) and hint in normalized for hint in hints
+        ):
+            return stack
     return None
 
 
@@ -1403,7 +1408,7 @@ def search(
             if action == "implementation" and entry_name.startswith("dev-"):
                 score += 50
                 reasons.append(f"explicit {stack} implementation owner")
-            elif action == "audit" and entry_name.startswith("audit-"):
+            elif action == "audit" and entry_name == "repo-audit":
                 score += 50
                 reasons.append(f"explicit {stack} audit owner")
         if authorized_delivery:

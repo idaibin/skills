@@ -97,9 +97,33 @@ cost.
 ### Hidden Coupling
 
 Name both sides of the coupling, the implicit ordering/configuration/state or
-data-shape contract, how it propagates, and the reachable failure when it drifts.
-Do not report generic "high coupling" without an owner pair and violated
+data-shape contract, how it propagates, and the reachable failure when it
+drifts. Do not report generic "high coupling" without an owner pair and violated
 boundary.
+
+### Async Failure And Defensive Catching
+
+Resolve the actual failure channel before adding or retaining `try/catch`:
+
+- `try/catch` handles synchronous throws and rejected promises only when the
+  promise is awaited inside the `try`; it does not catch later callback errors,
+  timer failures, or an unawaited promise rejection.
+- Do not wrap a terminal fire-and-forget telemetry or callback registration call
+  solely to preserve control flow when no required work follows it. Let the
+  integration owner handle its documented asynchronous failure channel.
+- When secondary telemetry must never interrupt business work, prefer one
+  explicit no-throw contract at the telemetry adapter boundary over repeated
+  empty catches at call sites. Do not assume that a function is asynchronous
+  from its purpose; inspect whether it synchronously prepares or enqueues work
+  before returning.
+- Tests must exercise the real callback, promise rejection, status result, or
+  synchronous-throw channel documented by the implementation. Do not make an
+  asynchronous API mock throw synchronously merely to justify defensive code.
+
+Retain a catch when it protects concrete required work that follows, performs
+recovery or mapping, or guards an API that can actually throw synchronously.
+Empty catches and redundant nested catches require the same evidence as any
+other abstraction.
 
 ## Signals That Need More Evidence
 

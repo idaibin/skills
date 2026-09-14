@@ -595,13 +595,15 @@ class ValidatorTests(unittest.TestCase):
         product_spec = (ROOT / "skills" / "product-spec" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        frontend_audit = (
-            ROOT / "skills" / "audit-frontend" / "SKILL.md"
-        ).read_text(encoding="utf-8")
+        repo_audit = (ROOT / "skills" / "repo-audit" / "SKILL.md").read_text(
+            encoding="utf-8"
+        )
         self.assertIn("matching\n  implementation owner", product_spec)
         self.assertNotIn("use `dev-frontend`\n  or `dev-rust`", product_spec)
-        self.assertIn("matching backend implementation or\n  audit owner", frontend_audit)
-        self.assertNotIn("backend-only Rust", frontend_audit)
+        self.assertIn(
+            "dev-frontend`, `dev-typescript`, `dev-java`, or `dev-rust`", repo_audit
+        )
+        self.assertNotIn("backend-only Rust", repo_audit)
 
     def test_ask_ai_app_native_relay_keeps_atomic_call_and_logical_operations_distinct(self) -> None:
         package = ROOT / "skills" / "ask-ai"
@@ -784,9 +786,7 @@ class ValidatorTests(unittest.TestCase):
             "skills/dev-frontend/references/project-grounding.md",
             "skills/dev-java/references/project-grounding.md",
             "skills/dev-rust/references/project-grounding.md",
-            "skills/audit-frontend/references/project-grounding.md",
-            "skills/audit-java/references/project-grounding.md",
-            "skills/audit-rust/references/project-grounding.md",
+            "skills/repo-audit/references/project-grounding.md",
         ):
             self.assertEqual(text, (ROOT / relative).read_text(encoding="utf-8"))
         evidence_and_status = text.split("## Evidence And Status\n", 1)[1].split(
@@ -870,9 +870,7 @@ class ValidatorTests(unittest.TestCase):
             "dev-frontend",
             "dev-java",
             "dev-rust",
-            "audit-frontend",
-            "audit-java",
-            "audit-rust",
+            "repo-audit",
         ):
             with self.subTest(skill=skill):
                 text = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
@@ -911,25 +909,27 @@ class ValidatorTests(unittest.TestCase):
                 "Rename only a private Rust helper; no reachable runtime, packaging, API, persistence, or cross-repository behavior changes.",
                 "Keep project-grounding risk classes `Not applicable`; do not scan deployment or consumer repositories.",
             ),
-            "audit-frontend": (
+}
+        repo_audit_expected = (
+            (
                 "Audit this Vue app's client route against the backend controller, gateway context, auth scope, production config, and failure states.",
                 "Trigger State/Data plus Build/Tooling and project grounding for the bounded provider/consumer chain.",
                 "Audit only a local CSS color token rename with no reachable API, build, runtime, or cross-repo effect.",
                 "Keep project grounding inactive and unrelated profiles out of scope.",
             ),
-            "audit-java": (
+            (
                 "Audit whether this Java service's source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.",
                 "Trigger Build/Migration plus project grounding; keep source, artifact, and runtime evidence distinct.",
                 "Audit this Java DTO naming only; no runtime, persistence, public contract, or cross-repo behavior is in scope.",
                 "Keep project grounding inactive; do not scan profiles, schemas, or sibling repositories.",
             ),
-            "audit-rust": (
+            (
                 "Audit this Rust service's packaged configuration, startup registration, durable migration compatibility, and consumer handoff.",
-                "Trigger `audit-rust` with project grounding; keep source, artifact, and runtime evidence distinct.",
+                "Trigger `repo-audit` with project grounding; keep source, artifact, and runtime evidence distinct.",
                 "Audit only a private Rust naming cleanup with no reachable runtime, packaging, API, persistence, or cross-repository effect.",
                 "Keep project grounding inactive and unrelated profiles out of scope.",
             ),
-        }
+        )
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         indexed = {item["name"]: item for item in index.get("packages", index.get("skills", []))}
 
@@ -962,6 +962,27 @@ class ValidatorTests(unittest.TestCase):
                 self.assertEqual(trigger_expected, trigger[trigger_prompt])
                 self.assertEqual(non_trigger_expected, non_trigger[non_trigger_prompt])
                 self.assertTrue(indexed[skill]["intents"])
+        audit_evals = (
+            ROOT / "skills" / "repo-audit" / "references" / "eval-cases.md"
+        ).read_text(encoding="utf-8")
+        audit_trigger = table_rows(
+            audit_evals.split("## Trigger Eval", 1)[1].split("## Non-Trigger Eval", 1)[0]
+        )
+        audit_non_trigger = table_rows(
+            audit_evals.split("## Non-Trigger Eval", 1)[1].split("## ", 1)[0]
+        )
+        for (
+            trigger_prompt,
+            trigger_expected,
+            non_trigger_prompt,
+            non_trigger_expected,
+        ) in repo_audit_expected:
+            with self.subTest(skill="repo-audit", prompt=trigger_prompt):
+                self.assertEqual(trigger_expected, audit_trigger[trigger_prompt])
+                self.assertEqual(
+                    non_trigger_expected, audit_non_trigger[non_trigger_prompt]
+                )
+        self.assertTrue(indexed["repo-audit"]["intents"])
 
     def test_project_grounding_index_is_owner_qualified_and_not_literal_routing(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
@@ -972,9 +993,7 @@ class ValidatorTests(unittest.TestCase):
             "dev-frontend",
             "dev-java",
             "dev-rust",
-            "audit-frontend",
-            "audit-java",
-            "audit-rust",
+            "repo-audit",
         )
         for owner in owners:
             with self.subTest(owner=owner):
@@ -1128,7 +1147,7 @@ class ValidatorTests(unittest.TestCase):
     def test_v3_registry_has_one_to_many_capabilities_and_repo_map_modes(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         self.assertEqual(3, index["version"])
-        self.assertEqual(17, len(index["packages"]))
+        self.assertEqual(16, len(index["packages"]))
         self.assertGreater(len(index["capabilities"]), len(index["packages"]))
         repo_map = next(item for item in index["packages"] if item["name"] == "repo-map")
         self.assertEqual(

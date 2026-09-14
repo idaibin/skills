@@ -1,0 +1,4 @@
+interface:
+  display_name: "To Task"
+  short_description: "Build and maintain executable task plans"
+  default_prompt: "Use $to-task to create or reconcile the repository's durable task ledger from accepted contracts and findings, preserving dependencies, acceptance criteria, evidence gates, current status, blockers, and next action without executing tasks."

@@ -20,7 +20,7 @@
 | Review any local or immutable repository change basis | `repo-review` |
 | Define unresolved product behavior or API business intent | `product-spec` |
 | Review authentication, authorization, token, input, or other security risks on a fixed change basis | `repo-review` Standards axis |
-| Audit a bounded frontend, Java, or Rust source path with no change basis | matching `audit-*` Skill |
+| Audit a bounded frontend, Java, or Rust source path with no change basis | `repo-audit` language profile |
 | Diagnose a concrete failure | Host diagnosis under effective instructions |
 | Apply accepted fixes | matching `dev-*` |
 | Stage, commit, push, squash, or clean branches | `repo-delivery` |

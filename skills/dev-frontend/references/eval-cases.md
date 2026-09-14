@@ -80,8 +80,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Plan the frontend rewrite across three apps before anyone edits code.` | Should not trigger this Skill; use the host's built-in planning. | Future cross-scope planning. |
 | `Find the root cause before changing any code.` | Should not trigger this Skill; use the host's built-in diagnosis under effective instructions. | Diagnosis before implementation. |
 | `Review all dirty changes and propose commit groups.` | Should prefer `repo-review`. | Dirty-tree review and staging plan. |
-| `Audit this frontend architecture for duplicated components, state boundaries, accessibility, and performance.` | Should prefer `audit-frontend`. | Read-only domain audit. |
-| `Does this Vite app need Rolldown configuration? Audit only; do not edit.` | Should prefer `audit-frontend` Build/Tooling. | Read-only toolchain assessment. |
+| `Audit this frontend architecture for duplicated components, state boundaries, accessibility, and performance.` | Should prefer `repo-audit`. | Read-only domain audit. |
+| `Does this Vite app need Rolldown configuration? Audit only; do not edit.` | Should prefer `repo-audit` frontend Build/Tooling. | Read-only toolchain assessment. |
 | `Verify this page in the browser and check console/network.` | Should prefer `ops-browser`. | Runtime browser evidence. |
 | `Capture the real Electron app window with platform-specific window evidence.` | Should prefer `ops-client`. | Desktop-client evidence. |
 | `These frontend changes are reviewed; stage, commit, and push them.` | Should prefer `repo-delivery`. | Authorized Git mutation after review. |

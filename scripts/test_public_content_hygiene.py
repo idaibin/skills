@@ -47,6 +47,25 @@ SECRET_SHAPE = re.compile(
     r"-----BEGIN [A-Z ]+PRIVATE KEY-----)"
 )
 PERSONAL_RUNTIME_NAMES = tuple("AI " + suffix for suffix in ("Review", "Design", "Exec"))
+# Boundary guards keep replacement IDs such as "repo-audit-frontend-normal" from
+# matching while bare owner mentions (including backticked or wildcard forms) do.
+RETIRED_AUDIT_OWNER_RE = re.compile(
+    r"(?<![a-z0-9-])audit-(?:frontend|java|rust|\*)(?![a-z0-9-])"
+)
+STALE_OWNER_SURFACES = [
+    ROOT / "AGENTS.md",
+    ROOT / "README.md",
+    ROOT / "INSTALL.md",
+    ROOT / "CLAUDE.md",
+    ROOT / "skills" / "AGENTS.md",
+    ROOT / "skills" / "CLAUDE.md",
+    ROOT / "docs" / "standards",
+    ROOT / "docs" / "skills",
+    ROOT / "docs" / "quality" / "cloud-behavior-validation.md",
+    ROOT / "evals" / "skill-routing-cases.json",
+    ROOT / "skills",
+    ROOT / "protocols",
+]
 
 
 def public_text_files() -> list[Path]:
@@ -164,6 +183,32 @@ class PublicContentHygieneTests(unittest.TestCase):
             self.assertNotRegex(text, r"https?://")
             self.assertNotIn(".." + "/", text)
 
+    def test_active_contracts_do_not_reference_retired_audit_owners(self) -> None:
+        """Active Skills, protocols, and the current validation flow stay on repo-audit.
+
+        Retirement records (live-canary-summary), generated baseline reports,
+        regression-test fixtures, and ignored task history may legitimately name
+        the retired owners; the surfaces below are current contracts only.
+        """
+        findings: list[str] = []
+        for entry in STALE_OWNER_SURFACES:
+            paths = (
+                [entry]
+                if entry.is_file()
+                else [
+                    path
+                    for path in entry.rglob("*")
+                    if path.is_file() and path.suffix in TEXT_SUFFIXES
+                ]
+            )
+            for path in paths:
+                text = path.read_text(encoding="utf-8")
+                for match in RETIRED_AUDIT_OWNER_RE.finditer(text):
+                    findings.append(
+                        f"{path.relative_to(ROOT)}: retired audit owner {match.group(0)}"
+                    )
+        self.assertEqual([], findings)
+
     def test_live_canary_summary_matches_current_package_digest(self) -> None:
         summary = (ROOT / "docs" / "quality" / "live-canary-summary.md").read_text(
             encoding="utf-8"
@@ -171,13 +216,13 @@ class PublicContentHygieneTests(unittest.TestCase):
         expected = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         self.assertIn(f"Package digest: `{expected}`", summary)
         basis = summary.split("## Current Results", 1)[0]
-        self.assertIn("all 17 packages", basis)
+        self.assertIn("all 16 packages", basis)
         self.assertIn("`skills-index.json`", basis)
 
     def test_live_canary_digest_covers_every_installed_parity_package(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         expected = {f"skills/{package['name']}" for package in index["packages"]}
-        self.assertEqual(17, len(expected))
+        self.assertEqual(16, len(expected))
         self.assertEqual(expected, set(DIGEST.DEFAULT_SCOPE))
         baseline = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         for package in DIGEST.DEFAULT_SCOPE:

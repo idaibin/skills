@@ -196,6 +196,14 @@ def regression_errors(
     baseline: dict[str, object],
     retired_skills: set[str] | None = None,
 ) -> list[str]:
+    """Compare current results with the immutable baseline.
+
+    A baseline case may leave only when it is confirmed retired: its ``skill``
+    or its ``observed_owner`` belongs to ``retired_skills``. A boundary case
+    that used to route to a retired owner therefore migrates to a replacement
+    case ID, while removals, definition changes, and owner drift of active
+    cases remain regressions.
+    """
     retired_skills = retired_skills or set()
     current_by_id = {str(case["id"]): case for case in current}
     errors: list[str] = []
@@ -212,7 +220,11 @@ def regression_errors(
         case_id = str(old.get("id"))
         new = current_by_id.get(case_id)
         if new is None:
-            if str(old.get("skill")) not in retired_skills:
+            retired_case = (
+                str(old.get("skill")) in retired_skills
+                or str(old.get("observed_owner")) in retired_skills
+            )
+            if not retired_case:
                 errors.append(f"baseline case removed: {case_id}")
         elif new.get("status") != "passed":
             errors.append(f"baseline case regressed: {case_id}")
@@ -267,21 +279,24 @@ def main() -> int:
     current_skills = {
         str(entry["name"]) for entry in SEARCH.package_entries(index)
     }
-    baseline_skills = {
-        str(case["skill"])
-        for case in baseline.get("cases", [])
-        if isinstance(case, dict) and case.get("skill")
-    } if baseline is not None else set()
+    def result_owners(case_list: object) -> set[str]:
+        owners: set[str] = set()
+        if not isinstance(case_list, list):
+            return owners
+        for case in case_list:
+            if not isinstance(case, dict):
+                continue
+            for field in ("skill", "observed_owner"):
+                value = case.get(field)
+                if isinstance(value, str) and value:
+                    owners.add(value)
+        return owners
+
+    current_owners = current_skills | (result_owners(evaluated) if evaluated else set())
+    baseline_owners = result_owners(baseline.get("cases")) if baseline is not None else set()
     candidate_baseline = load_json(ROOT / "evals" / "skill-routing-baseline.json")
-    candidate_baseline_skills = {
-        str(case["skill"])
-        for case in candidate_baseline.get("cases", [])
-        if isinstance(case, dict) and case.get("skill")
-    }
-    retired_skills = (
-        (baseline_skills - current_skills)
-        & (baseline_skills - candidate_baseline_skills)
-    )
+    candidate_owners = result_owners(candidate_baseline.get("cases"))
+    retired_skills = (baseline_owners - current_owners) & (baseline_owners - candidate_owners)
     regressions = (
         regression_errors(
             evaluated,

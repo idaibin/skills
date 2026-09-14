@@ -16,7 +16,7 @@ modern SaaS dark dashboard, minimalist bento grid, 3D claymorphic card, mobile i
 archetype, or technical OG / Satori banner card.
 
 `ui-spec` establishes the structural, token, and slot contract; `dev-frontend`
-implements component composition; and `audit-frontend` validates evidence boundaries.
+implements component composition; and `repo-audit` validates evidence boundaries.
 
 ## Archetype Governance Rules
 

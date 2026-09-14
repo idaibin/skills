@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repository Audit"
+  short_description: "Read-only frontend, Java, and Rust audits"
+  default_prompt: "Use $repo-audit to run a read-only, language-profile-selected audit of an existing frontend, Java, or Rust surface without a change basis and return P0-P3 evidence-ranked findings without editing code."

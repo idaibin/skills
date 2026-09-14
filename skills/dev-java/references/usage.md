@@ -24,7 +24,7 @@
 
 - `Map all Maven/Gradle roots and dependencies.` Use `repo-map`.
 - `Why did this one test start failing?` Use the host diagnosis flow until a fix is authorized.
-- `Audit current Spring Security and transaction risks without edits.` Use `audit-java`.
+- `Audit current Spring Security and transaction risks without edits.` Use `repo-audit`.
 - `Review this Worktree or commit.` Use `repo-review`.
 - `Implement this Kotlin/Scala/Groovy service.` Use the matching host capability; this
   Skill does not claim non-Java JVM language ownership.

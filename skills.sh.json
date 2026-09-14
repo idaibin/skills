@@ -23,7 +23,8 @@
       "title": "Product Definition",
       "description": "Skill for implementation-ready product specifications and authorized product-fact updates.",
       "skills": [
-        "product-spec"
+        "product-spec",
+        "to-task"
       ]
     },
     {
@@ -45,11 +46,9 @@
     },
     {
       "title": "Specialist Audit",
-      "description": "Read-only specialist skills for bounded frontend, Java, and Rust assessment, including selected-source visual fidelity findings.",
+      "description": "Read-only specialist skill for bounded frontend, Java, and Rust assessment, including selected-source visual fidelity findings.",
       "skills": [
-        "audit-frontend",
-        "audit-java",
-        "audit-rust"
+        "repo-audit"
       ]
     },
     {

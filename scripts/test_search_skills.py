@@ -207,9 +207,11 @@ class SearchSkillsTests(unittest.TestCase):
             "dev-frontend": "Wire this page to the real backend route; the dev proxy, production gateway context path, auth source, and loading/error/permission states differ.",
             "dev-java": "Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.",
             "dev-rust": "Change this Rust service's startup configuration, packaged resource precedence, and compatible consumer rollout.",
-            "audit-frontend": "Audit this Vue app's client route against the backend controller, gateway context, auth scope, production config, and failure states.",
-            "audit-java": "Audit whether this Java service's source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.",
-            "audit-rust": "Audit this Rust service's packaged configuration, startup registration, durable migration compatibility, and consumer handoff.",
+        }
+        audit_trigger_prompts = {
+            "Audit this Vue app's client route against the backend controller, gateway context, auth scope, production config, and failure states.",
+            "Audit whether this Java service's source profiles, packaged resources, startup exclusions, and target service registration resolve consistently.",
+            "Audit this Rust service's packaged configuration, startup registration, durable migration compatibility, and consumer handoff.",
         }
         non_trigger_prompts = {
             "repo-map": "List the top-level directories and owning manifests; do not map runtime, data, integration, compatibility, or delivery authorities.",
@@ -217,9 +219,11 @@ class SearchSkillsTests(unittest.TestCase):
             "dev-frontend": "Change only a local CSS color token; reachable API, build, runtime, and cross-repository contracts stay unchanged.",
             "dev-java": "Change only a Java comment; no behavior, build, config, or contract changes.",
             "dev-rust": "Rename only a private Rust helper; no reachable runtime, packaging, API, persistence, or cross-repository behavior changes.",
-            "audit-frontend": "Audit only a local CSS color token rename with no reachable API, build, runtime, or cross-repo effect.",
-            "audit-java": "Audit this Java DTO naming only; no runtime, persistence, public contract, or cross-repo behavior is in scope.",
-            "audit-rust": "Audit only a private Rust naming cleanup with no reachable runtime, packaging, API, persistence, or cross-repository effect.",
+        }
+        audit_non_trigger_prompts = {
+            "Audit only a local CSS color token rename with no reachable API, build, runtime, or cross-repo effect.",
+            "Audit this Java DTO naming only; no runtime, persistence, public contract, or cross-repo behavior is in scope.",
+            "Audit only a private Rust naming cleanup with no reachable runtime, packaging, API, persistence, or cross-repository effect.",
         }
         for owner, prompt in trigger_prompts.items():
             with self.subTest(kind="trigger", owner=owner):
@@ -227,6 +231,21 @@ class SearchSkillsTests(unittest.TestCase):
         for owner, prompt in non_trigger_prompts.items():
             with self.subTest(kind="non-trigger", owner=owner):
                 self.assertEqual(owner, SEARCH.search(index, prompt)[0]["name"])
+        for prompt in audit_trigger_prompts | audit_non_trigger_prompts:
+            with self.subTest(kind="consolidated-audit", prompt=prompt):
+                self.assertEqual("repo-audit", SEARCH.search(index, prompt)[0]["name"])
+
+    def test_cjk_frontend_prompts_select_the_frontend_stack_owner(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        self.assertEqual(
+            "repo-audit", SEARCH.search(index, "检查当前前端架构")[0]["name"]
+        )
+        self.assertEqual(
+            "repo-audit", SEARCH.search(index, "审计这个前端页面的状态与可访问性")[0]["name"]
+        )
+        self.assertEqual(
+            "dev-frontend", SEARCH.search(index, "修改前端导航组件的渲染问题")[0]["name"]
+        )
 
     def test_repo_delivery_grounding_authorization_stays_in_full_index_routing(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
@@ -1272,7 +1291,7 @@ class SearchSkillsTests(unittest.TestCase):
     def test_full_index_keeps_frontend_implementation_and_java_audit_discoverable(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         self.assertEqual("dev-frontend", SEARCH.search(index, "implement a frontend component")[0]["name"])
-        self.assertEqual("audit-java", SEARCH.search(index, "audit a Java service")[0]["name"])
+        self.assertEqual("repo-audit", SEARCH.search(index, "audit a Java service")[0]["name"])
 
     def test_v3_repo_map_exposes_three_capabilities_and_runtime_scope_formula(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))

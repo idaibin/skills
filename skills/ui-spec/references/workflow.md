@@ -119,7 +119,7 @@ Rules:
   support there.
 - Keep the matrix local to the affected slice. Do not hard-code a project's desktop
   sizes as a universal rule or duplicate this schema in `dev-frontend`,
-  `audit-frontend`, `ops-browser`, or `ops-client`; those consumers receive this
+  `repo-audit`, `ops-browser`, or `ops-client`; those consumers receive this
   matrix in the handoff and apply their own stage responsibilities.
 
 For example, an Admin surface may require `1920x1080`, make `1440x900` optional, and
@@ -174,6 +174,6 @@ compare source fidelity, task completion, information structure,
 interaction completeness, engineering fit, and evidence completeness. Emit one
 readiness verdict per slice and mark an incomplete multi-surface result `Partial`.
 Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved gaps
-to `dev-frontend`, `audit-frontend`, and `ops-browser`/`ops-client`; include traceability
+to `dev-frontend`, `repo-audit`, and `ops-browser`/`ops-client`; include traceability
 and asset gates, and request runtime evidence from the operations owner after
 implementation.

@@ -14,6 +14,7 @@ The result must contain exactly these public packages:
 repo-map
 domain-modeling
 product-spec
+to-task
 repo-review
 repo-delivery
 ui-spec
@@ -21,9 +22,7 @@ dev-frontend
 dev-typescript
 dev-java
 dev-rust
-audit-frontend
-audit-java
-audit-rust
+repo-audit
 ops-browser
 ops-client
 ask-ai
@@ -44,6 +43,7 @@ The publishable source directories are:
 - `skills/repo-map`
 - `skills/domain-modeling`
 - `skills/product-spec`
+- `skills/to-task`
 - `skills/repo-review`
 - `skills/repo-delivery`
 - `skills/ui-spec`
@@ -51,9 +51,7 @@ The publishable source directories are:
 - `skills/dev-typescript`
 - `skills/dev-java`
 - `skills/dev-rust`
-- `skills/audit-frontend`
-- `skills/audit-java`
-- `skills/audit-rust`
+- `skills/repo-audit`
 - `skills/ops-browser`
 - `skills/ops-client`
 - `skills/ask-ai`
@@ -79,7 +77,7 @@ Install selected Skills globally for Codex and Claude Code:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill repo-map domain-modeling product-spec repo-review repo-delivery \
+  --skill repo-map domain-modeling product-spec to-task repo-review repo-delivery \
   --global --agent codex claude-code
 ```
 
@@ -87,7 +85,7 @@ Install one Skill globally:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill audit-rust \
+  --skill repo-audit \
   --global --agent codex
 ```
 
@@ -111,19 +109,19 @@ npx skills@latest add idaibin/skills \
 Product definition:
 
 ```bash
-npx skills@latest add idaibin/skills --skill product-spec
+npx skills@latest add idaibin/skills --skill product-spec to-task
 ```
 
 Frontend specification and implementation:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill ui-spec dev-frontend audit-frontend ops-browser repo-review
+  --skill ui-spec dev-frontend repo-audit ops-browser repo-review
 ```
 
 This set covers the shared `frontend-visual-evidence/v1` handoff: `ui-spec` owns
 traceable targets, `dev-frontend` owns implementation and two-pass closure,
-`ops-browser` owns capture/computed evidence, `audit-frontend` owns current-surface
+`ops-browser` owns capture/computed evidence, `repo-audit` owns current-surface
 findings, and `repo-review` owns fixed-basis completion review.
 
 TypeScript service, CLI, worker, or engineering-tool implementation:
@@ -139,14 +137,14 @@ Rust implementation and audit:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill dev-rust audit-rust repo-review
+  --skill dev-rust repo-audit repo-review
 ```
 
 Java implementation and audit:
 
 ```bash
 npx skills@latest add idaibin/skills \
-  --skill dev-java audit-java repo-review
+  --skill dev-java repo-audit repo-review
 ```
 
 These are documentation shortcuts, not custom CLI bundles or quality claims.
@@ -154,7 +152,7 @@ These are documentation shortcuts, not custom CLI bundles or quality claims.
 ## Use Without Installing
 
 ```bash
-npx skills@latest use idaibin/skills@audit-rust
+npx skills@latest use idaibin/skills@repo-audit
 ```
 
 ## Inspect, Update, and Remove
@@ -164,7 +162,7 @@ npx skills list
 npx skills list --global
 npx skills update --project
 npx skills update --global
-npx skills remove audit-rust --global --agent codex
+npx skills remove repo-audit --global --agent codex
 ```
 
 Updates depend on source metadata recorded by `skills add`. Manually copied

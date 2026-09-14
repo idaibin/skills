@@ -1,4 +1,0 @@
-interface:
-  display_name: "Rust Audit"
-  short_description: "Audit selected Rust risk profiles with evidence"
-  default_prompt: "Use $audit-rust to run a read-only, profile-selected Rust audit and return evidence-ranked findings without editing code."

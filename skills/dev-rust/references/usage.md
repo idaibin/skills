@@ -50,7 +50,7 @@ regenerate normalized OpenAPI and the TS client, and prove compatibility and err
 - Diagnosis-only work for an unknown failing test or performance regression; use the host's built-in diagnosis under effective instructions.
 - Reviewing staged ownership or producing commit groups; use `repo-review`. Use `repo-delivery` for actual staging or commits after review.
 - Systematic read-only Rust architecture, performance, memory, concurrency,
-  SQLite, unsafe, or FFI audit; use `audit-rust`.
+  SQLite, unsafe, or FFI audit; use `repo-audit`.
 - Review of authentication, authorization, token, or input risks on a fixed
   Worktree or immutable change basis; use `repo-review`.
 - Frontend UI work around a Tauri backend; use `dev-frontend`.

@@ -7,6 +7,7 @@ effective repository instructions.
 ## Design Rules
 
 - Keep one public Skill per stable user intent and authority boundary.
+- Keep project task state in the target repository. `to-task` owns the reusable transformation and reconciliation workflow, not a catalog-side copy of any project's ledger.
 - Use profiles for framework or technology variants that share the same owner,
   workflow, mutation boundary, and output.
 - Keep `SKILL.md` concise. Link detailed checklists, examples, and variants directly

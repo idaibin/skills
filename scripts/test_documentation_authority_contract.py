@@ -48,7 +48,7 @@ LIFECYCLE_GATE_PATTERNS = {
     "skills/dev-frontend/SKILL.md": (
         r"Require a (?P<gate>.*?)\. Run the repository-defined non-mutating validator",
     ),
-    "skills/audit-frontend/SKILL.md": (
+    "skills/repo-audit/references/frontend-profile.md": (
         r"verify its (?P<gate>.*?)\. Inspect current validator evidence",
     ),
     "skills/repo-review/SKILL.md": (
@@ -155,9 +155,9 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
             "protocols/visual-direction-and-anti-slop-v1.md",
             "skills/ui-spec/references/visual-direction-and-anti-slop.md",
             "skills/dev-frontend/references/visual-direction-and-anti-slop.md",
-            "skills/audit-frontend/references/visual-direction-and-anti-slop.md",
+            "skills/repo-audit/references/visual-direction-and-anti-slop.md",
             "skills/dev-frontend/SKILL.md",
-            "skills/audit-frontend/SKILL.md",
+            "skills/repo-audit/SKILL.md",
             "skills/repo-review/SKILL.md",
             "skills/product-spec/references/template.md",
         )
@@ -172,7 +172,7 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
                 )
 
     def test_evals_do_not_restore_git_root_design_authority(self) -> None:
-        for owner in ("product-spec", "ui-spec", "dev-frontend", "audit-frontend", "repo-review"):
+        for owner in ("product-spec", "ui-spec", "dev-frontend", "repo-audit", "repo-review"):
             path = f"skills/{owner}/references/eval-cases.md"
             text = self.read(path)
             with self.subTest(path=path):
@@ -199,7 +199,9 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
 
     def test_ui_governance_keeps_page_registry_and_source_authorities_separate(self) -> None:
         ui_evals = self.read("skills/ui-spec/references/eval-cases.md")
-        audit_components = self.read("skills/audit-frontend/references/component-system.md")
+        audit_components = self.read(
+            "skills/repo-audit/references/frontend-component-system.md"
+        )
         self.assertIn("Registry/token lifecycle in their declared owners", ui_evals)
         self.assertIn("without treating the Registry as the props", audit_components)
         self.assertIn("Whole-image similarity metrics are diagnostic", audit_components)
@@ -217,7 +219,7 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         self.assertIn("forgeway-handoff.md", contract)
         for path in (
             "skills/dev-frontend/references/eval-cases.md",
-            "skills/audit-frontend/references/eval-cases.md",
+            "skills/repo-audit/references/eval-cases.md",
             "skills/repo-review/references/eval-cases.md",
         ):
             with self.subTest(path=path):

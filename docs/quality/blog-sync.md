@@ -14,7 +14,8 @@ local path, repository identity, and article filenames are intentionally omitted
 ## Verified catalog facts to synchronize
 
 - The catalog has 16 public packages after the current source validation, including
-  `dev-java` and `audit-java` as separate implementation and read-only audit owners.
+  `dev-java` for implementation and `repo-audit` as the consolidated read-only audit
+  owner with frontend, Java, and Rust profiles.
 - `ui-spec` resolves `<design-root>` from guidance, shared-system ownership, and
   consumers, then uses its Google `DESIGN.md` as the sole shared visual authority for
   that boundary. It translates a selected visual source into a Feature Spec for

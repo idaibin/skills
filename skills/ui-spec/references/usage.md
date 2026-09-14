@@ -24,7 +24,7 @@ candidate direction -> ui-spec candidate spec + complete prompt
 resolved design-root DESIGN.md + selected visual source + product facts -> ui-spec
   -> Feature Spec (reads DESIGN.md, does not rewrite it) -> dev-frontend
   -> Design System Spec (updates DESIGN.md) -> affected Feature Specs
-  -> ops-browser or ops-client -> audit-frontend -> repo-review -> repo-delivery
+  -> ops-browser or ops-client -> repo-audit -> repo-review -> repo-delivery
 ```
 
 A task with an already selected visual source may start directly with `ui-spec`. A

@@ -151,7 +151,7 @@ current behavior.
 - `dev-*` builds the task-scoped grounding record before edits, implements only after
   decisive authorities and compatibility constraints are sufficient, and reports
   evidence gaps without calling the change complete.
-- `audit-*` selects risk profiles from semantic signals, reads enough adjacent owners
+- `repo-audit` selects language profiles and risk profiles from semantic signals, reads enough adjacent owners
   to close the contract, and reports only reachable evidence-backed findings.
 - `repo-review` binds grounding to its fixed Worktree/SHA/package basis, treats
   same-change specifications as intent unless independently authoritative, attributes

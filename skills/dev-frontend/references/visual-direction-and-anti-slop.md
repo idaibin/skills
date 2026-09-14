@@ -83,5 +83,5 @@ existing system, nearest analogue, measured inconsistency, or user impact:
     separate evidence levels; unchecked visual quality remains `Not verified`.
 
 `ui-spec` records accepted decisions and evidence. `dev-frontend` implements the
-smallest aligned source change. `audit-frontend` reports only evidence-backed drift and
+smallest aligned source change. `repo-audit` reports only evidence-backed drift and
 routes remediation without editing.

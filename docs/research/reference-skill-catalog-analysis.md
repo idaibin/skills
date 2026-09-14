@@ -19,8 +19,8 @@ boundaries, package format, and validation system.
 | Failure diagnosis | Use a tight red-capable loop, minimization, falsifiable hypotheses, one-variable probes, and a regression seam. | Global diagnosis instructions |
 | Behavior testing | Test public seams and use vertical red-green slices. | Internal references in implementation Skills |
 | Document co-authoring | Gather source context, refine for the target reader, and re-read the finished artifact without imposing one document ceremony on every output. | `human-writing`; product decisions and acceptance remain in `product-spec` |
-| React composition | Prefer explicit variants, slots or compound composition when boolean mode combinations create invalid states; preserve simple independent props when they remain clear. | React profiles in `dev-frontend` and `audit-frontend` |
-| Web interface guidelines | Keep stable component, layout, accessibility, and performance checks versioned with the catalog; require runtime evidence for rendered claims. | `audit-frontend`, with accepted fixes routed to `dev-frontend` |
+| React composition | Prefer explicit variants, slots or compound composition when boolean mode combinations create invalid states; preserve simple independent props when they remain clear. | React profiles in `dev-frontend` and `repo-audit` |
+| Web interface guidelines | Keep stable component, layout, accessibility, and performance checks versioned with the catalog; require runtime evidence for rendered claims. | `repo-audit` frontend profile, with accepted fixes routed to `dev-frontend` |
 | Dependency source inspection | Read installed-version documentation or source only when public types, contracts, and local usage cannot answer the task; keep fetching tools optional. | The active implementation or audit owner, not a new public Skill |
 | Implementation | Consume a specification, validate continuously, and review before delivery. | Existing implementation-to-review chain |
 | Review | Keep Standards and Spec review independent so one cannot hide the other. | Two-axis evidence inside `repo-review` |

@@ -20,7 +20,7 @@ captured runtime.
 | `ui-spec` | Freeze source revision, approval, rights, viewport, and state; label evidence; separate selected source, runtime, and target contract; emit traceable deltas and asset strategy. | Unavailable source, uncertain viewport/state, unapproved proposed exact value, missing critical asset owner, `Partial`, or `Not Ready`. |
 | `dev-frontend` | Read applicable contracts and source evidence; map every acceptance ID before editing; preserve confirmed structure; close critical deltas before polish; run two visual passes. | Missing mapping, source/runtime conflation, generic fallback used as normal content, or missing target, breakpoint, or runtime evidence. |
 | `ops-browser` | Capture source and runtime at the same viewport/state; retain side-by-side, overlay, or diff evidence; read computed font, final contrast, geometry, alignment, and states; restore user browser state. | Missing capability, source identity, viewport, or state; unsupported claim; or runtime/screenshot inference relabeled as source-extracted. |
-| `audit-frontend` | Apply selected-source visual fidelity as a bounded profile and lead with P0-P3 findings. | Build, lint, source styles, structural similarity, or one screenshot offered as visual acceptance. |
+| `repo-audit` | Apply the frontend profile's selected-source visual fidelity as a bounded profile and lead with P0-P3 findings. | Build, lint, source styles, structural similarity, or one screenshot offered as visual acceptance. |
 | `repo-review` | Apply a fixed-basis visual-completion profile; validate handoff structure and inspect cited evidence. | Missing mapping, fewer than two same-state passes, absent computed evidence, unresolved P0/P1, or required state marked `Not verified`. |
 
 No duplicate public Skill is introduced. These owners share the
@@ -43,7 +43,7 @@ The evidence labels are `source-extracted`, `browser-computed`,
 - Stage model: `spec-ready` → `mapped` → `pass-1` → `final`
 - Readiness: only an approved source with no blockers can be `Ready`; later stages
   require `Ready`; `Partial` and `Not Ready` require explicit blockers.
-- Package copies: `ui-spec`, `dev-frontend`, `audit-frontend`, `repo-review`, and
+- Package copies: `ui-spec`, `dev-frontend`, `repo-audit`, `repo-review`, and
   `ops-browser`
 - Sanitized fixture: `skills/dev-frontend/assets/frontend-visual-evidence.example.json`
 - Generic example: `skills/dev-frontend/references/frontend-visual-gate-example.md`

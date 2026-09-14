@@ -49,4 +49,4 @@ preference as a violation.
 Source declarations can establish ownership and candidate behavior, but not perceived
 timing, spatial continuity, interruption, hover behavior, or reduced-motion results.
 Require runtime evidence for those claims or mark them `Not verified`. Do not create a
-parallel frontend-quality profile or require `audit-frontend` by default.
+parallel frontend-quality profile or require `repo-audit` by default.

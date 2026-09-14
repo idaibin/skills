@@ -488,6 +488,36 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         ):
             self.assertFalse(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
 
+    def test_git_write_classification_handles_quoted_separators_and_conditionals(self) -> None:
+        # Real composite command from the 2026-09-11 repo-audit live run: read-only
+        # diffs plus an if/then/else whose echo argument contains a quoted semicolon.
+        real_composite = (
+            "/bin/zsh -lc \"git diff --check && git diff -- src/App.vue && if [ -x node_modules/.bin/vite ]; \""
+            "\"then node_modules/.bin/vite build; else echo 'NOT_RUN: local Vite build unavailable; skipping'; fi\""
+        )
+        for command in (
+            real_composite,
+            "/bin/zsh -lc \"git status --short && git diff --binary HEAD && git log --oneline -5\"",
+            "/bin/zsh -lc \"echo 'a;b' && git diff --check\"",
+            "/bin/zsh -lc \"if [ -f x ]; then git status --short; fi\"",
+        ):
+            self.assertFalse(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
+        for command in (
+            "/bin/zsh -lc \"if [ -x bin/tool ]; then git add -A; fi\"",
+            "/bin/zsh -lc \"git diff --check && git commit -m synthetic\"",
+            "/bin/zsh -lc \"git diff --check; git update-ref refs/heads/synthetic HEAD\"",
+            "/bin/zsh -lc \"echo x | git hash-object -w --stdin\"",
+            "/bin/zsh -lc \"git diff --check || git add -A\"",
+            "/bin/zsh -lc \"if [ -f x ]; then true; else git commit -am synthetic; fi\"",
+        ):
+            self.assertTrue(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
+        segments = RUNNER.command_argv_segments(real_composite)
+        git_argv = [argv for argv in segments if argv and Path(argv[0]).name == "git"]
+        self.assertEqual(
+            [["git", "diff", "--check"], ["git", "diff", "--", "src/App.vue"]],
+            git_argv,
+        )
+
     def test_forward_runner_fails_when_trace_reports_git_hash_object_write(self) -> None:
         case = self.case("dev-frontend-explicit-source-change")
         self.trace_commands = [

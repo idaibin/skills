@@ -142,7 +142,7 @@ interface/schema authorities remain authoritative.
 
 - First-pass Java build/dependency mapping; use `repo-map`.
 - Diagnosis-only work with no authorized source change; use the host diagnosis flow.
-- A bounded read-only Java/Spring audit; use `audit-java`.
+- A bounded read-only Java/Spring audit; use `repo-audit`.
 - Worktree/index or immutable change-basis review; use `repo-review`.
 - Security-only repository scanning or exploit validation; use an available security workflow.
 - Git staging, commit, push, integration, or cleanup; use `repo-delivery`.

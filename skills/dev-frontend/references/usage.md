@@ -55,7 +55,7 @@ error states, remove the touched duplicate DTO, and verify loading/success/error
 - Large future planning before implementation; use the host's built-in planning.
 - Diagnosis-only work before any frontend source change is requested; use the host's built-in diagnosis under effective instructions.
 - Git diff ownership, staging plans, or commit readiness; use `repo-review`. Use `repo-delivery` for actual staging, commit, push, or delivery.
-- Systematic read-only frontend architecture, reuse, state/data, layout, accessibility, performance, or Tauri-boundary review; use `audit-frontend`.
+- Systematic read-only frontend architecture, reuse, state/data, layout, accessibility, performance, or Tauri-boundary review; use `repo-audit`.
 - Browser screenshots, console, network, uploads, downloads, account state, or runtime checks; use `ops-browser`.
 - Real desktop-client launch, process, CGWindowID, or native runtime evidence; use `ops-client`.
 - Product behavior, permissions, compatibility, or failure semantics are unresolved;

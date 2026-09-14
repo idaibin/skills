@@ -27,6 +27,7 @@
       "urn:skills:runtime-observation:v1",
       "urn:skills:rust-change-request:v1",
       "urn:skills:source-change-result:v1",
+      "urn:skills:task-plan:v1",
       "urn:skills:task-request:v1",
       "urn:skills:typescript-change-request:v1",
       "urn:skills:ui-contract:v1",
@@ -249,9 +250,7 @@
         "unbounded domain audit"
       ],
       "related": [
-        "audit-frontend",
-        "audit-java",
-        "audit-rust",
+        "repo-audit",
         "repo-delivery"
       ],
       "capability_ids": [
@@ -412,6 +411,72 @@
       ]
     },
     {
+      "name": "to-task",
+      "category": "product-definition",
+      "owner": "to-task",
+      "mutation_class": "artifact-write",
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "emit-draft",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "basis-drift",
+        "evidence-incomplete"
+      ],
+      "intents": [
+        "convert accepted contracts into executable tasks, dependencies, acceptance checks, and evidence gates",
+        "maintain and reconcile a resumable project task ledger",
+        "reopen only affected tasks after requirements, basis, or review findings change"
+      ],
+      "keywords": [
+        "task plan",
+        "task breakdown",
+        "implementation plan",
+        "dependency graph",
+        "acceptance criteria",
+        "task ledger",
+        "ready task",
+        "任务拆分",
+        "任务账",
+        "验收标准"
+      ],
+      "excludes": [
+        "product behavior decisions",
+        "repository mapping",
+        "source implementation",
+        "change review",
+        "Git mutation"
+      ],
+      "related": [
+        "product-spec",
+        "ui-spec",
+        "repo-map",
+        "dev-frontend",
+        "dev-typescript",
+        "dev-java",
+        "dev-rust",
+        "repo-review"
+      ],
+      "capability_ids": [
+        "task.ledger.maintain"
+      ]
+    },
+    {
       "name": "ui-spec",
       "category": "design",
       "owner": "ui-spec",
@@ -530,7 +595,7 @@
       ],
       "related": [
         "ui-spec",
-        "audit-frontend",
+        "repo-audit",
         "ops-browser"
       ],
       "capability_ids": [
@@ -658,7 +723,7 @@
         "Git delivery"
       ],
       "related": [
-        "audit-java",
+        "repo-audit",
         "repo-map",
         "repo-review"
       ],
@@ -719,7 +784,7 @@
         "Git delivery"
       ],
       "related": [
-        "audit-rust",
+        "repo-audit",
         "repo-review"
       ],
       "capability_ids": [
@@ -727,18 +792,20 @@
       ]
     },
     {
-      "name": "audit-frontend",
+      "name": "repo-audit",
       "category": "specialist-audit",
-      "owner": "audit-frontend",
+      "owner": "repo-audit",
       "mutation_class": "read-only",
       "required_capabilities": [
         "filesystem-read",
+        "git-read",
         "command-runner",
         "visual-evidence"
       ],
       "allowed_effects": [
         "read-repository",
         "read-source",
+        "read-git-state",
         "emit-findings"
       ],
       "forbidden_effects": [
@@ -756,8 +823,8 @@
         "runtime-unverified"
       ],
       "intents": [
-        "audit a bounded frontend surface without editing",
-        "assess frontend architecture, accessibility, performance, state, tooling, or visual fidelity"
+        "audit a bounded frontend, Java, or Rust surface without editing",
+        "assess existing architecture, ownership, state, transactions, concurrency, persistence, performance, accessibility, visual fidelity, tooling, or unsafe boundaries without a change basis"
       ],
       "keywords": [
         "frontend audit",
@@ -767,55 +834,7 @@
         "architecture audit",
         "Vue route audit",
         "CSS token audit",
-        "CSS color token audit"
-      ],
-      "excludes": [
-        "frontend implementation",
-        "fixed-basis change review"
-      ],
-      "related": [
-        "dev-frontend",
-        "repo-review"
-      ],
-      "capability_ids": [
-        "frontend.surface.audit"
-      ]
-    },
-    {
-      "name": "audit-java",
-      "category": "specialist-audit",
-      "owner": "audit-java",
-      "mutation_class": "read-only",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "read-git-state",
-        "emit-findings"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
-      "intents": [
-        "audit a bounded Java source or Java-owned Spring/build configuration surface without editing",
-        "assess build, architecture, API security, transactions, persistence, integrations, performance, or migration risks"
-      ],
-      "keywords": [
+        "CSS color token audit",
         "Java audit",
         "Spring audit",
         "transaction audit",
@@ -823,73 +842,28 @@
         "Spring Security audit",
         "Maven",
         "Gradle",
-        "migration audit"
-      ],
-      "excludes": [
-        "Java implementation",
-        "fixed-basis change review",
-        "vulnerability scan"
-      ],
-      "related": [
-        "dev-java",
-        "repo-review"
-      ],
-      "capability_ids": [
-        "java.surface.audit"
-      ]
-    },
-    {
-      "name": "audit-rust",
-      "category": "specialist-audit",
-      "owner": "audit-rust",
-      "mutation_class": "read-only",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "command-runner"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-source",
-        "read-git-state",
-        "emit-findings"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-artifact",
-        "write-git-state",
-        "control-browser-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified"
-      ],
-      "intents": [
-        "audit a bounded Rust workspace or subsystem without editing",
-        "assess ownership, concurrency, persistence, performance, or unsafe boundaries"
-      ],
-      "keywords": [
+        "migration audit",
         "Rust audit",
         "concurrency audit",
         "unsafe audit",
-        "performance audit",
         "ownership",
         "Rust runtime configuration audit",
         "Rust service migration compatibility audit"
       ],
       "excludes": [
-        "Rust implementation",
-        "fixed-basis change review"
+        "source implementation",
+        "fixed-basis change review",
+        "vulnerability scan"
       ],
       "related": [
+        "dev-frontend",
+        "dev-java",
         "dev-rust",
         "repo-review"
       ],
       "capability_ids": [
+        "frontend.surface.audit",
+        "java.surface.audit",
         "rust.surface.audit"
       ]
     },
@@ -1754,6 +1728,84 @@
       }
     },
     {
+      "capability_id": "task.ledger.maintain",
+      "capability_version": "1.0.0",
+      "package": "to-task",
+      "description": "Convert accepted project contracts into and reconcile an executable task ledger.",
+      "accepts": [
+        {
+          "schema": "urn:skills:task-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:task-plan:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "write-artifact",
+          "emit-draft",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "BASIS_DRIFT",
+          "recoverable": true,
+          "recovery": "refresh-accepted-input-basis"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "preserve-blocker-and-plan-independent-work"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "task_acceptance_and_dependency_trace"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
       "capability_id": "ui.contract.specify",
       "capability_version": "1.1.0",
       "package": "ui-spec",
@@ -2172,7 +2224,7 @@
     {
       "capability_id": "frontend.surface.audit",
       "capability_version": "1.0.0",
-      "package": "audit-frontend",
+      "package": "repo-audit",
       "description": "Audit a bounded frontend surface read-only.",
       "accepts": [
         {
@@ -2243,7 +2295,7 @@
     {
       "capability_id": "java.surface.audit",
       "capability_version": "1.0.0",
-      "package": "audit-java",
+      "package": "repo-audit",
       "description": "Audit a bounded Java surface read-only.",
       "accepts": [
         {
@@ -2315,7 +2367,7 @@
     {
       "capability_id": "rust.surface.audit",
       "capability_version": "1.0.0",
-      "package": "audit-rust",
+      "package": "repo-audit",
       "description": "Audit a bounded Rust surface read-only.",
       "accepts": [
         {

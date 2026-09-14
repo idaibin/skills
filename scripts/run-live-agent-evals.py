@@ -412,18 +412,82 @@ def trace_has_git_write(facts: dict[str, Any]) -> bool:
     return False
 
 
+SHELL_BRANCH_KEYWORDS = (
+    "if", "then", "elif", "else", "fi", "do", "done", "!", "while", "until", "for", "case", "esac",
+)
+
+
+def split_shell_body(body: str) -> list[str]:
+    """Split a shell body only on separators outside quotes.
+
+    A quoted argument may itself contain ``;`` or ``&&``; splitting there would
+    break its quotes and make the whole command unparseable.
+    """
+    segments: list[str] = []
+    current: list[str] = []
+    quote: str | None = None
+    index = 0
+    while index < len(body):
+        char = body[index]
+        if quote is not None:
+            if char == "\\" and quote == '"' and index + 1 < len(body):
+                current.extend(body[index : index + 2])
+                index += 2
+                continue
+            if char == quote:
+                quote = None
+            current.append(char)
+            index += 1
+            continue
+        if char in ("'", '"'):
+            quote = char
+            current.append(char)
+            index += 1
+            continue
+        if char == "\\" and index + 1 < len(body):
+            current.extend(body[index : index + 2])
+            index += 2
+            continue
+        if body[index : index + 2] in ("&&", "||"):
+            segments.append("".join(current))
+            current = []
+            index += 2
+            continue
+        if char in (";", "|"):
+            segments.append("".join(current))
+            current = []
+            index += 1
+            continue
+        current.append(char)
+        index += 1
+    segments.append("".join(current))
+    return [segment.strip() for segment in segments if segment.strip()]
+
+
 def command_argv_segments(command: str) -> list[list[str]]:
-    """Extract actual shell argv segments; echo/comments and unknown wrappers yield no target argv."""
+    """Extract actual shell argv segments; echo/comments and unknown wrappers yield no target argv.
+
+    Splitting is quote-aware, ``if/then/else`` branch keywords are stripped so
+    commands inside conditionals stay inspectable, and a segment that shlex
+    cannot parse keeps its whitespace tokens so Git write detection fails
+    closed instead of silently dropping it.
+    """
     try:
         argv = shlex.split(command)
     except ValueError:
-        return []
+        return [command.split()]
     if len(argv) >= 3 and Path(argv[0]).name in {"sh", "bash", "zsh"} and any(flag in argv[1:-1] for flag in ("-c", "-lc")):
-        try:
-            shell_body = argv[-1]
-            return [shlex.split(part) for part in re.split(r"\s*(?:&&|;|\|\|)\s*", shell_body) if part.strip()]
-        except ValueError:
-            return []
+        segments: list[list[str]] = []
+        for part in split_shell_body(argv[-1]):
+            try:
+                tokens = shlex.split(part)
+            except ValueError:
+                tokens = part.split()
+            while tokens and tokens[0] in SHELL_BRANCH_KEYWORDS:
+                tokens = tokens[1:]
+            if tokens:
+                segments.append(tokens)
+        return segments
     return [argv]
 
 

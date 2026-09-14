@@ -25,7 +25,7 @@ design-token table, breakpoint catalog, or framework recipe.
 - Repository source owns the current shell, component, styling, and runtime model;
   it is implementation evidence, not silent approval for a conflicting decision.
 - `ui-spec` records accepted layout ownership, `dev-frontend` owns source changes,
-  and `audit-frontend` stays read-only.
+  and `repo-audit` stays read-only.
 
 ## Layout Responsibility Model
 
@@ -118,7 +118,7 @@ inapplicable fields rather than inventing requirements or project-specific value
 
 `ui-spec` owns expected behavior in the existing UI contract; `dev-frontend` maps the
 changed cases to implementation and focused checks; `ops-browser` or `ops-client`
-provides runtime evidence and `audit-frontend` checks that evidence. This is not a new
+provides runtime evidence and `repo-audit` checks that evidence. This is not a new
 schema, viewport matrix, approval gate, or reason to reapprove an accepted contract.
 Keep business semantics and concrete dimensions in project documents.
 

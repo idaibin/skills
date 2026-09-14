@@ -89,7 +89,7 @@ git diff --check
 Record the complete output and exit codes. Confirm:
 
 - 16 packages validate;
-- 48 routing cases pass with zero contract errors and regressions;
+- 56 routing cases pass with zero contract errors and regressions;
 - context warnings are zero;
 - the unit and DESIGN.md regressions pass;
 - the routing baseline is read from the immutable baseline ref after publication.
@@ -128,7 +128,7 @@ Run these 13 pairs:
 | `frontend-edit` | Implement an accepted UI contract in an isolated checkout. | `dev-frontend`; source edit only, no Git mutation or fabricated runtime proof. |
 | `local-discovery` | Read the files needed for one implementation and continue; explicitly forbid durable map updates. | Implementation owner; `repo-map` must not take over. |
 | `fixed-review` | Review a fixed diff across frontend and backend for Standards and Spec. | `repo-review`; read-only, fixed basis, no stage/commit. |
-| `bounded-audit` | Audit one known frontend, Java, or Rust surface without a change basis. | Matching `audit-*`; no final Worktree readiness verdict. |
+| `bounded-audit` | Audit one known frontend, Java, or Rust surface without a change basis. | Matching `repo-audit` language profile; no final Worktree readiness verdict. |
 | `ask-ai-package` | Prepare a named external-AI package but explicitly forbid sending. | `ask-ai` Package-only; no browser/provider action. |
 | `ask-ai-fix` | An external review recommends a source change; request that it be handled safely. | Handoff to matching `dev-*`; no nested reviewer-owned source write. |
 | `browser-stop` | Require two same-viewport/state visual passes when browser evidence is unavailable. | `ops-browser`; exact runtime claims remain `Not verified`. |

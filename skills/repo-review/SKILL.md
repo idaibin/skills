@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when Worktree changes or a fixed snapshot/range need coordinated read-only Standards and Spec findings, documentation-authority review, completed provider-evidence integration, or selected-source visual-completion review; use audit-* for bounded domain audits and a host security workflow for security-only review."
+description: "Use when Worktree changes or a fixed snapshot/range need coordinated read-only Standards and Spec findings, documentation-authority review, completed provider-evidence integration, or selected-source visual-completion review; use repo-audit for bounded domain audits and a host security workflow for security-only review."
 ---
 
 # Repository Review
@@ -97,7 +97,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
 - Future implementation planning; use the host's built-in planning.
 - Business-domain modeling without a change basis; use `domain-modeling`.
 - Root-cause diagnosis of a concrete failure; use the host's built-in diagnosis under effective instructions.
-- A direct bounded frontend-only, Java-only, or Rust-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use the matching `audit-*` Skill. When a review basis exists, keep `repo-review` as coordinator.
+- A direct bounded frontend-only, Java-only, or Rust-only audit with no Worktree/index, immutable review basis, or cross-surface coordination; use `repo-audit` with its matching language profile. When a review basis exists, keep `repo-review` as coordinator.
 - Security-only repository/path scans or Git change scans; use the matching host
   security workflow. Keep this Skill when security is one axis of a broader review or
   when integrating completed scan evidence into its fixed-basis verdict.
@@ -132,7 +132,7 @@ Do not mix evidence between bases. Current-worktree content is contamination whe
   an external review axis and cannot add, clear, or reprioritize findings.
 - Do not activate frontend design compliance merely because a repository contains
   frontend files. It is conditional on visual or UI-contract change scope, does not
-  create another review profile, and does not require `audit-frontend`.
+  create another review profile, and does not require `repo-audit`.
 - Apply visual completion, OpenAPI, frontend CSS/components, documentation authority,
   motion, code quality, and project-grounding gates only through their applicable
   references. Static checks never replace required runtime evidence, and optional

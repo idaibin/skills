@@ -24,7 +24,7 @@
 
 | Prompt | Expected |
 | --- | --- |
-| `The behavior is approved; split implementation into tasks, owners, dependencies, and validation commands.` | Use host planning, not `product-spec`. |
+| `The behavior is approved; split implementation into tasks, owners, dependencies, and validation commands.` | Route to `to-task`, not `product-spec`. |
 | `Implement the approved React form and tests now.` | Prefer `dev-frontend`. |
 | `Implement the approved Rust change and tests now.` | Prefer `dev-rust`. |
 | `Resolve conflicting shared business language and rules across three product areas, including lifecycle or context depth only where material.` | Prefer `domain-modeling`. |

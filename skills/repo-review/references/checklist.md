@@ -102,9 +102,8 @@ When docs or commands reference a missing path:
 
 ## 4. Specialist Delegation
 
-- [ ] Use `audit-frontend` only for a bounded frontend surface.
-- [ ] Use `audit-java` only for selected Java/Spring profiles.
-- [ ] Use `audit-rust` only for selected Rust profiles.
+- [ ] Use `repo-audit` only for a bounded frontend, Java, or Rust surface with its
+  selected language profile.
 - [ ] Give every specialist exact paths, diff/range, questions, exclusions, and return contract.
 - [ ] Keep final scope, cross-domain integration, duplicate removal, severity, and report ownership in `repo-review`.
 - [ ] Reject specialist findings that cannot be verified against the fixed basis.

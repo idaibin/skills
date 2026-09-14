@@ -28,7 +28,7 @@ class VisualDirectionContractTests(unittest.TestCase):
         self.assertIn("deliberate repetition\n   for consistency is valid", text)
         self.assertIn("`ui-spec` records accepted decisions", text)
         self.assertIn("`dev-frontend` implements", text)
-        self.assertIn("`audit-frontend` reports", text)
+        self.assertIn("`repo-audit` reports", text)
 
     def test_layout_contract_detects_double_inset_by_axis_and_owner(self) -> None:
         text = LAYOUT_SOURCE.read_text(encoding="utf-8")
@@ -39,7 +39,7 @@ class VisualDirectionContractTests(unittest.TestCase):
         self.assertIn("scrollbar must remain flush", text)
 
     def test_all_three_frontend_owners_link_the_shared_contracts(self) -> None:
-        for skill in ("ui-spec", "dev-frontend", "audit-frontend"):
+        for skill in ("ui-spec", "dev-frontend", "repo-audit"):
             with self.subTest(skill=skill):
                 entrypoint = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
                 self.assertIn("references/visual-direction-and-anti-slop.md", entrypoint)

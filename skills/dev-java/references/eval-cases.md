@@ -13,7 +13,7 @@
 | Request | Expected behavior |
 | --- | --- |
 | `Map every Maven module and private dependency.` | Route to `repo-map`; do not edit source. |
-| `Audit the current Java service without changes.` | Route to `audit-java`. |
+| `Audit the current Java service without changes.` | Route to `repo-audit`. |
 | `Review and commit this Java Worktree.` | Route fixed-basis review to `repo-review`, then authorized Git mutation to `repo-delivery`. |
 | `Implement this Kotlin service in a mixed JVM monorepo.` | Do not trigger from JVM/build-tool proximity alone; route to a Kotlin-capable owner. |
 | `Change only a Java comment; no behavior, build, config, or contract changes.` | Keep project-grounding risk classes `Not applicable`; do not run environment or migration checks. |

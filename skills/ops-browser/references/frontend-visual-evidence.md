@@ -36,7 +36,7 @@ it never supplies a reusable target contract for a project.
 - `ops-browser` captures source/runtime evidence and computed DOM/CSS facts at the
   requested viewport and state. It does not approve a source, change a spec, edit
   code, or decide the final verdict.
-- `audit-frontend` uses this evidence for a bounded current-surface visual audit and
+- `repo-audit` uses this evidence for a bounded current-surface visual audit and
   leads with P0-P3 findings. It remains read-only and does not attribute findings to
   a change basis.
 - `repo-review` checks the handoff and reachable implementation on its selected

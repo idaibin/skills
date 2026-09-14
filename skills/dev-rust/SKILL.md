@@ -67,7 +67,7 @@ interface/schema contracts remain authoritative.
 - Shared cross-functional business language/rule or lifecycle conflicts; use `domain-modeling`. Route feature-local behavior, states, and acceptance to `product-spec`.
 - Diagnosis-only requests without authorized Rust source changes; use the host's built-in diagnosis under effective instructions.
 - Dirty-tree ownership, staging plans, or commit grouping; use `repo-review`. Use `repo-delivery` for actual staging or commits after review.
-- Systematic Rust architecture, performance, memory, concurrency, SQLite, unsafe, or FFI audit without requested edits; use `audit-rust`.
+- Systematic Rust architecture, performance, memory, concurrency, SQLite, unsafe, or FFI audit without requested edits; use `repo-audit`.
 - Review of a fixed Rust change basis, including authorization or token risks; use `repo-review`.
 - Frontend or webview UI changes; use `dev-frontend`.
 
