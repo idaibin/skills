@@ -230,7 +230,7 @@
       "id": "dev-frontend-explicit-source-change",
       "kind": "specialized",
       "mode": "explicit",
-      "prompt": "Use $dev-frontend to replace data-neutral-panel with data-neutral-surface in the supplied fixture source and its matching test contract. Do not modify check.py.",
+      "prompt": "Use $dev-frontend to replace data-neutral-panel with data-neutral-surface in the supplied fixture source and its matching test contract. This is an ordinary local UI correction with no development runtime provided. Run the focused check, do not run a production build, and keep development runtime and production build acceptance separate. Do not modify check.py.",
       "expected_skill": "dev-frontend",
       "excluded_skills": [
         "ui-spec",
@@ -242,13 +242,15 @@
         "process",
         "artifact",
         "effect",
+        "stop-honesty",
         "efficiency"
       ],
       "required_process": [
         "read-effective-instructions",
         "inspect-source-owner",
         "apply-minimal-change",
-        "run-focused-check"
+        "run-focused-check",
+        "defer-production-build"
       ],
       "required_source_owners": [
         "src/components/neutral-panel.ts:renderNeutralPanel"
@@ -270,7 +272,15 @@
       ],
       "required_artifacts": [
         "source-diff",
-        "focused-check"
+        "focused-check",
+        "validation-layer-separation"
+      ],
+      "forbidden_command_classes": [
+        "production-build"
+      ],
+      "required_not_verified": [
+        "development-runtime",
+        "production-build"
       ],
       "expected_stop": "completed",
       "max_tool_calls": 8

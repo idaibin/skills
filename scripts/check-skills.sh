@@ -72,18 +72,12 @@ else
   echo "cannot resolve routing baseline authority: set SKILLS_BASE_SHA or fetch origin/main" >&2
   exit 2
 fi
-if git cat-file -e "$routing_base_sha":evals/skill-routing-baseline.json 2>/dev/null; then
-  echo "routing baseline: $routing_base_sha (immutable Git authority)"
-  "${python_runner[@]}" scripts/run-skill-routing-evals.py --baseline-ref "$routing_base_sha"
-else
-  base_index_version="$(git show "$routing_base_sha":skills-index.json 2>/dev/null | "$python_bin" -c 'import json,sys; print(json.load(sys.stdin).get("version", 0))' 2>/dev/null || true)"
-  if [[ "$base_index_version" != "1" ]]; then
-    echo "published base $routing_base_sha is missing its routing baseline; refusing candidate bootstrap" >&2
-    exit 2
-  fi
-  echo "routing baseline: first v2 bootstrap (base index version 1 has no baseline)"
-  "${python_runner[@]}" scripts/run-skill-routing-evals.py --baseline-report evals/skill-routing-baseline.json
+if ! git cat-file -e "$routing_base_sha":evals/skill-routing-baseline.json 2>/dev/null; then
+  echo "published base $routing_base_sha is missing its routing baseline" >&2
+  exit 2
 fi
+echo "routing baseline: $routing_base_sha (immutable Git authority)"
+"${python_runner[@]}" scripts/run-skill-routing-evals.py --baseline-ref "$routing_base_sha"
 "${python_runner[@]}" scripts/report-skill-context.py
 "${python_runner[@]}" scripts/validate-frontend-visual-evidence.py \
   skills/dev-frontend/assets/frontend-visual-evidence.example.json

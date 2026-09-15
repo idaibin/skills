@@ -127,6 +127,10 @@ versioned adapter contract; they do not pretend the SQLite file itself is portab
 - `Route Map` selects one primary route or a minimal compatible route composition.
   `Reference Map` links every package reference with an explicit load condition.
   Evaluation cases are maintainer-only and are not loaded during ordinary execution.
+- Treat every description, route row, and document link as a context pointer: state
+  what it owns and the distinct condition that loads it, front-load the condition,
+  and collapse synonyms that merely rename the same branch. A pointer that cannot
+  reliably select a branch must be sharpened before its target is expanded.
 - Keep only rules that apply to every route, especially authority, permission, and
   irreversible-effect boundaries, in the entrypoint. Put route procedures, ordered
   workflows, checklists, examples, framework/provider profiles, and templates in
@@ -136,12 +140,33 @@ versioned adapter contract; they do not pretend the SQLite file itself is portab
 - Give each ordered step a checkable transition or completion criterion. Prefer an
   observable state, exhausted bounded set, or named stop condition over vague verbs
   such as understand, improve, or finish.
+- When an owner needs a user decision, resolve discoverable facts first, connect only
+  material decisions to their prerequisites, and ask only the current frontier. If
+  two or three real mutually exclusive outcomes exist, prefer the current host mode's
+  native structured-choice affordance, put the recommendation first, and state its
+  observable consequence or principal trade-off. If that affordance is unavailable,
+  identify the limitation at its actual scope (for example, the current mode) and use
+  a concise numbered fallback; never claim that a Skill, Markdown, or prompting added
+  a host-native control. Do not batch a decision with another decision that depends on
+  its answer, re-ask an already settled choice, or treat a selection as authorization
+  for a separately controlled effect.
 - Inline only what every execution branch needs; disclose branch-specific reference behind
   a direct, condition-worded pointer. Co-locate a concept's rule, exception, and stop
   condition instead of scattering fragments across the entrypoint and references.
 - Avoid duplicated guidance. One behavior has one authoritative source; repeat a short,
   stable term only when it intentionally anchors routing or execution.
-- A package may not require another Skill or repository-root file to perform its job.
+- Treat current manifests, configuration, directory structure, generated metadata,
+  and command help as environment authorities. Do not cache directly discoverable
+  versions, paths, flags, or scripts in prose; document only a non-obvious invariant,
+  rationale, compatibility rule, or expensive lookup that earns synchronization cost.
+- Classify a referenced authority or capability as hard only when its absence makes
+  the owned result incorrect or impossible; stop or route at that exact boundary.
+  Missing soft context may reduce confidence but does not block unrelated work: use
+  available evidence and report the scoped gap. A package may route to another owner
+  but must not read another Skill's private files to perform its own job.
+- Prefer a positive target behavior over low-value prohibitions. Retain explicit
+  negative language when it protects authorization, security, destructive-action,
+  evidence, or other hard boundaries, and pair it with the permitted outcome.
 - Provider-specific local-default schemas belong in a focused package reference and
   must be validated as runtime contracts; they are preferences and discovery hints,
   not portable frontmatter, current capability proof, or external-action authority.
@@ -245,11 +270,10 @@ nearest-boundary reroute, and a critical stop. `scripts/run-skill-routing-evals.
 validates complete catalog coverage, executes owner routing, requires each critical
 stop prompt to carry an owning-Skill signal, verifies declared stop states, and rejects
 active-case removal or owner drift. A retired package may leave the immutable baseline
-only when both the current catalog and candidate baseline remove its owner. After the first baseline is published, CI resolves
+only when both the current catalog and candidate baseline remove its owner. CI resolves
 `SKILLS_BASE_SHA` (or the merge-base with `origin/main`) and reads the baseline from
-that immutable Git object rather than the candidate Worktree. The local committed file
-is accepted as bootstrap authority only when the resolved base still has the v1 index;
-an invalid/unavailable base or a v2 base missing its baseline fails closed. This is an offline contract gate:
+that immutable Git object rather than the candidate Worktree. An invalid or unavailable
+base, or a published base missing its baseline, fails closed. This is an offline contract gate:
 the critical-stop check is a deterministic classifier/contract check, not proof that a
 host model followed the Skill or actually stopped at runtime.
 

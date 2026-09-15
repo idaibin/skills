@@ -65,18 +65,40 @@ class ValidatorTests(unittest.TestCase):
         (root / "docs" / "skills" / "skills-index.schema.json").write_text(
             json.dumps(index_schema), encoding="utf-8"
         )
+        portable_schemas = root / "docs" / "skills" / "schemas"
+        portable_schemas.mkdir()
+        for filename in (
+            "repository-scope.v1.schema.json",
+            "asset-map-result.v1.schema.json",
+            "review-request.v1.schema.json",
+            "review-findings.v1.schema.json",
+        ):
+            shutil.copy(ROOT / "docs" / "skills" / "schemas" / filename, portable_schemas / filename)
         (root / "skills-index.json").write_text(
             json.dumps(
                 {
-                    "version": 2,
+                    "$schema": "./docs/skills/skills-index.schema.json",
+                    "version": 3,
+                    "contract_version": "capability-registry/3",
                     "description": "Fixture discovery index.",
+                    "schema_refs": {
+                        "declared_portable": [
+                            "urn:skills:repository-scope:v1",
+                            "urn:skills:asset-map-result:v1",
+                            "urn:skills:review-request:v1",
+                            "urn:skills:review-findings:v1",
+                            "urn:skills:sample-request:v1",
+                            "urn:skills:sample-result:v1",
+                        ],
+                        "known_local": [],
+                    },
                     "categories": {
                         "samples": {
                             "title": "Samples",
                             "description": "Sample processing.",
                         }
                     },
-                    "skills": [
+                    "packages": [
                         {
                             "name": "sample-skill",
                             "category": "samples",
@@ -90,6 +112,47 @@ class ValidatorTests(unittest.TestCase):
                             "keywords": ["sample"],
                             "excludes": ["unrelated work"],
                             "related": [],
+                            "capability_ids": ["sample.process"],
+                        }
+                    ],
+                    "capabilities": [
+                        {
+                            "capability_id": "sample.process",
+                            "capability_version": "1.0.0",
+                            "package": "sample-skill",
+                            "description": "Process one authorized sample.",
+                            "accepts": [
+                                {"schema": "urn:skills:sample-request:v1", "kind": "portable"}
+                            ],
+                            "produces": [
+                                {"schema": "urn:skills:sample-result:v1", "kind": "portable"}
+                            ],
+                            "preconditions": ["SCOPE_RESOLVED"],
+                            "postconditions": ["TYPED_OUTPUT_EMITTED"],
+                            "permission_contract": {
+                                "maximum_mutation_class": "artifact-write",
+                                "maximum_effects": ["read-repository", "write-artifact"],
+                                "forbidden_effects": ["write-source", "write-git-state"],
+                                "required_confirmations": ["explicit-user-authorization"],
+                                "symbolic_scope_constraints": ["declared-task-scope"],
+                            },
+                            "failure_codes": [
+                                {
+                                    "code": "SCOPE_AMBIGUOUS",
+                                    "recoverable": True,
+                                    "recovery": "resolve-symbolic-scope",
+                                }
+                            ],
+                            "evidence_requirements": ["basis_or_scope_identity"],
+                            "adapter_binding": {
+                                "policy": "runtime-only",
+                                "portable_fields_forbidden": [
+                                    "provider",
+                                    "model",
+                                    "cli_path",
+                                    "executable",
+                                ],
+                            },
                         }
                     ],
                 }
@@ -100,6 +163,15 @@ class ValidatorTests(unittest.TestCase):
 
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
+
+    def test_v2_registry_is_rejected(self) -> None:
+        root = self.make_repo()
+        index_path = root / "skills-index.json"
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        index["version"] = 2
+        index_path.write_text(json.dumps(index), encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("version: 3 was expected" in error for error in errors))
 
     def test_entrypoint_must_be_a_bounded_map(self) -> None:
         root = self.make_repo()
@@ -487,7 +559,7 @@ class ValidatorTests(unittest.TestCase):
             root, package = fixture(temporary)
             index_path = root / "skills-index.json"
             index = json.loads(index_path.read_text(encoding="utf-8"))
-            ask_ai = next(item for item in index.get("packages", index.get("skills", [])) if item["name"] == "ask-ai")
+            ask_ai = next(item for item in index["packages"] if item["name"] == "ask-ai")
             ask_ai["allowed_effects"].append("write-source")
             index_path.write_text(json.dumps(index), encoding="utf-8")
             errors = VALIDATOR.ask_ai_authority_errors(package)
@@ -497,7 +569,7 @@ class ValidatorTests(unittest.TestCase):
             root, package = fixture(temporary)
             index_path = root / "skills-index.json"
             index = json.loads(index_path.read_text(encoding="utf-8"))
-            ask_ai = next(item for item in index.get("packages", index.get("skills", [])) if item["name"] == "ask-ai")
+            ask_ai = next(item for item in index["packages"] if item["name"] == "ask-ai")
             ask_ai["forbidden_effects"].remove("write-source")
             index_path.write_text(json.dumps(index), encoding="utf-8")
             errors = VALIDATOR.ask_ai_authority_errors(package)
@@ -630,7 +702,7 @@ class ValidatorTests(unittest.TestCase):
             ROOT / "docs" / "quality" / "official-skill-alignment.md"
         ).read_text(encoding="utf-8")
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        ask_ai = next(item for item in index.get("packages", index.get("skills", [])) if item["name"] == "ask-ai")
+        ask_ai = next(item for item in index["packages"] if item["name"] == "ask-ai")
         self.assertIn("distinct correlated create and submit logical IDs", standard)
         self.assertIn("distinct correlated\n  create and submit IDs", alignment)
         self.assertTrue(
@@ -1016,7 +1088,7 @@ class ValidatorTests(unittest.TestCase):
             ),
         )
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        indexed = {item["name"]: item for item in index.get("packages", index.get("skills", []))}
+        indexed = {item["name"]: item for item in index["packages"]}
 
         def table_rows(section: str) -> dict[str, str]:
             rows: dict[str, str] = {}
@@ -1071,7 +1143,7 @@ class ValidatorTests(unittest.TestCase):
 
     def test_project_grounding_index_is_owner_qualified_and_not_literal_routing(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
-        indexed = {item["name"]: item for item in index.get("packages", index.get("skills", []))}
+        indexed = {item["name"]: item for item in index["packages"]}
         owners = (
             "repo-map",
             "repo-review",
@@ -1160,41 +1232,22 @@ class ValidatorTests(unittest.TestCase):
         evals.write_text(evals.read_text().replace("## Quality Eval\n\n- three", "## Quality Eval"))
         self.assertTrue(any("empty ## Quality Eval" in error for error in VALIDATOR.validate(root)))
 
-    def test_eval_heading_must_be_exact(self) -> None:
-        root = self.make_repo()
-        evals = root / "skills" / "sample-skill" / "references" / "eval-cases.md"
-        evals.write_text(
-            "# Evals\n\n## Trigger Eval\n\n- one\n\n## Non-Trigger Eval\n\n- two\n\n"
-            "## Quality Eval Notes\n\n- not the required section\n"
-        )
-        self.assertTrue(any("missing ## Quality Eval" in error for error in VALIDATOR.validate(root)))
-
-    def test_eval_heading_outside_code_fence(self) -> None:
-        root = self.make_repo()
-        evals = root / "skills" / "sample-skill" / "references" / "eval-cases.md"
-        evals.write_text(
-            "# Evals\n\n## Trigger Eval\n\n- one\n\n## Non-Trigger Eval\n\n- two\n\n"
-            "```text\n## Quality Eval\n```\n"
-        )
-        self.assertTrue(any("missing ## Quality Eval" in error for error in VALIDATOR.validate(root)))
-
-    def test_eval_heading_outside_tilde_fence(self) -> None:
-        root = self.make_repo()
-        evals = root / "skills" / "sample-skill" / "references" / "eval-cases.md"
-        evals.write_text(
-            "# Evals\n\n## Trigger Eval\n\n- one\n\n## Non-Trigger Eval\n\n- two\n\n"
-            "~~~text\n## Quality Eval\n~~~\n"
-        )
-        self.assertTrue(any("missing ## Quality Eval" in error for error in VALIDATOR.validate(root)))
-
-    def test_eval_heading_inside_indented_code(self) -> None:
-        root = self.make_repo()
-        evals = root / "skills" / "sample-skill" / "references" / "eval-cases.md"
-        evals.write_text(
-            "# Evals\n\n## Trigger Eval\n\n- one\n\n## Non-Trigger Eval\n\n- two\n\n"
-            "    ## Quality Eval\n"
-        )
-        self.assertTrue(any("missing ## Quality Eval" in error for error in VALIDATOR.validate(root)))
+    def test_eval_heading_must_be_exact_and_outside_code(self) -> None:
+        prefix = "# Evals\n\n## Trigger Eval\n\n- one\n\n## Non-Trigger Eval\n\n- two\n\n"
+        variants = {
+            "near-match": "## Quality Eval Notes\n\n- not the required section\n",
+            "backtick-fence": "```text\n## Quality Eval\n```\n",
+            "tilde-fence": "~~~text\n## Quality Eval\n~~~\n",
+            "indented-code": "    ## Quality Eval\n",
+        }
+        for name, suffix in variants.items():
+            with self.subTest(name=name):
+                root = self.make_repo()
+                evals = root / "skills" / "sample-skill" / "references" / "eval-cases.md"
+                evals.write_text(prefix + suffix)
+                self.assertTrue(
+                    any("missing ## Quality Eval" in error for error in VALIDATOR.validate(root))
+                )
 
     def test_package_install_command_fails(self) -> None:
         root = self.make_repo()
@@ -1210,28 +1263,28 @@ class ValidatorTests(unittest.TestCase):
     def test_skill_index_set_must_match(self) -> None:
         root = self.make_repo()
         index = json.loads((root / "skills-index.json").read_text())
-        index["skills"] = []
+        index["packages"] = []
         (root / "skills-index.json").write_text(json.dumps(index))
         self.assertTrue(any("skills-index.json" in error for error in VALIDATOR.validate(root)))
 
     def test_skill_index_related_skill_must_exist(self) -> None:
         root = self.make_repo()
         index = json.loads((root / "skills-index.json").read_text())
-        index["skills"][0]["related"] = ["missing-skill"]
+        index["packages"][0]["related"] = ["missing-skill"]
         (root / "skills-index.json").write_text(json.dumps(index))
         self.assertTrue(any("unknown related Skills" in error for error in VALIDATOR.validate(root)))
 
     def test_skill_index_category_must_exist(self) -> None:
         root = self.make_repo()
         index = json.loads((root / "skills-index.json").read_text())
-        index["skills"][0]["category"] = "missing-category"
+        index["packages"][0]["category"] = "missing-category"
         (root / "skills-index.json").write_text(json.dumps(index))
         self.assertTrue(any("unknown category" in error for error in VALIDATOR.validate(root)))
 
     def test_skill_index_rejects_self_relation(self) -> None:
         root = self.make_repo()
         index = json.loads((root / "skills-index.json").read_text())
-        index["skills"][0]["related"] = ["sample-skill"]
+        index["packages"][0]["related"] = ["sample-skill"]
         (root / "skills-index.json").write_text(json.dumps(index))
         self.assertTrue(any("cannot relate to itself" in error for error in VALIDATOR.validate(root)))
 
@@ -1251,7 +1304,7 @@ class ValidatorTests(unittest.TestCase):
             "title": "Samples",
             "description": "Another category.",
         }
-        index["skills"][0]["category"] = "other"
+        index["packages"][0]["category"] = "other"
         (root / "skills-index.json").write_text(json.dumps(index))
         self.assertTrue(
             any("duplicate category titles" in error for error in VALIDATOR.validate(root))
@@ -1284,7 +1337,8 @@ class ValidatorTests(unittest.TestCase):
         self.assertEqual("1.2.0", versions["browser.runtime.operate"])
         self.assertEqual("1.1.0", versions["client.runtime.operate"])
         self.assertEqual("1.1.0", versions["external.ai.collaborate"])
-        self.assertEqual("1.1.0", versions["frontend.source.implement"])
+        self.assertEqual("1.3.0", versions["frontend.source.implement"])
+        self.assertEqual("1.1.0", versions["task.ledger.maintain"])
 
     def test_dev_frontend_noop_contract_requires_owner_identity(self) -> None:
         entrypoint = (ROOT / "skills/dev-frontend/SKILL.md").read_text(encoding="utf-8")
@@ -1363,35 +1417,26 @@ class ValidatorTests(unittest.TestCase):
         )
         self.assertEqual([], VALIDATOR.validate(root))
 
-    def test_openai_invocation_policy_requires_boolean(self) -> None:
-        root = self.make_repo()
-        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
-        metadata.write_text(
-            metadata.read_text() + 'policy:\n  allow_implicit_invocation: "false"\n',
-            encoding="utf-8",
-        )
-        self.assertTrue(
-            any("allow_implicit_invocation must be a boolean" in error for error in VALIDATOR.validate(root))
-        )
-
-    def test_openai_invocation_policy_rejects_null_value(self) -> None:
-        root = self.make_repo()
-        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
-        metadata.write_text(
-            metadata.read_text() + "policy:\n  allow_implicit_invocation:\n",
-            encoding="utf-8",
-        )
-        self.assertTrue(
-            any("allow_implicit_invocation must be a boolean" in error for error in VALIDATOR.validate(root))
-        )
-
-    def test_openai_invocation_policy_rejects_null_mapping(self) -> None:
-        root = self.make_repo()
-        metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
-        metadata.write_text(metadata.read_text() + "policy:\n", encoding="utf-8")
-        self.assertTrue(
-            any("top-level policy must be a mapping" in error for error in VALIDATOR.validate(root))
-        )
+    def test_openai_invocation_policy_rejects_invalid_types(self) -> None:
+        variants = {
+            "string": (
+                'policy:\n  allow_implicit_invocation: "false"\n',
+                "allow_implicit_invocation must be a boolean",
+            ),
+            "null-value": (
+                "policy:\n  allow_implicit_invocation:\n",
+                "allow_implicit_invocation must be a boolean",
+            ),
+            "null-mapping": ("policy:\n", "top-level policy must be a mapping"),
+        }
+        for name, (suffix, expected) in variants.items():
+            with self.subTest(name=name):
+                root = self.make_repo()
+                metadata = root / "skills" / "sample-skill" / "agents" / "openai.yaml"
+                metadata.write_text(metadata.read_text() + suffix, encoding="utf-8")
+                self.assertTrue(
+                    any(expected in error for error in VALIDATOR.validate(root))
+                )
 
     def test_unknown_frontmatter_field_fails(self) -> None:
         root = self.make_repo()
@@ -1412,51 +1457,22 @@ class ValidatorTests(unittest.TestCase):
         self.assertTrue(any("compatibility" in error for error in errors))
         self.assertTrue(any("metadata must map strings to strings" in error for error in errors))
 
-    def test_long_reference_requires_contents(self) -> None:
-        root = self.make_repo()
-        usage = root / "skills" / "sample-skill" / "references" / "usage.md"
-        usage.write_text("# Usage\n" + "detail\n" * 101)
-        self.assertTrue(any("needs a ## Contents" in error for error in VALIDATOR.validate(root)))
-
-    def test_long_reference_requires_exact_contents_heading(self) -> None:
-        root = self.make_repo()
-        usage = root / "skills" / "sample-skill" / "references" / "usage.md"
-        usage.write_text(
-            "# Usage\n"
-            + "detail\n" * 101
-            + "## Contents List\n\n- item one\n- item two\n"
-        )
-        self.assertTrue(any("needs a ## Contents" in error for error in VALIDATOR.validate(root)))
-
-    def test_long_reference_requires_contents_outside_fence(self) -> None:
-        root = self.make_repo()
-        usage = root / "skills" / "sample-skill" / "references" / "usage.md"
-        usage.write_text(
-            "# Usage\n"
-            + "detail\n" * 101
-            + "```text\n## Contents\n\n- item one\n```\n"
-        )
-        self.assertTrue(any("needs a ## Contents" in error for error in VALIDATOR.validate(root)))
-
-    def test_long_reference_requires_contents_tilde_fence(self) -> None:
-        root = self.make_repo()
-        usage = root / "skills" / "sample-skill" / "references" / "usage.md"
-        usage.write_text(
-            "# Usage\n"
-            + "detail\n" * 101
-            + "~~~text\n## Contents\n\n- item one\n~~~\n"
-        )
-        self.assertTrue(any("needs a ## Contents" in error for error in VALIDATOR.validate(root)))
-
-    def test_long_reference_contents_in_indented_code(self) -> None:
-        root = self.make_repo()
-        usage = root / "skills" / "sample-skill" / "references" / "usage.md"
-        usage.write_text(
-            "# Usage\n"
-            + "detail\n" * 101
-            + "    ## Contents\n\n- item one\n"
-        )
-        self.assertTrue(any("needs a ## Contents" in error for error in VALIDATOR.validate(root)))
+    def test_long_reference_requires_exact_contents_outside_code(self) -> None:
+        variants = {
+            "missing": "",
+            "near-match": "## Contents List\n\n- item one\n- item two\n",
+            "backtick-fence": "```text\n## Contents\n\n- item one\n```\n",
+            "tilde-fence": "~~~text\n## Contents\n\n- item one\n~~~\n",
+            "indented-code": "    ## Contents\n\n- item one\n",
+        }
+        for name, suffix in variants.items():
+            with self.subTest(name=name):
+                root = self.make_repo()
+                usage = root / "skills" / "sample-skill" / "references" / "usage.md"
+                usage.write_text("# Usage\n" + "detail\n" * 101 + suffix)
+                self.assertTrue(
+                    any("needs a ## Contents" in error for error in VALIDATOR.validate(root))
+                )
 
     def test_block_scalar_description_is_valid(self) -> None:
         root = self.make_repo()

@@ -54,8 +54,8 @@ under the repository's established `docs/` structure.
 - `scripts/run-skill-routing-evals.py` executes the catalog-wide normal, nearest-
   boundary, and critical-stop matrix. CI resolves `SKILLS_BASE_SHA` (or the merge-base
   with `origin/main`) to an immutable commit and reads the published baseline there;
-  the Worktree baseline is accepted only for the first v1-to-v2 bootstrap. Missing or
-  invalid base authority and any v2 base without its baseline fail closed.
+  missing or invalid base authority and any published base without its baseline fail
+  closed.
 - `scripts/report-skill-context.py` reports deterministic entrypoint and direct-
   reference context estimates as warnings; it does not claim exact model tokens or
   actual host loading behavior.

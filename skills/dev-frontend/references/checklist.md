@@ -8,7 +8,6 @@ Use this checklist when implementing or reviewing frontend changes.
 - [Contract Freeze Gate](#contract-freeze-gate)
 - [Reuse-First Gate](#reuse-first-gate)
 - [Stack And Structure](#stack-and-structure)
-- [Page And Feature Ownership](#page-and-feature-ownership)
 - [Framework Profile](#framework-profile)
 - [DOM And Layout Ownership](#dom-and-layout-ownership)
 - [Styling](#styling)
@@ -100,26 +99,6 @@ Use this checklist when implementing or reviewing frontend changes.
 - Preserve path aliases and import ordering conventions.
 - Keep local UI state local unless the app already uses a global store or route/query layer for the same responsibility.
 
-## Page And Feature Ownership
-
-- Treat the route/page file as a shell when it coordinates multiple independently
-  stateful business tabs or sections. The shell may own route context, page-level
-  navigation, component selection, and genuinely shared data or locks.
-- Give a tab or section its own feature component when it owns an independent API
-  flow, form, table, drawer/dialog, validation rules, action lifecycle, or loading and
-  error state. Do not implement those sections as large conditional branches in the
-  page shell.
-- Keep shared orchestration at the nearest common parent and pass the smallest stable
-  props/events or repository-native context. Do not duplicate shared loading, user
-  selection, permission, or lookup owners inside every section.
-- Split by business ownership and change reason, not by arbitrary line count, one
-  component per file dogma, or visual fragments with no independent behavior.
-- Before extracting a cross-feature shared component, prove real consumers and a
-  stable common contract. Otherwise keep the component inside its feature directory.
-- When a credible test seam exists, add a focused invariant that the shell composes
-  the intended feature components and does not own their API/form/table/drawer logic.
-  Prefer import/consumer or public-behavior evidence over full-markup snapshots.
-
 ## Framework Profile
 
 - Select React, Vue Composition, Vue Options, or Repository-native Other from manifests, file extensions, imports, and nearby code.
@@ -193,6 +172,20 @@ Use this checklist when implementing or reviewing frontend changes.
 
 ## Validation
 
+- Order validation by cost and proximity to the changed behavior: inspect source and
+  diff first; use the real target page through the existing development service and
+  hot reload when runtime UI/interaction evidence is needed and authorized; run the
+  smallest relevant test next; reserve a full production build for the gates below.
+- For consecutive UI, style, layout, copy, or local-interaction corrections, keep one
+  accepted slice and one development service. Batch adjacent edits, then repeat
+  `edit -> hot-reload settles cleanly -> exact route/state readback` for the affected
+  states. Do not run a full build after each correction or restart the service merely
+  to create a fresh validation event.
+- Before reusing a project-defined development port, identify the listener process,
+  its working directory, and the actual target page. When all three identify the
+  current project, reuse it without starting another port, restarting it, or stopping
+  another process. If ownership is uncertain or mismatched, do not disturb it; resolve
+  the project-specific runtime path or report the page check `Not verified`.
 - For a one-owner local style, template, icon, copy, or similarly bounded component
   change with no API/state/public/shared/build/runtime impact, batch the edits and use
   the running dev/compiler diagnostics as the first signal. If they remain clean,
@@ -224,8 +217,20 @@ Use this checklist when implementing or reviewing frontend changes.
   Success, non-crash, build completion, or an agent terminal state does not identify
   the cause by itself.
 
-- Run project-defined type, lint, test, build, formatter, or route checks only at a
-  logical slice boundary, before handoff, or after a real error; keep them focused.
+- Run project-defined type, lint, test, formatter, or route checks only at a logical
+  slice boundary, before handoff, or after a real error; keep them focused. Run a full
+  production build only at a stage closure or final delivery gate, when the user asks
+  for it, when dependencies/build configuration/compiler chain/route assembly changed,
+  when the development surface cannot provide the required evidence, or when static or
+  runtime checks expose a compilation-layer risk.
+- Record development-page and build evidence as separate layers: hot-reload readback
+  proves only the exercised runtime UI/interaction on the named page/state; a
+  production build proves only that production compilation completed. Neither clears
+  the other's gap. When a local page is verified without a required build, report the
+  build `Not verified` instead of running it for formality.
+- Report only warnings reached by the selected validation path and relevant to the
+  changed slice. Do not repeatedly surface unchanged build warnings when no build was
+  required or rerun.
 - Prefer non-mutating validation and use explicit fix/write commands only when rewrites are in scope.
 - Snapshot branch-aware Worktree state before a validation command that may generate or rewrite files, then compare status and diff afterward. Classify new changes as requested source, expected task-owned generated output, validation side effect, or unrelated/user-owned work.
 - Do not assume `build`, `check`, `dev`, or another read-like command preserved the checkout. Run a known writer in an isolated copy when practical. Never stage or retain validation drift merely because the command exited successfully; restore it only when the exact pre-state is known and the complete current diff is proven task-owned with no concurrent or mixed hunk. Otherwise preserve the diff and stop for `repo-review` ownership reconciliation.

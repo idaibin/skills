@@ -141,7 +141,12 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         provider_is_unavailable = "set stop_state to not-verified" in command[-1]
         selected_skill = "ui-spec" if nearest_negative else "dev-frontend"
         stop_state = "evidence-incomplete" if nearest_negative else "missing-authorization" if critical_stop else "not-verified" if provider_is_unavailable else "completed"
-        last.write_text(json.dumps({"selected_skill": selected_skill, "process": [], "stop_state": stop_state, "not_verified": []}), encoding="utf-8")
+        not_verified = (
+            ["development-runtime", "production-build"]
+            if "Report these unverified validation layers" in prompt
+            else []
+        )
+        last.write_text(json.dumps({"selected_skill": selected_skill, "process": [], "stop_state": stop_state, "not_verified": not_verified}), encoding="utf-8")
         trace_commands = getattr(
             self,
             "trace_commands",
@@ -232,6 +237,8 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertIn(str(RUNNER.skill_candidate_path("dev-frontend")), prompt)
         self.assertIn("Read its complete SKILL.md", prompt)
         self.assertIn("observable tool call", prompt)
+        self.assertIn("Before the first edit", prompt)
+        self.assertIn("defining symbol", prompt)
 
     def test_implicit_prompt_exposes_catalog_not_expected_owner_or_skill_path(self) -> None:
         case = self.case("dev-frontend-implicit-source-change")
@@ -240,6 +247,8 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertNotIn(str(RUNNER.skill_candidate_path(case["expected_skill"])), prompt)
         self.assertNotIn(case["required_source_owners"][0], prompt)
         self.assertIn("without inventorying every catalog file", prompt)
+        self.assertIn("<candidate-catalog-root>/<name>/SKILL.md", prompt)
+        self.assertIn("do not read a globally or project-installed copy", prompt)
 
     def test_numbered_file_read_is_observable_path_evidence(self) -> None:
         self.assertTrue(
@@ -580,6 +589,55 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertEqual("failed", result["status"])
         self.assertIn("git-write", result["effects"])
 
+    def test_production_build_detection_uses_executed_argv(self) -> None:
+        for command in (
+            "npm run build",
+            "pnpm --dir app run build",
+            "pnpm build",
+            "yarn build",
+            "bun run build",
+            "vite build",
+            "next build",
+            "CI=1 pnpm run build",
+            "corepack pnpm run build",
+            "npx vite build",
+            "bunx next build",
+            "npm run build:production",
+        ):
+            self.assertTrue(RUNNER.argv_runs_production_build(command), command)
+        for command in (
+            "echo npm run build",
+            "printf 'pnpm run build'",
+            "pnpm exec echo run build",
+            "pnpm run test",
+            "# npm run build",
+        ):
+            self.assertFalse(RUNNER.argv_runs_production_build(command), command)
+
+    def test_forward_runner_classifies_production_build_from_real_argv(self) -> None:
+        case = self.case("dev-frontend-explicit-source-change")
+        for command, expected_hit in (
+            ("pnpm run build", True),
+            ("pnpm build", True),
+            ("pnpm exec echo run build", False),
+        ):
+            with self.subTest(command=command):
+                self.trace_commands = [
+                    f"cat {RUNNER.skill_candidate_path('dev-frontend')}",
+                    "cat src/components/neutral-panel.ts",
+                    command,
+                    "python3 check.py --expect surface",
+                ]
+                try:
+                    with tempfile.TemporaryDirectory() as temporary, patch.object(RUNNER.subprocess, "run", side_effect=self.fake_codex):
+                        result = RUNNER.run_case(case, fixture=FIXTURE, output_root=Path(temporary), model="synthetic-model", reasoning="medium", sandbox="workspace-write", provider_evidence=None)
+                finally:
+                    del self.trace_commands
+                expected_hits = ["production-build"] if expected_hit else []
+                self.assertEqual(expected_hits, result["trace"]["forbidden_command_class_hits"])
+                self.assertEqual("failed" if expected_hit else "passed", result["status"])
+                self.assertEqual(not expected_hit, "defer-production-build" in result["process"])
+
     def test_forward_runner_derives_pass_from_trace_and_fixture_effect(self) -> None:
         case = self.case("dev-frontend-explicit-source-change")
         with tempfile.TemporaryDirectory() as temporary, patch.object(RUNNER.subprocess, "run", side_effect=self.fake_codex):
@@ -595,6 +653,11 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertEqual("passed", result["status"])
         self.assertEqual(["source-write"], result["effects"])
         self.assertIn("source-diff", result["artifacts"])
+        self.assertIn("validation-layer-separation", result["artifacts"])
+        self.assertEqual(
+            ["development-runtime", "production-build"],
+            result["not_verified"],
+        )
         self.assertEqual(4, result["efficiency"]["tool_calls"])
 
     def test_nearest_negative_uses_evidence_incomplete_without_source_write(self) -> None:

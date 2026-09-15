@@ -518,6 +518,51 @@ def argv_runs_focused_check(command: str, expected: str) -> bool:
     return any(argv == expected_argv for argv in command_argv_segments(command))
 
 
+def argv_runs_production_build(command: str) -> bool:
+    """Recognize an executed production-build argv, not wording in logs or comments."""
+    option_values = {
+        "npm": {"--prefix", "--workspace", "-w"},
+        "pnpm": {"--dir", "--filter", "--workspace-dir", "-C", "-F"},
+        "bun": {"--cwd"},
+        "yarn": {"--cwd"},
+    }
+    for argv in command_argv_segments(command):
+        while argv and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", argv[0]):
+            argv = argv[1:]
+        if not argv or argv[0] in {"echo", "printf", "comment"}:
+            continue
+        executable = Path(argv[0]).name
+        args = argv[1:]
+        if executable == "corepack" and args:
+            executable, args = Path(args[0]).name, args[1:]
+        if executable in {"vite", "next"} and args[:1] == ["build"]:
+            return True
+        if executable in {"npx", "bunx"} and len(args) >= 2:
+            if Path(args[0]).name in {"vite", "next"} and args[1] == "build":
+                return True
+        if executable in {"npm", "pnpm", "bun", "yarn"}:
+            command_args = list(args)
+            while command_args and command_args[0].startswith("-"):
+                option = command_args.pop(0)
+                if (
+                    option in option_values[executable]
+                    and "=" not in option
+                    and command_args
+                ):
+                    command_args.pop(0)
+            if not command_args:
+                continue
+            if command_args[0] == "run":
+                script = command_args[1] if len(command_args) > 1 else ""
+            elif executable in {"pnpm", "yarn"}:
+                script = command_args[0]
+            else:
+                script = ""
+            if script == "build" or script.startswith("build:"):
+                return True
+    return False
+
+
 def trace_loaded_skill(facts: dict[str, Any], skill: str, before_order: int | None) -> bool:
     candidate_path = skill_candidate_path(skill)
     candidate = str(candidate_path)
@@ -572,11 +617,11 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
     else:
         skill_instruction = (
             f"Candidate Skill catalog root: {skill_catalog_root()}. Select the appropriate candidate yourself, "
-            "using the available Skill descriptions without inventorying every catalog file. Then read that "
-            "candidate's complete SKILL.md in an observable tool call before acting."
+            "using the available Skill descriptions without inventorying every catalog file. After selecting "
+            "<name>, read exactly <candidate-catalog-root>/<name>/SKILL.md in an observable tool call before "
+            "acting; do not read a globally or project-installed copy."
         )
-    return "\n".join(
-        [
+    instructions = [
             "This is a disposable, synthetic live-Agent evaluation fixture.",
             "Follow its AGENTS.md. Never stage, commit, push, or access external services.",
             skill_instruction,
@@ -584,8 +629,21 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
             "Run the repository-defined focused check." if case["required_changed_paths"] else "Do not modify the fixture; report only the requested owner result or stop.",
             provider_note,
             "Return only the JSON object required by the output schema.",
-        ]
-    )
+    ]
+    if case["required_source_owners"] and case["required_changed_paths"]:
+        instructions.insert(
+            -3,
+            "Before the first edit, inspect the source owner in one observable successful command whose output contains the owner path's current content and defining symbol.",
+        )
+    required_not_verified = case.get("required_not_verified", [])
+    if required_not_verified:
+        instructions.insert(
+            -1,
+            "Report these unverified validation layers in not_verified: "
+            + ", ".join(required_not_verified)
+            + ".",
+        )
+    return "\n".join(instructions)
 
 
 def build_codex_command(
@@ -663,6 +721,12 @@ def run_case(
         source_diff_sha256 = sha256_text(diff)
         git_state = git_evidence(workspace, case_root, baseline_git)
         facts = trace_facts(trace_path)
+        forbidden_command_classes = case.get("forbidden_command_classes", [])
+        command_class_hits: list[str] = []
+        if "production-build" in forbidden_command_classes and any(
+            argv_runs_production_build(command) for command in facts["all_commands"]
+        ):
+            command_class_hits.append("production-build")
         expects_change = bool(case["required_changed_paths"])
         check_code, check_output = focused_check(workspace, expects_change)
         (case_root / "focused-check.log").write_text(check_output, encoding="utf-8")
@@ -706,6 +770,8 @@ def run_case(
         agent_focused_check = bool(last_write is not None or not changed) and trace_ran_focused_check(facts, expects_change, last_write)
         if agent_focused_check:
             process_steps.append("run-focused-check")
+        if "production-build" in forbidden_command_classes and "production-build" not in command_class_hits:
+            process_steps.append("defer-production-build")
         if final and final.get("selected_skill") == "ui-spec" and selection_trace:
             process_steps.append("classify-owner")
         if stop_state == "evidence-incomplete":
@@ -767,16 +833,27 @@ def run_case(
         observations.append("efficiency")
         if provider_required and "provider" in observations:
             artifacts.append("provider-review")
+        not_verified = final.get("not_verified", []) if final else []
+        required_not_verified = case.get("required_not_verified", [])
+        not_verified_present = (
+            isinstance(not_verified, list)
+            and all(isinstance(item, str) for item in not_verified)
+            and set(required_not_verified).issubset(not_verified)
+        )
+        if required_not_verified and not_verified_present and not command_class_hits:
+            artifacts.append("validation-layer-separation")
         result: dict[str, Any] = {
             "case_id": case["id"], "status": "failed", "selected_skill": final.get("selected_skill") if final else None,
             "observations": sorted(set(observations)), "process": sorted(set(process_steps)),
             "source_owners": case["required_source_owners"] if owner_trace else [],
             "artifacts": sorted(set(artifacts)), "effects": effects,
+            "not_verified": not_verified if isinstance(not_verified, list) else [],
             "stop": {"state": stop_state}, "efficiency": {"tool_calls": facts["tool_calls"], "successful_tool_calls": facts["successful_tool_calls"]},
             "trace": {
                 "exit_code": process.returncode, "changed_files": changed,
                 "environment_fingerprint": environment_fingerprint(), "source_diff_sha256": source_diff_sha256, "model": model,
                 "reasoning": reasoning, "sandbox": sandbox, "git": git_state,
+                "forbidden_command_class_hits": command_class_hits,
                 "selected_repository_root": (
                     str(provider_repository_root) if provider_repository_root is not None else None
                 ),
@@ -794,12 +871,13 @@ def run_case(
             and set(changed).issubset(case["allowed_changed_paths"])
         )
         provider_missing = provider_required is not None and "provider" not in result["observations"]
+        commands_valid = not command_class_hits and not_verified_present
         expected_stop = output_stop
         if not observable_effects:
             result["status"] = "failed"
         elif provider_missing:
             result["status"] = "not-verified"
-        elif process.returncode == 0 and observable_effects and required and expected and artifacts_present and owner_present and process_present and changed_paths_valid and stop_state == expected_stop and facts["tool_calls"] <= case["max_tool_calls"]:
+        elif process.returncode == 0 and observable_effects and required and expected and artifacts_present and owner_present and process_present and changed_paths_valid and commands_valid and stop_state == expected_stop and facts["tool_calls"] <= case["max_tool_calls"]:
             result["status"] = "passed"
         elif final is None:
             result["status"] = "not-verified"

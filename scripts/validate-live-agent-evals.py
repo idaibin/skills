@@ -27,6 +27,7 @@ OBSERVATIONS = {
     "skill-selection", "source-owner", "process", "artifact", "effect",
     "stop-honesty", "efficiency", "provider",
 }
+COMMAND_CLASSES = {"production-build"}
 
 
 def load_json(path: Path) -> dict[str, object]:
@@ -97,6 +98,12 @@ def case_errors(cases: dict[str, object]) -> list[str]:
         for key in ("excluded_skills", "required_observations", "required_process", "required_source_owners", "allowed_changed_paths", "required_changed_paths", "required_effects", "forbidden_effects", "required_artifacts"):
             if not strings(case.get(key)):
                 errors.append(f"{case_id}: {key} must be a string array")
+        for key in ("forbidden_command_classes", "required_not_verified"):
+            if key in case and not strings(case.get(key)):
+                errors.append(f"{case_id}: {key} must be a string array")
+        forbidden_command_classes = case.get("forbidden_command_classes", [])
+        if isinstance(forbidden_command_classes, list) and not set(forbidden_command_classes).issubset(COMMAND_CLASSES):
+            errors.append(f"{case_id}: unknown forbidden command class")
         observations = case.get("required_observations", [])
         if isinstance(observations, list) and not set(observations).issubset(OBSERVATIONS):
             errors.append(f"{case_id}: unknown required observation")
@@ -169,6 +176,12 @@ def result_errors(cases: dict[str, object], results: dict[str, object]) -> list[
         for key in ("observations", "process", "source_owners", "artifacts", "effects"):
             if not strings(result.get(key)):
                 errors.append(f"{case_id}: passed result needs {key}")
+        required_not_verified = case.get("required_not_verified", [])
+        if required_not_verified:
+            if not strings(result.get("not_verified")):
+                errors.append(f"{case_id}: passed result needs not_verified")
+            elif not set(required_not_verified).issubset(result["not_verified"]):
+                errors.append(f"{case_id}: missing required Not verified layer")
         if isinstance(result.get("observations"), list) and not set(case["required_observations"]).issubset(result["observations"]):
             errors.append(f"{case_id}: missing required observation")
         if isinstance(result.get("process"), list) and not set(case["required_process"]).issubset(result["process"]):

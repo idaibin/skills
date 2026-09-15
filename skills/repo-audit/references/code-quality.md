@@ -101,6 +101,20 @@ data-shape contract, how it propagates, and the reachable failure when it
 drifts. Do not report generic "high coupling" without an owner pair and violated
 boundary.
 
+### Change Distribution And Owner Fit
+
+- Treat **divergent change** as evidence only when one file or module has current or
+  historical changes for independently owned business reasons. Split at those stable
+  change reasons; do not infer the smell from size or responsibility labels alone.
+- Treat **shotgun surgery** as evidence only when one business change repeatedly
+  requires coordinated edits across multiple owners. Concentrate the rule or
+  orchestration at its natural owner; do not infer the smell from a broad one-off diff.
+- Apply the deletion test to a proposed extraction: if removing it makes its complexity
+  reappear across real callers, it may provide locality and leverage; if the complexity
+  disappears, prefer deleting or inlining the pass-through layer.
+- Preserve public behavior and test through the resulting public seam. A split that
+  only moves lines, adds navigation, or exposes private steps is not an improvement.
+
 ### Async Failure And Defensive Catching
 
 Resolve the actual failure channel before adding or retaining `try/catch`:

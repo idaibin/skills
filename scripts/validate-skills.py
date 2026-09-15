@@ -1522,10 +1522,7 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
         if pattern.search(index_text.lower()):
             errors.append(f"skills-index.json: index contains {label}")
 
-    # Keep a bounded v2 read path for temporary fixtures and migration tooling.
-    # The published catalog and all new consumers use the v3 schema directly.
-    legacy_v2 = payload.get("version") == 2 and isinstance(payload.get("skills"), list)
-    schema_errors = [] if legacy_v2 else sorted(
+    schema_errors = sorted(
         jsonschema.Draft202012Validator(schema).iter_errors(payload),
         key=lambda error: [str(part) for part in error.absolute_path],
     )
@@ -1535,7 +1532,7 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
     if schema_errors:
         return errors
 
-    entries = payload["skills"] if legacy_v2 else payload["packages"]
+    entries = payload["packages"]
     errors.extend(skill_contract_errors(entries))
     indexed_names = [entry["name"] for entry in entries]
     if len(indexed_names) != len(set(indexed_names)):
@@ -1546,24 +1543,23 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
             f"expected {sorted(names)}, found {sorted(set(indexed_names))}"
         )
 
-    if not legacy_v2:
-        errors.extend(capability_contract_errors(payload, entries))
-        implemented_portable = root / "docs" / "skills" / "schemas"
-        for filename, expected_id in (
-            ("repository-scope.v1.schema.json", "urn:skills:repository-scope:v1"),
-            ("asset-map-result.v1.schema.json", "urn:skills:asset-map-result:v1"),
-            ("review-request.v1.schema.json", "urn:skills:review-request:v1"),
-            ("review-findings.v1.schema.json", "urn:skills:review-findings:v1"),
-        ):
-            try:
-                portable_schema = json.loads((implemented_portable / filename).read_text(encoding="utf-8"))
-                jsonschema.Draft202012Validator.check_schema(portable_schema)
-                if portable_schema.get("$id") != expected_id:
-                    errors.append(f"{filename}: $id must be {expected_id}")
-                if expected_id not in payload["schema_refs"]["declared_portable"]:
-                    errors.append(f"{filename}: implemented portable schema is not declared")
-            except (OSError, json.JSONDecodeError, jsonschema.SchemaError) as error:
-                errors.append(f"{filename}: cannot validate implemented portable schema: {error}")
+    errors.extend(capability_contract_errors(payload, entries))
+    implemented_portable = root / "docs" / "skills" / "schemas"
+    for filename, expected_id in (
+        ("repository-scope.v1.schema.json", "urn:skills:repository-scope:v1"),
+        ("asset-map-result.v1.schema.json", "urn:skills:asset-map-result:v1"),
+        ("review-request.v1.schema.json", "urn:skills:review-request:v1"),
+        ("review-findings.v1.schema.json", "urn:skills:review-findings:v1"),
+    ):
+        try:
+            portable_schema = json.loads((implemented_portable / filename).read_text(encoding="utf-8"))
+            jsonschema.Draft202012Validator.check_schema(portable_schema)
+            if portable_schema.get("$id") != expected_id:
+                errors.append(f"{filename}: $id must be {expected_id}")
+            if expected_id not in payload["schema_refs"]["declared_portable"]:
+                errors.append(f"{filename}: implemented portable schema is not declared")
+        except (OSError, json.JSONDecodeError, jsonschema.SchemaError) as error:
+            errors.append(f"{filename}: cannot validate implemented portable schema: {error}")
 
     categories = set(payload["categories"])
     used_categories: set[str] = set()

@@ -1,6 +1,7 @@
 # Official Skill Alignment
 
-Reviewed: 2026-07-30
+Reviewed: 2026-07-30. Revalidate the linked upstream contracts before changing a
+provider surface; this date is disclosure, not proof of current upstream behavior.
 
 This catalog uses four current primary baselines:
 
@@ -71,8 +72,7 @@ catalog-wide normal/boundary/critical-stop matrix with a committed no-new-regres
 baseline. A deterministic character-based context report supplies warnings only; it
 is not a token-efficiency certification or substitute for host/model evidence.
 
-The first unpublished routing baseline is necessarily a reviewed bootstrap. Once it
-exists on `main`, the gate reads it from the immutable base ref so a candidate cannot
+The gate reads the routing baseline from the immutable base ref so a candidate cannot
 erase history merely by rewriting its own baseline file. Critical-stop prompts are
 checked by a deterministic owning-signal classifier plus the declared stop contract;
 this remains weaker than observing a real host stop.
@@ -80,25 +80,3 @@ this remains weaker than observing a real host stop.
 Official formats establish compatibility, not guaranteed model behavior. For a material
 workflow change, run the affected Skill on representative tasks and inspect the actual
 outputs. Critical production use still requires validation in the target environment.
-
-## Upstream Practice Snapshot
-
-The following repository comparison was refreshed from shallow clones on 2026-07-23.
-It is a practice comparison, not an additional compatibility contract.
-
-| Repository and revision | Useful practice | Catalog decision |
-| --- | --- | --- |
-| Reference catalog A | concise writing guidance, concrete reusable procedures, direct reference links | keep entries operational and avoid forcing one authoring style across every package |
-| Reference catalog B | progressive disclosure, bundled deterministic helpers, representative with-Skill evaluation | retain one-level references and behavior canaries; add scripts only for repeated deterministic work |
-| Reference catalog C | repository discovery, installation, and distribution validation | keep distribution/tooling checks separate from each Skill's runtime workflow |
-| Reference catalog D | compact core loops, provider metadata separated from portable `SKILL.md`, bundled wrappers for tool reliability | retain provider metadata as an adapter and keep portable instructions authoritative |
-| Reference catalog E | explicit nearest-neighbor rerouting where ambiguity is real, scored failure-sample iteration | add one short metadata negative only for genuine routing collisions; refine from live failures rather than prose growth |
-
-Across the five repositories, negative metadata is not universal and large entrypoints are
-not evidence of better behavior. This catalog therefore does not impose a minimum entry
-length, a negative clause on every description, or upstream-specific folder conventions.
-
-The Agent Skills specification points to `skills-ref`, whose upstream repository marks
-it as a demonstration library rather than a production validator. This catalog therefore
-keeps a focused, tested validator for its portable and provider-specific contracts instead
-of downloading an unpinned demonstration tool in CI.

@@ -41,11 +41,19 @@ source evidence before asking a question. Challenge only a remaining decision th
 change layout or ownership, component/token mapping, required states or interaction,
 responsive/accessibility behavior, or an executable UI acceptance result.
 
-Ask one bounded question at a time. Include the recommended answer, reason, principal
-trade-off, and affected slice. Stop when the slice passes its UI contract gates; do not
-traverse its product decision tree or reopen accepted visual direction. Route behavior,
-permission, failure semantics, or product acceptance to `product-spec`, and route
-visual alternatives or an unselected direction to Product Design.
+Connect those remaining UI decisions to their prerequisites and ask one bounded
+current-frontier question at a time. When two or three meaningful mutually exclusive
+UI outcomes exist, prefer the current host mode's native structured-choice affordance;
+put the recommendation first and describe the visible consequence or principal
+trade-off. If that affordance is unavailable, identify the limitation at its actual
+scope and use concise numbered options; do not claim that the client as a whole lacks
+the capability or that this Skill created a native control. Record the selected visual
+outcome and its exact contract mapping before recomputing the affected frontier.
+
+Stop when the slice passes its UI contract gates; do not traverse its product decision
+tree or reopen accepted visual direction. Route behavior, permission, failure
+semantics, or product acceptance to `product-spec`, and route visual alternatives or
+an unselected direction to Product Design.
 
 ## Profile Gate
 

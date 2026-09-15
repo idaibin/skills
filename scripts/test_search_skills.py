@@ -20,7 +20,7 @@ SPEC.loader.exec_module(SEARCH)
 class SearchSkillsTests(unittest.TestCase):
     def setUp(self) -> None:
         self.index = {
-            "skills": [
+            "packages": [
                 {
                     "name": "repo-map",
                     "category": "repository-engineering",
@@ -66,6 +66,14 @@ class SearchSkillsTests(unittest.TestCase):
                 },
             ]
         }
+
+    def assert_delivery_matrix(self, cases: dict[str, bool]) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        for query, expected in cases.items():
+            with self.subTest(query=query):
+                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
+                owners = {item["name"] for item in SEARCH.search(index, query)}
+                self.assertEqual(expected, "repo-delivery" in owners)
 
     def test_guidance_query_prefers_repo_map(self) -> None:
         results = SEARCH.search(self.index, "create AGENTS.md for frontend and backend")
@@ -659,7 +667,6 @@ class SearchSkillsTests(unittest.TestCase):
 
     def test_repo_delivery_final_characterization_and_event_matrix(self) -> None:
         """The reducer is occurrence-local, ordered, and keeps PR ownership separate."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         matrix = {
             # Modality: inquiry and global barrier never grant mutation authority.
             "Check whether git pull origin is allowed, then explain the result.": False,
@@ -678,11 +685,7 @@ class SearchSkillsTests(unittest.TestCase):
             "拉取远程分支。": True,
             "拉取一份文件。": False,
         }
-        for query, expected in matrix.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(matrix)
 
         parsed = SEARCH.parse_delivery_intent(
             "Commit these changes locally. Permission to commit is revoked. You may commit these changes locally."
@@ -694,13 +697,11 @@ class SearchSkillsTests(unittest.TestCase):
 
     def test_repo_delivery_event_reducer_regressions_are_occurrence_local(self) -> None:
         """Delivery authority is local to each occurrence and survives only valid lifecycle changes."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         cases = {
             # A same-segment Git occurrence must not borrow command modality from a
             # separate homonym, and vice versa.
             "Do not commit these Git changes, then commit this value to database.": False,
             "Push this button, then discuss pushing this branch.": False,
-            "Push this button, then push this branch.": True,
             # A global barrier blocks bare commands but a later action-specific
             # authorization can reopen only that action.
             "Do not make any Git changes. I authorize you to commit these changes locally.": True,
@@ -727,15 +728,10 @@ class SearchSkillsTests(unittest.TestCase):
             "Do not run git push origin main.": False,
             "git fetch --prune origin. Permission is revoked.": False,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
-    def test_repo_delivery_final_p2_context_pr_and_cli_regressions(self) -> None:
+    def test_repo_delivery_resource_homonyms_pr_and_cli_options(self) -> None:
         """Keep resource homonyms, publishing mutations, and Git global options distinct."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         cases = {
             "Fetch remote refs.": True,
             "Fetch remote configuration.": False,
@@ -745,8 +741,6 @@ class SearchSkillsTests(unittest.TestCase):
             "Abort this rebase.": True,
             "Cancel this PR. Commit and push this branch.": False,
             "Close this PR. Commit and push this branch.": False,
-            "File a PR. Cancel it. Commit and push this branch.": True,
-            "File a PR. Scratch that. Commit and push this branch.": True,
             "File a PR. Start a deployment. Cancel it. Commit and push this branch.": False,
             "Commit and push fixes for the existing PR branch.": True,
             "git -C repo fetch origin": True,
@@ -756,28 +750,19 @@ class SearchSkillsTests(unittest.TestCase):
             "Do not run git -C repo fetch origin.": False,
             "git -c protocol.version=2 fetch origin. Permission is revoked.": False,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
-    def test_repo_delivery_freeze_edges_for_fetch_barrier_pr_and_cli_options(self) -> None:
+    def test_repo_delivery_fetch_barrier_pr_and_quoted_cli_boundaries(self) -> None:
         """Freeze the final authority boundaries without broadening ordinary wording."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         cases = {
             "Fetch remote branches.": True,
             "Fetch the remote branch.": True,
-            "Fetch remote configuration.": False,
-            "Fetch remote resource.": False,
             "Do not make any Git changes. I permit you to commit these changes locally.": True,
             "Do not make any Git changes. I give you permission to commit these changes locally.": True,
             "Do not make any Git changes. May I commit these changes locally?": False,
             "Do not make any Git changes. I permit you to commit these changes locally. Permission is revoked.": False,
             "File a PR. Cancel that request. Commit and push this branch.": True,
             "File a PR. Start a deployment. Cancel that request. Commit and push this branch.": False,
-            "Cancel the existing PR. Commit and push this branch.": False,
-            "Commit and push fixes for the existing PR branch.": True,
             "Commit and push fixes to the open PR branch.": True,
             "git -C 'repo with spaces' fetch origin": True,
             'git --git-dir=".git dir" fetch origin': True,
@@ -786,15 +771,10 @@ class SearchSkillsTests(unittest.TestCase):
             "git --git-dir fetch origin": False,
             "git --work-tree fetch origin": False,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
-    def test_repo_delivery_revision16_events_questions_cjk_cli_and_release(self) -> None:
-        """Exercise Revision 16 boundaries through both the reducer and full index."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+    def test_repo_delivery_ordered_events_questions_cjk_cli_and_release(self) -> None:
+        """Exercise ordered authority boundaries through both the reducer and full index."""
         cases = {
             "You may commit these changes locally, but that permission is revoked.": False,
             "I authorize you to commit these changes locally, but Git mutation is forbidden.": False,
@@ -814,15 +794,8 @@ class SearchSkillsTests(unittest.TestCase):
             "Do not run git reset --hard.": False,
             "git revert deadbeef. Permission is revoked.": False,
             "Release the package lock.": False,
-            "Release version 1.2.3.": True,
-            "Release this artifact.": True,
-            "Release tag v1.2.3.": True,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
         ordered = SEARCH.parse_delivery_intent(
             "I authorize you to commit these changes locally, but Git mutation is forbidden."
@@ -830,9 +803,8 @@ class SearchSkillsTests(unittest.TestCase):
         self.assertEqual(["commit", "barrier"], [event.action for event in ordered.events])
         self.assertLess(ordered.events[0].span[0], ordered.events[1].span[0])
 
-    def test_repo_delivery_freeze_inverted_permission_and_package_lock_file(self) -> None:
+    def test_repo_delivery_inverted_permission_and_package_lock_file(self) -> None:
         """Auxiliary inversion asks; it never grants a delivery action."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         cases = {
             "Are you permitted to commit this branch": False,
             "Are you allowed to push this branch": False,
@@ -847,29 +819,19 @@ class SearchSkillsTests(unittest.TestCase):
             "Release this artifact.": True,
             "Release tag v1.2.3.": True,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
-    def test_repo_delivery_revision17_occurrence_revocation_pr_and_clean(self) -> None:
-        """Revision 17: all authority evidence stays occurrence-local and ordered."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+    def test_repo_delivery_occurrence_local_revocation_pr_and_clean(self) -> None:
+        """All authority evidence stays occurrence-local and ordered."""
         cases = {
             "Can I commit these Git changes, then I authorize you to commit this database value.": False,
-            "Do you have permission to commit this database value, then commit these Git changes locally.": True,
             "我想知道是否可以提交这些 Git 更改": False,
             "请提交这些 Git 更改然后不要提交数据库值。": True,
             "Commit these changes locally. Push permission is revoked.": True,
-            "Commit these changes locally. Permission is revoked.": False,
             "Release the package lockfile.": False,
             "Release package-lock.json.": False,
             "Release the dependency lock.": False,
             "Release the resource lock.": False,
-            "Release version 1.2.3.": True,
-            "Release this artifact.": True,
-            "Release tag v1.2.3.": True,
             "Do not make any Git changes. The branch may be pushed.": True,
             "Do not make any Git changes. Pushing the reviewed branch is authorized.": True,
             "File a PR, then cancel that PR, then commit and push this branch.": True,
@@ -880,15 +842,10 @@ class SearchSkillsTests(unittest.TestCase):
             "Do not run git clean -fd.": False,
             "git clean -fd. Permission is revoked.": False,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
-    def test_repo_delivery_freeze_barrier_revoke_and_pr_cancel_spans(self) -> None:
+    def test_repo_delivery_barrier_revoke_and_pr_cancel_spans(self) -> None:
         """Do not let a database inquiry reauthorize later bare Git mutations."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         cases = {
             "Do not make any Git changes. Do you have permission to commit this database value, then commit these Git changes locally.": False,
             "Do you have permission to commit this database value, then commit these Git changes locally.": True,
@@ -897,11 +854,7 @@ class SearchSkillsTests(unittest.TestCase):
             "Commit and push these changes. Permission to push is revoked.": True,
             "Commit and push these changes. Permission is revoked.": False,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
         span_cases = {
             "File a PR, then cancel it, then commit these changes locally.": "cancel it",
@@ -917,9 +870,8 @@ class SearchSkillsTests(unittest.TestCase):
         existing = SEARCH.parse_delivery_intent("Cancel the existing PR. Commit these changes locally.")
         self.assertNotIn("pr-cancel-pending", [event.action for event in existing.events])
 
-    def test_repo_delivery_revision18_external_review_regressions(self) -> None:
+    def test_repo_delivery_external_review_occurrence_order(self) -> None:
         """External-review P2s remain occurrence-local and lexically ordered."""
-        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         cases = {
             "Is permission granted to push this branch, then review the diff.": False,
             "Do you have permission to commit this database value, commit these Git changes locally.": True,
@@ -927,14 +879,8 @@ class SearchSkillsTests(unittest.TestCase):
             "Do not make any Git changes. Permission to commit these changes locally is granted.": True,
             "Do not make any Git changes. Permission to push this branch is granted.": True,
             "Do not make any Git changes. Is permission granted to push this branch?": False,
-            "File a PR, then cancel it, then file another PR, then commit these changes locally.": False,
-            "创建 PR，随后取消它，随后再次创建 PR，随后提交这些更改。": False,
         }
-        for query, expected in cases.items():
-            with self.subTest(query=query):
-                self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
-                names = {item["name"] for item in SEARCH.search(index, query)}
-                self.assertEqual(expected, "repo-delivery" in names)
+        self.assert_delivery_matrix(cases)
 
     def test_repo_delivery_all_canonical_targeted_revocations_and_inversion(self) -> None:
         """Targeted revocation clears only its canonical delivery grant."""
@@ -993,6 +939,9 @@ class SearchSkillsTests(unittest.TestCase):
                 ["File a PR", "file another PR", "cancel it"],
             ),
         }
+        self.assert_delivery_matrix(
+            {query: expected for query, (_, expected, _) in cases.items()}
+        )
         for query, (expected_actions, expected, expected_texts) in cases.items():
             with self.subTest(query=query):
                 parsed = SEARCH.parse_delivery_intent(query)
@@ -1003,7 +952,7 @@ class SearchSkillsTests(unittest.TestCase):
                 self.assertEqual(expected_texts, [query[event.span[0] : event.span[1]] for event in publishing])
                 self.assertEqual(expected, SEARCH.has_authorized_delivery_action(query))
 
-    def test_repo_delivery_revision18_p2_revocation_scope_and_pr_adjacency(self) -> None:
+    def test_repo_delivery_revocation_scope_and_pr_adjacency(self) -> None:
         """Only bare revocations are global; pronoun cancellation is sentence-adjacent."""
         revocations = {
             "Commit these changes locally. Database permission is revoked.": True,
@@ -1013,6 +962,7 @@ class SearchSkillsTests(unittest.TestCase):
             "Commit these changes locally, permission is revoked.": False,
             "Commit these changes locally, then permission is revoked.": False,
         }
+        self.assert_delivery_matrix(revocations)
         for query, expected in revocations.items():
             with self.subTest(kind="revocation", query=query):
                 parsed = SEARCH.parse_delivery_intent(query)
@@ -1127,7 +1077,7 @@ class SearchSkillsTests(unittest.TestCase):
                         self.assertTrue(parsed.authorized)
                         self.assertNotIn("revoke", [event.action for event in parsed.events])
 
-    def test_repo_delivery_revision19_occurrence_local_regressions(self) -> None:
+    def test_repo_delivery_questions_scopes_pr_and_cjk_occurrence_local(self) -> None:
         """Questions, scopes, PR lifecycles, and CJK commands stay occurrence-local."""
         for action, object_text in (("cherry-pick", "this commit"), ("fast-forward", "this branch")):
             inquiry = f"Is permission to {action} {object_text} granted"
@@ -1165,7 +1115,7 @@ class SearchSkillsTests(unittest.TestCase):
         self.assertEqual(["inquiry", "command"], [event.modality for event in commits])
         self.assertTrue(parsed.authorized)
 
-    def test_repo_delivery_revision19_adjacent_inverted_inquiries_are_occurrence_local(self) -> None:
+    def test_repo_delivery_adjacent_inverted_inquiries_are_occurrence_local(self) -> None:
         """A comma/then continuation cannot turn its preceding permission question into a grant."""
         for query in (
             "Is permission to cherry-pick this commit granted, then review the diff.",
@@ -1191,7 +1141,7 @@ class SearchSkillsTests(unittest.TestCase):
         self.assertEqual("inquiry", queried.modality)
         self.assertTrue(independent.authorized)
 
-    def test_repo_delivery_revision19_separator_cli_and_cherry_pick_aliases(self) -> None:
+    def test_repo_delivery_separator_cli_and_cherry_pick_aliases(self) -> None:
         """A later CLI command and a cherry-pick object's commit stay separate occurrences."""
         for separator in ("but", "while", ":", "：", " - ", " – ", " — "):
             query = f"Is permission to cherry-pick this commit granted {separator} git commit -am fix."
@@ -1245,7 +1195,7 @@ class SearchSkillsTests(unittest.TestCase):
                         self.assertEqual(["cherry-pick", "commit"], [event.action for event in later.events if event.action in {"cherry-pick", "commit"}])
                         self.assertTrue(later.authorized)
 
-    def test_repo_delivery_revision20_inquiry_boundaries_and_pr_denials(self) -> None:
+    def test_repo_delivery_coordinated_inquiry_boundaries_and_pr_denials(self) -> None:
         """Coordinated questions and denied PR opens cannot leak authority or erase antecedents."""
         for query, actions in (
             ("Can I cherry-pick this commit, then git commit -am fix?", ["cherry-pick", "commit"]),

@@ -67,6 +67,7 @@ class LiveAgentEvalTests(unittest.TestCase):
                 "source_owners": case["required_source_owners"],
                 "artifacts": case["required_artifacts"],
                 "effects": case["required_effects"],
+                "not_verified": case.get("required_not_verified", []),
                 "stop": {"state": case["expected_stop"]},
                 "efficiency": {"tool_calls": case["max_tool_calls"], "successful_tool_calls": case["max_tool_calls"]},
                 "trace": {
@@ -254,6 +255,19 @@ class LiveAgentEvalTests(unittest.TestCase):
         explicit["process"] = ["read-effective-instructions"]
         self.assertIn(
             "dev-frontend-explicit-source-change: missing required process step",
+            VALIDATOR.result_errors(self.cases, results),
+        )
+
+    def test_missing_required_not_verified_layer_cannot_pass(self) -> None:
+        results = self.passed_results()
+        explicit = next(
+            item
+            for item in results["case_results"]
+            if item["case_id"] == "dev-frontend-explicit-source-change"
+        )
+        explicit["not_verified"] = ["development-runtime"]
+        self.assertIn(
+            "dev-frontend-explicit-source-change: missing required Not verified layer",
             VALIDATOR.result_errors(self.cases, results),
         )
 

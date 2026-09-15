@@ -101,9 +101,6 @@ to use each package's portable `SKILL.md` metadata.
 - [Repository contribution rules](AGENTS.md)
 - [Package contribution rules](skills/AGENTS.md)
 
-`ask-chatgpt` was renamed to `ask-ai`; legacy wording remains compatible, but
-`ask-ai` is the maintained package.
-
 ## Development
 
 Run the repository's complete validation entry point before publishing changes:

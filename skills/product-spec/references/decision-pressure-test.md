@@ -25,7 +25,14 @@ decision instead of interviewing the user about it.
 3. Compute the current frontier: unresolved material decisions whose prerequisites are
    settled. Select the decision with the greatest downstream effect; prefer boundaries,
    permissions, failure semantics, and acceptance over local preferences.
-4. Ask one bounded question and wait for its answer. Include:
+4. Ask one bounded question from the current frontier and wait for its answer. When
+   two or three meaningful mutually exclusive product outcomes exist, prefer the
+   current host mode's native structured-choice affordance; put the recommendation
+   first and state each option as a user-visible outcome. If that affordance is
+   unavailable, identify the limitation at its actual scope and use concise numbered
+   options; do not claim that the client as a whole lacks the capability or that this
+   Skill created a native control. Use a concise open question only when the decision
+   cannot be represented honestly by bounded options. Include:
    - why the decision is material now;
    - the user need and verified product constraints or evidence that bound it;
    - the recommended answer and reason;
@@ -35,7 +42,8 @@ decision instead of interviewing the user about it.
 5. Record the answer using the workflow's Confirmed, Assumption, Open Question,
    Rejected, or Deferred state. For a confirmed material choice, retain its context,
    evidence or constraints, reason, principal trade-off, rejected alternative when
-   applicable, and affected slice or acceptance result. Link visual authority when
+   applicable, affected slice or acceptance result, and any exact domain mapping that
+   downstream owners need. Link visual authority when
    relevant; do not define visual style, tokens, layout, or motion here. Recompute only
    the affected branches, then select the next frontier decision.
 6. Checkpoint a coherent decision group before synthesizing or updating an artifact;

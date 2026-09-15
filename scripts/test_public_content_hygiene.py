@@ -61,7 +61,6 @@ STALE_OWNER_SURFACES = [
     ROOT / "skills" / "CLAUDE.md",
     ROOT / "docs" / "standards",
     ROOT / "docs" / "skills",
-    ROOT / "docs" / "quality" / "cloud-behavior-validation.md",
     ROOT / "evals" / "skill-routing-cases.json",
     ROOT / "skills",
     ROOT / "protocols",

@@ -21,6 +21,44 @@ Keep a compact status summary and one ordered Ready frontier. Detailed execution
 belong in the repository's progress/evidence authority and are referenced rather than
 copied into every task.
 
+## Decision Frontier
+
+Resolve ledger facts from accepted contracts, current evidence, and the existing task
+authority before questioning the user. Connect only unresolved choices that can change
+task boundaries, owner, dependency order, acceptance evidence, blocker scope, or the
+Ready frontier. A product, UI, architecture, implementation, review, or delivery
+decision stays with that owner: record it as a scoped blocker and next action instead
+of deciding it inside `to-task`.
+
+For a ledger-owned choice, ask only a current-frontier question whose prerequisites
+are settled. When two or three meaningful mutually exclusive outcomes exist, prefer
+the current host mode's native structured-choice affordance; put the recommendation
+first and state the task/evidence consequence. If that affordance is unavailable,
+identify the limitation at its actual scope and use concise numbered options; do not
+claim that the client as a whole lacks the capability or that this Skill created a
+native control. Record the selected outcome and basis, recompute affected dependencies
+and statuses, and never mark a dependent task Ready while its material owner decision
+remains unresolved. A selection does not authorize implementation, Git mutation,
+external action, or continuous execution.
+
+## Task Slicing
+
+- Prefer a narrow, independently demonstrable outcome that includes its matching
+  owner-level implementation and verification instead of horizontal batches such as
+  "all UI", "all services", or "all tests". When different mutation owners are
+  required, use explicit dependencies and make the smallest owner-complete task the
+  Ready unit.
+- Keep each task within one fresh execution context and one mutation owner. A task may
+  cross technical layers owned by that capability, but it must not hide a Product,
+  UI, architecture, review, delivery, or external-operation decision.
+- Treat a wide mechanical refactor as an exception when no narrow migration batch can
+  remain valid independently. Model it as **expand–contract**: add the compatible new
+  form, migrate consumers in bounded batches that preserve the declared green gate,
+  then remove the old form only after every migration dependency is complete.
+- When a migration batch cannot stay green alone, record the shared integration basis
+  and block final integration/verification on every batch. Do not call a horizontal
+  outage window a vertical slice.
+
 ## Separated Ledger Authorities
 
 Identify ledger roles by meaning, never by file name. A project may keep them in one

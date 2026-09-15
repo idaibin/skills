@@ -244,7 +244,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
     parser.add_argument("--basis", default="working-tree")
-    parser.add_argument("--baseline-report", type=Path)
     parser.add_argument(
         "--baseline-ref",
         help="Read the immutable baseline from <git-ref>:evals/skill-routing-baseline.json",
@@ -255,8 +254,6 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_baseline(args: argparse.Namespace) -> dict[str, object] | None:
-    if args.baseline_ref and args.baseline_report:
-        raise ValueError("choose either --baseline-ref or --baseline-report")
     if args.baseline_ref:
         completed = subprocess.run(
             ["git", "-C", str(ROOT), "show", f"{args.baseline_ref}:evals/skill-routing-baseline.json"],
@@ -265,7 +262,7 @@ def load_baseline(args: argparse.Namespace) -> dict[str, object] | None:
             text=True,
         )
         return json.loads(completed.stdout)
-    return load_json(args.baseline_report) if args.baseline_report else None
+    return None
 
 
 def main() -> int:
