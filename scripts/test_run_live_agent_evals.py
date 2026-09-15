@@ -3,7 +3,9 @@
 
 from __future__ import annotations
 
+import contextlib
 import importlib.util
+import io
 import json
 import os
 import shutil
@@ -229,6 +231,7 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertIn(f"${case['expected_skill']}", prompt)
         self.assertIn(str(RUNNER.skill_candidate_path("dev-frontend")), prompt)
         self.assertIn("Read its complete SKILL.md", prompt)
+        self.assertIn("observable tool call", prompt)
 
     def test_implicit_prompt_exposes_catalog_not_expected_owner_or_skill_path(self) -> None:
         case = self.case("dev-frontend-implicit-source-change")
@@ -236,6 +239,23 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertIn(str(RUNNER.skill_catalog_root()), prompt)
         self.assertNotIn(str(RUNNER.skill_candidate_path(case["expected_skill"])), prompt)
         self.assertNotIn(case["required_source_owners"][0], prompt)
+        self.assertIn("without inventorying every catalog file", prompt)
+
+    def test_numbered_file_read_is_observable_path_evidence(self) -> None:
+        self.assertTrue(
+            RUNNER.argv_reads_path(
+                "nl -ba src/components/neutral-panel.ts",
+                "src/components/neutral-panel.ts",
+            )
+        )
+
+    def test_awk_full_file_read_is_observable_path_evidence(self) -> None:
+        self.assertTrue(
+            RUNNER.argv_reads_path(
+                "awk '1' /tmp/catalog/skills/dev-rust/SKILL.md",
+                "/tmp/catalog/skills/dev-rust/SKILL.md",
+            )
+        )
 
     def test_trace_facts_deduplicates_started_and_completed_command_items(self) -> None:
         events = [
@@ -267,6 +287,15 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertFalse(RUNNER.trace_loaded_skill(facts, "dev-frontend", first_write))
         self.assertFalse(RUNNER.trace_ran_focused_check(facts, True, last_write))
         self.assertEqual([f"cat {candidate}"], facts["commands"])
+
+    def test_newline_separated_read_only_git_command_is_not_a_write(self) -> None:
+        facts = {
+            "all_commands": [
+                "/bin/zsh -lc \"sed -n '1,20p' local.txt\ngit status --short\""
+            ],
+            "commands": [],
+        }
+        self.assertFalse(RUNNER.trace_has_git_write(facts))
 
     def test_skill_read_requires_complete_candidate_content_from_the_same_successful_item(self) -> None:
         candidate_path = RUNNER.skill_candidate_path("dev-frontend")
@@ -336,6 +365,23 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         facts = {
             "commands": ["python3 -c 'import socket'", "git status --short"],
             "tool_items": [{"id": "unknown", "type": "function_call"}],
+        }
+        self.assertTrue(RUNNER.external_effect(facts))
+
+    def test_skill_name_in_local_path_is_not_an_external_effect(self) -> None:
+        facts = {
+            "commands": [
+                "sed -n '1,260p' /tmp/catalog/skills/ask-ai/SKILL.md",
+                "rg 'https://example.invalid' local-fixture.md",
+            ],
+            "tool_items": [],
+        }
+        self.assertFalse(RUNNER.external_effect(facts))
+
+    def test_external_executable_is_an_external_effect(self) -> None:
+        facts = {
+            "commands": ["/bin/zsh -lc 'curl https://example.invalid/result'"],
+            "tool_items": [],
         }
         self.assertTrue(RUNNER.external_effect(facts))
 
@@ -876,6 +922,7 @@ class RunLiveAgentEvalTests(unittest.TestCase):
                     "argv",
                     ["run-live-agent-evals.py", "--case", "dev-frontend-explicit-source-change", "--output-dir", str(output)],
                 ),
+                contextlib.redirect_stdout(io.StringIO()),
             ):
                 self.assertEqual(1, RUNNER.main())
             summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))

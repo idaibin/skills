@@ -317,6 +317,30 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
                 ]
                 self.assertTrue(VALIDATOR.semantic_errors(payload))
 
+    def test_proposed_target_requires_approval(self) -> None:
+        payload = self.stage_payload("spec-ready")
+        target = payload["delta_table"][0]["target_contract"]
+        target.update({
+            "value": "13px synthetic proposed target",
+            "evidence_level": "proposed",
+            "evidence_ids": ["TARGET-PROPOSED"],
+        })
+        payload["evidence"].append({
+            "id": "TARGET-PROPOSED",
+            "level": "proposed",
+            "claim": "Synthetic proposed target",
+            "source": "Synthetic proposal record",
+            "viewport": {"width": 1280, "height": 800, "zoom": 1},
+            "state": "synthetic populated state at scroll origin",
+            "limitation": "Requires approval",
+        })
+        self.assertTrue(self.errors(payload))
+        self.assertTrue(VALIDATOR.semantic_errors(payload))
+
+        target["approval"] = "synthetic owner approval"
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+
     def test_semantics_compare_capture_viewports(self) -> None:
         payload = copy.deepcopy(self.fixture)
         payload["visual_reviews"][0]["runtime_capture"]["viewport"]["height"] = 1080
@@ -343,6 +367,35 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
     def test_complete_rejects_failed_final_pass(self) -> None:
         payload = self.complete_payload()
         payload["visual_reviews"][-1]["verdict"] = "fail"
+        self.assertTrue(VALIDATOR.semantic_errors(payload))
+
+    def test_complete_tracks_findings_by_stable_identity(self) -> None:
+        payload = self.complete_payload()
+        payload["visual_reviews"][0]["findings"].append({
+            "id": "FINDING-OPEN-SECOND",
+            "severity": "P1",
+            "acceptance_id": "ACCEPTANCE-001",
+            "evidence_ids": ["RUNTIME-PASS-1"],
+            "status": "open",
+            "summary": "Independent synthetic blocker",
+        })
+        self.assertTrue(VALIDATOR.semantic_errors(payload))
+
+    def test_v1_accepts_legacy_findings_without_ids_without_masking(self) -> None:
+        payload = self.complete_payload()
+        for review in payload["visual_reviews"]:
+            for finding in review["findings"]:
+                finding.pop("id")
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+
+        payload["visual_reviews"][0]["findings"].append({
+            "severity": "P1",
+            "acceptance_id": "ACCEPTANCE-001",
+            "evidence_ids": ["RUNTIME-PASS-1"],
+            "status": "open",
+            "summary": "Independent legacy blocker",
+        })
         self.assertTrue(VALIDATOR.semantic_errors(payload))
 
     def test_complete_rejects_not_verified_list(self) -> None:
@@ -536,6 +589,22 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         target = copy.deepcopy(payload["required_runtime_matrix"][-1])
         missing_mobile["required_runtime_matrix"].append(target)
         self.assertTrue(VALIDATOR.semantic_errors(missing_mobile))
+
+    def test_complete_requires_every_frozen_target_even_when_coverage_is_not_applicable(self) -> None:
+        payload = self.complete_payload()
+        mobile = copy.deepcopy(payload["required_runtime_matrix"][0])
+        mobile["id"] = "synthetic-required-mobile"
+        mobile["viewport"] = {"width": 390, "height": 844, "zoom": 1}
+        mobile["target_fingerprint"] = VALIDATOR._canonical_sha256(
+            {"viewport": mobile["viewport"], "state": mobile["state"]}
+        )
+        payload["required_runtime_matrix"].append(mobile)
+        payload["runtime_coverage"]["responsive_breakpoints"] = {
+            "status": "not-applicable",
+            "evidence_ids": [],
+            "reason": "Synthetic invalid bypass attempt",
+        }
+        self.assertTrue(VALIDATOR.semantic_errors(payload))
 
     def test_runtime_matrix_rejects_duplicate_targets_and_fingerprint_drift(self) -> None:
         duplicate = self.complete_payload()

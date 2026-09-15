@@ -23,6 +23,10 @@ Use this checklist when implementing or reviewing frontend changes.
 - Identify actual package manager, scripts, frontend app boundary, target screen, route, component, framework, UI type, visual source, style system, and runtime proof requirement.
 - Identify the frontend project class, pinned runtime/package manager, lockfile, dependency policy, script contract, directory/naming standard, and documented exceptions.
 - Inspect only target page, component, route, service, hook or composable, store, type, style, shared UI, and layout owner files needed for the request.
+- For a no-op or accepted-baseline confirmation, read the exact owner path and symbol
+  plus the matching test or contract before validation. Report that owner identity and
+  the current-baseline focused check; a matching literal or passing check alone does
+  not establish source-owner evidence.
 - When the current record already matches the exact file, owner, and function, verify
   that target directly and do not invoke `repo-map`. For a cross-owner reuse/impact
   question, consume at most one bounded query from an existing compatible snapshot.
@@ -42,6 +46,10 @@ Use this checklist when implementing or reviewing frontend changes.
   record the smallest executable contract for the target slice: a task-local revision,
   observable acceptance, explicit non-goals, governing authority, affected
   owner/consumer, reuse decision, and the focused check that can fail before the change.
+- Record a reproducible verification basis: target surface and environment, starting
+  state, input/action, expected postcondition, decisive source/config/artifact
+  identities, controlled variables, and known confounders. Keep task-specific values
+  local to this basis; do not promote them into universal defaults.
 - Freeze the navigation path after verifying the owner and decisive chain. Do not repeat
   map queries or broad source discovery after freeze unless current source contradicts
   the basis or a real check failure exposes an ownership error.
@@ -63,6 +71,10 @@ Use this checklist when implementing or reviewing frontend changes.
   the old revision. Inventory and reconcile any old-revision hunks already landed in
   the Worktree before new implementation starts; do not turn the revision into a
   repository schema, durable authority, or migration mechanism.
+- If work is delegated, allow only one active implementation owner for the same mutable
+  slice. Combine adjacent implementation and diagnosis, keep an independent reviewer
+  read-only, and reconcile the owner's canonical result with the actual Worktree diff
+  before any successor continues the slice.
 
 ## Reuse-First Gate
 
@@ -187,8 +199,9 @@ Use this checklist when implementing or reviewing frontend changes.
   finish with local diff inspection and `git diff --check`; tests remain `Not verified`.
   Do not add red tests or repeat checks by default. End the implementation phase here,
   then continue any already-authorized browser acceptance or review through its owner.
-- Select focused checks and expensive-run preflight under the existing
-  [implementation workflow](../SKILL.md#workflow); do not duplicate its gates here.
+- Select focused checks and expensive-run preflight through the entry
+  [Route Map](../SKILL.md#route-map) and its applicable references; do not duplicate
+  unrelated route gates here.
   A local build is not release or runtime acceptance.
 
 - For selected-source visual work, run two same-viewport/state comparison passes:
@@ -205,6 +218,11 @@ Use this checklist when implementing or reviewing frontend changes.
   observable acceptance, run the initial check and at most one correction recheck; if
   the same target acceptance fails again, stop patching, preserve the diff and direct
   evidence, and return to diagnosis or one accountable handoff.
+- For a causal fix claim, rerun the same observable acceptance against the artifact or
+  runtime identity actually produced. Change one acceptance-decisive factor at a time
+  where practical; otherwise list confounders and report only the observed outcome.
+  Success, non-crash, build completion, or an agent terminal state does not identify
+  the cause by itself.
 
 - Run project-defined type, lint, test, build, formatter, or route checks only at a
   logical slice boundary, before handoff, or after a real error; keep them focused.

@@ -36,6 +36,11 @@ Do not mirror the same description or workflow into speculative provider files. 
 provider adapter must add machine-consumed behavior or distribution metadata, have a
 documented owner and validator, and leave `SKILL.md` as the portable authority.
 
+Portable packages must not embed a host application's orchestration model, Run/Gate/
+Receipt lifecycle, storage layout, adapter name, or product-specific schema namespace.
+Expose a provider-neutral input/result contract; the calling host owns translation,
+retention, and delivery receipts outside `skills/<name>/`.
+
 ## Metadata
 
 - `name` and `description` are required.
@@ -112,16 +117,26 @@ versioned adapter contract; they do not pretend the SQLite file itself is portab
 
 ## Instructions And References
 
-- Keep the `SKILL.md` body under 500 lines and include only the core workflow,
-  selection rules, safety boundaries, output, and direct reference links.
-- Put detailed checklists, examples, framework profiles, and templates in focused
-  references loaded on demand.
+- Treat `SKILL.md` as an entrypoint map, not a condensed operating manual. Every
+  package uses `## Entry Gate`, `## Route Map`, `## Invariants`, `## Output Map`, and
+  `## Reference Map`; keep the complete file at or below 8,000 Unicode characters
+  (about 2,000 tokens under the catalog estimator).
+- The five required map sections are non-empty, unique, and ordered as listed. An
+  optional non-empty `## Purpose` may precede them; no other H2 section belongs in the
+  entrypoint. Package-local Markdown links must resolve both their file and fragment.
+- `Route Map` selects one primary route or a minimal compatible route composition.
+  `Reference Map` links every package reference with an explicit load condition.
+  Evaluation cases are maintainer-only and are not loaded during ordinary execution.
+- Keep only rules that apply to every route, especially authority, permission, and
+  irreversible-effect boundaries, in the entrypoint. Put route procedures, ordered
+  workflows, checklists, examples, framework/provider profiles, and templates in
+  focused references loaded on demand.
 - Keep references one level deep and link every reference directly from `SKILL.md`.
 - Add a `## Contents` section to references longer than 100 lines.
 - Give each ordered step a checkable transition or completion criterion. Prefer an
   observable state, exhausted bounded set, or named stop condition over vague verbs
   such as understand, improve, or finish.
-- Inline what every execution branch needs; disclose branch-specific reference behind
+- Inline only what every execution branch needs; disclose branch-specific reference behind
   a direct, condition-worded pointer. Co-locate a concept's rule, exception, and stop
   condition instead of scattering fragments across the entrypoint and references.
 - Avoid duplicated guidance. One behavior has one authoritative source; repeat a short,

@@ -228,6 +228,14 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
                         f"delta {delta.get('acceptance_id')} {column} references "
                         f"forbidden evidence levels: {conflicting}"
                     )
+                if (
+                    column == "target_contract"
+                    and declared_level == "proposed"
+                    and not value.get("approval")
+                ):
+                    errors.append(
+                        f"delta {delta.get('acceptance_id')} proposed target requires approval"
+                    )
 
     reviews = payload.get("visual_reviews", [])
     for index, review in enumerate(reviews, start=1):
@@ -333,16 +341,27 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
         if reviews and isinstance(reviews[-1], dict):
             if reviews[-1].get("verdict") != "pass":
                 errors.append("Complete verdict requires the final visual review to pass")
-            latest_status: dict[tuple[object, object], object] = {}
+            latest_status: dict[object, tuple[object, object]] = {}
             for review in reviews:
                 if not isinstance(review, dict):
                     continue
+                legacy_occurrences: dict[tuple[object, object], int] = {}
                 for finding in review.get("findings", []):
                     if isinstance(finding, dict):
-                        latest_status[(finding.get("severity"), finding.get("acceptance_id"))] = finding.get("status")
+                        legacy_key = (
+                            finding.get("severity"),
+                            finding.get("acceptance_id"),
+                        )
+                        occurrence = legacy_occurrences.get(legacy_key, 0)
+                        legacy_occurrences[legacy_key] = occurrence + 1
+                        finding_id = finding.get("id") or (*legacy_key, occurrence)
+                        latest_status[finding_id] = (
+                            finding.get("severity"),
+                            finding.get("status"),
+                        )
             open_blockers = [
-                acceptance_id
-                for (severity, acceptance_id), status in latest_status.items()
+                finding_id
+                for finding_id, (severity, status) in latest_status.items()
                 if severity in {"P0", "P1"} and status == "open"
             ]
             if open_blockers:
@@ -447,6 +466,7 @@ def _complete_capture_closure_errors(
     }.items():
         item = matrix_records.get(target_id)
         if not isinstance(item, dict):
+            errors.append(f"Complete verdict lacks runtime matrix evidence for {target_id}")
             continue
         artifact = item.get("source")
         actual_bytes = artifact_bytes.get(artifact)

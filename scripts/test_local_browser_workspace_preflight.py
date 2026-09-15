@@ -214,6 +214,20 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
         self.assertEqual("capability-unavailable", result["state"])
         self.assertIn("target tab is absent and creation is disabled", result["reasons"])
 
+    def test_missing_target_tab_stops_when_grouping_is_disabled(self) -> None:
+        fixture = ready_fixture()
+        fixture["target_tab_state"] = "absent"
+        fixture["tab"] = None
+        fixture["observations"]["target_tabs"] = []
+        fixture["policy"]["tab_grouping"]["enabled"] = False
+        result = PREFLIGHT.evaluate(fixture)
+        self.assertEqual("capability-unavailable", result["state"])
+        self.assertFalse(result["permitted_actions"]["claim_verified_tab"])
+        self.assertIn(
+            "target tab is absent and no verified creation policy is enabled",
+            result["reasons"],
+        )
+
     def test_present_target_requires_fresh_tab_enumeration(self) -> None:
         fixture = ready_fixture()
         fixture["observations"]["target_tabs"] = []

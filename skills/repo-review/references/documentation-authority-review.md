@@ -20,9 +20,9 @@ moves, deletes, or claims completion of authoritative project documentation.
 ## Structured artifact gate
 
 Before accepting YAML, JSON, Schema, OpenAPI, or another sidecar as durable project
-authority, verify a named owner, producer, non-LLM consumer, semantic version,
-executable validator, drift policy, and retirement rule. “AI may read it” is not a
-consumer. A deployed
+authority, verify a named owner, non-LLM consumer, semantic version, executable
+validator, drift policy, and retirement rule. Require a producer only when an actual
+generated derivative exists. “AI may read it” is not a consumer. A deployed
 Swagger document is environment evidence unless the API owner maintains an adopted
 generation and compatibility pipeline.
 
@@ -42,9 +42,9 @@ review official format lint and UI Spec completeness as separate gates. Require 
 official spec commit and CLI version, `ui-spec-design-completeness/1` result, machine
 token groups or concrete official omissions, source binding, and exact design-hash
 human approval for adopted status. Local `awaiting-trusted-approval-verification`
-without a satisfied consumer completeness claim is blocking. Require a host-trusted
-approval receipt bound to the same exact Result Package; it clears the consumer gate
-without rewriting the producer result. Lint zero and a matching PackageManifest prove
+without a satisfied consumer completeness claim is blocking. Require independently
+trusted human approval evidence bound to the exact immutable result identity and basis; it clears the consumer gate
+without rewriting the producer result. Lint zero and a matching immutable content manifest prove
 neither completeness nor approval.
 
 ## Ownership identities

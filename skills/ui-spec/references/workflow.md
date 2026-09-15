@@ -159,9 +159,9 @@ Design System Spec, next run the package completeness checker from
 tokens or reviewed official omissions, prose-to-token application semantics, source
 binding, shared-component truth, and (for adopted stage) exact-hash approval binding.
 Only `ready-for-human-approval` may enter the approval request. The local adopted check
-stops at `awaiting-trusted-approval-verification`; only a host-trusted approval
-receipt bound to the exact Result Package may satisfy the downstream completeness
-gate. It does not rewrite the producer result. A PackageManifest alone binds bytes
+stops at `awaiting-trusted-approval-verification`; only independently trusted human
+approval evidence bound to the exact immutable result identity may satisfy the downstream completeness
+gate. It does not rewrite the producer result. An immutable content manifest alone binds bytes
 and basis but never upgrades either result.
 
 ## Evaluation And Handoff

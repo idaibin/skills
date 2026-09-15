@@ -16,7 +16,7 @@
 - [Text And File Input](#text-and-file-input)
 - [Output Capture](#output-capture)
 - [Page State Recovery](#page-state-recovery)
-- [Prompt Template](#prompt-template)
+- [Prompt Contract](#prompt-contract)
 
 ## Terminology Basis
 

@@ -19,6 +19,11 @@ inheritance exists only when current guidance and consumers prove it.
 
 `DESIGN.md` is the human-readable and machine-readable semantic authority for shared visual decisions: YAML frontmatter owns normative token values, while Markdown owns their application guidance.
 
+Any durable structured projection is conditional: use it only when a named owner,
+producer, non-LLM consumer, semantic version, executable validator, drift policy, and
+retirement rule already exist. Otherwise keep the Markdown authority as the runtime
+read path.
+
 ## PRD Relationship
 
 Use the same stable `<slice-id>` as the related project product-spec location when

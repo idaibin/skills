@@ -19,7 +19,7 @@ Before findings, record:
 - authority type: code-first backend declarations or contract-first OpenAPI;
 - authority path and ownership;
 - contract state (`draft` or `authoritative`) and the evidence supporting that state;
-- generator name/version and exact generation commands;
+- generator name/version and exact generation commands when generation exists;
 - baseline normalized OpenAPI artifact at the fixed Git basis;
 - candidate artifact from retained generation/CI evidence or clean generation in a
   disposable isolated copy constructed from the fixed basis plus candidate changes.
@@ -35,20 +35,22 @@ existing evidence only and mark regeneration/idempotence `Not verified`.
 ## Review Chain
 
 Trace product intent reference -> authority -> normalized OpenAPI -> backend
-route/DTO/handler/error mapping -> generated TypeScript client -> representative
-consumer -> tests and CI. The exchange artifact is language-neutral: Java
+route/DTO/handler/error mapping -> each actual generated client or native adapter ->
+representative consumer -> tests and CI. The exchange artifact is language-neutral: Java
 Swagger/OpenAPI and Rust libraries are authoring mechanisms, not frontend contracts.
 
 Check:
 
 1. exactly one authoring authority;
-2. valid, reconstructable OpenAPI and, when generation exists, two identical clean
+2. valid OpenAPI and, when generation exists, reconstructable output plus two identical clean
    generations replayed in the disposable isolated copy;
 3. compatibility diff against the fixed baseline artifact;
-4. isolated clean client regeneration with no unexplained drift or duplicate touched DTO;
+4. isolated clean regeneration of each actual client with no unexplained drift or
+   duplicate touched DTO; otherwise client generation is `Not applicable`;
 5. backend success, unauthenticated/unauthorized, validation, and business-error
    conformance when applicable;
-6. real consumer loading/success/error evidence when claimed;
+6. real consumer loading/success/error evidence when claimed, using browser evidence
+   only when that consumer is browser-based;
 7. clean-state CI reproduction of the complete chain.
 
 For hand-authored contract-first OpenAPI, also check that every operation declares the

@@ -362,12 +362,18 @@ def git_evidence(workspace: Path, case_root: Path, baseline: dict[str, str]) -> 
 
 
 def external_effect(facts: dict[str, Any]) -> bool:
-    command_pattern = re.compile(r"\b(?:ask-ai|curl|wget|gh|ssh|scp|sftp|nc|ncat)\b|https?://", re.I)
-    python_network = re.compile(r"\bpython(?:3)?\b.*\b(?:socket|urllib|requests|http\.client)\b", re.I)
-    return (
-        any(command_pattern.search(command) or python_network.search(command) for command in facts.get("all_commands", facts["commands"]))
-        or bool(facts["tool_items"])
-    )
+    external_executables = {"ask-ai", "curl", "wget", "gh", "ssh", "scp", "sftp", "nc", "ncat"}
+    python_network = re.compile(r"\b(?:socket|urllib|requests|http\.client)\b", re.I)
+    for command in facts.get("all_commands", facts["commands"]):
+        for argv in command_argv_segments(command):
+            if not argv:
+                continue
+            executable = Path(argv[0]).name.lower()
+            if executable in external_executables:
+                return True
+            if re.fullmatch(r"python(?:3(?:\.\d+)*)?", executable) and python_network.search(" ".join(argv[1:])):
+                return True
+    return bool(facts["tool_items"])
 
 
 def git_argv_is_read_only(arguments: list[str]) -> bool:
@@ -453,7 +459,7 @@ def split_shell_body(body: str) -> list[str]:
             current = []
             index += 2
             continue
-        if char in (";", "|"):
+        if char in (";", "|", "\n"):
             segments.append("".join(current))
             current = []
             index += 1
@@ -499,6 +505,10 @@ def argv_reads_path(command: str, path: str) -> bool:
         if executable == "cat" and path in argv[1:]:
             return True
         if executable == "sed" and path in argv[1:] and "-n" in argv:
+            return True
+        if executable == "nl" and path in argv[1:]:
+            return True
+        if executable == "awk" and path in argv[1:]:
             return True
     return False
 
@@ -556,12 +566,14 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
     if case["mode"] == "explicit":
         skill_instruction = (
             f"The explicitly named candidate ${case['expected_skill']} is at "
-            f"{skill_candidate_path(case['expected_skill'])}. Read its complete SKILL.md before acting."
+            f"{skill_candidate_path(case['expected_skill'])}. Read its complete SKILL.md in an observable "
+            "tool call before acting, even when its content is already available in context."
         )
     else:
         skill_instruction = (
             f"Candidate Skill catalog root: {skill_catalog_root()}. Select the appropriate candidate yourself, "
-            "then read that candidate's complete SKILL.md before acting."
+            "using the available Skill descriptions without inventorying every catalog file. Then read that "
+            "candidate's complete SKILL.md in an observable tool call before acting."
         )
     return "\n".join(
         [
@@ -569,7 +581,7 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
             "Follow its AGENTS.md. Never stage, commit, push, or access external services.",
             skill_instruction,
             case["prompt"],
-            "Run the repository-defined focused check.",
+            "Run the repository-defined focused check." if case["required_changed_paths"] else "Do not modify the fixture; report only the requested owner result or stop.",
             provider_note,
             "Return only the JSON object required by the output schema.",
         ]
@@ -700,6 +712,11 @@ def run_case(
             process_steps.append("stop-not-ready")
         if not changed and stop_state == "missing-authorization":
             process_steps.append("stop-before-edit")
+            process_steps.append("stop-before-effect")
+        if not changed and stop_state == "evidence-incomplete":
+            process_steps.append("stop-not-ready")
+        if not changed and final and final.get("selected_skill") == case["expected_skill"] and selection_trace and stop_state == "completed":
+            process_steps.append("deliver-owner-output")
         provider = None
         if provider_required:
             provider = provider_evidence or {
@@ -736,6 +753,10 @@ def run_case(
             artifacts.append("no-op-evidence")
         if not changed and stop_state == "missing-authorization":
             artifacts.append("authorization-gap")
+        if not changed and stop_state == "evidence-incomplete":
+            artifacts.append("evidence-gap")
+        if not changed and final and final.get("selected_skill") == case["expected_skill"] and selection_trace and stop_state == "completed":
+            artifacts.append("owner-result")
         if artifacts:
             observations.append("artifact")
         observable_effects = not facts["tool_items"] and not has_external_effect and git_state["ok"]

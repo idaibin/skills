@@ -80,6 +80,24 @@ def verified_parent(repo_arg: str) -> tuple[Path, Path]:
     return repo, parent
 
 
+def task_local_parent(parent_arg: str) -> Path:
+    candidate = Path(parent_arg).expanduser()
+    if candidate.is_symlink():
+        raise ValueError("artifact parent must be an existing non-symlink directory")
+    parent = candidate.resolve(strict=True)
+    if not parent.is_dir():
+        raise ValueError("artifact parent must be an existing non-symlink directory")
+    return parent
+
+
+def resolved_parent(args: argparse.Namespace) -> Path:
+    artifact_parent = getattr(args, "artifact_parent", None)
+    if artifact_parent:
+        return task_local_parent(artifact_parent)
+    _, parent = verified_parent(args.repo)
+    return parent
+
+
 def paths_for(parent: Path, review_id: str) -> dict[str, Path]:
     if not REVIEW_ID.fullmatch(review_id):
         raise ValueError("invalid review_id")
@@ -103,7 +121,7 @@ def append_event(path: Path, event: dict[str, object]) -> dict[str, object]:
 
 
 def prepare(args: argparse.Namespace) -> dict[str, object]:
-    _, parent = verified_parent(args.repo)
+    parent = resolved_parent(args)
     paths = paths_for(parent, args.review_id)
     package = paths["package"]
     if not package.is_file() or package.is_symlink():
@@ -155,7 +173,7 @@ def prepare(args: argparse.Namespace) -> dict[str, object]:
 
 
 def finalize(args: argparse.Namespace) -> dict[str, object]:
-    _, parent = verified_parent(args.repo)
+    parent = resolved_parent(args)
     paths = paths_for(parent, args.review_id)
     invocation = json.loads(paths["invocation"].read_text(encoding="utf-8"))
     if invocation.get("schema_version") != SCHEMA or invocation.get("state") != "prepared":
@@ -218,12 +236,16 @@ def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(description=__doc__)
     subcommands = root.add_subparsers(dest="command", required=True)
     prepare_parser = subcommands.add_parser("prepare")
-    prepare_parser.add_argument("--repo", required=True)
+    prepare_parent = prepare_parser.add_mutually_exclusive_group(required=True)
+    prepare_parent.add_argument("--repo")
+    prepare_parent.add_argument("--artifact-parent")
     prepare_parser.add_argument("--review-id", required=True)
     prepare_parser.add_argument("--provider", required=True)
     prepare_parser.add_argument("--operation-id", required=True)
     finalize_parser = subcommands.add_parser("finalize")
-    finalize_parser.add_argument("--repo", required=True)
+    finalize_parent = finalize_parser.add_mutually_exclusive_group(required=True)
+    finalize_parent.add_argument("--repo")
+    finalize_parent.add_argument("--artifact-parent")
     finalize_parser.add_argument("--review-id", required=True)
     finalize_parser.add_argument("--operation-id", required=True)
     finalize_parser.add_argument("--conversation-id", required=True)

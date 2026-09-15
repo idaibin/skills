@@ -3,8 +3,10 @@
 
 from __future__ import annotations
 
+import contextlib
 import copy
 import importlib.util
+import io
 import json
 import re
 import sys
@@ -76,6 +78,11 @@ class DesignMdCompletenessTests(unittest.TestCase):
 
     def errors(self, result):
         return result["shared_authority_completeness"]["errors"]
+
+    def test_meaningful_prose_is_language_neutral(self) -> None:
+        chinese = "主色用于关键操作，表面色用于内容区域。错误状态保持独立语义，并确保文字、图标和焦点在不同背景下清晰可辨。"
+        self.assertTrue(CHECKER.meaningful_prose(chinese))
+        self.assertFalse(CHECKER.meaningful_prose("颜色很好看"))
 
     def test_complete_first_adoption_is_ready_for_human_approval(self) -> None:
         result = evaluate(FIXTURES / "complete.md")
@@ -257,7 +264,11 @@ class DesignMdCompletenessTests(unittest.TestCase):
             "--source-ref", "selected-source:test", "--source-artifact", str(source),
             "--source-sha256", CHECKER.sha256(source), "--source-status", "approved",
         ]
-        with mock.patch.object(sys, "argv", argv), mock.patch.object(CHECKER, "run_official_lint", mutate_after_snapshot):
+        with (
+            mock.patch.object(sys, "argv", argv),
+            mock.patch.object(CHECKER, "run_official_lint", mutate_after_snapshot),
+            contextlib.redirect_stdout(io.StringIO()),
+        ):
             self.assertEqual(2, CHECKER.main())
 
 

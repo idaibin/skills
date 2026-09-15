@@ -10,12 +10,19 @@ effective repository instructions.
 - Keep project task state in the target repository. `to-task` owns the reusable transformation and reconciliation workflow, not a catalog-side copy of any project's ledger.
 - Use profiles for framework or technology variants that share the same owner,
   workflow, mutation boundary, and output.
-- Keep `SKILL.md` concise. Link detailed checklists, examples, and variants directly
-  from it; keep references one level deep.
+- Keep `SKILL.md` as a concise entrypoint map using Entry Gate, Route Map, Invariants,
+  Output Map, and Reference Map. Keep it at or below 8,000 Unicode characters; move
+  route procedures, checklists, examples, and variants to directly linked one-level
+  references loaded only for their named condition.
+- Keep those five non-empty sections unique and in that order. Only an optional
+  non-empty Purpose H2 may precede them; local Markdown file and fragment links must
+  resolve.
 - Packages must be self-contained. They may use their own `scripts/`, `references/`,
   and `assets/`, but must not depend on repository-root maintenance files at runtime.
 - Keep provider-specific metadata in its provider surface. This catalog includes
   `agents/openai.yaml` for OpenAI without treating it as portable frontmatter.
+- Keep host orchestration, receipt/storage lifecycles, adapter names, and host schema
+  namespaces outside portable packages; Skills expose provider-neutral contracts.
 - Do not invent parallel per-provider files. Add another provider surface only when
   that provider documents a real machine-readable contract that this catalog ships.
 - Do not put installation, update, changelog, or repository-maintenance guidance in

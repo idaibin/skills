@@ -59,6 +59,35 @@ def target(provider: str) -> dict:
 
 
 class AskAiTransportResolverTests(unittest.TestCase):
+    def test_optional_defaults_allow_standard_chat(self) -> None:
+        value = {
+            "provider": "gemini",
+            "defaults": {"schema_version": "ask-ai-defaults/v1", "default_provider": "manual"},
+            "current_request": {"transport": "codex-in-app-browser"},
+            "observations": {
+                "transport_availability": {"codex-in-app-browser": "available"},
+                "openTabs": [],
+            },
+        }
+        result = RESOLVER.resolve(value)
+        self.assertEqual("target-discovery-required", result["status"])
+        self.assertEqual({}, result["resolved_target"])
+        self.assertEqual("new-per-task", result["conversation_policy"])
+
+    def test_other_browser_provider_uses_standard_chat_without_persistent_route(self) -> None:
+        value = {
+            "provider": "kimi",
+            "defaults": {"schema_version": "ask-ai-defaults/v1"},
+            "current_request": {"transport": "codex-in-app-browser"},
+            "observations": {
+                "transport_availability": {"codex-in-app-browser": "available"},
+                "openTabs": [],
+            },
+        }
+        result = RESOLVER.resolve(value)
+        self.assertEqual("target-discovery-required", result["status"])
+        self.assertEqual("kimi", result["provider"])
+
     def test_chatgpt_project_and_gemini_notebook_same_name_resolve_independently(self) -> None:
         chatgpt = RESOLVER.resolve(payload("chatgpt", targets=[target("chatgpt")]))
         gemini = RESOLVER.resolve(payload("gemini", targets=[target("gemini")]))

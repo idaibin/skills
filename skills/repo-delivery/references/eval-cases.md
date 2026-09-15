@@ -1,5 +1,12 @@
 # Eval Cases
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Quality Eval](#quality-eval)
+- [Scoring](#scoring)
+
 For an authorized same-branch commit/rebase/push, one writer may execute the chain
 without delegation. Existing action-specific authorization persists across phases;
 commit-only authority still stops before push.
@@ -26,6 +33,8 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | `After verification, delete the temporary branch.` | Should trigger cleanup mode. | Delivery cleanup. |
 | `Integrate this reviewed branch into main; preserve meaningful commits when their boundaries are clean, otherwise squash noisy history.` | Should trigger Branch integration and record the evidence-based history strategy. | Integration shape is conditional, not automatically squash. |
 | `This rebase is already conflicted; trace both sides' intent, resolve each hunk, run checks, and continue the rebase, but do not push.` | Trigger conditional conflict resolution with bounded authorization. | Existing Git operation needs intent-preserving mutation. |
+| `Merge the feature branch into the environment branch and push it; both contain overlapping runtime configuration changes.` | Freeze source/target SHAs, inventory the configuration overlap, present mutually exclusive integration strategies through structured question/select, and stop before mutation until the user chooses. | Generic merge/push wording does not select history strategy, and sensitive configuration overlap requires human review even without textual conflicts. |
+| `Resolve every conflict yourself, continue this merge, and push.` | Inspect and brief each conflict or cohesive intent group, then require a separate human selection before editing or continuing; keep push separately authorized but pending. | Broad conflict-handling wording cannot delegate business-intent decisions or waive the human gate. |
 | `Push this already reviewed branch only; do not stage or commit dirty files.` | Trigger push-only dispatch and forbid staging/commit. | Push authority is independent. |
 | `Resolve these named conflicts, but do not stage, continue, commit, or push.` | Trigger resolve-only dispatch and stop with the requested file state. | Conflict sub-actions require separate authority. |
 | `This large task has one completed, focused-tested reporting slice. Commit only that slice locally so I can continue; do not push.` | Trigger Execution Durability semantic milestone, exact staging, `slice-validated`, remaining-tree reporting, and local-only durability. | Explicit commit authority protects one completed slice without claiming final review. |
@@ -86,6 +95,8 @@ Use these cases when changing `repo-delivery` triggers, modes, staging rules, pu
 | Branch history strategy | Fixes source/target, preserves coherent meaningful commits, squashes noisy or single-outcome history, and records the rationale. Partial integration accounts for every omitted commit. | Always squashes, blindly preserves WIP/fixup commits, or silently drops source commits. |
 | Dirty sync safety | Does not rebase/merge over a dirty worktree without an explicit preservation plan. | Risks overwriting local work during sync. |
 | Conflict resolution | Traces both sides' primary intent, resolves hunk by hunk, validates, and continues only the authorized operation; permits abort when safety evidence is missing. | blindly chooses ours/theirs, forbids abort, or stages/commits/pushes beyond authorization. |
+| Human integration strategy gate | Freezes source/target SHAs and shows 2–3 mutually exclusive merge/rebase/cherry-pick/squash choices with the evidence-backed recommendation and impact before mutation unless the current request already selected the exact strategy. | Infers a history strategy from generic merge/sync/commit/push wording or treats the recommendation as approval. |
+| Human conflict review gate | Presents target/source intent, proposed result, affected boundary, and verification per hunk or cohesive group; records the structured selection and re-prompts for newly discovered conflicts or sensitive semantic overlap. | Resolves because intent appears inferable, uses ours/theirs or whole-file replacement, relies on an earlier integration approval, or continues without the human choice. |
 | Cleanup | Deletes temporary branches only after final target state is verified and cleanup is requested or repo-required. | Deletes branches before proving delivery. |
 | Pull-request boundary | Stops after Git delivery and routes an explicit PR request to the publishing workflow. | Creates or updates a pull request. |
 | Skills release gate | Requires exact package/catalog scope, the canonical repository gate, package-script tests, and accepted fixed-basis review. | Delivers from a direct-validator-only or mutable Worktree basis. |

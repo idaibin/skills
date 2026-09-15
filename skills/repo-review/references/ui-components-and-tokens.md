@@ -14,7 +14,7 @@ in a project that has not adopted them.
   the project-native validator to catch missing, stale, or duplicate source and public
   import drift instead of accepting a documentation-marker check.
 - Trace `Component -> Semantic -> Primitive`, generated outputs, business-only
-  Semantic consumption, owner-scoped Component Token usage, and negative coverage for
+  Semantic consumption, owner-scoped Component Token usage, and project-native negative tests for
   unknown, cyclic, bypass, authored CSS self-reference, and generated drift.
 - Attribute findings only when the basis introduces, expands, exposes, or directly
   relies on the mismatch. An unadopted optional Registry or token pipeline is `Not

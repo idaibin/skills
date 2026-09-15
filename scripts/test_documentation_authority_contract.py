@@ -29,12 +29,8 @@ LIFECYCLE_GATE_PATTERNS = {
     "skills/product-spec/references/eval-cases.md": (
         r"Structured artifact admission \| Requires (?P<gate>.*?) before adding a sidecar\.",
     ),
-    "skills/ui-spec/SKILL.md": (
+    "skills/ui-spec/references/documentation-boundaries.md": (
         r"projection is conditional: use it only when (?P<gate>.*?) already exist\.",
-    ),
-    "skills/repo-map/SKILL.md": (
-        r"navigation only and require its (?P<gate>.*?)\. Otherwise",
-        r"map sidecars for machine convenience without a (?P<gate>.*?)\.",
     ),
     "skills/repo-map/references/checklist.md": (
         r"structured map sidecars without a (?P<gate>.*?)\.",
@@ -45,14 +41,11 @@ LIFECYCLE_GATE_PATTERNS = {
     "skills/repo-map/references/eval-cases.md": (
         r"Structured map admission \| Adds a sidecar only with a (?P<gate>.*?)\. \|",
     ),
-    "skills/dev-frontend/SKILL.md": (
-        r"Require a (?P<gate>.*?)\. Run the repository-defined non-mutating validator",
+    "skills/dev-frontend/references/ui-components-and-tokens.md": (
+        r"structured projection requires a (?P<gate>.*?)\. Otherwise",
     ),
     "skills/repo-audit/references/frontend-profile.md": (
         r"verify its (?P<gate>.*?)\. Inspect current validator evidence",
-    ),
-    "skills/repo-review/SKILL.md": (
-        r"projection is relevant only when a (?P<gate>.*?) are evidenced;",
     ),
     "skills/repo-review/references/documentation-authority-review.md": (
         r"verify a (?P<gate>.*?)\. “AI may read it”",
@@ -90,10 +83,12 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
                 )
 
     def test_product_spec_terminal_and_sidecar_gates(self) -> None:
-        text = re.sub(r"\s+", " ", self.read("skills/product-spec/SKILL.md"))
-        self.assertIn("current terminal contract", text)
+        skill = self.read("skills/product-spec/SKILL.md")
+        text = re.sub(r"\s+", " ", self.read("skills/product-spec/references/documentation-boundaries.md"))
+        self.assertIn("references/documentation-boundaries.md", skill)
+        self.assertIn("latest accepted product contract", text)
         workflow_gate = re.search(
-            r"create a structured companion only when (?P<gate>.*?) already exist\.",
+            r"durable structured artifact requires all of: (?P<gate>.*?)\. When",
             text,
         )
         self.assertIsNotNone(workflow_gate)
@@ -156,9 +151,9 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
             "skills/ui-spec/references/visual-direction-and-anti-slop.md",
             "skills/dev-frontend/references/visual-direction-and-anti-slop.md",
             "skills/repo-audit/references/visual-direction-and-anti-slop.md",
-            "skills/dev-frontend/SKILL.md",
-            "skills/repo-audit/SKILL.md",
-            "skills/repo-review/SKILL.md",
+            "skills/dev-frontend/references/specification-authorities.md",
+            "skills/repo-audit/references/frontend-profile.md",
+            "skills/repo-review/references/standards-and-spec.md",
             "skills/product-spec/references/template.md",
         )
         for path in paths:
@@ -180,7 +175,12 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
                 self.assertNotIn("root `DESIGN.md`", text)
 
     def test_repo_map_separates_source_and_runtime_identity(self) -> None:
-        text = self.read("skills/repo-map/SKILL.md")
+        skill = self.read("skills/repo-map/SKILL.md")
+        text = self.read("skills/repo-map/references/checklist.md") + self.read(
+            "skills/repo-map/references/api-contract-map.md"
+        )
+        self.assertIn("references/checklist.md", skill)
+        self.assertIn("references/api-contract-map.md", skill)
         self.assertIn("canonical/source owner", text)
         self.assertIn("runtime service identity", text)
 
@@ -207,16 +207,15 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         self.assertIn("Whole-image similarity metrics are diagnostic", audit_components)
         self.assertIn("optional assets are absent", audit_components)
 
-    def test_design_completeness_handoff_keeps_producer_state_distinct(self) -> None:
+    def test_design_completeness_handoff_is_host_neutral(self) -> None:
         contract = self.read("skills/ui-spec/references/design-md-contract.md")
-        handoff = self.read("skills/ui-spec/references/forgeway-handoff.md")
-        self.assertIn("ui.contract.specify@1.1.0", handoff)
-        self.assertIn("forgeway-ui-design-completeness/1", handoff)
-        self.assertIn("gate:ui-design-complete", handoff)
-        self.assertIn("package-relative", handoff)
-        self.assertIn("approval_record_sha256", handoff)
         self.assertIn("does not mutate the producer result", contract)
-        self.assertIn("forgeway-handoff.md", contract)
+        package_text = "\n".join(
+            path.read_text(encoding="utf-8")
+            for path in (ROOT / "skills" / "ui-spec").rglob("*")
+            if path.is_file() and path.suffix in {".md", ".py", ".json", ".yaml", ".yml"}
+        )
+        self.assertNotIn("forge" + "way", package_text.lower())
         for path in (
             "skills/dev-frontend/references/eval-cases.md",
             "skills/repo-audit/references/eval-cases.md",

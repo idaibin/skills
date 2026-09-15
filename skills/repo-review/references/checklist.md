@@ -71,20 +71,26 @@ uses the native route/DTO/error/client/consumer/test chain and marks this list
 
 - [ ] Fix the Git basis and record the baseline normalized OpenAPI artifact.
 - [ ] Identify one service authority: code-first declarations or contract-first OpenAPI.
-- [ ] Record authority path, generator name/version, exact commands, and generated markers.
-- [ ] Obtain the candidate from retained generation/CI evidence, or construct a
-      disposable isolated copy from the fixed basis plus candidate changes and run
-      clean generation there; never run a write-mode generator in the reviewed checkout.
-- [ ] Repeat clean generation only in that isolated copy, prove idempotence, and
-      prove the original worktree/index/status and relevant file hashes are unchanged.
+- [ ] Record the authority path and, only when generation exists, generator
+      name/version, exact commands, and generated markers.
+- [ ] When generation exists, obtain the candidate from retained generation/CI
+      evidence, or construct a disposable isolated copy from the fixed basis plus
+      candidate changes and run clean generation there; never run a write-mode
+      generator in the reviewed checkout. For a hand-authored contract-first artifact,
+      validate the exact reviewed artifact without inventing a generator.
+- [ ] Repeat clean generation only when a generated derivative exists, prove
+      idempotence there, and prove the original worktree/index/status and relevant file
+      hashes are unchanged.
 - [ ] Validate OpenAPI and run compatibility diff against the fixed baseline.
-- [ ] In the isolated copy, clean-regenerate the TypeScript client and reject
-      unexplained drift or touched hand-maintained duplicate DTOs.
+- [ ] In the isolated copy, clean-regenerate each actual generated client and reject
+      unexplained drift or touched hand-maintained duplicate DTOs; if consumers use a
+      native adapter, verify that adapter instead.
 - [ ] Verify applicable backend success, unauthenticated/unauthorized, validation,
       and business-error conformance.
-- [ ] Verify a real frontend consumer's loading/success/error behavior when claimed.
+- [ ] Verify each claimed real consumer's applicable success/error behavior; require
+      browser loading states only for a browser consumer.
 - [ ] Verify clean-state CI reproduces generation, validation, compatibility,
-      client, backend contract tests, and frontend gates.
+      actual client/adapter, backend contract tests, and applicable consumer gates.
 - [ ] Mark every missing live/runtime/CI gate `Not verified`; static schema checks
       cannot substitute for runtime conformance or consumer behavior.
 - [ ] When disposable isolation is unavailable, do not run generation; report that

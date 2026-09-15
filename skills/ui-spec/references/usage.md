@@ -49,17 +49,10 @@ same slice ID as related product facts, and never add another shared visual auth
 ## Handoff Examples
 
 - `dev-frontend`: selected visual source and revision, target route/surface, facts, exact layout/state/interaction contract, current tokens/components to reuse, proposed deltas, responsive/accessibility rules, copy, assets, hard blockers, and acceptance checks.
-- Forgeway or another compatible typed delivery consumer: capability
-  `ui.contract.specify@1.1.0`, exact Result PackageManifest, and package-relative
-  DESIGN.md, completeness JSON, selected-source artifact, and approval-record paths,
-  each closed by SHA-256 and byte length. Include the official spec commit, CLI
-  version, format-lint result, `ui-spec-design-completeness/1` result, token-group
-  names or official omitted reasons, source/approval bindings, and the trusted actor
-  identifiers. For Forgeway, target consumer
-  `forgeway-ui-design-completeness/1` and claim `gate:ui-design-complete`; keep the
-  producer result `awaiting-trusted-approval-verification` while the trusted receipt
-  satisfies the claim. Keep token values inside `DESIGN.md`; never copy Forgeway
-  traversal/store internals.
+- Compatible typed consumer: capability `ui.contract.specify@1.1.0`, exact immutable
+  input/result basis, package-relative artifacts, hashes and byte lengths, validation
+  results, source/approval bindings, and trusted actor identity. Keep token values in
+  `DESIGN.md`; the host adapter owns its own storage, traversal, and receipt protocol.
 - `ops-browser`: target URL, viewport/state matrix, exact assertions, console/network expectations, and screenshot paths after implementation.
 - `ops-client`: launch command, expected app/window identity, target size, fixture, assertions, and screenshot path after implementation.
 - Product Design: only when no visual source is selected or the user requests new visual alternatives, image generation, critique, or prototype exploration.

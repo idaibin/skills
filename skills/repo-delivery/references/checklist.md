@@ -26,6 +26,8 @@ does not authorize staging or committing.
 
 ## Required Evidence
 
+- A grounding record may identify evidence gaps, but it never authorizes stage, commit, push,
+  integration, cleanup, or pull-request actions.
 - Read relevant repo guidance before delivery.
 - Run `git status --short --branch`.
 - Identify branch, upstream, staged files, unstaged files, untracked files, and unrelated local work.
@@ -109,7 +111,12 @@ does not authorize staging or committing.
 ## Merge Or Rebase Conflicts
 
 - Load `resolving-merge-conflicts.md` only for an authorized in-progress operation.
-- Trace both sides' primary intent for every conflicted hunk; never clear markers by blindly choosing ours/theirs.
+- Trace both sides' primary intent for every conflicted hunk and same-rule semantic overlap; never clear markers by blindly choosing ours/theirs.
+- Before editing a conflict, present the two sides, proposed result, affected boundary,
+  and verification, then obtain a separate human choice through the host's structured
+  question/select UI. Prior branch-integration authority does not satisfy this gate.
+- Treat newly discovered conflicts or sensitive business/environment overlaps as a new
+  decision. Do not silently extend an earlier choice or rely on a clean auto-merge.
 - Run focused checks. If staging is authorized, stage only resolved paths/hunks and inspect the cached diff; continue only when separately authorized.
 - Abort when intent, basis, permissions, or local-work preservation cannot be established; no rule forbids a safe abort.
 - Conflict resolution does not imply staging, continuation, commit, push, force-push, cleanup, or branch deletion.
@@ -143,6 +150,10 @@ does not authorize staging or committing.
 ## Branch Integration Strategy
 
 - Fix the target tip and source range before deciding how history should land.
+- Unless the user already named the exact merge/rebase/cherry-pick/squash strategy in
+  the current authorization, present 2–3 mutually exclusive strategies through the
+  host's structured question/select UI and stop before mutation. Recommendation is
+  advice, not approval; a generic request to merge, sync, commit, or push is insufficient.
 - Preserve source commits when each is meaningful, reviewed, independently coherent, dependency-ordered, and useful for future traceability or rollback.
 - Squash when the source history is WIP/fixup-heavy, conflict-repair-heavy, mechanically fragmented, or intentionally represents one outcome; also follow an explicit one-commit or repository-policy requirement.
 - Fold fixup, conflict-only, and validation-repair commits into their owning intent instead of preserving them as important history.

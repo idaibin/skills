@@ -11,7 +11,7 @@ Use this checklist only when root ownership or bounded source resolution is ambi
    contract proves another owner. A non-Git container is not itself a child repository.
 3. Read effective guidance for every opened root. Record `versioned` or
    `local-unversioned`, current commit when present, dirty/untracked identity through a
-   PackageManifest when available, and exclusions.
+   immutable content manifest when available, and exclusions.
 4. Resolve symbolic scopes to repository-relative real paths. Reject absolute paths,
    `..` escape, and symlink targets outside the resolved root.
 5. Record extractor versions and the coverage denominator before scanning. Do not
@@ -41,7 +41,7 @@ Validate schema/version, snapshot basis, path containment, stable-ID uniqueness,
 edge endpoints, authority uniqueness, hashes, coverage arithmetic, exclusions,
 unresolved/conflict records, and tombstones. Report:
 
-- capability/version, repository and Git roots, basis/PackageManifest ref;
+- capability/version, repository and Git roots, immutable basis/content-manifest ref;
 - scan scope, exclusions, extractor versions, snapshot/scan ID;
 - covered/total units and the denominator definition;
 - unresolved, conflict, stale, and tombstoned counts;

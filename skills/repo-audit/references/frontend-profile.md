@@ -89,10 +89,10 @@ then select only the profiles required by the request.
 - When adoption/completeness is in scope, verify official-format evidence
   separately from the `ui-spec-design-completeness/1` result and exact
   design-hash approval. A local `awaiting-trusted-approval-verification`
-  result without a satisfied consumer claim is blocking; only a host-trusted
-  approval receipt bound to the same Result Package clears it, without
+  result without a satisfied consumer claim is blocking; only independently trusted
+  human approval evidence bound to the exact immutable result identity and basis clears it, without
   rewriting the producer result. Do not use lint zero, current theme/CSS, or
-  PackageManifest integrity to clear a missing, untrusted, or `not-ready`
+  immutable content-manifest integrity to clear a missing, untrusted, or `not-ready`
   shared authority.
 - When State/data/contracts reaches an adopted OpenAPI or generated-client
   chain, load [protocol contracts](frontend-protocol-contracts.md) and audit

@@ -5,7 +5,9 @@
 Reject when any applicable blocker is present:
 
 1. no selected visual source or accepted baseline exists;
-2. the resolved `<design-root>/DESIGN.md` is missing;
+2. an adopted, first-adoption, or shared-semantics-changing boundary lacks its resolved
+   `<design-root>/DESIGN.md`; a local semantics-preserving non-adopted slice records
+   `Not applicable` instead;
 3. source identity, revision, selection, approval, rights, `use`, or `ignore` is unknown;
 4. product behavior, permissions, route data, or acceptance claims are invented;
 5. a material source vs product fact conflict remains unresolved;
@@ -18,7 +20,7 @@ Reject when any applicable blocker is present:
     for a first adoption, adopted shared authority, or Design System Spec;
 11. a first-adoption candidate requests human approval before
     `ready-for-human-approval`, or an adopted authority lacks a satisfied downstream
-    completeness gate from host-trusted exact-hash approval evidence;
+    completeness gate from independently trusted, exact-hash human approval evidence;
 12. an update to an existing shared visual authority lacks lint/diff evidence or has an unresolved regression;
 13. implementation/runtimes are claimed without owning evidence;
 14. a required tooling call is blocked but the affected slice is marked `Ready`.
@@ -48,7 +50,8 @@ selected-source fidelity, interaction/states, responsive/accessibility, and mapp
 
 ## Deterministic Evidence
 
-Use source identity, product facts, and resolved `<design-root>/DESIGN.md` as primary checks, then gate shared changes by:
+Use source identity and product facts as primary checks. When shared visual authority
+is adopted or changing, also use resolved `<design-root>/DESIGN.md` and gate it by:
 
 - official DESIGN.md lint result
 - DESIGN.md completeness policy version/result, token groups or reasoned omissions,
@@ -69,9 +72,9 @@ Report each item by name; do not collapse them into a prose `Ready` label.
 | # | Item | Check |
 | --- | --- | --- |
 | 1 | Selected source fixed | source identity, revision, approval, and rights/use recorded |
-| 2 | DESIGN.md resolved | `<design-root>/DESIGN.md` exists or is created and validated under named human approval |
-| 3 | DESIGN.md format | official lint reports zero errors on `<design-root>/DESIGN.md`; this does not prove completeness |
-| 4 | DESIGN.md completeness | applicable shared authority reports `ready-for-human-approval` before approval; local binding remains `awaiting-trusted-approval-verification`; downstream host-trusted exact-package evidence satisfies its completeness claim without rewriting the producer result |
+| 2 | Shared visual authority disposition | adopted, first-adoption, or not-adopted/not-required is recorded; required DESIGN.md exists |
+| 3 | DESIGN.md format | required DESIGN.md lint reports zero errors; otherwise `Not applicable` |
+| 4 | DESIGN.md completeness | required shared authority passes its lifecycle gate; otherwise `Not applicable` |
 | 5 | Delta table complete | every material visual difference has a row with acceptance ID, source target, current runtime, target contract, priority, owner, evidence IDs, verification, and asset owner/fallback |
 | 6 | Viewport matrix complete | every required viewport/state entry is present with no missing required items; justified exclusions are named |
 | 7 | P1 asset and icon owner | every P1 asset and applicable SVG icon role has an accepted owner, rights status, and either an accepted isolated fallback or evidenced `None` disposition; icon family/render/state/color/accessibility acceptance is complete |
@@ -82,10 +85,11 @@ Evaluate the nine items in numeric order:
 
 1. If an item fails, stop at that item, report its number and name, and return
    `Not Ready`.
-2. If all nine pass but one or more explicitly non-blocking claims remain
-   `Not verified`, report the first such gap and return `Partial`.
-3. Return `Ready for dev-frontend <slice>` only when all nine pass and no
-   `Not verified` gap remains.
+2. If all required items pass, report non-blocking `Not verified` gaps without
+   downgrading the slice. Use `Partial` only when a multi-slice result contains both
+   ready and blocked slices.
+3. Return `Ready for dev-frontend <slice>` when every required item passes; readiness
+   does not upgrade separately reported runtime or optional evidence.
 
 A blocking `Not verified` condition must fail its owning checklist item; it cannot be
 downgraded to `Partial`.

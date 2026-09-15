@@ -43,21 +43,22 @@ class VisualDirectionContractTests(unittest.TestCase):
             with self.subTest(skill=skill):
                 entrypoint = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
                 self.assertIn("references/visual-direction-and-anti-slop.md", entrypoint)
-    def test_scene_archetypes_contract_covers_five_core_scenes_and_negative_rules(self) -> None:
+    def test_scene_archetypes_are_generic_cues_not_fixed_implementation_contracts(self) -> None:
         archetype_doc = ROOT / "skills" / "ui-spec" / "references" / "scene-archetypes.md"
         self.assertTrue(archetype_doc.is_file())
         text = archetype_doc.read_text(encoding="utf-8")
         self.assertIn("## Contents", text)
-        self.assertIn("## Archetype Governance Rules", text)
-        self.assertIn("Negative Constraint Enforcement", text)
-        self.assertIn("DTCG Token Mapping", text)
-        self.assertIn("Modern SaaS Dark Dashboard", text)
-        self.assertIn("Minimalist Bento Grid", text)
-        self.assertIn("3D Claymorphic Card", text)
-        self.assertIn("Mobile iOS Archetype", text)
-        self.assertIn("Technical OG / Satori Card", text)
-        self.assertIn("1200 x 630", text)
-        self.assertIn("44pt", text)
+        self.assertIn("## Use and Ownership", text)
+        self.assertIn("## Archetype Cues", text)
+        self.assertIn("### Operational dashboard", text)
+        self.assertIn("### Bento composition", text)
+        self.assertIn("### Tactile or dimensional surface", text)
+        self.assertIn("### Mobile native-like surface", text)
+        self.assertIn("### Generated social or preview card", text)
+        self.assertIn("not a component API, token source", text)
+        self.assertIn("Do not define props, slots, utility classes", text)
+        self.assertNotIn("1200 x 630", text)
+        self.assertNotIn("44pt", text)
 
 
 if __name__ == "__main__":

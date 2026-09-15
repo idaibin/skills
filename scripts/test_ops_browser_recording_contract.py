@@ -53,7 +53,7 @@ class OpsBrowserRecordingContractTests(unittest.TestCase):
             "record an authorized browser interaction with native browser capture",
             package["intents"],
         )
-        self.assertEqual("1.1.0", capability["capability_version"])
+        self.assertEqual("1.2.0", capability["capability_version"])
         self.assertIn("native recording evidence", capability["description"])
 
 

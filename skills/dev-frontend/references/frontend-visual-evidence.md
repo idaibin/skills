@@ -133,6 +133,11 @@ After implementation, perform at least two closed comparison passes:
 2. fix confirmed findings; repeat the same capture and computed checks; record the
    post-fix verdict.
 
+Give new findings a stable `id` and reuse it across passes. For compatibility with
+older v1 artifacts, `id` remains optional; validators identify an ID-less finding by
+its severity, acceptance ID, and stable occurrence order within each pass so two
+findings on the same acceptance item cannot mask one another.
+
 Additional passes are allowed, but pass 2 cannot be replaced by a static re-read. Keep
 the design capture and implementation capture independently inspectable even when an
 overlay/diff is produced. Record tool, viewport, state, zoom, scroll position, artifact

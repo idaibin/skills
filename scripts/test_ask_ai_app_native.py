@@ -89,7 +89,7 @@ class AppNativeCanaryTests(unittest.TestCase):
             / "provider-chatgpt.md"
         ).read_text(encoding="utf-8")
         self.assertIn("provider-chatgpt.md", skill)
-        self.assertIn("ChatGPT-only", skill)
+        self.assertIn("Use this route only for a verified ChatGPT Project", routing)
         self.assertIn("an empty available source is", routing)
         self.assertIn("legal for a new Quick Chat", routing)
 

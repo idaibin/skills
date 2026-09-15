@@ -140,9 +140,9 @@ binary, migration, or shared surface, check:
   tests, relevant feature combinations, compatibility fixtures, and affected
   consumer checks.
 - For the Protocol-contract overlay, validate the OpenAPI exchange artifact,
-  regenerate from the selected authority twice from clean state and compare for
-  idempotence, run compatibility diff against a fixed Git-basis artifact,
-  regenerate the TypeScript client without drift, and exercise backend runtime
+  regenerate actual derivatives twice from clean state and compare for idempotence,
+  run compatibility diff against a fixed Git-basis artifact, regenerate each actual
+  client without drift, and exercise backend runtime
   conformance for applicable success, unauthenticated/unauthorized, validation,
   and business-error paths. Require clean-state CI reproduction when in scope.
 - For the Concurrency/runtime overlay, add deterministic cancellation, panic,

@@ -38,8 +38,8 @@ approval state.
    `ui-spec-design-completeness/1` result. A missing, `not-ready`, stale-hash,
    format-only, or local `awaiting-trusted-approval-verification` result is blocking
    and handed to `ui-spec`, not repaired from implementation source. Only a satisfied
-   consumer completeness claim produced from a host-trusted approval receipt bound to
-   the same exact Result Package clears adoption; the producer result remains
+   consumer completeness claim produced from independently trusted human approval
+   evidence bound to the exact immutable result identity and basis clears adoption; the producer result remains
    `awaiting-trusted-approval-verification`.
 4. Cross-check implementation and runtime evidence against those contracts without
    silently treating current code as approval for an unresolved product or visual

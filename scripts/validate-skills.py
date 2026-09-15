@@ -8,6 +8,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import unquote
 
 import jsonschema
 import yaml
@@ -213,17 +214,27 @@ UI_SPEC_DESIGN_COMPLETENESS_TOKENS = (
     "ui-spec-design-completeness/1",
     "ready-for-human-approval",
     "awaiting-trusted-approval-verification",
-    "host-trusted",
-    "same exact Result Package",
+    "trusted human approval",
+    "same exact immutable result",
     "scripts/validate-design-md-completeness.py",
-    "PackageManifest binds bytes and basis",
-    "ui.contract.specify@1.1.0",
-    "forgeway-ui-design-completeness/1",
-    "gate:ui-design-complete",
-    "package-relative",
-    "byte length",
-    "approval_record_sha256",
-    "distinct canonical",
+)
+
+ENTRYPOINT_MAX_CHARACTERS = 8_000
+ENTRYPOINT_REQUIRED_HEADINGS = (
+    "## Entry Gate",
+    "## Route Map",
+    "## Invariants",
+    "## Output Map",
+    "## Reference Map",
+)
+ENTRYPOINT_ALLOWED_HEADINGS = ("## Purpose",) + ENTRYPOINT_REQUIRED_HEADINGS
+ENTRYPOINT_MANUAL_HEADINGS = (
+    "## Workflow",
+    "## Modes",
+    "## Hard Rules",
+    "## Do Not Use For",
+    "## Output Contract",
+    "## References",
 )
 
 
@@ -362,6 +373,35 @@ def section_has_content(text: str, heading: str) -> bool:
     return False
 
 
+def h2_section_text(text: str, heading: str) -> str:
+    """Return one H2 section body, excluding nested peer H2 sections."""
+    lines = text.splitlines()
+    in_code_fence = False
+    fence_char = ""
+    fence_len = 0
+    start: int | None = None
+    for index, line in enumerate(lines):
+        in_code_fence, fence_char, fence_len = _update_fence_state(
+            line, in_code_fence, fence_char, fence_len
+        )
+        if in_code_fence:
+            continue
+        if _heading_matches(line, heading):
+            start = index + 1
+            break
+    if start is None:
+        return ""
+    body: list[str] = []
+    for line in lines[start:]:
+        in_code_fence, fence_char, fence_len = _update_fence_state(
+            line, in_code_fence, fence_char, fence_len
+        )
+        if not in_code_fence and _is_h2_heading(line):
+            break
+        body.append(line)
+    return "\n".join(body)
+
+
 def has_exact_h2_heading(text: str, heading: str) -> bool:
     in_code_fence = False
     fence_char: str = ""
@@ -413,11 +453,12 @@ def _update_fence_state(
 def local_link_errors(markdown: Path, package: Path) -> list[str]:
     errors: list[str] = []
     text = markdown.read_text(encoding="utf-8")
-    for target in LINK_RE.findall(text):
-        target = target.strip().strip("<>").split("#", 1)[0]
-        if not target or re.match(r"^[a-z][a-z0-9+.-]*:", target):
+    for raw_target in LINK_RE.findall(text):
+        raw_target = raw_target.strip().strip("<>")
+        target, separator, fragment = raw_target.partition("#")
+        if re.match(r"^[a-z][a-z0-9+.-]*:", target):
             continue
-        resolved = (markdown.parent / target).resolve()
+        resolved = (markdown.parent / target).resolve() if target else markdown.resolve()
         try:
             resolved.relative_to(package.resolve())
         except ValueError:
@@ -425,7 +466,25 @@ def local_link_errors(markdown: Path, package: Path) -> list[str]:
             continue
         if not resolved.exists():
             errors.append(f"{markdown.relative_to(package)}: broken link: {target}")
+            continue
+        if separator and fragment and resolved.is_file() and resolved.suffix.lower() == ".md":
+            headings = {
+                markdown_heading_slug(match.group(1))
+                for match in re.finditer(r"^[ ]{0,3}#{1,6}\s+(.+?)\s*#*\s*$", resolved.read_text(encoding="utf-8"), re.MULTILINE)
+            }
+            decoded_fragment = unquote(fragment).strip().lower()
+            if decoded_fragment not in headings:
+                errors.append(
+                    f"{markdown.relative_to(package)}: broken local fragment: {raw_target}"
+                )
     return errors
+
+
+def markdown_heading_slug(title: str) -> str:
+    """Approximate the stable GitHub-style anchor used by package-local headings."""
+    title = re.sub(r"[`*_~]", "", title.strip().lower())
+    title = re.sub(r"[^\w\-\s]", "", title, flags=re.UNICODE)
+    return re.sub(r"\s", "-", title).strip("-")
 
 
 def ask_ai_defaults_errors(package: Path) -> list[str]:
@@ -477,18 +536,11 @@ def ui_spec_design_completeness_errors(package: Path) -> list[str]:
     if package.name != "ui-spec":
         return []
     contract = package / "references" / "design-md-contract.md"
-    handoff = package / "references" / "forgeway-handoff.md"
     checker = package / "scripts" / "validate-design-md-completeness.py"
     if not contract.is_file():
         return ["ui-spec: missing references/design-md-contract.md"]
     errors = []
-    if not handoff.is_file():
-        errors.append("ui-spec: missing references/forgeway-handoff.md")
-    text = normalized_contract_text(
-        contract.read_text(encoding="utf-8")
-        + "\n"
-        + (handoff.read_text(encoding="utf-8") if handoff.is_file() else "")
-    )
+    text = normalized_contract_text(contract.read_text(encoding="utf-8"))
     errors += [
         f"ui-spec: design-md contract set missing completeness token: {token}"
         for token in UI_SPEC_DESIGN_COMPLETENESS_TOKENS
@@ -1008,6 +1060,15 @@ def ask_ai_app_native_relay_errors(package: Path) -> list[str]:
     return []
 
 
+HOST_CONTRACT_PATTERNS = (
+    (re.compile("forge" + "way", re.IGNORECASE), "named host adapter"),
+    (re.compile(r"\bhost(?:'s)?[-_ ]+trusted\b", re.IGNORECASE), "host-trusted approval"),
+    (re.compile(r"\bsame exact result package\b", re.IGNORECASE), "host result package"),
+    (re.compile(r"\bgate:[a-z0-9_.-]+", re.IGNORECASE), "host gate namespace"),
+    (re.compile(r"\bpackagemanifest\b", re.IGNORECASE), "undefined host manifest type"),
+)
+
+
 def package_errors(package: Path, all_names: set[str]) -> list[str]:
     errors: list[str] = []
     skill_file = package / "SKILL.md"
@@ -1056,8 +1117,57 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
         not isinstance(allowed_tools, str) or not allowed_tools.strip()
     ):
         errors.append(f"{package.name}: allowed-tools must be a non-empty string when provided")
-    if len(body.splitlines()) > 500:
-        errors.append(f"{package.name}: SKILL.md body exceeds the recommended 500 lines")
+    if len(skill_file.read_text(encoding="utf-8")) > ENTRYPOINT_MAX_CHARACTERS:
+        errors.append(
+            f"{package.name}: SKILL.md entrypoint exceeds {ENTRYPOINT_MAX_CHARACTERS} characters"
+        )
+    for heading in ENTRYPOINT_REQUIRED_HEADINGS:
+        if not has_exact_h2_heading(body, heading):
+            errors.append(f"{package.name}: SKILL.md entrypoint map missing {heading}")
+        elif not section_has_content(body, heading):
+            errors.append(f"{package.name}: SKILL.md entrypoint map has empty {heading}")
+    entry_headings = [
+        heading
+        for line in body.splitlines()
+        if (heading := _heading_match(line)) is not None
+    ]
+    for heading in entry_headings:
+        if heading not in ENTRYPOINT_ALLOWED_HEADINGS:
+            errors.append(
+                f"{package.name}: move non-map section {heading} from SKILL.md into a conditional reference"
+            )
+        elif entry_headings.count(heading) > 1:
+            errors.append(f"{package.name}: duplicate SKILL.md entrypoint map section {heading}")
+        elif not section_has_content(body, heading):
+            errors.append(f"{package.name}: SKILL.md entrypoint map has empty {heading}")
+    allowed_positions = [
+        ENTRYPOINT_ALLOWED_HEADINGS.index(heading)
+        for heading in entry_headings
+        if heading in ENTRYPOINT_ALLOWED_HEADINGS
+    ]
+    if allowed_positions != sorted(allowed_positions):
+        errors.append(f"{package.name}: SKILL.md entrypoint map sections are out of order")
+    for heading in ENTRYPOINT_MANUAL_HEADINGS:
+        if has_exact_h2_heading(body, heading):
+            errors.append(
+                f"{package.name}: move {heading} from SKILL.md into a conditional reference"
+            )
+    host_contract_patterns = HOST_CONTRACT_PATTERNS
+    for portable_path in sorted(package.rglob("*")):
+        if not portable_path.is_file() or portable_path.suffix not in {
+            ".md", ".json", ".yaml", ".yml", ".py", ".js", ".mjs", ".sh"
+        }:
+            continue
+        try:
+            portable_text = portable_path.read_text(encoding="utf-8").lower()
+        except UnicodeDecodeError:
+            continue
+        for pattern, label in host_contract_patterns:
+            if pattern.search(portable_text):
+                errors.append(
+                    f"{package.name}: portable package contains {label}: "
+                    f"{portable_path.relative_to(package)}"
+                )
 
     for forbidden in FORBIDDEN_PACKAGE_FILES:
         if (package / forbidden).exists():
@@ -1073,10 +1183,23 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
             for target in LINK_RE.findall(skill_file.read_text(encoding="utf-8"))
             if target.startswith("references/")
         }
+        map_text = h2_section_text(body, "## Route Map") + "\n" + h2_section_text(
+            body, "## Reference Map"
+        )
+        map_linked = {
+            target.strip().strip("<>").split("#", 1)[0]
+            for target in LINK_RE.findall(map_text)
+            if target.startswith("references/")
+        }
         for reference in sorted(references.glob("*.md")):
             relative = reference.relative_to(package).as_posix()
             if relative not in linked:
                 errors.append(f"{package.name}: reference is not linked from SKILL.md: {relative}")
+            elif relative not in map_linked:
+                errors.append(
+                    f"{package.name}: reference must be routed from Route Map or Reference Map: "
+                    f"{relative}"
+                )
             reference_text = reference.read_text(encoding="utf-8")
             if len(reference_text.splitlines()) > LONG_REFERENCE_LINES and not has_exact_h2_heading(
                 reference_text, "## Contents"
@@ -1103,6 +1226,13 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
         errors.append(f"{package.name}: missing references/eval-cases.md")
     else:
         eval_text = eval_file.read_text(encoding="utf-8")
+        reference_map = h2_section_text(body, "## Reference Map").lower()
+        if "references/eval-cases.md" not in reference_map:
+            errors.append(f"{package.name}: eval-cases.md must be routed from Reference Map")
+        if "maintainer" not in reference_map or "do not load" not in reference_map:
+            errors.append(
+                f"{package.name}: Reference Map must mark eval-cases maintainer-only and do not load"
+            )
         for heading in EVAL_HEADINGS:
             if not has_exact_h2_heading(eval_text, heading):
                 errors.append(f"{package.name}: eval-cases.md missing {heading}")
@@ -1383,10 +1513,14 @@ def skill_index_errors(root: Path, names: set[str]) -> list[str]:
     index_path = root / "skills-index.json"
     schema_path = root / "docs" / "skills" / "skills-index.schema.json"
     try:
-        payload = json.loads(index_path.read_text(encoding="utf-8"))
+        index_text = index_path.read_text(encoding="utf-8")
+        payload = json.loads(index_text)
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as error:
         return [f"skills-index.json: cannot load index and schema: {error}"]
+    for pattern, label in HOST_CONTRACT_PATTERNS:
+        if pattern.search(index_text.lower()):
+            errors.append(f"skills-index.json: index contains {label}")
 
     # Keep a bounded v2 read path for temporary fixtures and migration tooling.
     # The published catalog and all new consumers use the v3 schema directly.

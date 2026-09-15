@@ -30,7 +30,7 @@ here remain subordinate to the target repository.
 
 ## Explicit Local Decisions
 
-- Use the rule-priority order in `SKILL.md`.
+- Use the shared [audit rule priority](rule-priority.md).
 - Require reuse investigation before creating general components or layers.
 - Keep route/page files primarily compositional.
 - Do not use occurrence counts or file-line limits as automatic extraction rules.

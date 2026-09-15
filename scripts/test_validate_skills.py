@@ -31,8 +31,13 @@ class ValidatorTests(unittest.TestCase):
         (package / "agents").mkdir()
         (package / "SKILL.md").write_text(
             "---\nname: sample-skill\ndescription: Use when a sample needs processing.\n---\n"
-            "# Sample\n\nSee [usage](references/usage.md) and "
-            "[evals](references/eval-cases.md).\n",
+            "# Sample\n\n## Entry Gate\n\nRequire a sample.\n\n"
+            "## Route Map\n\nUse [usage](references/usage.md).\n\n"
+            "## Invariants\n\nPreserve the source.\n\n"
+            "## Output Map\n\nReturn the result.\n\n"
+            "## Reference Map\n\nLoad [usage](references/usage.md) for the selected route. "
+            "Maintainers use [evals](references/eval-cases.md); do not load it during "
+            "ordinary execution.\n",
             encoding="utf-8",
         )
         (package / "references" / "usage.md").write_text("# Usage\n", encoding="utf-8")
@@ -95,6 +100,60 @@ class ValidatorTests(unittest.TestCase):
 
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
+
+    def test_entrypoint_must_be_a_bounded_map(self) -> None:
+        root = self.make_repo()
+        skill = root / "skills" / "sample-skill" / "SKILL.md"
+        text = skill.read_text(encoding="utf-8")
+        skill.write_text(text.replace("## Route Map", "## Workflow"), encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("entrypoint map missing ## Route Map" in error for error in errors))
+        self.assertTrue(any("move ## Workflow" in error for error in errors))
+
+        skill.write_text(text + ("x" * 8_000), encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("entrypoint exceeds 8000 characters" in error for error in errors))
+
+    def test_entrypoint_rejects_empty_reordered_and_manual_sections(self) -> None:
+        root = self.make_repo()
+        skill = root / "skills" / "sample-skill" / "SKILL.md"
+        text = skill.read_text(encoding="utf-8")
+
+        skill.write_text(text.replace("## Route Map\n\nUse [usage](references/usage.md).", "## Route Map\n\n"), encoding="utf-8")
+        self.assertTrue(any("empty ## Route Map" in error for error in VALIDATOR.validate(root)))
+
+        skill.write_text(text.replace("## Entry Gate\n\nRequire a sample.\n\n", "").replace("## Route Map", "## Route Map\n\nUse [usage](references/usage.md).\n\n## Entry Gate\n\nRequire a sample.\n\n## Procedure"), encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("sections are out of order" in error for error in errors))
+        self.assertTrue(any("non-map section ## Procedure" in error for error in errors))
+
+    def test_local_markdown_fragment_must_exist(self) -> None:
+        root = self.make_repo()
+        skill = root / "skills" / "sample-skill" / "SKILL.md"
+        text = skill.read_text(encoding="utf-8")
+        skill.write_text(text.replace("references/usage.md)", "references/usage.md#missing)", 1), encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("broken local fragment" in error for error in errors))
+
+    def test_portable_package_rejects_host_adapter_contract(self) -> None:
+        root = self.make_repo()
+        usage = root / "skills" / "sample-skill" / "references" / "usage.md"
+        usage.write_text("# Usage\n\nHost adapter: " + "forge" + "way\n", encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("named host adapter" in error for error in errors))
+
+        usage.write_text("# Usage\n\nA host-trusted approval uses gate:vendor-acceptance.\n", encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("host-trusted approval" in error for error in errors))
+        self.assertTrue(any("host gate namespace" in error for error in errors))
+
+        usage.write_text("# Usage\n\nThe host's trusted acceptance receipt clears it.\n", encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("host-trusted approval" in error for error in errors))
+
+        usage.write_text("# Usage\n\nConsume PackageManifest before routing.\n", encoding="utf-8")
+        errors = VALIDATOR.validate(root)
+        self.assertTrue(any("undefined host manifest type" in error for error in errors))
 
     def test_artifact_capability_requires_artifact_effect_for_control_owner(self) -> None:
         entry = {
@@ -348,10 +407,30 @@ class ValidatorTests(unittest.TestCase):
             self.assertTrue(any("ui-spec-design-completeness/1" in error for error in errors))
             self.assertTrue(any("ready-for-human-approval" in error for error in errors))
             self.assertTrue(any("validate-design-md-completeness.py" in error for error in errors))
-            self.assertTrue(any("ui.contract.specify@1.1.0" in error for error in errors))
-            self.assertTrue(any("forgeway-ui-design-completeness/1" in error for error in errors))
-            self.assertTrue(any("gate:ui-design-complete" in error for error in errors))
-            self.assertTrue(any("approval_record_sha256" in error for error in errors))
+
+    def test_repo_delivery_requires_human_conflict_selection(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        package = next(item for item in index["packages"] if item["name"] == "repo-delivery")
+        capability = next(
+            item
+            for item in index["capabilities"]
+            if item["capability_id"] == "repository.git.deliver"
+        )
+
+        self.assertEqual("1.2.0", capability["capability_version"])
+        self.assertIn("human-review-required", package["stop_states"])
+        self.assertIn(
+            "HUMAN_CONFLICT_RESOLUTION_SELECTED_WHEN_APPLICABLE",
+            capability["preconditions"],
+        )
+        self.assertIn(
+            "explicit-human-integration-or-conflict-selection-when-applicable",
+            capability["permission_contract"]["required_confirmations"],
+        )
+        self.assertIn(
+            "HUMAN_REVIEW_REQUIRED",
+            {failure["code"] for failure in capability["failure_codes"]},
+        )
 
     def test_ask_ai_provider_aliases_are_optional_and_canonical(self) -> None:
         source = ROOT / "skills" / "ask-ai"
@@ -595,14 +674,19 @@ class ValidatorTests(unittest.TestCase):
         product_spec = (ROOT / "skills" / "product-spec" / "SKILL.md").read_text(
             encoding="utf-8"
         )
+        product_usage = (ROOT / "skills" / "product-spec" / "references" / "usage.md").read_text(
+            encoding="utf-8"
+        )
         repo_audit = (ROOT / "skills" / "repo-audit" / "SKILL.md").read_text(
             encoding="utf-8"
         )
-        self.assertIn("matching\n  implementation owner", product_spec)
-        self.assertNotIn("use `dev-frontend`\n  or `dev-rust`", product_spec)
-        self.assertIn(
-            "dev-frontend`, `dev-typescript`, `dev-java`, or `dev-rust`", repo_audit
+        repo_audit_evals = (ROOT / "skills" / "repo-audit" / "references" / "eval-cases.md").read_text(
+            encoding="utf-8"
         )
+        self.assertIn("next owner", product_spec)
+        self.assertIn("matching `dev-*`", product_usage)
+        self.assertNotIn("use `dev-frontend`\n  or `dev-rust`", product_spec)
+        self.assertIn("matching `dev-*` owner", repo_audit_evals)
         self.assertNotIn("backend-only Rust", repo_audit)
 
     def test_ask_ai_app_native_relay_keeps_atomic_call_and_logical_operations_distinct(self) -> None:
@@ -875,7 +959,8 @@ class ValidatorTests(unittest.TestCase):
             with self.subTest(skill=skill):
                 text = (ROOT / "skills" / skill / "SKILL.md").read_text(encoding="utf-8")
                 self.assertIn("references/project-grounding.md", text)
-                self.assertIn("Not verified", text)
+                grounding = (ROOT / "skills" / skill / "references" / "project-grounding.md").read_text(encoding="utf-8")
+                self.assertIn("Not verified", grounding)
 
     def test_project_grounding_owner_evals_and_index_keep_owner_action_distinct(self) -> None:
         expected = {
@@ -1001,18 +1086,22 @@ class ValidatorTests(unittest.TestCase):
         self.assertIn("grounded repository ownership map", indexed["repo-map"]["keywords"])
         self.assertIn("multi-identity repository map", indexed["repo-map"]["keywords"])
         self.assertIn("canonical ownership identity map", indexed["repo-map"]["keywords"])
-        self.assertIn("documentation-authority rebuild map", indexed["repo-map"]["keywords"])
+        self.assertIn("repository asset graph", indexed["repo-map"]["keywords"])
+        self.assertNotIn("AGENTS.md", indexed["repo-map"]["keywords"])
+        self.assertIn("repository-guidance authoring", indexed["repo-map"]["excludes"])
         self.assertIn("grounded fixed-basis review", indexed["repo-review"]["keywords"])
 
     def test_repo_delivery_grounding_record_never_inverts_git_authority(self) -> None:
         skill = (ROOT / "skills" / "repo-delivery" / "SKILL.md").read_text(encoding="utf-8")
+        checklist = (ROOT / "skills" / "repo-delivery" / "references" / "checklist.md").read_text(encoding="utf-8")
         evals = (ROOT / "skills" / "repo-delivery" / "references" / "eval-cases.md").read_text(
             encoding="utf-8"
         )
         self.assertIn(
             "A grounding record may identify evidence gaps, but it never authorizes stage, commit, push,\n  integration, cleanup, or pull-request actions.",
-            skill,
+            checklist,
         )
+        self.assertIn("references/checklist.md", skill)
         trigger = evals.split("## Trigger Eval\n", 1)[1].split("\n## Non-Trigger Eval", 1)[0]
         non_trigger = evals.split("## Non-Trigger Eval\n", 1)[1].split("\n## Quality Eval", 1)[0]
         quality = evals.split("## Quality Eval\n", 1)[1]
@@ -1022,6 +1111,30 @@ class ValidatorTests(unittest.TestCase):
         self.assertIn("do not stage, commit, push, or open a pull request", non_trigger.lower())
         self.assertIn("Grounding-record authority", quality)
         self.assertIn("requires independent Git-delivery authority", quality)
+
+    def test_repo_delivery_durability_is_not_a_baseline_commit_requirement(self) -> None:
+        skill = (ROOT / "skills" / "repo-delivery" / "SKILL.md").read_text(encoding="utf-8")
+        route_map = VALIDATOR.h2_section_text(skill, "## Route Map")
+        reference_map = VALIDATOR.h2_section_text(skill, "## Reference Map")
+        baseline = next(line for line in route_map.splitlines() if line.startswith("| Commit, push"))
+        durability = next(line for line in route_map.splitlines() if "large authorized task" in line)
+        self.assertNotIn("execution durability", baseline)
+        self.assertIn("execution durability", durability)
+        self.assertIn("ordinary completed-change commit/push does not load it", reference_map)
+
+    def test_repo_map_separates_normal_operations_from_ambiguity_resolution(self) -> None:
+        skill = (ROOT / "skills" / "repo-map" / "SKILL.md").read_text(encoding="utf-8")
+        route_map = VALIDATOR.h2_section_text(skill, "## Route Map")
+        snapshot = next(line for line in route_map.splitlines() if "unambiguous graph snapshot" in line)
+        query = next(line for line in route_map.splitlines() if line.startswith("| Query identity"))
+        ambiguous = next(line for line in route_map.splitlines() if "source resolution is ambiguous" in line)
+        self.assertIn("graph-operation-gates.md", snapshot)
+        self.assertIn("graph-operation-gates.md", query)
+        self.assertNotIn("checklist.md", snapshot + query)
+        self.assertIn("checklist.md", ambiguous)
+        reference_map = VALIDATOR.h2_section_text(skill, "## Reference Map")
+        guidance = next(line for line in reference_map.splitlines() if "project-guidance.md" in line)
+        self.assertIn("only to recognize and reroute an explicit guidance", guidance)
 
     def test_name_must_match_directory(self) -> None:
         root = self.make_repo()
@@ -1159,6 +1272,36 @@ class ValidatorTests(unittest.TestCase):
             set(repo_map["capability_ids"]),
         )
         self.assertEqual([], VALIDATOR.capability_contract_errors(index, index["packages"]))
+
+    def test_changed_capability_contracts_have_new_versions(self) -> None:
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        versions = {
+            item["capability_id"]: item["capability_version"]
+            for item in index["capabilities"]
+        }
+        self.assertEqual("2.0.0", versions["repository.asset.scan"])
+        self.assertEqual("1.2.0", versions["ui.contract.specify"])
+        self.assertEqual("1.2.0", versions["browser.runtime.operate"])
+        self.assertEqual("1.1.0", versions["client.runtime.operate"])
+        self.assertEqual("1.1.0", versions["external.ai.collaborate"])
+        self.assertEqual("1.1.0", versions["frontend.source.implement"])
+
+    def test_dev_frontend_noop_contract_requires_owner_identity(self) -> None:
+        entrypoint = (ROOT / "skills/dev-frontend/SKILL.md").read_text(encoding="utf-8")
+        checklist = (ROOT / "skills/dev-frontend/references/checklist.md").read_text(encoding="utf-8")
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        capability = next(
+            item
+            for item in index["capabilities"]
+            if item["capability_id"] == "frontend.source.implement"
+        )
+        self.assertIn("No-op or accepted-baseline confirmation", entrypoint)
+        self.assertIn("exact owner path and symbol", entrypoint)
+        self.assertIn("a matching literal or passing check alone", checklist)
+        self.assertIn(
+            "source_owner_identity_for_change_or_noop_confirmation",
+            capability["evidence_requirements"],
+        )
 
     def test_v3_capability_contract_rejects_duplicate_id_and_unknown_package(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))

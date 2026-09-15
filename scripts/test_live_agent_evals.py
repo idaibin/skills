@@ -220,7 +220,12 @@ class LiveAgentEvalTests(unittest.TestCase):
 
     def test_nonpassing_result_stays_not_verified_without_trace_fabrication(self) -> None:
         results = self.passed_results()
-        results["case_results"][0] = {
+        explicit_index = next(
+            index
+            for index, item in enumerate(results["case_results"])
+            if item["case_id"] == "dev-frontend-explicit-source-change"
+        )
+        results["case_results"][explicit_index] = {
             "case_id": "dev-frontend-explicit-source-change",
             "status": "not-verified",
         }
@@ -241,7 +246,12 @@ class LiveAgentEvalTests(unittest.TestCase):
 
     def test_missing_process_step_cannot_pass(self) -> None:
         results = self.passed_results()
-        results["case_results"][0]["process"] = ["read-effective-instructions"]
+        explicit = next(
+            item
+            for item in results["case_results"]
+            if item["case_id"] == "dev-frontend-explicit-source-change"
+        )
+        explicit["process"] = ["read-effective-instructions"]
         self.assertIn(
             "dev-frontend-explicit-source-change: missing required process step",
             VALIDATOR.result_errors(self.cases, results),

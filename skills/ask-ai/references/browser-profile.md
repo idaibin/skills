@@ -220,7 +220,10 @@ five fixed roles. Any failure returns Package-only before external action. The b
 worker writes only `response_partial`; after attribution and completion evidence, the
 primary runs `finalize`, which atomically promotes `response_final`, records content
 and file hashes, and verifies final-path readback. Missing receipt fields remain
-`completion-not-verified` and never authorize resend.
+`completion-not-verified` and never authorize resend. Use `--repo` for a verified
+ignored repository parent or `--artifact-parent` for an explicit existing task-local
+directory when no Git repository owns the request. Compact text-only Standard Chat
+does not activate this gate unless configured capture or requested evidence requires it.
 
 `provider_aliases` and `model_aliases` are routing conveniences only. Resolve aliases
 to a canonical recipient and an exact installed model identifier before invocation;

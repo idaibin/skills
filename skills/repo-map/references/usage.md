@@ -31,7 +31,7 @@ source directly and may use bounded live-source discovery for an unresolved edge
 
 ## Output
 
-Return capability/version, repository identity, basis or PackageManifest reference,
+Return capability/version, repository identity, immutable basis or content-manifest reference,
 scan/snapshot ID, scope, exclusions, extractor versions, coverage, issues, query result,
 stale/tombstone counts and every `Not verified` boundary. A derived render additionally
 names its input snapshot and regeneration capability, and remains outside all gates.

@@ -1,145 +1,39 @@
 ---
 name: dev-rust
-description: "Use when a Rust source change must be implemented, ported, or refactored across APIs, crates, services, CLIs, async, persistence, unsafe or FFI boundaries, tests, or docs; owns source edits and validation, not audit-only, review-only, or Git-delivery work."
+description: "Use when an authorized Rust source change must be implemented, ported, or refactored; not for audit/review-only work or Git delivery."
 ---
 
 # Rust Implementation
 
-## Overview
+## Entry Gate
 
-Implement Rust changes against the repository's real toolchain, project class, crate boundaries, error model, and validation contract. Select validation by risk rather than applying native/FFI-level gates to every routine change.
+Implement a bounded Rust change in the repository's actual Cargo workspace, toolchain, crate boundaries, and interface contracts. Read guidance and current Worktree state; stop before edits if the target crate, build contract, or decisive interface is unknown.
 
-Consume `urn:skills:rust-change-request:v1`; the portable output is
-`urn:skills:source-change-result:v1`. When supplied, consume
-typed Task/requirement refs, authority refs, a compatible Asset Graph snapshot/query
-result, and an exact input PackageManifest; Rust source, manifests, and native
-interface/schema contracts remain authoritative.
+## Route Map
 
-## Workflow
+| Request condition | Read | Result |
+| --- | --- | --- |
+| Any Rust source change | [checklist](references/checklist.md) and [best practices](references/best-practices.md) | Scoped implementation/validation |
+| Public seam/testable behavior applies | [behavior first](references/behavior-first.md) | Behavior evidence |
+| Architecture or quality risk applies | [codebase design](references/codebase-design.md) and/or [code quality](references/code-quality.md) | Reuse/quality decision |
+| FFI, native, agent runtime, or production Bun bridge applies | [agent runtime](references/agent-runtime-profile.md) and/or [Bun patterns](references/bun-production-patterns.md) | Applicable boundary procedure |
+| Integration, persistence, packaging, compatibility, or cross-project signal applies | [project grounding](references/project-grounding.md) | Qualified evidence |
+| Existing/adopted protocol automation applies | [protocol contracts](references/protocol-contracts.md) and [OpenAPI governance](references/openapi-contract-governance.md) | Native-authority protocol work |
 
-1. Read effective repository guidance, including `AGENTS.md`, `CLAUDE.md`, and host-provided instructions when present, then run `git status --short` before edits.
-2. Identify the Rust project class: library workspace, application workspace, HTTP service, CLI, Tauri/native backend, or compact single package.
-3. Read the approved requirement/specification when one exists. Confirm requested behavior, acceptance criteria, non-goals, affected crates/modules/files, compatibility, and validation seams; for complex work without a usable specification, use the host's built-in planning and effective repository instructions before editing.
-4. Inspect the relevant `Cargo.toml`, lockfile, toolchain, formatter, lint, command source, modules, tests, architecture docs, and API/interface docs.
-5. Consume a compatible graph asset/consumer/impact query or perform the same targeted
-   live search across route registration, handlers, services, repositories,
-   traits/impls, types/DTOs, errors, migrations, callers, tests, and analogous
-   features. Reject a stale/mismatched snapshot, and never treat a query miss or
-   derived Markdown render as proof of absence.
-6. When the requested Rust change crosses reachable runtime/configuration, packaging, API,
-   persistence, compatibility, security, deployment, or cross-repository boundaries, load
-   `references/project-grounding.md` and build the smallest task-scoped record before edits.
-   A Rust file, Cargo manifest, or framework match alone does not activate grounding; leave
-   unrelated risk classes `Not applicable` and report unavailable runtime proof as `Not verified`.
-7. Start with the **Baseline** validation contract, then select every applicable risk overlay. Overlays are composable, not severity levels:
-   - **Protocol automation:** an existing OpenAPI/generated-client pipeline or an explicitly requested contract migration. Ordinary HTTP/API changes keep the repository-native route/DTO/client/test boundary under Baseline.
-   - **Agent Runtime:** a stateful local-agent workflow, typed agent protocol, durable operation history/recovery, approval/policy/sandbox enforcement, or Tauri/local app-server IPC. A Tauri app, SQLite crate, or async function alone does not activate this profile; load `references/agent-runtime-profile.md` only when the runtime lifecycle is reachable.
-   - **Concurrency/runtime:** Tokio tasks, channels, locks, cancellation, blocking work, overload, or shutdown.
-   - **Persistence/SQLite:** migrations, transactions, schema/query changes, durable compatibility, backup, or recovery.
-   - **Unsafe/FFI:** unsafe, ABI/layout, raw pointers, callbacks, allocators, native handles, or cross-language resource ownership.
-   - **Porting/parity:** language port or large rewrite that must preserve observable behavior and release semantics.
-   - **Target/platform:** `cfg`, target-specific APIs, packaging, native linkage, or supported-platform behavior.
-   A routine change uses Baseline with no overlays. An Agent Runtime change composes this profile with Concurrency/runtime, Persistence/SQLite, Protocol automation, and Target/platform only when each boundary is reachable. A mixed FFI plus SQLite change selects both overlays; a target-only change selects Target/platform without inheriting unrelated heavy tools.
-8. Decide in order: directly reuse, extend an existing contract, adapt the nearest reference, or create new. Record why existing interfaces are insufficient before adding an endpoint, trait, type family, or module.
-9. Trace ownership, dependency direction, and the complete interface chain before adding or moving code. If Protocol automation applies, identify one code-first or contract-first authority; otherwise preserve the repository-native API authority without introducing OpenAPI.
-10. When behavior is stable and a durable public seam exists, confirm that seam, then work one external behavior at a time: run one red-capable check, make the minimum green change, and continue as a vertical tracer bullet. Load `references/behavior-first.md`; do not force it onto exploratory work, generated code, or behavior without an honest seam.
-11. Implement the smallest idiomatic change that follows local ownership, borrowing, module, error, async, persistence, FFI, configuration, logging, documentation, and test patterns. When Agent Runtime applies, load `references/agent-runtime-profile.md` and keep the smallest explicit Thread/Turn/Operation, typed protocol, lifecycle, authorization, persistence, and IPC contract that the requested behavior needs. When the task materially involves duplication, dead/unused code, abstraction, coupling, or maintainability, load `references/code-quality.md` with implementation semantics and remove only declarations made obsolete by the authorized change after resolving Rust reachability.
-12. Update manifests, module exports, tests, commands, docs, CI/deploy paths, migrations, generated files, and indexes when the structural or public boundary changes.
-13. Run focused checks after each slice, then the repository's baseline gates and every selected overlay. Use Miri, sanitizers, fuzzing, stress, or repeated-operation tools only when both supported by the target repository/environment and relevant to the changed invariant.
-14. When Forgeway delivery integration is active, require an immutable Run with input
-    refs, exact scope, and input PackageManifest before mutation. Let the package
-    producer fingerprint each Attempt result and bind commands, tests, runtime checks,
-    and artifacts as typed Observations to that exact result package. Retries do not
-    overwrite earlier Attempts; this implementation owner emits no Receipt.
+## Invariants
 
-## Modes
+- Preserve real crate, ownership/error, async, unsafe/FFI, toolchain, and test conventions.
+- Do not add a framework, generated client, or protocol pipeline without an existing/adopted owner.
+- Keep source, lint/build, native/runtime, artifact, and deployment proof separate; do not mutate Git.
 
-- **Targeted implementation:** add or fix Rust behavior without broad architecture or toolchain changes.
-- **Structure alignment:** align modules, crates, manifests, commands, and docs to an explicit repository standard.
-- **Contract migration:** change an API, DTO, feature, persistence, or consumer boundary with compatibility and rollout evidence.
-- **Native/porting implementation:** preserve observable behavior, ABI/resource semantics, supported targets, and release behavior before idiomatic cleanup.
-- **Implementation self-check:** verify the edited Rust surface for ownership, errors, async behavior, safety, tests, dependencies, and structural drift before `repo-review` assesses commit readiness.
+## Output Map
 
-## Do Not Use For
+Report basis, crate/toolchain/profile, changed files/contracts, focused validation, exclusions, and `Not verified` gaps.
 
-- First-pass repository discovery; use `repo-map`.
-- Planning-only requests without authorized Rust source changes; use the host's built-in planning.
-- Shared cross-functional business language/rule or lifecycle conflicts; use `domain-modeling`. Route feature-local behavior, states, and acceptance to `product-spec`.
-- Diagnosis-only requests without authorized Rust source changes; use the host's built-in diagnosis under effective instructions.
-- Dirty-tree ownership, staging plans, or commit grouping; use `repo-review`. Use `repo-delivery` for actual staging or commits after review.
-- Systematic Rust architecture, performance, memory, concurrency, SQLite, unsafe, or FFI audit without requested edits; use `repo-audit`.
-- Review of a fixed Rust change basis, including authorization or token risks; use `repo-review`.
-- Frontend or webview UI changes; use `dev-frontend`.
+## Reference Map
 
-## Hard Rules
-
-- Follow repository-pinned toolchain, layout, dependency, lint, and command contracts.
-  Reuse or extend the established interface chain before adding a contract, and do not
-  introduce OpenAPI or copy another project class without an explicit selected overlay.
-- Preserve local ownership, dependency, error, and persistence boundaries. Apply
-  [best practices](references/best-practices.md) through the selected overlays rather
-  than treating generic Rust doctrine as evidence for this change.
-- Load and apply only references for the selected Agent Runtime, protocol,
-  concurrency, persistence, unsafe/FFI, porting, target/platform, behavior-first,
-  conditional code-quality, or codebase-design overlays. Do not inherit heavy
-  gates from an unselected overlay.
-- Treat new warnings in the touched surface as defects. Do not broaden scope to clean unrelated legacy warnings; report them separately. Prefer a local justified `#[expect(...)]` over weakening workspace lints.
-- Move behavior to a shared crate only after real reuse, stable API, named ownership,
-  and consumer validation. Keep every affected manifest, export, command, test, doc,
-  CI/deploy path, generated output, and index synchronized with structural changes.
-- Preserve unrelated local changes and generated files not owned by the task.
-- When implementing destructive cleanup or deletion behavior, discover candidates
-  first, prove ownership and bounded scope, preserve a recovery path when the
-  product contract allows it, require the applicable user confirmation or policy
-  authorization, perform only the accepted action, and rescan to reconcile the
-  actual result. This governs the Rust implementation; it does not authorize the
-  agent to delete user data during development.
-- Do not add speculative abstractions. Delete apparently unused items only after
-  resolving public API, feature/target configuration, generated reachability, FFI
-  exports, and downstream use.
-
-## Validation Model
-
-- **Baseline:** repository-defined format/check plus focused behavior tests; Clippy only when it is part of the repository baseline.
-- **Selected overlays:** add only the Agent Runtime, contract, concurrency/runtime, persistence/SQLite, unsafe/FFI, porting/parity, and target/platform evidence required by the changed surface. Combine overlays when risks interact; do not let one overlay erase another.
-- **Agent Runtime:** when selected, validate the legal state machine and uncertain-operation recovery, the single typed protocol/schema authority, bounded task/channel and cancellation behavior, distinct approval/policy/sandbox decisions, and durable log/projection or IPC gates that are actually in scope. Static types, generated schemas, local compilation, or host declarations do not prove target runtime, sandbox, client, or recovery behavior.
-- **Protocol-automation overlay:** only when selected, validate/rebuild the OpenAPI artifact, check clean idempotence and compatibility, regenerate owned clients, and run applicable backend conformance. Otherwise use repository-native API tests.
-- **Optional heavy tools:** Miri, sanitizers, fuzzing, stress, leak, and repeated-operation gates are never inherited merely from a target-specific change. Run them only when supported and relevant, or record why they were excluded.
-- **Full gate:** reserve workspace-wide builds/tests and release gates for merge,
-  release, deployment, final fixed-basis acceptance, explicit user requests, or when
-  no credible focused check exists for the actual risk.
-
-Do not claim Baseline or an overlay passed when a required tool, target, runtime, dataset, or external dependency was unavailable; mark the exact gap `Not verified`.
-
-## Output Contract
-
-Report capability `rust.source.implement`, Run/input/result PackageManifest refs when
-integration is active, typed source-change result/Observation refs, scope; detected
-project, crate/module, toolchain, and ownership boundaries; applicable authorities and
-existing owners; selected Rust risk overlays; reuse/extension/reference decision;
-changed files and contract chain; validation mapped to Baseline and each selected
-overlay; Worktree drift; excluded work and optional checks; and `Not found` or `Not
-verified` gaps. Add new-interface justification, manifest/docs lifecycle, failures,
-and target/runtime evidence only when applicable. If the user explicitly requests
-independent external review/research, hand one fixed basis/question to `ask-ai`; never
-send implicitly.
-
-## References
-
-- See [references/usage.md](references/usage.md) for trigger guidance and examples.
-- See [references/checklist.md](references/checklist.md) for implementation and review checks.
-- See [references/protocol-contracts.md](references/protocol-contracts.md) only when Protocol automation is selected.
-- See [references/openapi-contract-governance.md](references/openapi-contract-governance.md)
-  with that protocol profile for synchronized cross-language OpenAPI rules.
-- See [references/behavior-first.md](references/behavior-first.md) when a stable public seam supports vertical red-green slices.
-- See [references/codebase-design.md](references/codebase-design.md) only when the change materially affects a public module/interface, seam, cross-caller abstraction, or testability.
-- See [references/best-practices.md](references/best-practices.md) for idiomatic Rust API, ownership, error, test, docs, performance, dispatch, and concurrency rules.
-- See [references/code-quality.md](references/code-quality.md) when the requested
-  change materially involves duplication, dead/unused code, abstraction
-  quality, hidden coupling, or maintainability.
-- See [references/project-grounding.md](references/project-grounding.md) when reachable
-  runtime/configuration, packaging, API, persistence, compatibility, security, deployment,
-  or cross-repository boundaries affect the Rust change.
-- See [references/agent-runtime-profile.md](references/agent-runtime-profile.md) only when the change reaches a stateful local-agent workflow, typed agent protocol, durable operation history/recovery, approval/policy/sandbox enforcement, or Tauri/local app-server IPC.
-- See [references/bun-production-patterns.md](references/bun-production-patterns.md) only when Porting/parity or Unsafe/FFI needs source-derived prompts for cross-language semantics, resource lifetime, or local invariant enforcement.
-- See [references/eval-cases.md](references/eval-cases.md) for trigger and quality evals.
+- Read [checklist](references/checklist.md) and [best practices](references/best-practices.md) for the baseline.
+- Read [behavior first](references/behavior-first.md), [codebase design](references/codebase-design.md), [code quality](references/code-quality.md), and [project grounding](references/project-grounding.md) only when applicable.
+- Read [agent runtime](references/agent-runtime-profile.md), [Bun patterns](references/bun-production-patterns.md), [protocol contracts](references/protocol-contracts.md), and [OpenAPI governance](references/openapi-contract-governance.md) only for those profiles.
+- Read [usage](references/usage.md) for triggers and nearest boundaries.
+- Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

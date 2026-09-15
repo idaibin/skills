@@ -21,6 +21,8 @@ RESULT_SCHEMA_VERSION = "skill-live-agent-results/v1"
 RESULT_STATES = {"passed", "failed", "blocked", "not-verified"}
 CASE_MODES = {"explicit", "implicit"}
 STOP_STATES = {"completed", "evidence-incomplete", "missing-authorization"}
+CORE_CASE_KINDS = {"route", "nearest", "critical-stop"}
+SPECIALIZED_CASE_KIND = "specialized"
 OBSERVATIONS = {
     "skill-selection", "source-owner", "process", "artifact", "effect",
     "stop-honesty", "efficiency", "provider",
@@ -57,24 +59,32 @@ def case_errors(cases: dict[str, object]) -> list[str]:
     if not isinstance(entries, list) or not entries:
         return errors + ["live-agent cases must be a non-empty array"]
     modes = set()
-    expected_ids = {
-        "dev-frontend-explicit-source-change",
-        "dev-frontend-implicit-source-change",
-        "dev-frontend-nearest-negative",
-        "dev-frontend-valid-no-op",
-        "dev-frontend-critical-stop",
-        "dev-frontend-independent-provider",
+    expected_skills = {
+        path.name for path in (ROOT / "skills").iterdir()
+        if path.is_dir() and (path / "SKILL.md").is_file()
     }
+    per_skill: dict[str, set[str]] = {}
     actual_ids = set()
     for case in entries:
         if not isinstance(case, dict):
             errors.append("each live-agent case must be an object")
             continue
         case_id = case.get("id")
-        if not isinstance(case_id, str) or not re.fullmatch(r"dev-frontend-[a-z0-9-]+", case_id):
-            errors.append("live-agent case IDs must use the neutral dev-frontend namespace")
+        if not isinstance(case_id, str) or not re.fullmatch(r"[a-z0-9-]+", case_id):
+            errors.append("live-agent case IDs must be portable lowercase identifiers")
             continue
         actual_ids.add(case_id)
+        kind = case.get("kind")
+        if kind not in {*CORE_CASE_KINDS, SPECIALIZED_CASE_KIND}:
+            errors.append(
+                f"{case_id}: kind must be route, nearest, critical-stop, or specialized"
+            )
+        owner_skill = next(
+            (candidate for candidate in expected_skills if case_id.startswith(candidate + "-")),
+            None,
+        )
+        if owner_skill is not None and kind in CORE_CASE_KINDS:
+            per_skill.setdefault(owner_skill, set()).add(kind)
         mode = case.get("mode")
         if mode not in CASE_MODES:
             errors.append(f"{case_id}: mode must be explicit or implicit")
@@ -110,8 +120,10 @@ def case_errors(cases: dict[str, object]) -> list[str]:
             or provider.get("model") != "Flash"
         ):
             errors.append(f"{case_id}: independent provider must be AGY Flash")
-    if actual_ids != expected_ids:
-        errors.append("live-agent cases must keep the fixed explicit/implicit/negative/no-op/stop/provider set")
+    if len(actual_ids) != len(entries):
+        errors.append("live-agent case IDs must be unique")
+    if set(per_skill) != expected_skills or any(kinds != CORE_CASE_KINDS for kinds in per_skill.values()):
+        errors.append("live-agent cases must provide one route, nearest, and critical-stop case for every current skill; specialized cases are additional coverage")
     if modes != CASE_MODES:
         errors.append("live-agent cases must cover explicit and implicit invocation")
     return errors

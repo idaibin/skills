@@ -1,4 +1,4 @@
 interface:
   display_name: "Repository Map"
-  short_description: "Map architecture, dependencies, guidance, and authority"
-  default_prompt: "Use $repo-map to resolve real roots and maintain or explicitly rebuild the smallest current semantic map, separating source/build/runtime identities while preserving verified reuse and owner-bounded repair."
+  short_description: "Scan, query, and render repository asset graphs"
+  default_prompt: "Use $repo-map to scan, query, or render the smallest bounded repository asset graph, preserving source/build/runtime identity separation, coverage, conflicts, and unresolved edges without authoring repository guidance or changing source."

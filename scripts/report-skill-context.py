@@ -12,7 +12,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 LINK_RE = re.compile(r"\[[^\]]+\]\((references/[^)#]+)(?:#[^)]+)?\)")
-ENTRYPOINT_WARNING_TOKENS = 4_000
+ENTRYPOINT_WARNING_TOKENS = 2_000
 REFERENCE_WARNING_TOKENS = 8_000
 
 
@@ -40,7 +40,11 @@ def package_report(package: Path) -> dict[str, object]:
                 "path": relative,
                 "characters": len(reference_text),
                 "estimated_tokens": estimated_tokens(reference_text),
-                "runtime_candidate": Path(relative).name != "eval-cases.md",
+                "runtime_candidate": not (
+                    Path(relative).name == "eval-cases.md"
+                    or Path(relative).name.endswith("-eval-scenarios.md")
+                    or Path(relative).name.endswith("-reference-corpus.md")
+                ),
             }
         )
     runtime_references = [item for item in references if item["runtime_candidate"]]

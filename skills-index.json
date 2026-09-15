@@ -36,7 +36,7 @@
       "urn:skills:writing-request:v1"
     ],
     "known_local": [
-      "urn:forgeway:repository-asset-snapshot:v1"
+      "urn:skills:repository-asset-snapshot:v1"
     ]
   },
   "categories": {
@@ -105,14 +105,12 @@
         "evidence-incomplete"
       ],
       "intents": [
-        "map repository boundaries, architecture, commands, dependencies, and task routes",
-        "bootstrap layered repository guidance in root and owned subprojects",
-        "find reusable contracts and repair durable navigation",
-        "rebuild current repository documentation with canonical ownership identity separation"
+        "scan repository assets with explicit basis, scope, coverage, conflicts, and unresolved records",
+        "query repository boundaries, architecture, commands, dependencies, ownership, reuse, impact, and drift",
+        "render optional derived navigation views from validated graph results"
       ],
       "keywords": [
         "repository map",
-        "AGENTS.md",
         "monorepo",
         "frontend",
         "backend",
@@ -128,11 +126,14 @@
         "grounded repository ownership map",
         "multi-identity repository map",
         "canonical ownership identity map",
-        "documentation-authority rebuild map"
+        "repository asset graph",
+        "coverage drift query"
       ],
       "excludes": [
         "task-local implementation",
-        "fixed-basis change review"
+        "fixed-basis change review",
+        "repository-guidance authoring",
+        "AGENTS.md authoring"
       ],
       "related": [
         "domain-modeling",
@@ -286,6 +287,7 @@
         "missing-authorization",
         "scope-ambiguous",
         "strategy-unresolved",
+        "human-review-required",
         "basis-drift",
         "evidence-incomplete",
         "capability-unavailable",
@@ -317,6 +319,8 @@
         "non-fast-forward divergence",
         "squash branch main",
         "conflict resolution",
+        "handle merge conflict and push",
+        "finish conflicted merge",
         "semantic milestone",
         "targeted fixup",
         "safety checkpoint",
@@ -1193,7 +1197,7 @@
   "capabilities": [
     {
       "capability_id": "repository.asset.scan",
-      "capability_version": "1.0.0",
+      "capability_version": "2.0.0",
       "package": "repo-map",
       "description": "Scan repository assets and coverage.",
       "accepts": [
@@ -1208,7 +1212,7 @@
           "kind": "portable"
         },
         {
-          "schema": "urn:forgeway:repository-asset-snapshot:v1",
+          "schema": "urn:skills:repository-asset-snapshot:v1",
           "kind": "local"
         }
       ],
@@ -1569,7 +1573,7 @@
     },
     {
       "capability_id": "repository.git.deliver",
-      "capability_version": "1.1.0",
+      "capability_version": "1.2.0",
       "package": "repo-delivery",
       "description": "Perform separately authorized Git delivery.",
       "accepts": [
@@ -1587,7 +1591,8 @@
       "preconditions": [
         "SCOPE_RESOLVED",
         "BASIS_CURRENT",
-        "HISTORY_STRATEGY_RESOLVED_WHEN_APPLICABLE"
+        "HISTORY_STRATEGY_RESOLVED_WHEN_APPLICABLE",
+        "HUMAN_CONFLICT_RESOLUTION_SELECTED_WHEN_APPLICABLE"
       ],
       "postconditions": [
         "TYPED_OUTPUT_EMITTED"
@@ -1609,7 +1614,8 @@
           "invoke-external-provider"
         ],
         "required_confirmations": [
-          "explicit-user-authorization"
+          "explicit-user-authorization",
+          "explicit-human-integration-or-conflict-selection-when-applicable"
         ],
         "symbolic_scope_constraints": [
           "declared-task-scope"
@@ -1635,6 +1641,11 @@
           "code": "STRATEGY_UNRESOLVED",
           "recoverable": true,
           "recovery": "select-history-strategy-before-mutation"
+        },
+        {
+          "code": "HUMAN_REVIEW_REQUIRED",
+          "recoverable": true,
+          "recovery": "present-structured-options-and-obtain-human-selection"
         }
       ],
       "evidence_requirements": [
@@ -1807,7 +1818,7 @@
     },
     {
       "capability_id": "ui.contract.specify",
-      "capability_version": "1.1.0",
+      "capability_version": "1.2.0",
       "package": "ui-spec",
       "description": "Specify a traceable UI contract from selected evidence.",
       "accepts": [
@@ -1889,7 +1900,7 @@
         {
           "code": "DESIGN_APPROVAL_UNTRUSTED",
           "recoverable": true,
-          "recovery": "bind-host-trusted-approval-observation-to-result-package"
+          "recovery": "bind-trusted-human-approval-observation-to-immutable-result"
         }
       ],
       "evidence_requirements": [
@@ -1897,7 +1908,7 @@
         "runtime_observation_or_static_result",
         "design_authority_completeness_when_adopted",
         "exact_package_relative_design_completeness_source_approval_artifact_closure",
-        "host_trusted_design_approval_receipt_and_result_package_binding"
+        "trusted_human_design_approval_evidence_and_immutable_result_binding"
       ],
       "adapter_binding": {
         "policy": "runtime-only",
@@ -1911,7 +1922,7 @@
     },
     {
       "capability_id": "frontend.source.implement",
-      "capability_version": "1.0.0",
+      "capability_version": "1.1.0",
       "package": "dev-frontend",
       "description": "Implement an authorized frontend source change.",
       "accepts": [
@@ -1975,7 +1986,8 @@
       ],
       "evidence_requirements": [
         "basis_or_scope_identity",
-        "runtime_observation_or_static_result"
+        "runtime_observation_or_static_result",
+        "source_owner_identity_for_change_or_noop_confirmation"
       ],
       "adapter_binding": {
         "policy": "runtime-only",
@@ -2438,7 +2450,7 @@
     },
     {
       "capability_id": "browser.runtime.operate",
-      "capability_version": "1.1.0",
+      "capability_version": "1.2.0",
       "package": "ops-browser",
       "description": "Operate an authorized browser session and capture visual, computed, or native recording evidence.",
       "accepts": [
@@ -2464,6 +2476,7 @@
         "maximum_mutation_class": "browser-control",
         "maximum_effects": [
           "read-repository",
+          "write-artifact",
           "emit-findings",
           "emit-handoff",
           "control-browser-state"
@@ -2479,7 +2492,8 @@
           "host-runtime-confirmation"
         ],
         "symbolic_scope_constraints": [
-          "declared-task-scope"
+          "declared-task-scope",
+          "task-artifact-root"
         ]
       },
       "failure_codes": [
@@ -2515,7 +2529,7 @@
     },
     {
       "capability_id": "client.runtime.operate",
-      "capability_version": "1.0.0",
+      "capability_version": "1.1.0",
       "package": "ops-client",
       "description": "Operate an authorized desktop client and capture evidence.",
       "accepts": [
@@ -2541,6 +2555,7 @@
         "maximum_mutation_class": "client-control",
         "maximum_effects": [
           "read-repository",
+          "write-artifact",
           "emit-findings",
           "emit-handoff",
           "control-client-state"
@@ -2556,7 +2571,8 @@
           "host-runtime-confirmation"
         ],
         "symbolic_scope_constraints": [
-          "declared-task-scope"
+          "declared-task-scope",
+          "task-artifact-root"
         ]
       },
       "failure_codes": [
@@ -2592,7 +2608,7 @@
     },
     {
       "capability_id": "external.ai.collaborate",
-      "capability_version": "1.0.0",
+      "capability_version": "1.1.0",
       "package": "ask-ai",
       "description": "Coordinate authorized external AI collaboration.",
       "accepts": [
@@ -2618,6 +2634,7 @@
         "maximum_mutation_class": "external-action",
         "maximum_effects": [
           "read-repository",
+          "write-artifact",
           "emit-handoff",
           "invoke-external-provider"
         ],
@@ -2632,7 +2649,8 @@
           "host-runtime-confirmation"
         ],
         "symbolic_scope_constraints": [
-          "declared-task-scope"
+          "declared-task-scope",
+          "task-artifact-root"
         ]
       },
       "failure_codes": [

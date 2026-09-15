@@ -50,14 +50,28 @@ done
 [[ -n "$message" && ${#paths[@]} -gt 0 ]] || { usage >&2; exit 2; }
 git rev-parse --is-inside-work-tree >/dev/null
 
+normalized_paths=()
 for path in "${paths[@]}"; do
+  while [[ "$path" == ./* ]]; do
+    path="${path#./}"
+  done
   case "$path" in
-    ''|.|..|/*|*'..'*|*'*'*|*'?'*|*'['*)
+    ''|.|..|/*|:*|*'..'*|*'*'*|*'?'*|*'['*|*$'\n'*)
       printf 'unsafe path: %s\n' "$path" >&2
       exit 2
       ;;
   esac
+  [[ ! -d "$path" ]] || {
+    printf 'path must name a file: %s\n' "$path" >&2
+    exit 2
+  }
+  [[ -e "$path" ]] || git ls-files --error-unmatch -- ":(literal)$path" >/dev/null 2>&1 || {
+    printf 'path is neither a file nor a tracked deletion: %s\n' "$path" >&2
+    exit 2
+  }
+  normalized_paths+=("$path")
 done
+paths=("${normalized_paths[@]}")
 
 git diff --cached --quiet || {
   printf '%s\n' 'refusing pre-existing staged content' >&2
@@ -69,12 +83,22 @@ branch=$(git symbolic-ref --quiet --short HEAD) || {
   exit 3
 }
 
-git add -- "${paths[@]}"
+literal_paths=()
+for path in "${paths[@]}"; do
+  literal_paths+=(":(literal)$path")
+done
+git add -- "${literal_paths[@]}"
 git diff --cached --quiet && {
   printf '%s\n' 'nothing staged from requested paths' >&2
   exit 3
 }
 git diff --cached --check
+expected_files=$(printf '%s\n' "${paths[@]}" | LC_ALL=C sort -u)
+actual_files=$(git diff --cached --name-only | LC_ALL=C sort -u)
+[[ "$actual_files" == "$expected_files" ]] || {
+  printf '%s\n' 'staged paths differ from the frozen exact-file allowlist' >&2
+  exit 3
+}
 staged_files=$(git diff --cached --name-only | wc -l | tr -d ' ')
 git commit --quiet -m "$message"
 

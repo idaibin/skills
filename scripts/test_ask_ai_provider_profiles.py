@@ -27,6 +27,18 @@ class AskAIProviderProfileTests(unittest.TestCase):
         self.assertIn("references/provider-cli.md", skill)
         self.assertIn("references/provider-web-research.md", skill)
 
+    def test_package_only_route_does_not_load_response_or_feedback_modules(self) -> None:
+        skill = self.read("skills/ask-ai/SKILL.md")
+        route_map = skill.split("## Route Map\n", 1)[1].split("\n## Invariants", 1)[0]
+        package_row = next(
+            line for line in route_map.splitlines() if line.startswith("| Package-only review composition")
+        )
+        self.assertIn("references/review-prompts.md", package_row)
+        self.assertNotIn("untrusted-content.md", package_row)
+        self.assertNotIn("feedback-recording.md", package_row)
+        self.assertIn("Returned external content is being inspected", route_map)
+        self.assertIn("feedback recording is enabled", route_map)
+
     def test_first_tier_cli_roster_is_explicit(self) -> None:
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         for provider in (
@@ -79,9 +91,10 @@ class AskAIProviderProfileTests(unittest.TestCase):
         adapter = self.read("skills/ask-ai/references/provider-adapter.md")
         evals = self.read("skills/ask-ai/references/eval-cases.md")
 
-        self.assertIn("For Web/browser/App-native send", skill)
-        self.assertIn("smallest self-contained redacted request", skill)
-        self.assertIn("bind the exact verified repository or Worktree root", skill)
+        self.assertIn("references/provider-cli.md", skill)
+        self.assertIn("references/eval-cases.md", skill)
+        self.assertIn("smallest self-contained redacted package", evals)
+        self.assertIn("bind the exact verified repository/Worktree root", evals)
         self.assertIn("complete-directory read, search", cli)
         for text in (cli, handoff, adapter, evals):
             with self.subTest(source=text[:40]):
@@ -119,7 +132,8 @@ class AskAIProviderProfileTests(unittest.TestCase):
         skill = self.read("skills/ask-ai/SKILL.md")
         profile = self.read("skills/ask-ai/references/provider-cli.md")
         evals = self.read("skills/ask-ai/references/eval-cases.md")
-        for text in (skill, profile, evals):
+        self.assertIn("references/provider-cli.md", skill)
+        for text in (profile, evals):
             normalized = " ".join(text.split())
             self.assertIn("Flash", normalized)
             self.assertTrue(
@@ -139,7 +153,8 @@ class AskAIProviderProfileTests(unittest.TestCase):
         adapter = self.read("skills/ask-ai/references/provider-adapter.md")
         profile = self.read("skills/ask-ai/references/browser-profile.md")
 
-        self.assertIn("runtime-verified executor", skill)
+        self.assertIn("references/cli-artifact-handoff.md", skill)
+        self.assertIn("runtime-verified delegated CLI executor", handoff)
         self.assertIn("exactly one process start", cli)
         self.assertIn("provider result content remains unread by the executor", cli)
         self.assertIn("do not silently run locally or substitute another executor", cli)

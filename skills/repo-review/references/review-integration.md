@@ -1,8 +1,8 @@
 # Review Integration
 
 Load this reference only when the fixed review basis includes completed external-review
-evidence, an explicitly persisted post-terminal retention instruction, or active Forgeway
-delivery integration. Ordinary local review does not need this context.
+evidence or an explicitly persisted post-terminal retention instruction. Ordinary local
+review does not need this context.
 
 ## External Review Evidence
 
@@ -26,16 +26,3 @@ Freeze the local verdict before any post-terminal action. An explicitly persiste
 failure is retention evidence, not a review axis, and cannot add, clear, reprioritize, or
 otherwise change findings or verdicts. Without a valid persisted instruction, do not send
 or prepare an external retention payload.
-
-## Forgeway Delivery
-
-When Forgeway delivery integration is active, bind the review capability, exact
-input/result PackageManifest, graph snapshot/query references, scope, and spec references
-to an immutable Run. Import every local or accepted external finding/result as a typed
-Observation against that exact package. A new Attempt/result package makes prior
-downstream review observations stale; never rewrite them or hand-edit a Gate.
-
-The portable result reports `scope_assessment` and `spec_assessment` separately. Graph
-impact may bound a static search but never authorizes scope expansion. Missing trustworthy
-acceptance authority remains `not-verified` rather than being inferred from source or
-tests.

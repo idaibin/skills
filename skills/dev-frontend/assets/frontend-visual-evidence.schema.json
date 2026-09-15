@@ -265,7 +265,13 @@
         "evidence_level": { "$ref": "#/$defs/evidenceLevel" },
         "evidence_ids": { "$ref": "#/$defs/evidenceRefs" },
         "approval": { "type": "string", "minLength": 1 }
-      }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "evidence_level": { "const": "proposed" } }, "required": ["evidence_level"] },
+          "then": { "required": ["approval"] }
+        }
+      ]
     },
     "delta": {
       "type": "object",
@@ -319,6 +325,7 @@
       "additionalProperties": false,
       "required": ["severity", "acceptance_id", "evidence_ids", "status", "summary"],
       "properties": {
+        "id": { "type": "string", "minLength": 1 },
         "severity": { "enum": ["P0", "P1", "P2", "P3"] },
         "acceptance_id": { "type": "string", "minLength": 1 },
         "evidence_ids": { "$ref": "#/$defs/evidenceRefs" },

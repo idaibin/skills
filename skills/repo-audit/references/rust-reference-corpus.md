@@ -28,7 +28,7 @@ External sources remain subordinate to the target repository.
 
 ## Explicit Local Governance Decisions
 
-- Apply the rule priority in `SKILL.md`.
+- Apply the shared [audit rule priority](rule-priority.md).
 - Require targeted repository and analogous-code investigation before creating
   public traits, global state, runtimes, pools, caches, or database layers.
 - Distinguish portable governance from organization baselines, new-project

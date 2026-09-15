@@ -37,7 +37,8 @@ def _mapping(value: Any, label: str, errors: list[str]) -> dict[str, Any]:
 def _validate_defaults(defaults: dict[str, Any], errors: list[str]) -> None:
     if defaults.get("schema_version") != "ask-ai-defaults/v1":
         errors.append("schema_version must be ask-ai-defaults/v1")
-    routes = _mapping(defaults.get("context_routes"), "context_routes", errors)
+    routes_value = defaults.get("context_routes", {})
+    routes = _mapping(routes_value, "context_routes", errors)
     for route_id, value in routes.items():
         if not isinstance(route_id, str) or not route_id.strip():
             errors.append("context route IDs must be non-empty strings")
@@ -146,8 +147,8 @@ def resolve(payload: dict[str, Any]) -> dict[str, Any]:
     errors: list[str] = []
     provider = payload.get("provider")
     route_id = payload.get("route_id", "review")
-    if not isinstance(provider, str) or provider not in PROVIDERS:
-        errors.append("provider must be chatgpt or gemini")
+    if not isinstance(provider, str) or not provider.strip():
+        errors.append("provider must be a non-empty string")
         provider = "invalid"
     if not isinstance(route_id, str) or not route_id.strip():
         errors.append("route_id must be a non-empty string")
@@ -156,9 +157,17 @@ def resolve(payload: dict[str, Any]) -> dict[str, Any]:
     _validate_defaults(defaults, errors)
     observations = _mapping(payload.get("observations"), "observations", errors)
     current = _mapping(payload.get("current_request", {}), "current_request", errors)
-    target = _provider_target(defaults, provider, route_id, errors) if provider in PROVIDERS else {}
+    routes = defaults.get("context_routes", {})
+    route = routes.get(route_id) if isinstance(routes, dict) else None
+    if route is not None and provider not in PROVIDERS:
+        errors.append("persistent context routing is unsupported for this provider")
+    target = (
+        _provider_target(defaults, provider, route_id, errors)
+        if isinstance(route, dict) and provider in PROVIDERS
+        else {}
+    )
 
-    preference = _mapping(defaults.get("browser_preference"), "browser_preference", errors)
+    preference = _mapping(defaults.get("browser_preference", {}), "browser_preference", errors)
     primary = preference.get("primary", "codex-in-app-browser")
     fallback = preference.get("fallback", "package-only")
     if primary not in {"codex-in-app-browser", "user-local-browser", "manual"}:
@@ -216,9 +225,9 @@ def resolve(payload: dict[str, Any]) -> dict[str, Any]:
         "route_id": route_id,
         "resolved_target": target,
         "conversation_policy": (
-            _mapping(defaults.get("context_routes"), "context_routes", errors)
+            _mapping(defaults.get("context_routes", {}), "context_routes", errors)
             .get(route_id, {})
-            .get("conversation_policy", "reuse-verified")
+            .get("conversation_policy", "new-per-task")
         ),
         "selected_transport": selected,
         "forbidden_transports": sorted(set(forbidden)),

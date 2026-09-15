@@ -23,7 +23,7 @@ identity, installed adapters, or completed evidence.
 
 | Skill | Owns | Mutation |
 | --- | --- | --- |
-| `repo-map` | current repository boundaries, commands, reuse, source/runtime identities, durable maps, and explicitly requested layered root/subproject guidance | named map or guidance artifacts only |
+| `repo-map` | repository asset scans, bounded graph queries, coverage/drift checks, and derived navigation views | isolated graph snapshots, run-local cache, and explicitly requested derived map artifacts only; never repository guidance |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
@@ -167,8 +167,9 @@ Component/Layout `repo-audit` frontend profile may trace that contract to adapte
 components/consumers, and runtime evidence. `repo-review` keeps the sole
 change-basis gateway and adds this check only for visual or UI-contract changes.
 
-For authoritative documentation rebuilds, `product-spec`, `ui-spec`, and `repo-map`
-write only their owned current terminal contracts. Git retains formal history;
+For authoritative documentation rebuilds, `product-spec` and `ui-spec` write only
+their owned current terminal contracts. `repo-map` may index those authorities but
+never authors repository guidance or product/design contracts. Git retains formal history;
 verified ignored `.codex/` locations own task reviews, handoffs, captures, comparison
 passes, and environment snapshots. `repo-review` activates its conditional
 Documentation Authority Review to verify index/link/deletion closure, authority

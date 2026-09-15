@@ -42,7 +42,7 @@ and other supported agents.
 
 | Skill | What it helps with |
 | --- | --- |
-| `repo-map` | Map repository roots, architecture, commands, dependencies, ownership, and reusable contracts. |
+| `repo-map` | Scan, query, and render repository asset relationships, ownership, coverage, and drift. |
 | `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |

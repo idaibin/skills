@@ -28,25 +28,29 @@ frontend consumers must not depend on backend language.
 ## Implementation Chain
 
 1. Fix the Git basis and baseline exchange artifact.
-2. Record authority type, owning path, generator version, and exact commands.
+2. Record authority type and owning path; record generator version and commands only
+   when an actual generated derivative exists.
 3. Change the smallest route/DTO/handler/service/error chain.
-4. Generate or conform to normalized OpenAPI.
+4. Generate or conform to normalized OpenAPI according to the selected authority.
 5. Validate the artifact and run compatibility diff.
-6. Regenerate the project-owned TypeScript client and verify no unexplained drift.
+6. Regenerate each project-owned client that actually consumes this contract and
+   verify no unexplained drift; otherwise mark client generation `Not applicable`.
 7. Run backend contract tests for applicable input/auth/success/error semantics.
-8. Ensure CI can reproduce generation, validation, compatibility, client, backend
-   contract tests, and downstream type/build checks from clean state.
+8. Ensure CI can reproduce the applicable generation, validation, compatibility,
+   consumer, backend-contract, and downstream checks from clean state.
 
 ## Minimum Live Evidence
 
-- one service and one bounded feature with a real frontend consumer;
+- one service and one bounded feature with at least one real consumer;
 - at least one operation containing input, auth, success, and error behavior;
-- unique authority, valid/rebuildable OpenAPI, and two clean identical generations;
+- unique authority and valid OpenAPI; require two clean identical generations only
+  for code-first or another actual generated derivative;
 - compatibility diff against a fixed Git basis;
-- clean generated-client regeneration with no touched DTO duplicated by hand;
+- clean regeneration for every actual generated client, with no competing touched DTO;
 - backend runtime success, unauthenticated/unauthorized, validation, and business
   error paths when applicable;
-- one real consumer plus the repository's runtime/browser evidence owner;
+- one real consumer plus its applicable runtime evidence owner; browser evidence is
+  required only for a browser consumer;
 - clean-state CI reproduction.
 
 If a required tool or runtime path is unavailable, finish the supported source

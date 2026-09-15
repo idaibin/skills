@@ -5,7 +5,7 @@ Good prose cannot repair unsupported content. Build a source ledger before draft
 ## Contents
 
 - [Source Ledger](#source-ledger)
-- [Source Precedence](#source-precedence)
+- [Editing Directives And Claim Authority](#editing-directives-and-claim-authority)
 - [Claim Trace](#claim-trace)
 - [Research-To-Draft Loop](#research-to-draft-loop)
 - [Rewrite Rules](#rewrite-rules)
@@ -218,7 +218,12 @@ Use this loop only when the user requests research, citations, or current extern
 
 Ordinary unexecuted, non-destructive examples may remain when clearly labeled as unverified. A syntax-only check proves syntax only, not safety, runtime behavior, or compatibility.
 
-For unresolved P0/P1 issues, use the safe-partial or blocked-artifact response in the main Output Contract. Apply a winning source, preserve and label uncertainty, exclude only the affected claim, or request the minimum authoritative information. Never silently choose between equal-authority conflicts, invent a disclosure, expose do-not-disclose material, or rewrite verbatim text to hide the conflict.
+For unresolved P0/P1 issues, use a safe partial or the blocked-artifact response
+defined below in this reference: apply a winning source, preserve and label
+uncertainty, exclude only the affected claim, or request the minimum authoritative
+information. Never silently choose between equal-authority conflicts, invent a
+disclosure, expose do-not-disclose material, or rewrite verbatim text to hide the
+conflict.
 
 ## Drafting From Sparse Notes
 

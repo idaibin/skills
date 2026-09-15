@@ -161,8 +161,13 @@ def omission_map(frontmatter: dict[str, Any], errors: list[str]) -> dict[str, st
 def meaningful_prose(content: str) -> bool:
     without_fences = narrative_content(content)
     without_markup = re.sub(r"`[^`]*`|[*_#>|\-]", " ", without_fences)
-    words = re.findall(r"[\w\u3400-\u9fff]+", without_markup, flags=re.UNICODE)
-    return len("".join(words)) >= 40 and len(words) >= 8 and len({word.casefold() for word in words}) >= 4
+    units = re.findall(
+        r"[A-Za-z0-9_]+|[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]",
+        without_markup,
+        flags=re.UNICODE,
+    )
+    compact = "".join(units)
+    return len(compact) >= 40 and len(units) >= 8 and len({unit.casefold() for unit in units}) >= 4
 
 
 def narrative_content(content: str) -> str:

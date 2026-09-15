@@ -230,6 +230,10 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("tab_grouping.enabled must be a boolean")
     session_enabled = session_policy["enabled"]
     group_enabled = group_policy["enabled"]
+    if target_tab_state == "absent" and not group_enabled:
+        if observed_target_tab_ids:
+            reasons.append("target tab absence is not proven by current enumeration")
+        reasons.append("target tab is absent and no verified creation policy is enabled")
     execution_profile = policy.get(
         "execution_profile", {"mode": "existing-user-profile"}
     )

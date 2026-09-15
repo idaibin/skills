@@ -16,6 +16,9 @@ project that has not adopted them.
   project declares its builder, generated consumers, validator, drift policy, and
   retirement rule.
 - A Component Registry is a maintained projection, not the component API authority.
+- Any durable structured projection requires a named owner, producer, non-LLM
+  consumer, semantic version, executable validator, drift policy, and retirement rule.
+  Otherwise consume the human contract and live source directly.
 
 ## Implementation Gate
 

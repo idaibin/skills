@@ -8,7 +8,6 @@
 - [Two Independent Results](#two-independent-results)
 - [First Creation](#first-creation)
 - [Validation Boundary](#validation-boundary)
-- [Forgeway Machine Handoff](#forgeway-machine-handoff)
 
 ## Scope and Source
 
@@ -58,11 +57,11 @@ Run `python3 scripts/validate-design-md-completeness.py` after official lint. It
 token schema. It returns `ready-for-human-approval` for a complete first-adoption
 candidate. A local adopted-stage record that binds the exact current DESIGN.md hash
 returns `awaiting-trusted-approval-verification`, never `complete`: a local record and
-caller-supplied hash cannot prove human identity. A downstream host-trusted approval
-receipt bound into the exact Result Package may satisfy `gate:ui-design-complete`;
+caller-supplied hash cannot prove human identity. Independently trusted human approval
+evidence bound to the exact immutable result identity and basis may satisfy downstream completeness;
 it does not mutate the producer result. Any policy error is `not-ready`, even when
-official lint reports zero. All consumers require that same exact Result Package; a
-receipt bound to different bytes or basis is stale and cannot clear the gate.
+official lint reports zero. All consumers require that same exact immutable result;
+approval evidence bound to different bytes or basis is stale and cannot clear the gate.
 
 ## First Creation
 
@@ -99,10 +98,3 @@ receipt bound to different bytes or basis is stale and cannot clear the gate.
 - Treat a blocked required CLI step as `Not verified`; do not mark the affected slice `Ready`.
 - The checker does not redefine Google token types. It only enforces this Skill's
   adoption completeness, section semantics, source binding, and approval binding.
-
-## Forgeway Machine Handoff
-
-When the active delivery consumer declares the compatible contract, follow
-[forgeway-handoff.md](forgeway-handoff.md) for capability/consumer identifiers,
-package-relative artifacts, hashes and byte lengths, principal bindings, and
-fail-closed conditions.

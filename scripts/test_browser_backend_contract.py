@@ -63,16 +63,33 @@ class BrowserBackendContractTests(unittest.TestCase):
         skill = self.read("skills/ops-browser/SKILL.md")
         usage = self.read("skills/ops-browser/references/usage.md")
         evals = self.read("skills/ops-browser/references/eval-cases.md")
-        self.assertIn(
-            "For a fixed route, known controls, repeatable capture, regression check, or external write, prefer deterministic APIs or Playwright",
-            skill,
-        )
+        self.assertIn("references/usage.md", skill)
         self.assertIn(
             "Browser-native/tool API or Playwright | Route, controls, assertions, or capture targets can be specified; the flow must be repeatable; an external write is authorized",
             usage,
         )
         self.assertIn("Uses an LLM browser agent only for open-ended read-oriented navigation", evals)
         self.assertIn("Uses agentic navigation for a fixed write flow", evals)
+
+    def test_every_browser_operation_resolves_and_reads_back_viewport(self) -> None:
+        skill = self.read("skills/ops-browser/SKILL.md")
+        policy = self.read("skills/ops-browser/references/viewport-policy.md")
+        evals = self.read("skills/ops-browser/references/eval-cases.md")
+        self.assertIn(
+            "Any browser operation | [platform operations](references/platform-operations.md), [tab lifecycle](references/tab-lifecycle.md), and [viewport policy](references/viewport-policy.md)",
+            skill,
+        )
+        for term in (
+            "an effective host or personal default",
+            "`1920 x 1080` CSS pixels for desktop Web",
+            "`iPhone 15` portrait device profile for mobile Web",
+            "`window.innerWidth` and `window.innerHeight`",
+            "matching width and height alone does not prove",
+            "device profile is active",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, policy)
+        self.assertIn("substitutes another iPhone variant", evals)
 
     def test_agentic_handoff_cannot_carry_write_authority(self) -> None:
         protocol = self.read("protocols/browser-operation-v1.md")
@@ -109,14 +126,15 @@ class BrowserBackendContractTests(unittest.TestCase):
             "skills/ops-browser/references/local-browser-workspaces.md"
         )
         evals = self.read("skills/ops-browser/references/eval-cases.md")
+        source = skill + workspace + evals
         for term in (
-            "explicit current-request route",
+            "explicit current-request surface",
             "configured Chrome extension",
-            "existing user Profile",
+            "existing Profile",
             "stop `Not verified`",
         ):
             with self.subTest(term=term):
-                self.assertIn(term, skill + workspace)
+                self.assertIn(term, source)
         self.assertIn("Normal user-local route", evals)
         self.assertIn("Critical stop preserves route", evals)
 
@@ -138,9 +156,7 @@ class BrowserBackendContractTests(unittest.TestCase):
 
     def test_target_binding_and_canonical_restoration_are_cross_package(self) -> None:
         paths = (
-            "skills/ops-browser/SKILL.md",
             "skills/ops-browser/references/local-browser-workspaces.md",
-            "skills/ask-ai/SKILL.md",
             "skills/ask-ai/references/provider-chatgpt.md",
         )
         for path in paths:
@@ -150,6 +166,9 @@ class BrowserBackendContractTests(unittest.TestCase):
                 self.assertIn("tab identity", text)
                 self.assertIn("restoration", text.lower())
                 self.assertIn("fingerprint", text.lower())
+
+        self.assertIn("references/local-browser-workspaces.md", self.read("skills/ops-browser/SKILL.md"))
+        self.assertIn("references/provider-chatgpt.md", self.read("skills/ask-ai/SKILL.md"))
 
         for path in (
             "skills/ops-browser/references/eval-cases.md",

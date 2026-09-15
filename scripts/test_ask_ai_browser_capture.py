@@ -29,6 +29,21 @@ class Args:
 
 
 class BrowserCaptureTests(unittest.TestCase):
+    def test_repositoryless_task_local_parent_is_supported(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            self.assertEqual(parent.resolve(), MODULE.task_local_parent(str(parent)))
+
+    def test_repositoryless_task_local_parent_rejects_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            target = root / "target"
+            target.mkdir()
+            link = root / "link"
+            link.symlink_to(target, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "non-symlink directory"):
+                MODULE.task_local_parent(str(link))
+
     def setUp(self) -> None:
         self.temporary = tempfile.TemporaryDirectory()
         self.repo = Path(self.temporary.name)
