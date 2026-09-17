@@ -3,6 +3,7 @@
 ## Contents
 
 - [Required Evidence](#required-evidence)
+- [Human Selection](#human-selection)
 - [Staging And Commit](#staging-and-commit)
 - [Parallel Current-Branch Delivery](#parallel-current-branch-delivery)
 - [Execution Durability](#execution-durability)
@@ -43,6 +44,19 @@ does not authorize staging or committing.
 - Run cached `diff --check`, stat, and name-status before each commit; inspect content
   hunks only when scope is mixed, changed since review, or otherwise unresolved.
 - Verify final local and remote refs once after delivery.
+
+## Human Selection
+
+Use a currently available structured choice capability permitted for this mode and
+question type, following host policy. A rejected tool is not proof that every choice
+UI is unavailable: inspect eligible alternatives before falling back to a concise
+numbered-choice question. Do not repeat a call rejected for an unchanged mode or
+usage restriction. Offer 2–3 mutually exclusive outcomes with the recommendation
+and its impact first.
+
+For asynchronous questions, keep dependent Git actions paused until the user's actual
+answer arrives; continue only independent authorized work. Submission, a preselected
+option, an empty response, or elapsed time never supplies a decision or approval.
 
 ## Staging And Commit
 
@@ -113,8 +127,8 @@ does not authorize staging or committing.
 - Load `resolving-merge-conflicts.md` only for an authorized in-progress operation.
 - Trace both sides' primary intent for every conflicted hunk and same-rule semantic overlap; never clear markers by blindly choosing ours/theirs.
 - Before editing a conflict, present the two sides, proposed result, affected boundary,
-  and verification, then obtain a separate human choice through the host's structured
-  question/select UI. Prior branch-integration authority does not satisfy this gate.
+  and verification, then obtain a separate human choice using [Human Selection](#human-selection).
+  Prior branch-integration authority does not satisfy this gate.
 - Treat newly discovered conflicts or sensitive business/environment overlaps as a new
   decision. Do not silently extend an earlier choice or rely on a clean auto-merge.
 - Run focused checks. If staging is authorized, stage only resolved paths/hunks and inspect the cached diff; continue only when separately authorized.
@@ -152,7 +166,7 @@ does not authorize staging or committing.
 - Fix the target tip and source range before deciding how history should land.
 - Unless the user already named the exact merge/rebase/cherry-pick/squash strategy in
   the current authorization, present 2–3 mutually exclusive strategies through the
-  host's structured question/select UI and stop before mutation. Recommendation is
+  applicable capability under [Human Selection](#human-selection) and stop before mutation. Recommendation is
   advice, not approval; a generic request to merge, sync, commit, or push is insufficient.
 - Preserve source commits when each is meaningful, reviewed, independently coherent, dependency-ordered, and useful for future traceability or rollback.
 - Squash when the source history is WIP/fixup-heavy, conflict-repair-heavy, mechanically fragmented, or intentionally represents one outcome; also follow an explicit one-commit or repository-policy requirement.
