@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 16 available Skills:
+Browse the 17 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -45,6 +45,7 @@ and other supported agents.
 | `repo-map` | Scan, query, and render repository asset relationships, ownership, coverage, and drift. |
 | `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
+| `api-spec` | Design or revise native API contracts and validate OpenAPI against accepted business behavior. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
 | `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
@@ -67,6 +68,7 @@ task genuinely crosses an authority boundary.
 ```text
 unknown repository -> repo-map
 unclear product     -> domain-modeling / product-spec
+API contract        -> api-spec -> matching implementation owner
 UI contract         -> ui-spec -> dev-frontend
 accepted contracts  -> to-task -> matching implementation owner
 source change       -> matching dev-* owner (`dev-typescript` for non-browser TS/JS)

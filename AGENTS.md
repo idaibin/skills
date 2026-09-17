@@ -8,6 +8,7 @@ This file defines how AI agents should work on this repository. It is not the pr
 - Only when the user explicitly asks to install Skills from this catalog's published source, read `INSTALL.md` and follow that installation flow.
 - Do not switch into installation mode just because this repository contains `skills/`.
 - Use `repo-map` for separate repository mapping, reuse inventory, or docs/code alignment.
+- Use `api-spec` for native API contract design, revision, and OpenAPI validation after business semantics are accepted; route implementation and fixed-change review to their existing owners.
 - Use `domain-modeling` when shared cross-functional business language or rules conflict; load lifecycle or bounded-context depth only when that shared ambiguity requires it. Route feature-local behavior and acceptance to `product-spec`.
 - Use `to-task` when accepted Product/UI/architecture contracts or later findings need technical decomposition or reconciliation into a durable task ledger with dependencies, acceptance/evidence gates, status, blockers, and next action. It does not execute or schedule tasks. Use host planning for ephemeral reasoning that does not need a maintained task artifact.
 - For concrete failures, follow the effective personal or repository diagnosis rules before permanent remediation; use the matching implementation skill only when a source change is requested.

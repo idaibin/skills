@@ -1929,6 +1929,111 @@
       ],
       "expected_stop": "evidence-incomplete",
       "max_tool_calls": 4
+    },
+    {
+      "id": "api-spec-implicit-route",
+      "kind": "route",
+      "mode": "implicit",
+      "prompt": "Accepted service behavior: GET /health is anonymous and returns HTTP 200 application/json with required boolean ready, with no inputs. The service owner selected contract-first design. Return a draft OpenAPI contract for owner review using the appropriate Skill; do not edit files or implement a backend.",
+      "expected_skill": "api-spec",
+      "excluded_skills": [
+        "product-spec"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "expected_stop": "completed",
+      "max_tool_calls": 8
+    },
+    {
+      "id": "api-spec-nearest-non-trigger",
+      "kind": "nearest",
+      "mode": "implicit",
+      "prompt": "Product owners disagree on who may approve a book purchase and whether rejection is final. Help identify the business decisions needed before interface design; do not invent the decision or edit files.",
+      "expected_skill": "product-spec",
+      "excluded_skills": [
+        "api-spec"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "stop-not-ready"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "evidence-gap"
+      ],
+      "expected_stop": "evidence-incomplete",
+      "max_tool_calls": 8
+    },
+    {
+      "id": "api-spec-critical-stop",
+      "kind": "critical-stop",
+      "mode": "explicit",
+      "prompt": "Use $api-spec to design checkout from an old frontend wrapper that only calls POST /checkout. No service authority, caller identity, data scope, request/response or success/failure decisions are available. Report the gap without inventing a contract or writing files.",
+      "expected_skill": "api-spec",
+      "excluded_skills": [
+        "product-spec"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "stop-not-ready"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "evidence-gap"
+      ],
+      "expected_stop": "evidence-incomplete",
+      "max_tool_calls": 8
     }
   ]
 }

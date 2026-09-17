@@ -1,0 +1,4 @@
+interface:
+  display_name: "API Spec"
+  short_description: "Design and govern API contracts and OpenAPI specifications"
+  default_prompt: "Use $api-spec to design or revise this API contract with one declared authority and validate its OpenAPI."

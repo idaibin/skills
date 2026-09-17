@@ -8,6 +8,8 @@
       "urn:frontend-visual-evidence:v1",
       "urn:skills:ai-result:v1",
       "urn:skills:ai-review-request:v1",
+      "urn:skills:api-contract:v1",
+      "urn:skills:api-request:v1",
       "urn:skills:asset-map-result:v1",
       "urn:skills:audit-findings:v1",
       "urn:skills:audit-request:v1",
@@ -71,6 +73,10 @@
     "writing": {
       "title": "Writing Extension",
       "description": "Source-grounded drafting, rewriting, diagnosis, and adaptation."
+    },
+    "api-contracts": {
+      "title": "API Contracts",
+      "description": "API wire contract authoring and OpenAPI governance."
     }
   },
   "packages": [
@@ -412,6 +418,70 @@
       ],
       "capability_ids": [
         "product.contract.specify"
+      ]
+    },
+    {
+      "name": "api-spec",
+      "category": "api-contracts",
+      "owner": "api-spec",
+      "mutation_class": "artifact-write",
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "command-runner",
+        "text-authoring"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "write-artifact",
+        "emit-draft",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete"
+      ],
+      "intents": [
+        "design or revise API wire contracts",
+        "author and validate OpenAPI specifications",
+        "confirm an unchanged accepted API contract"
+      ],
+      "keywords": [
+        "API contract",
+        "OpenAPI",
+        "wire contract",
+        "OpenAPI request",
+        "OpenAPI response",
+        "contract-first",
+        "code-first",
+        "接口契约",
+        "接口设计",
+        "接口规范"
+      ],
+      "excludes": [
+        "source implementation",
+        "fixed-basis change review",
+        "unresolved product behavior",
+        "repository ownership mapping"
+      ],
+      "related": [
+        "product-spec",
+        "domain-modeling",
+        "dev-java",
+        "dev-typescript",
+        "repo-review"
+      ],
+      "capability_ids": [
+        "api.contract.specify"
       ]
     },
     {
@@ -2751,6 +2821,90 @@
       "evidence_requirements": [
         "basis_or_scope_identity",
         "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "api.contract.specify",
+      "capability_version": "1.0.0",
+      "package": "api-spec",
+      "description": "Specify native API wire contracts and validate their OpenAPI artifacts.",
+      "accepts": [
+        {
+          "schema": "urn:skills:api-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:api-contract:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BUSINESS_SEMANTICS_ACCEPTED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "write-artifact",
+          "emit-draft",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "resolve-native-authority-or-business-decision"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result",
+        "native_contract_authority_and_verification_dimensions"
       ],
       "adapter_binding": {
         "policy": "runtime-only",

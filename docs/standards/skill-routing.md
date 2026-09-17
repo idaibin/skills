@@ -26,6 +26,7 @@ identity, installed adapters, or completed evidence.
 | `repo-map` | repository asset scans, bounded graph queries, coverage/drift checks, and derived navigation views | isolated graph snapshots, run-local cache, and explicitly requested derived map artifacts only; never repository guidance |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
+| `api-spec` | native API wire contracts and OpenAPI authoring or validation after business decisions | named native contract artifacts only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
 | `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
@@ -92,7 +93,7 @@ it neither grants new permissions nor makes the whole requested outcome complete
 Common sequence, when needed:
 
 ```text
-repo-map -> domain-modeling/product-spec/ui-spec -> to-task -> dev-* -> repo-review -> repo-delivery
+repo-map -> domain-modeling/product-spec -> api-spec/ui-spec -> to-task -> dev-* -> repo-review -> repo-delivery
 ```
 
 For an explicitly authorized `ask-ai` sequential relay, keep the frozen basis and

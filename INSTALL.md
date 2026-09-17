@@ -14,6 +14,7 @@ The result must contain exactly these public packages:
 repo-map
 domain-modeling
 product-spec
+api-spec
 to-task
 repo-review
 repo-delivery
@@ -43,6 +44,7 @@ The publishable source directories are:
 - `skills/repo-map`
 - `skills/domain-modeling`
 - `skills/product-spec`
+- `skills/api-spec`
 - `skills/to-task`
 - `skills/repo-review`
 - `skills/repo-delivery`
@@ -111,6 +113,19 @@ Product definition:
 ```bash
 npx skills@latest add idaibin/skills --skill product-spec to-task
 ```
+
+API contract design and implementation:
+
+```bash
+npx skills@latest add idaibin/skills --skill api-spec dev-java repo-review
+```
+
+Choose the implementation owner for the target stack. `api-spec` owns the contract,
+not backend source or runtime verification. Its canonical source is
+`skills/api-spec` in this repository; consumers such as Forgeway reference the
+capability rather than maintaining a second package. Refresh only this package with
+`npx skills@latest add idaibin/skills --skill api-spec --global --agent codex`;
+review local project-specific differences before replacing an existing same-name Skill.
 
 Frontend specification and implementation:
 

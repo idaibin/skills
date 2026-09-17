@@ -215,13 +215,13 @@ class PublicContentHygieneTests(unittest.TestCase):
         expected = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         self.assertIn(f"Package digest: `{expected}`", summary)
         basis = summary.split("## Current Results", 1)[0]
-        self.assertIn("all 16 packages", basis)
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        self.assertIn(f"all {len(index['packages'])} packages", basis)
         self.assertIn("`skills-index.json`", basis)
 
     def test_live_canary_digest_covers_every_installed_parity_package(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         expected = {f"skills/{package['name']}" for package in index["packages"]}
-        self.assertEqual(16, len(expected))
         self.assertEqual(expected, set(DIGEST.DEFAULT_SCOPE))
         baseline = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
         for package in DIGEST.DEFAULT_SCOPE:

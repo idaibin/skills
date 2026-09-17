@@ -28,6 +28,13 @@
       ]
     },
     {
+      "title": "API Contracts",
+      "description": "Design and validate native API wire contracts without taking over product decisions or implementation.",
+      "skills": [
+        "api-spec"
+      ]
+    },
+    {
       "title": "Design",
       "description": "Skill for translating a selected visual source into a traceable implementation-ready Feature Spec, separating source targets from current runtime, and maintaining shared DESIGN.md semantics only when they truly change.",
       "skills": [

@@ -1321,7 +1321,10 @@ class ValidatorTests(unittest.TestCase):
     def test_v3_registry_has_one_to_many_capabilities_and_repo_map_modes(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         self.assertEqual(3, index["version"])
-        self.assertEqual(16, len(index["packages"]))
+        self.assertEqual(
+            {path.parent.name for path in (ROOT / "skills").glob("*/SKILL.md")},
+            {package["name"] for package in index["packages"]},
+        )
         self.assertGreater(len(index["capabilities"]), len(index["packages"]))
         repo_map = next(item for item in index["packages"] if item["name"] == "repo-map")
         self.assertEqual(

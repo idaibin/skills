@@ -475,6 +475,48 @@
       "expected_owner": "human-writing",
       "expected_stop": "evidence-incomplete",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "api-spec-normal",
+      "skill": "api-spec",
+      "capability_id": "api.contract.specify",
+      "class": "normal",
+      "prompt": "Use api-spec to author an OpenAPI wire contract for accepted API behavior.",
+      "expected_owner": "api-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "api-spec-implicit",
+      "skill": "api-spec",
+      "class": "normal",
+      "prompt": "Define the request schema and response schema in the OpenAPI wire contract.",
+      "expected_owner": "api-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "api-spec-no-op",
+      "skill": "api-spec",
+      "class": "normal",
+      "prompt": "Confirm an unchanged accepted API contract and its OpenAPI schema without modifying it.",
+      "expected_owner": "api-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "api-spec-boundary",
+      "skill": "api-spec",
+      "class": "boundary",
+      "prompt": "Define product behavior, user flow, feature requirements, and acceptance criteria before implementation.",
+      "expected_owner": "product-spec",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "api-spec-critical-stop",
+      "skill": "api-spec",
+      "class": "critical-stop",
+      "prompt": "Design an API wire contract in OpenAPI, but required facts are missing; stop before inventing the response schema.",
+      "expected_owner": "api-spec",
+      "expected_stop": "evidence-incomplete",
+      "expected_outcome": "stop"
     }
   ]
 }
