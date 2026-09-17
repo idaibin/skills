@@ -18,6 +18,7 @@
     "schema_version": { "const": "frontend-visual-evidence/v1" },
     "stage": { "enum": ["spec-ready", "mapped", "pass-1", "final"] },
     "task_id": { "type": "string", "minLength": 1 },
+    "required_comparison_passes": { "type": "integer", "minimum": 1 },
     "selected_source": { "$ref": "#/$defs/selectedSource" },
     "required_runtime_matrix": {
       "type": "array",
@@ -162,7 +163,7 @@
       "if": { "properties": { "stage": { "const": "final" } }, "required": ["stage"] },
       "then": {
         "required": ["implementation_mapping", "visual_reviews", "runtime_coverage", "final_verdict"],
-        "properties": { "visual_reviews": { "minItems": 2 } }
+        "properties": { "visual_reviews": { "minItems": 1 } }
       }
     }
   ],

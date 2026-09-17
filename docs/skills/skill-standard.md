@@ -47,7 +47,8 @@ retention, and delivery receipts outside `skills/<name>/`.
 - `name` matches the directory, uses lowercase letters, digits, and hyphens, and is at
   most 64 characters.
 - `description` is non-empty, at most 1,024 characters, and says what the Skill does
-  and when to use it. Prefer concise `Use when ...` wording. When a real neighboring
+  and when to use it. Front-load the concrete action and distinguishing trigger;
+  avoid generic authorization prefixes and exhaustive capability lists. When a real neighboring
   Skill or host capability is easy to confuse with this owner, include one short
   negative or rerouting condition in the description; do not enumerate the full
   `Do Not Use For` section in always-loaded metadata.
@@ -131,6 +132,9 @@ versioned adapter contract; they do not pretend the SQLite file itself is portab
   what it owns and the distinct condition that loads it, front-load the condition,
   and collapse synonyms that merely rename the same branch. A pointer that cannot
   reliably select a branch must be sharpened before its target is expanded.
+- A baseline read covers only shared invariants. Select framework, runtime, visual,
+  external-provider, and handoff detail by the actual changed behavior or operation;
+  do not require all profiles for every invocation.
 - Keep only rules that apply to every route, especially authority, permission, and
   irreversible-effect boundaries, in the entrypoint. Put route procedures, ordered
   workflows, checklists, examples, framework/provider profiles, and templates in
@@ -259,6 +263,14 @@ Repository-facing boundaries remain simple:
   `Not verified`.
 
 ## Evaluation
+
+For implementation workflows, reuse existing checks before adding tests. Add coverage
+only for a meaningful behavior gap; reversible low-impact changes do not need tests
+that restate the implementation. Complete applicable project gates, then repeat or
+expand checks only after a relevant change, failure, unresolved concern, or an explicit
+project requirement. Unneeded checks are not applicable; missing required evidence
+remains `Not verified`. A successful visual comparison needs no duplicate pass unless
+the accepted project contract requires one; a fix requires affected-state readback.
 
 Maintain at least three representative scenarios for each Skill: a normal trigger, a
 nearby non-trigger or boundary, and a quality/edge case. This catalog keeps them in

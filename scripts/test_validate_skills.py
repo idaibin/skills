@@ -164,6 +164,14 @@ class ValidatorTests(unittest.TestCase):
     def test_valid_repository(self) -> None:
         self.assertEqual([], VALIDATOR.validate(self.make_repo()))
 
+    def test_action_first_description_needs_no_magic_prefix(self) -> None:
+        root = self.make_repo()
+        path = root / "skills/sample-skill/SKILL.md"
+        path.write_text(path.read_text().replace(
+            "Use when a sample needs processing.", "Process a supplied sample into a normalized result."
+        ))
+        self.assertEqual([], VALIDATOR.validate(root))
+
     def test_v2_registry_is_rejected(self) -> None:
         root = self.make_repo()
         index_path = root / "skills-index.json"

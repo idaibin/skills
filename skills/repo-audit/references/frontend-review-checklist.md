@@ -76,7 +76,7 @@ When Selected-Source Visual Fidelity is selected:
 - Keep selected-source targets, browser-computed current runtime, and accepted target contracts separate; prefer design inspect-panel values over screenshot estimates.
 - Require a reviewable side-by-side/overlay/diff and computed evidence for exact runtime geometry, font, final color/contrast, and alignment claims.
 - Check real per-item assets and isolated fallback, truncation, hover/focus, applicable feedback states, desktop target, and specified breakpoints.
-- Report P0-P3 findings before the verdict; missing two-pass evidence remains `Not verified` and cannot be replaced by build/lint success.
+- Report P0-P3 findings before the verdict; missing required runtime comparison evidence remains `Not verified` and cannot be replaced by build/lint success.
 
 ## 6. Accessibility Profile
 

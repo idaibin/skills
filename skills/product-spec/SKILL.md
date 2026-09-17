@@ -1,6 +1,6 @@
 ---
 name: product-spec
-description: "Use when product behavior, scope, states, rules, or acceptance must be defined in a named product artifact; not for shared domain modeling, UI visual specification, implementation, review, or delivery."
+description: "Define feature behavior, scope, states, and acceptance in a product specification."
 ---
 
 # Product Specification

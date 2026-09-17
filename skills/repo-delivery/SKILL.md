@@ -1,6 +1,6 @@
 ---
 name: repo-delivery
-description: "Use when explicitly authorized Git mutation is required for commits, pushes, integration, history normalization, cleanup, or delivery; not for implementation, review-only work, or pull-request creation."
+description: "Execute authorized Git commits, pushes, integration, history changes, or cleanup."
 ---
 
 # Repository Delivery

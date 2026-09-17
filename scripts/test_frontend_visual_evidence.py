@@ -106,7 +106,7 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
                 payload.pop(key)
         return payload
 
-    def complete_payload(self) -> dict[str, object]:
+    def complete_payload(self, *, single_pass: bool = False) -> dict[str, object]:
         payload = copy.deepcopy(self.fixture)
         payload["final_verdict"]["status"] = "Complete"
         payload["final_verdict"]["remaining_gaps"] = []
@@ -134,6 +134,13 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         for category, record in payload["runtime_coverage"].items():
             record["status"] = "verified"
             record["evidence_ids"] = [evidence_by_category[category]]
+        if single_pass:
+            payload["visual_reviews"] = [payload["visual_reviews"][-1]]
+            payload["visual_reviews"][0]["pass"] = 1
+            payload["visual_reviews"][0]["findings"] = []
+            for item in payload["evidence"]:
+                if item["level"] == "browser-computed":
+                    item["review_pass"] = 1
         target_viewport = payload["visual_reviews"][-1]["runtime_capture"]["viewport"]
         target_state = payload["visual_reviews"][-1]["runtime_capture"]["state"]
         target_fingerprint = VALIDATOR._canonical_sha256({"viewport": target_viewport, "state": target_state})
@@ -260,10 +267,24 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         payload["visual_reviews"] = copy.deepcopy(self.fixture["visual_reviews"])
         self.assertTrue(self.errors(payload))
 
-    def test_two_visual_passes_are_required(self) -> None:
-        payload = copy.deepcopy(self.fixture)
-        payload["visual_reviews"] = payload["visual_reviews"][:1]
-        self.assertTrue(self.errors(payload))
+    def test_complete_first_pass_needs_no_duplicate_comparison(self) -> None:
+        payload = self.complete_payload(single_pass=True)
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+
+    def test_project_required_pass_count_is_preserved(self) -> None:
+        payload = self.complete_payload(single_pass=True)
+        payload["required_comparison_passes"] = 2
+        self.assertIn("required_comparison_passes", " ".join(VALIDATOR.semantic_errors(payload)))
+        payload = self.complete_payload()
+        payload["required_comparison_passes"] = 2
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+
+    def test_failed_first_pass_cannot_claim_completion(self) -> None:
+        payload = self.complete_payload(single_pass=True)
+        payload["visual_reviews"][0]["verdict"] = "fail"
+        self.assertIn("final visual review to pass", " ".join(VALIDATOR.semantic_errors(payload)))
 
     def test_pass_order_is_fixed(self) -> None:
         payload = copy.deepcopy(self.fixture)

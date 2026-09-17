@@ -1,6 +1,6 @@
 ---
 name: dev-rust
-description: "Use when an authorized Rust source change must be implemented, ported, or refactored; not for audit/review-only work or Git delivery."
+description: "Implement, port, or refactor Rust source in the existing Cargo workspace."
 ---
 
 # Rust Implementation

@@ -578,7 +578,7 @@
       ],
       "intents": [
         "implement or refactor frontend source",
-        "close selected-source UI differences with runtime validation",
+        "close selected-source UI differences with risk-matched runtime validation",
         "change frontend state, data, styling, accessibility, performance, or tooling"
       ],
       "keywords": [
@@ -909,7 +909,8 @@
         "operate or verify a specified browser page",
         "capture same-state visual and computed browser evidence",
         "record an authorized browser interaction with native browser capture",
-        "preserve a configurable unified or operation-mapped local-browser tab workspace"
+        "preserve a configurable unified or operation-mapped local-browser tab workspace",
+        "continue already-authorized local browser acceptance after implementation"
       ],
       "keywords": [
         "browser operation",

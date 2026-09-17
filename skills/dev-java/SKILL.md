@@ -1,6 +1,6 @@
 ---
 name: dev-java
-description: "Use when authorized Java source or Java-owned Maven/Gradle configuration must be implemented, migrated, or refactored; not for non-Java JVM work, audit/review-only work, or Git delivery."
+description: "Implement Java source and Java-owned Maven or Gradle changes."
 ---
 
 # Java Implementation

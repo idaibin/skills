@@ -1096,8 +1096,6 @@ def package_errors(package: Path, all_names: set[str]) -> list[str]:
         or re.search(r"<[^>]+>", description)
     ):
         errors.append(f"{package.name}: description must be plain text with 1-1024 characters")
-    elif "Use when" not in description:
-        errors.append(f"{package.name}: description must state when to use the Skill")
     license_value = metadata.get("license")
     if license_value is not None and (not isinstance(license_value, str) or not license_value.strip()):
         errors.append(f"{package.name}: license must be a non-empty string when provided")

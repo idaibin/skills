@@ -57,8 +57,12 @@
 
 ## Validation
 
-- Run a red-capable focused check before or with the implementation when a stable seam exists.
-- Run repository-owned format/static/compile and focused tests with the pinned toolchain.
+- Reuse checks closest to the changed behavior; add tests only for a meaningful
+  coverage gap. Reproduce a bug before fixing it when practical, without requiring
+  new red tests for reversible low-impact edits.
+- Run applicable repository-owned format/static/compile and focused tests with the
+  pinned toolchain. After required checks pass, repeat or broaden only for a relevant
+  change, failure, unresolved concern, or explicit project requirement.
 - Prefer check-only validation; capture status/diff before and after commands and
   classify expected task output, unexpected validation drift, and unrelated changes.
 - Add slice, integration, real-database/container, security, concurrency, or migration

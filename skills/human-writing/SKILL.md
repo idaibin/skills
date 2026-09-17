@@ -1,6 +1,6 @@
 ---
 name: human-writing
-description: "Use when drafting, rewriting, proofreading/校对, diagnosing, or adapting source-grounded prose while preserving facts, attribution, uncertainty, voice, and meaning; not for translation-only work, fiction, external publication, product/technical decisions, or AI-detection evasion."
+description: "Draft, rewrite, proofread/校对, or adapt source-grounded prose while preserving meaning; not translation-only work or fiction."
 ---
 
 # Human Writing

@@ -19,8 +19,11 @@
 
 ## Evidence
 
-- Focused type-check and behavior tests cover success and relevant failure paths.
-- Format/lint checks match repository commands.
+- Select existing checks closest to the change and complete required project gates.
+  Add behavior tests only for a meaningful coverage gap, including relevant failure
+  paths; a reversible low-impact edit needs no implementation-mirroring test.
+- Use repository format/lint/type commands when applicable. Repeat or broaden checks
+  only after a relevant change, failure, unresolved concern, or explicit requirement.
 - Runtime, packaging, schema generation, integration, and multi-runtime parity checks are included only when reachable.
-- Every unavailable claim is marked `Not verified` with the exact blocker.
+- Missing required evidence is `Not verified`; irrelevant checks are not applicable.
 - Changed files, drift, exclusions, and remaining risks are reported before handoff.

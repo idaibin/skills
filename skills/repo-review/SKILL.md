@@ -1,6 +1,6 @@
 ---
 name: repo-review
-description: "Use when Worktree changes or a fixed snapshot/range need coordinated read-only Standards and Spec findings, documentation-authority review, provider-evidence integration, or selected-source visual-completion review; use repo-audit for no-change-basis audits."
+description: "Review current changes or a fixed revision read-only. Use repo-audit for existing-surface audits without a change basis."
 ---
 
 # Repository Review

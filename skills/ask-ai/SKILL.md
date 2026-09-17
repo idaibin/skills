@@ -1,6 +1,6 @@
 ---
 name: ask-ai
-description: "Use when the user requests a package or named external-AI result for review, research, cross-review/互审, final-result retention, image generation/editing, or an exact saved instruction such as 进行三方会审; do not use it for work Codex or an available host tool can complete directly."
+description: "Prepare or obtain a requested external-AI result for review, research, images, cross-review/互审, or a saved instruction such as 进行三方会审."
 ---
 
 # Ask AI

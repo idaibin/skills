@@ -18,7 +18,7 @@ it never supplies a reusable target contract for a project.
 - [Evidence Levels](#evidence-levels)
 - [Selected-Source Freeze](#selected-source-freeze)
 - [Delta And Implementation Mapping](#delta-and-implementation-mapping)
-- [Two-Pass Runtime Gate](#two-pass-runtime-gate)
+- [Runtime Comparison Gate](#runtime-comparison-gate)
 - [Required Runtime Coverage](#required-runtime-coverage)
 - [Degraded Evidence](#degraded-evidence)
 - [Handoff Artifact](#handoff-artifact)
@@ -31,8 +31,8 @@ it never supplies a reusable target contract for a project.
   traceable deltas, local-versus-shared ownership, acceptance, and readiness.
 - `dev-frontend` maps every applicable acceptance item to source ownership and a
   verification method before editing, preserves correct structure, implements P1
-  structure/assets/typography/alignment before P2 polish, and closes two runtime
-  comparison passes.
+  structure/assets/typography/alignment before P2 polish, and closes the applicable
+  runtime comparison and any required correction recheck.
 - `ops-browser` captures source/runtime evidence and computed DOM/CSS facts at the
   requested viewport and state. It does not approve a source, change a spec, edit
   code, or decide the final verdict.
@@ -123,22 +123,28 @@ Pause implementation when the selected source is unavailable, the slice verdict 
 or target viewport/state is unresolved. Preserve already-correct layout and ownership;
 do not replace a working page wholesale to close local visual deltas.
 
-## Two-Pass Runtime Gate
+## Runtime Comparison Gate
 
-After implementation, perform at least two closed comparison passes:
+After implementation, complete one qualifying comparison:
 
-1. capture selected source and implementation at the same viewport/state; create a
-   reviewable side-by-side, overlay, or deterministic diff; read applicable computed
-   styles and DOM geometry; record findings;
-2. fix confirmed findings; repeat the same capture and computed checks; record the
-   post-fix verdict.
+Capture selected source and implementation at the same viewport/state; create a
+reviewable side-by-side, overlay, or deterministic diff; read applicable computed
+styles and DOM geometry; record findings and required runtime coverage. If all
+applicable acceptance passes, close without repeating an unchanged comparison.
+
+After a confirmed fix, repeat the affected capture and computed checks on the same
+baseline and record the post-fix verdict. Recheck otherwise only when target/source,
+runtime identity, state, or an unresolved concern invalidates existing evidence.
+Preserve stricter accepted project requirements: when they require a minimum pass
+count, record it as `required_comparison_passes`; omission means one. Do not invent
+a higher count. An unresolved failure never becomes a pass merely by reaching a count.
 
 Give new findings a stable `id` and reuse it across passes. For compatibility with
 older v1 artifacts, `id` remains optional; validators identify an ID-less finding by
 its severity, acceptance ID, and stable occurrence order within each pass so two
 findings on the same acceptance item cannot mask one another.
 
-Additional passes are allowed, but pass 2 cannot be replaced by a static re-read. Keep
+Every required runtime recheck needs new runtime evidence, not a static re-read. Keep
 the design capture and implementation capture independently inspectable even when an
 overlay/diff is produced. Record tool, viewport, state, zoom, scroll position, artifact
 path/ID, and evidence limitations for every capture.
@@ -170,7 +176,7 @@ acceptance. Each target has a stable ID and a canonical fingerprint of its viewp
 state. `responsive_breakpoints: verified` requires distinct browser-computed evidence
 for every frozen target; repeating one viewport does not cover another breakpoint.
 Matrix evidence must bind its target ID, viewport/state/fingerprint, and task-owned
-artifact bytes. The ordinary two-pass selected-source comparison may satisfy one matrix
+artifact bytes. The selected-source comparison may satisfy one matrix
 target; additional breakpoints use separately artifact-bound matrix evidence.
 
 Generic placeholders are not normal product assets. A fallback may cover one missing
@@ -215,7 +221,7 @@ artifact has a required `stage` and advances without inventing future evidence:
 | `spec-ready` | `ui-spec`: selected source, evidence, deltas, and readiness only. No implementation/runtime/final fields. |
 | `mapped` | `dev-frontend` before editing: adds complete implementation mapping. No visual-review/final fields. |
 | `pass-1` | `dev-frontend` plus `ops-browser`: adds exactly one qualifying comparison pass. No runtime-coverage/final verdict. |
-| `final` | `dev-frontend` after pass 2: adds two or more passes, runtime coverage, and final verdict for review. |
+| `final` | `dev-frontend`: adds qualifying comparisons, runtime coverage, and final verdict for review; a passing first comparison may go directly here. |
 
 `Ready` requires an approved selected source and an empty blocker list. `Partial`
 or `Not Ready` requires at least one explicit blocker and may exist only at
@@ -227,7 +233,7 @@ Across its stages the artifact contains:
 - selected-source freeze and evidence inventory;
 - traceable delta rows;
 - acceptance-to-owner implementation mapping;
-- two or more runtime review passes;
+- one or more runtime reviews, including any required correction or project rechecks;
 - required runtime coverage;
 - findings, fixed items, remaining gaps, `Not verified`, and final verdict.
 
@@ -304,7 +310,7 @@ Visual completion requires all of:
 
 1. accepted source identity and traceable target contract;
 2. complete implementation mapping for applicable acceptance items;
-3. two same-viewport/state runtime comparison passes;
+3. one qualifying same-viewport/state runtime comparison, plus any correction or accepted project rechecks;
 4. computed geometry/style evidence for applicable exact claims;
 5. desktop target plus every specified key breakpoint exercised;
 6. no unresolved P0/P1 finding and no required category marked `failed` or

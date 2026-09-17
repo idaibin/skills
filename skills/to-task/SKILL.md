@@ -1,6 +1,6 @@
 ---
 name: to-task
-description: "Use when accepted product, UI, architecture, or review inputs must become or reconcile with a durable project task ledger; not for specification, implementation, review, delivery, or scheduling."
+description: "Create or reconcile a durable project task ledger from accepted contracts and findings; not task execution or scheduling."
 ---
 
 # To Task

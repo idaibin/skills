@@ -238,6 +238,9 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
                     )
 
     reviews = payload.get("visual_reviews", [])
+    required_passes = payload.get("required_comparison_passes", 1)
+    if stage == "final" and isinstance(required_passes, int) and len(reviews) < required_passes:
+        errors.append("final evidence does not meet the accepted required_comparison_passes")
     for index, review in enumerate(reviews, start=1):
         if not isinstance(review, dict):
             continue

@@ -1,6 +1,6 @@
 ---
 name: domain-modeling
-description: "Use when shared business terms, rules, lifecycle, or bounded-context ambiguity must be resolved into a named fact source; not for feature-local behavior, implementation, review, or delivery."
+description: "Resolve shared business terms, rules, and lifecycle ambiguity; use product-spec for feature-local behavior."
 ---
 
 # Domain Modeling

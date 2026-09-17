@@ -1,6 +1,6 @@
 ---
 name: ops-client
-description: "Use when explicitly authorized desktop-client operation or native-window evidence is needed; not for browser proxies, source implementation, diagnosis-only work, or Git delivery."
+description: "Operate desktop clients and capture native-window evidence within task authority."
 ---
 
 # Client Operations
@@ -8,6 +8,10 @@ description: "Use when explicitly authorized desktop-client operation or native-
 ## Entry Gate
 
 Operate a named desktop client only after confirming target process/window/build, adapter capability, allowed side effects, and evidence boundary. Installation, process, window, menu, and runtime behavior are separate claims.
+
+Reuse existing task authority for requested local client acceptance. An implementation
+handoff does not require renewed approval; installs, account changes, external writes,
+and destructive actions still require their own applicable authority.
 
 ## Route Map
 

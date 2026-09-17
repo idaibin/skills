@@ -118,8 +118,8 @@ hand-edited.
 - For wrapper removal, compare element order, landmark/heading structure, accessible
   names, class/attribute fallthrough, event targets, focus order, effective flex/grid
   item relationships, containing blocks, scroll owners, and selectors before and after.
-- For selected-source cleanup, pass 1 records the mismatch before correction and pass 2
-  replays the same viewport/state after correction. A responsive breakpoint, hover,
+- For selected-source cleanup, record the mismatch before correction and recheck
+  the affected viewport/state after correction. A responsive breakpoint, hover,
   focus-visible, loading, empty, error, disabled, or overflow state required by the UI
   contract is a separate target, not implied by the desktop default.
 - Formatting, preprocessing, linting, and selector comparison prove source integrity

@@ -120,7 +120,7 @@ npx skills@latest add idaibin/skills \
 ```
 
 This set covers the shared `frontend-visual-evidence/v1` handoff: `ui-spec` owns
-traceable targets, `dev-frontend` owns implementation and two-pass closure,
+traceable targets, `dev-frontend` owns implementation and runtime comparison closure,
 `ops-browser` owns capture/computed evidence, `repo-audit` owns current-surface
 findings, and `repo-review` owns fixed-basis completion review.
 

@@ -1,6 +1,6 @@
 ---
 name: dev-typescript
-description: "Use when an authorized non-browser TypeScript or JavaScript change is needed for Node.js, Bun, or Deno; not for frontend UI, audit/review-only work, or Git delivery."
+description: "Implement non-browser TypeScript or JavaScript changes for Node.js, Bun, or Deno."
 ---
 
 # TypeScript Implementation

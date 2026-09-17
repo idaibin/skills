@@ -135,7 +135,11 @@ binary, migration, or shared surface, check:
 ## Validation
 
 - Use repository-defined commands first.
-- Run matching format, check, test, and Clippy gates when present.
+- Run applicable format, check, test, and Clippy gates required by the repository.
+  Reuse focused coverage; add tests only for a meaningful behavior gap. Reversible
+  low-impact changes need no implementation-mirroring tests. Once required checks
+  pass, repeat or expand only for a relevant change, failure, unresolved concern,
+  or explicit project requirement.
 - For the Contract overlay, run downstream/example compile, public docs or doc
   tests, relevant feature combinations, compatibility fixtures, and affected
   consumer checks.

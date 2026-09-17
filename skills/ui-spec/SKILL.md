@@ -1,6 +1,6 @@
 ---
 name: ui-spec
-description: "Use when a source-grounded candidate direction, selected visual source, or accepted UI surface must become a traceable UI Feature Spec or adopted DESIGN.md contract; not for product behavior, visual generation, source implementation, runtime operation, or Git delivery."
+description: "Turn selected visual evidence into a UI Feature Spec or shared DESIGN.md contract; not image generation or implementation."
 ---
 
 # UI Specification

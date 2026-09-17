@@ -1,6 +1,6 @@
 ---
 name: repo-audit
-description: "Use when a bounded read-only frontend, Java, or Rust audit of existing paths without a change basis is needed; use repo-review for a Worktree, commit, range, or review package."
+description: "Audit existing frontend, Java, or Rust surfaces read-only. Use repo-review for change-based reviews."
 ---
 
 # Repository Audit

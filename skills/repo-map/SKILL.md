@@ -1,6 +1,6 @@
 ---
 name: repo-map
-description: "Use when a Git or non-Git workspace needs a machine-queryable repository asset scan, impact/relationship query, coverage or drift check, or optional derived navigation view; not for task-local discovery, source changes, guidance authoring, or review."
+description: "Scan or query repository assets, relationships, coverage, and drift; not routine task-local file discovery."
 ---
 
 # Repository Map

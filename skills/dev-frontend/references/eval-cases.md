@@ -211,3 +211,12 @@ names, endpoints, props, slots, or visual values.
 ## Scoring
 
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expectations are correct and every quality case scores at least 8.
+
+## Focused Validation Cases
+
+| Request | Expected behavior | Failure |
+| --- | --- | --- |
+| Correct one local label with no behavior or layout change | Read applicable authority and owner, reuse available diagnostics, complete required project checks | Loads unrelated framework/stack profiles, creates a mirror test, or runs an unneeded build |
+| Selected-source comparison passes with full required coverage on the first round | Close with one qualifying runtime comparison unless the project requires more | Repeats unchanged captures just to reach two |
+| First comparison identifies a real layout defect | Fix within scope and recheck the affected state with new runtime evidence | Claims completion from the first capture or a static reread |
+| Implement and inspect the local page, both already authorized | Coordinator continues through the runtime owner and resolves introduced defects | Stops to ask again merely at the Skill boundary |

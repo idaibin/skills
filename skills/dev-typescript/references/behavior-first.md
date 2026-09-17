@@ -12,15 +12,17 @@ Before writing a test or check:
 
 Do not invent an abstraction only to make a test possible. If no honest seam exists, report the gap; a brittle internal assertion is not a substitute.
 
-## Vertical Tracer Bullet
+## Focused Behavior Check
 
-For one behavior at a time:
+Reuse an existing check when it observes the requested behavior and independent
+expected result. Add or extend a check only for an uncovered, meaningful regression
+risk; do not create a test that restates a reversible low-impact implementation.
 
-1. add one failing test or executable check through the confirmed seam;
-2. run it and retain evidence that it is red for the intended missing or wrong behavior, not setup noise;
-3. implement the minimum production change that makes this one behavior green;
-4. rerun the focused check and applicable static gate;
-5. keep externally observable behavior green while simplifying only what this slice made necessary;
-6. repeat with the next behavior.
+For a bug fix with a reproducible failure, run the focused check before the fix when
+practical, then verify the corrected result. Implement related changes as one coherent
+slice and run affected checks plus required project gates. Once they pass, expand or
+repeat only for new changes, failures, unresolved concerns, or an explicit requirement.
 
-Avoid horizontal batches of imagined tests followed by a broad implementation. Mock only true external boundaries; never mock the behavior owner being verified. A passing test that was never observed red is validation evidence, not red-green evidence.
+Mock only true external boundaries; never mock the behavior owner being verified.
+A passing test that was never observed red is validation evidence, not red-green
+evidence. Preserve an explicitly required TDD workflow when the project adopts one.

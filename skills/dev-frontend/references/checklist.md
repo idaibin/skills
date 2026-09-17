@@ -1,6 +1,8 @@
 # Frontend Implementation Checklist
 
-Use this checklist when implementing or reviewing frontend changes.
+Use the context and validation sections for frontend implementation. Read other
+sections only for the changed behavior; a copy-only edit does not activate layout,
+framework lifecycle, API, or native-runtime checks. Review remains with its owner.
 
 ## Contents
 
@@ -197,9 +199,10 @@ Use this checklist when implementing or reviewing frontend changes.
   unrelated route gates here.
   A local build is not release or runtime acceptance.
 
-- For selected-source visual work, run two same-viewport/state comparison passes:
-  capture and compare, read computed geometry/style, fix confirmed findings, then
-  recapture and reinspect.
+- For selected-source visual work, capture and compare at the same viewport/state,
+  read applicable computed geometry/style, and close when required coverage passes.
+  Recheck after confirmed fixes or changed evidence; preserve any stricter project
+  pass requirement. Do not duplicate a successful unchanged comparison.
 - Independently inspect real assets and per-item fallback, font fallback including
   native controls, truncation, final contrast, section alignment, card dimensions,
   hover/focus, applicable loading/empty/error states, desktop target, and every key

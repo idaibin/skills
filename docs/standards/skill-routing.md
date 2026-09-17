@@ -29,7 +29,7 @@ identity, installed adapters, or completed evidence.
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
 | `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
-| `dev-frontend` | requested frontend implementation plus selected-source mapping and two-pass visual closure | source files |
+| `dev-frontend` | requested frontend implementation plus selected-source mapping and risk-matched visual closure | source files |
 | `dev-typescript` | requested non-browser TypeScript/JavaScript implementation for Node.js, Bun, or Deno | source files |
 | `dev-java` | requested Java/Spring implementation and migration | source files |
 | `dev-rust` | requested Rust implementation | source files |
