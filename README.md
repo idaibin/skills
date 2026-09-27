@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 17 available Skills:
+Browse the 18 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -55,6 +55,7 @@ and other supported agents.
 | `repo-audit` | Audit an existing frontend, Java, or Rust surface read-only through language profiles. |
 | `repo-review` | Review a Worktree, commit, range, or verified package on a fixed evidence basis. |
 | `repo-delivery` | Commit, integrate, push, and clean up reviewed changes with explicit Git authorization. |
+| `tests` | Execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic with coverage and defect evidence. |
 | `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
 | `ops-client` | Operate and verify real desktop-client processes and windows. |
 | `ask-ai` | Prepare or run explicitly authorized external-AI review, research, relay, and image workflows. |
@@ -75,6 +76,7 @@ source change       -> matching dev-* owner (`dev-typescript` for non-browser TS
 bounded audit       -> repo-audit (frontend / Java / Rust profile)
 change review       -> repo-review
 Git delivery        -> repo-delivery
+functional acceptance -> tests -> ops-browser / existing API runner
 browser/client proof -> ops-browser / ops-client
 external AI         -> ask-ai
 ```

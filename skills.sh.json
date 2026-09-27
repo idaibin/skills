@@ -63,7 +63,8 @@
       "description": "Skills for browser and desktop-client operation with state-safe evidence collection, visual comparison, and runtime geometry/style proof.",
       "skills": [
         "ops-browser",
-        "ops-client"
+        "ops-client",
+        "tests"
       ]
     },
     {

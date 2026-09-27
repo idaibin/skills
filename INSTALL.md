@@ -24,6 +24,7 @@ dev-typescript
 dev-java
 dev-rust
 repo-audit
+tests
 ops-browser
 ops-client
 ask-ai
@@ -54,6 +55,7 @@ The publishable source directories are:
 - `skills/dev-java`
 - `skills/dev-rust`
 - `skills/repo-audit`
+- `skills/tests`
 - `skills/ops-browser`
 - `skills/ops-client`
 - `skills/ask-ai`

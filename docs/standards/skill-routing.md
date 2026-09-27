@@ -36,6 +36,7 @@ identity, installed adapters, or completed evidence.
 | `dev-rust` | requested Rust implementation | source files |
 | `repo-audit` | bounded existing frontend, Java, and Rust audit profiles, including selected-source visual fidelity | read-only |
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
+| `tests` | scoped end-to-end functional acceptance, correlated API/UI/business evidence, defects, retest and cleanup | test artifacts and authorized browser/test state; no product source or Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
 | `ops-client` | authorized desktop-client operations and evidence | client state |
 | `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |

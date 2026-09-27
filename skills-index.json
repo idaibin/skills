@@ -1265,6 +1265,85 @@
       "capability_ids": [
         "writing.source.adapt"
       ]
+    },
+    {
+      "name": "tests",
+      "category": "runtime-operations",
+      "owner": "tests",
+      "mutation_class": "browser-control",
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "artifact-write",
+        "command-runner",
+        "browser-control",
+        "visual-evidence"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-git-state",
+        "read-source",
+        "write-artifact",
+        "control-browser-state",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified",
+        "basis-drift"
+      ],
+      "intents": [
+        "plan and execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic",
+        "run system testing and regression with correlated business-state evidence",
+        "report test coverage, defects, affected retests and cleanup"
+      ],
+      "keywords": [
+        "end-to-end testing",
+        "functional testing",
+        "system testing",
+        "acceptance testing",
+        "regression testing",
+        "test cases",
+        "test coverage",
+        "business logic",
+        "UI walkthrough",
+        "端到端测试",
+        "功能测试",
+        "系统测试",
+        "接口测试",
+        "页面走查",
+        "点击测试",
+        "逻辑测试",
+        "测试流程"
+      ],
+      "excludes": [
+        "source-only change review",
+        "source implementation",
+        "single screenshot capture",
+        "API contract authoring",
+        "Git mutation"
+      ],
+      "related": [
+        "ops-browser",
+        "repo-review",
+        "repo-audit",
+        "dev-frontend",
+        "api-spec",
+        "to-task"
+      ],
+      "capability_ids": [
+        "test.acceptance.execute"
+      ]
     }
   ],
   "capabilities": [
@@ -2905,6 +2984,94 @@
         "basis_or_scope_identity",
         "runtime_observation_or_static_result",
         "native_contract_authority_and_verification_dimensions"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "test.acceptance.execute",
+      "capability_version": "1.0.0",
+      "package": "tests",
+      "description": "Execute scoped functional acceptance and correlate API, page, UI, click and business-state evidence.",
+      "accepts": [
+        {
+          "schema": "urn:skills:repository-scope:v1",
+          "kind": "portable"
+        },
+        {
+          "schema": "urn:skills:browser-operation-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:runtime-observation:v1",
+          "kind": "portable"
+        },
+        {
+          "schema": "urn:skills:audit-findings:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "browser-control",
+        "maximum_effects": [
+          "read-repository",
+          "read-git-state",
+          "read-source",
+          "write-artifact",
+          "control-browser-state",
+          "emit-findings",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization",
+          "host-runtime-confirmation"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope",
+          "task-artifact-root"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
       ],
       "adapter_binding": {
         "policy": "runtime-only",

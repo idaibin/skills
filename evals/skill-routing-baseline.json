@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:f31386847a7cd84ef976915b5d6b46f0b7832c31066a3fb515690aece8571a5f",
+  "fingerprint": "sha256:e121b250d04014790e480166622085c9901b8ab7e1c690befb88e010dc6d1303",
   "summary": {
-    "total": 61,
-    "passed": 61,
+    "total": 64,
+    "passed": 64,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -741,6 +741,42 @@
       "observed_owner": "api-spec",
       "expected_stop": "evidence-incomplete",
       "observed_stop": "evidence-incomplete",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-normal",
+      "case_fingerprint": "sha256:528c05d5cd28e42fd0b20dc70aa00e9e6be98db248f13c6ae773e68dae76c35e",
+      "class": "normal",
+      "skill": "tests",
+      "expected_owner": "tests",
+      "observed_owner": "tests",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-boundary",
+      "case_fingerprint": "sha256:939fa62ec5d8fe39758c5d0dd7c7abaf60b86d8fd47c30f8937f10b7198ec9ba",
+      "class": "boundary",
+      "skill": "tests",
+      "expected_owner": "repo-review",
+      "observed_owner": "repo-review",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-critical-stop",
+      "case_fingerprint": "sha256:4f7797a6ca7334c6d7f494b15c3a65622639e1ba76d226a2c9259ed52e268575",
+      "class": "critical-stop",
+      "skill": "tests",
+      "expected_owner": "tests",
+      "observed_owner": "tests",
+      "expected_stop": "missing-authorization",
+      "observed_stop": "missing-authorization",
       "status": "passed",
       "failures": []
     }
