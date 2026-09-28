@@ -84,6 +84,15 @@ Translate the selected source into implementable decisions:
 - state transitions, action ownership, feedback placement, and precedence between independent async domains;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
 
+When Product requires input to survive a failed action, specify how the retained
+values stay visible and reachable in the failure state: feedback placement,
+overlay/scroll ownership, focus destination, and the enabled recovery action.
+Bind assertions to the affected viewport/state and compare entered values before
+failure, after feedback, and during the permitted recovery. Follow accepted
+clear-on-failure and uncertain-outcome rules; UI must not choose retention or
+retry policy. Missing Product semantics blocks only the dependent UI transition,
+not already confirmed layout or unrelated states.
+
 When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in
 the adopted `DESIGN.md` and page-local role/placement/state mapping in the Feature
 Spec. Exact viewBox, stroke, size, and color values require accepted evidence; the
@@ -173,6 +182,15 @@ gate. It does not rewrite the producer result. An immutable content manifest alo
 and basis but never upgrades either result.
 
 ## Evaluation And Handoff
+
+Evaluate the supplied accepted contract against the requested assertions before
+proposing changes. When it already satisfies them, return a bounded no-change
+result. Missing implementation evidence does not erase clauses supplied in that
+contract. Keep UI contract readiness, artifact publication, and runtime validation
+separate: a preview or an untested browser state is not itself a UI contract
+blocker. Name the specific missing contract evidence, such as an unresolved
+component mapping, and mark actual file readback or runtime behavior `Not verified`
+when it was not exercised.
 
 Run source identity, product truth, rights, required-state, mapping, responsive,
 viewport-matrix, accessibility, overflow, approval, and implementation-budget gates

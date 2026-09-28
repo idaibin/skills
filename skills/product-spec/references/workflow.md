@@ -1,11 +1,21 @@
 # Product Specification Workflow
 
+## Contents
+
+- [Evidence first](#evidence-first)
+- [Decision states](#decision-states)
+- [Product scope gate](#product-scope-gate)
+- [Ready for an implementation slice](#ready-for-an-implementation-slice)
+- [Stop conditions](#stop-conditions)
+- [Documentation rebuild closure](#documentation-rebuild-closure)
+
 ## Evidence First
 
 1. Read effective guidance and product-document conventions.
 2. Search named requirements, current product facts, UI states, and representative
    consumers only as far as needed to resolve product choices.
-3. Separate confirmed current behavior from proposals and assumptions.
+3. Separate confirmed current behavior from proposals and assumptions. Do not assign
+   required/optional field semantics that the product source has not supplied.
 4. For a fact that materially changes scope, user outcome, data risk, or acceptance,
    trace its state and evidence to the affected slice and observable acceptance
    consequence. Do not add technical design or interface definitions.
@@ -64,6 +74,17 @@ Name each slice, then verify only applicable gates:
 - business rules and user-visible semantics;
 - user-visible UI and data effects only where the slice touches them;
 - dependency edges and executable acceptance results.
+
+For a submission or editable draft whose failure can lose user work or repeat a
+business action, trace the accepted rule for what input is retained, cleared, or
+restored and how the user recovers. Distinguish a confirmed rejection from an
+unknown submission outcome when that changes whether retry is safe. Turn the
+rule into observable before/failure/recovery acceptance. A status check is evidence
+for a decision, not the decision itself: a list's presence or absence of a record
+does not establish this submission's success or safe retry without a confirmed
+correlation/completeness basis and an accepted recovery rule. Do not prescribe
+storage, API retry mechanics, or universal draft retention. If the rule is unsettled, keep
+only that recovery slice Open and resolve the material product decision.
 
 Block only when a missing decision can change user behavior, business rules,
 permission/security boundaries, failure semantics, or

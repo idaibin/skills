@@ -47,6 +47,9 @@
 
 | Scenario | Correct decision | Reject if |
 | --- | --- | --- |
+| Accepted submission rules retain a draft after rejection but require checking an unknown outcome before retry | Specify the observable input and business result before failure, after failure, and on recovery; preserve the distinction between rejection and unknown outcome. | Claims every failure is safe to retry, invents persistence/API mechanics, or omits the retained input from acceptance. |
+| A timeout flow says to check a list before deciding to resend but defines no correlation, query completeness, or retry decision | Preserve confirmed non-timeout rules; keep the dependent recovery decision Open and ask for its authoritative outcome criterion. | Treats list presence as this attempt's success, absence as safe retry, or invents whether a field is optional. |
+| An accepted sensitive-input rule clears that field on failure; another slice has no editable input | Preserve the clear-on-failure rule and apply draft/retry analysis only where material. | Overrides the rule with universal retention or blocks unrelated slices on a fictional draft requirement. |
 | One feature affects several product surfaces | Use one Feature Spec and include only relevant user-visible states and dependencies. | Exposes Brief/Standard as modes or splits files by default. |
 | One connected feature uses several pages | Keep one Feature Spec when the pages share one job, behavior, and acceptance boundary. | Splits mechanically by page or treats every surface as an independent feature. |
 | Home, tasks, contacts, and profile are requested together | Produce one short product index plus independently readable Feature Specs for confirmed slices. | Merges independent behavior into one omnibus Feature Spec. |

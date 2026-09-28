@@ -3,15 +3,21 @@
 ## Basis
 
 - Digest scope: all 18 packages declared by `skills-index.json`; the index owns the package set.
-- Package digest: `sha256:9045f3ef46c9308734b089e29ed31ec18c61c3ce8a59b886e10bd1c503e6f718`
-- Change focus: the tests functional acceptance owner, API/UI/business-state evidence,
-  finite coverage, defect retest and cleanup. The other 17 package trees are unchanged.
-  Raw live-Agent and project records remain local.
+- Package digest: `sha256:21d613b4cbfbb6b695995349f88cba1528ee3bed98fb730b34d030766d6fe6ba`
+- Change focus: Product recovery decisions and UI failure-state contracts, accepted
+  no-change evaluation, and bounded readiness. Raw live-Agent records remain local.
+
+- Added scope: Product submission-recovery semantics and UI retained-input visibility,
+  accepted-contract no-op evaluation, and separate contract/runtime readiness. Ten
+  fixed synthetic cases cover explicit/contextual use, owner neighbors, no-change
+  results, and unresolved recovery rules. Automated route/process verdicts require
+  case-specific semantic readback; they do not establish contract correctness alone.
 
 ## Current Results
 
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
+| Product/UI recovery live cases | Partial | Ten fixed cases on gpt-5.6-terra medium, 24 total executions. Latest applicable semantic readback: 6 pass, 3 partial, 1 fail; automated route/process checks pass but do not grade specification content. Accepted-contract no-op is corrected. Remaining gaps concern workflow consumption, Product recovery handoff, unsupported UI details, and a missing actual preview. Raw traces and per-case adjudication remain local; no whole-system or efficiency claim. |
 | Package structure | Pass | 18 self-contained packages; local links and metadata validate. |
 | Deterministic routing | Pass | 64/64 cases; no regressions against the immutable preceding baseline. |
 | Context warnings | Pass | Zero warnings; estimates are not measured model tokens. |

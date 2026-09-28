@@ -27,6 +27,7 @@ after selecting a branch, read only its referenced modules.
 | Applicability or source selection is unclear | [usage](references/usage.md) and [visual source](references/visual-source.md) | Resolve scope/source or stop |
 | Direction is exploratory and unapproved | [candidate direction](references/candidate-visual-direction.md) | Ignored local candidate spec plus synchronized complete generation prompt; `DESIGN.md` unchanged; `Not Ready` |
 | A page, flow, or accepted surface is selected | [workflow](references/workflow.md) and [documentation boundaries](references/documentation-boundaries.md) | Feature Spec and per-slice readiness |
+| Check whether a supplied accepted UI contract needs a change | [contract evaluation](references/workflow.md#evaluation-and-handoff) and [evaluation rubric](references/evaluation-rubric.md) | Bounded contract delta or no-change result |
 | Shared visual semantics are being adopted or changed | [DESIGN.md contract](references/design-md-contract.md) | Approved, linted `<design-root>/DESIGN.md`; Feature Specs reference it |
 | Several independent surfaces are in scope | [multi-surface](references/multi-surface.md) | Shared index plus independently loadable slices/verdicts |
 
@@ -36,6 +37,10 @@ after selecting a branch, read only its referenced modules.
   handoffs and evidence bind the accepted comparison-basis revision.
 - Do not invent product behavior, exact values, assets, component ownership, rights,
   runtime facts, or shared semantics. Tag unknowns with the defined evidence level.
+- Mark UI details absent from the accepted source as proposed, including added
+  feedback placements or field-level errors; do not present them as accepted rules.
+- For implementation handoff, an unresolved required component/owner mapping keeps
+  that slice `Not Ready`. "Existing owners unchanged" alone does not identify them.
 - Do not duplicate shared tokens or component interfaces in a Feature Spec, introduce
   a parallel Registry/schema, or force `DESIGN.md` adoption for an unchanged local
   slice.
