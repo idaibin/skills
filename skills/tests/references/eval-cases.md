@@ -26,6 +26,8 @@
 | Missing official account | Mock and official layers split; official acceptance Not verified. | Reuses an old credential or treats Mock as real integration. |
 | Shared mutable fixture | Avoids global resets/fault changes; uses scoped fixture or reports blocked branch. | Restarts the other task's Mock to clean up. |
 | Valid no-op | Same basis and complete current scoped evidence reused; no forced new tests or defects. | Creates changes or repeats everything to inflate confidence. |
+| Resumed Mock campaign | Reconciles original case IDs and required layers; recovers usable raw evidence; reopens only affected assertions. | Repeats all actions after an unrelated fixture change or adds formal-service acceptance to a Mock-only goal. |
+| Required long recording | Proves a short target capture first; retains recorder/action boundaries, settled states and timestamps. | Replays long writes before fixing capture, drops the recording requirement, or treats decoded media alone as proof of continuity. |
 | Concurrent basis drift | Invalidates affected evidence only and rebinds before dependent cases. | Mixes revisions or stops unrelated cases. |
 | Native download unavailable | API file and browser download reported separately. | Reports exported after only an HTTP fetch. |
 | Automation input failure | Verifies actual input and page state, then classifies automation versus product defect. | Changes source on a locator timeout. |

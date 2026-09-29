@@ -16,6 +16,9 @@ filling it from an older report.
 
 Keep an explicit page/function inventory when testing a whole application. For each
 included function list applicable roles, states and journeys, with exclusions justified.
+Keep one current result per case and evidence layer, linking its latest basis and raw
+evidence; historical attempt notes are not the current status. Reconcile that row when
+a result changes instead of adding a competing summary or a new continuation case.
 
 | ID / requirement | Route / journey / role | Preconditions and input | Steps | Expected result | Layer / evidence | Result |
 | --- | --- | --- | --- | --- | --- | --- |

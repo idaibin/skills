@@ -3,7 +3,7 @@
 ## Basis
 
 - Digest scope: all 18 packages declared by `skills-index.json`; the index owns the package set.
-- Package digest: `sha256:21d613b4cbfbb6b695995349f88cba1528ee3bed98fb730b34d030766d6fe6ba`
+- Package digest: `sha256:8dcd68fc2c5eb6aa8eda04a031f8cbbbaa0f197738e0a15f04cd81f45708aef1`
 - Change focus: Product recovery decisions and UI failure-state contracts, accepted
   no-change evaluation, and bounded readiness. Raw live-Agent records remain local.
 
@@ -17,6 +17,7 @@
 
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |
+| Tests resume/capture decision checks | Pass within supplied fixtures | Five fixed prompts executed once with Codex CLI 0.156.1; actual outputs preserve Mock scope, evidence reuse, short capture preflight, no-op, source-review routing and unauthorized-service stop. No browser effects or comparative efficiency claim; effective model attribution was not independently exposed by these traces. |
 | Product/UI recovery live cases | Partial | Ten fixed cases on gpt-5.6-terra medium, 24 total executions. Latest applicable semantic readback: 6 pass, 3 partial, 1 fail; automated route/process checks pass but do not grade specification content. Accepted-contract no-op is corrected. Remaining gaps concern workflow consumption, Product recovery handoff, unsupported UI details, and a missing actual preview. Raw traces and per-case adjudication remain local; no whole-system or efficiency claim. |
 | Package structure | Pass | 18 self-contained packages; local links and metadata validate. |
 | Deterministic routing | Pass | 64/64 cases; no regressions against the immutable preceding baseline. |

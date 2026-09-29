@@ -35,6 +35,14 @@ Prioritize access/environment blockers, core business journeys, high-impact writ
 shared controls, then remaining pages. Freeze the finite inventory and report its
 denominator. Add cases only for newly observed requirements or gaps, not to keep busy.
 
+Bind required evidence layers to the accepted outcome. For an explicitly Mock-scoped
+run, formal-service acceptance stays separate; it blocks this run only if required by
+that outcome. Preserve explicitly required full walkthroughs and recordings.
+On resume, reconcile latest evidence into the original case IDs before choosing work.
+Name the missing assertion and why existing evidence cannot answer it. Recover usable
+raw evidence before repeating actions; a fixture version change invalidates only cases
+whose consumed data or behavior changed. Reproduce stale defect claims before repair.
+
 ## 3. Execute each journey
 
 1. Check current basis and test data; capture the initial page/state and relevant

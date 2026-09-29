@@ -44,9 +44,14 @@ cause. Same-state comparison after an authorized fix closes the affected visual 
 repeat additional passes only when the accepted project rule requires them.
 
 Continuous recording is conditional on the user's/project's acceptance requirement.
-When required, start the available authorized native recorder before actions and stop
-after the final state. Inspect playback and media metadata. Stitched frames are not
-continuous interaction proof; missing capture capability blocks only the video claim.
+When required, first verify a short capture on the actual target: viewport, readable
+frame, recorder lifecycle, retained output and playback. Fix capture failures before
+replaying a long write journey. Then capture the planned actions through their settled
+final state, correlating recording start/stop and action times with retained evidence.
+Native change-frame streams may have idle gaps; preserve timestamps and capture origin.
+Encoding their frames does not itself break continuity, while stitching independent
+screenshots does not establish it. Media decoding alone proves neither capture
+continuity nor business correctness. Missing capability blocks only the video claim.
 
 Console warnings need attribution; no console errors does not mean no functional bug.
 For downloads, correlate the click, response, observed browser download and actual
