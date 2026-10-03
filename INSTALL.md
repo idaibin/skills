@@ -11,6 +11,7 @@ npx skills@latest add idaibin/skills --list
 The result must contain exactly these public packages:
 
 ```text
+work-retro
 repo-map
 domain-modeling
 product-spec
@@ -41,6 +42,7 @@ to discover packages from their portable `SKILL.md` metadata.
 
 The publishable source directories are:
 
+- `skills/work-retro`
 - `skills/repo-map`
 - `skills/domain-modeling`
 - `skills/product-spec`

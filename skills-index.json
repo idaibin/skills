@@ -34,6 +34,8 @@
       "urn:skills:typescript-change-request:v1",
       "urn:skills:ui-contract:v1",
       "urn:skills:ui-request:v1",
+      "urn:skills:work-retro-request:v1",
+      "urn:skills:work-retro-result:v1",
       "urn:skills:writing-output:v1",
       "urn:skills:writing-request:v1"
     ],
@@ -77,6 +79,10 @@
     "api-contracts": {
       "title": "API Contracts",
       "description": "API wire contract authoring and OpenAPI governance."
+    },
+    "personal-retrospectives": {
+      "title": "Work Retrospectives",
+      "description": "Personal and cross-project workflow retrospectives."
     }
   },
   "packages": [
@@ -1264,6 +1270,68 @@
       "related": [],
       "capability_ids": [
         "writing.source.adapt"
+      ]
+    },
+    {
+      "name": "work-retro",
+      "category": "personal-retrospectives",
+      "owner": "work-retro",
+      "mutation_class": "artifact-write",
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "text-authoring",
+        "task-enumeration",
+        "task-read"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "emit-findings",
+        "emit-draft",
+        "emit-handoff",
+        "read-task-state"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "evidence-incomplete",
+        "publication-unsafe"
+      ],
+      "intents": [
+        "retrospect on prior conversations across projects and domains",
+        "propose evidence-backed improvements with scoped exceptions"
+      ],
+      "keywords": [
+        "retrospective",
+        "retrospect",
+        "postmortem",
+        "复盘",
+        "工作复盘",
+        "个人工作流程"
+      ],
+      "excludes": [
+        "repository mapping",
+        "task ledger maintenance",
+        "source implementation",
+        "change review",
+        "Git mutation",
+        "automatic persistent rule updates"
+      ],
+      "related": [
+        "repo-map",
+        "to-task",
+        "repo-review",
+        "repo-delivery"
+      ],
+      "capability_ids": [
+        "work.retrospective.analyze"
       ]
     }
   ],
@@ -2905,6 +2973,88 @@
         "basis_or_scope_identity",
         "runtime_observation_or_static_result",
         "native_contract_authority_and_verification_dimensions"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "work.retrospective.analyze",
+      "capability_version": "1.0.0",
+      "package": "work-retro",
+      "description": "Analyze bounded personal history and propose context-scoped improvements.",
+      "accepts": [
+        {
+          "schema": "urn:skills:work-retro-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:work-retro-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "EVIDENCE_ACCESSIBLE"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "write-artifact",
+          "emit-findings",
+          "emit-draft",
+          "emit-handoff",
+          "read-task-state"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-history-scope",
+          "declared-report-destination"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-declared-history-scope"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "report-bounded-coverage-and-missing-evidence"
+        },
+        {
+          "code": "PUBLICATION_UNSAFE",
+          "recoverable": true,
+          "recovery": "prepare-synthetic-safe-export-or-stop-publication"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "source_coverage_and_provenance",
+        "finding_to_proposal_validation_trace"
       ],
       "adapter_binding": {
         "policy": "runtime-only",

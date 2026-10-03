@@ -72,6 +72,13 @@
       "skills": [
         "human-writing"
       ]
+    },
+    {
+      "title": "Work Retrospectives",
+      "description": "Evidence-backed, context-scoped improvement proposals from personal work history.",
+      "skills": [
+        "work-retro"
+      ]
     }
   ]
 }

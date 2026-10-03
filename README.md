@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 17 available Skills:
+Browse the 18 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -42,6 +42,7 @@ and other supported agents.
 
 | Skill | What it helps with |
 | --- | --- |
+| `work-retro` | Retrospect across work history and propose evidence-backed, context-scoped improvements. |
 | `repo-map` | Scan, query, and render repository asset relationships, ownership, coverage, and drift. |
 | `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |

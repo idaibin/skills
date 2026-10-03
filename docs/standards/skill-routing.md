@@ -23,6 +23,7 @@ identity, installed adapters, or completed evidence.
 
 | Skill | Owns | Mutation |
 | --- | --- | --- |
+| `work-retro` | bounded personal/cross-project work-history retrospectives and scoped improvement proposals | requested retrospective artifact only; never persistent rules or task execution |
 | `repo-map` | repository asset scans, bounded graph queries, coverage/drift checks, and derived navigation views | isolated graph snapshots, run-local cache, and explicitly requested derived map artifacts only; never repository guidance |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |

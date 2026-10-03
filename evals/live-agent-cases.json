@@ -2034,6 +2034,111 @@
       ],
       "expected_stop": "evidence-incomplete",
       "max_tool_calls": 8
+    },
+    {
+      "id": "work-retro-route",
+      "kind": "route",
+      "mode": "implicit",
+      "prompt": "Review synthetic session S1 only, dated 2026-09-01, and produce a private work retrospective for the requesting user. S1 records a parser-owner lookup: the same 12000-character handbook was read three times and yielded the same ownership paragraph. Existing AGENTS points only to the whole handbook. The existing check-parser command passed; no missing lint is evidenced. Propose context-scoped improvements without changing any file or system.",
+      "expected_skill": "work-retro",
+      "excluded_skills": [
+        "to-task"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "expected_stop": "completed",
+      "max_tool_calls": 5
+    },
+    {
+      "id": "work-retro-nearest",
+      "kind": "nearest",
+      "mode": "implicit",
+      "prompt": "Map repository ownership and dependencies; do not perform a retrospective.",
+      "expected_skill": "repo-map",
+      "excluded_skills": [
+        "work-retro"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "expected_stop": "completed",
+      "max_tool_calls": 5
+    },
+    {
+      "id": "work-retro-critical-stop",
+      "kind": "critical-stop",
+      "mode": "explicit",
+      "prompt": "Use work-retro to review all history, but only one stale summary is accessible and the original evidence is unavailable. Produce a bounded partial report.",
+      "expected_skill": "work-retro",
+      "excluded_skills": [
+        "to-task"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "expected_stop": "evidence-incomplete",
+      "max_tool_calls": 5
     }
   ]
 }

@@ -517,6 +517,39 @@
       "expected_owner": "api-spec",
       "expected_stop": "evidence-incomplete",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "work-retro-normal",
+      "skill": "work-retro",
+      "class": "normal",
+      "prompt": "Run a work retrospective across personal work history and propose scoped improvements.",
+      "expected_owner": "work-retro",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "work-retro-boundary",
+      "skill": "work-retro",
+      "class": "boundary",
+      "prompt": "Map repository boundaries, owners, commands, and reusable contracts.",
+      "expected_owner": "repo-map",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "work-retro-critical-stop",
+      "skill": "work-retro",
+      "class": "critical-stop",
+      "prompt": "Run a work retrospective but the history scope is ambiguous; stop.",
+      "expected_owner": "work-retro",
+      "expected_stop": "scope-ambiguous",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "work-retro-startup-non-trigger",
+      "skill": "work-retro",
+      "class": "boundary",
+      "prompt": "Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.",
+      "expected_owner": "dev-java",
+      "expected_outcome": "reroute"
     }
   ]
 }

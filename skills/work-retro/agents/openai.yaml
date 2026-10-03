@@ -1,0 +1,4 @@
+interface:
+  display_name: "work retro"
+  short_description: "Review work history and propose scoped improvements"
+  default_prompt: "Use $work-retro to review the declared work history, disclose source coverage, and produce evidence-backed, context-scoped improvement proposals with validation criteria."

@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:f31386847a7cd84ef976915b5d6b46f0b7832c31066a3fb515690aece8571a5f",
+  "fingerprint": "sha256:fecb670a82433a24a94706d6faf7bd36ffb281114f6e4f6d6d39ad6d71ec43bb",
   "summary": {
-    "total": 61,
-    "passed": 61,
+    "total": 65,
+    "passed": 65,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -741,6 +741,54 @@
       "observed_owner": "api-spec",
       "expected_stop": "evidence-incomplete",
       "observed_stop": "evidence-incomplete",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "work-retro-normal",
+      "case_fingerprint": "sha256:fec235ab2893d8a2173d45123bd0b99d7aa542747b13f7446e7a91d6d0266978",
+      "class": "normal",
+      "skill": "work-retro",
+      "expected_owner": "work-retro",
+      "observed_owner": "work-retro",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "work-retro-boundary",
+      "case_fingerprint": "sha256:be3f3351456e6fb1bec828639bfb57816e6e97a742d7407545903d4029af53f2",
+      "class": "boundary",
+      "skill": "work-retro",
+      "expected_owner": "repo-map",
+      "observed_owner": "repo-map",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "work-retro-critical-stop",
+      "case_fingerprint": "sha256:19c63f17da1056a9f0a76905607a74f3814f17c62ec37e340f67f17649f778d6",
+      "class": "critical-stop",
+      "skill": "work-retro",
+      "expected_owner": "work-retro",
+      "observed_owner": "work-retro",
+      "expected_stop": "scope-ambiguous",
+      "observed_stop": "scope-ambiguous",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "work-retro-startup-non-trigger",
+      "case_fingerprint": "sha256:4f9cc739e84f9989c7b103abe23221fc17d91534ad7b04d41b6bfc2007f95516",
+      "class": "boundary",
+      "skill": "work-retro",
+      "expected_owner": "dev-java",
+      "observed_owner": "dev-java",
+      "expected_stop": null,
+      "observed_stop": null,
       "status": "passed",
       "failures": []
     }
