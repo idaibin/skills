@@ -31,6 +31,11 @@ load it for every frontend edit or use it to redesign an approved surface.
   can take control without waiting for a stale sequence to finish.
 - Respect reduced-motion preferences when movement is material, preserve focus and
   keyboard behavior, and gate hover-only effects on devices that support hover.
+  When reduced-motion overrides affect measured or positioned overlays, inspect the
+  effective transition properties and verify actual geometry and interaction lifecycle
+  with motion disabled. A near-zero global duration may still animate synchronous
+  positioning writes; choose the correction at the existing owner rather than assuming
+  shorter duration is equivalent to no transition.
 - Avoid animation-only wrappers when an existing semantic or state-owning element can
   own the same effect without changing layout, accessibility, or reuse boundaries.
 
