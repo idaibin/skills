@@ -18,7 +18,7 @@ required objects cannot be verified.
 | Immutable commit/range/snapshot or verified review package | [fixed-basis checklist](references/checklist.md) and [Standards/Spec](references/standards-and-spec.md) | Fixed-basis P0-P3 findings/observations |
 | Current Worktree review | [worktree checklist](references/worktree-checklist.md) and [Standards/Spec](references/standards-and-spec.md) | Worktree P0-P3 findings/observations |
 | Product/UI/DESIGN/map authority changes apply | [documentation authority](references/documentation-authority-review.md) | Authority closure review |
-| Frontend visual/layout/motion change applies | [visual evidence](references/frontend-visual-evidence.md), [CSS governance](references/frontend-css-governance.md), [components/tokens](references/ui-components-and-tokens.md), and/or [motion review](references/interaction-motion-review.md) | Conditional visual review |
+| Frontend visual/layout/interaction/motion change applies | [visual evidence](references/frontend-visual-evidence.md), [CSS governance](references/frontend-css-governance.md), [components/tokens](references/ui-components-and-tokens.md), and/or [motion review](references/interaction-motion-review.md) | Conditional visual review |
 | OpenAPI/protocol, cross-boundary, or external provider evidence applies | [protocol contracts](references/protocol-contracts.md), [OpenAPI governance](references/openapi-contract-governance.md), [project grounding](references/project-grounding.md), and/or [review integration](references/review-integration.md) | Qualified evidence integration |
 | Design/quality or Worktree example is needed | [codebase design](references/codebase-design.md) and/or [worktree examples](references/worktree-examples.md) | Bounded analysis |
 

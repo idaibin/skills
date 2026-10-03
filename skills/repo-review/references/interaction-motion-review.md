@@ -38,6 +38,18 @@ gaps. Existing implementation values are facts, not automatically approved targe
   semantic owners avoid unnecessary layout work or animation-only wrappers? Do not
   demand a rewrite when layout semantics require another property or owner.
 
+- For affected async writes, do all reachable activation paths share effective
+  admission before awaiting, and release on failure so retry works? Loading styling
+  alone is insufficient; do not demand another lock when existing ownership proves it.
+- Are transient press, focus, persistent selection, business-disabled and pending
+  semantics distinct? Does any pending dismissal policy reach the actual overlay
+  owner without trapping a merely business-disabled action?
+- Does a keyboard surface transition preserve intended activation without a default
+  event firing on the newly focused control? Are label/control associations real?
+- Does runtime evidence cover the affected variant/state/surface combinations,
+  composited text versus non-text/focus contrast, and settled focus behavior? Separate
+  inherited library/earlier-build, isolated fixture, real-route and API evidence.
+
 ## Finding Gate
 
 Apply the ordinary Standards/Spec finding gate. Attribute the issue to the selected

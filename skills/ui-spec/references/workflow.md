@@ -82,6 +82,10 @@ Translate the selected source into implementable decisions:
 - current components/tokens to `reuse`, bounded adaptations, and justified new declarations;
 - loading, empty, error, populated, permission, validation, success, disabled, hover, focus, and reduced-motion behavior where applicable;
 - state transitions, action ownership, feedback placement, and precedence between independent async domains;
+- for changed interactive controls, distinguish hover, transient press, keyboard focus,
+  persistent selection, business-disabled and request-pending behavior; specify
+  applicable combined states, dismissal/retry expectations and focus destinations
+  in the existing slice contract, without creating another matrix or global palette;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
 
 When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in

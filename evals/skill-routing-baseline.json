@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:fecb670a82433a24a94706d6faf7bd36ffb281114f6e4f6d6d39ad6d71ec43bb",
+  "fingerprint": "sha256:5c9a6692acac5e09e3e34b74e23752dd8b875da47dff7b3dafa1cae2cd7ab2aa",
   "summary": {
-    "total": 65,
-    "passed": 65,
+    "total": 66,
+    "passed": 66,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -787,6 +787,18 @@
       "skill": "work-retro",
       "expected_owner": "dev-java",
       "observed_owner": "dev-java",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-frontend-interaction-feedback",
+      "case_fingerprint": "sha256:c3ae2716fbecf9b97c97f1c9d30fee4c606ff21de22063a21fa87eb25950394a",
+      "class": "normal",
+      "skill": "dev-frontend",
+      "expected_owner": "dev-frontend",
+      "observed_owner": "dev-frontend",
       "expected_stop": null,
       "observed_stop": null,
       "status": "passed",

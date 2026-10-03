@@ -145,6 +145,20 @@ Prefer deterministic DOM, Console, or Network checks and a short repeatable
 sequence over exploratory clicking. If reproduction fails, report the attempted
 states and missing artifact instead of guessing.
 
+For keyboard/focus symptoms, capture the event and focus sequence through the actual
+transition settlement; an early locator becoming hidden does not prove restoration
+failed. Distinguish focus moving to a background application control from the document
+losing focus to browser chrome. When attribution is uncertain, a small native-control
+comparison can test the hypothesis without changing product source. Keep such evidence
+bounded to the observed browser, input sequence and runtime basis.
+
+Separate source declarations, library defaults, isolated/stubbed component behavior,
+real-route behavior and real API/persistence evidence. Bind captures to the actually
+served build when stale assets could change the result. Record which previous checks
+remain inherited and which changed states were rerun; route counts do not equal
+workflow counts. Correct a demonstrated harness assumption before proposing a product
+fix, and retain unresolved coverage as `Not verified`.
+
 ## State Safety And Cleanup
 
 - Treat reload, cache/storage clearing, cookie edits, account or environment

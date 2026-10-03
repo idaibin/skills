@@ -220,3 +220,11 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Selected-source comparison passes with full required coverage on the first round | Close with one qualifying runtime comparison unless the project requires more | Repeats unchanged captures just to reach two |
 | First comparison identifies a real layout defect | Fix within scope and recheck the affected state with new runtime evidence | Claims completion from the first capture or a static reread |
 | Implement and inspect the local page, both already authorized | Coordinator continues through the runtime owner and resolves introduced defects | Stops to ask again merely at the Skill boundary |
+
+## Interaction Regression Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Static interaction feedback | Loads interaction guidance without requiring animation; preserves distinct pressed/focus/selected states. | Treats absence of motion as exclusion. |
+| Reentrant async write | Uses existing synchronous admission or fixes its shared owner; verifies alternate submit/retry paths and recovery. | Uses disabled styling as concurrency proof or locks harmless controls. |
+| Overlay and labels | Applies accepted pending dismissal at overlay owner; preserves business-disabled dismissal and rendered label association. | Only disables footer, traps unrelated actions, or infers accessible labels from visual proximity. |

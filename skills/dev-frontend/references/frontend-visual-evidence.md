@@ -166,10 +166,19 @@ evidence IDs and a reason:
 - final composited foreground/background contrast;
 - cross-section and main/sidebar alignment;
 - card/control dimensions and hit areas;
-- hover and visible keyboard focus;
+- applicable hover, held press, persistent selection and visible keyboard focus;
 - applicable loading, empty, error, permission, and disabled states;
 - responsive behavior at the desktop target and every key breakpoint named by the
   slice contract.
+
+For affected interaction colors, check actual component variants on their relevant
+surfaces/themes, including combined states. Primary tokens may not own link, danger,
+selected, outlined, or focus aliases; inspect the effective computed owner and alpha
+composition. Compare text contrast with its text background, and non-text/focus
+indicators with the relevant adjacent surfaces under the applicable contract. Do not
+reuse one threshold for every role or treat a nominal opaque token as proof of its
+rendered translucent indicator. Record sampled, inherited and unexercised coverage
+separately; one component fixture or resting route capture is not a complete workflow.
 
 Freeze those required viewport/state pairs in `required_runtime_matrix` before runtime
 acceptance. Each target has a stable ID and a canonical fingerprint of its viewport and

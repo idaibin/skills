@@ -550,6 +550,14 @@
       "prompt": "Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.",
       "expected_owner": "dev-java",
       "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-frontend-interaction-feedback",
+      "skill": "dev-frontend",
+      "class": "normal",
+      "prompt": "Implement frontend interaction feedback with keyboard focus, pressed and selected states in existing UI components.",
+      "expected_owner": "dev-frontend",
+      "expected_outcome": "route"
     }
   ]
 }

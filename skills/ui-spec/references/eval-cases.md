@@ -118,3 +118,9 @@ Score each quality case 0–10. Minimum pass:
 - every quality case score >= 8
 - no hard blocker remains
 - applicable DESIGN.md lint/diff gates pass before any `Ready` verdict; a proven non-adopted, semantics-preserving local slice records them `Not applicable`, while unavailable required gates produce an explicit blocker and `Not verified`
+
+## Interaction Regression Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Interactive state distinctions | Keeps applicable transient/persistent/disabled/pending combinations and focus/retry policy in existing UI contract. | Invents universal colors, dimensions or a parallel schema. |

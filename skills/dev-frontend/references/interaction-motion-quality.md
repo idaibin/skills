@@ -34,9 +34,43 @@ load it for every frontend edit or use it to redesign an approved surface.
 - Avoid animation-only wrappers when an existing semantic or state-owning element can
   own the same effect without changing layout, accessibility, or reuse boundaries.
 
+## Interaction State And Admission
+
+For affected controls, distinguish transient hover/press, visible keyboard focus,
+persistent selection, business-disabled, and request-pending states. Preserve the
+existing component/library state owner and applicable semantics; a palette override
+or pointer cursor does not establish complete feedback across its variants.
+
+- Trace every reachable activation path for an async write: click, native form submit,
+  keyboard activation, and alternate retry/action entrypoints. When overlap would
+  duplicate a side effect, admit synchronously at the shared handler owner before
+  awaiting work, release on terminal success/failure, and keep retry reachable. Reuse
+  an equivalent existing guard; do not add locks to harmless synchronous controls.
+- Keep business-disabled confirmation separate from request-pending interaction.
+  Apply the accepted pending-dismissal policy at the actual dialog/Drawer owner,
+  including Close, Escape, mask, Cancel and nested paths, not merely a footer button.
+  An unavailable business action does not itself justify trapping dismissal.
+- When a keyboard action opens or replaces a focused surface, trace originating
+  keydown/default activation through focus transfer and the resulting click/submit.
+  Prevent an evidenced unintended default at its owner; preserve legitimate Enter,
+  Space, form submission and library keyboard behavior rather than blanket blocking.
+- Verify field labels reach the rendered control's accessible name, including
+  controlled fields outside automatic form registration. Use the stack's existing
+  association mechanism, with unique control IDs when explicit label binding is needed.
+- On failure, preserve useful input, expose recoverable feedback and release admission;
+  distinguish retry from close/reopen reset. Verify focus after the actual close
+  transition settles before introducing custom restoration or trapping code.
+
 ## Validation
 
-Source inspection proves declarations and ownership only. Exercise the affected states
+Source inspection proves declarations and ownership only. For changed interaction
+families, exercise the applicable variant × state × surface/theme combinations on
+rendered maintained components; include selected+focused and pressed states when
+reachable. A passing solid-primary control does not prove outlined, link, danger,
+menu or elevated-surface variants. Use focused dispatch/readback assertions for
+reentrant actions; loading/disabled appearance alone does not prove single admission.
+
+Source inspection alone does not prove runtime behavior. Exercise the affected states
 and rapid repeated input at the relevant viewport when timing, interruption, spatial
 continuity, hover capability, or perceived feedback is part of acceptance. Record
 reduced-motion behavior when applicable. If runtime evidence is unavailable, report

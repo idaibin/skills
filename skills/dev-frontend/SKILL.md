@@ -21,7 +21,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | A touched file, component, or function mixes independent UI, state, data, side-effect, or business responsibilities | [decomposition](references/decomposition.md) | Cohesive owners and readable orchestration |
 | Styling system or CSS ownership changes | [styling systems](references/styling-systems.md) or [CSS governance](references/frontend-css-governance.md) for the changed concern | Scoped styling |
 | Shared components/tokens or layout ownership changes | [components/tokens](references/ui-components-and-tokens.md) or [layout](references/frontend-layout-governance.md) | Applicable visual contract |
-| Animation or visual direction changes | [motion](references/interaction-motion-quality.md) or [visual direction](references/visual-direction-and-anti-slop.md) | Applicable interaction/visual contract |
+| Interaction feedback, animation, or visual direction changes | [interaction/motion](references/interaction-motion-quality.md) or [visual direction](references/visual-direction-and-anti-slop.md) | Applicable interaction/visual contract |
 | Selected-source visual closure applies | [specification authorities](references/specification-authorities.md) and [visual evidence](references/frontend-visual-evidence.md) | Runtime comparison boundary |
 | API/protocol or cross-boundary signal applies | [OpenAPI governance](references/openapi-contract-governance.md), [protocol contracts](references/protocol-contracts.md), and/or [project grounding](references/project-grounding.md) | Qualified integration work |
 

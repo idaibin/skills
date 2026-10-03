@@ -163,3 +163,9 @@
 ## Scoring
 
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expectations are correct and every quality case scores at least 8.
+
+## Interaction Regression Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Interaction change closure | Reviews actual shared admission and effective variant/state/surface evidence on the fixed basis. | Requires duplicate locks or promotes primary-palette/build checks to complete rendered acceptance. |

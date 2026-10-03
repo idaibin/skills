@@ -668,7 +668,10 @@
         "page route integration",
         "CSS token change",
         "large component decomposition",
-        "large function refactor"
+        "large function refactor",
+        "interaction feedback",
+        "keyboard focus",
+        "pressed and selected states"
       ],
       "excludes": [
         "read-only frontend audit",
