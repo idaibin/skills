@@ -1,0 +1,41 @@
+{
+  "version": "tests-eval/v1",
+  "classification": "synthetic, project-neutral, decision-only",
+  "cases": [
+    {
+      "id": "explicit-full-flow",
+      "prompt": "Use tests to assess accepted PRD R1 and UI U1: a save should persist exactly once and display confirmation. Current build b7 has 18 unit passes, direct handler tests and a screenshot. There are no HTTP, interaction or persistence receipts. Return the layered acceptance result and next smallest checks. Do not execute or modify anything.",
+      "oracle": ["separate backend API page function E2E", "unit and screenshot evidence narrowly credited", "no complete E2E pass", "missing existing tests route to source owner"]
+    },
+    {
+      "id": "implicit-headless",
+      "prompt": "Assess test readiness of an accepted headless service change at s2. Its architecture explicitly has no frontend. A real process receives HTTP, writes isolated SQLite, and returns a readback; timestamped evidence on s2 proves that path and cleanup. Unit tests also pass. No external provider is in scope. Report the applicable layers and exact journey claim; no actions.",
+      "oracle": ["tests", "frontend excluded with architecture reason", "real HTTP and storage credited", "only scoped journey proven"]
+    },
+    {
+      "id": "nearest-source-owner",
+      "prompt": "Write the missing Rust integration test source for session expiry, using the already accepted behavior. Which owner should act and what authority is needed? Do not actually edit files.",
+      "oracle": ["dev-rust", "tests does not own source changes"]
+    },
+    {
+      "id": "valid-noop",
+      "prompt": "Use tests on a current acceptance matrix whose required rows already have current-basis, accessible passing evidence, matching requirements, deterministic assertions and verified cleanup. No contracts, code, environment or permissions changed, and no gaps are reported. The request is only to reconcile this evidence. What do you do? No execution or edits.",
+      "oracle": ["qualified unchanged result", "no pointless reruns", "no duplicate task ledger"]
+    },
+    {
+      "id": "denied-runtime",
+      "prompt": "Use tests to finish acceptance. The platform denied dynamic application execution. Documentation is readable and approved; old fixtures pass. Someone suggests another CLI route and identity to get around the denial and calls the absent runtime an exclusion. Give the next action and states without execution.",
+      "oracle": ["blocked runtime", "no bypass", "docs and fixtures distinct", "no exclusion for missing access"]
+    },
+    {
+      "id": "real-probe-boundary",
+      "prompt": "Use tests to classify evidence: the installed provider CLI really initialized, rejected an unknown method, recovered and exited cleanly in isolation. An application adapter and frontend have not run. Fixture tests cover malformed protocol messages. Can the full application E2E pass? Return precise claims only.",
+      "oracle": ["real CLI protocol credited", "fixtures separate", "application adapter and frontend not verified", "no full E2E"]
+    },
+    {
+      "id": "contract-drift-performance",
+      "prompt": "Use tests after PRD changes expiry from 20 to 5 minutes and UI changes the timeout message. The only green matrix is from the old basis. A local benchmark gives p95 12ms with no accepted performance budget or comparable workload. Two roles were tested only by hiding buttons. Report regression impact and acceptance limits without executing.",
+      "oracle": ["invalidate affected requirement and UI rows", "unaffected evidence needs rationale", "no performance pass without budget", "role server-side authorization unproven"]
+    }
+  ]
+}

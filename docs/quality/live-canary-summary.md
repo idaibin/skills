@@ -1,5 +1,17 @@
 # Skill Live Canary Summary
 
+## Tests candidate basis
+
+- Digest scope: all 19 packages declared by `skills-index.json`.
+- Package digest: `sha256:d6547a0079060c0238c59dede573073e4228d866d8dd9b3877c11f1ba71aa360`
+- Added tests is candidate-only. Its package and deterministic routing checks pass;
+  seven independent decision cases and the full catalog gate pass (19 packages,
+  72 routing cases, 452 tests and DESIGN.md regressions). Real-project
+  end-to-end use and stable promotion remain unverified.
+- Evaluation and remaining adoption gates: [tests candidate evaluation](tests-evaluation.md).
+- The results below belong to the earlier 18-package basis, not the new candidate.
+
+
 ## Basis
 
 - Digest scope: all 18 packages declared by `skills-index.json`; the index owns the package set.

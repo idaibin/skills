@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 18 available Skills:
+Browse the 19 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -48,6 +48,7 @@ and other supported agents.
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `api-spec` | Design or revise native API contracts and validate OpenAPI against accepted business behavior. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
+| `tests` | Candidate: trace accepted contracts through layered tests and evidence; cross-project validation remains open. |
 | `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
 | `dev-typescript` | Implement non-browser TypeScript and JavaScript services, CLIs, workers, MCP servers, libraries, and scripts across Node.js, Bun, and Deno. |
@@ -74,6 +75,7 @@ UI contract         -> ui-spec -> dev-frontend
 accepted contracts  -> to-task -> matching implementation owner
 source change       -> matching dev-* owner (`dev-typescript` for non-browser TS/JS)
 bounded audit       -> repo-audit (frontend / Java / Rust profile)
+layered acceptance  -> tests -> repo-review
 change review       -> repo-review
 Git delivery        -> repo-delivery
 browser/client proof -> ops-browser / ops-client

@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:1561d6bce22047e4b008f679106d41a9bbecc51caf0fa1aa62cb1cb5ad5e393c",
+  "fingerprint": "sha256:94bed4c913047112ca9ab8aac44d4dc5fb6cc33078732f1d9e3192ab4dfc6bdc",
   "summary": {
-    "total": 69,
-    "passed": 69,
+    "total": 72,
+    "passed": 72,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -835,6 +835,42 @@
       "skill": "dev-rust",
       "expected_owner": "dev-rust",
       "observed_owner": "dev-rust",
+      "expected_stop": "missing-authorization",
+      "observed_stop": "missing-authorization",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-normal",
+      "case_fingerprint": "sha256:deba4c71c698aaff47d321412fccbb8372dbcda7c7608b4347d053be64db901a",
+      "class": "normal",
+      "skill": "tests",
+      "expected_owner": "tests",
+      "observed_owner": "tests",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-boundary",
+      "case_fingerprint": "sha256:a8adf1482db6887cec94ff0116846c3c21f088bb035f94e6936797f3ade334e1",
+      "class": "boundary",
+      "skill": "tests",
+      "expected_owner": "dev-rust",
+      "observed_owner": "dev-rust",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-critical-stop",
+      "case_fingerprint": "sha256:bddefce236c2fb6452e21d3255756202085bbe483c25b18410b67bfdba03071e",
+      "class": "critical-stop",
+      "skill": "tests",
+      "expected_owner": "tests",
+      "observed_owner": "tests",
       "expected_stop": "missing-authorization",
       "observed_stop": "missing-authorization",
       "status": "passed",

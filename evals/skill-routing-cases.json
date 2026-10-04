@@ -583,6 +583,32 @@
       "expected_owner": "dev-rust",
       "expected_stop": "missing-authorization",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "tests-normal",
+      "skill": "tests",
+      "capability_id": "testing.coverage.verify",
+      "class": "normal",
+      "prompt": "Verify layered test coverage and the test acceptance matrix for backend tests, API tests and end-to-end tests.",
+      "expected_owner": "tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "tests-boundary",
+      "skill": "tests",
+      "class": "boundary",
+      "prompt": "Implement this Rust source change and add integration tests.",
+      "expected_owner": "dev-rust",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "tests-critical-stop",
+      "skill": "tests",
+      "class": "critical-stop",
+      "prompt": "Verify layered test coverage, but authorization is not granted; stop before execution.",
+      "expected_owner": "tests",
+      "expected_stop": "missing-authorization",
+      "expected_outcome": "stop"
     }
   ]
 }
