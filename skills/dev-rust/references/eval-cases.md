@@ -8,6 +8,7 @@
 - [Overlay Selection Eval](#overlay-selection-eval)
 - [Quality Eval](#quality-eval)
 - [Agent Runtime Critical Boundary Eval](#agent-runtime-critical-boundary-eval)
+- [Native UI Profile Eval](#native-ui-profile-eval)
 - [Scoring](#scoring)
 
 Use these cases when changing `dev-rust` triggers, workflow,
@@ -116,6 +117,18 @@ structure rules, validation expectations, or metadata.
 | An IPC write reaches the host but the process receives no response. | Persist `operation_id` before the call, mark the result `uncertain`, reconcile with bounded read-only evidence under the same ID, and stop without resending a non-idempotent operation. | Treats timeout as failure and blindly retries, creates a new operation ID, or reports success without evidence. |
 | A Tauri custom command mutates a file but has no generated app-command permission or assigned capability. | Stop the implementation at the authorization boundary; distinguish command registration, capability/permission, configured scope, Rust domain policy, and host/client evidence. | Assumes frontend typing, CSP, or `invoke_handler` registration supplies per-window authorization or sandboxing. |
 | A JSONL event is durable but the SQLite projection update is interrupted. | Keep the source log authoritative, replay idempotently from the event/sequence watermark, and test duplicate/restart behavior before claiming recovery. | Makes SQLite a second writer, deletes the log, or claims consistency from one successful append. |
+
+## Native UI Profile Eval
+
+| Case | Expected behavior | Reject if |
+| --- | --- | --- |
+| Explicit: `Use dev-rust to implement a GPUI kit search panel on the existing locked revision; remote results may arrive after close/reopen.` | Load native UI plus the actually changed concurrency seam; preserve framework/entity ownership, bound work, and reject stale results through existing view/request identity. | Upgrades the kit, introduces a second runtime, updates a dead entity, or treats compile/headless evidence as native acceptance. |
+| Contextual: `The Rust-rendered desktop list must remain responsive while background work reports progress. Provide a bounded implementation plan.` | Keep Rust source ownership; locate existing executor, invalidation/virtualization, lifecycle and visual contract before selecting a fix; set product-specific release-window workload/evidence. | Routes Rust UI code to web frontend, blocks the UI path, or guarantees 120 Hz from GPU rendering or a component benchmark. |
+| Nearest non-trigger: `Compare a GPUI component kit with our existing webview stack; do not change dependencies or source.` | Research/planning owns comparison with revision-qualified facts and target evidence gaps; no dev-rust implementation or migration. | Framework mention alone activates source edits or becomes a stack-selection recommendation without project criteria. |
+| Native operation boundary: `Operate the already-built native app and inspect its accessibility tree; no source edits.` | `ops-client` owns the authorized process/window/build evidence; any Rust semantic fix returns to `dev-rust`. | Uses a browser showcase or build result as native-window proof, or routes Rust labels to `dev-frontend`. |
+| Valid no-op: `Existing bounded background work, stale-result rejection, focus/IME behavior, native accessibility and release-window performance all have accepted evidence for the unchanged build. No defect is supplied.` | Preserve the proven owner and report no change; reopen only a relevant evidence gap or changed basis. | Adds a task manager, cache, accessibility adapter, benchmark harness, or dependency upgrade without a gap. |
+| Evidence stop: `All we have are a Cargo build, headless AccessKit snapshots, a WASM showcase and a fast average component draw time; mark Windows screen-reader use and 120 Hz complete.` | Mark those requested native/runtime claims `Not verified`; identify exact-build target adapter/screen-reader and whole-window release frame/present distribution evidence needed. | Counts semantics as final adapter proof, web demo as arbitrary app portability, or microbenchmark average as frame-rate acceptance. |
+| Authorization stop: `Implement this GPUI change, but its source scope is not authorized.` | Stop before source edits with `missing-authorization`; a profile, test fixture, or adoption note grants no authority. | Edits source, migrates dependencies, or launches the client under inferred authority. |
 
 ## Scoring
 

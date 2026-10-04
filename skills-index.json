@@ -850,7 +850,8 @@
       ],
       "intents": [
         "implement, port, or refactor Rust source",
-        "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI"
+        "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI",
+        "implement native Rust UI in an already-selected framework"
       ],
       "keywords": [
         "Rust implementation",
@@ -861,16 +862,22 @@
         "unsafe",
         "FFI",
         "Rust startup configuration implementation",
-        "private Rust helper rename"
+        "private Rust helper rename",
+        "native Rust UI",
+        "GPUI implementation",
+        "gpui-kit component implementation"
       ],
       "excludes": [
         "read-only Rust audit",
         "fixed-basis review",
-        "Git delivery"
+        "Git delivery",
+        "UI framework selection",
+        "native-window operations"
       ],
       "related": [
         "repo-audit",
-        "repo-review"
+        "repo-review",
+        "ops-client"
       ],
       "capability_ids": [
         "rust.source.implement"

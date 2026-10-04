@@ -558,6 +558,31 @@
       "prompt": "Implement frontend interaction feedback with keyboard focus, pressed and selected states in existing UI components.",
       "expected_owner": "dev-frontend",
       "expected_outcome": "route"
+    },
+    {
+      "id": "dev-rust-native-ui",
+      "skill": "dev-rust",
+      "class": "normal",
+      "prompt": "Implement a GPUI native Rust UI component in the existing Cargo workspace without changing its dependency revision.",
+      "expected_owner": "dev-rust",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-rust-native-window-reroute",
+      "skill": "dev-rust",
+      "class": "boundary",
+      "prompt": "Operate the existing desktop client and capture native-window evidence; no source implementation.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-rust-native-ui-stop",
+      "skill": "dev-rust",
+      "class": "critical-stop",
+      "prompt": "Implement this native Rust UI change, but the source scope is not authorized; stop.",
+      "expected_owner": "dev-rust",
+      "expected_stop": "missing-authorization",
+      "expected_outcome": "stop"
     }
   ]
 }

@@ -9,6 +9,7 @@ project class and repository standard instead of forcing one layout everywhere.
 ## Best For
 
 - Implementing or refactoring a Rust feature, service, CLI, library, or Tauri backend.
+- Implementing an already-selected GPUI or GPUI-based native Rust UI with pinned dependency, input, accessibility, and release-window evidence.
 - Aligning Cargo workspace membership, crate ownership, or module boundaries.
 - Self-checking edited error handling, async behavior, persistence layering, or shared extraction.
 - Applying an explicit repository Rust standard with matching docs and commands.
@@ -45,6 +46,8 @@ regenerate normalized OpenAPI and the TS client, and prove compatibility and err
 
 ## Non-Triggers
 
+- Comparing GPUI/component kits or deciding whether to replace the UI stack; use research/planning before implementation authority exists.
+- Operating or accepting a real native window without source changes; use `ops-client`.
 - Repository orientation before the Rust surface is known; use `repo-map`.
 - Planning a cross-repository migration before implementation; use the host's built-in planning.
 - Diagnosis-only work for an unknown failing test or performance regression; use the host's built-in diagnosis under effective instructions.

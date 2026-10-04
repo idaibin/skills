@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:5c9a6692acac5e09e3e34b74e23752dd8b875da47dff7b3dafa1cae2cd7ab2aa",
+  "fingerprint": "sha256:1561d6bce22047e4b008f679106d41a9bbecc51caf0fa1aa62cb1cb5ad5e393c",
   "summary": {
-    "total": 66,
-    "passed": 66,
+    "total": 69,
+    "passed": 69,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -801,6 +801,42 @@
       "observed_owner": "dev-frontend",
       "expected_stop": null,
       "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-rust-native-ui",
+      "case_fingerprint": "sha256:70707f407e4a8609783fd41988965b981224c49474474f781077838f8e9ea9bf",
+      "class": "normal",
+      "skill": "dev-rust",
+      "expected_owner": "dev-rust",
+      "observed_owner": "dev-rust",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-rust-native-window-reroute",
+      "case_fingerprint": "sha256:750f9f691a444c3b7e00c4fa9d940ff03c5eafab96e840e0eb7a0851997d062d",
+      "class": "boundary",
+      "skill": "dev-rust",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-rust-native-ui-stop",
+      "case_fingerprint": "sha256:f5f2a67081fb106e4ed33a64b0203a21a507c8a420f316dd28246984116437cd",
+      "class": "critical-stop",
+      "skill": "dev-rust",
+      "expected_owner": "dev-rust",
+      "observed_owner": "dev-rust",
+      "expected_stop": "missing-authorization",
+      "observed_stop": "missing-authorization",
       "status": "passed",
       "failures": []
     }
