@@ -609,6 +609,14 @@
       "expected_owner": "tests",
       "expected_stop": "missing-authorization",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "tests-early-design",
+      "skill": "tests",
+      "class": "normal",
+      "prompt": "Use early test design and risk-based testing to identify testability gaps and provisional checks before implementation.",
+      "expected_owner": "tests",
+      "expected_outcome": "route"
     }
   ]
 }

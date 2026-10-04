@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:94bed4c913047112ca9ab8aac44d4dc5fb6cc33078732f1d9e3192ab4dfc6bdc",
+  "fingerprint": "sha256:19e140ce2893caeec74a38ebf6b270e385431b104b1bab31fddd2266cbd6ef2c",
   "summary": {
-    "total": 72,
-    "passed": 72,
+    "total": 73,
+    "passed": 73,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -873,6 +873,18 @@
       "observed_owner": "tests",
       "expected_stop": "missing-authorization",
       "observed_stop": "missing-authorization",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "tests-early-design",
+      "case_fingerprint": "sha256:1699505c2ae2cb6e06ce23c3be11c5c61233b0666d2a06dae60efe55967fb060",
+      "class": "normal",
+      "skill": "tests",
+      "expected_owner": "tests",
+      "observed_owner": "tests",
+      "expected_stop": null,
+      "observed_stop": null,
       "status": "passed",
       "failures": []
     }

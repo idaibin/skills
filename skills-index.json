@@ -1381,6 +1381,7 @@
         "unsafe-or-destructive"
       ],
       "intents": [
+        "design early risk-based tests and testability checks with provisional assumptions",
         "verify layered test coverage against accepted product and UI contracts",
         "run existing scoped tests and reconcile backend API frontend and end-to-end evidence",
         "select impacted regression tests after contract or source changes"
@@ -1397,7 +1398,10 @@
         "regression tests",
         "测试矩阵",
         "端到端测试",
-        "分层测试"
+        "分层测试",
+        "early test design",
+        "risk-based testing",
+        "testability"
       ],
       "excludes": [
         "product behavior decisions",
@@ -3160,9 +3164,9 @@
     },
     {
       "capability_id": "testing.coverage.verify",
-      "capability_version": "0.1.0",
+      "capability_version": "0.1.1",
       "package": "tests",
-      "description": "Verify scoped contract-to-test coverage and evidence using existing authorized checks.",
+      "description": "Design early risk-based coverage and verify scoped test evidence using existing authorized checks.",
       "accepts": [
         {
           "schema": "urn:skills:test-request:v1",

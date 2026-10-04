@@ -75,6 +75,7 @@ UI contract         -> ui-spec -> dev-frontend
 accepted contracts  -> to-task -> matching implementation owner
 source change       -> matching dev-* owner (`dev-typescript` for non-browser TS/JS)
 bounded audit       -> repo-audit (frontend / Java / Rust profile)
+early risk/test design <-> product/UI and matching dev-* owner
 layered acceptance  -> tests -> repo-review
 change review       -> repo-review
 Git delivery        -> repo-delivery

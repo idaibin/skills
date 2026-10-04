@@ -1,6 +1,6 @@
 ---
 name: tests
-description: "Plan and verify layered test coverage from accepted PRD/UI contracts through backend, API, frontend and end-to-end evidence. Run existing scoped tests; route missing test implementation to its code owner."
+description: "Design risk-based test coverage early and verify it iteratively across backend, API, frontend and end-to-end boundaries. Run existing scoped tests; route missing test implementation to its code owner."
 ---
 
 # Tests
@@ -8,15 +8,16 @@ description: "Plan and verify layered test coverage from accepted PRD/UI contrac
 ## Entry Gate
 
 Own a bounded test-coverage and evidence decision for a declared feature, change, or
-journey. Resolve the accepted product/UI/API authorities, target revision, environment,
-requested layers, and execution permission before selecting checks. An existing
-project test plan remains authoritative; reuse its IDs and evidence locations.
+journey. During product/design work, identify risks, testability gaps and provisional
+checks without waiting for implementation. Resolve applicable authorities, their
+acceptance status, target basis, environment and permission before execution; only
+settled oracles support acceptance verdicts. Reuse the project test plan and its IDs.
 
 ## Route Map
 
 | Request condition | Read | Result |
 | --- | --- | --- |
-| Plan coverage or reconcile existing results against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
+| Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
 | Role isolation, concurrent users, load or performance applies | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, budgets and bounded measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |

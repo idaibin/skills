@@ -7,7 +7,8 @@ format with these semantic fields rather than requiring a second database or led
 ## Input
 
 - Repository and immutable revision or Worktree patch digest; selected feature/change/journey.
-- Accepted product, UI and API sources with versions and acceptance IDs.
+- Applicable product, UI and API sources with versions, acceptance status and IDs;
+  provisional assumptions and unresolved oracles for early design.
 - Requested test layers, relevant environments/roles and execution scope/permissions.
 - Existing project commands, fixtures, evidence sources, budgets and exclusions.
 
@@ -16,7 +17,7 @@ Missing input blocks only dependent rows; preserve feasible independent checks.
 ## Result
 
 - Basis: repository/revision/patch, contract versions, runtime/build/configuration identity.
-- Coverage rows: requirement ID, layer, scenario, role, real/stubbed boundary, oracle,
+- Coverage rows: requirement/risk ID, layer, scenario, role, real/stubbed boundary, oracle,
   fixture/source, command or recipe, run identity, state and supporting evidence. Keep
   separate rows for differently verified boundaries within the same layer.
 - Evidence: time, source version/provenance, observed assertions, exit/result, artifact
@@ -24,7 +25,8 @@ Missing input blocks only dependent rows; preserve feasible independent checks.
 - Failures: expected/actual, reproducible steps, first failure and retry history,
   owning boundary and smallest next check or fix.
 - Gaps: missing tests/contracts/capabilities, blockers, justified exclusions and impacted
-  regression rows; distinguish historical evidence from current-basis acceptance.
+  regression rows, residual risks and provisional decisions; distinguish historical
+  evidence from current-basis acceptance.
 - Conclusion: which scoped requirements are proven, whether the first real E2E exists
   and exactly where it begins/ends, and which required layers remain open.
 - Handoff: bounded input for implementation, operations, `to-task`, fixed-basis review or

@@ -11,7 +11,9 @@ For multi-user behavior, identify distinct identities, initial state, concurrent
 operation ordering, expected invariant and observable final state. Separate concurrency
 bugs from serial correctness. Capture conflicts, retries, duplicate submissions and
 isolation where applicable; deterministic local fixtures remain separate from real
-multi-user transport evidence. Never switch identities to evade an access denial.
+multi-user transport evidence. Report observed overlap/actor behavior separately from
+configured worker counts or arrival rate; scheduling intent does not prove concurrency.
+Never switch identities to evade an access denial.
 
 For performance, take budgets and workload from the accepted project requirement or
 explicitly report missing budgets. Do not invent numeric pass thresholds. Declare:

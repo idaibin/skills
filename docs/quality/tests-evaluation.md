@@ -1,81 +1,65 @@
-# Unified tests candidate evaluation
+# Tests candidate evaluation
 
-## Fixed basis and decision
+## Current basis and scope
 
-Base: `129f89b3c8d1ed0a76c172f2209b427ac72a7a35` on the non-main review branch.
-The added `tests` package and its catalog integration are a **candidate**, not stable.
-Portable capability version is `testing.coverage.verify@0.1.0`.
+Candidate capability: `testing.coverage.verify@0.1.1`, based on
+`23cc6b0a30abf15dd86cbb6cd148d13c731cca97`. No stable promotion or installation.
+The distinct output is risk-based contract-to-boundary acceptance evidence. Product,
+UI/API decisions, source/test implementation, browser/client mechanics, task-ledger
+maintenance, fixed-basis review and Git delivery retain their existing owners.
 
-The existing owners already validate their own implementation, contract or operation.
-The distinct reusable output here is a contract-to-layer acceptance matrix that can
-consume those results without replacing their authority. Source/test implementation,
-Product/UI/API decisions, browser/client mechanics, task-ledger maintenance, fixed-basis
-review and Git delivery retain their current owners. No automatic Skill invocation is
-claimed. The package adds no runtime scripts, schemas or tool installation.
+Early provisional examples and testability analysis can inform design before code;
+unsettled business policy cannot become an acceptance oracle. Five coverage views are
+navigation, not exhaustive quality categories or chronological stages. Applicable
+security, accessibility, recovery and compatibility risks may cross any view.
+Iteration uses focused checks and necessary regression; final submission/authorized
+integration require complete applicable gates on the actual assembled basis. Unchanged
+evidence can be reused with an explicit impact rationale where project rules permit;
+required blocked gates remain open. Test success never proves deployed health.
 
-## Evidence levels
+## Source cross-check (2026-10-04)
 
-- V1 Package: Verified by package/link/metadata validator for 19 packages.
-- V2 Routing: Verified by 72 deterministic cases, zero regressions against the frozen
-  base's published baseline. This is catalog consistency, not model selection proof.
-- V3 Behavior: Seven blind native-agent decision cases met their oracles. Inputs were
-  supplied separately from expected results; the evaluator froze its responses before
-  reading gold. No application runtime or source mutation was involved.
-- V4 Project: Two real-project owners applied the candidate to already completed
-  runtime receipts. One classified an isolated external-CLI protocol diagnostic; the
-  other classified a real service/SQLite/HTTP slice. Both retained unrun application/UI
-  and whole-product E2E layers. A documentation-only project supplied a blocked case.
-  These are evidence-consumption pilots, not Skill-directed full-stack execution.
-- V5 Claim floor: The matrix kept fixture, unit, external protocol, real API, UI and
-  full E2E evidence distinct. Denied execution stayed blocked; headless frontend
-  exclusion required an accepted architecture scope. Runtime installation, production,
-  whole-project completion and stable promotion remain Not verified.
-- V6 Generalization: The different slices exposed a useful clarification: one layer may
-  have several boundary-specific rows with different states. That clarification was
-  added without moving project state or facts into the portable package. Comparative
-  quality, cost, time or token improvements were not measured.
+- [ISTQB CTFL 4.0.1](https://istqb.org/wp-content/uploads/2024/11/ISTQB_CTFL_Syllabus_v4.0.1.pdf),
+  §§1.4.1, 2.1.2–2.1.5, 5.2.3: early analysis/testability and likelihood/impact inform
+  iterative test scope. This supports the boundary correction, not wholesale adoption
+  of a methodology or every syllabus category.
+- [W3C WAI](https://www.w3.org/WAI/test-evaluate/): evaluate accessibility throughout
+  design/development; tools alone cannot establish conformance. Applicable checks need
+  suitable oracles and human evaluation where required.
+- [Google SRE](https://sre.google/workbook/canarying-releases/): release assessment
+  requires attributable monitoring evidence. Missing health/recovery evidence is a
+  release-owner handoff, not permission to configure monitoring or deploy a canary.
 
-## Synthetic decision cases
+Actual-use feedback supports preserving a pre-run plan identity and checking exercised
+fixtures, paths and overlap rather than inferring coverage from names/counts/configuration.
+Public cases remain synthetic; project facts and runtime receipts stay project-owned.
 
-The public inputs and authoring oracles are in `evals/tests-cases.json`.
+## Evidence and limits
 
-| Case | Observed bounded decision |
-| --- | --- |
-| Explicit full flow | Unit/handler proof stays scoped; screenshot needs provenance; API/function/E2E remain unrun |
-| Implicit headless service | Frontend excluded by accepted architecture; real HTTP/store/readback proves only that service journey |
-| Nearest implementation | Missing Rust test source belongs to dev-rust |
-| Valid no-op | Reconcile current receipts without duplicate ledger or unnecessary reruns |
-| Denied runtime | Block dependent execution, no alternate identity/route and no false exclusion |
-| Real external probe | CLI protocol proof cannot become application-adapter or frontend E2E proof |
-| Contract drift/performance | Revalidate affected PRD/UI rows; no budget acceptance or server authorization from weak substitutes |
-
-The evaluator is a native independent agent; model identity was not independently
-attested. This is not a CLI JSONL trace, independently isolated invocation per case,
-real-browser test, external-model comparison, or measured efficiency result.
-
-## Validation and review
-
-Canonical `bash scripts/check-skills.sh` passed with immutable `SKILLS_BASE_SHA`
-set to the base above: 19 packages, 72/72 routing, 452 unit regressions, shared
-protocol parity, DESIGN.md contract regressions and whitespace; zero context warnings.
-The first run exposed missing new-package catalog fixtures, baseline entries and a
-stale digest, plus an unwritable default npm cache. A later execution lacked terminal
-completion evidence after an approval-wait cancellation. After confirming no owned
-run remained and receiving authorization evidence, one same-gate retry completed
-with exit 0 using writable task caches. No product-runtime result follows from this.
-
-Independent decision/review output SHA-256:
-`5d86142def0784ab288835cb76e52f768054a5bc51f5cb7b26e2c5d6087e4e59`.
-The initial package review found no actionable P0–P3 issue; final catalog-delta review
-is required on the delivered basis. Raw responses/read records stay task-local.
+- V1/V2: 19-package structural checks and 73 deterministic routing cases pass, with
+  zero regressions against the immutable base. Canonical gate passed: 452 unit
+  regressions, shared protocol parity, DESIGN.md checks and whitespace; zero context
+  warnings. An initial approval-wait cancellation left no terminal result; one
+  authorized same-gate retry completed with exit 0.
+- V3: Seven initial and four refinement native-agent decision cases met their oracles.
+  The refinement reviewer froze responses before reading gold and found no actionable
+  P0–P3. Refinement output SHA-256:
+  `f38a2d4f31951a3b6feef3ee08aa4ba8aa22c205b4ac44796fca41867e0aa68d`.
+  This is supplied-case decision evidence, not CLI JSONL, isolated model benchmarking,
+  actual runtime execution by that reviewer, or measured efficiency.
+- V4: Two structurally different real projects used the initial candidate before bounded
+  execution (production client/external protocol and API/storage/authorization). Another
+  project remained a docs-only blocked case. These do not certify complete products.
+- V5/V6: Real, fixture, unit, API, UI and E2E results stay separate. Different statuses may
+  coexist within one layer. Prior same-layer pass, configured workers, test names,
+  missing capability and denied routes cannot raise the evidence level. No quantitative
+  quality/time/cost improvement or generalized full-stack completion is claimed.
 
 ## Remaining adoption gate
 
-Retain candidate status until representative projects actually use this workflow to
-select and execute their authorized existing checks, including a first real accepted
-end-to-end journey at the declared application boundary. Capture fixed source/contract
-versions, fixtures, cleanup and failures, include multi-role/performance cases where
-applicable, and obtain independent fixed-basis review or an explicit adoption decision.
-Missing authority or platform permission cannot be waived to complete the evaluation.
-The full product pipelines remain project-owned open work; this package does not certify
-them merely because its own catalog and decision checks pass.
+Keep candidate status until representative accepted application journeys, including
+real entry-to-outcome E2E, have current-basis evidence and independent adoption review.
+Include role/concurrency/performance checks where relevant, with agreed budgets and
+permissions. Required blocked UI/runtime checks cannot be waived. Canonical adoption
+artifact publication remains a separately scoped governance step; no automatic
+publication, deployment, installation or promotion follows from catalog checks.

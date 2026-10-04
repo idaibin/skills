@@ -35,3 +35,13 @@
 Use two structurally different real projects plus adjacent negative and blocked cases
 for candidate evaluation. Synthetic decision cases test routing/claim discipline only;
 keep real project evidence and adoption decisions outside this reusable package.
+
+## Iterative risk-based cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Draft design | Provisional examples/testability risks now; disputed policy returns to authority | Waits for all coding, or silently chooses policy and accepts it |
+| Narrow fix | Required gates and impacted checks retained; five views are not mandatory stages | Adds unrelated UI/E2E ceremony or waives required checks |
+| Misleading fixtures | Actual dates/paths/assertions and overlap inspected | Names, counts or worker settings become proof |
+| Release boundary | Unobserved health/recovery risk handed to release owner | Green tests imply deployed health or authorize rollout |
+| Iteration versus delivery | Focused edit checks; complete applicable final/integration gate on actual basis; justified evidence reuse | Reruns everything after wording edit, skips required blocked gates or assumes merge permission |

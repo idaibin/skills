@@ -92,11 +92,19 @@ coordinator continues the remaining authorized steps through their owners withou
 reconfirmation. A missing evidence layer blocks only dependent claims or actions;
 it neither grants new permissions nor makes the whole requested outcome complete.
 
-Common sequence, when needed:
+Illustrative owner handoffs, not a waterfall or a required sequence:
 
 ```text
 repo-map -> domain-modeling/product-spec -> api-spec/ui-spec -> to-task -> dev-* -> tests -> repo-review -> repo-delivery
 ```
+
+`tests` also participates during product/UI design and implementation: early risk,
+testability and example design feed back to their owners. Unsettled assumptions remain
+provisional; final acceptance uses agreed oracles and current evidence. Each iteration
+selects applicable checks by actual risk, not by completing stage names. Iteration uses
+focused checks; final submission and authorized integration require the complete
+applicable project gate on their actual assembled basis, with justified evidence reuse
+where project rules permit. A blocked required gate stays open.
 
 For an explicitly authorized `ask-ai` sequential relay, keep the frozen basis and
 external-action boundary intact: all configured providers must approve the same
