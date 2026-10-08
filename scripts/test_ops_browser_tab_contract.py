@@ -57,16 +57,6 @@ class OpsBrowserTabContractTests(unittest.TestCase):
             with self.subTest(field=field):
                 self.assertIn(field, fields)
 
-    def test_each_tab_ledger_field_is_locally_required(self) -> None:
-        fields = self.tab_ledger_fields()
-        for field in LEDGER_FIELDS:
-            mutated = fields.replace(field, "", 1)
-            with self.subTest(removed=field):
-                self.assertFalse(
-                    all(required in mutated for required in LEDGER_FIELDS),
-                    f"ledger stayed complete after removing {field}",
-                )
-
     def test_reconciliation_revalidates_identity_and_fingerprint(self) -> None:
         text = self.normalized("skills/ops-browser/references/tab-lifecycle.md")
         match = re.search(

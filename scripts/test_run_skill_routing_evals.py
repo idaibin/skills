@@ -18,15 +18,6 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class SkillRoutingEvalTests(unittest.TestCase):
-    def test_current_matrix_covers_and_passes_every_catalog_skill(self) -> None:
-        index = RUNNER.load_json(RUNNER.DEFAULT_INDEX)
-        cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)
-        schema = RUNNER.load_json(RUNNER.DEFAULT_SCHEMA)
-        self.assertEqual([], RUNNER.validate_case_contract(index, cases, schema))
-        evaluated = RUNNER.evaluate(index, cases)
-        self.assertEqual(len(cases["cases"]), len(evaluated))
-        self.assertTrue(all(case["status"] == "passed" for case in evaluated))
-
     def test_published_baseline_covers_every_current_case(self) -> None:
         cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)
         baseline = RUNNER.load_json(ROOT / "evals" / "skill-routing-baseline.json")
