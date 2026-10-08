@@ -34,6 +34,11 @@ Resolve component and design-library mappings from live imports, wrappers, and
 consumers before naming them. Never promote a concept-only component or feature into
 the candidate, selected-source target, or product scope.
 
+When several surfaces show the same discrepancy, fix one comparison basis and trace
+the shared shell, overlay, motion and component owner before writing page rules.
+Record only proven page exceptions; if the shared owner conflicts with the selected
+source, keep affected slices `Not Ready` until that decision is resolved.
+
 ## UI Contract Challenge
 
 After product facts and the selected visual source are fixed, resolve repository and
@@ -87,6 +92,12 @@ Translate the selected source into implementable decisions:
   applicable combined states, dismissal/retry expectations and focus destinations
   in the existing slice contract, without creating another matrix or global palette;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
+
+When Product requires retained input after a failed action, specify how values stay
+visible and reachable through feedback, scrolling, focus and the permitted recovery
+action. Compare entered values before failure, after feedback and during recovery on
+the affected viewport/state. UI does not decide whether an uncertain submission may
+be retried; missing Product policy blocks only that dependent transition.
 
 When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in
 the adopted `DESIGN.md` and page-local role/placement/state mapping in the Feature
@@ -177,6 +188,11 @@ gate. It does not rewrite the producer result. An immutable content manifest alo
 and basis but never upgrades either result.
 
 ## Evaluation And Handoff
+
+Check a supplied accepted UI contract against the requested assertions before
+proposing edits. If it already satisfies them, return a bounded no-change result.
+Keep contract readiness, artifact readback and runtime proof separate; missing
+browser evidence alone does not erase an accepted contract clause.
 
 Run source identity, product truth, rights, required-state, mapping, responsive,
 viewport-matrix, accessibility, overflow, approval, and implementation-budget gates

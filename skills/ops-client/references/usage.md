@@ -48,6 +48,16 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
   exact target and action, then confirm the command source and whether it may disturb
   an existing instance or active user workflow. Relevant source changes alone do not
   authorize rebuild or restart.
+- App selection, Accessibility press, and semantic targeting may activate a window even
+  when they do not move the pointer. A request to interact with an exact named app,
+  including `@Computer` plus that app, covers the requested bounded interaction and
+  incidental activation; do not demand another approval for that same action. If the
+  user requires another app to remain foreground, record that app and establish a
+  proven background-safe, window-scoped route before binding or acting. If activation
+  remains possible, stop with the interaction `Not verified`; a later focus check cannot
+  repair a temporary violation. Verify focus after each permitted action and stop
+  without reclaiming focus if the user changes apps. Do not claim a read-only
+  annotation proves an operation is background-safe.
 - Treat multiple app instances and stale bundles as common failure modes.
 - For Tauri webviews, make controls semantic and discoverable through DOM and Accessibility surfaces.
 - For code edits that add semantic controls, labels, or stable selectors, use `dev-frontend` for webview source or `dev-rust` for Rust-rendered/native UI source; then return here for real-window proof.
@@ -93,6 +103,10 @@ Do not retry an action whose side effect may already have occurred. When no safe
 exists, return the exact terminal result and mark the resulting UI state `Not verified`.
 Do not shift a routine recovery to the user merely because the first adapter call did not
 run.
+
+When the target changes because the user switched apps, stop without reselecting or
+reclaiming focus. Preserve evidence already obtained, mark the requested unfinished
+interaction `Not verified`, and report the client goal as evidence-incomplete.
 
 ## Screen-Session Gate
 
@@ -140,6 +154,12 @@ Use only on macOS and only when the commands/APIs are exposed and permissions su
 - prefer `screencapture -x -l<CGWindowID>` over region capture;
 - prefer macOS Accessibility actions such as `AXPress` on named controls over pointer movement or coordinate clicks;
 - verify screen-recording and Accessibility permission through successful actions, not app visibility alone.
+
+Before an already-authorized relaunch of a rebuilt macOS client that uses Keychain or
+TCC, compare Bundle ID and signing identity with the accepted build using read-only
+identity evidence. Do not infer that an ad-hoc rebuild preserves trust or promise a
+fixed number of permission prompts. Signing, keychain, and TCC changes require their
+own authority; if identity is unresolved, keep only the dependent relaunch unverified.
 
 Do not reuse `CGWindowID`, `screencapture`, `AXPress`, or macOS Accessibility
 terminology for Windows or Linux evidence.

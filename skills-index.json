@@ -602,6 +602,7 @@
         "accessibility",
         "design root",
         "visual evidence lifecycle",
+        "parameterized visual background",
         "candidate UI specification",
         "complete image generation prompt",
         "设计根目录",
@@ -1076,7 +1077,8 @@
         "Electron",
         "native app",
         "process",
-        "window verification"
+        "window verification",
+        "desktop foreground continuity"
       ],
       "excludes": [
         "browser-page verification",
@@ -1272,7 +1274,8 @@
         "proofread",
         "article",
         "documentation",
-        "source-grounded"
+        "source-grounded",
+        "natural rewrite"
       ],
       "excludes": [
         "translation-only requests",

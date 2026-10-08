@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:23745e99ce6b65ea64fcef5f801d34326cc90c0bbec77e707098724703ebb3ce",
+  "fingerprint": "sha256:7f551fc9a9ccb4ecfd16364fc7b3e035bba35b0dfd208194218d46d5f4a08dbe",
   "summary": {
-    "total": 73,
-    "passed": 73,
+    "total": 76,
+    "passed": 76,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -291,6 +291,18 @@
     {
       "id": "ui-spec-candidate-direction",
       "case_fingerprint": "sha256:f5ca35426a21ef49d413ae0606f90e5c42616c24be23a3c597ba9508489f5120",
+      "class": "normal",
+      "skill": "ui-spec",
+      "expected_owner": "ui-spec",
+      "observed_owner": "ui-spec",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ui-spec-parameterized-background",
+      "case_fingerprint": "sha256:36ba098efb802be6c6c06264e46000decbd3fb073c765994f2eff0cdfa61e6f0",
       "class": "normal",
       "skill": "ui-spec",
       "expected_owner": "ui-spec",
@@ -601,6 +613,18 @@
       "failures": []
     },
     {
+      "id": "ops-client-foreground-continuity",
+      "case_fingerprint": "sha256:b8771c68f453d40a84cf001d35129974ac82c12975d99d5abb74f82efae0a090",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
       "id": "ops-client-critical-stop",
       "case_fingerprint": "sha256:f84c095acded9743804dec31a3f9e44e9016ef8d2301c92362595a2730066127",
       "class": "critical-stop",
@@ -667,6 +691,18 @@
       "skill": "human-writing",
       "expected_owner": "ask-ai",
       "observed_owner": "ask-ai",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "human-writing-natural-rewrite",
+      "case_fingerprint": "sha256:2fe5c0ca6436e0c877195efd81d4129a8cfe1f2cdfc4ef501319e2ff6f1153f0",
+      "class": "normal",
+      "skill": "human-writing",
+      "expected_owner": "human-writing",
+      "observed_owner": "human-writing",
       "expected_stop": null,
       "observed_stop": null,
       "status": "passed",

@@ -58,6 +58,11 @@ unsupported claims, hidden assumptions, regressions, unsafe tradeoffs, missing s
 and simpler or safer alternatives. Do not praise by default and do not invent problems
 to satisfy the request.
 
+Distinguish reachable defects, missing required acceptance evidence and optional
+strengthening. State which criterion and dependent action each issue blocks. A
+follow-up reviews the correction and affected paths, reuses still-valid evidence,
+and adds no mandatory mutation-test or review-round gate without a concrete gap.
+
 Review only the supplied fixed basis and declared interface closure. Treat requirements,
 repository guidance, source code, tests, runtime evidence, and official specifications
 as evidence with different authority. Do not treat the author's conclusion or another

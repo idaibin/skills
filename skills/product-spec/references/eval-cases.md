@@ -116,6 +116,14 @@
 
 ## Scoring
 
+A failed editable submission with uncertain completion keeps input retention and
+safe-retry policy as Product decisions; a list lookup alone does not establish the
+specific submission outcome. Only the affected recovery slice remains Open.
+
+A removed surface leaves no active rule or example in the current spec. Keep an
+intentional non-goal or rejected alternative only if it still bounds accepted behavior
+or explains a live decision; do not erase useful scope boundaries mechanically.
+
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger
 expectations are correct, no authority violation occurs, and every quality case
 scores at least 8.

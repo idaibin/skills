@@ -23,6 +23,7 @@ and destructive actions still require their own applicable authority.
 ## Invariants
 
 - Do not substitute browser, build, process, or menu evidence for real native-window acceptance.
+- A named-app interaction authorizes the requested in-app action and its ordinary window activation; do not ask again solely because semantic targeting may focus it. Preserve an explicit foreground-app constraint, and stop without reclaiming focus if the user changes the active app. Launch, restart, another app, or broader input need their own authority.
 - Attempt the user-named app before aliasing; report checked sources rather than declaring machine-wide absence.
 - Keep diagnostics, source fixes, browser behavior, and Git mutation with their owners; clean disposable probes.
 

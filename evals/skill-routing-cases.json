@@ -207,6 +207,14 @@
       "expected_outcome": "route"
     },
     {
+      "id": "ui-spec-parameterized-background",
+      "skill": "ui-spec",
+      "class": "normal",
+      "prompt": "Specify a parameterized visual background in the accepted UI contract, including source rights and a readable text-safe area.",
+      "expected_owner": "ui-spec",
+      "expected_outcome": "route"
+    },
+    {
       "id": "ui-spec-svg-icon-system",
       "skill": "ui-spec",
       "class": "normal",
@@ -418,6 +426,14 @@
       "expected_outcome": "reroute"
     },
     {
+      "id": "ops-client-foreground-continuity",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Operate this desktop client while preserving desktop foreground continuity for the user's active app.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
       "id": "ops-client-critical-stop",
       "skill": "ops-client",
       "class": "critical-stop",
@@ -466,6 +482,14 @@
       "prompt": "Ask ChatGPT for an independent review of this fixed proposal.",
       "expected_owner": "ask-ai",
       "expected_outcome": "reroute"
+    },
+    {
+      "id": "human-writing-natural-rewrite",
+      "skill": "human-writing",
+      "class": "normal",
+      "prompt": "Perform a natural rewrite of this source-grounded article without changing its facts or author voice.",
+      "expected_owner": "human-writing",
+      "expected_outcome": "route"
     },
     {
       "id": "human-writing-critical-stop",

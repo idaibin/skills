@@ -15,6 +15,9 @@ Select exactly one profile from repository evidence before applying framework-sp
   and coordinated state or structure; preserve a simple prop API when composition would
   add indirection without removing a real invalid state or repeated assembly.
 - Add memoization only for an evidenced render or calculation boundary; do not use it as decoration.
+- For an affected asynchronous settings save or effect-owned state, preserve existing
+  triggers and check cleanup, stale responses, edits while pending and actual failure
+  recovery. Reuse a matching local pattern; do not impose this matrix on unrelated UI.
 
 ## Vue Composition
 

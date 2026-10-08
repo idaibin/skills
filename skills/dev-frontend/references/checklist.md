@@ -26,8 +26,9 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
 - Inspect only target page, component, route, service, hook or composable, store, type, style, shared UI, and layout owner files needed for the request.
 - For a no-op or accepted-baseline confirmation, read the exact owner path and symbol
   plus the matching test or contract before validation. Report that owner identity and
-  the current-baseline focused check; a matching literal or passing check alone does
-  not establish source-owner evidence.
+  a current-basis focused result; reuse it when still applicable, otherwise run the
+  check; a matching literal or passing check alone does not establish source-owner
+  evidence without the owner and basis link.
 - When the current record already matches the exact file, owner, and function, verify
   that target directly and do not invoke `repo-map`. For a cross-owner reuse/impact
   question, consume at most one bounded query from an existing compatible snapshot.

@@ -16,6 +16,7 @@ only decisions needed for the requested slice.
 | Request condition | Read | Result |
 | --- | --- | --- |
 | One feature needs behavior, states, and acceptance | [workflow](references/workflow.md) and [template](references/template.md) | Progressive Feature Spec |
+| Submission failure or uncertain completion affects recovery | [workflow](references/workflow.md#ready-for-an-implementation-slice) | Accepted input, outcome and safe-retry rules, or a scoped Open decision |
 | New product line/boundary reset is explicit | [workflow](references/workflow.md) | Foundation Spec |
 | Confirmed changes update a named fact source | [documentation boundaries](references/documentation-boundaries.md) | Bounded artifact update |
 | A material product decision needs challenge | [decision pressure test](references/decision-pressure-test.md) | Decision disposition |

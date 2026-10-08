@@ -10,6 +10,7 @@ Load this reference only when voice, rhythm, or template residue materially affe
 - [Semantic Units](#semantic-units)
 - [Edit Permission And Intensity](#edit-permission-and-intensity)
 - [Pattern Families](#pattern-families)
+- [Natural Rewrite Passes](#natural-rewrite-passes)
 - [Protected And Secondhand Text](#protected-and-secondhand-text)
 - [Research-Process Leakage](#research-process-leakage)
 - [Iterative-Edit Seams](#iterative-edit-seams)
@@ -108,6 +109,18 @@ Give four failure shapes an explicit pass:
 - **Manufactured punchlines:** several clipped declarations or fragments try to make every sentence land. Keep one short sentence when it earns emphasis; join or vary a run that creates drama without information.
 - **Aphorism formulas:** a concrete claim is recast as a portable slogan or grand metaphor. Restore the mechanism, condition, or consequence the phrase is standing in for.
 - **Fake-candid openers:** `说实话`, `你知道吗`, `真正的问题是`, `Here's the thing`, or a one-word question creates a theatrical pause before a routine claim. Keep genuine conversational wording when it belongs to the author; remove the stage direction when it only manufactures intimacy.
+
+## Natural Rewrite Passes
+
+For a requested natural rewrite or close style adaptation, work privately in three
+passes: (1) lock supported claims, uncertainty, protected text and the source voice;
+(2) repair only diagnosed template clusters with concrete actors and actions; (3)
+read cold for repeated rhythms, filler transitions and invented stance, then check
+every changed claim against the source. Keep genuine irregularity but do not invent
+experience, quirks or uncertainty to simulate a person. Return only the requested
+artifact unless the user asks for editing notes; promise no detector outcome. A
+static result such as “three of four tests passed” is not evidence of progress or
+improvement without an earlier comparison basis; omit that stock conclusion.
 
 ## Protected And Secondhand Text
 

@@ -59,6 +59,14 @@ external action, or continuous execution.
   and block final integration/verification on every batch. Do not call a horizontal
   outage window a vertical slice.
 
+## Outcome and Retry Continuity
+
+Keep each fix tied to its original feature and acceptance ID across renamed slices,
+owners, and alternative routes. Preserve the first failure and what changed the
+hypothesis; passing a child check does not make the parent feature runtime-accepted.
+When no authorized task is executable, return the pending decision or runtime queue
+with exact resume conditions instead of inventing cleanup work to keep activity going.
+
 ## Separated Ledger Authorities
 
 Identify ledger roles by meaning, never by file name. A project may keep them in one

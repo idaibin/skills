@@ -162,6 +162,10 @@
 
 ## Scoring
 
+In follow-up review, optional mutation evidence alone does not block a fix when the
+required criterion is already proven; a new reachable defect still needs a finding
+and targeted verification regardless of the review-round number.
+
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expectations are correct and every quality case scores at least 8.
 
 ## Interaction Regression Cases

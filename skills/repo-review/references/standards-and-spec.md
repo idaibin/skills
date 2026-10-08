@@ -8,6 +8,7 @@
 - [Conditional Frontend Design Compliance](#conditional-frontend-design-compliance)
 - [Conditional Documentation Authority Review](#conditional-documentation-authority-review)
 - [Independence and Integration](#independence-and-integration)
+- [Follow-up Review](#follow-up-review)
 - [Verdict](#verdict)
 
 ## Standards Axis
@@ -108,6 +109,16 @@ check; do not reuse the old verdict.
 ## Independence and Integration
 
 Keep evidence collection independent so standards quality cannot hide a requirement miss and requirement coverage cannot excuse unsafe code. Parallel read-only passes are optional, not mandatory. The `repo-review` coordinator verifies both reports, removes duplicates, assigns one P0-P3 severity from concrete impact, and labels each finding with its contributing axis.
+
+## Follow-up Review
+
+Separate reachable defects, unmet required acceptance checks, and optional evidence
+strengthening. For each actionable gap, name the criterion and dependent claim it
+blocks. Missing mutation evidence is not automatically a mandatory gate unless the
+project requires it or the claimed fix depends on it. After a correction, bind the
+new basis and recheck the failure plus affected paths; reuse earlier evidence only
+when its inputs remain valid. Count repeated failures by criterion and cause, not
+review-round number, and do not waive a new reachable defect because it appeared late.
 
 ## Verdict
 

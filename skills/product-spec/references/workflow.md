@@ -65,6 +65,13 @@ Name each slice, then verify only applicable gates:
 - user-visible UI and data effects only where the slice touches them;
 - dependency edges and executable acceptance results.
 
+For an editable submission whose failure may lose user work or repeat a business
+action, settle which input stays visible, clears or restores and how recovery works.
+Distinguish a confirmed rejection from an unknown outcome when retry safety differs.
+A lookup result proves this submission's outcome only with a confirmed correlation
+and completeness basis; do not infer safe retry from mere absence in a list. If the
+policy is unsettled, keep that recovery slice Open while unrelated slices continue.
+
 Block only when a missing decision can change user behavior, business rules,
 permission/security boundaries, failure semantics, or
 acceptance results. Otherwise record the question as Assumption or Deferred and

@@ -29,6 +29,7 @@ after selecting a branch, read only its referenced modules.
 | A page, flow, or accepted surface is selected | [workflow](references/workflow.md) and [documentation boundaries](references/documentation-boundaries.md) | Feature Spec and per-slice readiness |
 | Shared visual semantics are being adopted or changed | [DESIGN.md contract](references/design-md-contract.md) | Approved, linted `<design-root>/DESIGN.md`; Feature Specs reference it |
 | Several independent surfaces are in scope | [multi-surface](references/multi-surface.md) | Shared index plus independently loadable slices/verdicts |
+| An accepted surface requires a parameterized visual background | [visual asset contract](references/visual-asset-contract.md) | Source-bound recipe, readable area, fallback and target-surface acceptance |
 
 ## Invariants
 
@@ -68,6 +69,7 @@ Load a module only when its condition applies:
 | Layout ownership, inset, overlay, focus, hit order, or transition changes | [layout and interaction](references/frontend-layout-governance.md) |
 | Repeated source measurements need normalization | [measurement normalization](references/measurement-normalization.md) |
 | SVG/icon roles or fallback are part of acceptance | [SVG icon contract](references/svg-icon-system.md) |
+| An accepted slice includes a parameterized gradient, texture or motion background | [visual asset contract](references/visual-asset-contract.md) |
 | Current runtime is compared with a selected source | [visual evidence](references/frontend-visual-evidence.md) |
 | Final readiness is being decided | [evaluation rubric](references/evaluation-rubric.md) |
 

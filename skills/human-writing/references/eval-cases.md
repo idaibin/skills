@@ -15,6 +15,7 @@ the actual output; package validation alone does not establish writing quality.
 | User prompt | Expected result |
 | --- | --- |
 | `把这篇中文技术博客去掉 AI 模板，但别改命令和结论。` | Rewrite while preserving protected technical text |
+| `按三遍流程重写：先去模板感，再找残留，最后只给终稿。保留原意和作者语气。` | Apply private meaning, rewrite and cold-read passes; return only the final text without invented experience, changed commands or unsupported progress claims |
 | `校对这篇文章，只改确实影响理解或可信度的地方。` | Proofread with minimal edits; unchanged prose is allowed |
 | `根据这些开发 notes 写一篇个人长文，没写到的别补。` | Draft from supplied sources without invention |
 | `把 Zen Clear 介绍压成 200 字短文。` | Produce concise source-grounded copy |

@@ -6,6 +6,7 @@
 | --- | --- |
 | `Implement this Fastify TypeScript plugin and its Vitest contract tests.` | Route to `dev-typescript`. |
 | `Add a Bun CLI subcommand using the repository's existing lockfile and error model.` | Route to `dev-typescript`; select Bun profile. |
+| `Fix this CLI option and check it on the source entry point.` | Run a representative safe invocation when available, plus focused project checks; report installed-command proof separately and run a build only when risk or a required gate calls for it. |
 | `Fix this Deno worker's permission and cancellation behavior.` | Route to `dev-typescript`; select Deno profile. |
 
 ## Non-Trigger Eval

@@ -22,6 +22,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | Styling system or CSS ownership changes | [styling systems](references/styling-systems.md) or [CSS governance](references/frontend-css-governance.md) for the changed concern | Scoped styling |
 | Shared components/tokens or layout ownership changes | [components/tokens](references/ui-components-and-tokens.md) or [layout](references/frontend-layout-governance.md) | Applicable visual contract |
 | Interaction feedback, animation, or visual direction changes | [interaction/motion](references/interaction-motion-quality.md) or [visual direction](references/visual-direction-and-anti-slop.md) | Applicable interaction/visual contract |
+| Accepted UI contract has a parameterized background | [components/tokens](references/ui-components-and-tokens.md), [interaction/motion](references/interaction-motion-quality.md), and [visual evidence](references/frontend-visual-evidence.md) | Contract-mapped component, fallback and target-surface evidence |
 | Selected-source visual closure applies | [specification authorities](references/specification-authorities.md) and [visual evidence](references/frontend-visual-evidence.md) | Runtime comparison boundary |
 | API/protocol or cross-boundary signal applies | [OpenAPI governance](references/openapi-contract-governance.md), [protocol contracts](references/protocol-contracts.md), and/or [project grounding](references/project-grounding.md) | Qualified integration work |
 
@@ -29,7 +30,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 - Reuse the nearest maintained owner before creating; preserve routing, state/data, component, and styling ownership.
 - Treat size as a review signal, not a line-count rule; split only at a stable ownership, behavior, lifecycle, side-effect, or verification boundary.
-- A no-op confirmation still reads and reports the exact owner path and symbol plus its matching contract before running the current-baseline focused check.
+- A no-op confirmation still reads and reports the exact owner path and symbol plus its matching contract; reuse a matching current-basis focused result, or run the check when that evidence is absent or stale.
 - Use the lowest-cost evidence closest to the changed behavior: source/diff checks, an already-running development surface with hot reload, focused tests, then a full production build only when its boundary or the delivery stage requires it.
 - Keep Product behavior and UI visual readiness independent; source/build evidence does not prove browser/client/runtime acceptance.
 - Do not generate visual assets, operate browser/client state, review, or mutate Git.

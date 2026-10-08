@@ -3,9 +3,9 @@
 ## Dev Tests candidate basis
 
 - Digest scope: all 19 packages declared by `skills-index.json`.
-- Package digest: `sha256:8663f35f7ba205c58f18588986b9721921546e89e45ae66c4ec0de75fe108dfe`
-- Candidate 0.1.1: early risk/testability design, focused iteration and complete
-  applicable final/integration verification. 19-package/73-routing checks and four
+- Package digest: `sha256:6ba526f556e48a3098d85d94a0502d4dd83e61a9a28b1b51367a3a456e176419`
+- Candidate 0.1.1 before this integration: early risk/testability design, focused
+  iteration and complete applicable final/integration verification. 19-package/73-routing checks and four
   independent refinement decisions pass; canonical gate passed 452 tests, DESIGN.md
   regressions and whitespace with zero context warnings.
 - Current assessment: [dev-tests candidate evaluation](dev-tests-evaluation.md).
@@ -15,6 +15,16 @@
   and bounded claims; none ran project tests or changed source. The prompts explicitly
   named this Skill, so implicit invocation, actual project E2E and efficiency remain
   unverified. Raw CLI output is task-local rather than a published behavior trace.
+- On 2026-10-08, the 47-item carryover integration passed 19-package validation,
+  76/76 routing cases, 452 catalog tests, the DESIGN.md checks and zero context
+  warnings. Seven further read-only synthetic decision cases covered asset rights,
+  foreground behavior, frontend no-op reuse, retry/review classification, writing
+  evidence, Product recovery and shared-module build ownership. A writing response
+  initially overstated progress without a prior baseline; the final same-worker
+  recheck used the bounded result. Three dedicated `ops-client` CLI cases passed
+  in disposable fixtures, including a corrected foreground fixture/rubric. These
+  cases prove recorded decisions only: no real client, browser, project test,
+  production effect, implicit selection or comparative efficiency was verified.
 - Earlier unrelated package results below are historical, not current candidate proof.
 
 ## Basis
