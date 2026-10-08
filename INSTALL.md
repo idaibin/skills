@@ -65,8 +65,8 @@ The publishable source directories are:
 
 The `dev-tests` package on this candidate branch is not yet stable; listing it does not
 mean cross-project acceptance is complete or authorize installation.
-The former `tests` package name is not an alias for `dev-tests`; existing installed
-copies require a separately authorized migration before they use the new name.
+Existing installed copies of the former package are not aliases for `dev-tests`;
+they require a separately authorized migration before using the new name.
 
 ## Install
 
