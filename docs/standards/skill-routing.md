@@ -29,7 +29,7 @@ identity, installed adapters, or completed evidence.
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `api-spec` | native API wire contracts and OpenAPI authoring or validation after business decisions | named native contract artifacts only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
-| `tests` | contract-to-layer coverage, authorized existing checks and qualified test evidence | scoped test artifacts; no source/test implementation, browser/client mechanics or Git |
+| `dev-tests` | contract-to-layer coverage, authorized existing checks and qualified test evidence | scoped test artifacts; no source/test implementation, browser/client mechanics or Git |
 | `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and risk-matched visual closure | source files |
@@ -95,10 +95,10 @@ it neither grants new permissions nor makes the whole requested outcome complete
 Illustrative owner handoffs, not a waterfall or a required sequence:
 
 ```text
-repo-map -> domain-modeling/product-spec -> api-spec/ui-spec -> to-task -> dev-* -> tests -> repo-review -> repo-delivery
+repo-map -> domain-modeling/product-spec -> api-spec/ui-spec -> to-task -> dev-* -> dev-tests -> repo-review -> repo-delivery
 ```
 
-`tests` also participates during product/UI design and implementation: early risk,
+`dev-tests` also participates during product/UI design and implementation: early risk,
 testability and example design feed back to their owners. Unsettled assumptions remain
 provisional; final acceptance uses agreed oracles and current evidence. Each iteration
 selects applicable checks by actual risk, not by completing stage names. Iteration uses
@@ -147,10 +147,10 @@ push actions. Without those conditions, the external-review owner supplies only 
 necessary files or review package. Review publication never creates a pull request,
 updates `main`, force-pushes, or counts as reviewer approval.
 
-The `tests` candidate owns cross-layer acceptance evidence, not another task ledger.
+The `dev-tests` candidate owns cross-layer acceptance evidence, not another task ledger.
 Missing tests route to the implementation owner, runtime mechanics to operations, and
 contract ambiguity to Product/UI/API owners. Existing implementation checks stay with
-implementation; compose `tests` when a separate layered acceptance result is needed.
+implementation; compose `dev-tests` when a separate layered acceptance result is needed.
 This candidate does not certify any project or become stable merely by being listed.
 
 This is not mandatory ceremony. A known non-browser TypeScript/JavaScript, Java, or Rust implementation can start directly

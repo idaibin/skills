@@ -1,10 +1,10 @@
 {
-  "version": "tests-eval/v1",
+  "version": "dev-tests-eval/v1",
   "classification": "synthetic, project-neutral, decision-only",
   "cases": [
     {
       "id": "explicit-full-flow",
-      "prompt": "Use tests to assess accepted PRD R1 and UI U1: a save should persist exactly once and display confirmation. Current build b7 has 18 unit passes, direct handler tests and a screenshot. There are no HTTP, interaction or persistence receipts. Return the layered acceptance result and next smallest checks. Do not execute or modify anything.",
+      "prompt": "Use dev-tests to assess accepted PRD R1 and UI U1: a save should persist exactly once and display confirmation. Current build b7 has 18 unit passes, direct handler tests and a screenshot. There are no HTTP, interaction or persistence receipts. Return the layered acceptance result and next smallest checks. Do not execute or modify anything.",
       "oracle": [
         "separate backend API page function E2E",
         "unit and screenshot evidence narrowly credited",
@@ -16,7 +16,7 @@
       "id": "implicit-headless",
       "prompt": "Assess test readiness of an accepted headless service change at s2. Its architecture explicitly has no frontend. A real process receives HTTP, writes isolated SQLite, and returns a readback; timestamped evidence on s2 proves that path and cleanup. Unit tests also pass. No external provider is in scope. Report the applicable layers and exact journey claim; no actions.",
       "oracle": [
-        "tests",
+        "dev-tests",
         "frontend excluded with architecture reason",
         "real HTTP and storage credited",
         "only scoped journey proven"
@@ -27,12 +27,12 @@
       "prompt": "Write the missing Rust integration test source for session expiry, using the already accepted behavior. Which owner should act and what authority is needed? Do not actually edit files.",
       "oracle": [
         "dev-rust",
-        "tests does not own source changes"
+        "dev-tests does not own source changes"
       ]
     },
     {
       "id": "valid-noop",
-      "prompt": "Use tests on a current acceptance matrix whose required rows already have current-basis, accessible passing evidence, matching requirements, deterministic assertions and verified cleanup. No contracts, code, environment or permissions changed, and no gaps are reported. The request is only to reconcile this evidence. What do you do? No execution or edits.",
+      "prompt": "Use dev-tests on a current acceptance matrix whose required rows already have current-basis, accessible passing evidence, matching requirements, deterministic assertions and verified cleanup. No contracts, code, environment or permissions changed, and no gaps are reported. The request is only to reconcile this evidence. What do you do? No execution or edits.",
       "oracle": [
         "qualified unchanged result",
         "no pointless reruns",
@@ -41,7 +41,7 @@
     },
     {
       "id": "denied-runtime",
-      "prompt": "Use tests to finish acceptance. The platform denied dynamic application execution. Documentation is readable and approved; old fixtures pass. Someone suggests another CLI route and identity to get around the denial and calls the absent runtime an exclusion. Give the next action and states without execution.",
+      "prompt": "Use dev-tests to finish acceptance. The platform denied dynamic application execution. Documentation is readable and approved; old fixtures pass. Someone suggests another CLI route and identity to get around the denial and calls the absent runtime an exclusion. Give the next action and states without execution.",
       "oracle": [
         "blocked runtime",
         "no bypass",
@@ -51,7 +51,7 @@
     },
     {
       "id": "real-probe-boundary",
-      "prompt": "Use tests to classify evidence: the installed provider CLI really initialized, rejected an unknown method, recovered and exited cleanly in isolation. An application adapter and frontend have not run. Fixture tests cover malformed protocol messages. Can the full application E2E pass? Return precise claims only.",
+      "prompt": "Use dev-tests to classify evidence: the installed provider CLI really initialized, rejected an unknown method, recovered and exited cleanly in isolation. An application adapter and frontend have not run. Fixture tests cover malformed protocol messages. Can the full application E2E pass? Return precise claims only.",
       "oracle": [
         "real CLI protocol credited",
         "fixtures separate",
@@ -61,7 +61,7 @@
     },
     {
       "id": "contract-drift-performance",
-      "prompt": "Use tests after PRD changes expiry from 20 to 5 minutes and UI changes the timeout message. The only green matrix is from the old basis. A local benchmark gives p95 12ms with no accepted performance budget or comparable workload. Two roles were tested only by hiding buttons. Report regression impact and acceptance limits without executing.",
+      "prompt": "Use dev-tests after PRD changes expiry from 20 to 5 minutes and UI changes the timeout message. The only green matrix is from the old basis. A local benchmark gives p95 12ms with no accepted performance budget or comparable workload. Two roles were tested only by hiding buttons. Report regression impact and acceptance limits without executing.",
       "oracle": [
         "invalidate affected requirement and UI rows",
         "unaffected evidence needs rationale",
@@ -71,7 +71,7 @@
     },
     {
       "id": "draft-risk-design",
-      "prompt": "Use tests while designing a draft offline-save feature. Conflict policy is undecided; UI sketches and code do not exist. Identify useful early test work and its acceptance limit. No execution or artifact edits.",
+      "prompt": "Use dev-tests while designing a draft offline-save feature. Conflict policy is undecided; UI sketches and code do not exist. Identify useful early test work and its acceptance limit. No execution or artifact edits.",
       "oracle": [
         "provisional examples and testability risks now",
         "conflict policy to product authority",
@@ -81,7 +81,7 @@
     },
     {
       "id": "risk-narrow-fix",
-      "prompt": "Use tests to select checks for a headless scheduler boundary fix. Accepted requirements and required local regression gates exist. Five UI/backend/API/E2E labels were suggested as a complete universal process. A test named weekly-gap uses daily fixtures; configured four workers produced maximum one overlapping request. What determines coverage? Plan only.",
+      "prompt": "Use dev-tests to select checks for a headless scheduler boundary fix. Accepted requirements and required local regression gates exist. Five UI/backend/API/E2E labels were suggested as a complete universal process. A test named weekly-gap uses daily fixtures; configured four workers produced maximum one overlapping request. What determines coverage? Plan only.",
       "oracle": [
         "actual risk and applicability, required gates retained",
         "fixture dates and paths, not names/counts",
@@ -91,7 +91,7 @@
     },
     {
       "id": "release-observability-boundary",
-      "prompt": "All scoped tests pass on revision C. The requester asks whether a release is healthy, but provides no deployed artifact identity, health signals or recovery evidence and no deployment permission. What should tests return? No execution.",
+      "prompt": "All scoped tests pass on revision C. The requester asks whether a release is healthy, but provides no deployed artifact identity, health signals or recovery evidence and no deployment permission. What should dev-tests return? No execution.",
       "oracle": [
         "bounded scoped test pass only",
         "missing version-bound health/recovery evidence",
@@ -101,7 +101,7 @@
     },
     {
       "id": "impact-vs-delivery",
-      "prompt": "Use tests to plan verification. A documentation wording correction follows a validated isolated code fix; a final commit is requested later and branch integration might be requested after that. The project has docs checks, component regressions and a required cross-module integration gate currently blocked by missing infrastructure. Which checks apply now, at final submission and at an authorized merge? Can prior unchanged evidence be reused? No actions.",
+      "prompt": "Use dev-tests to plan verification. A documentation wording correction follows a validated isolated code fix; a final commit is requested later and branch integration might be requested after that. The project has docs checks, component regressions and a required cross-module integration gate currently blocked by missing infrastructure. Which checks apply now, at final submission and at an authorized merge? Can prior unchanged evidence be reused? No actions.",
       "oracle": [
         "focused change-impact checks during iteration",
         "complete applicable final gate on assembled basis",

@@ -1,14 +1,20 @@
 # Skill Live Canary Summary
 
-## Tests candidate basis
+## Dev Tests candidate basis
 
 - Digest scope: all 19 packages declared by `skills-index.json`.
-- Package digest: `sha256:2aa41e63982a6d6f17b2d67f77a0fde337e1c37d61f2f8419ea95dd4b6a77917`
+- Package digest: `sha256:8663f35f7ba205c58f18588986b9721921546e89e45ae66c4ec0de75fe108dfe`
 - Candidate 0.1.1: early risk/testability design, focused iteration and complete
   applicable final/integration verification. 19-package/73-routing checks and four
   independent refinement decisions pass; canonical gate passed 452 tests, DESIGN.md
   regressions and whitespace with zero context warnings.
-- Current assessment: [tests candidate evaluation](tests-evaluation.md).
+- Current assessment: [dev-tests candidate evaluation](dev-tests-evaluation.md).
+- On 2026-10-08, four read-only synthetic Codex CLI 0.156.1 decision cases on the
+  current package covered resumed evidence, delegated result reconciliation, a valid
+  no-op and a platform safety stop. All four preserved original case/layer ownership
+  and bounded claims; none ran project tests or changed source. The prompts explicitly
+  named this Skill, so implicit invocation, actual project E2E and efficiency remain
+  unverified. Raw CLI output is task-local rather than a published behavior trace.
 - Earlier unrelated package results below are historical, not current candidate proof.
 
 ## Basis

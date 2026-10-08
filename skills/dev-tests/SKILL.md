@@ -1,9 +1,9 @@
 ---
-name: tests
+name: dev-tests
 description: "Design risk-based test coverage early and verify it iteratively across backend, API, frontend and end-to-end boundaries. Run existing scoped tests; route missing test implementation to its code owner."
 ---
 
-# Tests
+# Dev Tests
 
 ## Entry Gate
 

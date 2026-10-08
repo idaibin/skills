@@ -585,37 +585,37 @@
       "expected_outcome": "stop"
     },
     {
-      "id": "tests-normal",
-      "skill": "tests",
+      "id": "dev-tests-normal",
+      "skill": "dev-tests",
       "capability_id": "testing.coverage.verify",
       "class": "normal",
       "prompt": "Verify layered test coverage and the test acceptance matrix for backend tests, API tests and end-to-end tests.",
-      "expected_owner": "tests",
+      "expected_owner": "dev-tests",
       "expected_outcome": "route"
     },
     {
-      "id": "tests-boundary",
-      "skill": "tests",
+      "id": "dev-tests-boundary",
+      "skill": "dev-tests",
       "class": "boundary",
       "prompt": "Implement this Rust source change and add integration tests.",
       "expected_owner": "dev-rust",
       "expected_outcome": "reroute"
     },
     {
-      "id": "tests-critical-stop",
-      "skill": "tests",
+      "id": "dev-tests-critical-stop",
+      "skill": "dev-tests",
       "class": "critical-stop",
       "prompt": "Verify layered test coverage, but authorization is not granted; stop before execution.",
-      "expected_owner": "tests",
+      "expected_owner": "dev-tests",
       "expected_stop": "missing-authorization",
       "expected_outcome": "stop"
     },
     {
-      "id": "tests-early-design",
-      "skill": "tests",
+      "id": "dev-tests-early-design",
+      "skill": "dev-tests",
       "class": "normal",
       "prompt": "Use early test design and risk-based testing to identify testability gaps and provisional checks before implementation.",
-      "expected_owner": "tests",
+      "expected_owner": "dev-tests",
       "expected_outcome": "route"
     }
   ]

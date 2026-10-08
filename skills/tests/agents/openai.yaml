@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tests"
-  short_description: "Verify contract-to-test coverage across layers"
-  default_prompt: "Use $tests to derive a bounded acceptance matrix from current project contracts, run authorized existing checks, and report layer-specific evidence, failures and gaps without overstating end-to-end coverage."

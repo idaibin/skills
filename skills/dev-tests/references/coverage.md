@@ -48,6 +48,13 @@ regression risks. Record which results require rerun, which remain reusable and 
 A stale receipt is historical evidence with `not-run` on the new basis until validated.
 Return affected missing checks to the code owner and ledger changes to `to-task`.
 
+When resuming a campaign or receiving delegated results, reconcile each observation
+against the existing requirement, case ID and evidence layer before selecting another
+run. Reopen only rows whose consumed behavior, fixture or basis changed; preserve
+usable raw evidence for unaffected rows. An agent's terminal state closes its assigned
+execution, not the parent acceptance case or the campaign verdict. Do not create a
+continuation case merely to record a retry or a handoff.
+
 For relevant risks, check accessibility, authorization/data protection, reliability,
 recovery and compatibility across these views rather than adding mandatory new layers.
 Identify missing observable assertions, controllable fixtures or failure injection as

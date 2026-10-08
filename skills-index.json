@@ -1347,9 +1347,9 @@
       ]
     },
     {
-      "name": "tests",
+      "name": "dev-tests",
       "category": "repository-engineering",
-      "owner": "tests",
+      "owner": "dev-tests",
       "mutation_class": "artifact-write",
       "required_capabilities": [
         "filesystem-read",
@@ -3165,7 +3165,7 @@
     {
       "capability_id": "testing.coverage.verify",
       "capability_version": "0.1.1",
-      "package": "tests",
+      "package": "dev-tests",
       "description": "Design early risk-based coverage and verify scoped test evidence using existing authorized checks.",
       "accepts": [
         {

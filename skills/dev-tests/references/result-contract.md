@@ -19,7 +19,9 @@ Missing input blocks only dependent rows; preserve feasible independent checks.
 - Basis: repository/revision/patch, contract versions, runtime/build/configuration identity.
 - Coverage rows: requirement/risk ID, layer, scenario, role, real/stubbed boundary, oracle,
   fixture/source, command or recipe, run identity, state and supporting evidence. Keep
-  separate rows for differently verified boundaries within the same layer.
+  separate rows for differently verified boundaries within the same layer. Maintain one
+  current state per case and boundary; link historical attempts without presenting
+  them as competing current results.
 - Evidence: time, source version/provenance, observed assertions, exit/result, artifact
   path or authorized URL and digest where useful, limitations, cleanup outcome.
 - Failures: expected/actual, reproducible steps, first failure and retry history,

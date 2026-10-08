@@ -12,7 +12,7 @@ The result must contain exactly these public packages:
 
 ```text
 work-retro
-tests
+dev-tests
 repo-map
 domain-modeling
 product-spec
@@ -44,7 +44,7 @@ to discover packages from their portable `SKILL.md` metadata.
 The publishable source directories are:
 
 - `skills/work-retro`
-- `skills/tests`
+- `skills/dev-tests`
 - `skills/repo-map`
 - `skills/domain-modeling`
 - `skills/product-spec`
@@ -63,8 +63,10 @@ The publishable source directories are:
 - `skills/ask-ai`
 - `skills/human-writing`
 
-The `tests` package on this candidate branch is not yet stable; listing it does not
+The `dev-tests` package on this candidate branch is not yet stable; listing it does not
 mean cross-project acceptance is complete or authorize installation.
+The former `tests` package name is not an alias for `dev-tests`; existing installed
+copies require a separately authorized migration before they use the new name.
 
 ## Install
 

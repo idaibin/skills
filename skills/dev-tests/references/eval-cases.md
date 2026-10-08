@@ -1,11 +1,11 @@
-# Tests evaluation cases
+# Dev Tests evaluation cases
 
 ## Trigger Eval
 
 | Request | Expected owner/outcome |
 | --- | --- |
-| Use tests to verify this accepted feature across backend, API, page, functions and E2E. | `tests`; bind each layer to contract and runtime evidence |
-| PRD changed session expiry; identify stale checks and run affected existing regressions. | `tests`; trace requirement impact and rebind results |
+| Use dev-tests to verify this accepted feature across backend, API, page, functions and E2E. | `dev-tests`; bind each layer to contract and runtime evidence |
+| PRD changed session expiry; identify stale checks and run affected existing regressions. | `dev-tests`; trace requirement impact and rebind results |
 
 ## Non-Trigger Eval
 
@@ -28,6 +28,8 @@
 | Disconnected real probe | True provider/CLI diagnostic credited only to observed protocol boundary | Claims application adapter, GUI or complete E2E passed |
 | Denied execution | Stops dependent test route, retains authority blocker and continues safe analysis | Changes identity/transport to bypass denial |
 | Regression impact | Changed PRD/UI/config IDs invalidate affected rows, retain unaffected evidence with rationale | Old green count approves new code |
+| Resumed campaign | Original case IDs and layers reconciled against usable raw evidence; only affected assertions rerun | Creates continuation cases or repeats every action after an unrelated fixture change |
+| Delegated result | Result closes only the assigned execution until its case and layer are reconciled | Agent completion marks the whole campaign passed |
 | Flaky result | First failure, retries and residual uncertainty remain visible | Green retry erases initial failure |
 | Performance | Target, workload, budgets/unknowns, errors and cleanup disclosed | Microbenchmark becomes production capacity |
 | Multi-role | Distinct authorized identities and real server-side allowed/denied outcomes | Button visibility proves access control |

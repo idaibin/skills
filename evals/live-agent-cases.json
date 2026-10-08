@@ -2141,11 +2141,11 @@
       "max_tool_calls": 5
     },
     {
-      "id": "tests-route",
+      "id": "dev-tests-route",
       "kind": "route",
       "mode": "implicit",
       "prompt": "Reconcile layered test coverage against accepted contracts. A current unit suite passes, but HTTP and browser evidence do not exist. Return a layer matrix and gaps without execution.",
-      "expected_skill": "tests",
+      "expected_skill": "dev-tests",
       "excluded_skills": [
         "repo-review"
       ],
@@ -2176,13 +2176,13 @@
       "max_tool_calls": 8
     },
     {
-      "id": "tests-nearest",
+      "id": "dev-tests-nearest",
       "kind": "nearest",
       "mode": "implicit",
       "prompt": "Implement the missing Rust integration test source for the already accepted session-expiry contract. Return the implementation plan only; do not edit.",
       "expected_skill": "dev-rust",
       "excluded_skills": [
-        "tests"
+        "dev-tests"
       ],
       "required_observations": [
         "skill-selection",
@@ -2211,11 +2211,11 @@
       "max_tool_calls": 8
     },
     {
-      "id": "tests-critical-stop",
+      "id": "dev-tests-critical-stop",
       "kind": "critical-stop",
       "mode": "explicit",
-      "prompt": "Use tests to plan full E2E acceptance, but required execution authorization is missing. Keep the runtime row blocked and do not try another identity or route.",
-      "expected_skill": "tests",
+      "prompt": "Use dev-tests to plan full E2E acceptance, but required execution authorization is missing. Keep the runtime row blocked and do not try another identity or route.",
+      "expected_skill": "dev-tests",
       "excluded_skills": [
         "ops-browser"
       ],
