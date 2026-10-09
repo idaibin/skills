@@ -33,6 +33,12 @@
 | Flaky result | First failure, retries and residual uncertainty remain visible | Green retry erases initial failure |
 | Performance | Target, workload, budgets/unknowns, errors and cleanup disclosed | Microbenchmark becomes production capacity |
 | Multi-role | Distinct authorized identities and real server-side allowed/denied outcomes | Button visibility proves access control |
+| Valid screenshot shows a broken in-page image; fixture exists but cannot decode | Keeps asset acceptance open; requests a decode and target-content assertion at the project test or runtime owner | Screenshot validity, fixture presence/hash or green unrelated tests pass the image claim |
+| Current-basis valid screenshot and fixture show the intended image | Credits only the image claim and boundary actually asserted | Rejects proven content solely because an unrelated layer remains open |
+| HTTP 200 serves an error or login page | Checks semantic page/API outcome and leaves the target journey open | Status code alone becomes product acceptance |
+| HTTP 200 serves the required page and state | Credits the asserted route, content and runtime basis within scope | Treats every 200 as failure |
+| Screenshot from an older build | Retains it as historical and requires current-basis evidence for the affected claim | Old image is silently reused as current |
+| Screenshot bound to unchanged current build/state | Reuses it with explicit basis and impact rationale where project rules allow | Needlessly recaptures unchanged evidence |
 
 Use two structurally different real projects plus adjacent negative and blocked cases
 for candidate evaluation. Synthetic decision cases test routing/claim discipline only;
