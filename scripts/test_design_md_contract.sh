@@ -22,15 +22,26 @@ design_md_cli=(npx --yes -p @google/design.md@0.4.0 designmd)
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/aicraft-design-md-XXXXXX")"
 trap 'rm -rf -- "$tmp_dir"' EXIT
 
+run_designmd_command() {
+  local stdout_file="$tmp_dir/designmd.stdout"
+  local stderr_file="$tmp_dir/designmd.stderr"
+  local status
+  if "${design_md_cli[@]}" "$@" >"$stdout_file" 2>"$stderr_file"; then
+    cat "$stdout_file" "$stderr_file"
+  else
+    status=$?
+    printf 'designmd failed (exit %s):' "$status" >&2
+    printf ' %q' "$@" >&2
+    printf '\nstdout:\n' >&2
+    cat "$stdout_file" >&2
+    printf 'stderr:\n' >&2
+    cat "$stderr_file" >&2
+    return "$status"
+  fi
+}
+
 run_designmd_lint() {
-  local target="$1"
-  local output
-  set +e
-  output="$("${design_md_cli[@]}" lint --format json "$target" 2>&1)"
-  local status=$?
-  set -e
-  printf '%s\n' "$output"
-  return $status
+  run_designmd_command lint --format json "$1"
 }
 
 extract_warning_count() {
@@ -281,7 +292,7 @@ if "${completeness_checker[@]}" "$design_md_path" \
   exit 1
 fi
 
-diff_output="$("${design_md_cli[@]}" diff "$design_md_path" "$design_md_path" --format json 2>&1)"
+diff_output="$(run_designmd_command diff "$design_md_path" "$design_md_path" --format json)"
 if ! echo "$diff_output" | grep -qE '\"regression\"[[:space:]]*:[[:space:]]*false'; then
   echo "designmd diff did not report regression false for identical files" >&2
   echo "$diff_output" >&2
