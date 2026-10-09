@@ -1,13 +1,5 @@
 # Task Ledger Contract
 
-## Contents
-
-- [Decision Frontier](#decision-frontier)
-- [Task Slicing](#task-slicing)
-- [Outcome and Retry Continuity](#outcome-and-retry-continuity)
-- [Separated Ledger Authorities](#separated-ledger-authorities)
-- [Continuous Workflow Boundary](#continuous-workflow-boundary)
-
 Use the repository's established plan format. When none exists, use the smallest
 Markdown structure that preserves these fields:
 
@@ -27,9 +19,7 @@ Markdown structure that preserves these fields:
 
 Keep a compact status summary and one ordered Ready frontier. Detailed execution logs
 belong in the repository's progress/evidence authority and are referenced rather than
-copied into every task. When claiming a prerequisite was met before implementation,
-verify its accepted state on a historical basis from before that implementation; a
-current file alone cannot establish earlier readiness.
+copied into every task.
 
 ## Decision Frontier
 
@@ -74,11 +64,6 @@ external action, or continuous execution.
 Keep each fix tied to its original feature and acceptance ID across renamed slices,
 owners, and alternative routes. Preserve the first failure and what changed the
 hypothesis; passing a child check does not make the parent feature runtime-accepted.
-When reconciling after execution or handoff, compare the original acceptance IDs
-with the prior ledger state: name criteria closed, newly opened, and still open,
-with their evidence or blocker. If no criterion advanced, retain the original
-incomplete status and return one known blocker or next discriminating check; do not
-count another report, retry, or handoff as progress.
 When no authorized task is executable, return the pending decision or runtime queue
 with exact resume conditions instead of inventing cleanup work to keep activity going.
 

@@ -60,10 +60,6 @@ recovery and compatibility across these views rather than adding mandatory new l
 Identify missing observable assertions, controllable fixtures or failure injection as
 testability gaps for the implementation owner. Inspect actual inputs, exercised paths
 and assertions: a test name, count or configured workload is not coverage evidence.
-For an artifact or response claim, assert the contract-required content or state,
-including an expected empty response. File presence, a digest, a successful status
-code, or a captured image alone is insufficient.
-Keep format, identity, and visual oracles specific to the accepted project contract.
 For a requested release-readiness assessment, identify missing version-bound health
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
