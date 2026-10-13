@@ -50,11 +50,13 @@ def parse_final_message(path: Path) -> dict[str, Any] | None:
     if not path.is_file():
         return None
     text = path.read_text(encoding="utf-8").strip()
-    if text.startswith("```"):
-        text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
+
+    def reject_non_json_constant(value: str) -> None:
+        raise ValueError(f"Non-JSON numeric constant: {value}")
+
     try:
-        value = json.loads(text)
-    except json.JSONDecodeError:
+        value = json.loads(text, parse_constant=reject_non_json_constant)
+    except ValueError:
         return None
     return value if isinstance(value, dict) else None
 
