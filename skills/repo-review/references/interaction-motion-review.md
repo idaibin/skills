@@ -27,6 +27,8 @@ gaps. Existing implementation values are facts, not automatically approved targe
   especially keyboard-driven or repeatedly used controls?
 - Does the basis preserve existing component and motion contracts rather than inventing
   a parallel timing, easing, library, or visual system?
+- Does each animated property have one effective CSS or scripted owner, with continuous
+  animation, timers, observers and controls paused or cleaned up when no longer needed?
 - Does feedback keep loading, success, failure, selection, expansion, and dismissal
   understandable without hiding or delaying the resulting state?
 - Does changed motion preserve reduced-motion, focus, keyboard, hover-capability, and

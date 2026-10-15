@@ -95,6 +95,11 @@ separately `Not verified`; missing runtime/browser evidence is a distinct
 rendered-behavior `Not verified`. Do not infer exact visual values from pixels, make
 this a mandatory `repo-audit` handoff, or open a parallel review entry point.
 
+Trace applicable theme/global styles, generated token consumers, shell/overlay/scroll
+owners, menu/breadcrumb/title/i18n bindings, stable route/permission/deep-link IDs, and
+component tree or `key` state retention. Imports alone do not bound the impact, and a
+visible-name change does not authorize changing a stable identifier.
+
 When the basis adds or changes motion, gesture behavior, transition ownership, or
 user-visible interaction feedback, load `interaction-motion-review.md` inside this
 same subflow. Do not infer that branch from `.tsx`, `.vue`, `.css`, component paths,
@@ -124,6 +129,8 @@ project requires it or the claimed fix depends on it. After a correction, bind t
 new basis and recheck the failure plus affected paths; reuse earlier evidence only
 when its inputs remain valid. Count repeated failures by criterion and cause, not
 review-round number, and do not waive a new reachable defect because it appeared late.
+Repeat a full suite only for a required gate, relevant change, failure or unresolved
+risk; a flakiness rerun must name its distinct evidence goal.
 
 ## Verdict
 
