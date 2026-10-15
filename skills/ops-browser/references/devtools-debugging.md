@@ -191,3 +191,15 @@ one-variable experiment, direct browser facts, explicitly labeled inferences,
 `Not verified` gaps, state changes, sensitive-data handling, artifact paths or
 identifiers, runtime ownership/ledger, cleanup verification, and the caller-owned
 next decision.
+
+## Cached Portal Navigation And Timing
+
+For a requested rapid-navigation/resize/cache acceptance, use a task-owned page and verify that viewport/network/debug controls are tab-scoped. Task ownership does not grant shared viewport control; apply effective host policy and verified user authority. Browser-wide viewport control is not safe isolation by itself. If independent isolation cannot be established, leave the affected resize check Not verified.
+
+Capture the Network cursor before actions and read through complete event pages using consistent filters. Record endpoint, request identity, page/filter/page-size, status/terminal and truncation; redact proof/auth values and business content. A size-changing return may require a list refresh without repeating rankings; same-context return should be judged against its actual cache contract.
+
+Exercise first entry, rapid departure, return after effective size change, pagination and same-URL cached return. Inspect visible list, page number and selected state together with request counts. Distinguish leaving before queued initialization from leaving after the request started. If browser automation reached only the second case, the first remains Not verified; do not replace it with a mock or script result. Browser back to a saved page query and a navigation button that resets the query are different operations.
+
+When inspecting storage, read only the authorized key and report shape/count/restoration rather than secrets or raw records. Runtime encrypted-mode validation, actual logout and API writes require their own authorized operational boundary; source/Store tests are separate evidence.
+
+For responsiveness capture, report first visible feedback, handler/queue/main-thread work and animation/presentation evidence separately. A fixed animation duration, 60 fps target or recording fps cannot prove smooth input. Compare traces with profiler overhead, frame/process ownership and deployed source identified; do not infer an embedded page is the AI widget from its URL alone.

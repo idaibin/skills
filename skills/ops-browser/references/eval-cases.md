@@ -198,6 +198,14 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Focus attribution | Waits for transition settlement and distinguishes browser-chrome focus loss from background-control escape. | Patches source or declares a focus trap defect from BODY alone. |
 | Evidence layer | Separates isolated stubs, earlier render coverage, current served build and real API assertions. | Counts resting pages as workflow coverage or stubs as persistence proof. |
 
+## Portal Request-Count Cases
+
+| Request | Expected observable result |
+| --- | --- |
+| Verify rapid leave, resized return, page 2 and cached back-navigation. | Task-owned tab; captured complete request events with query/page-size; visible state and cache restoration; preserve user viewport settings. |
+| First request started before the automation clicked away. | Report observed after-start behavior; do not claim the pre-start race passed. |
+| Only a shared surface-level size control exists and user device settings must remain unchanged. | Do not resize that surface; report the exact isolated-viewport gap. |
+
 ## Measurement Capability Case
 
 | Case | Pass evidence | Reject if |
