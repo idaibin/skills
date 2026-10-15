@@ -49,7 +49,7 @@ same slice ID as related product facts, and never add another shared visual auth
 ## Handoff Examples
 
 - `dev-frontend`: selected visual source and revision, target route/surface, facts, exact layout/state/interaction contract, current tokens/components to reuse, proposed deltas, responsive/accessibility rules, copy, assets, hard blockers, and acceptance checks.
-- Compatible typed consumer: capability `ui.contract.specify@1.1.0`, exact immutable
+- Compatible typed consumer: capability `ui.contract.specify@1.2.0`, exact immutable
   input/result basis, package-relative artifacts, hashes and byte lengths, validation
   results, source/approval bindings, and trusted actor identity. Keep token values in
   `DESIGN.md`; the host adapter owns its own storage, traversal, and receipt protocol.

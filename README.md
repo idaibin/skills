@@ -101,6 +101,7 @@ to use each package's portable `SKILL.md` metadata.
 
 ## Documentation
 
+- [Product iteration requirements](docs/product/iteration.md), [solution](docs/plans/iteration.md), and [task ledger](docs/plans/iteration-tasks.md)
 - [Installation and updates](INSTALL.md)
 - [Skill authoring standard](docs/skills/skill-standard.md)
 - [Routing and ownership](docs/standards/skill-routing.md)
@@ -116,6 +117,8 @@ bash scripts/check-skills.sh
 ```
 
 Detailed validation rules live in [skills/AGENTS.md](skills/AGENTS.md#validation).
+For bounded iteration, use the [change-to-check mapping](docs/plans/iteration.md#维护检查选择表)
+to select focused checks and distinguish static, canonical and live evidence.
 
 ## License
 
