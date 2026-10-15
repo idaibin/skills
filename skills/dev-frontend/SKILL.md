@@ -14,6 +14,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | Request condition | Read | Result |
 | --- | --- | --- |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
+| Product behavior, copy, page interaction, layout, or visual acceptance changes | [specification authorities](references/specification-authorities.md) | Owning contracts ready before source |
 | Toolchain, dependencies, routing, stack migration, or render/effect semantics change | Relevant section of [stack guidelines](references/stack-guidelines.md) | Stack-specific constraints |
 | Framework state, lifecycle, routing, or component API semantics change | Selected [framework profile](references/framework-profiles.md) | Framework-compatible change |
 | Local or shared frontend loading, responsiveness, rendering or memory cost | [portal experience/performance](references/portal-experience-performance.md) | Business-preserving shared change and route coverage |
@@ -29,10 +30,11 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 ## Invariants
 
+- Before changing another business module, apply the [scope rule](references/codebase-design.md#decision-rules); reuse an existing approval for the same plan and scope.
 - Reuse the nearest maintained owner before creating; preserve routing, state/data, component, and styling ownership.
 - Treat size as a review signal, not a line-count rule; split only at a stable ownership, behavior, lifecycle, side-effect, or verification boundary.
 - A no-op confirmation still reads and reports the exact owner path and symbol plus its matching contract; reuse a matching current-basis focused result, or run the check when that evidence is absent or stale.
-- Use the lowest-cost evidence closest to the changed behavior: source/diff checks, an already-running development surface with hot reload, focused tests, then a full production build only when its boundary or the delivery stage requires it.
+- During development, use source/diff checks, focused non-build checks, and the documented page through its existing service. Standalone build, bundle, or package commands require an authorized release phase or an explicit request for build, packaging, or artifacts.
 - Keep Product behavior and UI visual readiness independent; source/build evidence does not prove browser/client/runtime acceptance.
 - Do not generate visual assets, operate browser/client state, review, or mutate Git.
 - Return this phase's evidence to the coordinator, who continues already-authorized
@@ -41,7 +43,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 ## Output Map
 
-Report scope, authorities, reuse decision, selected profiles, changed files/contracts, focused validation, development-surface evidence and production-build status independently when applicable, exclusions, and gaps.
+Report scope, authorities, reuse decision, selected profiles, changed files/contracts, focused validation, documented-page evidence, any explicitly authorized build evidence, exclusions, and gaps.
 
 ## Reference Map
 

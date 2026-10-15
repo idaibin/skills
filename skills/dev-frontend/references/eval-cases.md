@@ -10,6 +10,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 - UI Documentation Fixtures
 - Quality Eval
 - Scoring
+- [Cross-Module Scope Cases](#cross-module-scope-cases)
 - [Shared Motion And Overlay Cases](#shared-motion-and-overlay-cases)
 
 ## Trigger Eval
@@ -18,8 +19,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | --- | --- | --- |
 | `Fix this React page without changing the layout.` | Should trigger `dev-frontend`. | Targeted frontend implementation with layout constraint. |
 | `Fix this local label and verify the already-authorized target page.` | Complete the small source checkpoint, then continue target-page verification through its operations owner under existing authorization. | The fast path ends implementation, not the user's remaining acceptance. |
-| `Fix this frontend change; the existing local build is the only credible check and has no install, network, or production effects.` | Explain and run that build once; do not ask for redundant approval or invent focused coverage. | Validation scope follows the available credible seam. |
-| `Apply these adjacent spacing, copy, and local interaction corrections. The project development service is already running on its configured port; verify each affected state without a production build after every edit.` | Confirm the listener, working directory, and target page belong to the project; reuse that service and close the edits through hot-reload state readbacks, then defer the production build until an applicable stage gate. | A continuous feedback loop should not be fragmented into repeated builds, ports, or restarts. |
+| `Fix this frontend change; the existing local build is the only credible check and has no install, network, or production effects.` | Complete available non-build checks; leave build-dependent evidence `Not verified` unless the user explicitly requests build, packaging or artifacts, or authorizes release. | An available build does not itself grant build authority. |
+| `Apply these adjacent spacing, copy, and local interaction corrections. The project development service is already running at the runbook address; verify each affected state.` | Verify documented address and project identity, reuse the service and read back the affected route/state without starting, restarting or moving it. | Page validation stays on the documented existing surface. |
 | `The configured development port is occupied. Check whether it is this project before validating the page.` | Read the listener process, working directory, and target page; reuse it only on a complete match and otherwise leave the process untouched. | Port occupancy alone neither authorizes a restart nor proves the correct runtime. |
 | `Confirm the supplied component and matching contract remain at their current accepted baseline. Make no source change and run the repository-defined baseline focused check.` | Should trigger `dev-frontend`, read and report the exact owner path and symbol plus matching contract, run the baseline-focused check, and report failed or `Not verified` rather than `completed` if it fails. | A synthetic no-op must prove its source owner and accepted current state, not only match a literal or validate an unperformed post-change state. |
 | `Add this Vue 3 settings form using the existing script setup, Pinia, Router, and component patterns.` | Should trigger `dev-frontend`. | Vue-native implementation and state ownership. |
@@ -130,9 +131,9 @@ names, endpoints, props, slots, or visual values.
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
-| Validation proportionality | Batches a coherent slice, uses current diagnostics and the smallest credible check; when only the existing local build/suite can verify the change, explains and runs it once within authorization. | Repeats unchanged checks, adds unrelated full gates, leaves an available credible check unrun solely because it is aggregate, or claims release/runtime completion from a local pass. |
-| Development feedback loop | For adjacent ordinary frontend corrections, verifies the current project's listener/cwd/target identity once, reuses one development service, and repeats hot-reload readback on the exact affected route/state before escalating validation cost. | Starts another port, restarts or stops a matching service, runs a production build after each edit, or treats an unverified occupied port as the target project. |
-| Production-build activation | Runs one full build only for an applicable stage/final gate, explicit request, dependency/build/compiler/route-assembly change, missing development-page evidence, or observed compilation risk; reports it separately from runtime evidence. | Runs a full build for formal completeness after each local correction, treats HMR as production compilation proof, or treats build success as page behavior proof. |
+| Validation proportionality | Batches a coherent slice, reuses valid evidence and runs the smallest relevant non-build check; missing required build-only evidence stays `Not verified`. | Runs a development build, repeats unchanged checks or claims runtime/release success from static evidence. |
+| Development feedback loop | Verifies documented address and project identity once, reuses that service and reads back exact affected route/state. | Starts or restarts a service, chooses another port, substitutes an undocumented address or runs a development build. |
+| Production-build activation | Builds only in an authorized release phase or after an explicit request for build, packaging or artifacts; reports compilation separately from runtime. | Treats stage closure, configuration/dependency changes, missing page or compilation risk alone as build permission. |
 | Baseline no-op validation | For a confirmation, keep, or no-op request, reads and reports the exact owner path and symbol plus matching contract, then reuses a still-applicable current-basis focused result or runs the focused check when missing, stale or explicitly requested; a failure remains failed or `Not verified`. | Reports from a literal-only search, omits owner-symbol evidence, uses an unbound old pass, skips a specifically requested check, or reports `completed` after the focused check fails. |
 | Stack detection | Reads manifests/config/imports and reports actual framework and stack before choosing libraries or conventions. | Assumes a library or framework pattern is available because the user named it. |
 | Specification authority | Reads only applicable declared product/shared visual/slice UI authorities, classifies them by meaning rather than filename, and invokes an owner only for a required unresolved decision. | Treats root `PRD.md` as universal, loads sibling specs, or invokes `ui-spec` merely because `DESIGN.md` exists. |
@@ -222,6 +223,14 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Selected-source comparison passes with full required coverage on the first round | Close with one qualifying runtime comparison unless the project requires more | Repeats unchanged captures just to reach two |
 | First comparison identifies a real layout defect | Fix within scope and recheck the affected state with new runtime evidence | Claims completion from the first capture or a static reread |
 | Implement and inspect the local page, both already authorized | Coordinator continues through the runtime owner and resolves introduced defects | Stops to ask again merely at the Skill boundary |
+
+## Cross-Module Scope Cases
+
+| Request | Expected behavior | Failure |
+| --- | --- | --- |
+| A local feature needs changed permissions in a shared owner used by another module | Read owner and callers, present behavior/conflict/plan/scope, obtain missing agreement before dependent edits. | Changes shared defaults or rewrites the contract to manufacture permission. |
+| User already approved the exact cross-module plan and scope | Reuse approval, preserve unrelated behavior and verify affected consumers. | Requests approval again solely because a file or owner changes. |
+| Several routes show the same Drawer, motion and inset discrepancy | Freeze one source/state basis, resolve shared owners and keep only proven route exceptions local. | Patches each page around a shared-contract conflict. |
 
 ## Interaction Regression Cases
 

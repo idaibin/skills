@@ -52,6 +52,10 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
   state, input/action, expected postcondition, decisive source/config/artifact
   identities, controlled variables, and known confounders. Keep task-specific values
   local to this basis; do not promote them into universal defaults.
+- For repeated visual or interaction symptoms, freeze one selected-source basis with
+  route, viewport, theme, data and state. Resolve shared shell, overlay, component and
+  library owners before page rules; keep only proven page exceptions local and return
+  unresolved shared-contract conflicts to their owner before editing.
 - Freeze the navigation path after verifying the owner and decisive chain. Do not repeat
   map queries or broad source discovery after freeze unless current source contradicts
   the basis or a real check failure exposes an ownership error.
@@ -175,20 +179,19 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
 
 ## Validation
 
-- Order validation by cost and proximity to the changed behavior: inspect source and
-  diff first; use the real target page through the existing development service and
-  hot reload when runtime UI/interaction evidence is needed and authorized; run the
-  smallest relevant test next; reserve a full production build for the gates below.
+- Order development validation by cost and proximity: inspect source and diff, use
+  the documented target page through its existing service when runtime evidence is
+  authorized, then run the smallest relevant non-build check. Do not invoke a
+  standalone build, bundle, or package command during development.
 - For consecutive UI, style, layout, copy, or local-interaction corrections, keep one
   accepted slice and one development service. Batch adjacent edits, then repeat
   `edit -> hot-reload settles cleanly -> exact route/state readback` for the affected
-  states. Do not run a full build after each correction or restart the service merely
-  to create a fresh validation event.
-- Before reusing a project-defined development port, identify the listener process,
-  its working directory, and the actual target page. When all three identify the
-  current project, reuse it without starting another port, restarting it, or stopping
-  another process. If ownership is uncertain or mismatched, do not disturb it; resolve
-  the project-specific runtime path or report the page check `Not verified`.
+  states. Do not restart the service merely to create a fresh validation event.
+- Open only the address declared by project documentation or its runbook. Where
+  available, verify listener, working directory and target page identity. Do not start
+  or restart a server, stop another process, or choose another port for validation.
+  If the address is unavailable, uncertain or mismatched, leave page acceptance
+  `Not verified` and report the documented service recovery condition.
 - For a one-owner local style, template, icon, copy, or similarly bounded component
   change with no API/state/public/shared/build/runtime impact, batch the edits and use
   the running dev/compiler diagnostics as the first signal. If they remain clean,
@@ -212,26 +215,25 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
   remains `Not verified` and prevents a visual-complete verdict.
 - Keep the target acceptance surface fixed across implementation and runtime checks.
   A standalone preview or sibling route is separate evidence. For one unchanged
-  observable acceptance, run the initial check and at most one correction recheck; if
-  the same target acceptance fails again, stop patching, preserve the diff and direct
-  evidence, and return to diagnosis or one accountable handoff.
+  observable acceptance, a second failure for the same cause stops the same-hypothesis
+  patch loop. Preserve the diff and failure evidence and return to diagnosis; changing
+  the slice or owner does not reset that history. Assess a new defect by its impact.
 - For a causal fix claim, rerun the same observable acceptance against the artifact or
   runtime identity actually produced. Change one acceptance-decisive factor at a time
   where practical; otherwise list confounders and report only the observed outcome.
   Success, non-crash, build completion, or an agent terminal state does not identify
   the cause by itself.
 
-- Run project-defined type, lint, test, formatter, or route checks only at a logical
-  slice boundary, before handoff, or after a real error; keep them focused. Run a full
-  production build only at a stage closure or final delivery gate, when the user asks
-  for it, when dependencies/build configuration/compiler chain/route assembly changed,
-  when the development surface cannot provide the required evidence, or when static or
-  runtime checks expose a compilation-layer risk.
+- Run focused project-defined type, lint, test, formatter or route checks at a logical
+  slice boundary, before handoff, or after a relevant error. Inspect scripts for nested
+  build, bundle or package commands. Run those only in an authorized release phase or
+  after an explicit request for build, packaging or artifacts; a configuration change,
+  unavailable page or suspected compilation risk alone does not grant that authority.
 - Record development-page and build evidence as separate layers: hot-reload readback
   proves only the exercised runtime UI/interaction on the named page/state; a
   production build proves only that production compilation completed. Neither clears
-  the other's gap. When a local page is verified without a required build, report the
-  build `Not verified` instead of running it for formality.
+  the other's gap. A required build layer without authorized evidence is
+  `Not verified`; an unrequired build is `Not applicable`.
 - Report only warnings reached by the selected validation path and relevant to the
   changed slice. Do not repeatedly surface unchanged build warnings when no build was
   required or rerun.
@@ -241,8 +243,9 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
 - Use `ops-browser` when visual layout, interaction, responsive behavior, console errors, network payloads, or route behavior need web evidence.
 - Use `ops-client` when the task requires proof from a real Tauri, Electron, or native desktop window.
 - Mark unchecked runtime, visual, responsive, console, network, accessibility, or permission behavior as `Not verified`.
-- Clean-regenerate the project-owned client, verify no unexplained generated drift,
-  and run affected typecheck/build/tests. Static typecheck alone does not prove
+- For an affected generated-client contract, clean-regenerate within the authorized
+  scope, verify no unexplained drift, and run affected non-build checks. Build evidence
+  follows the authorization rule above. Static typecheck alone does not prove
   backend conformance or runtime loading/success/error behavior.
 
 ## Review

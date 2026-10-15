@@ -17,7 +17,8 @@ Select exactly one profile from repository evidence before applying framework-sp
 - Add memoization only for an evidenced render or calculation boundary; do not use it as decoration.
 - For an affected asynchronous settings save or effect-owned state, preserve existing
   triggers and check cleanup, stale responses, edits while pending and actual failure
-  recovery. Reuse a matching local pattern; do not impose this matrix on unrelated UI.
+  recovery. Establish in-flight ownership before starting work and release it on every
+  exit. Reuse a matching local pattern; do not impose this matrix on unrelated UI.
 
 ## Vue Composition
 
