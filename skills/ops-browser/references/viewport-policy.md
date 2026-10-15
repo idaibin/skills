@@ -25,11 +25,11 @@ every older or broader default.
   profile, and then navigating to the target. If that sequence is unavailable, apply
   it immediately after tab creation and reload only when reloading is authorized and
   required for the page to initialize under the target viewport.
-- For mobile Web, use the complete named `iPhone 15` profile when the backend exposes
-  it, including its mobile, touch, scale, user-agent, and orientation behavior. Do not
-  substitute another iPhone variant. If only dimensions are available, use the
-  backend's dimensions for that named profile and keep the unexposed device-emulation
-  fields `Not verified`.
+- For mobile Web, apply the complete device profile resolved above when the backend
+  exposes it, including mobile, touch, scale, user-agent, and orientation behavior.
+  Do not substitute another device for the resolved target. If only dimensions are
+  available, use the backend's dimensions for that target and keep the unexposed
+  device-emulation fields `Not verified`.
 - Do not resize a pre-existing user tab without authority and a restoration record.
   Use a task-owned tab when required session state is preserved; otherwise leave the
   viewport requirement `Not verified`.

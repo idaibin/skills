@@ -62,3 +62,17 @@ Source declarations can establish ownership and candidate behavior, but not perc
 timing, spatial continuity, interruption, hover behavior, or reduced-motion results.
 Require runtime evidence for those claims or mark them `Not verified`. Do not create a
 parallel frontend-quality profile or require `repo-audit` by default.
+
+## Unified Policy And Reusable Overlays
+
+For a policy-wide change, trace the application owner through teleports and scripted
+consumers, not only CSS duration declarations. Preserve project-defined precedence and
+capability/cache validity. Distinguish decorative transitions from required loading,
+positioning and business feedback; do not require disabling all animation indiscriminately.
+
+Inspect shell/mask/content presentation and the actual close/closed/model-update order.
+Check that module or shell reuse preserves a fresh form/request session, close during
+load invalidates old work, and old completion events cannot affect a reopened target.
+Accept callback-order fixtures as lifecycle evidence, not first-painted geometry or
+perceived performance. Require claim-matched enabled/disabled and cold/warm evidence
+only for the affected criteria; do not reopen unrelated accepted behavior.

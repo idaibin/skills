@@ -62,3 +62,19 @@ accepted budget, measured observations can be reported but performance acceptanc
 `not-run` or `blocked` according to the missing prerequisite. A local microbenchmark
 cannot establish full-path or production capacity. Compare improvement claims only on
 comparable workloads/environments with uncertainty and observed errors disclosed.
+
+## Motion And Overlay Reproduction
+
+Use the accepted motion policy and select cases for the changed owners: cold first
+open, cached reopen, current target replacement, loading/empty/error/retry, close while
+loading, close-complete before model update, rapid reopen, and cached-page departure
+with a late success or failure. A session must not inherit an old callback or response.
+Exercise affected cases with animation enabled and disabled; a normal-speed close
+alone cannot validate an immediate close path.
+
+Keep policy/clock tests, source-component lifecycle tests and actual painted-browser
+checks separate. A component fixture can prove callback ordering and invalidation;
+first-frame geometry, mask ordering, hit-testing, focus and perceived latency require
+the corresponding rendered state. Distinguish unvisited or data-blocked consumers from
+passes. When a preserved pre-fix source exists, replay the same relevant assertions
+against it and the candidate without writing to the live checkout; retain both results.

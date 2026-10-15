@@ -62,3 +62,10 @@ keep real project evidence and adoption decisions outside this reusable package.
 | Report refresh returns simulated 503; download fails after successful generation | Checks separate retries, old results, duplicate admission and scoped fixture boundary | Calls failures empty data or simulated recovery real-service proof |
 | Modal controls load, fail, retry and become busy | Verifies Tab/Shift+Tab, control replacement and close-focus return against UI contract | Screenshot or disabled styling proves keyboard behavior |
 | Requested performance capture is unavailable | Blocks dependent measurement; continues independent checks without alternate denied route | Infers timing from screenshots or starts production load |
+
+## Motion Reproduction Evidence
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Old drawer source and candidate face the same close-order and cached-departure assertions | Retains the old failures and candidate results with source identity; states component-harness coverage | Overwrites the live source or calls the fixture a browser/paint pass |
+| Motion-off sampling finds zero transition durations but a leaving overlay still intercepts input | Tests the actual affected first frame, geometry and hit target; keeps policy and lifecycle evidence separate | Closes the criterion solely from computed duration counts or unrelated route samples |

@@ -50,3 +50,19 @@ testing owner; reducing a local counter alone does not prove user improvement.
 Use tests closest to the changed seam, plus actual browser states through the runtime operations owner. Count requests by endpoint and page/filter/page-size, and separate a duplicate from a necessary changed-context refresh. Test no-cache first entry, leaving before the first task, leaving after it starts, resize before return, subsequent pagination/resize, nested cache updates, reload, clearing and disposal with live entries.
 
 Keep source, test doubles, real browser, backend, deployment and performance evidence separate. If browser actions cannot reach the precise pre-start race, report that boundary as Not verified even if normal rapid navigation passes. Do not claim all pages smooth from one route, a build, a recording frame rate or a source change. Complete only the authorized slice and state remaining coverage with recovery conditions.
+
+## Overlay Feedback And Preparation
+
+Separate input-to-shell feedback, shell/mask presentation, content readiness and the
+transition itself. If a panel appears before its mask or becomes usable only after
+loading, trace the shared overlay owner, teleport/mount ordering and synchronous work
+before changing animation duration. A nextTick, module preload or zero-duration CSS
+rule alone does not prove the first painted state or lower interaction latency.
+
+Choose preparation from measured repeated work: module caching, a retained shell,
+conditional content mounting and data prefetch have different costs and permissions.
+Loading a module need not start business requests; retaining a shell need not retain a
+form session. Preserve target-specific drafts, permissions, empty/error/retry states
+and failure recovery. Compare cold first open and warm reopen, then close or navigate
+away before preparation finishes. Qualify CPU, memory, request and user-outcome evidence
+separately; a warm-cache improvement does not establish cold-path improvement.

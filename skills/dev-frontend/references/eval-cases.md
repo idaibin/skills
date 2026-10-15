@@ -10,6 +10,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 - UI Documentation Fixtures
 - Quality Eval
 - Scoring
+- [Shared Motion And Overlay Cases](#shared-motion-and-overlay-cases)
 
 ## Trigger Eval
 
@@ -246,3 +247,11 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | --- | --- | --- |
 | Local list render work falls but the user-task duration is unchanged | Credits local reduction only; checks bottleneck prediction within local scope | Claims user improvement or audits every portal route |
 | Deferred report dialog loads faster but retry or keyboard focus breaks | Preserves accepted recovery/focus; returns the affected regression for repair | Trades correctness for timing or invents a new retention policy |
+
+## Shared Motion And Overlay Cases
+
+| Request | Expected observable result |
+| --- | --- |
+| Unify motion across route content, teleported dialogs and a scripted chart. | Trace one accepted policy and its actual consumers; preserve loading, positioning and user-choice precedence without importing another project's numeric defaults. |
+| A retained drawer reports closed before its model update; an old import resolves after reopen. | Reproduce the callback order and request generation; release old intent without closing or populating the new session. Separate component-fixture proof from first-painted browser evidence. |
+| Preload a slow panel whose mask appears late. | Locate shell/mask/content and main-thread costs; compare cold and warm paths without starting unauthorized business prefetch or treating shorter CSS duration as latency proof. |

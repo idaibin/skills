@@ -1,5 +1,13 @@
 # Interaction And Motion Quality
 
+## Contents
+
+- [Authority And Purpose](#authority-and-purpose)
+- [Implementation Checks](#implementation-checks)
+- [Interaction State And Admission](#interaction-state-and-admission)
+- [Validation](#validation)
+- [Shared Motion Policy And Overlay Lifetime](#shared-motion-policy-and-overlay-lifetime)
+
 Load this reference only when the authorized frontend change adds or changes motion,
 gesture behavior, transition ownership, or user-visible interaction feedback. Do not
 load it for every frontend edit or use it to redesign an approved surface.
@@ -81,3 +89,28 @@ continuity, hover capability, or perceived feedback is part of acceptance. Recor
 reduced-motion behavior when applicable. If runtime evidence is unavailable, report
 the affected behavior `Not verified`; do not claim interaction or motion quality from
 build, lint, typecheck, or static CSS alone.
+
+## Shared Motion Policy And Overlay Lifetime
+
+For an authorized motion-unification change, resolve one application-level policy
+from the accepted preference, system setting, page configuration and capability rules.
+Keep their precedence in the project contract. Do not copy another project's modes,
+frame thresholds, sampling windows, cache lifetimes or durations as defaults. An
+adaptive policy needs its actual measurement capability before accepting a cached
+result; capability absence and sampling cancellation must preserve the contracted
+fallback rather than manufacture frame evidence.
+
+Trace consumers beyond route transitions: application-root state, body/teleported
+library overlays, feedback, collapse/scroll behavior, and JavaScript-driven charts or
+scrolling. Keep meaningful loading/wait indicators, positioning, triggers and business
+requests intact. Test the entering and leaving first frames: a near-zero duration may
+still leave opacity, transforms, height, delay or hit-testing in a transitional state.
+
+Treat reusable code and an open form as different lifetimes. A cached module or shell
+may survive; each opening still needs its own target, draft and request generation.
+Invalidate the closing session at the actual close/deactivation boundary, retain any
+required leaving snapshot, and release the parent's open intent at the contracted
+completion event. Inspect the library's real close/closed/model-update order. Old
+completion callbacks and late imports/responses must not close, populate or reopen a
+new session. Cover both animated and immediate-close modes, including close during
+load, rapid reopen and KeepAlive departure/return.

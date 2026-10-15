@@ -10,6 +10,7 @@
 6. Viewport acceptance matrix
 7. Artifact pass
 8. Evaluation and handoff
+- [Shared Motion Policy Coverage](#shared-motion-policy-coverage)
 
 ## Candidate Or Visual Source Gate
 
@@ -214,3 +215,17 @@ Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved
 to `dev-frontend`, `repo-audit`, and `ops-browser`/`ops-client`; include traceability
 and asset gates, and request runtime evidence from the operations owner after
 implementation.
+
+## Shared Motion Policy Coverage
+
+When unifying motion, retain the project's accepted precedence among explicit user
+choice, automatic assessment, system preference and page configuration. Specify the
+unconfirmed/capability-missing state and which current or subsequent transition a new
+assessment affects. Thresholds, durations and cache policy remain project decisions.
+Map one policy owner to route content, teleported overlays and applicable scripted
+animation consumers; record external embedded surfaces as separate owners.
+
+For affected overlays, specify shell/mask/content readiness and entering/leaving first
+frames, interaction availability, hit-testing and focus. Define close, close-complete,
+deactivation and reopen outcomes independently of animation duration, preserving
+loading indicators, dismissal confirmation and any required leaving snapshot.
