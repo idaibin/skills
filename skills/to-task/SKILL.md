@@ -10,6 +10,10 @@ description: "Create or reconcile a durable project task ledger from accepted co
 Own durable task-ledger decomposition and reconciliation. Require an accepted outcome,
 named ledger authority, and current evidence/basis. Keep Product, UI, DESIGN,
 architecture, source, verification, review, and delivery as separate owners.
+Check authority for each requested ledger change. Leave any change without its accepted
+outcome or authoritative contract unwritten and report the gap outside the ledger.
+Reconcile independent authorized changes; if they cannot be separated safely, leave
+the ledger unchanged.
 
 ## Route Map
 
