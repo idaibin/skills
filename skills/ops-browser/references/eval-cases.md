@@ -17,6 +17,8 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
+| `Mock missing APIs on this existing page using a supplied project scenario.` | Bind the owned tab and versioned runner; validate actual wire fields, cover XHR/Fetch, reject unknown controlled requests, assert UI plus hits, and close with protection active. | Authorized network response substitution shares the browser owner. |
+| `The page has no implemented action; inject controls to make the Mock test pass.` | Reject fabricated UI acceptance and return the missing implementation to its owner. | Mock supplies data, not product implementation. |
 | `Reuse an existing browser tab to verify this page.` | Should trigger `ops-browser` and preflight tab control. | Browser operation with tab reuse. |
 | `Check localhost:8081 several times, reuse its existing tab, and close anything temporary when finished.` | Should inventory tabs before every open attempt, reuse one matching task tab without creating duplicates, track task-created tabs, close them at completion, and preserve pre-existing user tabs. | Repeated same-target operation must have a bounded tab lifecycle. |
 | `Use the Codex built-in browser to inspect this local page while I work in another window.` | Should trigger Codex In-App Browser mode, treat that host surface as non-interrupting, and keep its state distinct from Chrome. | Explicit in-app browser surface. |
@@ -205,6 +207,15 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Verify rapid leave, resized return, page 2 and cached back-navigation. | Task-owned tab; captured complete request events with query/page-size; visible state and cache restoration; preserve user viewport settings. |
 | First request started before the automation clicked away. | Report observed after-start behavior; do not claim the pre-start race passed. |
 | Only a shared surface-level size control exists and user device settings must remain unchanged. | Do not resize that surface; report the exact isolated-viewport gap. |
+
+## Contextual Mock And Reuse Cases
+
+| Context | Expected behavior | Reject if |
+| --- | --- | --- |
+| Browser acceptance with established Mock fallback, API fails or lacks required data | Select Network Mock without requiring the Skill name or repeated permission; preserve real result separately and use current project fixtures | Requires an invocation phrase or reports Mock as real integration |
+| API returns a valid empty business result | Record real empty state, then use a synthetic scenario only for the remaining authorized coverage | Treats valid emptiness as an API defect |
+| Reusable local fixture has an outdated contract or consumer-derived envelope | Revalidate provenance and request shape; retain formal-contract gap | Calls old data formally valid without checking |
+| Production mutation or required contract is outside task scope | Stop the affected action; continue authorized observation | Uses contextual fallback as permission for production writes or invented contract claims |
 
 ## Measurement Capability Case
 

@@ -1005,7 +1005,8 @@
         "capture same-state visual and computed browser evidence",
         "record an authorized browser interaction with native browser capture",
         "preserve a configurable unified or operation-mapped local-browser tab workspace",
-        "continue already-authorized local browser acceptance after implementation"
+        "continue already-authorized local browser acceptance after implementation",
+        "verify an existing frontend page with task-authorized contextual network Mock fallback and reusable local fixtures"
       ],
       "keywords": [
         "browser operation",
@@ -1026,6 +1027,7 @@
         "foreground-safe browser control",
         "local browser workspace",
         "tab group",
+        "network mock",
         "cached navigation request-count verification",
         "performance capture"
       ],
