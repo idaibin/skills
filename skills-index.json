@@ -1069,7 +1069,8 @@
       ],
       "intents": [
         "operate or verify a real desktop client",
-        "capture process and window evidence for Tauri, Electron, or native applications"
+        "capture process and window evidence for Tauri, Electron, or native applications",
+        "operate mobile apps in task-owned Android emulators or platform simulators"
       ],
       "keywords": [
         "desktop client",
@@ -1078,7 +1079,15 @@
         "native app",
         "process",
         "window verification",
-        "desktop foreground continuity"
+        "desktop foreground continuity",
+        "background client operation",
+        "AXValue",
+        "AXPress",
+        "Android Emulator",
+        "headless",
+        "ADB",
+        "simulator",
+        "device serial"
       ],
       "excludes": [
         "browser-page verification",
@@ -2771,7 +2780,7 @@
       "capability_id": "client.runtime.operate",
       "capability_version": "1.1.0",
       "package": "ops-client",
-      "description": "Operate an authorized desktop client and capture evidence.",
+      "description": "Operate an authorized desktop client or emulator-hosted mobile app and capture runtime evidence.",
       "accepts": [
         {
           "schema": "urn:skills:client-operation-request:v1",

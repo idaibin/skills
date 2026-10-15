@@ -641,6 +641,22 @@
       "prompt": "Use early test design and risk-based testing to identify testability gaps and provisional checks before implementation.",
       "expected_owner": "dev-tests",
       "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-background-qualification",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Qualify background client operation with AXValue and AXPress while preserving desktop foreground continuity; verify the postcondition and restore disposable test state.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-android-headless",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
     }
   ]
 }

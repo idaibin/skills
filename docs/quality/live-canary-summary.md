@@ -1,5 +1,12 @@
 # Skill Live Canary Summary
 
+## Current package byte inventory
+
+- Digest scope: all 19 packages declared by `skills-index.json`.
+- Package digest: `sha256:95977112d66d52637fe6acb6272b35ab9cb651d67a826d2941b4aa5574a89278`
+- This digest identifies current package bytes only. The live decisions below retain
+  their original basis and do not establish behavior for this inventory.
+
 ## Dev Tests candidate basis
 
 - Digest scope: all 19 packages declared by `skills-index.json`.

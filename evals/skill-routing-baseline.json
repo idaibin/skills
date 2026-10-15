@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:7f551fc9a9ccb4ecfd16364fc7b3e035bba35b0dfd208194218d46d5f4a08dbe",
+  "fingerprint": "sha256:63cc4c291a547c02ae63a55a8a50b1a4dc463653e88b5c6e1f8615806fef2f25",
   "summary": {
-    "total": 76,
-    "passed": 76,
+    "total": 78,
+    "passed": 78,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -919,6 +919,30 @@
       "skill": "dev-tests",
       "expected_owner": "dev-tests",
       "observed_owner": "dev-tests",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-client-background-qualification",
+      "case_fingerprint": "sha256:f9295d90606563d6d062fefc1f39c2c750b2b3d30229ca767474cb0acc4ddcd6",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-client-android-headless",
+      "case_fingerprint": "sha256:a25bd3a372be7bc66c7835a1a77b8ba4b06c648ef323fe63e462dc1037434285",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
       "expected_stop": null,
       "observed_stop": null,
       "status": "passed",

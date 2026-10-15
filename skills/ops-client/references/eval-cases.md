@@ -2,6 +2,15 @@
 
 Use these cases when changing `ops-client` triggers, modes, platform adapters, window evidence rules, Accessibility guidance, AI-operable UI guidance, or metadata.
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Quality Eval](#quality-eval)
+- [Background qualification cases](#background-qualification-cases)
+- [Simulator cases](#simulator-cases)
+- [Scoring](#scoring)
+
 ## Trigger Eval
 
 | User prompt | Expected result | Why |
@@ -67,6 +76,38 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | Missing adapter | On Windows or Linux without the required UI Automation/AT-SPI and capture adapter, reports window and interaction proof as `Not supported` while preserving any separately proven repository/process evidence. | Runs macOS commands, substitutes a browser/region screenshot, or claims equivalent proof. |
 | Client debug handoff | Enters only after caller delegation of an already-isolated client evidence request, verifies the real process/window/build, returns direct evidence, removes disposable state, and retains referenced evidence until embedded, archived, or accepted by the handoff owner. | Starts from an unexplained root-cause request, claims the final cause/fix, deletes evidence before transfer, or leaves temporary client state unexplained. |
 
+## Background qualification cases
+
+| Case | Required behavior | Failure |
+| --- | --- | --- |
+| Setter reports success; rich-text value remains original | Record failed write postcondition, preserve content and stop that route. | Claims successful typing, falls back to paste/Enter or submits the draft. |
+| Authorized disposable text/toggle qualification | Bind a unique control, monitor activation, verify change, restore only the probe-owned value and verify restoration. | Treats full verification as permission for terminal execution, file saves or permission changes. |
+| User types while the probe is outstanding | Preserve the concurrent edit, stop mutation and report cleanup state. | Restores an old preimage over the user's new content. |
+| Background endpoints match, but no continuous observer exists | Report bounded endpoint evidence and the missing transient-focus coverage. | Claims uninterrupted keyboard focus from two samples. |
+| AX main window is full size; capture is a transformed thumbnail | Preserve both identities and image evidence; full-window visual acceptance remains unverified. | Counts capture API success or enlarges the thumbnail as full-window proof. |
+| Window title maps to multiple native windows | Resolve identity through additional independent evidence or stop capture as ambiguous. | Chooses the first window or raises the app. |
+| Browser native AX is readable but no isolated safe test tab can be created | Return native coverage separately and route page work to the browser owner without touching user tabs. | Treats native AX discovery as page verification or modifies existing user pages. |
+| Ordinary background passes; minimized/Space/locked checks were not run | Keep the untested states separate with recovery conditions. | Extends the pass to all states or changes desktop state without authority. |
+
+## Simulator cases
+
+| Case | Required behavior | Failure |
+| --- | --- | --- |
+| Headless Android plus a connected phone | Bind owned AVD/serial and use explicit device selection for every action/capture. | Uses default adb, the phone or another task's running emulator. |
+| SDK registry says installed, boot image missing | Inspect actual image/configuration and report readiness failure before launch; provisioning retains its authority. | Treats installed metadata as a bootable image or silently replaces it. |
+| Old APK without the new native plugin | Verify installed identity; qualify operation-chain smoke only and keep feature acceptance unverified. | Promotes a passing login screen to current-source/native-plugin acceptance. |
+| Host locked, guest ADB available | Use the authorized bounded device route without host input; record host-lock interval and guest outcome. | Blocks all guest work merely because the host is locked, or uses host GUI to work around it. |
+| Locked click passes, recovery occurs after host unlock | Preserve the locked click and classify recovery separately. | Uses a locked filename or old lock sample as proof of locked recovery. |
+| PNG exceeds default process buffer | Stream binary output or repair a diagnosed bounded capture buffer; decode and inspect before acceptance. | Retries input, uses truncated bytes or claims success from file existence/hash change. |
+| Recording shorter than requested | Inspect actual duration and transition frames; keep long-flow/audio/locked recording gaps separate. | Reports requested duration or assumes all sessions and surfaces were recorded. |
+| iOS or physical-device requirement | Resolve the actual platform harness and artifact or report the missing capability; preserve matrix-required physical coverage. | Runs ADB against iOS or treats emulator success as physical/vendor-device proof. |
+
 ## Scoring
+
+For a background project-navigation flow with a transformed thumbnail, retain the
+failed full-window capture and continue independently authorized AX checks. A
+project's selected menu mark proves selection only; unchanged draft text and a
+disabled send button leave text entry failed and submission unverified. Preserve
+user activity and qualify each operation's focus coverage separately.
 
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expectations are correct and every quality case scores at least 8.

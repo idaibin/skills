@@ -17,6 +17,9 @@
 ## Summary
 
 Use `ops-client` for real desktop client operation, verification, and bounded Client Debug Evidence. It applies to Tauri, Electron, and Rust-rendered/native shells such as GPUI when real app-window evidence matters. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for desktop webview code changes.
+For a mobile app running inside an emulator or simulator, use
+[simulator operations](simulator-operations.md) and bind the guest device/artifact;
+a headless guest does not require native host-window acceptance.
 
 ## Trigger Examples
 
@@ -42,6 +45,7 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
 
 ## Operation Notes
 
+- For a background or focus-preserving request, apply [background operations](background-operations.md) before selection or mutation. Its qualification branch applies only when the user has requested testing the uncertain route; ordinary use requires established operation-specific focus behavior.
 - Process and runtime source are part of the evidence, not optional setup.
 - When the task starts from a repository, identify the client app location and startup command before claiming verification.
 - Before starting or restarting the client, require explicit authorization for the
@@ -53,9 +57,10 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
   including `@Computer` plus that app, covers the requested bounded interaction and
   incidental activation; do not demand another approval for that same action. If the
   user requires another app to remain foreground, record that app and establish a
-  proven background-safe, window-scoped route before binding or acting. If activation
-  remains possible, stop with the interaction `Not verified`; a later focus check cannot
-  repair a temporary violation. Verify focus after each permitted action and stop
+  proven background-safe, window-scoped route before binding or acting, or follow an
+  explicitly requested bounded qualification under the background profile. Known
+  activating routes remain excluded. Without either basis, stop with the interaction
+  `Not verified`; a later focus check cannot repair a temporary violation. Verify focus after each permitted action and stop
   without reclaiming focus if the user changes apps. Do not claim a read-only
   annotation proves an operation is background-safe.
 - Treat multiple app instances and stale bundles as common failure modes.
@@ -109,6 +114,11 @@ reclaiming focus. Preserve evidence already obtained, mark the requested unfinis
 interaction `Not verified`, and report the client goal as evidence-incomplete.
 
 ## Screen-Session Gate
+
+For device-bound simulator commands, apply the host/guest distinction in
+[simulator operations](simulator-operations.md#host-lock-and-sleep). The restrictions
+below govern host desktop effects; they do not prohibit an independently authorized,
+verified guest-control route that neither wakes nor manipulates the host UI.
 
 Record `screen_session` as `unlocked`, `locked`, or `unknown` from a direct
 platform or adapter signal. App visibility, an existing window identifier, and a

@@ -624,7 +624,9 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
             "acting; do not read a globally or project-installed copy."
         )
     instructions = [
-            "This is a disposable, synthetic live-Agent evaluation fixture.",
+            "You are a child evaluation agent in a disposable, synthetic live-Agent fixture. "
+            "The parent coordinator owns shared/global bookkeeping; do not duplicate it. "
+            "Keep evaluation writes within this fixture.",
             "Follow its AGENTS.md. Never stage, commit, push, or access external services.",
             skill_instruction,
             case["prompt"],

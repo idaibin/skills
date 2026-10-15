@@ -13,6 +13,11 @@ again merely because implementation hands off here. Preflight browser/profile/ta
 target URL/state and applicable account/side-effect boundary. Stop only the operation
 whose target or authority is unresolved. External sends and writes retain their gates.
 
+Resolve whether the supplied request identifies a page/tab or authorizes target
+creation before loading operation profiles. When that identity is absent, report
+the target gap directly; repository-source discovery and platform-profile expansion
+cannot establish the missing browser target.
+
 ## Route Map
 
 | Request condition | Read | Result |

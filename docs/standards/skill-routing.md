@@ -39,7 +39,7 @@ identity, installed adapters, or completed evidence.
 | `repo-audit` | bounded existing frontend, Java, and Rust audit profiles, including selected-source visual fidelity | read-only |
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
-| `ops-client` | authorized desktop-client operations and evidence | client state |
+| `ops-client` | authorized desktop-client and emulator-hosted mobile-app operations, background-route qualification and runtime evidence | client or bound virtual-device state; preserve host constraints and verify guest/application postconditions |
 | `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
 

@@ -58,7 +58,7 @@ and other supported agents.
 | `repo-review` | Review a Worktree, commit, range, or verified package on a fixed evidence basis. |
 | `repo-delivery` | Commit, integrate, push, and clean up reviewed changes with explicit Git authorization. |
 | `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
-| `ops-client` | Operate and verify real desktop-client processes and windows. |
+| `ops-client` | Operate desktop clients and emulator-hosted mobile apps; verify runtime state and captures. |
 | `ask-ai` | Prepare or run explicitly authorized external-AI review, research, relay, and image workflows. |
 | `human-writing` | Draft, rewrite, diagnose, and adapt source-grounded writing without changing its facts or voice. |
 
