@@ -193,6 +193,27 @@ Documentation Authority Review to verify index/link/deletion closure, authority
 separation, structured-artifact lifecycle, source-owner/runtime-identity separation,
 and absence of Skill-development reports from the product repository.
 
+## Deterministic Matcher Boundaries
+
+The routing eval matrix measures the deterministic `search-skills.py` matcher against
+authored case phrasing; it does not measure raw real-world input directly. Two known
+boundaries keep results honest:
+
+- Symptom-only phrasing (for example an issue title such as "library throws
+  RangeError for invalid values") carries no task action or owner vocabulary and may
+  return no match. The requesting host or agent is expected to restate the symptom as
+  a task before deterministic routing; raw symptom classification is not a matcher
+  goal.
+- Phrasings that mix weak evidence for two owners (for example "capture performance
+  measurements") resolve by their strongest anchor and may land in a weak-score
+  partition. Anchored boundary cases pin the discriminator; mixed phrasing is not
+  promoted to a case until its intended owner is unambiguous.
+
+Directly negated stack-word occurrences ("non-browser", "without css") are excluded
+from affirmative stack hints before owner selection. A separate affirmative occurrence
+of the same word remains a hint; focused regressions cover both directions. This
+token rule does not claim general natural-language negation understanding.
+
 ## Review Checklist
 
 - The description clearly says what the Skill owns and when it triggers; when a real

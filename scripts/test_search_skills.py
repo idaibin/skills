@@ -125,6 +125,17 @@ class SearchSkillsTests(unittest.TestCase):
         self.assertEqual("dev-frontend", results[0]["owner"])
         self.assertNotIn("ui-spec", [result["owner"] for result in results])
 
+    def test_stack_negation_preserves_separate_affirmative_occurrences(self) -> None:
+        cases = (
+            ("Implement non-browser TypeScript source.", "typescript"),
+            ("Implement TypeScript source without CSS changes.", "typescript"),
+            ("Implement browser source without browser extensions in TypeScript.", "frontend"),
+            ("Implement TypeScript source for a browser without browser extensions.", "frontend"),
+        )
+        for query, expected in cases:
+            with self.subTest(query=query):
+                self.assertEqual(expected, SEARCH.task_stack(query))
+
     def test_dont_want_spec_removes_spec_from_candidate_set(self) -> None:
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         results = SEARCH.search(

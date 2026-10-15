@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:9353276d71d5b042b00fb7c4d2fa6ab56b01f075c27b5d9c4937ff7c38acc61c",
+  "fingerprint": "sha256:7dd18ff135bf26db0e07ec11317b743b57a818f6df69204120422635cac265e6",
   "summary": {
-    "total": 86,
-    "passed": 86,
+    "total": 89,
+    "passed": 89,
     "failed": 0,
     "contract_errors": 0,
     "regressions": 0
@@ -421,6 +421,42 @@
       "failures": []
     },
     {
+      "id": "dev-typescript-non-browser-negation",
+      "case_fingerprint": "sha256:674da3ef90d719a20f6d7f3d9ec71d38b12b8dbd7a214d91d8a057e6e725de63",
+      "class": "boundary",
+      "skill": "dev-frontend",
+      "expected_owner": "dev-typescript",
+      "observed_owner": "dev-typescript",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-typescript-issue-regression-fix",
+      "case_fingerprint": "sha256:75d77f3a44edd817dab8b1167079d6673df789cfcfec2f6e432d47fda0e3aae6",
+      "class": "normal",
+      "skill": "dev-typescript",
+      "expected_owner": "dev-typescript",
+      "observed_owner": "dev-typescript",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-typescript-issue-library-bug",
+      "case_fingerprint": "sha256:60776277630d0989c5ee8b3d803265e49a22ad226ac322141333d9524df6978c",
+      "class": "normal",
+      "skill": "dev-typescript",
+      "expected_owner": "dev-typescript",
+      "observed_owner": "dev-typescript",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
       "id": "dev-java-normal",
       "case_fingerprint": "sha256:133b5c018631f9b5b49307ba3338b25eb37424348274988a527b120337e8d305",
       "class": "normal",
@@ -625,6 +661,42 @@
       "failures": []
     },
     {
+      "id": "ops-client-background-qualification",
+      "case_fingerprint": "sha256:f9295d90606563d6d062fefc1f39c2c750b2b3d30229ca767474cb0acc4ddcd6",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-client-zcode-cli-session",
+      "case_fingerprint": "sha256:7e90d83fbaaaa8f088d0178e87db8e839f4255c33327dd9fc8d259d8b8985e8d",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-client-external-review-owner",
+      "case_fingerprint": "sha256:0e4a25a1ad6b3938c5b0aa12e7227cdeeb76afc13f3a87d452367b6f24261c43",
+      "class": "boundary",
+      "skill": "ops-client",
+      "expected_owner": "ask-ai",
+      "observed_owner": "ask-ai",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
       "id": "ops-client-critical-stop",
       "case_fingerprint": "sha256:f84c095acded9743804dec31a3f9e44e9016ef8d2301c92362595a2730066127",
       "class": "critical-stop",
@@ -633,6 +705,18 @@
       "observed_owner": "ops-client",
       "expected_stop": "missing-authorization",
       "observed_stop": "missing-authorization",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-client-android-headless",
+      "case_fingerprint": "sha256:a25bd3a372be7bc66c7835a1a77b8ba4b06c648ef323fe63e462dc1037434285",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
+      "expected_stop": null,
+      "observed_stop": null,
       "status": "passed",
       "failures": []
     },
@@ -925,66 +1009,6 @@
       "failures": []
     },
     {
-      "id": "ops-client-background-qualification",
-      "case_fingerprint": "sha256:f9295d90606563d6d062fefc1f39c2c750b2b3d30229ca767474cb0acc4ddcd6",
-      "class": "normal",
-      "skill": "ops-client",
-      "expected_owner": "ops-client",
-      "observed_owner": "ops-client",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "ops-client-android-headless",
-      "case_fingerprint": "sha256:a25bd3a372be7bc66c7835a1a77b8ba4b06c648ef323fe63e462dc1037434285",
-      "class": "normal",
-      "skill": "ops-client",
-      "expected_owner": "ops-client",
-      "observed_owner": "ops-client",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "ops-client-session-protocol",
-      "case_fingerprint": "sha256:b743ba9be7bea6c68e8696d281754502659f5ec06050bf18581011cd84d5e66e",
-      "class": "normal",
-      "skill": "ops-client",
-      "expected_owner": "ops-client",
-      "observed_owner": "ops-client",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "ops-client-zcode-cli-session",
-      "case_fingerprint": "sha256:7e90d83fbaaaa8f088d0178e87db8e839f4255c33327dd9fc8d259d8b8985e8d",
-      "class": "normal",
-      "skill": "ops-client",
-      "expected_owner": "ops-client",
-      "observed_owner": "ops-client",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
-      "id": "ops-client-external-review-owner",
-      "case_fingerprint": "sha256:0e4a25a1ad6b3938c5b0aa12e7227cdeeb76afc13f3a87d452367b6f24261c43",
-      "class": "boundary",
-      "skill": "ops-client",
-      "expected_owner": "ask-ai",
-      "observed_owner": "ask-ai",
-      "expected_stop": null,
-      "observed_stop": null,
-      "status": "passed",
-      "failures": []
-    },
-    {
       "id": "dev-tests-performance-measurement",
       "case_fingerprint": "sha256:418ddf79b2f97f82ed105bdfb88260cb69b341daeabf04494c9918d0f457c676",
       "class": "normal",
@@ -1039,6 +1063,18 @@
       "skill": "ops-browser",
       "expected_owner": "ops-browser",
       "observed_owner": "ops-browser",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-client-session-protocol",
+      "case_fingerprint": "sha256:b743ba9be7bea6c68e8696d281754502659f5ec06050bf18581011cd84d5e66e",
+      "class": "normal",
+      "skill": "ops-client",
+      "expected_owner": "ops-client",
+      "observed_owner": "ops-client",
       "expected_stop": null,
       "observed_stop": null,
       "status": "passed",

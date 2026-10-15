@@ -291,6 +291,30 @@
       "expected_outcome": "stop"
     },
     {
+      "id": "dev-typescript-non-browser-negation",
+      "skill": "dev-frontend",
+      "class": "boundary",
+      "prompt": "Implement this Node.js library bug fix on non-browser TypeScript source.",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-issue-regression-fix",
+      "skill": "dev-typescript",
+      "class": "normal",
+      "prompt": "fix a JavaScript date library regression and add a regression test",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-issue-library-bug",
+      "skill": "dev-typescript",
+      "class": "normal",
+      "prompt": "fix javascript library bug",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
       "id": "dev-java-normal",
       "skill": "dev-java",
       "class": "normal",
@@ -434,6 +458,30 @@
       "expected_outcome": "route"
     },
     {
+      "id": "ops-client-background-qualification",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Qualify background client operation with AXValue and AXPress while preserving desktop foreground continuity; verify the postcondition and restore disposable test state.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-zcode-cli-session",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Use the installed ZCode client's CLI to read an exact existing task session in the background; do not touch the desktop window.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-external-review-owner",
+      "skill": "ops-client",
+      "class": "boundary",
+      "prompt": "Choose an external AI provider and request an independent review of a source patch.",
+      "expected_owner": "ask-ai",
+      "expected_outcome": "reroute"
+    },
+    {
       "id": "ops-client-critical-stop",
       "skill": "ops-client",
       "class": "critical-stop",
@@ -441,6 +489,14 @@
       "expected_owner": "ops-client",
       "expected_stop": "missing-authorization",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "ops-client-android-headless",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
     },
     {
       "id": "ask-ai-normal",
@@ -643,46 +699,6 @@
       "expected_outcome": "route"
     },
     {
-      "id": "ops-client-background-qualification",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Qualify background client operation with AXValue and AXPress while preserving desktop foreground continuity; verify the postcondition and restore disposable test state.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-android-headless",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-session-protocol",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-zcode-cli-session",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Use the installed ZCode client's CLI to read an exact existing task session in the background; do not touch the desktop window.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-external-review-owner",
-      "skill": "ops-client",
-      "class": "boundary",
-      "prompt": "Choose an external AI provider and request an independent review of a source patch.",
-      "expected_owner": "ask-ai",
-      "expected_outcome": "reroute"
-    },
-    {
       "id": "dev-tests-performance-measurement",
       "skill": "dev-tests",
       "class": "normal",
@@ -720,6 +736,14 @@
       "class": "normal",
       "prompt": "performance capture",
       "expected_owner": "ops-browser",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-session-protocol",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
+      "expected_owner": "ops-client",
       "expected_outcome": "route"
     }
   ]
