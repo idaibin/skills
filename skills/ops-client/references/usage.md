@@ -45,6 +45,12 @@ a headless guest does not require native host-window acceptance.
 
 ## Operation Notes
 
+- Before a client effect, resolve the latest valid authority for the exact app and
+  action. Retain source/order/scope and any superseded restriction; a later same-scope
+  authorization may replace an earlier handoff-only limit, while unrelated authority
+  does not lift a cancelled write or paused interaction. Older plans, summaries, and
+  scheduled requests cannot resume it. Preserve the foreground and screen-session
+  gates independently of that authorization.
 - For a background or focus-preserving request, apply [background operations](background-operations.md) before selection or mutation. Its qualification branch applies only when the user has requested testing the uncertain route; ordinary use requires established operation-specific focus behavior.
 - Process and runtime source are part of the evidence, not optional setup.
 - When the task starts from a repository, identify the client app location and startup command before claiming verification.
@@ -101,6 +107,11 @@ Use the tool's terminal result as the source for the action outcome. Keep `cance
 failure, ordinary action failure, and an outcome that cannot be determined. Do not invent
 a cause such as the user rejecting a permission prompt.
 
+For an applicable host-policy refusal, retain the exact denied action, source, and
+reason and stop that action. A rewritten request, alternative adapter, or fresh
+session is not a recovery path around the refusal. Only an actual change by its
+governing authority can lift it; an ordinary action cancellation is not such a refusal.
+
 After a cancelled or ambiguous action, read the current target state when that read is
 safe. If the authorized reversible goal remains incomplete, use at most one verified
 alternative semantic path, such as a named close action instead of a cancelled key event.
@@ -119,6 +130,13 @@ For device-bound simulator commands, apply the host/guest distinction in
 [simulator operations](simulator-operations.md#host-lock-and-sleep). The restrictions
 below govern host desktop effects; they do not prohibit an independently authorized,
 verified guest-control route that neither wakes nor manipulates the host UI.
+
+Use a fresh permitted direct observation for the current target and capability.
+A historical screenshot failure or old screen-session record does not establish
+current offline, locked, or permission state. If current evidence cannot be obtained
+safely, keep it unknown or `Not verified`, preserve the failed attempt, and continue
+only independently authorized work. This freshness check does not clear an unresolved
+applicable policy refusal or authorize a foreground effect.
 
 Record `screen_session` as `unlocked`, `locked`, or `unknown` from a direct
 platform or adapter signal. App visibility, an existing window identifier, and a
