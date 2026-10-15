@@ -48,6 +48,9 @@ For every applicable icon role, record:
 | Evidence | source identity and one allowed evidence level |
 
 Keep SVG path data, framework props, imports, and source paths out of the Feature Spec.
+For an icon button, the control owner supplies its accessible name and owns render
+size, color, stroke, alignment and state treatment; a glyph or Tooltip alone does not
+name the action.
 
 ## SVG Delivery Constraints
 

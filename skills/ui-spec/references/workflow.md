@@ -37,6 +37,8 @@ the candidate, selected-source target, or product scope.
 
 When several surfaces show the same discrepancy, fix one comparison basis and trace
 the shared shell, overlay, motion and component owner before writing page rules.
+Bind route/entrypoint, viewport, theme/locale, data, start state, input and expected
+end state; map content insets, component wrappers and design-library ownership.
 Record only proven page exceptions; if the shared owner conflicts with the selected
 source, keep affected slices `Not Ready` until that decision is resolved.
 
@@ -97,8 +99,10 @@ Translate the selected source into implementable decisions:
 When Product requires retained input after a failed action, specify how values stay
 visible and reachable through feedback, scrolling, focus and the permitted recovery
 action. Compare entered values before failure, after feedback and during recovery on
-the affected viewport/state. UI does not decide whether an uncertain submission may
-be retried; missing Product policy blocks only that dependent transition.
+the affected viewport/state. When Product requires clearing instead, specify that
+failure state. UI does not decide whether an uncertain submission may be retried;
+missing Product policy blocks only that dependent transition, not confirmed unrelated
+states.
 
 When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in
 the adopted `DESIGN.md` and page-local role/placement/state mapping in the Feature
@@ -203,6 +207,9 @@ Check a supplied accepted UI contract against the requested assertions before
 proposing edits. If it already satisfies them, return a bounded no-change result.
 Keep contract readiness, artifact readback and runtime proof separate; missing
 browser evidence alone does not erase an accepted contract clause.
+Name the specific missing contract decision, such as an unresolved required component
+mapping; report unperformed artifact readback or runtime validation separately as
+`Not verified` rather than treating either as a contract defect.
 
 Run source identity, product truth, rights, required-state, mapping, responsive,
 viewport-matrix, accessibility, overflow, approval, and implementation-budget gates
