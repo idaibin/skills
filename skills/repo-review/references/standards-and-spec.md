@@ -24,6 +24,11 @@ affect the review verdict, and a blocking pre-existing issue must be directly
 required by the changed path. Language/framework profiles refine reachability;
 they do not replace the shared finding gate.
 
+For dependency patches or workarounds, trace installation/use and affected observable
+assertions. Record upgrades or patch removal as scoped revalidation triggers; existing
+scripts or unrelated green checks do not prove the behavior. Bind file-scope claims to
+the selected diff rather than a summary.
+
 ## Security Evidence
 
 Apply this only when a security claim is material. Keep status separate from P0-P3:

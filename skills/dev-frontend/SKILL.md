@@ -16,6 +16,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
 | Toolchain, dependencies, routing, stack migration, or render/effect semantics change | Relevant section of [stack guidelines](references/stack-guidelines.md) | Stack-specific constraints |
 | Framework state, lifecycle, routing, or component API semantics change | Selected [framework profile](references/framework-profiles.md) | Framework-compatible change |
+| Local or shared frontend loading, responsiveness, rendering or memory cost | [portal experience/performance](references/portal-experience-performance.md) | Business-preserving shared change and route coverage |
 | No-op or accepted-baseline confirmation | [checklist](references/checklist.md) | Exact owner-symbol and baseline-check evidence |
 | Behavior/public seam, ownership, or quality concern applies | [behavior first](references/behavior-first.md), [codebase design](references/codebase-design.md), and/or [code quality](references/code-quality.md) | Scoped design/validation |
 | A touched file, component, or function mixes independent UI, state, data, side-effect, or business responsibilities | [decomposition](references/decomposition.md) | Cohesive owners and readable orchestration |

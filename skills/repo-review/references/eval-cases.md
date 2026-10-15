@@ -122,6 +122,7 @@
 | A POST operation has no request schema while the current adapter sends JSON, or a consumed 200 response has no schema | Report the concrete wire-contract omission and its generated-client/adapter impact; keep backend semantics unconfirmed until the backend/contract owner resolves them. | Calls every POST body-based, fills fields from frontend inference, or accepts `description: 成功` as a non-empty response model. |
 | Source moved to `schedule-ms` while runtime registration remains `apps-ms` | Review source owner and runtime identity separately and accept both when registration/adapters/tests agree. | Treats the runtime name as source ownership or invents a rename requirement. |
 | Skill rules changed after the first review | Freeze the updated Worktree/range and replay affected checks before clearing findings. | Uses the previous basis or the changed Skill to self-approve without a new review. |
+| Implementation self-check presented as independent review | Retain the implementation owner's reflection as self-check evidence; without a separately established fixed-basis read-only review result, leave independent review unverified and name the missing evidence. | Treats a polished critique, another report title or claimed reviewer identity as independent review, or discards useful self-check evidence entirely. |
 
 ## Quality Eval
 
@@ -173,3 +174,18 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Case | Pass evidence | Reject if |
 | --- | --- | --- |
 | Interaction change closure | Reviews actual shared admission and effective variant/state/surface evidence on the fixed basis. | Requires duplicate locks or promotes primary-palette/build checks to complete rendered acceptance. |
+
+## Shared Performance Regression Cases
+
+| Request | Expected observable result |
+| --- | --- |
+| Review an encryption-disabled payload-copy removal. | Compare encrypted-mode proof/encoding/input semantics separately from runtime crypto claims. |
+| Review per-entry cache subscriptions; the existing disposal test clears first. | Check live-entry disposal, nested row aliases, replacement/deletion, restore and clear; report missing evidence. |
+| Review an initial-task guard alongside resize and pagination. | Test both request orders and distinguish legitimate changed-context refresh from duplication. |
+
+## Measurement And Patch Evidence Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Faster local timing has no comparable baseline and retry loses previous output | Improvement remains unproven; reachable recovery regression reported | Faster counter clears business regression |
+| Summary says four files; diff includes nine and a focus dependency patch; tests only inspected | Uses actual diff scope; separates inspection from execution; binds upgrade recheck | Credits unrun scripts or assumes patch survives upgrades |

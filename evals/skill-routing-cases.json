@@ -681,6 +681,46 @@
       "prompt": "Choose an external AI provider and request an independent review of a source patch.",
       "expected_owner": "ask-ai",
       "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-tests-performance-measurement",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "Run existing scoped tests and return a test acceptance matrix for comparable performance measurement.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-tests-recovery-keyboard",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "failure recovery tests keyboard regression tests",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "frontend-local-loading",
+      "skill": "dev-frontend",
+      "class": "normal",
+      "prompt": "frontend loading performance",
+      "expected_owner": "dev-frontend",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "review-performance-evidence",
+      "skill": "repo-review",
+      "class": "normal",
+      "prompt": "Review this fixed commit and its frontend performance review evidence.",
+      "expected_owner": "repo-review",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "browser-timing-capture",
+      "skill": "ops-browser",
+      "class": "normal",
+      "prompt": "performance capture",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "route"
     }
   ]
 }

@@ -196,3 +196,9 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | --- | --- | --- |
 | Focus attribution | Waits for transition settlement and distinguishes browser-chrome focus loss from background-control escape. | Patches source or declares a focus trap defect from BODY alone. |
 | Evidence layer | Separates isolated stubs, earlier render coverage, current served build and real API assertions. | Counts resting pages as workflow coverage or stubs as persistence proof. |
+
+## Measurement Capability Case
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Timing requested but only screenshot and network status exposed | Returns supported observations and precise missing timeline claim | Invents timing, changes shared Dimensions or declares budget acceptance |

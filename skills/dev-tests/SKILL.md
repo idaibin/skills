@@ -19,7 +19,7 @@ settled oracles support acceptance verdicts. Reuse the project test plan and its
 | --- | --- | --- |
 | Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
-| Role isolation, concurrent users, load or performance applies | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, budgets and bounded measurements |
+| Role isolation, concurrent users, load or performance applies | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |
 
 ## Invariants

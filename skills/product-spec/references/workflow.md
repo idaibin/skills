@@ -1,5 +1,14 @@
 # Product Specification Workflow
 
+## Contents
+
+- [Evidence First](#evidence-first)
+- [Decision States](#decision-states)
+- [Product Scope Gate](#product-scope-gate)
+- [Ready for an Implementation Slice](#ready-for-an-implementation-slice)
+- [Stop Conditions](#stop-conditions)
+- [Documentation Rebuild Closure](#documentation-rebuild-closure)
+
 ## Evidence First
 
 1. Read effective guidance and product-document conventions.
@@ -71,6 +80,17 @@ Distinguish a confirmed rejection from an unknown outcome when retry safety diff
 A lookup result proves this submission's outcome only with a confirmed correlation
 and completeness basis; do not infer safe retry from mere absence in a list. If the
 policy is unsettled, keep that recovery slice Open while unrelated slices continue.
+
+For asynchronous result journeys, distinguish pending work, failed retrieval and a
+confirmed empty result by their accepted evidence. Settle recovery per failing stage:
+what can be retried independently, whether previous results remain available after a
+refresh failure, and which actions may repeat. Do not prescribe universal retention
+or retry. A download failure need not imply that completed report generation failed.
+
+For a performance outcome, settle the task/context, observable endpoint, target basis
+and protected business results before implementation; an unresolved numeric target
+does not prevent an explicitly measurement-only slice. Presentation and focus rules
+remain with UI; measurement methods remain with the testing owner.
 
 Block only when a missing decision can change user behavior, business rules,
 permission/security boundaries, failure semantics, or

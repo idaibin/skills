@@ -53,3 +53,12 @@ keep real project evidence and adoption decisions outside this reusable package.
 | Misleading fixtures | Actual dates/paths/assertions and overlap inspected | Names, counts or worker settings become proof |
 | Release boundary | Unobserved health/recovery risk handed to release owner | Green tests imply deployed health or authorize rollout |
 | Iteration versus delivery | Focused edit checks; complete applicable final/integration gate on actual basis; justified evidence reuse | Reruns everything after wording edit, skips required blocked gates or assumes merge permission |
+
+## Comparative And Recovery Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Two noisy lab samples improve while cache and dataset change | Preserves samples and confounders; improvement inconclusive, field p75 unproven | Picks fastest run or claims RUM attainment |
+| Report refresh returns simulated 503; download fails after successful generation | Checks separate retries, old results, duplicate admission and scoped fixture boundary | Calls failures empty data or simulated recovery real-service proof |
+| Modal controls load, fail, retry and become busy | Verifies Tab/Shift+Tab, control replacement and close-focus return against UI contract | Screenshot or disabled styling proves keyboard behavior |
+| Requested performance capture is unavailable | Blocks dependent measurement; continues independent checks without alternate denied route | Infers timing from screenshots or starts production load |

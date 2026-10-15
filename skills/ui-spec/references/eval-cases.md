@@ -130,3 +130,9 @@ Score each quality case 0–10. Minimum pass:
 | Case | Pass evidence | Reject if |
 | --- | --- | --- |
 | Interactive state distinctions | Keeps applicable transient/persistent/disabled/pending combinations and focus/retry policy in existing UI contract. | Invents universal colors, dimensions or a parallel schema. |
+
+## Async Focus Continuity Case
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| A modal download control becomes busy or is replaced by retry | Maps initial, pending, error, retry and close focus against accepted modal semantics | Traps every non-modal overlay or chooses Product retry policy |

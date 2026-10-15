@@ -26,7 +26,7 @@ cannot establish the missing browser target.
 | External-AI turn, attachment/submission, or structured operation handoff | Applicable sections of [browser operation protocol](references/browser-operation-protocol.md) | Correlated side-effect and response evidence |
 | Local workspace/browser ownership applies | [local workspaces](references/local-browser-workspaces.md) | Verified target selection |
 | Runtime visual comparison applies | [visual evidence](references/frontend-visual-evidence.md) | Same-state capture/comparison |
-| DevTools/console/network debugging applies | [DevTools debugging](references/devtools-debugging.md) | Scoped observation |
+| DevTools/console/network debugging or performance capture applies | [DevTools debugging](references/devtools-debugging.md) | Scoped observation |
 | Axure/Lanhu evidence extraction applies | [Axure evidence](references/axure-product-evidence.md) and/or [Lanhu evidence](references/lanhu-ui-evidence.md) | Qualified source evidence |
 
 ## Invariants

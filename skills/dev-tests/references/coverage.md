@@ -38,6 +38,14 @@ for each actual boundary. An E2E through a stub is an explicitly named simulated
 journey, never proof of the substituted real boundary. Distinguish the first real E2E
 from later regression coverage: one passing journey establishes that journey only.
 
+For asynchronous result/download journeys, map relevant faults to accepted states and
+recovery: failed retrieval versus confirmed emptiness, stage-specific retry, retained
+results after refresh failure, duplicate admission, close during work and late completion.
+Include focus assertions across loading/failure/retry/busy/close when keyboard behavior
+is in scope. A synthetic fault such as 503 is a selected fixture, not a universal code.
+Record controllable failure points; route missing injection support to implementation.
+Simulated faults do not prove a real service failed or recovered.
+
 Use positive, negative, edge, recovery and role scenarios where behavior or risk
 requires them. Include cross-layer invariants: what the UI promises must match the API
 and backend outcome. Keep visual acceptance and interaction correctness separate.

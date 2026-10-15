@@ -39,6 +39,11 @@ Return these gate results to `repo-delivery`; testing grants no commit or merge 
    acceptance scope or a named prerequisite/authorization blocker; return incomplete
    dependent claims rather than cycling through alternate denied execution paths.
 
+For performance comparisons, follow [roles and performance](roles-and-performance.md)
+for measurement interpretation and acceptance. Receive raw browser/client observations
+from the operations owner; it does not own the cross-layer verdict. Retest protected
+recovery and keyboard states affected by the optimization, not just the faster path.
+
 Do not modify tests to match observed behavior when it contradicts accepted requirements.
 When no relevant existing test exists, return the missing assertion and owner; a manual
 observation may support only what it actually checks, not pretend automated coverage.

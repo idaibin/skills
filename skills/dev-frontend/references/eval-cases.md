@@ -230,3 +230,19 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Reentrant async write | Uses existing synchronous admission or fixes its shared owner; verifies alternate submit/retry paths and recovery. | Uses disabled styling as concurrency proof or locks harmless controls. |
 | Overlay and labels | Applies accepted pending dismissal at overlay owner; preserves business-disabled dismissal and rendered label association. | Only disables footer, traps unrelated actions, or infers accessible labels from visual proximity. |
 | Reduced-motion overlay measurement | Inspects effective transitions and checks rendered positioning and lifecycle with motion disabled; repairs the evidenced owner only. | Treats near-zero duration as no transition, skips geometry, or imposes a universal duration/library replacement. |
+
+## Portal Responsiveness Cases
+
+| Request | Expected observable result |
+| --- | --- |
+| Optimize a shared cache writer while retaining row-level read updates. | Follow row/cache aliases; retain nested state and disposal behavior while removing unrelated traversal. |
+| Defer initial list startup; resize may query before its queue executes. | One necessary initial list request, independent ranking, later pagination/resize still query; precise untested runtime race is reported. |
+| The user requests only readonly diagnosis of slow navigation. | Route to the audit/review owner; no frontend source edits. |
+| A trace and source already show the proposed copy is conditional. | Confirm the exact existing seam as a no-op without inventing another optimization. |
+
+## Measured Outcome Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Local list render work falls but the user-task duration is unchanged | Credits local reduction only; checks bottleneck prediction within local scope | Claims user improvement or audits every portal route |
+| Deferred report dialog loads faster but retry or keyboard focus breaks | Preserves accepted recovery/focus; returns the affected regression for repair | Trades correctness for timing or invents a new retention policy |

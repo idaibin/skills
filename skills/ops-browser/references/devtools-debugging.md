@@ -66,6 +66,14 @@ switch to controlled Chrome, Computer Use, or system accessibility/coordinate
 automation merely to fill a gap; those are distinct routes with separate state
 and non-interruption requirements.
 
+For performance capture, preflight the requested timeline/metric surface and record
+browser/tool version, capture boundaries, frame/process ownership, sample identity,
+observer overhead and dropped/truncated events when exposed. Return raw observations
+and limitations against the testing owner's plan, not a budget verdict. Screenshots
+cannot replace unavailable timing evidence. Network/CPU changes require verified
+isolation and authority; Dimensions restrictions still apply. Missing measurement
+capability blocks only dependent claims.
+
 ## Capability And Evidence Selection
 
 Preflight only the surfaces needed by the request:

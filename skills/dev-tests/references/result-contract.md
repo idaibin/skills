@@ -34,6 +34,13 @@ Missing input blocks only dependent rows; preserve feasible independent checks.
 - Handoff: bounded input for implementation, operations, `to-task`, fixed-basis review or
   authorized delivery. A target owner name is not proof it ran or permission to run it.
 
+For comparative performance rows include metric/start-end definition, baseline and
+candidate identity, raw sample references/count, aggregation/spread, exclusions and
+comparability limitations. Return separate conclusions for improvement, accepted
+budget, protected journeys and existing/missing regression protection. Keep script
+inspection distinct from execution. Link dependency-sensitive assertions to their
+revalidation trigger rather than claiming they survive upgrades.
+
 ## Row states
 
 | State | Meaning |

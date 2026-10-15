@@ -60,6 +60,13 @@ inventory. Omit it when the existing sections already make the fact-to-acceptanc
 relationship obvious. Keep the fact's state and evidence in the existing decision
 record instead of duplicating them in this table.
 
+For a performance-focused Feature Spec, use Goal and Acceptance criteria to name the
+user task, affected population/context, observable completion point, target and its
+accepted source, and business outcomes that must not regress. Distinguish first
+feedback, usable controls and completed content when they matter. Without a baseline,
+define a measurement outcome rather than inventing a percentage improvement. Tools,
+sampling and implementation choices belong to their execution owners.
+
 ## Foundation Spec
 
 ```markdown

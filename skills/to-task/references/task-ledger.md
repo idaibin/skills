@@ -102,6 +102,15 @@ and statuses, and never mark a dependent task Ready while its material owner dec
 remains unresolved. A selection does not authorize implementation, Git mutation,
 external action, or continuous execution.
 
+When several tasks are Ready, retain the accepted business priority and required
+gates before proposing an execution order. Where those leave a choice, give a brief
+evidence-based reason using user benefit, risk, work unblocked, cost, and confidence
+in the estimates; record unknown estimates rather than inventing scores. Order is
+not a dependency: do not add blocking edges just to express preference. A material
+business trade-off returns to its owning decision authority, blocking only the
+affected selection; independent authorized Ready work remains available. An unchanged
+accepted order is a valid no-op and ordering grants no execution permission.
+
 ## Task Slicing
 
 - Prefer a narrow, independently demonstrable outcome that includes its matching

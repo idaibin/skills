@@ -112,6 +112,15 @@ or `Not verified`.
 
 Do not infer exact CSS values or behavior from pixels alone. Trace exact values to live source or an accepted contract; otherwise label them proposed and require acceptance before implementation.
 
+For asynchronous overlays whose controls load, fail, retry or become busy, specify
+focus continuity across those transitions using the existing interaction contract.
+Include initial focus, applicable Tab/Shift+Tab containment, focus when a control is
+disabled/replaced, and the closing destination. Derive containment from actual
+modal/non-modal semantics; do not impose modal trapping on every overlay. Map Product
+recovery to visible feedback and reachable controls without redefining retry policy.
+Where performance acceptance applies, identify visible states for first feedback,
+usability and content completion; timing thresholds and sampling are not UI defaults.
+
 ## Viewport Acceptance Matrix
 
 When a slice has responsive behavior or an explicitly bounded visual acceptance

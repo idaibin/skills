@@ -257,7 +257,9 @@
         "fixed range review",
         "grounded fixed-basis review",
         "documentation authority review",
-        "文档权威审查"
+        "文档权威审查",
+        "frontend cache subscription review",
+        "frontend performance review"
       ],
       "excludes": [
         "source implementation",
@@ -674,7 +676,9 @@
         "large function refactor",
         "interaction feedback",
         "keyboard focus",
-        "pressed and selected states"
+        "pressed and selected states",
+        "portal responsiveness optimization",
+        "frontend loading performance"
       ],
       "excludes": [
         "read-only frontend audit",
@@ -943,12 +947,14 @@
         "unsafe audit",
         "ownership",
         "Rust runtime configuration audit",
-        "Rust service migration compatibility audit"
+        "Rust service migration compatibility audit",
+        "shared portal performance audit"
       ],
       "excludes": [
         "source implementation",
         "fixed-basis change review",
-        "vulnerability scan"
+        "vulnerability scan",
+        "fixed commit"
       ],
       "related": [
         "dev-frontend",
@@ -1019,7 +1025,9 @@
         "existing browser login state",
         "foreground-safe browser control",
         "local browser workspace",
-        "tab group"
+        "tab group",
+        "cached navigation request-count verification",
+        "performance capture"
       ],
       "excludes": [
         "desktop-client verification",
@@ -1417,7 +1425,10 @@
         "分层测试",
         "early test design",
         "risk-based testing",
-        "testability"
+        "testability",
+        "performance measurement",
+        "failure recovery tests",
+        "keyboard regression tests"
       ],
       "excludes": [
         "product behavior decisions",
