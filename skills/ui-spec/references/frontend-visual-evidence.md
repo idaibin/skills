@@ -208,9 +208,15 @@ resource download:
    asset verified.
 
 Browser work must preserve user state. Record initial tab, viewport, zoom, scroll, and
-target identity; restore user-owned tabs to their prior viewport/scroll where possible,
-close task-only tabs, and leave one explicitly identified delivery tab/artifact in an
-inspectable state when requested.
+target identity. Resolve viewport control permission from the effective host policy
+and user authorization before using setters or lifecycle operations. A task-owned tab
+does not establish isolation from shared browser state. When changes are prohibited
+or their scope is unknown, observe passively and stop operations that could change
+that state. Apply restrictions only to their named surface, operation, and task
+condition; verify authority separately for other surfaces rather than extending a
+scoped restriction globally. Restore and close only within the verified authority; report incomplete
+cleanup without enlarging permission. Leave one explicitly identified delivery
+tab/artifact in an inspectable state when requested.
 
 ## Handoff Artifact
 
@@ -308,8 +314,11 @@ conflicting final receipts cannot jointly establish a final state.
 The canonical final receipt also binds a non-empty operation ID, the raw
 pre-capture browser state (`tab_id`, URL, viewport, and scroll), explicitly
 authorized restoration actions, and a post-operation readback in that same
-structure. The post-operation browser state MUST equal `before_state` exactly;
-the capture target viewport/state is evidence context, not the restoration target.
+structure. The post-operation browser state MUST equal `before_state` exactly. Do not
+change the compared browser state merely to manufacture matching readback. A mismatch
+leaves the dependent restoration claim `Not verified`; any authorized corrective
+action requires its own operation record and fresh readback. The capture
+target viewport/state is evidence context, not the restoration target.
 Its canonical SHA-256 is recomputed after excluding the hash field itself; a
 receipt cannot establish finality by merely repeating a pass number.
 

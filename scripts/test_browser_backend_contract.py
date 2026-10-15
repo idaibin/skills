@@ -71,25 +71,33 @@ class BrowserBackendContractTests(unittest.TestCase):
         self.assertIn("Uses an LLM browser agent only for open-ended read-oriented navigation", evals)
         self.assertIn("Uses agentic navigation for a fixed write flow", evals)
 
-    def test_every_browser_operation_resolves_and_reads_back_viewport(self) -> None:
+    def test_viewport_requirement_separates_resolution_from_shared_state_control(self) -> None:
         skill = self.read("skills/ops-browser/SKILL.md")
         policy = self.read("skills/ops-browser/references/viewport-policy.md")
         evals = self.read("skills/ops-browser/references/eval-cases.md")
+        usage = self.read("skills/ops-browser/references/usage.md")
+        lifecycle = self.read("skills/ops-browser/references/tab-lifecycle.md")
         self.assertIn(
             "Any browser operation | [platform operations](references/platform-operations.md), [tab lifecycle](references/tab-lifecycle.md), and [viewport policy](references/viewport-policy.md)",
             skill,
         )
         for term in (
             "an effective host or personal default",
+            "for an independently isolated browser only, the package fallback:",
             "`1920 x 1080` CSS pixels for desktop Web",
             "`iPhone 15` portrait device profile for mobile Web",
+            "explicit user authorization; a requested viewport or task-owned tab is insufficient.",
             "`window.innerWidth` and `window.innerHeight`",
             "matching width and height alone does not prove",
             "device profile is active",
         ):
             with self.subTest(term=term):
                 self.assertIn(term, policy)
-        self.assertIn("substitutes another iPhone variant", evals)
+        self.assertIn("Resolve viewport control authority from host policy and user authorization", skill)
+        self.assertIn("Applies effective host policy; unknown or prohibited shared-state changes", evals)
+        self.assertIn("changes shared user browser state", evals)
+        self.assertIn("only within verified host policy and user authority", lifecycle)
+        self.assertIn("Cleanup does not enlarge viewport control authority", usage)
 
     def test_agentic_handoff_cannot_carry_write_authority(self) -> None:
         protocol = self.read("protocols/browser-operation-v1.md")

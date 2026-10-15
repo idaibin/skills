@@ -71,7 +71,7 @@ browser/tool version, capture boundaries, frame/process ownership, sample identi
 observer overhead and dropped/truncated events when exposed. Return raw observations
 and limitations against the testing owner's plan, not a budget verdict. Screenshots
 cannot replace unavailable timing evidence. Network/CPU changes require verified
-isolation and authority; Dimensions restrictions still apply. Missing measurement
+isolation and authority; effective host viewport policy still applies. Missing measurement
 capability blocks only dependent claims.
 
 ## Capability And Evidence Selection
@@ -106,7 +106,9 @@ When this task starts a local runtime, create a small task ledger before launch:
 - task-specific browser profile and evidence/artifact paths.
 
 The host-provided Codex in-app Browser is catalog-classified non-interrupting; do
-not present that classification as an official public API guarantee.
+not present that classification as an official public API guarantee. Use it only
+when the planned tool lifecycle complies with effective host policy and user
+authority. Unknown or prohibited shared-state effects block the affected operation.
 For controlled Chrome, Computer Use, system accessibility/coordinate automation,
 or another visible/user-owned route, do not claim background safety from
 headless terminology alone: require direct `background_safe` evidence or use

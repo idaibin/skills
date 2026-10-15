@@ -27,6 +27,7 @@ stable identity; keep dependent work serial.
 Reconcile the task-local tab ledger before finishing. Resume ownership only from the same
 revalidated browser surface/session, tab identity, and target fingerprint; otherwise mark
 ownership `Not verified`. Retain a task-created tab only when the user explicitly
-requested it; otherwise close identity-matched task-created tabs and restore authorized
-state. Never close a pre-existing user tab without authority. After interruption, do not
-close from a stale handle, URL match, or unverifiable ownership.
+requested it; otherwise close identity-matched task-created tabs and restore state
+only within verified host policy and user authority. If lifecycle effects on shared
+state are unknown or prohibited, leave affected cleanup incomplete and report it. Never close a pre-existing user tab without authority. After
+interruption, do not close from a stale handle, URL match, or unverifiable ownership.

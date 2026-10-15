@@ -22,7 +22,7 @@ cannot establish the missing browser target.
 
 | Request condition | Read | Result |
 | --- | --- | --- |
-| Any browser operation | [platform operations](references/platform-operations.md), [tab lifecycle](references/tab-lifecycle.md), and [viewport policy](references/viewport-policy.md) | Bounded target operation at a verified viewport |
+| Any browser operation | [platform operations](references/platform-operations.md), [tab lifecycle](references/tab-lifecycle.md), and [viewport policy](references/viewport-policy.md) | Bounded target operation with an observed viewport and qualified claims |
 | External-AI turn, attachment/submission, or structured operation handoff | Applicable sections of [browser operation protocol](references/browser-operation-protocol.md) | Correlated side-effect and response evidence |
 | Local workspace/browser ownership applies | [local workspaces](references/local-browser-workspaces.md) | Verified target selection |
 | Runtime visual comparison applies | [visual evidence](references/frontend-visual-evidence.md) | Same-state capture/comparison |
@@ -34,6 +34,7 @@ cannot establish the missing browser target.
 - Inventory and identify the exact target before action; absent target with no creation policy is not verified.
 - Separate read observation from side effects; never infer identity, authorization, or application acceptance from browser reachability.
 - Preserve target/profile and avoid focus theft; report actual postcondition and unverified gaps.
+- Resolve viewport control authority from host policy and user authorization. Task-owned tabs do not prove isolation; when shared-state changes are prohibited or their scope is unknown, use passive observation and stop affected operations.
 
 ## Output Map
 
