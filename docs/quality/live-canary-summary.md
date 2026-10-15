@@ -3,7 +3,7 @@
 ## Current package byte inventory
 
 - Digest scope: all 19 packages declared by `skills-index.json`.
-- Package digest: `sha256:f85e94cd00a09cf82e96a51d3711b79e1a5fa518591c53c78f6345326451e4a3`
+- Package digest: `sha256:237d73e516fb51b4e57ff8be2406eceaa9255e1d03868e06f9aac0c0515e4bb0`
 - This digest identifies current package bytes only. The live decisions below retain
   their original basis and do not establish behavior for this inventory.
 

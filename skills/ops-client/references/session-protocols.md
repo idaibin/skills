@@ -3,6 +3,11 @@
 Use for an installed client's own CLI, stdio, socket or HTTP session API. The app and
 transport are runtime inputs; no specific product, model or host path is required.
 Prefer a verified semantic route for background tasks before probing GUI input.
+For an installed ZCode CLI, read the [bounded CLI example](zcode-cli-example.md) to
+qualify its actual command, configuration source, prompt and exact-session resume.
+Use the [app-server example](app-server-example.md) only when that separate protocol
+is the selected route. Neither example selects an external AI provider or approves
+a new review request on behalf of its owner.
 
 ## Entry and reuse
 

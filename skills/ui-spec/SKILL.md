@@ -50,7 +50,7 @@ after selecting a branch, read only its referenced modules.
 
 ## Output Map
 
-Return `ui.contract.specify@1.1.0` with lifecycle/profile, source identity and rights,
+Return `ui.contract.specify@1.2.0` with lifecycle/profile, source identity and rights,
 authority disposition, slice IDs, applicable layout/state/interaction/accessibility and
 asset contracts, delta/evidence references, comparison basis, per-slice readiness, and
 named gaps. Candidate output additionally returns both ignored paths/hashes and handoff

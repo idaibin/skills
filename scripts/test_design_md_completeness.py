@@ -231,6 +231,20 @@ class DesignMdCompletenessTests(unittest.TestCase):
         )
         self.assertIn("human approver, proposer, and implementer identities must be distinct", self.errors(result))
 
+    def test_missing_parser_binding_never_installs(self) -> None:
+        with mock.patch.dict("os.environ", {}, clear=True), mock.patch.object(CHECKER.subprocess, "run") as run:
+            with self.assertRaisesRegex(RuntimeError, "DESIGN_MD_PACKAGE_ROOT"):
+                CHECKER.run_official_lint(b"# Design")
+            run.assert_not_called()
+
+    def test_wrong_parser_version_never_installs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            Path(directory, "package.json").write_text(json.dumps({"name": "@google/design.md", "version": "0.0.0"}))
+            with mock.patch.dict("os.environ", {"DESIGN_MD_PACKAGE_ROOT": directory}), mock.patch.object(CHECKER.subprocess, "run") as run:
+                with self.assertRaisesRegex(RuntimeError, "version mismatch"):
+                    CHECKER.run_official_lint(b"# Design")
+                run.assert_not_called()
+
     def test_official_flow_mapping_is_not_rejected_by_policy_parser(self) -> None:
         path = self.mutate(
             "complete.md",

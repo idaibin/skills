@@ -39,7 +39,7 @@ and destructive actions still require their own applicable authority.
 
 ## Output Map
 
-Return app/process/window/build identity, authorized actions, direct evidence, cleanup, and `Not verified` claims.
+Return client executable/build and applicable process/window or protocol/session identity, authorized actions, direct evidence, cleanup, and `Not verified` claims.
 For background work, separate capability discovery, actual state change, foreground/input continuity, capture and restoration; report each requested operation at the level directly observed.
 For simulator work, include device/image/ABI, installed package identity, guest state,
 host lock/sleep evidence, capture/recording validation and retention ownership.
@@ -48,6 +48,6 @@ host lock/sleep evidence, capture/recording validation and retention ownership.
 
 - Read [usage](references/usage.md) for client modes, targeting, safety, evidence, and stop conditions.
 - Read [background operations](references/background-operations.md) when the user requires background execution or asks to qualify a focus-preserving route.
-- Read [session protocols](references/session-protocols.md) for app-owned CLI/RPC task submission, progress queries and reusable qualification evidence; load its [bundled app-server example](references/app-server-example.md) only when the installed client exposes that route.
+- Read [session protocols](references/session-protocols.md) for app-owned CLI/RPC task submission, progress queries and reusable qualification evidence. For ZCode, load the [bundled CLI example](references/zcode-cli-example.md) or [app-server example](references/app-server-example.md) only for the installed route being used.
 - Read [simulator operations](references/simulator-operations.md) for mobile apps running inside Android Emulator or another simulator, including headless and host-lock checks.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

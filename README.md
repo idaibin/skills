@@ -120,3 +120,9 @@ Detailed validation rules live in [skills/AGENTS.md](skills/AGENTS.md#validation
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE).
+
+For dependency-free validation with an existing pinned Python environment, set
+`PYTHON_BIN` to its executable and `SKILLS_USE_EXISTING_PYTHON=1`; the check verifies
+the exact development dependency versions. Set `DESIGN_MD_PACKAGE_ROOT` to an existing
+`@google/design.md@0.4.0` package for the DESIGN contract check. These bindings reuse
+installed tools and do not install dependencies.

@@ -20,11 +20,12 @@
 
 ## CLI and Version Policy
 
-- Use Node.js + npm CLI package `@google/design.md@0.4.0` only.
-- Use one cross-platform command form for all platforms:
-  - `npx -p @google/design.md@0.4.0 designmd lint --format json <file>`
-  - `npx -p @google/design.md@0.4.0 designmd diff <before> <after>`
-  - `npx -p @google/design.md@0.4.0 designmd export --format <format> <file>`
+- Bind `DESIGN_MD_PACKAGE_ROOT` to an existing `@google/design.md@0.4.0` package
+  and verify its package name and version before invocation.
+- Resolve the path placeholder from that runtime binding and invoke its Node entry:
+  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js lint --format json <file>`
+  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js diff <before> <after>`
+  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js export --format <format> <file>`
 - Do not use the unpinned package name or different versions.
 - Review and update the pinned spec snapshot and CLI version together; do not advance one silently.
 
@@ -98,3 +99,8 @@ approval evidence bound to different bytes or basis is stale and cannot clear th
 - Treat a blocked required CLI step as `Not verified`; do not mark the affected slice `Ready`.
 - The checker does not redefine Google token types. It only enforces this Skill's
   adoption completeness, section semantics, source binding, and approval binding.
+
+The completeness validator consumes an existing `@google/design.md@0.4.0` package
+through `DESIGN_MD_PACKAGE_ROOT`. It checks the package identity/version and does not
+install dependencies. Without that binding, return the missing-parser gap before
+validation; source, parser output and human approval remain separate evidence.

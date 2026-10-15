@@ -665,6 +665,22 @@
       "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
       "expected_owner": "ops-client",
       "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-zcode-cli-session",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Use the installed ZCode client's CLI to read an exact existing task session in the background; do not touch the desktop window.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-external-review-owner",
+      "skill": "ops-client",
+      "class": "boundary",
+      "prompt": "Choose an external AI provider and request an independent review of a source patch.",
+      "expected_owner": "ask-ai",
+      "expected_outcome": "reroute"
     }
   ]
 }

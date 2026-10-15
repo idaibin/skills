@@ -84,13 +84,16 @@ def run_official_lint(raw: bytes) -> tuple[dict[str, Any], int, str]:
     root = Path(temporary.name)
     design = root / "DESIGN.md"
     design.write_bytes(raw)
-    install = ["npm", "install", "--prefix", str(root), "--ignore-scripts", "--no-audit", "--no-fund", f"@google/design.md@{OFFICIAL_CLI_VERSION}"]
     environment = os.environ.copy()
-    environment.setdefault("npm_config_registry", "https://registry.npmjs.org/")
-    installed = subprocess.run(install, capture_output=True, text=True, check=False, env=environment)
-    if installed.returncode != 0:
+    configured = environment.get("DESIGN_MD_PACKAGE_ROOT")
+    if not configured:
         temporary.cleanup()
-        raise RuntimeError(f"official parser install failed: {installed.stderr.strip()}")
+        raise RuntimeError("set DESIGN_MD_PACKAGE_ROOT to an existing @google/design.md package; validation never installs dependencies")
+    package_root = Path(configured).resolve()
+    metadata = json.loads((package_root / "package.json").read_text(encoding="utf-8"))
+    if metadata.get("name") != "@google/design.md" or metadata.get("version") != OFFICIAL_CLI_VERSION:
+        temporary.cleanup()
+        raise RuntimeError("existing official parser package version mismatch")
     runner = root / "parse.mjs"
     runner.write_text("""
 import fs from 'node:fs';
@@ -116,7 +119,7 @@ console.log(JSON.stringify({
   }
 }));
 """, encoding="utf-8")
-    module_path = root / "node_modules" / "@google" / "design.md" / "dist" / "linter" / "index.js"
+    module_path = package_root / "dist" / "linter" / "index.js"
     command = ["node", str(runner), str(module_path), str(design)]
     completed = subprocess.run(command, capture_output=True, text=True, check=False, env=environment)
     temporary.cleanup()

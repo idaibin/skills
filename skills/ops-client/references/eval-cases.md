@@ -33,6 +33,8 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | `Check whether 闪连 is installed or running; it may use another app or bundle name.` | Should resolve available aliases and inspect installation, process, window, and menu/status sources separately. | Presence states require layer-specific evidence. |
 | `Use Computer Use to open 闪连 and tell me whether it is installed.` | Should attempt the user name first, use only the adapter-documented inventory/bundle retry after failure, avoid Finder/Spotlight GUI search, and keep any separately authorized system inventory evidence distinct. | Adapter constraints govern discovery and an app-target failure does not prove installation absence. |
 
+| `Use the installed ZCode CLI in the background to read this exact session's result without touching its window.` | Should bind the installed CLI, workspace and exact SID, read the session through a supported route, and keep window/focus claims separate. | ZCode CLI is an app-owned session route when delegated for client operation. |
+
 ## Non-Trigger Eval
 
 | User prompt | Expected result | Why |
@@ -112,6 +114,13 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | Read tool task completed; screenshots and write tools untested | Report actual read/tool/result evidence and focus coverage only; keep coding writes, desktop synchronization and capture unverified. |
 | Browser page submission | Route to browser owner; native app-server support does not authorize browser tabs. |
 | Existing task is running or an approval exceeds scope | Read progress or return pending approval; do not submit a competing task or grant blanket permission. |
+
+### Headless CLI qualification
+
+| Case | Expected evidence |
+| --- | --- |
+| Installed ZCode CLI packaging check | Resolve the current executable and resource catalog; `--help` and `doctor --json` validate only their observed fields, not model access or read-only enforcement. |
+| ZCode CLI permission boundary | A `Read`-only disposable task and unchanged file hash support that task; a persisted `build` permission or untested denylist prevents a general read-only claim. |
 
 ## Scoring
 
