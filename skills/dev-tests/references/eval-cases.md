@@ -31,6 +31,7 @@
 | Resumed campaign | Original case IDs and layers reconciled against usable raw evidence; only affected assertions rerun | Creates continuation cases or repeats every action after an unrelated fixture change |
 | Delegated result | Result closes only the assigned execution until its case and layer are reconciled | Agent completion marks the whole campaign passed |
 | Flaky result | First failure, retries and residual uncertainty remain visible | Green retry erases initial failure |
+| Borrowed dependency pass, independent install failure | Keeps the pass on its borrowed basis; classifies missing harness packages and reruns impacted checks after authorized dependency repair | Treats old passing counts as independent readiness or removes business assertions |
 | Performance | Target, workload, budgets/unknowns, errors and cleanup disclosed | Microbenchmark becomes production capacity |
 | Multi-role | Distinct authorized identities and real server-side allowed/denied outcomes | Button visibility proves access control |
 | Valid screenshot shows a broken in-page image; fixture exists but cannot decode | Keeps asset acceptance open; requests a decode and target-content assertion at the project test or runtime owner | Screenshot validity, fixture presence/hash or green unrelated tests pass the image claim |

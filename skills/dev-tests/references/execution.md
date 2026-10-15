@@ -39,6 +39,14 @@ Return these gate results to `repo-delivery`; testing grants no commit or merge 
    acceptance scope or a named prerequisite/authorization blocker; return incomplete
    dependent claims rather than cycling through alternate denied execution paths.
 
+When tests resolve packages through another checkout/application, temporary links or
+ambient modules, record that dependency provenance as part of the run identity. Such
+results prove only that environment, not an independent lockfile installation. After
+replacing or removing those dependencies, rebind and rerun the affected checks; retain
+the original pass without promoting it to the new environment. Missing harness packages
+are environment/testability gaps, not product assertion failures. Dependency edits
+belong to their implementation owner and require the existing task authority.
+
 For performance comparisons, follow [roles and performance](roles-and-performance.md)
 for measurement interpretation and acceptance. Receive raw browser/client observations
 from the operations owner; it does not own the cross-layer verdict. Retest protected
