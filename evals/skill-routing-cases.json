@@ -657,6 +657,14 @@
       "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
       "expected_owner": "ops-client",
       "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-session-protocol",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
     }
   ]
 }

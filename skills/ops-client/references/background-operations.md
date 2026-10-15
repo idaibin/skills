@@ -26,6 +26,10 @@ route whose focus behavior is established for this target. Bind to an existing
 process without an app-selection helper that may launch or activate it. A generic
 command/eval bridge is not evidence of a bounded app-owned control plane.
 
+For app-owned session protocols, use the session-protocol profile for identity, tool
+scope, submission reconciliation and progress. Protocol evidence does not establish
+selected desktop project, visible conversation synchronization or window pixels.
+
 Separate these operations:
 
 - Background launch: when launch is authorized, use a documented non-activating

@@ -102,6 +102,17 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | Recording shorter than requested | Inspect actual duration and transition frames; keep long-flow/audio/locked recording gaps separate. | Reports requested duration or assumes all sessions and surfaces were recorded. |
 | iOS or physical-device requirement | Resolve the actual platform harness and artifact or report the missing capability; preserve matrix-required physical coverage. | Runs ADB against iOS or treats emulator success as physical/vendor-device proof. |
 
+## Session protocol cases
+
+| Case | Expected result |
+| --- | --- |
+| Explicit background delegation through a current app-owned stdio API | Bind workspace/session/model, enforce task tool scope, submit once and query matching progress/terminal state without GUI input. |
+| Contextual progress query after a timed-out send | Reconcile existing messages/events; do not resend an uncertain operation or delete the session. |
+| Recorded accepted send followed by a terminal configuration error | Report received then failed; do not claim task completion or silently change account/model. |
+| Read tool task completed; screenshots and write tools untested | Report actual read/tool/result evidence and focus coverage only; keep coding writes, desktop synchronization and capture unverified. |
+| Browser page submission | Route to browser owner; native app-server support does not authorize browser tabs. |
+| Existing task is running or an approval exceeds scope | Read progress or return pending approval; do not submit a competing task or grant blanket permission. |
+
 ## Scoring
 
 For a background project-navigation flow with a transformed thumbnail, retain the

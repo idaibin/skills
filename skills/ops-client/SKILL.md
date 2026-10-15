@@ -1,6 +1,6 @@
 ---
 name: ops-client
-description: "Operate desktop clients and mobile apps in emulators or simulators; capture runtime evidence within task authority."
+description: "Operate desktop clients through semantic protocols or UI controls, including background task submission and progress queries, and mobile apps in emulators or simulators."
 ---
 
 # Client Operations
@@ -8,6 +8,8 @@ description: "Operate desktop clients and mobile apps in emulators or simulators
 ## Entry Gate
 
 Operate a named desktop client only after confirming target process/window/build, adapter capability, screen-session state, foreground constraints, allowed side effects, and evidence boundary. Installation, process, window, menu, and runtime behavior are separate claims.
+For an app-owned session protocol, bind the executable/protocol/workspace/session
+instead of requiring a native window; keep backend state and desktop presentation separate.
 For an emulator-hosted app, bind the virtual device, guest OS and installed artifact
 instead of requiring a host window; keep guest controls and host desktop state separate.
 
@@ -22,6 +24,7 @@ and destructive actions still require their own applicable authority.
 | Launch/inspect/interact/capture a client | [usage](references/usage.md) | Verified client-layer evidence or safe stop |
 | Background or focus-preserving operation, including capability qualification | [background operations](references/background-operations.md), plus the applicable platform in usage | Per-operation capability, result, non-interference and cleanup evidence |
 | Mobile app in Android Emulator or another simulator | [simulator operations](references/simulator-operations.md) | Device-bound interaction, capture, recording and qualified host-lock evidence |
+| App-owned protocol, background task delegation or progress query | [session protocols](references/session-protocols.md), plus background operations when focus must be preserved | Bound session, scoped tools, reconciled submission and progress/result evidence |
 | Need examples/edge cases | [usage](references/usage.md) | Correct mode/boundary |
 
 ## Invariants
@@ -45,5 +48,6 @@ host lock/sleep evidence, capture/recording validation and retention ownership.
 
 - Read [usage](references/usage.md) for client modes, targeting, safety, evidence, and stop conditions.
 - Read [background operations](references/background-operations.md) when the user requires background execution or asks to qualify a focus-preserving route.
+- Read [session protocols](references/session-protocols.md) for app-owned CLI/RPC task submission, progress queries and reusable qualification evidence; load its [bundled app-server example](references/app-server-example.md) only when the installed client exposes that route.
 - Read [simulator operations](references/simulator-operations.md) for mobile apps running inside Android Emulator or another simulator, including headless and host-lock checks.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

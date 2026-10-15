@@ -1070,7 +1070,8 @@
       "intents": [
         "operate or verify a real desktop client",
         "capture process and window evidence for Tauri, Electron, or native applications",
-        "operate mobile apps in task-owned Android emulators or platform simulators"
+        "operate mobile apps in task-owned Android emulators or platform simulators",
+        "Submit and inspect scoped background tasks through app-owned session protocols"
       ],
       "keywords": [
         "desktop client",
@@ -1087,7 +1088,10 @@
         "headless",
         "ADB",
         "simulator",
-        "device serial"
+        "device serial",
+        "session protocol",
+        "background delegation",
+        "progress query"
       ],
       "excludes": [
         "browser-page verification",
