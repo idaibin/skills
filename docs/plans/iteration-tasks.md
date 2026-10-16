@@ -200,3 +200,15 @@ Owner：当前 Codex 协调者；claimed_at：2026-10-13（Asia/Shanghai）；ba
 用户继续本轮并要求完成后由 Astra high 完整审查 Skills 与 Forgeway，随后明确把新集成的 ZCode CLI 路线加入本轮。门户仅修改 HELP-OPTIONS-FAILURE：PRD/UI 同步已接受的缓存停用边界，页面补选项失败提示和迟到请求序列守卫、onDeactivated 失效，既有 cachedPageQuery 测试追加两项真实 setup/KeepAlive 场景。修前两项失败，修后与初始化套件合计34项通过，源码与独立文档 scoped diff 检查通过；现有其他dirty保留。真实代理浏览器验收仍Not verified，不把业务源码修复当to-task运行接受。证据在门户 .codex/artifacts/help-options-fix-20261015/。
 
 CLI 0.16.9 新建独占临时工作区只读测试，两回合直接rc0、同SID/新turn、原文件hash不变；精确SID本地记录均为completed Read，模型记录glm-5.3 completed。请求plan而有效permission仍build，严格防写与连续焦点仍Not verified。维护源和安装副本的主入口/session-protocols/zcode-cli-example三文件hash一致，包validator19项、当前candidate routing89/89通过。Forgeway仅补通用headless CLI argv/cwd、直接退出、回合关联和有效权限证据规则，未添加品牌路由。原始证据见[zcode CLI回执](../../.codex/reviews/zcode-cli-current-20261015-receipt.json)和[集成核对](../../.codex/reviews/zcode-cli-current-20261015-integration.json)。本轮不提交、不安装，不把CLI有界读取或模式标签当沙箱。S-02/S-05及其他计数保持原状。
+
+## 提交收口与两仓当前状态（2026-10-16）
+
+维护源为 `feat/development`、HEAD `028f7afe552cd55c0984e3a173b646058682b461`。相对本地已有 `origin/feat/development` 追踪引用领先23个提交；未fetch，不据此声称远端实时状态。当前本任务账有未提交修改，暂存区为空。S-01–S-04保持各自有界Done，S-05完整收益保持Blocked，Ready 0、Blocked 1、Doing 0、Done 4不变。
+
+已接受源码按七个主题提交 `98b3575`…`dfef4d8`，见[七主题提交报告](../../.codex/reviews/skills-commit-20261015-report.md)；后续四个归并提交为 `b8555de`、`6d32e80`、`c38ca67`、`028f7af`。ask-ai源码接受依据是[用户明确接受记录](../../.codex/reviews/skills-repair-20261015-acceptance.json)，不是把门户四例或旧版本反馈外推为新版独立盲评；原失败及未验证边界保留。
+
+[Astra v2冻结结果](../../.codex/reviews/astra-six-fixes-20261015-rereview-final-content-check.json)中的452 tests属于较早基线；后续[canonical日志](../../.codex/reviews/routing-origin-20261015-canonical.log)为453 tests、19包、89/89路由，通过范围由上述接受记录绑定。四个归并提交仅按本轮3包结构/链接、1项库存一致性及改动空白检查接受，不宣称当前HEAD重新全量通过；历史Astra四表面1376路径零漂移也不证明当前安装或运行状态。
+
+已按HEAD `028f7af`完成本机最小同步：30个文件的已审段落全部应用，当前目标指纹与[同步回执](../../.codex/reviews/skills-installed-20261016-sync-receipt.json)一致；4个语义等价项、3处截图冻结扩展、重建录屏说明和符号链接保留。范围与取舍见[最小同步清单](../../.codex/reviews/skills-installed-20261015-report.md)。S-03原17包中16包有差异是历史库存，不沿用作当前统计；定向同步不证明全目录同字节或宿主已自然激活。
+
+当前未验证项仍为实际Agent行为、真实运行、Mock隔离、自然自动发现及提效；S-05不自动扩样或重跑已闭项。Forgeway HEAD `7e331a0`的三项CLI遗留及未提交Mock切片分别保持其边界，见[Forgeway当前盘点](../../../forgeway/product/iteration-tasks.md#提交与-browser-mock-切片当前状态2026-10-16)。后续只在对应缺口取得授权和所需目标证据时恢复；本次仅协调两处账本段，不改变任务定义、依赖、计数、历史失败或既有接受，不提交、推送或接续Mock。
