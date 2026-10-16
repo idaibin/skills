@@ -1311,85 +1311,6 @@
       ]
     },
     {
-      "name": "tests",
-      "category": "runtime-operations",
-      "owner": "tests",
-      "mutation_class": "browser-control",
-      "required_capabilities": [
-        "filesystem-read",
-        "git-read",
-        "artifact-write",
-        "command-runner",
-        "browser-control",
-        "visual-evidence"
-      ],
-      "allowed_effects": [
-        "read-repository",
-        "read-git-state",
-        "read-source",
-        "write-artifact",
-        "control-browser-state",
-        "emit-findings",
-        "emit-handoff"
-      ],
-      "forbidden_effects": [
-        "write-source",
-        "write-git-state",
-        "control-client-state",
-        "invoke-external-provider"
-      ],
-      "stop_states": [
-        "missing-authorization",
-        "scope-ambiguous",
-        "capability-unavailable",
-        "evidence-incomplete",
-        "runtime-unverified",
-        "basis-drift"
-      ],
-      "intents": [
-        "plan and execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic",
-        "run system testing and regression with correlated business-state evidence",
-        "report test coverage, defects, affected retests and cleanup"
-      ],
-      "keywords": [
-        "end-to-end testing",
-        "functional testing",
-        "system testing",
-        "acceptance testing",
-        "regression testing",
-        "test cases",
-        "test coverage",
-        "business logic",
-        "UI walkthrough",
-        "端到端测试",
-        "功能测试",
-        "系统测试",
-        "接口测试",
-        "页面走查",
-        "点击测试",
-        "逻辑测试",
-        "测试流程"
-      ],
-      "excludes": [
-        "source-only change review",
-        "source implementation",
-        "single screenshot capture",
-        "API contract authoring",
-        "Git mutation"
-      ],
-      "related": [
-        "ops-browser",
-        "repo-review",
-        "repo-audit",
-        "dev-frontend",
-        "api-spec",
-        "to-task"
-      ],
-      "capability_ids": [
-        "test.acceptance.execute"
-      ]
-    },
-    {
       "name": "work-retro",
       "category": "personal-retrospectives",
       "owner": "work-retro",
@@ -1455,12 +1376,14 @@
       "name": "dev-tests",
       "category": "repository-engineering",
       "owner": "dev-tests",
-      "mutation_class": "artifact-write",
+      "mutation_class": "browser-control",
       "required_capabilities": [
         "filesystem-read",
         "git-read",
         "artifact-write",
-        "command-runner"
+        "command-runner",
+        "browser-control",
+        "visual-evidence"
       ],
       "allowed_effects": [
         "read-repository",
@@ -1468,12 +1391,12 @@
         "read-git-state",
         "write-artifact",
         "emit-findings",
-        "emit-handoff"
+        "emit-handoff",
+        "control-browser-state"
       ],
       "forbidden_effects": [
         "write-source",
         "write-git-state",
-        "control-browser-state",
         "control-client-state",
         "invoke-external-provider"
       ],
@@ -1483,13 +1406,17 @@
         "capability-unavailable",
         "evidence-incomplete",
         "missing-authorization",
-        "unsafe-or-destructive"
+        "unsafe-or-destructive",
+        "runtime-unverified"
       ],
       "intents": [
         "design early risk-based tests and testability checks with provisional assumptions",
         "verify layered test coverage against accepted product and UI contracts",
         "run existing scoped tests and reconcile backend API frontend and end-to-end evidence",
-        "select impacted regression tests after contract or source changes"
+        "select impacted regression tests after contract or source changes",
+        "plan and execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic",
+        "run system testing and regression with correlated business-state evidence",
+        "report test coverage, defects, affected retests and cleanup"
       ],
       "keywords": [
         "layered test coverage",
@@ -1509,7 +1436,23 @@
         "testability",
         "performance measurement",
         "failure recovery tests",
-        "keyboard regression tests"
+        "keyboard regression tests",
+        "end-to-end testing",
+        "functional testing",
+        "system testing",
+        "acceptance testing",
+        "regression testing",
+        "test cases",
+        "test coverage",
+        "business logic",
+        "UI walkthrough",
+        "功能测试",
+        "系统测试",
+        "接口测试",
+        "页面走查",
+        "点击测试",
+        "逻辑测试",
+        "测试流程"
       ],
       "excludes": [
         "product behavior decisions",
@@ -1518,7 +1461,12 @@
         "client mechanics",
         "fixed-basis review",
         "Git delivery",
-        "task ledger maintenance"
+        "task ledger maintenance",
+        "source-only change review",
+        "source implementation",
+        "single screenshot capture",
+        "API contract authoring",
+        "Git mutation"
       ],
       "related": [
         "product-spec",
@@ -1532,10 +1480,12 @@
         "ops-browser",
         "ops-client",
         "repo-review",
-        "repo-delivery"
+        "repo-delivery",
+        "repo-audit"
       ],
       "capability_ids": [
-        "testing.coverage.verify"
+        "testing.coverage.verify",
+        "test.acceptance.execute"
       ]
     }
   ],
@@ -3191,7 +3141,7 @@
     {
       "capability_id": "test.acceptance.execute",
       "capability_version": "1.0.0",
-      "package": "tests",
+      "package": "dev-tests",
       "description": "Execute scoped functional acceptance and correlate API, page, UI, click and business-state evidence.",
       "accepts": [
         {

@@ -26,7 +26,6 @@ dev-typescript
 dev-java
 dev-rust
 repo-audit
-tests
 ops-browser
 ops-client
 ask-ai
@@ -59,16 +58,10 @@ The publishable source directories are:
 - `skills/dev-java`
 - `skills/dev-rust`
 - `skills/repo-audit`
-- `skills/tests`
 - `skills/ops-browser`
 - `skills/ops-client`
 - `skills/ask-ai`
 - `skills/human-writing`
-
-The `dev-tests` package on this candidate branch is not yet stable; listing it does not
-mean cross-project acceptance is complete or authorize installation.
-Existing installed copies of the former package are not aliases for `dev-tests`;
-they require a separately authorized migration before using the new name.
 
 ## Install
 

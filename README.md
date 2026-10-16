@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 20 available Skills:
+Browse the 19 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -48,7 +48,7 @@ and other supported agents.
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `api-spec` | Design or revise native API contracts and validate OpenAPI against accepted business behavior. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
-| `dev-tests` | Candidate: trace accepted contracts through layered tests and evidence; cross-project validation remains open. |
+| `dev-tests` | Plan risk-based coverage and execute functional acceptance across APIs, pages, UI and business journeys. |
 | `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
 | `dev-typescript` | Implement non-browser TypeScript and JavaScript services, CLIs, workers, MCP servers, libraries, and scripts across Node.js, Bun, and Deno. |
@@ -57,7 +57,6 @@ and other supported agents.
 | `repo-audit` | Audit an existing frontend, Java, or Rust surface read-only through language profiles. |
 | `repo-review` | Review a Worktree, commit, range, or verified package on a fixed evidence basis. |
 | `repo-delivery` | Commit, integrate, push, and clean up reviewed changes with explicit Git authorization. |
-| `tests` | Execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic with coverage and defect evidence. |
 | `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
 | `ops-client` | Operate desktop clients and emulator-hosted mobile apps; verify runtime state and captures. |
 | `ask-ai` | Prepare or run explicitly authorized external-AI review, research, relay, and image workflows. |
@@ -80,7 +79,7 @@ early risk/test design <-> product/UI and matching dev-* owner
 layered acceptance  -> dev-tests -> repo-review
 change review       -> repo-review
 Git delivery        -> repo-delivery
-functional acceptance -> tests -> ops-browser / existing API runner
+functional acceptance -> dev-tests -> ops-browser / existing API runner
 browser/client proof -> ops-browser / ops-client
 external AI         -> ask-ai
 ```

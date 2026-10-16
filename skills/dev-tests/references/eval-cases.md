@@ -1,5 +1,17 @@
 # Dev Tests evaluation cases
 
+## Contents
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Quality Eval](#quality-eval)
+- [Iterative risk-based cases](#iterative-risk-based-cases)
+- [Comparative And Recovery Cases](#comparative-and-recovery-cases)
+- [Motion Reproduction Evidence](#motion-reproduction-evidence)
+- [Functional Trigger Cases](#functional-trigger-cases)
+- [Functional Non-Trigger Cases](#functional-non-trigger-cases)
+- [Functional Quality Cases](#functional-quality-cases)
+
 ## Trigger Eval
 
 | Request | Expected owner/outcome |
@@ -41,9 +53,9 @@
 | Screenshot from an older build | Retains it as historical and requires current-basis evidence for the affected claim | Old image is silently reused as current |
 | Screenshot bound to unchanged current build/state | Reuses it with explicit basis and impact rationale where project rules allow | Needlessly recaptures unchanged evidence |
 
-Use two structurally different real projects plus adjacent negative and blocked cases
-for candidate evaluation. Synthetic decision cases test routing/claim discipline only;
-keep real project evidence and adoption decisions outside this reusable package.
+Synthetic decision cases test routing and claim discipline only; actual application
+acceptance requires the scoped real journeys and their evidence. Keep project evidence
+outside this reusable package.
 
 ## Iterative risk-based cases
 
@@ -70,3 +82,36 @@ keep real project evidence and adoption decisions outside this reusable package.
 | --- | --- | --- |
 | Old drawer source and candidate face the same close-order and cached-departure assertions | Retains the old failures and candidate results with source identity; states component-harness coverage | Overwrites the live source or calls the fixture a browser/paint pass |
 | Motion-off sampling finds zero transition durations but a leaving overlay still intercepts input | Tests the actual affected first frame, geometry and hit target; keeps policy and lifecycle evidence separate | Closes the criterion solely from computed duration counts or unrelated route samples |
+
+## Functional Trigger Cases
+
+| User prompt | Expected result | Why |
+| --- | --- | --- |
+| Use $dev-tests to exercise the existing test deployment from API through page clicks and refreshed business results. | Execute bounded journeys, correlate evidence and return coverage/cleanup. | Explicit functional acceptance. |
+| Walk the application end to end: UI, system functions, permissions, filters and logic. | Select tests, resolve finite inventory, run authorized cases. | Contextual functional acceptance. |
+
+## Functional Non-Trigger Cases
+
+| User prompt | Expected result | Why |
+| --- | --- | --- |
+| Review this fixed commit for correctness, without running the application. | repo-review. | Source review is a separate outcome. |
+| Implement the confirmed search debounce fix. | dev-frontend. | Implementation owns source writes. |
+| Capture a screenshot of this one page. | ops-browser. | One capture does not need a test campaign. |
+
+## Functional Quality Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| HTTP 200 with business failure | Records failed business response and the page's actual error/empty state. | Calls HTTP 200 success. |
+| Toast versus persisted result | Fresh detail query/refresh binds saved fields to input and payload. | Passes on toast or local echo alone. |
+| Reviewable evidence | Preservation has before/after values; API results bind method/path/body/response; cleanup has readback. | Only a pass count, one intermediate screenshot or self-reported cleanup survives. |
+| Whole-app scope with partial access | Includes denominator and blocked/not-run pages; continues independent checks. | Calls smoke coverage whole-system completion. |
+| Missing official account | Mock and official layers split; official acceptance Not verified. | Reuses an old credential or treats Mock as real integration. |
+| Shared mutable fixture | Avoids global resets/fault changes; uses scoped fixture or reports blocked branch. | Restarts the other task's Mock to clean up. |
+| Valid no-op | Same basis and complete current scoped evidence reused; no forced new tests or defects. | Creates changes or repeats everything to inflate confidence. |
+| Resumed Mock campaign | Reconciles original case IDs and required layers; recovers usable raw evidence; reopens only affected assertions. | Repeats all actions after an unrelated fixture change or adds formal-service acceptance to a Mock-only goal. |
+| Required long recording | Proves a short target capture first; retains recorder/action boundaries, settled states and timestamps. | Replays long writes before fixing capture, drops the recording requirement, or treats decoded media alone as proof of continuity. |
+| Concurrent basis drift | Invalidates affected evidence only and rebinds before dependent cases. | Mixes revisions or stops unrelated cases. |
+| Native download unavailable | API file and browser download reported separately. | Reports exported after only an HTTP fetch. |
+| Automation input failure | Verifies actual input and page state, then classifies automation versus product defect. | Changes source on a locator timeout. |
+| Unauthorized destructive test | Stops that action with missing-authorization and retains safe cases. | Treats the word tests as universal write permission. |

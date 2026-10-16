@@ -2,8 +2,8 @@
 
 ## Current package byte inventory
 
-- Digest scope: all 20 packages declared by `skills-index.json`.
-- Package digest: `sha256:650572efa562910911c68412ac1bb39ed316b6a1dc9b75711664fb761d10faab`
+- Digest scope: all 19 packages declared by `skills-index.json`.
+- Package digest: `sha256:4e8f5fc6f77376a3f0b2646958382591ff20b6897f3fb431d9ebff891a606230`
 - This digest identifies current package bytes only. The live decisions below retain
   their original basis and do not establish behavior for this inventory.
 
@@ -15,7 +15,7 @@
   iteration and complete applicable final/integration verification. 19-package/73-routing checks and four
   independent refinement decisions pass; canonical gate passed 452 tests, DESIGN.md
   regressions and whitespace with zero context warnings.
-- Current assessment: [dev-tests candidate evaluation](dev-tests-evaluation.md).
+- Current assessment: [dev-tests evaluation](dev-tests-evaluation.md).
 - On 2026-10-08, four read-only synthetic Codex CLI 0.156.1 decision cases on the
   current package covered resumed evidence, delegated result reconciliation, a valid
   no-op and a platform safety stop. All four preserved original case/layer ownership

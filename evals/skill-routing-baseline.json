@@ -1,7 +1,7 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
   "basis": "working-tree",
-  "fingerprint": "sha256:9ddc841ccc74aaa2f857b66799d1d0cb2ecd07ef20a5091ec80589970bf0a6d2",
+  "fingerprint": "sha256:fc60342d99035900be38ac0cef267097243320b646fbf5ad9f57026735cc1523",
   "summary": {
     "total": 92,
     "passed": 92,
@@ -745,22 +745,22 @@
       "failures": []
     },
     {
-      "id": "tests-normal",
-      "case_fingerprint": "sha256:528c05d5cd28e42fd0b20dc70aa00e9e6be98db248f13c6ae773e68dae76c35e",
+      "id": "dev-tests-functional-normal",
+      "case_fingerprint": "sha256:106d378ae4dde7b6078fe18b6fa99f6cbd45f45c488c735f0e1570e44522d6b5",
       "class": "normal",
-      "skill": "tests",
-      "expected_owner": "tests",
-      "observed_owner": "tests",
+      "skill": "dev-tests",
+      "expected_owner": "dev-tests",
+      "observed_owner": "dev-tests",
       "expected_stop": null,
       "observed_stop": null,
       "status": "passed",
       "failures": []
     },
     {
-      "id": "tests-boundary",
-      "case_fingerprint": "sha256:939fa62ec5d8fe39758c5d0dd7c7abaf60b86d8fd47c30f8937f10b7198ec9ba",
+      "id": "dev-tests-functional-boundary",
+      "case_fingerprint": "sha256:65d78a24c3e0998ba3b944fb6275420dd3902099d69b782243335a1374fc2db0",
       "class": "boundary",
-      "skill": "tests",
+      "skill": "dev-tests",
       "expected_owner": "repo-review",
       "observed_owner": "repo-review",
       "expected_stop": null,
@@ -769,12 +769,12 @@
       "failures": []
     },
     {
-      "id": "tests-critical-stop",
-      "case_fingerprint": "sha256:4f7797a6ca7334c6d7f494b15c3a65622639e1ba76d226a2c9259ed52e268575",
+      "id": "dev-tests-functional-critical-stop",
+      "case_fingerprint": "sha256:de16db6849803e186ef68d2bacebcd22f3171c2b7edfa7cecec22b7fda24de55",
       "class": "critical-stop",
-      "skill": "tests",
-      "expected_owner": "tests",
-      "observed_owner": "tests",
+      "skill": "dev-tests",
+      "expected_owner": "dev-tests",
+      "observed_owner": "dev-tests",
       "expected_stop": "missing-authorization",
       "observed_stop": "missing-authorization",
       "status": "passed",

@@ -1,6 +1,6 @@
 ---
 name: dev-tests
-description: "Design risk-based test coverage early and verify it iteratively across backend, API, frontend and end-to-end boundaries. Run existing scoped tests; route missing test implementation to its code owner."
+description: "Plan risk-based coverage and execute functional acceptance across backend, APIs, pages, UI, business logic and end-to-end journeys. Run existing scoped checks; route source fixes to their owner."
 ---
 
 # Dev Tests
@@ -12,6 +12,8 @@ journey. During product/design work, identify risks, testability gaps and provis
 checks without waiting for implementation. Resolve applicable authorities, their
 acceptance status, target basis, environment and permission before execution; only
 settled oracles support acceptance verdicts. Reuse the project test plan and its IDs.
+When asked to execute functional acceptance, run the reachable authorized cases; a
+checklist alone does not complete the run.
 
 ## Route Map
 
@@ -19,6 +21,10 @@ settled oracles support acceptance verdicts. Reuse the project test plan and its
 | --- | --- | --- |
 | Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
+| Execute a functional acceptance campaign or resume its case inventory | [functional workflow](references/workflow.md) | Real journeys, correlated results, retest and cleanup |
+| API or business-state behavior participates | [API and logic](references/api-and-logic.md) | Wire, business status and independent persistence assertions |
+| Pages, UI or clicks participate | [page walkthrough](references/page-walkthrough.md) | Reachability, real interaction and visible outcomes |
+| Record functional cases, defects or recovery | [test record](references/test-record.md) | Finite coverage, case evidence and recovery queue |
 | Role isolation, concurrent users, load or performance applies | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |
 
@@ -56,6 +62,10 @@ into “all tests passed” when required cells remain unresolved.
 
 - Read [coverage](references/coverage.md) when deriving or reconciling the acceptance matrix.
 - Read [execution](references/execution.md) before running checks or making regression claims.
+- Read [functional workflow](references/workflow.md) for functional campaigns and resumed case inventories.
+- Read [API and logic](references/api-and-logic.md) for network, business status and persistence.
+- Read [page walkthrough](references/page-walkthrough.md) for real UI journeys and browser evidence.
+- Read [test record](references/test-record.md) for functional plans, defects, coverage and recovery.
 - Read [roles and performance](references/roles-and-performance.md) only for relevant multi-user, authorization or performance requirements.
 - Read [result contract](references/result-contract.md) when consuming results or returning evidence.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary execution.

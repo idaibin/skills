@@ -70,7 +70,9 @@ affected cases and rebind their basis. Do not interrupt or alter the other task.
 Distinguish product defect, contract disagreement, fixture gap, environment failure,
 and automation failure. Reproduce with the smallest reversible sequence and record
 expected/actual behavior plus causal request/state evidence. A locator timeout is not
-automatically a product bug. A flawed Mock may hide missing fields or replacement
+automatically a product bug. After two failures for the same cause, retain both
+outcomes and stop that unchanged hypothesis; continue only with diagnostic evidence
+for a different route, while independent cases may proceed. A flawed Mock may hide missing fields or replacement
 semantics; verify against the contract before changing any fixture.
 
 Test ownership does not authorize source repair. When repair is already in scope,

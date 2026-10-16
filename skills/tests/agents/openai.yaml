@@ -1,4 +1,0 @@
-interface:
-  display_name: "Tests"
-  short_description: "Run end-to-end functional and UI acceptance tests"
-  default_prompt: "Use $tests to execute the project's authorized end-to-end acceptance across APIs, pages, UI, clicks and business logic, then report evidence, defects, coverage and cleanup."

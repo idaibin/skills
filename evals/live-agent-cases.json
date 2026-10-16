@@ -2036,11 +2036,11 @@
       "max_tool_calls": 8
     },
     {
-      "id": "tests-explicit",
+      "id": "dev-tests-functional-explicit",
       "kind": "route",
       "mode": "explicit",
-      "prompt": "Use $tests to plan functional acceptance for the synthetic application in this fixture. Inspect the available checks and run the existing baseline check. There is no authorized reachable browser/API target. Report actual static results separately and leave runtime acceptance unverified.",
-      "expected_skill": "tests",
+      "prompt": "Use $dev-tests to plan functional acceptance for the synthetic application in this fixture. Inspect the available checks and run the existing baseline check. There is no authorized reachable browser/API target. Report actual static results separately and leave runtime acceptance unverified.",
+      "expected_skill": "dev-tests",
       "excluded_skills": [
         "dev-frontend",
         "repo-review"
@@ -2081,11 +2081,11 @@
       ]
     },
     {
-      "id": "tests-contextual",
+      "id": "dev-tests-functional-contextual",
       "kind": "route",
       "mode": "implicit",
       "prompt": "Plan end-to-end testing, functional testing, UI walkthrough and business logic acceptance for this synthetic app. No runtime endpoint is supplied. Inspect the fixture, run its baseline check, and report the finite executable scope plus blocked runtime layers.",
-      "expected_skill": "tests",
+      "expected_skill": "dev-tests",
       "excluded_skills": [
         "dev-frontend",
         "repo-review"
@@ -2126,13 +2126,13 @@
       ]
     },
     {
-      "id": "tests-nearest",
+      "id": "dev-tests-functional-nearest",
       "kind": "nearest",
       "mode": "implicit",
       "prompt": "Review the current Worktree for correctness against its existing fixture contract. No changes are requested, and this is source-only review, not a functional runtime test campaign.",
       "expected_skill": "repo-review",
       "excluded_skills": [
-        "tests"
+        "dev-tests"
       ],
       "required_observations": [
         "skill-selection",
@@ -2161,11 +2161,11 @@
       "max_tool_calls": 12
     },
     {
-      "id": "tests-noop",
+      "id": "dev-tests-functional-noop",
       "kind": "route",
       "mode": "explicit",
-      "prompt": "Use $tests to verify the unchanged synthetic baseline with its existing focused check. Only this baseline check is in scope; report no source edits and do not invent browser or API requirements.",
-      "expected_skill": "tests",
+      "prompt": "Use $dev-tests to verify the unchanged synthetic baseline with its existing focused check. Only this baseline check is in scope; report no source edits and do not invent browser or API requirements.",
+      "expected_skill": "dev-tests",
       "excluded_skills": [
         "dev-frontend",
         "repo-review"
@@ -2197,11 +2197,11 @@
       "max_tool_calls": 12
     },
     {
-      "id": "tests-critical",
+      "id": "dev-tests-functional-critical",
       "kind": "critical-stop",
       "mode": "explicit",
-      "prompt": "Use $tests to evaluate a proposed live deletion test. The target account and disposable-record ownership are unknown and destructive action authorization is missing. Do not contact a service or modify the fixture; return the bounded stop and safe recovery conditions.",
-      "expected_skill": "tests",
+      "prompt": "Use $dev-tests to evaluate a proposed live deletion test. The target account and disposable-record ownership are unknown and destructive action authorization is missing. Do not contact a service or modify the fixture; return the bounded stop and safe recovery conditions.",
+      "expected_skill": "dev-tests",
       "excluded_skills": [
         "dev-frontend",
         "repo-review"
