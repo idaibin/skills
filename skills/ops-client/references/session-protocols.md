@@ -31,10 +31,8 @@ Do not retry an unchanged failed route or switch adapters around a policy denial
    session. Read identity, current model, status, latest input and pending approvals.
    Concurrent work or an ambiguous session blocks sending; status queries may continue.
 2. Bound the task, permitted paths, tools, effects, network and approval handling.
-   Enforce supported tool filters and isolation in the execution layer; a prompt is
-   not a sandbox. A tool-name allowlist limits tool kinds, not filesystem paths.
-   Missing path isolation must be reported and limits the kinds of tasks accepted.
-   Read-only qualification proves neither write safety nor arbitrary coding ability.
+   Check effective tool filters and path isolation before accepting the task;
+   unsupported enforcement limits the permitted operation.
 3. Submit once, retaining request identity and returned session/turn/revision. A
    transport success or accepted response means only received. After a timeout or
    disconnect, reconcile messages/events before sending again; absent native
@@ -43,7 +41,6 @@ Do not retry an unchanged failed route or switch adapters around a policy denial
    tool-call/result and approval events to this session and the submitted turn.
    Separate queued, running, waiting-for-approval, terminal-success, terminal-failure
    and unknown using the actual protocol's states. Do not invent percentage complete.
-   Empty active-tool lists at the end do not establish a tool-free turn.
 5. Validate completion from matching user input, terminal event, assistant result and
    the task's observable postcondition. For tool tasks inspect actual tool name,
    arguments, completion and outputs; approval requests remain pending unless exact
@@ -61,9 +58,6 @@ prove uninterrupted focus. A later quiet interval cannot erase an earlier gap.
 Return target/build/protocol identity, operation and authorization, workspace/session,
 request/turn correlation, tool and path enforcement limits, accepted/running/terminal
 observations, task postcondition, focus coverage, retained state and recovery conditions.
-Keep secrets and business transcripts private. Bind evidence to the current task and
-basis; new sessions or models do not inherit another session's successful result.
-
 Backend project binding and session history prove protocol state. Desktop project
 selection, visible task registration/refresh, AX input and full-window capture remain
 separate claims. Long tasks, approval interactions, disconnect recovery and unattended

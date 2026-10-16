@@ -1,55 +1,42 @@
 # Bundled ZCode CLI qualification example
 
-Use for an authorized installed ZCode CLI operation. Bind the existing user session
-when requested; this transport does not select a reviewer/provider or authorize new
-business work. CLI state and desktop presentation remain separate evidence layers.
+Use for an authorized installed ZCode CLI operation. Apply the shared
+[session protocol procedure](session-protocols.md#submit-and-query) for session
+selection, submission and reconciliation; this reference covers ZCode-specific
+configuration, arguments and persisted readback.
 
 ## Contents
 
-- [Identity and account binding](#identity-and-account-binding)
-- [Resume and submit once](#resume-and-submit-once)
-- [Readback and attribution](#readback-and-attribution)
-- [Permission, privacy and route limits](#permission-privacy-and-route-limits)
+- [Installed configuration roots](#installed-configuration-roots)
+- [Exact-session invocation](#exact-session-invocation)
+- [Persisted readback](#persisted-readback)
+- [CLI and app-server limits](#cli-and-app-server-limits)
 
-## Identity and account binding
+## Installed configuration roots
 
-Resolve the executable inside the current app, version, help, exact workspace/key,
-session ID and account/configuration source. Reuse matching caller-owned qualification
-records; check drift before repeating probes. Help and doctor validate packaging and
-arguments, not model access, tool effects or completed turns.
+Resolve the executable inside the current app, version and help. In the qualified
+macOS CLI 0.16.9, process-local configuration accepts these variables:
 
-The qualified macOS CLI 0.16.9 supports process-local configuration:
-
-| Variable | Meaning to verify in the installed runtime |
+| Variable | Installed-runtime meaning |
 | --- | --- |
-| ZCODE_DATA_BASE_DIR | Parent of the original account's .zcode directory; not that directory itself |
-| ZCODE_BUILTIN_PROVIDER_CONFIG_FILE | Existing bundle config/provider/zcode-builtin.json |
-| ZCODE_PERSONAL_PROVIDER_CONFIG_FILE | Original account's existing .zcode/v2/provider_config.json |
+| ZCODE_DATA_BASE_DIR | Parent of the account's .zcode directory; not that directory itself |
+| ZCODE_BUILTIN_PROVIDER_CONFIG_FILE | Bundle config/provider/zcode-builtin.json |
+| ZCODE_PERSONAL_PROVIDER_CONFIG_FILE | Account .zcode/v2/provider_config.json |
 
-A desktop launched from another working directory may use an account root different
-from the shell default. Locate the actual desktop task index/configuration through
-verified process open files, installed path resolution and exact task metadata. A
-missing catalog or provider under the shell default is only a scoped lookup failure.
-Use paths to the original stores and let the CLI load credentials natively; do not
-print/copy tokens, change global config, switch accounts/models or create a replacement
-session to repair binding. Preserve exact provider/model IDs and reasoning variant;
-case-normalized model labels and the UI picker alone do not establish identity.
+The desktop may resolve a different account root from the shell default. Locate its
+actual task index/configuration through verified process open files, installed path
+resolution and exact task metadata. Account configuration, desktop task index and
+CLI transcript database can resolve independently; changing the account-root override
+does not establish a new transcript root. Pass the original configuration paths and
+let the CLI load credentials natively, without dumping their contents.
 
-Account configuration, desktop task index and CLI transcript database can resolve to
-different roots. Discover each independently; an account-root override does not prove
-that the session database moved. Keep personal paths, SIDs and live receipts outside
-the published Skill.
+Bind the stored workspace key and exact provider/model/variant IDs from that session.
+Case-normalized model labels and the UI picker alone do not establish those IDs.
 
-## Resume and submit once
+## Exact-session invocation
 
-Before sending, read the exact SID's workspace, latest input, model and terminal state,
-pending approvals and concurrent activity. Resume only the intended idle session. If
-work is running, query it; after an uncertain send, reconcile it instead of replaying.
-Use --resume with the exact SID; --continue selects a latest session and is unsuitable
-for this binding. Do not send a no-op model probe into a live user task merely to test
-connectivity when retained evidence or an authorized real continuation suffices.
-
-Use an argument array with the installed executable, for example:
+Use --resume with the exact idle SID. --continue selects a latest session and is
+unsuitable for exact-session binding. Use an argument array, for example:
 
 ```javascript
 const args = [
@@ -58,59 +45,40 @@ const args = [
   '--disallowed-tools', ...taskDeniedTools,
   '--prompt', authorizedPrompt,
 ];
-// Spawn with process-local verified configuration; stream stdout/stderr to
-// private caller-owned evidence. Preserve the original account and session mode.
 ```
 
 In 0.16.9 the denylist is variadic: place --prompt after it, and positional commands
-such as doctor before it, or they can be consumed as tool names. Read current help
-before reuse. Headless slash-command handling differs from TUI: /model was not a
-supported model-selection route in the qualified headless flow. Use verified existing
-binding rather than assuming a slash prompt changes configuration.
+such as doctor before it, or they can be consumed as tool names. Check current help
+before reuse. The qualified headless flow did not support /model as a model-selection
+route; preserve the verified session binding rather than treating that slash prompt
+as configuration.
 
-Capture process exit/signal, stderr and returned sessionId/turnId/traceId, response,
-projection and usage when supplied. Verify the same SID and a new matching turn.
-Accepted input, a zero exit or a generated report alone does not prove completion.
-Distinguish process/transport exit from the task's persisted terminal state; a finished
-assistant message does not prove a still-open transport exited successfully.
+Capture direct process exit/signal, stderr and the returned sessionId, turnId,
+traceId, response, projection and usage when supplied. An exact resume must return
+the same SID and a new corresponding turn; inspect persisted permission/model state
+when it differs from the requested --mode.
 
-## Readback and attribution
+## Persisted readback
 
-Use supported exact-session queries first. When the installed route requires local
-persisted evidence, inspect the schema and open SQLite read-only; restrict queries to
-the exact SID, submitted input and subsequent turn. Message/part records can establish
-assistant finish, matching tool calls, arguments, status, outputs and final text.
-Inspect actual events, not only the final self-report. Avoid dumping unrelated history.
+Prefer supported exact-session queries. If the installed route requires SQLite
+readback, inspect its schema, open it read-only and restrict queries to the exact SID,
+submitted input and subsequent turn. Message/part records expose assistant finish,
+tool calls, arguments, status, outputs and final text. Correlate completed model_usage
+rows through session/turn/trace and provider_id, model_id and variant.
 
-Correlate completed model_usage records with the exact session and current turn/trace,
-including provider_id, model_id and variant. This is local client attribution, not
-server attestation. Verify result files and hashes independently and compare authorized
-before/after state. A correction resumes the same idle session with the concrete
-remaining issue; do not redispatch the original work or open an equivalent task.
+## CLI and app-server limits
 
-## Permission, privacy and route limits
+--cwd does not contain CLI session/cache persistence. Mode and tool-name filters do
+not enforce filesystem paths; require suitable isolation for the accepted operation.
+Do not repair unresolved binding by switching account/model or creating a substitute
+session.
 
-Mode names, plan mode and tool denylists do not create a path sandbox. Denying Edit
-still leaves writes possible through Bash or Write. Preserve the authorized permission
-boundary, report missing enforcement and inspect actual tools and before/after state;
-do not claim strict read-only prevention without verified isolation. The CLI can persist
-session/cache state outside --cwd. An unchanged file hash proves endpoint equality,
-not absence of intermediate changes; equal database counts do not prove content equality.
+The bundled app-server is a separate host-driven protocol; standalone account-backed
+model access may depend on native-host account synchronization. Qualify it separately
+when selected. A missing standalone account source does not establish that the
+desktop account is unavailable, and is not a reason to copy keys into that transport.
+See the [app-server example](app-server-example.md) for that route.
 
-For process configuration, capture only in memory and emit an explicit nonsecret
-whitelist. Parse connection URLs and emit only needed host/port/database metadata;
-exclude userinfo, password and query. Filtering variable names for PASSWORD/TOKEN does
-not sanitize a DATABASE_URL. Never emit raw process environments or credential files.
-
-The bundled app-server is a separate host-driven protocol: standalone account-backed
-model access may depend on native-host account synchronization. A standalone empty
-account source does not prove that the desktop account is unavailable. Prefer the
-qualified direct CLI route for same-account headless continuation; qualify app-server
-separately if selected. Do not emulate host credential synchronization by copying keys.
-
-A completed CLI tool task does not prove desktop task-list refresh, screenshots,
-uninterrupted foreground continuity, approval handling or disconnect recovery. Retain
-user sessions and preserve relevant failed-route evidence. Consult current installed
-implementation first; [official CLI source](https://github.com/zai-org/ZCode/blob/main/apps/zcode-cli/packages/cli/src/run.ts)
-and [Agent mode guide](https://zcode.z.ai/en/docs/agents) are rediscovery pointers, not
-substitutes for the installed build's observed behavior.
+Consult the installed implementation first. The [official CLI source](https://github.com/zai-org/ZCode/blob/main/apps/zcode-cli/packages/cli/src/run.ts)
+and [Agent mode guide](https://zcode.z.ai/en/docs/agents) are rediscovery pointers;
+version-dependent arguments and persisted schemas require installed-build checks.
