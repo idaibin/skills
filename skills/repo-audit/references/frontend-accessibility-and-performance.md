@@ -1,5 +1,13 @@
 # Accessibility And Performance
 
+## Contents
+
+- [Accessibility](#accessibility)
+- [Runtime Evidence Boundaries](#runtime-evidence-boundaries)
+- [Performance Review Order](#performance-review-order)
+- [Common Corrections](#common-corrections)
+- [Portal-Wide Shared Costs](#portal-wide-shared-costs)
+
 Evidence basis: shadcn/Radix compound primitives, Outline and Appwrite
 accessibility patterns, WAI-ARIA Authoring Practices, React's official
 `useMemo` guidance, Tauri's async/channel guidance, and reference-repository
@@ -71,6 +79,12 @@ derived state, store-wide subscriptions, repeated guard/listener registration,
 and requests restarted on every activation. Require profiling, request counts,
 or explicit fan-out/complexity evidence before claiming a performance defect.
 
+For a performance finding, connect symptom, falsifiable hypothesis, predicted cost
+and user-task effect, and an observation that distinguishes competing causes. Request
+the smallest authorized comparison; audit does not implement the intervention. Report
+local work reduction separately from end-to-end benefit, and hand measurement questions
+to the testing owner with evidence identity.
+
 ## Common Corrections
 
 - paginate or virtualize unbounded collections;
@@ -82,3 +96,19 @@ or explicit fan-out/complexity evidence before claiming a performance defect.
 - split bundles at existing route/feature boundaries when measurement supports it;
 - move blocking native work off the UI thread and stream progress;
 - batch or subscribe instead of issuing high-frequency IPC calls.
+
+## Portal-Wide Shared Costs
+
+When the user reports many pages slow, derive coverage from the current router/navigation and feature permissions; do not limit scope to routes present in a recording. Track shared shell owners separately from each page's initialization and embedded surfaces. Cover first entry, cached return, changed query/page-size, mouse/keyboard/scroll, selects, drawers and local error/loading feedback; record untouched routes as Not verified.
+
+Audit the actual chain: input creation/queueing -> handler -> route resolution -> activation -> request preparation -> response/reactive work -> layout/paint. Separate elapsed input transport from renderer work and from recording/profiler overhead. A trace missing OS/transport events cannot identify network, machine load or remote input as the unique cause. Screenshot coverage may span only part of the trace; process-wide node counters do not alone prove a leak, and video capture fps does not equal rendering fps.
+
+Look for unused synchronous request payload copies when encryption is disabled, while retaining the proof and encrypted-mode inputs. Persistence has independent costs: reactive dependency traversal, response copying, serialization and storage. Deferred setItem can still coexist with global deep subscriptions. Prove traversal scope with actual subscriptions and bounded field-read probes, reporting synthetic evidence separately from device timing.
+
+Follow cached response aliases into rendered row handlers before suggesting shallower watchers. Nested read/optimistic/loading flags may be persisted business state. Per-entry changes must retain their own nested updates and release old/live subscriptions; root-only searches cannot establish that all writes are root replacements.
+
+Do not label KeepAlive a universal duplicate initializer. Inspect stable keys, isolated route contexts, mounted/activated guards, resume-only work, late results and dirty realtime fan-out. Inspect the interaction between first-task queues and existing resize/pagination/query requests. Necessary changed-context refreshes are not duplicates.
+
+Inspect floating configuration identity, scroll-ancestor discovery, geometry reads and hidden content mounting. Map a Popper stack to a concrete reachable control before a local fix; preserve placement and reopen/cache semantics. Inspect real animation properties before recommending transform/opacity, and keep mandated motion/hover behavior separate from performance-only changes.
+
+Return confirmed shared costs, their reachable consumers, measured versus synthetic evidence, already-corrected work, and minimal business-preserving proposals. Do not promote old deployment measurements to current performance or a local test to all-page runtime acceptance.

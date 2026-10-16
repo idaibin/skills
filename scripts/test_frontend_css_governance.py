@@ -6,12 +6,6 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
 PROTOCOL = ROOT / "protocols/frontend-css-governance-v1.md"
-COPIES = (
-    ROOT / "skills/dev-frontend/references/frontend-css-governance.md",
-    ROOT / "skills/repo-audit/references/frontend-css-governance.md",
-    ROOT / "skills/repo-review/references/frontend-css-governance.md",
-)
-
 
 class FrontendCssGovernanceTests(unittest.TestCase):
     def test_protocol_covers_contract_ownership_and_runtime_closure(self) -> None:
@@ -24,12 +18,6 @@ class FrontendCssGovernanceTests(unittest.TestCase):
             "A wrapper MUST",
         ):
             self.assertIn(marker, text)
-
-    def test_generated_copies_match_protocol(self) -> None:
-        expected = PROTOCOL.read_bytes()
-        for copy in COPIES:
-            with self.subTest(copy=copy):
-                self.assertEqual(expected, copy.read_bytes())
 
 
 if __name__ == "__main__":

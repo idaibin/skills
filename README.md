@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 18 available Skills:
+Browse the 20 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list
@@ -42,11 +42,13 @@ and other supported agents.
 
 | Skill | What it helps with |
 | --- | --- |
+| `work-retro` | Retrospect across work history and propose evidence-backed, context-scoped improvements. |
 | `repo-map` | Scan, query, and render repository asset relationships, ownership, coverage, and drift. |
 | `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `api-spec` | Design or revise native API contracts and validate OpenAPI against accepted business behavior. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
+| `dev-tests` | Candidate: trace accepted contracts through layered tests and evidence; cross-project validation remains open. |
 | `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
 | `dev-typescript` | Implement non-browser TypeScript and JavaScript services, CLIs, workers, MCP servers, libraries, and scripts across Node.js, Bun, and Deno. |
@@ -57,7 +59,7 @@ and other supported agents.
 | `repo-delivery` | Commit, integrate, push, and clean up reviewed changes with explicit Git authorization. |
 | `tests` | Execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic with coverage and defect evidence. |
 | `ops-browser` | Operate and verify browser pages while preserving target and evidence boundaries. |
-| `ops-client` | Operate and verify real desktop-client processes and windows. |
+| `ops-client` | Operate desktop clients and emulator-hosted mobile apps; verify runtime state and captures. |
 | `ask-ai` | Prepare or run explicitly authorized external-AI review, research, relay, and image workflows. |
 | `human-writing` | Draft, rewrite, diagnose, and adapt source-grounded writing without changing its facts or voice. |
 
@@ -74,6 +76,8 @@ UI contract         -> ui-spec -> dev-frontend
 accepted contracts  -> to-task -> matching implementation owner
 source change       -> matching dev-* owner (`dev-typescript` for non-browser TS/JS)
 bounded audit       -> repo-audit (frontend / Java / Rust profile)
+early risk/test design <-> product/UI and matching dev-* owner
+layered acceptance  -> dev-tests -> repo-review
 change review       -> repo-review
 Git delivery        -> repo-delivery
 functional acceptance -> tests -> ops-browser / existing API runner
@@ -99,6 +103,7 @@ to use each package's portable `SKILL.md` metadata.
 
 ## Documentation
 
+- [Product iteration requirements](docs/product/iteration.md), [solution](docs/plans/iteration.md), and [task ledger](docs/plans/iteration-tasks.md)
 - [Installation and updates](INSTALL.md)
 - [Skill authoring standard](docs/skills/skill-standard.md)
 - [Routing and ownership](docs/standards/skill-routing.md)
@@ -114,7 +119,15 @@ bash scripts/check-skills.sh
 ```
 
 Detailed validation rules live in [skills/AGENTS.md](skills/AGENTS.md#validation).
+For bounded iteration, use the [change-to-check mapping](docs/plans/iteration.md#维护检查选择表)
+to select focused checks and distinguish static, canonical and live evidence.
 
 ## License
 
 Licensed under the [Apache License 2.0](LICENSE).
+
+For dependency-free validation with an existing pinned Python environment, set
+`PYTHON_BIN` to its executable and `SKILLS_USE_EXISTING_PYTHON=1`; the check verifies
+the exact development dependency versions. Set `DESIGN_MD_PACKAGE_ROOT` to an existing
+`@google/design.md@0.4.0` package for the DESIGN contract check. These bindings reuse
+installed tools and do not install dependencies.

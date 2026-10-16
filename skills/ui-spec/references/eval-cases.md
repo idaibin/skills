@@ -57,6 +57,7 @@ content actually changes, require the existing exact-content human approval gate
 
 | Scenario | Correct decision | Reject if |
 | --- | --- | --- |
+| Several routes show the same Drawer, motion and inset discrepancy | Freeze one comparison basis and resolve shared shell/overlay/component owners before per-route specs; keep only proven exceptions local. | Repeats shared rules as page overrides or marks a conflicted slice Ready. |
 | Product retains submitted input after rejection and the accepted source includes a dialog with error feedback | Specify retained-value visibility, feedback/overlay/scroll ownership, focus, and reachable recovery at the accepted viewport; distinguish specification from runtime evidence. | Treats state-variable retention as visible proof, lets feedback hide the fields, or invents Product retry semantics. |
 | Product clears a sensitive field after failure, or has not decided whether an uncertain submission can be retried | Honor the accepted clearing rule; keep only a transition dependent on unresolved Product semantics not Ready. | Forces universal retention, enables an unapproved retry, or blocks unrelated confirmed UI states. |
 | The supplied accepted UI contract already covers every requested failure-state assertion, but no implementation or browser evidence is supplied | Return no change for that contract; keep file readback and runtime validation separate and unverified. | Claims supplied clauses are missing, invents a contract update, or treats preview/runtime absence alone as a UI readiness blocker. |
@@ -81,6 +82,7 @@ content actually changes, require the existing exact-content human approval gate
 | Design tool cannot select an icon, but the screenshot can be viewed at 200% | Use the zoomed image only for `visually-inferred` comparison; keep exact icon size `proposed` or `Not verified`. | Copies the current runtime icon size or a pixel estimate into the target as verified. |
 | Repeated Lanhu spacing differs by one pixel | Apply the even-grid rule only when at least three same-semantic samples have a strict even majority and every outlier is within 1px; keep raw evidence and approval separate from the target. | Pools unrelated gaps, rounds an odd majority arbitrarily, or applies the rule to widths, type, borders, radii, icons, or assets. |
 | Every product currently uses one generic gradient icon | Specify real per-item asset ownership and only an isolated failed-item fallback. | Treats the current fallback as a normal visual asset strategy. |
+| A selected page uses a branded, parameterized gradient behind readable content | Bind source rights, recipe, text-safe area, reduced-motion state, export identity and target-surface evidence; hand rendering to `dev-frontend`. | Copies an unlicensed source, infers contrast from a palette name, or treats an export as runtime proof. |
 | Accepted page requires a fixed shell and SVG icon family | Keep shared token/icon-family semantics in adopted `DESIGN.md`; keep header/navigation/content/overlay ownership, page states, and role-to-icon placement in the Feature Spec. Resolve existing library/wrapper, rights, canonical geometry, render sizes, family weight, accepted coloring strategy, accessibility, and isolated fallback or evidenced `None`; require a focused icon gallery and same-state runtime verification. | Copies shared values into the page spec, hard-codes attachment examples as universal values, creates SVG path data, introduces a parallel icon library, or calls source/gallery review runtime proof. |
 | A downstream consumer receives an adopted DESIGN package | Hand off the exact immutable basis and package-relative DESIGN.md, completeness result, selected source, and approval evidence with closed hashes/byte lengths; keep producer state distinct from independently trusted acceptance evidence. | Copies tokens or adapter internals, accepts a local record alone, mutates producer state to simulate trusted acceptance, or accepts a stale/different package or principal identity. |
 | An acceptance-decisive interaction condition changes after implementation or comparison evidence exists | Advance the task-local comparison-basis revision, identify affected implementation/evidence/handoffs as stale, and require reconciliation on the new basis before readiness. | Silently edits the contract, reuses old evidence, or treats an in-flight result for the old conditions as current. |
@@ -115,9 +117,26 @@ content actually changes, require the existing exact-content human approval gate
 
 ## Scoring
 
+For a failed submission, UI keeps Product-approved retained input visible through
+feedback, focus and recovery; an unknown outcome does not let UI choose retry policy.
+An already accepted UI clause can return no-change without browser proof, while its
+runtime claim remains separate and unverified.
+
 Score each quality case 0–10. Minimum pass:
 
 - routing is correct
 - every quality case score >= 8
 - no hard blocker remains
 - applicable DESIGN.md lint/diff gates pass before any `Ready` verdict; a proven non-adopted, semantics-preserving local slice records them `Not applicable`, while unavailable required gates produce an explicit blocker and `Not verified`
+
+## Interaction Regression Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Interactive state distinctions | Keeps applicable transient/persistent/disabled/pending combinations and focus/retry policy in existing UI contract. | Invents universal colors, dimensions or a parallel schema. |
+
+## Async Focus Continuity Case
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| A modal download control becomes busy or is replaced by retry | Maps initial, pending, error, retry and close focus against accepted modal semantics | Traps every non-modal overlay or chooses Product retry policy |

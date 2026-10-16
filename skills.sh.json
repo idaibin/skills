@@ -8,6 +8,7 @@
       "skills": [
         "repo-map",
         "domain-modeling",
+        "dev-tests",
         "repo-review",
         "repo-delivery"
       ]
@@ -72,6 +73,13 @@
       "description": "Skills for personal technical writing, editing, and publication-ready prose.",
       "skills": [
         "human-writing"
+      ]
+    },
+    {
+      "title": "Work Retrospectives",
+      "description": "Evidence-backed, context-scoped improvement proposals from personal work history.",
+      "skills": [
+        "work-retro"
       ]
     }
   ]

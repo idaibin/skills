@@ -50,11 +50,13 @@ def parse_final_message(path: Path) -> dict[str, Any] | None:
     if not path.is_file():
         return None
     text = path.read_text(encoding="utf-8").strip()
-    if text.startswith("```"):
-        text = re.sub(r"^```(?:json)?\s*|\s*```$", "", text)
+
+    def reject_non_json_constant(value: str) -> None:
+        raise ValueError(f"Non-JSON numeric constant: {value}")
+
     try:
-        value = json.loads(text)
-    except json.JSONDecodeError:
+        value = json.loads(text, parse_constant=reject_non_json_constant)
+    except ValueError:
         return None
     return value if isinstance(value, dict) else None
 
@@ -622,7 +624,9 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
             "acting; do not read a globally or project-installed copy."
         )
     instructions = [
-            "This is a disposable, synthetic live-Agent evaluation fixture.",
+            "You are a child evaluation agent in a disposable, synthetic live-Agent fixture. "
+            "The parent coordinator owns shared/global bookkeeping; do not duplicate it. "
+            "Keep evaluation writes within this fixture.",
             "Follow its AGENTS.md. Never stage, commit, push, or access external services.",
             skill_instruction,
             case["prompt"],

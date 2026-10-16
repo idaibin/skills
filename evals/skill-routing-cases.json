@@ -542,6 +542,234 @@
       "expected_owner": "tests",
       "expected_stop": "missing-authorization",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "ui-spec-parameterized-background",
+      "skill": "ui-spec",
+      "class": "normal",
+      "prompt": "Specify a parameterized visual background in the accepted UI contract, including source rights and a readable text-safe area.",
+      "expected_owner": "ui-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-non-browser-negation",
+      "skill": "dev-frontend",
+      "class": "boundary",
+      "prompt": "Implement this Node.js library bug fix on non-browser TypeScript source.",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-issue-regression-fix",
+      "skill": "dev-typescript",
+      "class": "normal",
+      "prompt": "fix a JavaScript date library regression and add a regression test",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-issue-library-bug",
+      "skill": "dev-typescript",
+      "class": "normal",
+      "prompt": "fix javascript library bug",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-foreground-continuity",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Operate this desktop client while preserving desktop foreground continuity for the user's active app.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-background-qualification",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Qualify background client operation with AXValue and AXPress while preserving desktop foreground continuity; verify the postcondition and restore disposable test state.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-zcode-cli-session",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Use the installed ZCode client's CLI to read an exact existing task session in the background; do not touch the desktop window.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-external-review-owner",
+      "skill": "ops-client",
+      "class": "boundary",
+      "prompt": "Choose an external AI provider and request an independent review of a source patch.",
+      "expected_owner": "ask-ai",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "ops-client-android-headless",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "human-writing-natural-rewrite",
+      "skill": "human-writing",
+      "class": "normal",
+      "prompt": "Perform a natural rewrite of this source-grounded article without changing its facts or author voice.",
+      "expected_owner": "human-writing",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "work-retro-normal",
+      "skill": "work-retro",
+      "class": "normal",
+      "prompt": "Run a work retrospective across personal work history and propose scoped improvements.",
+      "expected_owner": "work-retro",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "work-retro-boundary",
+      "skill": "work-retro",
+      "class": "boundary",
+      "prompt": "Map repository boundaries, owners, commands, and reusable contracts.",
+      "expected_owner": "repo-map",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "work-retro-critical-stop",
+      "skill": "work-retro",
+      "class": "critical-stop",
+      "prompt": "Run a work retrospective but the history scope is ambiguous; stop.",
+      "expected_owner": "work-retro",
+      "expected_stop": "scope-ambiguous",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "work-retro-startup-non-trigger",
+      "skill": "work-retro",
+      "class": "boundary",
+      "prompt": "Make this Spring service's local startup work by changing service discovery and packaged profile behavior; production must remain registered.",
+      "expected_owner": "dev-java",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-frontend-interaction-feedback",
+      "skill": "dev-frontend",
+      "class": "normal",
+      "prompt": "Implement frontend interaction feedback with keyboard focus, pressed and selected states in existing UI components.",
+      "expected_owner": "dev-frontend",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-rust-native-ui",
+      "skill": "dev-rust",
+      "class": "normal",
+      "prompt": "Implement a GPUI native Rust UI component in the existing Cargo workspace without changing its dependency revision.",
+      "expected_owner": "dev-rust",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-rust-native-window-reroute",
+      "skill": "dev-rust",
+      "class": "boundary",
+      "prompt": "Operate the existing desktop client and capture native-window evidence; no source implementation.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-rust-native-ui-stop",
+      "skill": "dev-rust",
+      "class": "critical-stop",
+      "prompt": "Implement this native Rust UI change, but the source scope is not authorized; stop.",
+      "expected_owner": "dev-rust",
+      "expected_stop": "missing-authorization",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "dev-tests-normal",
+      "skill": "dev-tests",
+      "capability_id": "testing.coverage.verify",
+      "class": "normal",
+      "prompt": "Verify layered test coverage and the test acceptance matrix for backend tests, API tests and end-to-end tests.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-tests-boundary",
+      "skill": "dev-tests",
+      "class": "boundary",
+      "prompt": "Implement this Rust source change and add integration tests.",
+      "expected_owner": "dev-rust",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-tests-critical-stop",
+      "skill": "dev-tests",
+      "class": "critical-stop",
+      "prompt": "Verify layered test coverage, but authorization is not granted; stop before execution.",
+      "expected_owner": "dev-tests",
+      "expected_stop": "missing-authorization",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "dev-tests-early-design",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "Use early test design and risk-based testing to identify testability gaps and provisional checks before implementation.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-tests-performance-measurement",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "Run existing scoped tests and return a test acceptance matrix for comparable performance measurement.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-tests-recovery-keyboard",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "failure recovery tests keyboard regression tests",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "frontend-local-loading",
+      "skill": "dev-frontend",
+      "class": "normal",
+      "prompt": "frontend loading performance",
+      "expected_owner": "dev-frontend",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "review-performance-evidence",
+      "skill": "repo-review",
+      "class": "normal",
+      "prompt": "Review this fixed commit and its frontend performance review evidence.",
+      "expected_owner": "repo-review",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "browser-timing-capture",
+      "skill": "ops-browser",
+      "class": "normal",
+      "prompt": "performance capture",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-session-protocol",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
     }
   ]
 }

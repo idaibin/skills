@@ -27,6 +27,8 @@ gaps. Existing implementation values are facts, not automatically approved targe
   especially keyboard-driven or repeatedly used controls?
 - Does the basis preserve existing component and motion contracts rather than inventing
   a parallel timing, easing, library, or visual system?
+- Does each animated property have one effective CSS or scripted owner, with continuous
+  animation, timers, observers and controls paused or cleaned up when no longer needed?
 - Does feedback keep loading, success, failure, selection, expansion, and dismissal
   understandable without hiding or delaying the resulting state?
 - Does changed motion preserve reduced-motion, focus, keyboard, hover-capability, and
@@ -37,6 +39,18 @@ gaps. Existing implementation values are facts, not automatically approved targe
 - Where an equivalent implementation exists, do transform/opacity and existing
   semantic owners avoid unnecessary layout work or animation-only wrappers? Do not
   demand a rewrite when layout semantics require another property or owner.
+
+- For affected async writes, do all reachable activation paths share effective
+  admission before awaiting, and release on failure so retry works? Loading styling
+  alone is insufficient; do not demand another lock when existing ownership proves it.
+- Are transient press, focus, persistent selection, business-disabled and pending
+  semantics distinct? Does any pending dismissal policy reach the actual overlay
+  owner without trapping a merely business-disabled action?
+- Does a keyboard surface transition preserve intended activation without a default
+  event firing on the newly focused control? Are label/control associations real?
+- Does runtime evidence cover the affected variant/state/surface combinations,
+  composited text versus non-text/focus contrast, and settled focus behavior? Separate
+  inherited library/earlier-build, isolated fixture, real-route and API evidence.
 
 ## Finding Gate
 
@@ -50,3 +64,17 @@ Source declarations can establish ownership and candidate behavior, but not perc
 timing, spatial continuity, interruption, hover behavior, or reduced-motion results.
 Require runtime evidence for those claims or mark them `Not verified`. Do not create a
 parallel frontend-quality profile or require `repo-audit` by default.
+
+## Unified Policy And Reusable Overlays
+
+For a policy-wide change, trace the application owner through teleports and scripted
+consumers, not only CSS duration declarations. Preserve project-defined precedence and
+capability/cache validity. Distinguish decorative transitions from required loading,
+positioning and business feedback; do not require disabling all animation indiscriminately.
+
+Inspect shell/mask/content presentation and the actual close/closed/model-update order.
+Check that module or shell reuse preserves a fresh form/request session, close during
+load invalidates old work, and old completion events cannot affect a reopened target.
+Accept callback-order fixtures as lifecycle evidence, not first-painted geometry or
+perceived performance. Require claim-matched enabled/disabled and cold/warm evidence
+only for the affected criteria; do not reopen unrelated accepted behavior.

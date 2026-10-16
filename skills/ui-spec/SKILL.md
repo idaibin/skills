@@ -30,6 +30,7 @@ after selecting a branch, read only its referenced modules.
 | Check whether a supplied accepted UI contract needs a change | [contract evaluation](references/workflow.md#evaluation-and-handoff) and [evaluation rubric](references/evaluation-rubric.md) | Bounded contract delta or no-change result |
 | Shared visual semantics are being adopted or changed | [DESIGN.md contract](references/design-md-contract.md) | Approved, linted `<design-root>/DESIGN.md`; Feature Specs reference it |
 | Several independent surfaces are in scope | [multi-surface](references/multi-surface.md) | Shared index plus independently loadable slices/verdicts |
+| An accepted surface requires a parameterized visual background | [visual asset contract](references/visual-asset-contract.md) | Source-bound recipe, readable area, fallback and target-surface acceptance |
 
 ## Invariants
 
@@ -54,7 +55,7 @@ after selecting a branch, read only its referenced modules.
 
 ## Output Map
 
-Return `ui.contract.specify@1.1.0` with lifecycle/profile, source identity and rights,
+Return `ui.contract.specify@1.2.0` with lifecycle/profile, source identity and rights,
 authority disposition, slice IDs, applicable layout/state/interaction/accessibility and
 asset contracts, delta/evidence references, comparison basis, per-slice readiness, and
 named gaps. Candidate output additionally returns both ignored paths/hashes and handoff
@@ -73,6 +74,7 @@ Load a module only when its condition applies:
 | Layout ownership, inset, overlay, focus, hit order, or transition changes | [layout and interaction](references/frontend-layout-governance.md) |
 | Repeated source measurements need normalization | [measurement normalization](references/measurement-normalization.md) |
 | SVG/icon roles or fallback are part of acceptance | [SVG icon contract](references/svg-icon-system.md) |
+| An accepted slice includes a parameterized gradient, texture or motion background | [visual asset contract](references/visual-asset-contract.md) |
 | Current runtime is compared with a selected source | [visual evidence](references/frontend-visual-evidence.md) |
 | Final readiness is being decided | [evaluation rubric](references/evaluation-rubric.md) |
 

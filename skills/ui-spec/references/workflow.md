@@ -10,6 +10,7 @@
 6. Viewport acceptance matrix
 7. Artifact pass
 8. Evaluation and handoff
+- [Shared Motion Policy Coverage](#shared-motion-policy-coverage)
 
 ## Candidate Or Visual Source Gate
 
@@ -33,6 +34,13 @@ Record confirmed product facts, available data/actions/states, current component
 Resolve component and design-library mappings from live imports, wrappers, and
 consumers before naming them. Never promote a concept-only component or feature into
 the candidate, selected-source target, or product scope.
+
+When several surfaces show the same discrepancy, fix one comparison basis and trace
+the shared shell, overlay, motion and component owner before writing page rules.
+Bind route/entrypoint, viewport, theme/locale, data, start state, input and expected
+end state; map content insets, component wrappers and design-library ownership.
+Record only proven page exceptions; if the shared owner conflicts with the selected
+source, keep affected slices `Not Ready` until that decision is resolved.
 
 ## UI Contract Challenge
 
@@ -82,6 +90,10 @@ Translate the selected source into implementable decisions:
 - current components/tokens to `reuse`, bounded adaptations, and justified new declarations;
 - loading, empty, error, populated, permission, validation, success, disabled, hover, focus, and reduced-motion behavior where applicable;
 - state transitions, action ownership, feedback placement, and precedence between independent async domains;
+- for changed interactive controls, distinguish hover, transient press, keyboard focus,
+  persistent selection, business-disabled and request-pending behavior; specify
+  applicable combined states, dismissal/retry expectations and focus destinations
+  in the existing slice contract, without creating another matrix or global palette;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
 
 When Product requires input to survive a failed action, specify how the retained
@@ -105,6 +117,15 @@ verified only when an accepted authority provides them; otherwise mark them prop
 or `Not verified`.
 
 Do not infer exact CSS values or behavior from pixels alone. Trace exact values to live source or an accepted contract; otherwise label them proposed and require acceptance before implementation.
+
+For asynchronous overlays whose controls load, fail, retry or become busy, specify
+focus continuity across those transitions using the existing interaction contract.
+Include initial focus, applicable Tab/Shift+Tab containment, focus when a control is
+disabled/replaced, and the closing destination. Derive containment from actual
+modal/non-modal semantics; do not impose modal trapping on every overlay. Map Product
+recovery to visible feedback and reachable controls without redefining retry policy.
+Where performance acceptance applies, identify visible states for first feedback,
+usability and content completion; timing thresholds and sampling are not UI defaults.
 
 ## Viewport Acceptance Matrix
 
@@ -203,3 +224,17 @@ Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved
 to `dev-frontend`, `repo-audit`, and `ops-browser`/`ops-client`; include traceability
 and asset gates, and request runtime evidence from the operations owner after
 implementation.
+
+## Shared Motion Policy Coverage
+
+When unifying motion, retain the project's accepted precedence among explicit user
+choice, automatic assessment, system preference and page configuration. Specify the
+unconfirmed/capability-missing state and which current or subsequent transition a new
+assessment affects. Thresholds, durations and cache policy remain project decisions.
+Map one policy owner to route content, teleported overlays and applicable scripted
+animation consumers; record external embedded surfaces as separate owners.
+
+For affected overlays, specify shell/mask/content readiness and entering/leaving first
+frames, interaction availability, hit-testing and focus. Define close, close-complete,
+deactivation and reopen outcomes independently of animation duration, preserving
+loading indicators, dismissal confirmation and any required leaving snapshot.

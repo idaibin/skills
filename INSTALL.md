@@ -11,6 +11,8 @@ npx skills@latest add idaibin/skills --list
 The result must contain exactly these public packages:
 
 ```text
+work-retro
+dev-tests
 repo-map
 domain-modeling
 product-spec
@@ -42,6 +44,8 @@ to discover packages from their portable `SKILL.md` metadata.
 
 The publishable source directories are:
 
+- `skills/work-retro`
+- `skills/dev-tests`
 - `skills/repo-map`
 - `skills/domain-modeling`
 - `skills/product-spec`
@@ -60,6 +64,11 @@ The publishable source directories are:
 - `skills/ops-client`
 - `skills/ask-ai`
 - `skills/human-writing`
+
+The `dev-tests` package on this candidate branch is not yet stable; listing it does not
+mean cross-project acceptance is complete or authorize installation.
+Existing installed copies of the former package are not aliases for `dev-tests`;
+they require a separately authorized migration before using the new name.
 
 ## Install
 

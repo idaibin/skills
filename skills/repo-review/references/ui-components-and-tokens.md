@@ -23,5 +23,14 @@ in a project that has not adopted them.
   critical state, accessibility, computed-style, and geometry claims require their own
   evidence at the accepted viewport/state and contract-owned tolerance.
 
+- Verify that prose owns semantic purpose and the token source owns exact values;
+  reject parallel value authorities or one-off values promoted to shared semantics
+  without stable consumers.
+- Trace base-control, shared-composition, Layout and page responsibilities where the
+  change moves state, permissions, scrolling, spacing or workflow ownership.
+- For newly introduced external component, icon, motion or template sources, verify
+  source/version, license and permitted redistribution before accepting them in a
+  public Skill, reusable template or distributable fixture.
+
 Review the validator and its negative fixtures, not only its passing output. A green
 marker-only test proves document presence, not project governance behavior.

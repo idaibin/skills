@@ -14,23 +14,27 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | Request condition | Read | Result |
 | --- | --- | --- |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
+| Product behavior, copy, page interaction, layout, or visual acceptance changes | [specification authorities](references/specification-authorities.md) | Owning contracts ready before source |
 | Toolchain, dependencies, routing, stack migration, or render/effect semantics change | Relevant section of [stack guidelines](references/stack-guidelines.md) | Stack-specific constraints |
 | Framework state, lifecycle, routing, or component API semantics change | Selected [framework profile](references/framework-profiles.md) | Framework-compatible change |
+| Local or shared frontend loading, responsiveness, rendering or memory cost | [portal experience/performance](references/portal-experience-performance.md) | Business-preserving shared change and route coverage |
 | No-op or accepted-baseline confirmation | [checklist](references/checklist.md) | Exact owner-symbol and baseline-check evidence |
 | Behavior/public seam, ownership, or quality concern applies | [behavior first](references/behavior-first.md), [codebase design](references/codebase-design.md), and/or [code quality](references/code-quality.md) | Scoped design/validation |
 | A touched file, component, or function mixes independent UI, state, data, side-effect, or business responsibilities | [decomposition](references/decomposition.md) | Cohesive owners and readable orchestration |
 | Styling system or CSS ownership changes | [styling systems](references/styling-systems.md) or [CSS governance](references/frontend-css-governance.md) for the changed concern | Scoped styling |
 | Shared components/tokens or layout ownership changes | [components/tokens](references/ui-components-and-tokens.md) or [layout](references/frontend-layout-governance.md) | Applicable visual contract |
-| Animation or visual direction changes | [motion](references/interaction-motion-quality.md) or [visual direction](references/visual-direction-and-anti-slop.md) | Applicable interaction/visual contract |
+| Interaction feedback, animation, or visual direction changes | [interaction/motion](references/interaction-motion-quality.md) or [visual direction](references/visual-direction-and-anti-slop.md) | Applicable interaction/visual contract |
+| Accepted UI contract has a parameterized background | [components/tokens](references/ui-components-and-tokens.md), [interaction/motion](references/interaction-motion-quality.md), and [visual evidence](references/frontend-visual-evidence.md) | Contract-mapped component, fallback and target-surface evidence |
 | Selected-source visual closure applies | [specification authorities](references/specification-authorities.md) and [visual evidence](references/frontend-visual-evidence.md) | Runtime comparison boundary |
 | API/protocol or cross-boundary signal applies | [OpenAPI governance](references/openapi-contract-governance.md), [protocol contracts](references/protocol-contracts.md), and/or [project grounding](references/project-grounding.md) | Qualified integration work |
 
 ## Invariants
 
+- Before changing another business module, apply the [scope rule](references/codebase-design.md#decision-rules); reuse an existing approval for the same plan and scope.
 - Reuse the nearest maintained owner before creating; preserve routing, state/data, component, and styling ownership.
 - Treat size as a review signal, not a line-count rule; split only at a stable ownership, behavior, lifecycle, side-effect, or verification boundary.
-- A no-op confirmation still reads and reports the exact owner path and symbol plus its matching contract before running the current-baseline focused check.
-- Use the lowest-cost evidence closest to the changed behavior: source/diff checks, an already-running development surface with hot reload, focused tests, then a full production build only when its boundary or the delivery stage requires it.
+- A no-op confirmation still reads and reports the exact owner path and symbol plus its matching contract; reuse a matching current-basis focused result, or run the check when that evidence is absent or stale.
+- During development, use source/diff checks, focused non-build checks, and the documented page through its existing service. Standalone build, bundle, or package commands require an authorized release phase or an explicit request for build, packaging, or artifacts.
 - Keep Product behavior and UI visual readiness independent; source/build evidence does not prove browser/client/runtime acceptance.
 - Do not generate visual assets, operate browser/client state, review, or mutate Git.
 - Return this phase's evidence to the coordinator, who continues already-authorized
@@ -39,7 +43,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 ## Output Map
 
-Report scope, authorities, reuse decision, selected profiles, changed files/contracts, focused validation, development-surface evidence and production-build status independently when applicable, exclusions, and gaps.
+Report scope, authorities, reuse decision, selected profiles, changed files/contracts, focused validation, documented-page evidence, any explicitly authorized build evidence, exclusions, and gaps.
 
 ## Reference Map
 

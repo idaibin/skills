@@ -39,7 +39,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   esac
 fi
 
-if command -v uv >/dev/null 2>&1; then
+if [[ "${SKILLS_USE_EXISTING_PYTHON:-0}" == "1" ]]; then
+  "$python_bin" -c 'from importlib.metadata import version; assert version("PyYAML") == "6.0.2"; assert version("jsonschema") == "4.25.1"'
+  python_runner=("$python_bin")
+elif command -v uv >/dev/null 2>&1; then
   export UV_CACHE_DIR="${UV_CACHE_DIR:-${TMPDIR:-/tmp}/aicraft-skills-uv-cache}"
   python_runner=(
     uv run

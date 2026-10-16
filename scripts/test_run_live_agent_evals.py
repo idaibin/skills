@@ -28,6 +28,36 @@ FIXTURE = ROOT / "evals/fixtures/live-agent-dev-frontend"
 REAL_SUBPROCESS_RUN = subprocess.run
 
 
+class FinalMessageFormatTests(unittest.TestCase):
+    def parse(self, text: str) -> dict[str, object] | None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "last-message.json"
+            path.write_text(text, encoding="utf-8")
+            return RUNNER.parse_final_message(path)
+
+    def test_accepts_only_a_bare_object_with_optional_whitespace(self) -> None:
+        self.assertEqual(self.parse(' \n{"selected_skill": "to-task"}\n '),
+                         {"selected_skill": "to-task"})
+
+    def test_rejects_wrapping_instead_of_cleaning_it(self) -> None:
+        for text in ('```json\n{}\n```', '```\n{}\n```', 'Result:\n{}',
+                     '{}\nDONE', '{}{}', '{invalid}'):
+            with self.subTest(text=text):
+                self.assertIsNone(self.parse(text))
+
+    def test_rejects_non_objects_and_missing_message(self) -> None:
+        for text in ('[]', 'null', '"result"'):
+            with self.subTest(text=text):
+                self.assertIsNone(self.parse(text))
+        with tempfile.TemporaryDirectory() as temporary:
+            self.assertIsNone(RUNNER.parse_final_message(Path(temporary) / "absent"))
+
+    def test_rejects_non_json_numeric_constants(self) -> None:
+        for token in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(token=token):
+                self.assertIsNone(self.parse('{"count":' + token + '}'))
+
+
 class RunLiveAgentEvalTests(unittest.TestCase):
     def case(self, case_id: str) -> dict[str, object]:
         return next(case for case in CASES["cases"] if case["id"] == case_id)

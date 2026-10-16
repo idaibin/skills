@@ -208,12 +208,14 @@ class PublicContentHygieneTests(unittest.TestCase):
                     )
         self.assertEqual([], findings)
 
-    def test_live_canary_summary_matches_current_package_digest(self) -> None:
+    def test_live_canary_summary_tracks_current_package_inventory(self) -> None:
         summary = (ROOT / "docs" / "quality" / "live-canary-summary.md").read_text(
             encoding="utf-8"
         )
         expected = DIGEST.digest_paths(ROOT, DIGEST.DEFAULT_SCOPE)
-        self.assertIn(f"Package digest: `{expected}`", summary)
+        inventory = summary.split("## Current package byte inventory", 1)[1].split("## Dev Tests candidate basis", 1)[0]
+        self.assertIn(f"Package digest: `{expected}`", inventory)
+        self.assertIn("do not establish behavior for this inventory", inventory)
         basis = summary.split("## Current Results", 1)[0]
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
         self.assertIn(f"all {len(index['packages'])} packages", basis)

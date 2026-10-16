@@ -1160,6 +1160,7 @@ STACK_TOKENS = {
     "frontend": ("frontend", "react", "vue", "svelte", "css", "dom", "browser", "前端"),
     "typescript": ("typescript", "javascript", "node", "nodejs", "bun", "deno", "fastify"),
 }
+STACK_NEGATORS = frozenset({"non", "no", "not", "without", "excluding", "except"})
 
 
 def task_stack(query: str) -> str | None:
@@ -1168,7 +1169,14 @@ def task_stack(query: str) -> str | None:
         clause for clause in query_clauses(query) if not NEGATED_CLAUSE_RE.match(clause)
     )
     normalized = normalize(affirmative)
-    tokens = set(normalized.split())
+    words = normalized.split()
+    # A token directly following a negator ("non-browser", "without css") names
+    # what the request excludes, not an affirmative stack hint.
+    tokens = {
+        word
+        for index, word in enumerate(words)
+        if index == 0 or words[index - 1] not in STACK_NEGATORS
+    }
     for stack, hints in STACK_TOKENS.items():
         if tokens & set(hints) or any(
             contains_cjk(hint) and hint in normalized for hint in hints

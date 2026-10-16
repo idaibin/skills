@@ -31,9 +31,13 @@
       "urn:skills:source-change-result:v1",
       "urn:skills:task-plan:v1",
       "urn:skills:task-request:v1",
+      "urn:skills:test-request:v1",
+      "urn:skills:test-result:v1",
       "urn:skills:typescript-change-request:v1",
       "urn:skills:ui-contract:v1",
       "urn:skills:ui-request:v1",
+      "urn:skills:work-retro-request:v1",
+      "urn:skills:work-retro-result:v1",
       "urn:skills:writing-output:v1",
       "urn:skills:writing-request:v1"
     ],
@@ -77,6 +81,10 @@
     "api-contracts": {
       "title": "API Contracts",
       "description": "API wire contract authoring and OpenAPI governance."
+    },
+    "personal-retrospectives": {
+      "title": "Work Retrospectives",
+      "description": "Personal and cross-project workflow retrospectives."
     }
   },
   "packages": [
@@ -249,7 +257,9 @@
         "fixed range review",
         "grounded fixed-basis review",
         "documentation authority review",
-        "文档权威审查"
+        "文档权威审查",
+        "frontend cache subscription review",
+        "frontend performance review"
       ],
       "excludes": [
         "source implementation",
@@ -594,6 +604,7 @@
         "accessibility",
         "design root",
         "visual evidence lifecycle",
+        "parameterized visual background",
         "candidate UI specification",
         "complete image generation prompt",
         "设计根目录",
@@ -662,7 +673,12 @@
         "page route integration",
         "CSS token change",
         "large component decomposition",
-        "large function refactor"
+        "large function refactor",
+        "interaction feedback",
+        "keyboard focus",
+        "pressed and selected states",
+        "portal responsiveness optimization",
+        "frontend loading performance"
       ],
       "excludes": [
         "read-only frontend audit",
@@ -841,7 +857,8 @@
       ],
       "intents": [
         "implement, port, or refactor Rust source",
-        "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI"
+        "change Rust APIs, services, CLIs, async code, persistence, unsafe, or FFI",
+        "implement native Rust UI in an already-selected framework"
       ],
       "keywords": [
         "Rust implementation",
@@ -852,16 +869,22 @@
         "unsafe",
         "FFI",
         "Rust startup configuration implementation",
-        "private Rust helper rename"
+        "private Rust helper rename",
+        "native Rust UI",
+        "GPUI implementation",
+        "gpui-kit component implementation"
       ],
       "excludes": [
         "read-only Rust audit",
         "fixed-basis review",
-        "Git delivery"
+        "Git delivery",
+        "UI framework selection",
+        "native-window operations"
       ],
       "related": [
         "repo-audit",
-        "repo-review"
+        "repo-review",
+        "ops-client"
       ],
       "capability_ids": [
         "rust.source.implement"
@@ -924,12 +947,14 @@
         "unsafe audit",
         "ownership",
         "Rust runtime configuration audit",
-        "Rust service migration compatibility audit"
+        "Rust service migration compatibility audit",
+        "shared portal performance audit"
       ],
       "excludes": [
         "source implementation",
         "fixed-basis change review",
-        "vulnerability scan"
+        "vulnerability scan",
+        "fixed commit"
       ],
       "related": [
         "dev-frontend",
@@ -980,7 +1005,8 @@
         "capture same-state visual and computed browser evidence",
         "record an authorized browser interaction with native browser capture",
         "preserve a configurable unified or operation-mapped local-browser tab workspace",
-        "continue already-authorized local browser acceptance after implementation"
+        "continue already-authorized local browser acceptance after implementation",
+        "verify an existing frontend page with task-authorized contextual network Mock fallback and reusable local fixtures"
       ],
       "keywords": [
         "browser operation",
@@ -1000,7 +1026,10 @@
         "existing browser login state",
         "foreground-safe browser control",
         "local browser workspace",
-        "tab group"
+        "tab group",
+        "network mock",
+        "cached navigation request-count verification",
+        "performance capture"
       ],
       "excludes": [
         "desktop-client verification",
@@ -1050,7 +1079,9 @@
       ],
       "intents": [
         "operate or verify a real desktop client",
-        "capture process and window evidence for Tauri, Electron, or native applications"
+        "capture process and window evidence for Tauri, Electron, or native applications",
+        "operate mobile apps in task-owned Android emulators or platform simulators",
+        "Submit and inspect scoped background tasks through app-owned session protocols"
       ],
       "keywords": [
         "desktop client",
@@ -1058,7 +1089,19 @@
         "Electron",
         "native app",
         "process",
-        "window verification"
+        "window verification",
+        "desktop foreground continuity",
+        "background client operation",
+        "AXValue",
+        "AXPress",
+        "Android Emulator",
+        "headless",
+        "ADB",
+        "simulator",
+        "device serial",
+        "session protocol",
+        "background delegation",
+        "progress query"
       ],
       "excludes": [
         "browser-page verification",
@@ -1254,7 +1297,8 @@
         "proofread",
         "article",
         "documentation",
-        "source-grounded"
+        "source-grounded",
+        "natural rewrite"
       ],
       "excludes": [
         "translation-only requests",
@@ -1343,6 +1387,155 @@
       ],
       "capability_ids": [
         "test.acceptance.execute"
+      ]
+    },
+    {
+      "name": "work-retro",
+      "category": "personal-retrospectives",
+      "owner": "work-retro",
+      "mutation_class": "artifact-write",
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "text-authoring",
+        "task-enumeration",
+        "task-read"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "emit-findings",
+        "emit-draft",
+        "emit-handoff",
+        "read-task-state"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "evidence-incomplete",
+        "publication-unsafe"
+      ],
+      "intents": [
+        "retrospect on prior conversations across projects and domains",
+        "propose evidence-backed improvements with scoped exceptions"
+      ],
+      "keywords": [
+        "retrospective",
+        "retrospect",
+        "postmortem",
+        "复盘",
+        "工作复盘",
+        "个人工作流程"
+      ],
+      "excludes": [
+        "repository mapping",
+        "task ledger maintenance",
+        "source implementation",
+        "change review",
+        "Git mutation",
+        "automatic persistent rule updates"
+      ],
+      "related": [
+        "repo-map",
+        "to-task",
+        "repo-review",
+        "repo-delivery"
+      ],
+      "capability_ids": [
+        "work.retrospective.analyze"
+      ]
+    },
+    {
+      "name": "dev-tests",
+      "category": "repository-engineering",
+      "owner": "dev-tests",
+      "mutation_class": "artifact-write",
+      "required_capabilities": [
+        "filesystem-read",
+        "git-read",
+        "artifact-write",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "read-source",
+        "read-git-state",
+        "write-artifact",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "control-client-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "scope-ambiguous",
+        "basis-drift",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "missing-authorization",
+        "unsafe-or-destructive"
+      ],
+      "intents": [
+        "design early risk-based tests and testability checks with provisional assumptions",
+        "verify layered test coverage against accepted product and UI contracts",
+        "run existing scoped tests and reconcile backend API frontend and end-to-end evidence",
+        "select impacted regression tests after contract or source changes"
+      ],
+      "keywords": [
+        "layered test coverage",
+        "test acceptance matrix",
+        "backend tests",
+        "API tests",
+        "frontend page tests",
+        "frontend function tests",
+        "end-to-end tests",
+        "E2E coverage",
+        "regression tests",
+        "测试矩阵",
+        "端到端测试",
+        "分层测试",
+        "early test design",
+        "risk-based testing",
+        "testability",
+        "performance measurement",
+        "failure recovery tests",
+        "keyboard regression tests"
+      ],
+      "excludes": [
+        "product behavior decisions",
+        "test source implementation",
+        "browser mechanics",
+        "client mechanics",
+        "fixed-basis review",
+        "Git delivery",
+        "task ledger maintenance"
+      ],
+      "related": [
+        "product-spec",
+        "ui-spec",
+        "api-spec",
+        "to-task",
+        "dev-frontend",
+        "dev-typescript",
+        "dev-java",
+        "dev-rust",
+        "ops-browser",
+        "ops-client",
+        "repo-review",
+        "repo-delivery"
+      ],
+      "capability_ids": [
+        "testing.coverage.verify"
       ]
     }
   ],
@@ -2683,7 +2876,7 @@
       "capability_id": "client.runtime.operate",
       "capability_version": "1.1.0",
       "package": "ops-client",
-      "description": "Operate an authorized desktop client and capture evidence.",
+      "description": "Operate an authorized desktop client or emulator-hosted mobile app and capture runtime evidence.",
       "accepts": [
         {
           "schema": "urn:skills:client-operation-request:v1",
@@ -3072,6 +3265,178 @@
       "evidence_requirements": [
         "basis_or_scope_identity",
         "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "work.retrospective.analyze",
+      "capability_version": "1.0.0",
+      "package": "work-retro",
+      "description": "Analyze bounded personal history and propose context-scoped improvements.",
+      "accepts": [
+        {
+          "schema": "urn:skills:work-retro-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:work-retro-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "EVIDENCE_ACCESSIBLE"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "write-artifact",
+          "emit-findings",
+          "emit-draft",
+          "emit-handoff",
+          "read-task-state"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-history-scope",
+          "declared-report-destination"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-declared-history-scope"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "report-bounded-coverage-and-missing-evidence"
+        },
+        {
+          "code": "PUBLICATION_UNSAFE",
+          "recoverable": true,
+          "recovery": "prepare-synthetic-safe-export-or-stop-publication"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "source_coverage_and_provenance",
+        "finding_to_proposal_validation_trace"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "testing.coverage.verify",
+      "capability_version": "0.1.1",
+      "package": "dev-tests",
+      "description": "Design early risk-based coverage and verify scoped test evidence using existing authorized checks.",
+      "accepts": [
+        {
+          "schema": "urn:skills:test-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:test-result:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED",
+        "EVIDENCE_BOUND"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "read-git-state",
+          "write-artifact",
+          "emit-findings",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-test-scope",
+          "declared-isolated-test-state",
+          "declared-report-destination"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "report-dependent-layer-blocked"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-acceptance-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "stop-dependent-execution"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "report-unproven-layers"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "contract_to_layer_trace",
+        "runtime_observation_or_static_result",
+        "real_and_substituted_boundaries",
+        "cleanup_outcome"
       ],
       "adapter_binding": {
         "policy": "runtime-only",

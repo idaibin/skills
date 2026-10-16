@@ -60,8 +60,10 @@ Evaluate every requested slice independently.
 When a request requires shared token/component change:
 
 - Update resolved `<design-root>/DESIGN.md` content.
-- Before handoff, run official lint and diff gates against the resolved design root:
-  - `npx -p @google/design.md@0.4.0 designmd lint --format json <design-root>/DESIGN.md`
-  - `npx -p @google/design.md@0.4.0 designmd diff <before-DESIGN.md> <design-root>/DESIGN.md --format json`
+- Before handoff, use the existing parser binding from the
+  [CLI version policy](design-md-contract.md#cli-and-version-policy) to run official
+  lint and diff against the resolved design root:
+  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js lint --format json <design-root>/DESIGN.md`
+  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js diff <before-DESIGN.md> <design-root>/DESIGN.md --format json`
 
 No additional machine artifact is required for this gate.

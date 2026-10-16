@@ -13,6 +13,11 @@ Load this reference only when a change or review materially affects a public mod
 
 ## Decision Rules
 
+- Before changing a shared owner that affects another business module, inspect its
+  actual callers, behavior, permissions and data effects. Keep the change inside the
+  user's authorized scope; ask for the missing business decision or expanded scope
+  only when the existing request does not settle it. Reuse an explicit decision for
+  the same change instead of demanding approval again at each file or owner boundary.
 - Prefer the existing repository seam and terminology when they already provide locality and testability.
 - Introduce a new shared seam only for real variation, repeated callers, or a proven ownership boundary; one hypothetical alternate implementation is insufficient.
 - Deepen or replace a shallow pass-through when evidence shows scattered knowledge; do not add another wrapper layer around it.

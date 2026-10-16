@@ -1,5 +1,13 @@
 # Interaction And Motion Quality
 
+## Contents
+
+- [Authority And Purpose](#authority-and-purpose)
+- [Implementation Checks](#implementation-checks)
+- [Interaction State And Admission](#interaction-state-and-admission)
+- [Validation](#validation)
+- [Shared Motion Policy And Overlay Lifetime](#shared-motion-policy-and-overlay-lifetime)
+
 Load this reference only when the authorized frontend change adds or changes motion,
 gesture behavior, transition ownership, or user-visible interaction feedback. Do not
 load it for every frontend edit or use it to redesign an approved surface.
@@ -31,14 +39,78 @@ load it for every frontend edit or use it to redesign an approved surface.
   can take control without waiting for a stale sequence to finish.
 - Respect reduced-motion preferences when movement is material, preserve focus and
   keyboard behavior, and gate hover-only effects on devices that support hover.
+  When reduced-motion overrides affect measured or positioned overlays, inspect the
+  effective transition properties and verify actual geometry and interaction lifecycle
+  with motion disabled. A near-zero global duration may still animate synchronous
+  positioning writes; choose the correction at the existing owner rather than assuming
+  shorter duration is equivalent to no transition.
 - Avoid animation-only wrappers when an existing semantic or state-owning element can
   own the same effect without changing layout, accessibility, or reuse boundaries.
 
+## Interaction State And Admission
+
+For affected controls, distinguish transient hover/press, visible keyboard focus,
+persistent selection, business-disabled, and request-pending states. Preserve the
+existing component/library state owner and applicable semantics; a palette override
+or pointer cursor does not establish complete feedback across its variants.
+
+- Trace every reachable activation path for an async write: click, native form submit,
+  keyboard activation, and alternate retry/action entrypoints. When overlap would
+  duplicate a side effect, admit synchronously at the shared handler owner before
+  awaiting work, release on terminal success/failure, and keep retry reachable. Reuse
+  an equivalent existing guard; do not add locks to harmless synchronous controls.
+- Keep business-disabled confirmation separate from request-pending interaction.
+  Apply the accepted pending-dismissal policy at the actual dialog/Drawer owner,
+  including Close, Escape, mask, Cancel and nested paths, not merely a footer button.
+  An unavailable business action does not itself justify trapping dismissal.
+- When a keyboard action opens or replaces a focused surface, trace originating
+  keydown/default activation through focus transfer and the resulting click/submit.
+  Prevent an evidenced unintended default at its owner; preserve legitimate Enter,
+  Space, form submission and library keyboard behavior rather than blanket blocking.
+- Verify field labels reach the rendered control's accessible name, including
+  controlled fields outside automatic form registration. Use the stack's existing
+  association mechanism, with unique control IDs when explicit label binding is needed.
+- On failure, preserve useful input, expose recoverable feedback and release admission;
+  distinguish retry from close/reopen reset. Verify focus after the actual close
+  transition settles before introducing custom restoration or trapping code.
+
 ## Validation
 
-Source inspection proves declarations and ownership only. Exercise the affected states
+Source inspection proves declarations and ownership only. For changed interaction
+families, exercise the applicable variant × state × surface/theme combinations on
+rendered maintained components; include selected+focused and pressed states when
+reachable. A passing solid-primary control does not prove outlined, link, danger,
+menu or elevated-surface variants. Use focused dispatch/readback assertions for
+reentrant actions; loading/disabled appearance alone does not prove single admission.
+
+Source inspection alone does not prove runtime behavior. Exercise the affected states
 and rapid repeated input at the relevant viewport when timing, interruption, spatial
 continuity, hover capability, or perceived feedback is part of acceptance. Record
 reduced-motion behavior when applicable. If runtime evidence is unavailable, report
 the affected behavior `Not verified`; do not claim interaction or motion quality from
 build, lint, typecheck, or static CSS alone.
+
+## Shared Motion Policy And Overlay Lifetime
+
+For an authorized motion-unification change, resolve one application-level policy
+from the accepted preference, system setting, page configuration and capability rules.
+Keep their precedence in the project contract. Do not copy another project's modes,
+frame thresholds, sampling windows, cache lifetimes or durations as defaults. An
+adaptive policy needs its actual measurement capability before accepting a cached
+result; capability absence and sampling cancellation must preserve the contracted
+fallback rather than manufacture frame evidence.
+
+Trace consumers beyond route transitions: application-root state, body/teleported
+library overlays, feedback, collapse/scroll behavior, and JavaScript-driven charts or
+scrolling. Keep meaningful loading/wait indicators, positioning, triggers and business
+requests intact. Test the entering and leaving first frames: a near-zero duration may
+still leave opacity, transforms, height, delay or hit-testing in a transitional state.
+
+Treat reusable code and an open form as different lifetimes. A cached module or shell
+may survive; each opening still needs its own target, draft and request generation.
+Invalidate the closing session at the actual close/deactivation boundary, retain any
+required leaving snapshot, and release the parent's open intent at the contracted
+completion event. Inspect the library's real close/closed/model-update order. Old
+completion callbacks and late imports/responses must not close, populate or reopen a
+new session. Cover both animated and immediate-close modes, including close during
+load, rapid reopen and KeepAlive departure/return.

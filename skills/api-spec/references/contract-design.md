@@ -17,6 +17,12 @@ Do not maintain parallel handwritten endpoint, DTO, response, or error authoriti
 Frontend wrappers, screenshots, legacy prose, repository inventories, and successful
 parsing may reveal conflicts but cannot establish backend truth.
 
+Describe the accepted current endpoints, fields and examples directly in the active
+integration contract. Remove superseded definitions and links within authorized scope,
+while preserving compatibility or migration information when real consumers, data or
+the accepted deliverable require it. Resolve those dependencies before changing their
+behavior; a final document should not narrate the task conversation.
+
 ## Workflow
 
 1. Fix the service boundary, owner, consumers, current source basis, and applicable

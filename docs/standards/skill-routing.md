@@ -23,11 +23,13 @@ identity, installed adapters, or completed evidence.
 
 | Skill | Owns | Mutation |
 | --- | --- | --- |
+| `work-retro` | bounded personal/cross-project work-history retrospectives and scoped improvement proposals | requested retrospective artifact only; never persistent rules or task execution |
 | `repo-map` | repository asset scans, bounded graph queries, coverage/drift checks, and derived navigation views | isolated graph snapshots, run-local cache, and explicitly requested derived map artifacts only; never repository guidance |
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `api-spec` | native API wire contracts and OpenAPI authoring or validation after business decisions | named native contract artifacts only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
+| `dev-tests` | contract-to-layer coverage, authorized existing checks and qualified test evidence | scoped test artifacts; no source/test implementation, browser/client mechanics or Git |
 | `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and risk-matched visual closure | source files |
@@ -38,7 +40,7 @@ identity, installed adapters, or completed evidence.
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
 | `tests` | scoped end-to-end functional acceptance, correlated API/UI/business evidence, defects, retest and cleanup | test artifacts and authorized browser/test state; no product source or Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
-| `ops-client` | authorized desktop-client operations and evidence | client state |
+| `ops-client` | authorized desktop-client and emulator-hosted mobile-app operations, background-route qualification and runtime evidence | client or bound virtual-device state; preserve host constraints and verify guest/application postconditions |
 | `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
 
@@ -91,11 +93,19 @@ coordinator continues the remaining authorized steps through their owners withou
 reconfirmation. A missing evidence layer blocks only dependent claims or actions;
 it neither grants new permissions nor makes the whole requested outcome complete.
 
-Common sequence, when needed:
+Illustrative owner handoffs, not a waterfall or a required sequence:
 
 ```text
-repo-map -> domain-modeling/product-spec -> api-spec/ui-spec -> to-task -> dev-* -> repo-review -> repo-delivery
+repo-map -> domain-modeling/product-spec -> api-spec/ui-spec -> to-task -> dev-* -> dev-tests -> repo-review -> repo-delivery
 ```
+
+`dev-tests` also participates during product/UI design and implementation: early risk,
+testability and example design feed back to their owners. Unsettled assumptions remain
+provisional; final acceptance uses agreed oracles and current evidence. Each iteration
+selects applicable checks by actual risk, not by completing stage names. Iteration uses
+focused checks; final submission and authorized integration require the complete
+applicable project gate on their actual assembled basis, with justified evidence reuse
+where project rules permit. A blocked required gate stays open.
 
 For an explicitly authorized `ask-ai` sequential relay, keep the frozen basis and
 external-action boundary intact: all configured providers must approve the same
@@ -138,6 +148,12 @@ push actions. Without those conditions, the external-review owner supplies only 
 necessary files or review package. Review publication never creates a pull request,
 updates `main`, force-pushes, or counts as reviewer approval.
 
+The `dev-tests` candidate owns cross-layer acceptance evidence, not another task ledger.
+Missing tests route to the implementation owner, runtime mechanics to operations, and
+contract ambiguity to Product/UI/API owners. Existing implementation checks stay with
+implementation; compose `dev-tests` when a separate layered acceptance result is needed.
+This candidate does not certify any project or become stable merely by being listed.
+
 This is not mandatory ceremony. A known non-browser TypeScript/JavaScript, Java, or Rust implementation can start directly
 with `dev-typescript`, `dev-java`, or `dev-rust`. `repo-review` evaluates correctness, security, performance, and
 maintainability together on its selected basis. Security risk does not create a new
@@ -177,6 +193,27 @@ passes, and environment snapshots. `repo-review` activates its conditional
 Documentation Authority Review to verify index/link/deletion closure, authority
 separation, structured-artifact lifecycle, source-owner/runtime-identity separation,
 and absence of Skill-development reports from the product repository.
+
+## Deterministic Matcher Boundaries
+
+The routing eval matrix measures the deterministic `search-skills.py` matcher against
+authored case phrasing; it does not measure raw real-world input directly. Two known
+boundaries keep results honest:
+
+- Symptom-only phrasing (for example an issue title such as "library throws
+  RangeError for invalid values") carries no task action or owner vocabulary and may
+  return no match. The requesting host or agent is expected to restate the symptom as
+  a task before deterministic routing; raw symptom classification is not a matcher
+  goal.
+- Phrasings that mix weak evidence for two owners (for example "capture performance
+  measurements") resolve by their strongest anchor and may land in a weak-score
+  partition. Anchored boundary cases pin the discriminator; mixed phrasing is not
+  promoted to a case until its intended owner is unambiguous.
+
+Directly negated stack-word occurrences ("non-browser", "without css") are excluded
+from affirmative stack hints before owner selection. A separate affirmative occurrence
+of the same word remains a hint; focused regressions cover both directions. This
+token rule does not claim general natural-language negation understanding.
 
 ## Review Checklist
 

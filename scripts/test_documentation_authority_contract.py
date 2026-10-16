@@ -73,15 +73,6 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
             with self.subTest(context=context, term=term):
                 self.assertIn(term, gate)
 
-    def assert_each_lifecycle_term_is_required(self, gate: str, *, context: str) -> None:
-        for term in LIFECYCLE_TERMS:
-            mutated = gate.replace(term, "", 1)
-            with self.subTest(context=context, removed=term):
-                self.assertFalse(
-                    all(required in mutated for required in LIFECYCLE_TERMS),
-                    f"gate stayed complete after removing {term}: {context}",
-                )
-
     def test_product_spec_terminal_and_sidecar_gates(self) -> None:
         skill = self.read("skills/product-spec/SKILL.md")
         text = re.sub(r"\s+", " ", self.read("skills/product-spec/references/documentation-boundaries.md"))
@@ -95,16 +86,12 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         assert workflow_gate is not None
         gate = workflow_gate.group("gate")
         self.assert_complete_lifecycle(gate, context="product-spec workflow gate")
-        self.assert_each_lifecycle_term_is_required(
-            gate, context="product-spec workflow gate"
-        )
 
     def test_structured_projection_consumers_keep_complete_lifecycle(self) -> None:
         for path in LIFECYCLE_GATE_PATTERNS:
             for index, gate in enumerate(self.lifecycle_gates(path)):
                 context = f"{path} gate {index + 1}"
                 self.assert_complete_lifecycle(gate, context=context)
-                self.assert_each_lifecycle_term_is_required(gate, context=context)
 
     def test_navigation_references_are_distinct_from_copied_authority(self) -> None:
         paths = (

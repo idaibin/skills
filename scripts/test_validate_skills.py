@@ -1362,7 +1362,17 @@ class ValidatorTests(unittest.TestCase):
         )
         self.assertIn("No-op or accepted-baseline confirmation", entrypoint)
         self.assertIn("exact owner path and symbol", entrypoint)
-        self.assertIn("a matching literal or passing check alone", checklist)
+        self.assertIn("exact owner path and symbol", checklist)
+        no_op_item = re.search(r"^- For a no-op or accepted-baseline confirmation,.*?(?=^- |\Z)", checklist, re.M | re.S)
+        self.assertIsNotNone(no_op_item)
+        assert no_op_item is not None
+        no_op_text = re.sub(r"\s+", " ", no_op_item.group()).lower()
+        self.assertRegex(
+            no_op_text,
+            r"(?:literal|passing check|successful check|check by itself).*?"
+            r"(?:does not|cannot|is insufficient|not enough).*?"
+            r"(?:source.owner|source ownership|owner evidence)",
+        )
         self.assertIn(
             "source_owner_identity_for_change_or_noop_confirmation",
             capability["evidence_requirements"],

@@ -119,6 +119,21 @@
 
 ## Scoring
 
+A failed editable submission with uncertain completion keeps input retention and
+safe-retry policy as Product decisions; a list lookup alone does not establish the
+specific submission outcome. Only the affected recovery slice remains Open.
+
+A removed surface leaves no active rule or example in the current spec. Keep an
+intentional non-goal or rejected alternative only if it still bounds accepted behavior
+or explains a live decision; do not erase useful scope boundaries mechanically.
+
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger
 expectations are correct, no authority violation occurs, and every quality case
 scores at least 8.
+
+## Performance And Staged Recovery Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Make report opening faster; no baseline or accepted target exists | Defines task/context/completion and a measurement-only outcome | Invents a percentage, tool or architectural change |
+| Retrieval fails, refresh fails with old results, or generated output cannot download | Distinguishes failure from empty data; settles retry/retention per stage from authority | Makes failure an empty list or requires restarting every stage |

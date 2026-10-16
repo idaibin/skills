@@ -16,7 +16,10 @@
 
 ## Summary
 
-Use `ops-client` for real desktop client operation, verification, and bounded Client Debug Evidence. It is currently Tauri-focused, but it also applies to Electron and native shells when real app-window evidence matters. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for desktop webview code changes.
+Use `ops-client` for real desktop client operation, verification, and bounded Client Debug Evidence. It applies to Tauri, Electron, and Rust-rendered/native shells such as GPUI when real app-window evidence matters. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for desktop webview code changes.
+For a mobile app running inside an emulator or simulator, use
+[simulator operations](simulator-operations.md) and bind the guest device/artifact;
+a headless guest does not require native host-window acceptance.
 
 ## Trigger Examples
 
@@ -42,15 +45,33 @@ Use `ops-client` for real desktop client operation, verification, and bounded Cl
 
 ## Operation Notes
 
+- Before a client effect, resolve the latest valid authority for the exact app and
+  action. Retain source/order/scope and any superseded restriction; a later same-scope
+  authorization may replace an earlier handoff-only limit, while unrelated authority
+  does not lift a cancelled write or paused interaction. Older plans, summaries, and
+  scheduled requests cannot resume it. Preserve the foreground and screen-session
+  gates independently of that authorization.
+- For a background or focus-preserving request, apply [background operations](background-operations.md) before selection or mutation. Its qualification branch applies only when the user has requested testing the uncertain route; ordinary use requires established operation-specific focus behavior.
 - Process and runtime source are part of the evidence, not optional setup.
 - When the task starts from a repository, identify the client app location and startup command before claiming verification.
 - Before starting or restarting the client, require explicit authorization for the
   exact target and action, then confirm the command source and whether it may disturb
   an existing instance or active user workflow. Relevant source changes alone do not
   authorize rebuild or restart.
+- App selection, Accessibility press, and semantic targeting may activate a window even
+  when they do not move the pointer. A request to interact with an exact named app,
+  including `@Computer` plus that app, covers the requested bounded interaction and
+  incidental activation; do not demand another approval for that same action. If the
+  user requires another app to remain foreground, record that app and establish a
+  proven background-safe, window-scoped route before binding or acting, or follow an
+  explicitly requested bounded qualification under the background profile. Known
+  activating routes remain excluded. Without either basis, stop with the interaction
+  `Not verified`; a later focus check cannot repair a temporary violation. Verify focus after each permitted action and stop
+  without reclaiming focus if the user changes apps. Do not claim a read-only
+  annotation proves an operation is background-safe.
 - Treat multiple app instances and stale bundles as common failure modes.
 - For Tauri webviews, make controls semantic and discoverable through DOM and Accessibility surfaces.
-- For code edits that add semantic controls, labels, or stable selectors, use `dev-frontend`; then return here for real-window proof.
+- For code edits that add semantic controls, labels, or stable selectors, use `dev-frontend` for webview source or `dev-rust` for Rust-rendered/native UI source; then return here for real-window proof.
 - For Electron apps, first prove the real desktop runtime/window when the task asks for client evidence; use browser tooling only for plain web-preview behavior or after the real app identity is established.
 - Enter Client Debug Evidence only after the caller supplies an already-isolated client-layer evidence request. Otherwise route unexplained failures back to the caller for diagnosis before client operation. Reproduce only on the verified target process/window/build, return direct evidence, remove disposable probes and launched test instances, and retain referenced screenshots/logs/traces until embedded, archived, or accepted by the handoff owner. Do not infer a final cause across frontend, IPC, Rust, database, packaging, or platform layers.
 
@@ -86,6 +107,11 @@ Use the tool's terminal result as the source for the action outcome. Keep `cance
 failure, ordinary action failure, and an outcome that cannot be determined. Do not invent
 a cause such as the user rejecting a permission prompt.
 
+For an applicable host-policy refusal, retain the exact denied action, source, and
+reason and stop that action. A rewritten request, alternative adapter, or fresh
+session is not a recovery path around the refusal. Only an actual change by its
+governing authority can lift it; an ordinary action cancellation is not such a refusal.
+
 After a cancelled or ambiguous action, read the current target state when that read is
 safe. If the authorized reversible goal remains incomplete, use at most one verified
 alternative semantic path, such as a named close action instead of a cancelled key event.
@@ -94,7 +120,23 @@ exists, return the exact terminal result and mark the resulting UI state `Not ve
 Do not shift a routine recovery to the user merely because the first adapter call did not
 run.
 
+When the target changes because the user switched apps, stop without reselecting or
+reclaiming focus. Preserve evidence already obtained, mark the requested unfinished
+interaction `Not verified`, and report the client goal as evidence-incomplete.
+
 ## Screen-Session Gate
+
+For device-bound simulator commands, apply the host/guest distinction in
+[simulator operations](simulator-operations.md#host-lock-and-sleep). The restrictions
+below govern host desktop effects; they do not prohibit an independently authorized,
+verified guest-control route that neither wakes nor manipulates the host UI.
+
+Use a fresh permitted direct observation for the current target and capability.
+A historical screenshot failure or old screen-session record does not establish
+current offline, locked, or permission state. If current evidence cannot be obtained
+safely, keep it unknown or `Not verified`, preserve the failed attempt, and continue
+only independently authorized work. This freshness check does not clear an unresolved
+applicable policy refusal or authorize a foreground effect.
 
 Record `screen_session` as `unlocked`, `locked`, or `unknown` from a direct
 platform or adapter signal. App visibility, an existing window identifier, and a
@@ -140,6 +182,12 @@ Use only on macOS and only when the commands/APIs are exposed and permissions su
 - prefer `screencapture -x -l<CGWindowID>` over region capture;
 - prefer macOS Accessibility actions such as `AXPress` on named controls over pointer movement or coordinate clicks;
 - verify screen-recording and Accessibility permission through successful actions, not app visibility alone.
+
+Before an already-authorized relaunch of a rebuilt macOS client that uses Keychain or
+TCC, compare Bundle ID and signing identity with the accepted build using read-only
+identity evidence. Do not infer that an ad-hoc rebuild preserves trust or promise a
+fixed number of permission prompts. Signing, keychain, and TCC changes require their
+own authority; if identity is unresolved, keep only the dependent relaunch unverified.
 
 Do not reuse `CGWindowID`, `screencapture`, `AXPress`, or macOS Accessibility
 terminology for Windows or Linux evidence.

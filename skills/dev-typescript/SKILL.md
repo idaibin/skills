@@ -22,6 +22,9 @@ Implement the smallest authorized non-browser source slice in the repository's a
 ## Invariants
 
 - Preserve existing runtime, package manager, module, source, and test owners; do not add a parallel stack.
+- For CLI changes, exercise the actual command entry point and representative flags
+  when safe and available; keep build, installed-command and runtime evidence distinct.
+  Select build checks by changed risk and the project's required delivery gates.
 - Keep source, static, build, runtime, artifact, and deployment claims separate.
 - Do not implement browser UI, review, stage/commit/push, or infer unresolved behavior.
 

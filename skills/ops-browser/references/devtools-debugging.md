@@ -66,6 +66,14 @@ switch to controlled Chrome, Computer Use, or system accessibility/coordinate
 automation merely to fill a gap; those are distinct routes with separate state
 and non-interruption requirements.
 
+For performance capture, preflight the requested timeline/metric surface and record
+browser/tool version, capture boundaries, frame/process ownership, sample identity,
+observer overhead and dropped/truncated events when exposed. Return raw observations
+and limitations against the testing owner's plan, not a budget verdict. Screenshots
+cannot replace unavailable timing evidence. Network/CPU changes require verified
+isolation and authority; effective host viewport policy still applies. Missing measurement
+capability blocks only dependent claims.
+
 ## Capability And Evidence Selection
 
 Preflight only the surfaces needed by the request:
@@ -98,7 +106,9 @@ When this task starts a local runtime, create a small task ledger before launch:
 - task-specific browser profile and evidence/artifact paths.
 
 The host-provided Codex in-app Browser is catalog-classified non-interrupting; do
-not present that classification as an official public API guarantee.
+not present that classification as an official public API guarantee. Use it only
+when the planned tool lifecycle complies with effective host policy and user
+authority. Unknown or prohibited shared-state effects block the affected operation.
 For controlled Chrome, Computer Use, system accessibility/coordinate automation,
 or another visible/user-owned route, do not claim background safety from
 headless terminology alone: require direct `background_safe` evidence or use
@@ -145,6 +155,20 @@ Prefer deterministic DOM, Console, or Network checks and a short repeatable
 sequence over exploratory clicking. If reproduction fails, report the attempted
 states and missing artifact instead of guessing.
 
+For keyboard/focus symptoms, capture the event and focus sequence through the actual
+transition settlement; an early locator becoming hidden does not prove restoration
+failed. Distinguish focus moving to a background application control from the document
+losing focus to browser chrome. When attribution is uncertain, a small native-control
+comparison can test the hypothesis without changing product source. Keep such evidence
+bounded to the observed browser, input sequence and runtime basis.
+
+Separate source declarations, library defaults, isolated/stubbed component behavior,
+real-route behavior and real API/persistence evidence. Bind captures to the actually
+served build when stale assets could change the result. Record which previous checks
+remain inherited and which changed states were rerun; route counts do not equal
+workflow counts. Correct a demonstrated harness assumption before proposing a product
+fix, and retain unresolved coverage as `Not verified`.
+
 ## State Safety And Cleanup
 
 - Treat reload, cache/storage clearing, cookie edits, account or environment
@@ -167,3 +191,15 @@ one-variable experiment, direct browser facts, explicitly labeled inferences,
 `Not verified` gaps, state changes, sensitive-data handling, artifact paths or
 identifiers, runtime ownership/ledger, cleanup verification, and the caller-owned
 next decision.
+
+## Cached Portal Navigation And Timing
+
+For a requested rapid-navigation/resize/cache acceptance, use a task-owned page and verify that viewport/network/debug controls are tab-scoped. Task ownership does not grant shared viewport control; apply effective host policy and verified user authority. Browser-wide viewport control is not safe isolation by itself. If independent isolation cannot be established, leave the affected resize check Not verified.
+
+Capture the Network cursor before actions and read through complete event pages using consistent filters. Record endpoint, request identity, page/filter/page-size, status/terminal and truncation; redact proof/auth values and business content. A size-changing return may require a list refresh without repeating rankings; same-context return should be judged against its actual cache contract.
+
+Exercise first entry, rapid departure, return after effective size change, pagination and same-URL cached return. Inspect visible list, page number and selected state together with request counts. Distinguish leaving before queued initialization from leaving after the request started. If browser automation reached only the second case, the first remains Not verified; do not replace it with a mock or script result. Browser back to a saved page query and a navigation button that resets the query are different operations.
+
+When inspecting storage, read only the authorized key and report shape/count/restoration rather than secrets or raw records. Runtime encrypted-mode validation, actual logout and API writes require their own authorized operational boundary; source/Store tests are separate evidence.
+
+For responsiveness capture, report first visible feedback, handler/queue/main-thread work and animation/presentation evidence separately. A fixed animation duration, 60 fps target or recording fps cannot prove smooth input. Compare traces with profiler overhead, frame/process ownership and deployed source identified; do not infer an embedded page is the AI widget from its URL alone.

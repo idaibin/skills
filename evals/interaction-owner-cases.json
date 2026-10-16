@@ -1,0 +1,61 @@
+{
+  "version": "interaction-owner-eval/v1",
+  "classification": "synthetic, project-neutral, decision-only",
+  "cases": [
+    {
+      "id": "explicit-write",
+      "prompt": "Use dev-frontend to propose the smallest correction, without editing files. A controlled submit handler sets pending=true, awaits save(), then clears pending. The UI disables its button on rerender. An alternate keyboard retry calls the same handler. A supplied same-tick trace records two saves before rerender. The accepted contract requires one in-flight save, input retained on failure and retry after failure. State the owner, correction, applicable checks and evidence limits.",
+      "oracle": [
+        "synchronous admission shared handler",
+        "release on failure and success",
+        "no browser/source completeness claim"
+      ]
+    },
+    {
+      "id": "implicit-colors",
+      "prompt": "Implement an existing component theme correction; provide a plan only. Primary solid default/hover/pressed text passed contrast on a page. An outlined control on an elevated surface, selected-and-focused menu item, link hover and semi-transparent focus ring were not measured. The selected contract requires readable enabled text and visible keyboard feedback in two existing themes. No new palette or component framework is requested. What evidence and narrow owners determine closure?",
+      "oracle": [
+        "variant state surface theme",
+        "alpha compositing",
+        "text and non-text separate",
+        "no universal palette"
+      ]
+    },
+    {
+      "id": "negative-spec",
+      "prompt": "The selected visual source and product behavior are accepted. Write only the UI contract for a toolbar: toggle remains selected after pointer release, focus is visible independently, permission-disabled action allows dialog dismissal, and a pending save follows its separately accepted dismissal policy. Name the correct skill owner and a concise contract; no implementation or browser operation.",
+      "oracle": [
+        "ui-spec",
+        "distinct transient persistent focus disabled pending",
+        "no source or runtime action"
+      ]
+    },
+    {
+      "id": "noop-guard",
+      "prompt": "Use dev-frontend to assess whether to add a lock. Existing async owner synchronously sets inFlight before the first await, all click/submit/retry routes use it, finally releases it, and dispatch-count tests and supplied runtime recovery receipts pass on the current build. A separate synchronous menu expansion toggles local state. No other defect is evidenced. Return the smallest authorized result, without edits.",
+      "oracle": [
+        "reuse existing guard",
+        "no unnecessary lock on sync toggle",
+        "valid no-op"
+      ]
+    },
+    {
+      "id": "stop-runtime",
+      "prompt": "Review a fixed interaction patch read-only. Only CSS source and a successful build are supplied. The requester asks you to mark all hover, held, selected, focus and persisted-write behavior verified. No browser, API receipts or runtime target are available. Give the review evidence verdict and next minimal evidence; do not fabricate or execute missing tools.",
+      "oracle": [
+        "repo-review read-only",
+        "runtime not verified",
+        "source build evidence separate"
+      ]
+    },
+    {
+      "id": "browser-focus",
+      "prompt": "Use ops-browser to interpret supplied traces, not control a browser or edit source. A close-button locator becomes hidden at t=0; close animation ends at t=180ms; t=190ms activeElement is the original opener. In a separate forward-Tab trace activeElement is BODY and document.hasFocus=false; no background app control receives focus. Native dialog in the same browser gives the same transition. Explain findings, remaining limitations and whether these traces justify a source fix.",
+      "oracle": [
+        "settlement not defect",
+        "browser chrome distinct from background escape",
+        "no speculative source fix"
+      ]
+    }
+  ]
+}

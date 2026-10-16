@@ -8,6 +8,7 @@
 - [Conditional Frontend Design Compliance](#conditional-frontend-design-compliance)
 - [Conditional Documentation Authority Review](#conditional-documentation-authority-review)
 - [Independence and Integration](#independence-and-integration)
+- [Follow-up Review](#follow-up-review)
 - [Verdict](#verdict)
 
 ## Standards Axis
@@ -22,6 +23,11 @@ pre-existing-but-blocking, or merely pre-existing. Only the first four can
 affect the review verdict, and a blocking pre-existing issue must be directly
 required by the changed path. Language/framework profiles refine reachability;
 they do not replace the shared finding gate.
+
+For dependency patches or workarounds, trace installation/use and affected observable
+assertions. Record upgrades or patch removal as scoped revalidation triggers; existing
+scripts or unrelated green checks do not prove the behavior. Bind file-scope claims to
+the selected diff rather than a summary.
 
 ## Security Evidence
 
@@ -89,6 +95,11 @@ separately `Not verified`; missing runtime/browser evidence is a distinct
 rendered-behavior `Not verified`. Do not infer exact visual values from pixels, make
 this a mandatory `repo-audit` handoff, or open a parallel review entry point.
 
+Trace applicable theme/global styles, generated token consumers, shell/overlay/scroll
+owners, menu/breadcrumb/title/i18n bindings, stable route/permission/deep-link IDs, and
+component tree or `key` state retention. Imports alone do not bound the impact, and a
+visible-name change does not authorize changing a stable identifier.
+
 When the basis adds or changes motion, gesture behavior, transition ownership, or
 user-visible interaction feedback, load `interaction-motion-review.md` inside this
 same subflow. Do not infer that branch from `.tsx`, `.vue`, `.css`, component paths,
@@ -108,6 +119,18 @@ check; do not reuse the old verdict.
 ## Independence and Integration
 
 Keep evidence collection independent so standards quality cannot hide a requirement miss and requirement coverage cannot excuse unsafe code. Parallel read-only passes are optional, not mandatory. The `repo-review` coordinator verifies both reports, removes duplicates, assigns one P0-P3 severity from concrete impact, and labels each finding with its contributing axis.
+
+## Follow-up Review
+
+Separate reachable defects, unmet required acceptance checks, and optional evidence
+strengthening. For each actionable gap, name the criterion and dependent claim it
+blocks. Missing mutation evidence is not automatically a mandatory gate unless the
+project requires it or the claimed fix depends on it. After a correction, bind the
+new basis and recheck the failure plus affected paths; reuse earlier evidence only
+when its inputs remain valid. Count repeated failures by criterion and cause, not
+review-round number, and do not waive a new reachable defect because it appeared late.
+Repeat a full suite only for a required gate, relevant change, failure or unresolved
+risk; a flakiness rerun must name its distinct evidence goal.
 
 ## Verdict
 

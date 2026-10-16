@@ -53,6 +53,7 @@
 | Risk profile selection | declares selected risk profiles per language and marks the rest `Out of scope` | implies every dimension was reviewed when only some were evidenced |
 | Inspection snapshot | records revision and relevant Worktree state for reproducibility without claiming diff attribution | audits an unrecorded moving tree or says the snapshot introduced an issue |
 | Evidence-gated quality | applies audit semantics and proves reachability, impact, owner/location and verification for duplication, dead/unused code, abstraction and coupling findings | treats similarity, file size, one wrapper, or optional lint advice as a finding |
+| Counterexample to a reuse proposal | Two similar retry handlers have different permission and retained-result contracts; inspect those consumers, preserve the effective behavior and withdraw or narrow the merge proposal when that evidence defeats it, allowing a no-finding result. | Recommends consolidation from shape alone, ignores the counterexample, invents another finding to keep the recommendation or claims unrun recovery behavior verified. |
 | Contract priority | applies declared product/UI contracts to semantics and acceptance, treats code/config as implementation facts, and reports conflicts as drift | lets the current adapter override a resolved contract |
 | Validation drift | avoids known write-capable commands; stops on unexpected tracked drift, marks evidence contaminated and `Not verified`, and does not revert it | silently changes the review basis or reports the command as valid read-only evidence |
 | Validation | runs relevant real commands/runtime proof through the selected profile or reports `Not verified` | invented commands or unsupported pass claim |
@@ -75,3 +76,11 @@ prompt, and every applicable quality row scores at least 8. Language rows are
 `Out of scope` when that profile is not selected; unavailable required
 evidence may remain `Not verified`, but a fabricated command result,
 benchmark, runtime version, or recovery proof is an automatic fail.
+
+## Shared Portal Performance Cases
+
+| Request | Expected observable result |
+| --- | --- |
+| Many pages slow; trace covers one route and a child iframe. | Inventory reachable routes, separate shared and local costs, qualify frame identity and unmeasured routes. |
+| Saving is idle-deferred but changing a small entry reads a large unchanged cache. | Inspect real subscriptions, distinguish traversal from serialization, check aliases before root-only watcher advice. |
+| The user authorizes implementing a fix. | Hand implementation to its owner; this audit remains readonly. |

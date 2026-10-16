@@ -166,10 +166,19 @@ evidence IDs and a reason:
 - final composited foreground/background contrast;
 - cross-section and main/sidebar alignment;
 - card/control dimensions and hit areas;
-- hover and visible keyboard focus;
+- applicable hover, held press, persistent selection and visible keyboard focus;
 - applicable loading, empty, error, permission, and disabled states;
 - responsive behavior at the desktop target and every key breakpoint named by the
   slice contract.
+
+For affected interaction colors, check actual component variants on their relevant
+surfaces/themes, including combined states. Primary tokens may not own link, danger,
+selected, outlined, or focus aliases; inspect the effective computed owner and alpha
+composition. Compare text contrast with its text background, and non-text/focus
+indicators with the relevant adjacent surfaces under the applicable contract. Do not
+reuse one threshold for every role or treat a nominal opaque token as proof of its
+rendered translucent indicator. Record sampled, inherited and unexercised coverage
+separately; one component fixture or resting route capture is not a complete workflow.
 
 Freeze those required viewport/state pairs in `required_runtime_matrix` before runtime
 acceptance. Each target has a stable ID and a canonical fingerprint of its viewport and
@@ -199,9 +208,15 @@ resource download:
    asset verified.
 
 Browser work must preserve user state. Record initial tab, viewport, zoom, scroll, and
-target identity; restore user-owned tabs to their prior viewport/scroll where possible,
-close task-only tabs, and leave one explicitly identified delivery tab/artifact in an
-inspectable state when requested.
+target identity. Resolve viewport control permission from the effective host policy
+and user authorization before using setters or lifecycle operations. A task-owned tab
+does not establish isolation from shared browser state. When changes are prohibited
+or their scope is unknown, observe passively and stop operations that could change
+that state. Apply restrictions only to their named surface, operation, and task
+condition; verify authority separately for other surfaces rather than extending a
+scoped restriction globally. Restore and close only within the verified authority; report incomplete
+cleanup without enlarging permission. Leave one explicitly identified delivery
+tab/artifact in an inspectable state when requested.
 
 ## Handoff Artifact
 
@@ -299,8 +314,11 @@ conflicting final receipts cannot jointly establish a final state.
 The canonical final receipt also binds a non-empty operation ID, the raw
 pre-capture browser state (`tab_id`, URL, viewport, and scroll), explicitly
 authorized restoration actions, and a post-operation readback in that same
-structure. The post-operation browser state MUST equal `before_state` exactly;
-the capture target viewport/state is evidence context, not the restoration target.
+structure. The post-operation browser state MUST equal `before_state` exactly. Do not
+change the compared browser state merely to manufacture matching readback. A mismatch
+leaves the dependent restoration claim `Not verified`; any authorized corrective
+action requires its own operation record and fresh readback. The capture
+target viewport/state is evidence context, not the restoration target.
 Its canonical SHA-256 is recomputed after excluding the hash field itself; a
 receipt cannot establish finality by merely repeating a pass number.
 

@@ -63,6 +63,11 @@ parallel `docs/prd/`, `docs/ui/`, root `PRD.md`, or visual authority.
   when the missing decision can change the requested behavior or acceptance.
 - Preserve authorization boundaries: a handoff transfers context, not permission to
   write product facts, UI specifications, source, or Git state.
+- Update only the authority whose accepted behavior or presentation changes; do not
+  manufacture document edits for unaffected layers. Keep Product and UI readiness
+  separate, and verify source, automated checks and runtime evidence on their own
+  bases after implementation. An explicit user decision in the current task can
+  supply the needed approval; an unchanged contract does not need reapproval.
 
 ## Report
 
