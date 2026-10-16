@@ -48,6 +48,6 @@ host lock/sleep evidence, capture/recording validation and retention ownership.
 
 - Read [usage](references/usage.md) for client modes, targeting, safety, evidence, and stop conditions.
 - Read [background operations](references/background-operations.md) when the user requires background execution or asks to qualify a focus-preserving route.
-- Read [session protocols](references/session-protocols.md) for app-owned CLI/RPC task submission, progress queries and reusable qualification evidence. For ZCode, load the [bundled CLI example](references/zcode-cli-example.md) or [app-server example](references/app-server-example.md) only for the installed route being used.
+- Read [session protocols](references/session-protocols.md) for app-owned CLI/RPC task submission, progress queries and reusable qualification evidence. For ZCode CLI account/model binding, exact-session continuation and result readback, load the [bundled CLI example](references/zcode-cli-example.md). Load the [app-server example](references/app-server-example.md) only when that separate host-driven protocol is selected.
 - Read [simulator operations](references/simulator-operations.md) for mobile apps running inside Android Emulator or another simulator, including headless and host-lock checks.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

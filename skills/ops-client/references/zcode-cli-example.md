@@ -1,67 +1,116 @@
 # Bundled ZCode CLI qualification example
 
-Use only when an authorized task calls for operating an installed ZCode client through
-its bundled CLI. This route uses no desktop UI input; it does not prove uninterrupted
-foreground continuity, native-window presentation or desktop task-list synchronization. External-AI
-provider selection and review quality remain with the requesting workflow.
+Use for an authorized installed ZCode CLI operation. Bind the existing user session
+when requested; this transport does not select a reviewer/provider or authorize new
+business work. CLI state and desktop presentation remain separate evidence layers.
 
-## Identity and entry
+## Contents
 
-Bind `command -v zcode`, the resolved executable inside the installed app, `--version`,
-the exact `--cwd`, account/configuration source and intended session. Read installed
-`--help` and run `doctor --json` for packaging and argument checks. `doctor` does not
-prove model access, tool restrictions or a completed Agent turn. Use the installed
-runtime as authority when upstream source or an older local profile differs.
+- [Identity and account binding](#identity-and-account-binding)
+- [Resume and submit once](#resume-and-submit-once)
+- [Readback and attribution](#readback-and-attribution)
+- [Permission, privacy and route limits](#permission-privacy-and-route-limits)
 
-The qualified macOS 0.16.9 bundle needed a process-local
-`ZCODE_BUILTIN_PROVIDER_CONFIG_FILE` pointing to its existing
-`config/provider/zcode-builtin.json`. Resolve and verify that resource in the current
-installation; do not hard-code another installation's path, alter the app bundle,
-copy credentials or change shared provider settings to make a probe pass. A missing
-default catalog path is a bounded lookup failure, not proof of provider absence.
+## Identity and account binding
 
-## Prompt and exact-session resume
+Resolve the executable inside the current app, version, help, exact workspace/key,
+session ID and account/configuration source. Reuse matching caller-owned qualification
+records; check drift before repeating probes. Help and doctor validate packaging and
+arguments, not model access, tool effects or completed turns.
 
-For a bounded headless task, pass `--cwd`, `--prompt`, `--json` and an explicit mode.
-The installed 0.16.9 help also advertises `--disallowed-tools`, `--no-color` and
-`--resume <sess_...>`. Put a positional subcommand such as `doctor` before the
-variadic `--disallowed-tools` option; otherwise it may be consumed as a tool name
-and the CLI may enter TUI. In prompt invocations, put `--prompt` after the denylist
-so it cannot be consumed as another tool name. `--continue` selects a latest session and is not a substitute for an
-exact SID.
+The qualified macOS CLI 0.16.9 supports process-local configuration:
 
-Capture direct process exit, stderr, the JSON `sessionId`, `turnId`, `traceId`,
-`projection`, `response` and usage, then read the task's actual postcondition.
-An exit code or JSON response alone does not prove tool effects or desktop state.
-Before `--resume`, verify the original SID, workspace, terminal state and absence of
-concurrent work; send once, confirm the returned SID is identical and turn ID is new.
-After ambiguous submission, reconcile the existing session instead of replaying.
-The CLI may persist session/cache state outside `--cwd`; an empty workspace is not a
-zero-side-effect claim.
+| Variable | Meaning to verify in the installed runtime |
+| --- | --- |
+| ZCODE_DATA_BASE_DIR | Parent of the original account's .zcode directory; not that directory itself |
+| ZCODE_BUILTIN_PROVIDER_CONFIG_FILE | Existing bundle config/provider/zcode-builtin.json |
+| ZCODE_PERSONAL_PROVIDER_CONFIG_FILE | Original account's existing .zcode/v2/provider_config.json |
 
-For model attribution, a completed session-bound `model_usage` row in ZCode's local
-CLI database is stronger than the UI model picker or self-report, but it is still
-local client evidence, not server attestation. Query only the exact SID after the
-turn ends and protect credentials and transcript content. A warning on stderr must
-be assessed against the requested capability even when the turn exits successfully.
+A desktop launched from another working directory may use an account root different
+from the shell default. Locate the actual desktop task index/configuration through
+verified process open files, installed path resolution and exact task metadata. A
+missing catalog or provider under the shell default is only a scoped lookup failure.
+Use paths to the original stores and let the CLI load credentials natively; do not
+print/copy tokens, change global config, switch accounts/models or create a replacement
+session to repair binding. Preserve exact provider/model IDs and reasoning variant;
+case-normalized model labels and the UI picker alone do not establish identity.
 
-## Permission and evidence boundary
+Account configuration, desktop task index and CLI transcript database can resolve to
+different roots. Discover each independently; an account-root override does not prove
+that the session database moved. Keep personal paths, SIDs and live receipts outside
+the published Skill.
 
-`--mode plan` and a tool denylist are not a filesystem sandbox or a general read-only
-guarantee. In the qualified 0.16.9 read/resume probe, the CLI used only `Read` and
-left the disposable workspace file unchanged, yet its persisted session permission
-field said `build`. Treat this as a bounded observed effect, not proof that future
-file or command tools are disabled. For a real read-only review, require an authorized
-isolated workspace or another verified enforcement route, inspect actual tool events
-and before/after state, and leave strict write prevention `Not verified` otherwise.
-Do not infer a successful app-server route, plugin loading, long-task recovery,
-approval handling or foreground continuity from a CLI prompt smoke test.
+## Resume and submit once
 
-The 0.16.9 qualification observed `--help` and `doctor --json` exit 0; a no-tool
-prompt returned its requested short response with exit 0. A second disposable task
-read a file using `Read`, then resumed the exact SID with a distinct turn; both
-turns exited 0, the response and file hash matched, and local model usage recorded
-`glm-5.3` completed. These are capability examples to revalidate against the
-current installation, not reusable acceptance for another task or model.
+Before sending, read the exact SID's workspace, latest input, model and terminal state,
+pending approvals and concurrent activity. Resume only the intended idle session. If
+work is running, query it; after an uncertain send, reconcile it instead of replaying.
+Use --resume with the exact SID; --continue selects a latest session and is unsuitable
+for this binding. Do not send a no-op model probe into a live user task merely to test
+connectivity when retained evidence or an authorized real continuation suffices.
 
-For rediscovery, consult the [official CLI source](https://github.com/zai-org/ZCode/blob/main/apps/zcode-cli/packages/cli/src/run.ts) and [ZCode Agent mode guide](https://zcode.z.ai/en/docs/agents), then prefer the installed version's observed behavior.
+Use an argument array with the installed executable, for example:
+
+```javascript
+const args = [
+  '--cwd', workspace, '--resume', sessionId,
+  '--json', '--no-color', '--mode', verifiedMode,
+  '--disallowed-tools', ...taskDeniedTools,
+  '--prompt', authorizedPrompt,
+];
+// Spawn with process-local verified configuration; stream stdout/stderr to
+// private caller-owned evidence. Preserve the original account and session mode.
+```
+
+In 0.16.9 the denylist is variadic: place --prompt after it, and positional commands
+such as doctor before it, or they can be consumed as tool names. Read current help
+before reuse. Headless slash-command handling differs from TUI: /model was not a
+supported model-selection route in the qualified headless flow. Use verified existing
+binding rather than assuming a slash prompt changes configuration.
+
+Capture process exit/signal, stderr and returned sessionId/turnId/traceId, response,
+projection and usage when supplied. Verify the same SID and a new matching turn.
+Accepted input, a zero exit or a generated report alone does not prove completion.
+Distinguish process/transport exit from the task's persisted terminal state; a finished
+assistant message does not prove a still-open transport exited successfully.
+
+## Readback and attribution
+
+Use supported exact-session queries first. When the installed route requires local
+persisted evidence, inspect the schema and open SQLite read-only; restrict queries to
+the exact SID, submitted input and subsequent turn. Message/part records can establish
+assistant finish, matching tool calls, arguments, status, outputs and final text.
+Inspect actual events, not only the final self-report. Avoid dumping unrelated history.
+
+Correlate completed model_usage records with the exact session and current turn/trace,
+including provider_id, model_id and variant. This is local client attribution, not
+server attestation. Verify result files and hashes independently and compare authorized
+before/after state. A correction resumes the same idle session with the concrete
+remaining issue; do not redispatch the original work or open an equivalent task.
+
+## Permission, privacy and route limits
+
+Mode names, plan mode and tool denylists do not create a path sandbox. Denying Edit
+still leaves writes possible through Bash or Write. Preserve the authorized permission
+boundary, report missing enforcement and inspect actual tools and before/after state;
+do not claim strict read-only prevention without verified isolation. The CLI can persist
+session/cache state outside --cwd. An unchanged file hash proves endpoint equality,
+not absence of intermediate changes; equal database counts do not prove content equality.
+
+For process configuration, capture only in memory and emit an explicit nonsecret
+whitelist. Parse connection URLs and emit only needed host/port/database metadata;
+exclude userinfo, password and query. Filtering variable names for PASSWORD/TOKEN does
+not sanitize a DATABASE_URL. Never emit raw process environments or credential files.
+
+The bundled app-server is a separate host-driven protocol: standalone account-backed
+model access may depend on native-host account synchronization. A standalone empty
+account source does not prove that the desktop account is unavailable. Prefer the
+qualified direct CLI route for same-account headless continuation; qualify app-server
+separately if selected. Do not emulate host credential synchronization by copying keys.
+
+A completed CLI tool task does not prove desktop task-list refresh, screenshots,
+uninterrupted foreground continuity, approval handling or disconnect recovery. Retain
+user sessions and preserve relevant failed-route evidence. Consult current installed
+implementation first; [official CLI source](https://github.com/zai-org/ZCode/blob/main/apps/zcode-cli/packages/cli/src/run.ts)
+and [Agent mode guide](https://zcode.z.ai/en/docs/agents) are rediscovery pointers, not
+substitutes for the installed build's observed behavior.

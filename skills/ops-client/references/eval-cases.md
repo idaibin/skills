@@ -121,6 +121,9 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | Existing task is running or an approval exceeds scope | Read progress or return pending approval; do not submit a competing task or grant blanket permission. |
 | Installed ZCode CLI packaging check | Resolve the current executable and resource catalog; `--help` and `doctor --json` validate only their observed fields, not model access or read-only enforcement. |
 | ZCode prompt and exact SID resume | Bind `--cwd` and process-local config, record direct rc and JSON session/turn IDs, verify the task postcondition, then resume only an idle exact SID and confirm a new turn on the same session. |
+| ZCode desktop account root differs from shell default | Resolve actual account/config and transcript roots separately; resume the exact idle SID with original provider/model/variant through process-local paths and native credential loading. Do not print/copy credentials, change accounts or create a replacement session. |
+| ZCode headless model command or standalone app-server lacks account models | Diagnose the selected installed route and host/account dependency; preserve the original model, use a qualified direct CLI continuation when authorized, and keep unsupported routes unverified rather than replaying the business task. |
+| ZCode process configuration evidence | Emit only an explicit nonsecret whitelist; parse DATABASE_URL into needed host/port/database metadata before output. A variable-name secret filter is insufficient. |
 | ZCode CLI permission boundary | A `Read`-only disposable task and unchanged file hash support that task; a persisted `build` permission or untested denylist prevents a general read-only claim. |
 
 ## Scoring
