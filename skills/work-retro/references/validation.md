@@ -22,6 +22,20 @@ source, globalized conflicting rule, or false completeness claim is a critical f
 aggregate quality cannot cancel it. Evaluate a fresh agent's actual output and trace;
 regex/package checks alone cannot establish behavior.
 
+## Proposed regression guards
+
+When proposing a new guard for an evidenced real error, require a safe replay of the
+old error that is rejected for the intended reason, plus a structurally similar valid
+case that passes. Only in an explicitly authorized, isolated, disposable fixture,
+check that removing or disabling the guard makes the old-error case expose the failure
+again; an unrelated error or any nonzero exit is insufficient. Never disable protections
+in a real workspace or production. Without that authorized fixture, report the mutation
+check as a validation gap instead of executing it.
+If the historical error cannot be safely reproduced, keep that validation gap explicit.
+A synthetic substitute may test the mechanism, but must not be labelled a real
+historical replay. Retain the source, candidate, oracle and actual run evidence under
+the existing result contract; this requirement grants no execution or adoption authority.
+
 ## Evidence levels
 
 1. Package: metadata, references, links, catalog parity, and sensitive-data check.
