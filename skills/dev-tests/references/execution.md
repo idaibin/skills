@@ -56,3 +56,11 @@ Do not modify tests to match observed behavior when it contradicts accepted requ
 When no relevant existing test exists, return the missing assertion and owner; a manual
 observation may support only what it actually checks, not pretend automated coverage.
 Unit, contract, integration, UI and E2E results retain their individual evidence levels.
+
+## Assertion scope
+
+Name the assertions actually executed. Reaching an intercepted request with a syntactic
+URL is a smoke result, not method/path/payload/response conformance. Contract assertions
+need an independently accepted expected value; copying the implementation into an
+expectation cannot prove correctness. A runner intended to signal assertion failure
+must return a failing process status when such a check fails.

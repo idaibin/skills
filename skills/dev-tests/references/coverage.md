@@ -71,3 +71,11 @@ and assertions: a test name, count or configured workload is not coverage eviden
 For a requested release-readiness assessment, identify missing version-bound health
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
+
+## Generated coverage boundaries
+
+Keep file/module dependencies separate from exported-symbol consumers. A shared import
+does not establish a caller of every export; resolve the named symbol, alias, namespace
+member and callback handoff, and retain computed/instance-dependent references as gaps.
+Source-derived inventory rows and generic case scaffolds remain provisional until an
+accepted business oracle supplies the required observable outcomes.

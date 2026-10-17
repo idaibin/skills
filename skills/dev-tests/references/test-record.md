@@ -52,3 +52,13 @@ fault settings, tabs and files separately from business success.
 End with the finite recovery queue: case, dependency/decision, precise resume action.
 An honest completed run may find defects or remain partial; it cannot claim whole
 system acceptance until the agreed coverage and required evidence are complete.
+
+## Safe reruns
+
+Reconcile generated observations into the current case IDs without resetting manual
+results, investigation notes or owner-specific recovery conditions. Bind retained
+verdicts to their source/environment basis; changed or missing bindings require an
+explicit invalidation or blocked update, with the previous observation preserved.
+Update only the tool-owned section of mixed generated/manual records. Refresh digests
+for declared evidence writes and validate untouched receipts before accepting the new
+index; a stale index is not current integrity evidence.

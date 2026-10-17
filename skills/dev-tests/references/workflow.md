@@ -1,5 +1,13 @@
 # Execution workflow
 
+## Contents
+
+- [Establish the run](#1-establish-the-run)
+- [Build finite coverage](#2-build-finite-coverage)
+- [Execute each journey](#3-execute-each-journey)
+- [Diagnose and retest](#4-diagnose-and-retest)
+- [Exit](#5-exit)
+
 ## 1. Establish the run
 
 Read effective project instructions and only the relevant Product, UI and API items.
@@ -43,6 +51,14 @@ Name the missing assertion and why existing evidence cannot answer it. Recover u
 raw evidence before repeating actions; a fixture version change invalidates only cases
 whose consumed data or behavior changed. Reproduce stale defect claims before repair.
 
+When the project maintains a generated asset/case catalogue, consume its existing
+stable IDs and run its drift/reference checks before selecting cases. Reconcile
+registered routes, request definitions, controls/options and their direct/indirect
+consumers separately. Apply the [generated coverage boundaries](coverage.md#generated-coverage-boundaries)
+to the graph and oracle approval state. Keep unresolved extraction and unexecuted
+obligations visible in the final denominator; catalogue validation is structural
+evidence, not case execution.
+
 ## 3. Execute each journey
 
 1. Check current basis and test data; capture the initial page/state and relevant
@@ -59,6 +75,13 @@ whose consumed data or behavior changed. Reproduce stale defect claims before re
 5. Restore only task-owned test data and state via supported scoped operations.
    Verify restored records, counts and fault settings. Restarting a shared Mock or
    clearing all storage is not cleanup of one test record.
+
+For a requested performance recording, freeze capture as part of the execution plan.
+Use a separate scripted replay when recording overhead is excluded from measurement;
+bind both phases to the same source, data, viewport, motion policy and case sequence.
+If capture is included in the measured windows, disclose it and hold it equal across
+compared runs. Validate the actual video and its covered operations independently;
+a metric pass does not establish that a recording exists or is usable.
 
 Close the case with its actual evidence and status before the next business journey.
 If a write outcome is uncertain, reconcile it by readback before retrying; do not
