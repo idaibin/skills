@@ -1,5 +1,11 @@
 # Product Specification Templates
 
+## Contents
+
+- [Feature Spec](#feature-spec)
+- [Foundation Spec](#foundation-spec)
+- [Artifact Update](#artifact-update)
+
 Use repository conventions before these shapes. Omit inapplicable sections.
 
 ## Feature Spec
@@ -10,7 +16,7 @@ Use repository conventions before these shapes. Omit inapplicable sections.
 ## Goal and implementation slice
 ## Users and scenarios
 ## Confirmed decisions and rationale
-## Scope and non-goals
+## Scope
 ## Main and failure flows
 ## Business rules and permissions
 ## UI states and evidence (if applicable)
@@ -18,7 +24,7 @@ Use repository conventions before these shapes. Omit inapplicable sections.
 ## Affected product surfaces and dependencies (if applicable)
 ## Product fact trace (if facts materially change scope or acceptance)
 ## Acceptance criteria
-## Assumptions, open questions, rejected and deferred decisions
+## Open questions (working drafts only; resolve before terminal delivery)
 ## Ready for <implementation slice>
 ```
 
@@ -29,13 +35,18 @@ For several independent features, add a short index before the slice documents:
 
 ## Shared confirmed facts
 ## Slice inventory, links, and status
-## Shared dependencies and exclusions
+## Shared dependencies
 ## Slice-specific blockers
 ## Consumer read contract
 ```
 
 Each linked slice uses the Feature Spec template. Do not repeat UI colors, typography,
 components, tokens, or page geometry; link the target UI contract instead.
+
+The terminal artifact contains only accepted behavior. Removed requirements and
+rejected alternatives are not sections to preserve; omit decision-history fields
+from final delivery. Use the following reasoning table only while a material choice
+is unresolved, not as a mandatory section in the finished spec.
 
 For each material product choice, record only the fields needed to preserve why the
 slice is implementable. Omit this structure for settled or low-impact facts:

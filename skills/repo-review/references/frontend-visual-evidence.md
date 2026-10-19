@@ -149,6 +149,12 @@ the design capture and implementation capture independently inspectable even whe
 overlay/diff is produced. Record tool, viewport, state, zoom, scroll position, artifact
 path/ID, and evidence limitations for every capture.
 
+For screenshot comparison, also freeze the browser/client and build identity, device
+pixel ratio when material, loaded fonts, locale/time zone, theme/color scheme, data or
+fixture, and reduced-motion/animation state. Do not mask real product variability just
+to stabilize a test. Exercise dynamic interaction separately from a static comparison,
+and never update all image baselines merely to remove unexplained failures.
+
 Whole-image RMSE, pixel similarity, perceptual distance, or another aggregate image
 metric is diagnostic only. It may help locate drift but cannot independently pass or
 fail the visual gate; critical states, assets, accessibility, computed styles, and

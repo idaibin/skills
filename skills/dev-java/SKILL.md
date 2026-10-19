@@ -21,6 +21,8 @@ Implement Java changes against the actual build root, JDK, module, framework, an
 
 ## Invariants
 
+- Before touching another business module, apply the [cross-module business gate](references/codebase-design.md#cross-module-business-gate); an implementation request alone does not authorize changing its existing behavior or code.
+
 - Preserve the pinned JDK/build/framework and existing controller/service/data/security owners.
 - Do not introduce OpenAPI, persistence abstractions, generated clients, or architecture merely by analogy.
 - Keep source, tests, build, migration, integration, runtime, and deployment evidence distinct; do not mutate Git.

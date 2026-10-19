@@ -33,6 +33,11 @@ calling it filled; use its native supported controls, not direct app-state mutat
 
 ## UI evidence
 
+For asynchronous overlays, exercise focus across loading, failure, retry, busy controls,
+control replacement and close. Check applicable Tab/Shift+Tab containment and restored
+focus against the accepted UI contract; non-modal overlays need not trap focus. Labels,
+screenshots and disabled styling do not prove keyboard continuity or duplicate admission.
+
 Use screenshots for appearance, computed geometry for dimensions, DOM/AX for semantics,
 network for requests and console for runtime errors. Observe initial, intermediate
 and final states required by the case; do not blur controls or inject CSS to improve

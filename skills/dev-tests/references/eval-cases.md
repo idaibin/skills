@@ -87,6 +87,7 @@ outside this reusable package.
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
+| Use dev-tests to verify accepted performance and protected recovery/keyboard outcomes | Bind comparable metrics and observable assertions to the existing case inventory | Scoped runtime acceptance, not early design or source implementation |
 | Use $dev-tests to exercise the existing test deployment from API through page clicks and refreshed business results. | Execute bounded journeys, correlate evidence and return coverage/cleanup. | Explicit functional acceptance. |
 | Walk the application end to end: UI, system functions, permissions, filters and logic. | Select tests, resolve finite inventory, run authorized cases. | Contextual functional acceptance. |
 

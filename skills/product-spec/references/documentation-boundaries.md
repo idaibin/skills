@@ -51,10 +51,10 @@ decisions, migration narratives, or task validation logs in the current spec. A
 business-effective date remains only when the date itself changes user eligibility,
 behavior, rollout, or acceptance.
 
-When accepted scope removes a surface, delete its obsolete rules, examples and active
-references from the current contract. Keep a non-goal or rejected alternative only
-when it still defines a real boundary or explains an accepted decision; do not retain
-conversation history or create a replacement archive merely to narrate the deletion.
+When a user removes a product surface or requirement, delete its authorized sections,
+examples and active references. Do not preserve it as a non-goal, a rejected decision,
+a negative declaration, or a statement about what the user said. Describe only the
+accepted final product. Do not create a replacement archive for removed content.
 
 Use a verified ignored `.codex/` workspace for local reviews, captures, handoffs,
 comparison reports, and environment snapshots. Publish a time-bound status document

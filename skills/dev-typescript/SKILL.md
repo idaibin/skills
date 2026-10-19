@@ -21,10 +21,10 @@ Implement the smallest authorized non-browser source slice in the repository's a
 
 ## Invariants
 
+- Before touching another business module, apply the [cross-module business gate](references/codebase-design.md#cross-module-business-gate); an implementation request alone does not authorize changing its existing behavior or code.
+
 - Preserve existing runtime, package manager, module, source, and test owners; do not add a parallel stack.
-- For CLI changes, exercise the actual command entry point and representative flags
-  when safe and available; keep build, installed-command and runtime evidence distinct.
-  Select build checks by changed risk and the project's required delivery gates.
+- During development, do not invoke a standalone build, bundle, or package command as validation. Run the actual CLI entry point with `--help`, `doctor` when supported, representative commands, and focused non-build checks. A build is allowed only in an authorized release phase or when the user explicitly requests build, packaging, or artifacts; if installation requires a build without that authorization, keep installed-command validation `Not verified` and report the requirement.
 - Keep source, static, build, runtime, artifact, and deployment claims separate.
 - Do not implement browser UI, review, stage/commit/push, or infer unresolved behavior.
 

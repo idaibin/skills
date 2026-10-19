@@ -23,6 +23,8 @@ Implement a bounded Rust change in the repository's actual Cargo workspace, tool
 
 ## Invariants
 
+- Before touching another business module, apply the [cross-module business gate](references/codebase-design.md#cross-module-business-gate); reuse an existing explicit decision for the same plan and scope.
+
 - Preserve real crate, ownership/error, async, unsafe/FFI, toolchain, and test conventions.
 - Do not add a framework, generated client, or protocol pipeline without an existing/adopted owner.
 - Keep source, lint/build, native/runtime, artifact, and deployment proof separate; do not mutate Git.

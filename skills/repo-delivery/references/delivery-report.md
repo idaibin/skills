@@ -13,6 +13,8 @@ Use this compact structure after the requested Git state is reached or when deli
 
 ## Verification
 - <command or probe>: <result>
+- Baseline and affected surfaces: <spec/revision plus routes, pages, components, or clients actually covered>
+- Runtime environment: <browser/client, build identity, viewport, theme, locale, data fixture, and motion state when applicable>
 - Review: <basis and verdict>
 - Lifecycle/mode: <execution-durability|final-delivery> / <milestone|fixup|checkpoint|normalization|other>
 - Authorization: <per-action|bounded-task-plan> and <scope/remaining validity>
@@ -20,6 +22,7 @@ Use this compact structure after the requested Git state is reached or when deli
 - Commit strategy: <categorized commits|explicit single commit|preserved source commits|squash|explicit partial integration> and <rationale>
 - Normalization: <before/after HEAD and tree equality, disposition, or Not performed>
 - Git proof: <local SHA and remote ref when applicable>
+- Write/readback: <written artifact or ref and independent readback result, or Not applicable>
 
 ## Known Issues
 - <remaining defect, failed check, residual risk, or Not verified gap>

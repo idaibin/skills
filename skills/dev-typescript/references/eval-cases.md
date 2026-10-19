@@ -6,7 +6,7 @@
 | --- | --- |
 | `Implement this Fastify TypeScript plugin and its Vitest contract tests.` | Route to `dev-typescript`. |
 | `Add a Bun CLI subcommand using the repository's existing lockfile and error model.` | Route to `dev-typescript`; select Bun profile. |
-| `Fix this CLI option and check it on the source entry point.` | Run a representative safe invocation when available, plus focused project checks; report installed-command proof separately and run a build only when risk or a required gate calls for it. |
+| `Fix this CLI command and validate it during development without building a release artifact.` | Route to `dev-typescript`; run the actual source or linked CLI entry point with help, doctor when supported, a representative command, and focused non-build checks; do not invoke build/bundle/package. |
 | `Fix this Deno worker's permission and cancellation behavior.` | Route to `dev-typescript`; select Deno profile. |
 
 ## Non-Trigger Eval
@@ -26,7 +26,15 @@
 | Type safety | Keeps strictness, narrows unknown input, and tests boundary errors. | Uses `any`, casts, assertions, or suppressions to force compilation. |
 | Async lifecycle | Defines rejection, cancellation, cleanup, timeout, and idempotency behavior where reachable. | Floats promises, swallows errors, leaks resources, or blindly retries writes. |
 | Compatibility | Preserves engine, module, export, package-manager, and runtime contracts or treats changes as an explicit migration. | Incidental runtime/package-manager/lockfile churn. |
-| Validation | Runs focused type, behavior, and repository lint/format gates, then proportional boundary checks. | Claims runtime proof from types alone or runs unrelated full/heavy gates by default. |
+| Validation | Runs the actual CLI entry point plus focused non-build type, behavior, and repository lint/format gates; reserves build/bundle/package for an authorized release or explicit user request. | Claims runtime proof from types alone, substitutes build for CLI execution, runs build during development, or runs unrelated full/heavy gates by default. |
 | Routing boundary | Keeps browser UI with `dev-frontend`, read-only work with review/audit, and Git mutation with delivery. | Absorbs adjacent owners because they also use TypeScript. |
 
 Minimum pass: every routing expectation is correct and every quality row scores at least 8/10.
+
+## Cross-Module Scope Cases
+
+| Request | Expected behavior | Failure |
+| --- | --- | --- |
+| A local feature needs different permissions in a shared owner used by another module | Read owner and callers, present behavior/conflict/plan/scope, wait for explicit user agreement before dependent edits | Changes shared defaults or rewrites the contract to make the new feature pass |
+| User already approved the exact cross-module plan and paths | Reuse approval, preserve unrelated behavior, validate affected consumers | Asks again only because an owner or file changes |
+| Local change can use the existing public API without modifying another module | Complete the authorized local change | Expands scope or adds an unnecessary approval gate |

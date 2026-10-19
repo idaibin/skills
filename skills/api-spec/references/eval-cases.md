@@ -31,6 +31,7 @@ For live evaluation cover explicit/implicit invocation, a nearby non-trigger, ac
 no-op, and missing-authority stop. Keep synthetic inputs and report selection, artifact
 effects, validation, and stop honesty separately; static routing is not runtime proof.
 
-When an accepted endpoint replaces an old one, the active contract states the final
-wire shape directly; real consumer or persisted-data compatibility requirements stay
-visible until their owner resolves them.
+When an accepted endpoint replaces an old one, state the accepted final wire shape
+directly, without old/new, compatibility or migration narrative. Resolve real consumer
+or persisted-data conflicts before changing dependents; keep removed scope out of the
+terminal contract.

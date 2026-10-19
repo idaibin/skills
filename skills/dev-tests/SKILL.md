@@ -25,7 +25,8 @@ checklist alone does not complete the run.
 | API or business-state behavior participates | [API and logic](references/api-and-logic.md) | Wire, business status and independent persistence assertions |
 | Pages, UI or clicks participate | [page walkthrough](references/page-walkthrough.md) | Reachability, real interaction and visible outcomes |
 | Record functional cases, defects or recovery | [test record](references/test-record.md) | Finite coverage, case evidence and recovery queue |
-| Role isolation, concurrent users, load or performance applies | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
+| Scoped performance acceptance or before/after comparison participates | [performance measurement](references/performance-measurement.md) | Comparable metrics, protected journeys and qualified verdicts |
+| Role isolation, concurrent users or load scenarios apply | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |
 
 ## Invariants
@@ -50,6 +51,10 @@ checklist alone does not complete the run.
   `repo-delivery` separately authorized Git actions. No deployment, installation,
   publication, production load, or implicit promotion follows from testing.
 
+- Consolidate delegated case results into the frozen inventory before selecting more
+  work. An agent terminal state closes only its assigned execution, not another
+  evidence layer or the run verdict.
+
 ## Output Map
 
 Return the [result contract](references/result-contract.md): frozen basis and authority
@@ -68,4 +73,5 @@ into “all tests passed” when required cells remain unresolved.
 - Read [test record](references/test-record.md) for functional plans, defects, coverage and recovery.
 - Read [roles and performance](references/roles-and-performance.md) only for relevant multi-user, authorization or performance requirements.
 - Read [result contract](references/result-contract.md) when consuming results or returning evidence.
+- Read [performance measurement](references/performance-measurement.md) for scoped comparative performance acceptance.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary execution.

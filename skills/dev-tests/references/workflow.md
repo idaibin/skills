@@ -21,6 +21,14 @@ Inspect current scripts/configuration and choose actual declared commands. Reuse
 nearest effective tests; do not invent `test`/`lint` commands, treat a build as testing,
 or launch new infrastructure implicitly. Capture a task-local baseline before tests.
 
+When tests resolve packages through another checkout/application, temporary links or
+ambient modules, record that dependency provenance as part of the run identity. Such
+results prove only that environment, not an independent lockfile installation. After
+replacing or removing those dependencies, rebind and rerun the affected checks; retain
+the original pass without promoting it to the new environment. Missing harness packages
+are environment/testability gaps, not product assertion failures. Dependency edits
+belong to their implementation owner and require the existing task authority.
+
 Exit this step with one identified target and known effects. If authentication,
 identity, network or tools are missing, mark dependent cases BLOCKED and continue
 available static/Mock/read-only cases with their narrower evidence label.
@@ -104,6 +112,11 @@ and cross-module decisions, and returns for the failing case plus affected neigh
 Retain the original failure and the new result; no need to rerun unrelated passed cases.
 
 ## 5. Exit
+
+For performance comparisons, follow [performance measurement](performance-measurement.md)
+for interpretation and acceptance. Receive raw browser/client observations from the
+operations owner; it does not own the cross-layer verdict. Retest protected recovery
+and keyboard states affected by the optimization, not just the faster path.
 
 Reconcile the inventory: passes, failures, blocked/not-run cases and justified N/A.
 All required assertions must have current evidence for the scoped journey to pass.

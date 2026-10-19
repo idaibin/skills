@@ -56,6 +56,14 @@ rewriting them simply to obtain a green test.
 
 ## Evidence limits
 
+For asynchronous result/download journeys, map relevant faults to accepted states and
+recovery: failed retrieval versus confirmed emptiness, stage-specific retry, retained
+results after refresh failure, duplicate admission, close during work and late completion.
+A synthetic fault such as 503 is a selected fixture, not a universal code. Record
+controllable failure points; route missing injection support to implementation.
+Simulated faults do not prove a real service failed or recovered. Keyboard assertions
+remain in [page walkthrough](page-walkthrough.md).
+
 Direct API tests prove API results, not whether the page sent the same payload.
 Browser network evidence must bind the tested action to its own request and response.
 Independent API readback strengthens persistence proof but does not replace actual UI

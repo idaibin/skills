@@ -17,11 +17,15 @@ Do not maintain parallel handwritten endpoint, DTO, response, or error authoriti
 Frontend wrappers, screenshots, legacy prose, repository inventories, and successful
 parsing may reveal conflicts but cannot establish backend truth.
 
-Describe the accepted current endpoints, fields and examples directly in the active
-integration contract. Remove superseded definitions and links within authorized scope,
-while preserving compatibility or migration information when real consumers, data or
-the accepted deliverable require it. Resolve those dependencies before changing their
-behavior; a final document should not narrate the task conversation.
+## Terminal Integration Contract
+
+Write integration documents directly against the accepted final endpoints, fields,
+flows and call examples. Remove superseded definitions and active references within
+scope; omit old/new comparisons, compatibility plans, migration instructions and
+conversation attribution. Do not keep removed scope as a negative declaration.
+If a real consumer or persisted-data dependency conflicts with the final contract,
+raise the impact and permitted change plan before dependent implementation. Keep
+that decision in the task discussion, not as legacy prose in the final contract.
 
 ## Workflow
 

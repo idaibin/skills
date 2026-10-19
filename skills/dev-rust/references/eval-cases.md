@@ -136,3 +136,11 @@ Score each quality case from 0 to 10. Minimum pass: every quality case scores at
 and all trigger/non-trigger and overlay-selection expectations are correct.
 Selecting one highest profile for a mixed risk, or applying unrelated
 heavy checks to Routine or target-only work, is an automatic selection failure.
+
+## Cross-Module Scope Cases
+
+| Request | Expected behavior | Failure |
+| --- | --- | --- |
+| A local feature needs different permissions in a shared owner used by another module | Read owner and callers, present behavior/conflict/plan/scope, wait for explicit user agreement before dependent edits | Changes shared defaults or rewrites the contract to make the new feature pass |
+| User already approved the exact cross-module plan and paths | Reuse approval, preserve unrelated behavior, validate affected consumers | Asks again only because an owner or file changes |
+| Local change can use the existing public API without modifying another module | Complete the authorized local change | Expands scope or adds an unnecessary approval gate |
