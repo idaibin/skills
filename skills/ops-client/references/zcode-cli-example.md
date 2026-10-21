@@ -15,7 +15,8 @@ configuration, arguments and persisted readback.
 ## Installed configuration roots
 
 Resolve the executable inside the current app, version and help. In the qualified
-macOS CLI 0.16.9, process-local configuration accepts these variables:
+macOS CLI 0.17.0 (native-review live-canary 2026-10-20; exact-session resume canary
+2026-10-21), process-local configuration accepts these variables:
 
 | Variable | Installed-runtime meaning |
 | --- | --- |
@@ -47,7 +48,7 @@ const args = [
 ];
 ```
 
-In 0.16.9 the denylist is variadic: place --prompt after it, and positional commands
+In 0.17.0 the denylist is variadic: place --prompt after it, and positional commands
 such as doctor before it, or they can be consumed as tool names. Check current help
 before reuse. The qualified headless flow did not support /model as a model-selection
 route; preserve the verified session binding rather than treating that slash prompt
@@ -70,6 +71,9 @@ rows through session/turn/trace and provider_id, model_id and variant.
 
 --cwd does not contain CLI session/cache persistence. Mode and tool-name filters do
 not enforce filesystem paths; require suitable isolation for the accepted operation.
+In 0.17.0 --resume itself is not repository-bound: resuming an exact SID under a
+--cwd from a different repository succeeds, so repository binding relies on the
+caller-side session registry, not on the CLI.
 Do not repair unresolved binding by switching account/model or creating a substitute
 session.
 
