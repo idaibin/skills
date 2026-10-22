@@ -283,6 +283,32 @@ class LocalBrowserWorkspacePreflightTests(unittest.TestCase):
             "locked-session policy prohibits browser profile import", result["reasons"]
         )
 
+    def test_locked_session_policy_cannot_allow_forbidden_controller_actions(self) -> None:
+        constraints = {
+            "requires_browser_launch": "prohibit_browser_launch",
+            "requires_debug_enablement": "prohibit_debug_enablement",
+            "requires_gui_automation": "prohibit_keyboard_pointer",
+            "requires_profile_import": "prohibit_profile_import",
+        }
+        for constraint, policy_key in constraints.items():
+            for policy_value in (False, None, "omitted"):
+                with self.subTest(constraint=constraint, policy_value=policy_value):
+                    fixture = ready_fixture()
+                    fixture["screen_session"] = "locked"
+                    fixture["capabilities"].update({
+                        "preconnected_browser_control": "available",
+                        "background_safe_tab_enumeration": "available",
+                        "background_safe_page_control": "available",
+                    })
+                    fixture["controller_constraints"] = {constraint: True}
+                    if policy_value == "omitted":
+                        fixture["policy"]["locked_session"].pop(policy_key)
+                    else:
+                        fixture["policy"]["locked_session"][policy_key] = policy_value
+                    result = PREFLIGHT.evaluate(fixture)
+                    self.assertEqual("capability-unavailable", result["state"])
+                    self.assertFalse(result["lock_safe_ready"])
+
     def test_locked_session_always_rejects_debug_enablement(self) -> None:
         fixture = ready_fixture()
         fixture["screen_session"] = "locked"

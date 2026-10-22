@@ -73,10 +73,3 @@ The output's `state_change_allowed` applies only to capability mapping. The Skil
 external-action authorization, package, identity, model/reasoning, and ledger gates
 still apply. Re-run after App restart, schema/authentication change, or any
 `unavailableSources: [chatgpt]` result.
-
-Run the offline routing, legacy-ledger, attestation, prompt-fingerprint, candidate,
-and truncation regressions with:
-
-```bash
-python3 -m unittest scripts.test_ask_ai_app_native
-```

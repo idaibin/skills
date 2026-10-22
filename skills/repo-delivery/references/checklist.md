@@ -42,7 +42,7 @@ does not authorize staging or committing.
   artifact. Consume the evidence; do not capture screenshots, operate a browser/client,
   or issue a new visual verdict.
 - Run cached `diff --check`, stat, and name-status before each commit; inspect content
-  hunks only when scope is mixed, changed since review, or otherwise unresolved.
+  hunks only when scope is mixed, unreviewed, changed since review, or otherwise unresolved.
 - Verify final local and remote refs once after delivery.
 
 ## Human Selection

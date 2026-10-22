@@ -25,6 +25,7 @@ ALL_TRANSPORTS = {
 ROUTE_POLICIES = {"prefer-verified-persistent", "require-verified-persistent"}
 ROUTE_FALLBACKS = {"new-standard-chat", "package-only"}
 CONVERSATION_POLICIES = {"reuse-verified", "new-per-task"}
+DEFAULT_CONVERSATION_POLICY = "new-per-task"
 
 
 def _mapping(value: Any, label: str, errors: list[str]) -> dict[str, Any]:
@@ -50,7 +51,7 @@ def _validate_defaults(defaults: dict[str, Any], errors: list[str]) -> None:
             errors.append(f"context_routes.{route_id}.fallback is invalid")
         if route.get("policy") == "require-verified-persistent" and route.get("fallback") != "package-only":
             errors.append(f"context_routes.{route_id} require policy must use package-only fallback")
-        if route.get("conversation_policy", "reuse-verified") not in CONVERSATION_POLICIES:
+        if route.get("conversation_policy", DEFAULT_CONVERSATION_POLICY) not in CONVERSATION_POLICIES:
             errors.append(f"context_routes.{route_id}.conversation_policy is invalid")
         targets = route.get("provider_targets")
         if targets is None:
@@ -227,7 +228,7 @@ def resolve(payload: dict[str, Any]) -> dict[str, Any]:
         "conversation_policy": (
             _mapping(defaults.get("context_routes", {}), "context_routes", errors)
             .get(route_id, {})
-            .get("conversation_policy", "new-per-task")
+            .get("conversation_policy", DEFAULT_CONVERSATION_POLICY)
         ),
         "selected_transport": selected,
         "forbidden_transports": sorted(set(forbidden)),

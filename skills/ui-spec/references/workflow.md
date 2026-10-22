@@ -213,9 +213,11 @@ blocker. Name the specific missing contract evidence, such as an unresolved
 component mapping, and mark actual file readback or runtime behavior `Not verified`
 when it was not exercised.
 
-Run source identity, product truth, rights, required-state, mapping, responsive,
-viewport-matrix, accessibility, overflow, approval, and implementation-budget gates
-per slice. When SVG icons apply, also run icon owner, rights, family consistency,
+Run per-slice gates for selected-source identity, revision, selection, approval, rights,
+`use`, and `ignore`; product truth; required state; mapping; responsive and viewport
+matrix; accessibility; overflow; and implementation budget. Use the evaluation
+rubric's checklist for the full readiness criteria. When SVG icons apply, also run
+icon owner, rights, family consistency,
 render/state, safety, accessibility, fallback, and gallery-acceptance gates. Then
 compare source fidelity, task completion, information structure,
 interaction completeness, engineering fit, and evidence completeness. Emit one

@@ -55,10 +55,11 @@ after selecting a branch, read only its referenced modules.
 
 ## Output Map
 
-Return `ui.contract.specify@1.2.0` with lifecycle/profile, source identity and rights,
-authority disposition, slice IDs, applicable layout/state/interaction/accessibility and
-asset contracts, delta/evidence references, comparison basis, per-slice readiness, and
-named gaps. Candidate output additionally returns both ignored paths/hashes and handoff
+Return `ui.contract.specify@1.2.0` with lifecycle/profile, selected-source
+identity/revision, selection/approval, rights/use/ignore boundaries, authority
+disposition, slice IDs, applicable layout/state/interaction/accessibility and asset
+contracts, delta/evidence references, comparison basis, per-slice readiness, and named
+gaps. Candidate output additionally returns both ignored paths/hashes and handoff
 status. Store task-local evidence under verified ignored `.codex/artifacts/`. Include
 DESIGN, viewport, SVG, or runtime-evidence fields only when the corresponding
 module was activated.
