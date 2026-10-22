@@ -174,6 +174,8 @@ def validate_event(event: object) -> dict:
         raise ValueError("unsupported event schema")
     if event["event_type"] not in ALLOWED_EVENT_TYPES:
         raise ValueError("unsupported event type")
+    if event.get("completion_state") == "failed-before-submit":
+        raise ValueError("failed-before-submit cannot produce a feedback event")
     if event["event_type"] != "verification-update":
         invalid = VERIFICATION_ONLY_FIELDS.intersection(event)
         if invalid:

@@ -65,6 +65,34 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
             lock_mode = self.log.with_suffix(".jsonl.lock").stat().st_mode & 0o777
             self.assertEqual(0o600, lock_mode)
 
+    def test_rejects_all_feedback_events_failed_before_submit(self) -> None:
+        self.event = {key: self.event[key] for key in (
+            "schema_version", "event_id", "event_type", "timestamp", "feedback_id",
+            "review_id", "round_id", "fixed_basis_hash", "provider",
+        )}
+        self.event["completion_state"] = "failed-before-submit"
+        for event_type in ("review-attempt", "response-captured", "verification-update"):
+            with self.subTest(event_type=event_type):
+                self.event["event_type"] = event_type
+                result = self.run_recorder()
+                self.assertEqual(1, result.returncode)
+                self.assertIn("failed-before-submit", result.stderr)
+                self.assertFalse(self.log.exists())
+
+    def test_preserves_submitted_and_ambiguous_review_attempts(self) -> None:
+        self.event = {key: self.event[key] for key in (
+            "schema_version", "event_id", "event_type", "timestamp", "feedback_id",
+            "review_id", "round_id", "fixed_basis_hash", "provider",
+        )}
+        self.event["event_type"] = "review-attempt"
+        for state in ("submitted", "ambiguous"):
+            with self.subTest(state=state):
+                self.event["event_id"] = "round-1:review-attempt:" + state
+                self.event["completion_state"] = state
+                result = self.run_recorder()
+                self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual(2, len(self.log.read_text(encoding="utf-8").splitlines()))
+
     def test_rejects_duplicate_event_id(self) -> None:
         self.assertEqual(0, self.run_recorder().returncode)
         result = self.run_recorder()

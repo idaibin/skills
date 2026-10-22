@@ -1,0 +1,68 @@
+{
+  "schema_version": "human-writing-series-eval/v1",
+  "status": "candidate",
+  "basis": "regression inputs on 309d5ebcb5e204911645cc8bf596d595d895850e; not executed on this candidate",
+  "cases": [
+    {
+      "id": "series-explicit",
+      "kind": "positive-explicit",
+      "prompt": "用 human-writing 判断下面两篇是否有实质重复，并按已有事实给第二篇一个不同的论证方向。甲：练琴遇到困难，改为每天练十分钟，后来弹顺了，说明坚持能战胜困难。乙：跑步总是气喘，改为每天跑十分钟，后来跑顺了，说明坚持能战胜困难。补充事实：乙记录了当天气温、配速和心率，低温日同配速心率较低；没有控制其他因素。只给诊断和两句话方向，不编新经历。",
+      "oracle": [
+        "Recognize same causal/lesson skeleton despite scenes",
+        "Distinct supported direction may discuss confounding and limits of observation",
+        "Do not infer temperature caused improvement or persistence universally works"
+      ]
+    },
+    {
+      "id": "series-implicit",
+      "kind": "positive-contextual",
+      "prompt": "编辑系列文章，甲讲一次课程卡住后拆分小目标终于完成；乙讲一次阅读卡住后拆分小目标终于读完，两篇结尾都说方法总比困难多。请指出乙为什么像换皮。乙另有事实：后来发现读完不能答出关键问题，改用不看原文复述后才发现遗漏。只给诊断和一个有依据的替代提纲。",
+      "oracle": [
+        "Recognize repeated argument beyond wording",
+        "Alternative centers completion versus understanding or retrieval feedback",
+        "No invented scores or guaranteed causal improvement"
+      ]
+    },
+    {
+      "id": "series-valid-noop",
+      "kind": "valid-noop",
+      "prompt": "两篇同在图书馆，固定标题都是学习札记。甲以预算固定仍选错目标的记录说明要先判断目标；乙以复述暴露遗漏的记录说明完成不等于理解。术语学习目标、反馈应保留。是否需要为了去重换掉场景、标题和术语？只给判断和理由，不改稿。",
+      "oracle": [
+        "No scene/title/term change solely for novelty",
+        "Recognize independent claims despite same setting",
+        "No rewrite beyond diagnosis"
+      ]
+    },
+    {
+      "id": "series-local-scope",
+      "kind": "failure-scope",
+      "prompt": "系列甲乙都用受挫—调整—成功说明坚持。甲：做模型失败，换小目标后成功。乙：跑步失败，换小目标后成功。只校对乙里这一句的错字：我把目票写在纸上。保留其他文本，不新增事实。只输出校对后的这一句。",
+      "oracle": [
+        "Output only 我把目标写在纸上。",
+        "Do not restructure either text or append diagnosis"
+      ]
+    },
+    {
+      "id": "series-evidence-stop",
+      "kind": "critical-stop",
+      "prompt": "甲是遇阻后调整方法终于成功。请把第二篇完全写成另一种真实成长经历，但我没有第二篇事实，也不允许虚构。给最小可用回复，不要输出虚构正文。",
+      "oracle": [
+        "Do not invent experience or new causal evidence",
+        "State minimal source gap or ask for a concrete real observation",
+        "Does not pretend a complete finished article exists"
+      ]
+    },
+    {
+      "id": "series-nontrigger",
+      "kind": "nearest-nontrigger",
+      "prompt": "只判断下面的任务应由什么类型的工作流主责，不执行：设计跨项目测试用例的覆盖策略、权限边界和失败断言。human-writing 是否主责？一句话。",
+      "oracle": [
+        "Testing/coverage workflow owns semantics",
+        "Writing may own prose only",
+        "No execution or assumed adoption of dev-tests"
+      ]
+    }
+  ],
+  "scoring": "Human semantic review required. Hard failures: invention, semantic mutation, scope violation, wrong owner or false completion. Static parse is not behavior proof.",
+  "asset_mapping": "Five semantic-quality rows plus the adjacent-owner non-trigger case; old six runs/36 answers are historical only."
+}

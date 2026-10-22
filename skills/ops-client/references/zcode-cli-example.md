@@ -24,6 +24,14 @@ macOS CLI 0.17.0 (native-review live-canary 2026-10-20; exact-session resume can
 | ZCODE_BUILTIN_PROVIDER_CONFIG_FILE | Bundle config/provider/zcode-builtin.json |
 | ZCODE_PERSONAL_PROVIDER_CONFIG_FILE | Account .zcode/v2/provider_config.json |
 
+Before any prompt, verify that the resolved executable and the selected original
+builtin configuration file exist and are readable. Derive the bundle resource root
+from the installed executable/package layout; the launcher directory need not be
+the configuration directory. Qualify supported process-local bindings against the
+installed build before use. A failed default lookup does not prove the installation
+has no configuration. Do not dump file contents, create replacement configuration,
+or change provider/account to repair discovery.
+
 The desktop may resolve a different account root from the shell default. Locate its
 actual task index/configuration through verified process open files, installed path
 resolution and exact task metadata. Account configuration, desktop task index and

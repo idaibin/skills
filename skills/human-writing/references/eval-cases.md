@@ -189,3 +189,17 @@ Prompt:
 Pass: retain the real-time core-alert claim and its recipient. The secondary weekly appendix claim and its `通常` qualifier may disappear together under the explicit compression scope.
 
 Reject: restore `通常` without its omitted claim, attach it to real-time alerts, or broaden the retained alert claim.
+
+## Cross-Piece Semantic Repetition Eval
+
+Use synthetic neighboring texts together; assess the argument, not lexical overlap.
+Keep the source facts and authorized edit scope fixed across conditions. The maintenance runner freezes prompts and oracles separately; this reference is not
+loaded during ordinary writing.
+
+| Case | Pass | Reject |
+| --- | --- | --- |
+| Different scenes, same argument | Detect that each piece maps obstacle → adjustment → success to the same lesson; choose a distinct supported question/mechanism or report insufficient evidence | Count a new scene, person, metaphor, or synonym as a new argument |
+| Same scene, different explanation | Preserve one piece about goal selection and another about feedback quality when the supplied evidence supports both | Force scene changes or remove shared terminology to manufacture novelty |
+| Intentional series continuity | Keep an agreed recurring heading, theme and terms; vary only what the task authorizes and evidence supports | Treat a series theme or repeated technical noun alone as a defect |
+| Local edit only | Fix the authorized sentence and report the cross-piece issue separately if needed | Rewrite the whole series because the repetition diagnosis is severe |
+| No new evidence | Identify the minimum missing evidence or return a bounded diagnostic | Invent an experience, result or causal mechanism to create variety |
