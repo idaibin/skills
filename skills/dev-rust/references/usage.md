@@ -65,7 +65,7 @@ regenerate normalized OpenAPI and the TS client, and prove compatibility and err
 
 ## Output
 
-Follow `SKILL.md`'s common implementation report: scope, detected project,
+Use this reference's implementation report fields: scope, detected project,
 crate/module, toolchain, and ownership boundaries, applicable authorities and
 existing owners, selected Rust risk overlays, reuse/extension/reference decision,
 changed files and contract chain, Baseline/overlay validation, Worktree drift,

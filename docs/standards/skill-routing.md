@@ -39,7 +39,8 @@ identity, installed adapters, or completed evidence.
 | `repo-audit` | bounded existing frontend, Java, and Rust audit profiles, including selected-source visual fidelity | read-only |
 | `repo-delivery` | authorized execution-durability commits plus final history normalization, review-branch publication, integration, push, and cleanup | Git |
 | `ops-browser` | authorized browser operations, same-state visual comparison, and computed runtime evidence | browser state |
-| `ops-client` | authorized desktop-client and emulator-hosted mobile-app operations, background-route qualification and runtime evidence | client or bound virtual-device state; preserve host constraints and verify guest/application postconditions |
+| `ops-client` | authorized desktop-client operations, app-owned session protocols, background-route qualification and runtime evidence | desktop client state; preserve foreground and screen-session constraints |
+| `ops-device` | authorized physical-phone, emulator and simulator operations, installed-app and guest evidence | bound device/app state; keep host, guest, simulator and physical-device claims separate |
 | `ask-ai` | local request packages and authorized named external-AI collaboration | local artifact or authorized external action |
 | `human-writing` | source-grounded drafting, rewriting, diagnosis, and adaptation | requested writing output |
 
@@ -60,6 +61,15 @@ implementation work shows that its workflow and domain knowledge justify an
 independently maintained package. Java reached that threshold through repeated Maven
 and Gradle work across legacy Java 8/Spring Boot 2 and modern Java 17+/Spring Boot 3+
 services with distinct security, transaction, persistence, integration, and migration gates.
+
+For operation Skills, select the owner from the result being verified before choosing
+an adapter. `ops-browser` owns page/DOM/network evidence, including a page in a mobile
+browser; `ops-client` owns a desktop application's runtime and embedded WebView;
+`ops-device` owns mobile device/app lifecycle, native UI and an app's embedded WebView.
+A cross-surface flow may hand off a bounded observation while preserving the original
+device, app, browser context and authorization. Native computer controls, browser
+protocols and device CLIs remain adapter options when the current host can bind the
+exact target and verify the required result. Their availability is not authority.
 
 ## Shared Code Quality Model
 

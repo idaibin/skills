@@ -289,6 +289,16 @@ base, or a published base missing its baseline, fails closed. This is an offline
 the critical-stop check is a deterministic classifier/contract check, not proof that a
 host model followed the Skill or actually stopped at runtime.
 
+For an intentional active-case owner migration during a package split, obtain human
+confirmation before replacing the maintained baseline. The catalog maintainer records
+only that transition in `evals/skill-routing-migrations.json` with old and new case
+fingerprints and owners, approval date and controlled reason. The routing evaluator
+is its non-LLM consumer and validator: it accepts that exact passed transition while
+continuing to reject unmatched definition drift, owner drift, failed cases and
+removed active cases. Generate the candidate baseline from the full passing case set
+and read it back. Retire the manifest after the immutable base includes the new owner;
+Git retains the migration history.
+
 Static routing, schema, prose, fixture, and package gates are necessary but never prove
 live Skill capability. Run a fixed live-agent evaluation when creating a Skill,
 materially changing routing/process/output/effect behavior, repairing a demonstrated

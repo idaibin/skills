@@ -72,6 +72,7 @@ python3 scripts/validate-frontend-visual-evidence.py \
   assets/frontend-visual-evidence.example.json
 ```
 
-The artifact exercises `spec-ready`, `mapped`, `pass-1`, and `final` structure,
+The single final artifact represents `spec-ready`, `mapped`, `pass-1`, and `final`
+stage fields; it is not a separate example artifact for each stage. It exercises
 cross-evidence references, implementation mapping, pass-scoped runtime evidence,
 coverage, and final reporting. It does not authenticate screenshots or claims.

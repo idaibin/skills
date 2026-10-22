@@ -27,6 +27,7 @@ Worktree changes and stop on ambiguous scope or failed preflight.
 - No commit/push/integration/cleanup follows from implementation or review wording alone.
 - Stage only frozen exact paths; never use broad pathspecs or hide unrelated dirty content.
 - Ordinary commit/push does not require a merge strategy; apply it only for actual divergent integration.
+- For integration, honor effective project and host guidance first. Without a contrary rule, use a non-squash rebase only for a verified private, unpublished and unconsumed source branch, preserving commit order; the strategy never authorizes the Git mutation.
 - Report local and remote refs separately; never claim publication, merge, or runtime installation without evidence.
 
 ## Output Map

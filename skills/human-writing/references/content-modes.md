@@ -1,11 +1,12 @@
 # Content Modes
 
-Select one primary mode. Combine modes only when the user asks for a platform adaptation or mixed artifact.
+Select one primary mode. Combine modes only when the user asks for a platform adaptation or mixed artifact. When the request names a document type, apply [Typed-Document Boundaries](#typed-document-boundaries) first.
 
 All modes inherit `fact-integrity.md`. The rules below describe only mode-specific structure and emphasis; they do not redefine source precedence, attribution, semantic fidelity, relationship disclosure, or external-claim handling.
 
 ## Contents
 
+- [Typed-Document Boundaries](#typed-document-boundaries)
 - [Short-Form](#short-form)
 - [Factual Soft Copy](#factual-soft-copy)
 - [Personal Technical Essay](#personal-technical-essay)
@@ -13,6 +14,34 @@ All modes inherit `fact-integrity.md`. The rules below describe only mode-specif
 - [Engineering Retrospective](#engineering-retrospective)
 - [Architecture Note](#architecture-note)
 - [Resource List](#resource-list)
+
+## Typed-Document Boundaries
+
+Apply before mode selection when the request names a document type — test cases,
+API/interface documentation, a product or project manual, or a Word/Excel
+deliverable. Classify by the requested output format, content type, and
+authoritative source: a file extension, directory, or container name alone never
+decides the semantic owner, and not every document is this Skill's to rewrite.
+
+| Document type | This Skill owns | Semantic owner keeps |
+| --- | --- | --- |
+| Test-case documents | prose wording and readability without changing case order or grouping | test semantics, coverage structure, risk, and execution (testing workflow such as `dev-tests`) |
+| API/interface documentation | reader-facing prose around a frozen contract | wire contract, schema, and OpenAPI authoring or validation (contract workflow such as `api-spec`) |
+| Product/project manuals | presentation, structure, and plain-language wording | product and project facts or decisions (the accepted authority source) |
+| Word/Excel deliverables | content drafting and revision | file format, directory placement, and render acceptance (the applicable Office-document workspace specification) |
+
+- Compose the smallest compatible set: a wording-only request never expands into
+  test design, contract authoring, or new fact decisions, and a handoff carries
+  only the bounded context the other owner needs now.
+- Manual prose carries facts at the authority source's strength: keep claim
+  status, attribution, and uncertainty per `fact-integrity.md`, and never
+  upgrade a plan into shipped behavior or a vendor claim into verified behavior.
+- For a Word/Excel deliverable, apply a user-supplied template first. Check the
+  active workspace instructions and project README for the applicable Office-document
+  specification; read its `AGENTS.md`/`README.md` before producing or reformatting the file. Placement,
+  typography, and per-page or per-sheet render acceptance follow that
+  specification. Without one, keep the agreed format minimal and report
+  anything not rendered or checked as `Not verified`.
 
 ## Short-Form
 

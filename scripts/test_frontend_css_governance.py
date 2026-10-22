@@ -15,6 +15,8 @@ class FrontendCssGovernanceTests(unittest.TestCase):
             "page-edge inset and one owner supplies each internal gap",
             "Do not add element-level `opacity`",
             "same-viewport/state runtime",
+            "required_comparison_passes",
+            "omission means one",
             "A wrapper MUST",
         ):
             self.assertIn(marker, text)

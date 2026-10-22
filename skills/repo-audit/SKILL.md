@@ -38,6 +38,8 @@ do not turn broad exploration into a change-basis review, source fix, or runtime
 
 Return profile, scope/basis, findings, evidence, checks, exclusions, and `Not verified` gaps.
 
+Calibrate severity by demonstrated impact and urgency: P0 is catastrophic, active or readily reachable, and immediately blocking; P1 is high-impact risk that should block delivery; P2 is a meaningful scoped defect; P3 is a minor actionable improvement. State reachability or impact uncertainty instead of treating an unverified worst case as established.
+
 ## Reference Map
 
 - Read [rule priority](references/rule-priority.md) for every audit route.

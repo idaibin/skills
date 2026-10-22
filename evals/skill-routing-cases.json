@@ -427,6 +427,63 @@
       "expected_outcome": "stop"
     },
     {
+      "id": "ops-device-normal",
+      "skill": "ops-device",
+      "class": "normal",
+      "prompt": "Operate the specified Android physical phone, verify the installed mobile app and capture device-bound guest state.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-device-boundary",
+      "skill": "ops-device",
+      "class": "boundary",
+      "prompt": "Operate the specified mobile browser page in Chrome and capture browser DOM and computed-style evidence on its web content.",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "ops-device-critical-stop",
+      "skill": "ops-device",
+      "class": "critical-stop",
+      "prompt": "Operate this mobile app on a connected physical device, but the target scope is ambiguous among several serials; stop.",
+      "expected_owner": "ops-device",
+      "expected_stop": "scope-ambiguous",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "ops-device-ios-physical",
+      "skill": "ops-device",
+      "class": "normal",
+      "prompt": "Verify the installed iOS app on the specified paired physical iPhone by UDID, not on the Simulator.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-device-webview",
+      "skill": "ops-device",
+      "class": "normal",
+      "prompt": "Verify login inside the Android native app WebView and then the native app return state on this exact device.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-browser-phone-page",
+      "skill": "ops-browser",
+      "class": "normal",
+      "prompt": "Check the DOM and real network request of this webpage in mobile Chrome on the bound phone.",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-device-boundary",
+      "skill": "ops-client",
+      "class": "boundary",
+      "prompt": "Control this specified iOS Simulator and verify the installed mobile app, not the desktop client.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "reroute"
+    },
+    {
       "id": "ask-ai-normal",
       "skill": "ask-ai",
       "class": "normal",
@@ -475,6 +532,30 @@
       "expected_owner": "human-writing",
       "expected_stop": "evidence-incomplete",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "human-writing-typed-doc-normal",
+      "skill": "human-writing",
+      "class": "normal",
+      "prompt": "Rewrite the wording of this source-grounded manual; keep every verified fact at its stated authority and strength.",
+      "expected_owner": "human-writing",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "human-writing-doc-type-boundary",
+      "skill": "human-writing",
+      "class": "boundary",
+      "prompt": "Author and validate the OpenAPI interface documentation for the accepted API contract.",
+      "expected_owner": "api-spec",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "human-writing-test-doc-boundary",
+      "skill": "human-writing",
+      "class": "boundary",
+      "prompt": "Design the test coverage and test cases for the documented login flow.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "reroute"
     },
     {
       "id": "api-spec-normal",
@@ -610,10 +691,10 @@
     {
       "id": "ops-client-android-headless",
       "skill": "ops-client",
-      "class": "normal",
+      "class": "boundary",
       "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
+      "expected_owner": "ops-device",
+      "expected_outcome": "reroute"
     },
     {
       "id": "human-writing-natural-rewrite",

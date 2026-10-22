@@ -1,6 +1,6 @@
 ---
 name: ops-browser
-description: "Operate browser pages and capture runtime evidence within task authority; not frontend source editing."
+description: "Operate browser pages, including mobile-browser content, and capture runtime evidence; use ops-device for device/app state."
 ---
 
 # Browser Operations
@@ -27,6 +27,7 @@ cannot establish the missing browser target.
 | Local workspace/browser ownership applies | [local workspaces](references/local-browser-workspaces.md) | Verified target selection |
 | Runtime visual comparison applies | [visual evidence](references/frontend-visual-evidence.md) | Same-state capture/comparison |
 | DevTools/console/network debugging or performance capture applies | [DevTools debugging](references/devtools-debugging.md) | Scoped observation |
+| A page runs in a physical phone browser or native-app WebView | [usage](references/usage.md) | Browser evidence with bound device/app context and a scoped device handoff |
 | Browser acceptance encounters an abnormal/empty API and task context permits synthetic test inputs | [Network Mock](references/network-mock.md) | Scoped response replacement, request lifecycle and separate Mock evidence |
 | Axure/Lanhu evidence extraction applies | [Axure evidence](references/axure-product-evidence.md) and/or [Lanhu evidence](references/lanhu-ui-evidence.md) | Qualified source evidence |
 
@@ -35,6 +36,11 @@ cannot establish the missing browser target.
 - Inventory and identify the exact target before action; absent target with no creation policy is not verified.
 - Separate read observation from side effects; never infer identity, authorization, or application acceptance from browser reachability.
 - Preserve target/profile and avoid focus theft; report actual postcondition and unverified gaps.
+- Route by the page result being verified, then choose the best authorized adapter
+  available on this host, including native computer controls when they bind the
+  target and meet the evidence need. A mobile browser page remains browser-owned;
+  device launch, guest state and permissions belong to `ops-device`. A native app's
+  WebView remains owned by its device or desktop-client Skill.
 - Resolve viewport control authority from host policy and user authorization. Task-owned tabs do not prove isolation; when shared-state changes are prohibited or their scope is unknown, use passive observation and stop affected operations.
 
 ## Output Map

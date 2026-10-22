@@ -269,8 +269,12 @@ viewport/state, evidence-level, and completion semantics. Validity does not prov
 truth of evidence or UI quality. Reviewers must still inspect cited artifacts and
 reachable source.
 
-Every delta comparison value must cite evidence matching its declared evidence level;
-selected-source and target-contract columns cannot cite `browser-computed` evidence as
+Every delta comparison value must cite evidence matching its declared evidence level.
+Directional `visually-inferred` observations may remain in the delta table with their
+limits; they do not establish a comparison-pass finding or verified runtime coverage.
+Each comparison-pass finding requires browser-computed evidence from the same pass,
+viewport and state. Keep observations without that evidence directional or `Not verified`.
+The selected-source and target-contract columns cannot cite `browser-computed` evidence as
 their authority. Each computed check and each `verified` runtime coverage record must
 cite final-pass browser evidence tagged with the same runtime category, viewport, and
 state. One geometry observation cannot satisfy assets, font, contrast, focus, states,

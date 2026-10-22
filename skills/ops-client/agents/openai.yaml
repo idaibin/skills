@@ -1,4 +1,4 @@
 interface:
   display_name: "Ops Client"
-  short_description: "Operate desktop clients and emulator-hosted apps"
-  default_prompt: "Use $ops-client to verify a desktop client or mobile app in an emulator within existing task authority. Keep installation, running, native-window and guest-runtime evidence separate. Bind the exact virtual device and installed artifact for simulator work; use device-scoped controls without host focus or input, and distinguish host lock from guest state. Preserve cancelled or unexecuted results, verify postconditions and cleanup, and keep old-package, untested-platform and long-duration claims unverified. When the host is locked, use only an authorized verified control route without waking, focusing or synthesizing host GUI input."
+  short_description: "Operate desktop clients and app sessions"
+  default_prompt: "Use $ops-client to verify a desktop client within existing task authority. Bind the executable, process/window or app-owned protocol/session. Keep semantic state and visible-window proof separate, verify postconditions, and preserve foreground and screen-session constraints. Use ops-device for physical phones, emulators, and simulators; a desktop client's WebView remains client-owned."

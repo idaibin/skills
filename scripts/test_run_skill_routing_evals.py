@@ -5,8 +5,13 @@ from __future__ import annotations
 
 import importlib.util
 import copy
+import contextlib
+import io
+import json
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +23,56 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class SkillRoutingEvalTests(unittest.TestCase):
+    def test_baseline_status_is_explicit_in_console_and_json(self) -> None:
+        paths = {
+            str(ROOT / "skills-index.json"): {"packages": []},
+            str(ROOT / "evals" / "skill-routing-cases.json"): {"cases": []},
+            str(ROOT / "docs" / "skills" / "skill-routing-cases.schema.json"): {},
+            str(ROOT / "evals" / "skill-routing-baseline.json"): {"cases": []},
+        }
+        for baseline, checked in ((None, False), ({"cases": []}, True)):
+            with self.subTest(checked=checked):
+                args = SimpleNamespace(
+                    index=ROOT / "skills-index.json", cases=ROOT / "evals" / "skill-routing-cases.json",
+                    schema=ROOT / "docs" / "skills" / "skill-routing-cases.schema.json",
+                    migrations=Path("missing-migrations"), basis="synthetic",
+                    baseline_ref="baseline-ref" if checked else None,
+                    write_report=None, json=True,
+                )
+                stdout = io.StringIO()
+                with (
+                    patch.object(RUNNER, "parse_args", return_value=args),
+                    patch.object(RUNNER, "load_json", side_effect=lambda path: paths[str(path)]),
+                    patch.object(RUNNER, "validate_case_contract", return_value=[]),
+                    patch.object(RUNNER, "evaluate", return_value=[]),
+                    patch.object(RUNNER, "load_baseline", return_value=baseline),
+                    patch.object(RUNNER, "regression_errors", return_value=[]),
+                    patch.object(RUNNER.SEARCH, "package_entries", return_value=[]),
+                    contextlib.redirect_stdout(stdout),
+                ):
+                    self.assertEqual(0, RUNNER.main())
+                report = json.loads(stdout.getvalue())
+                self.assertIs(checked, report["summary"]["baseline_checked"])
+
+        args = SimpleNamespace(
+            index=ROOT / "skills-index.json", cases=ROOT / "evals" / "skill-routing-cases.json",
+            schema=ROOT / "docs" / "skills" / "skill-routing-cases.schema.json",
+            migrations=Path("missing-migrations"), basis="synthetic", baseline_ref=None,
+            write_report=None, json=False,
+        )
+        stdout = io.StringIO()
+        with (
+            patch.object(RUNNER, "parse_args", return_value=args),
+            patch.object(RUNNER, "load_json", side_effect=lambda path: paths[str(path)]),
+            patch.object(RUNNER, "validate_case_contract", return_value=[]),
+            patch.object(RUNNER, "evaluate", return_value=[]),
+            patch.object(RUNNER, "load_baseline", return_value=None),
+            patch.object(RUNNER.SEARCH, "package_entries", return_value=[]),
+            contextlib.redirect_stdout(stdout),
+        ):
+            self.assertEqual(0, RUNNER.main())
+        self.assertIn("baseline unchecked", stdout.getvalue())
+
     def test_published_baseline_covers_every_current_case(self) -> None:
         cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)
         baseline = RUNNER.load_json(ROOT / "evals" / "skill-routing-baseline.json")
@@ -171,6 +226,39 @@ class SkillRoutingEvalTests(unittest.TestCase):
         self.assertTrue(any("definition changed" in error for error in errors))
         self.assertTrue(any("owner changed" in error for error in errors))
         self.assertTrue(any("case removed" in error for error in errors))
+
+    def test_approved_owner_migration_requires_exact_old_and_new_evidence(self) -> None:
+        old = {
+            "cases": [{
+                "id": "device-owner", "skill": "ops-client",
+                "case_fingerprint": "sha256:" + "a" * 64,
+                "status": "passed", "observed_owner": "ops-client",
+            }]
+        }
+        new = [{
+            "id": "device-owner", "skill": "ops-client",
+            "case_fingerprint": "sha256:" + "b" * 64,
+            "status": "passed", "observed_owner": "ops-device",
+        }]
+        manifest = {
+            "schema_version": "skill-routing-migrations/v1",
+            "migrations": [{
+                "case_id": "device-owner",
+                "from_fingerprint": "sha256:" + "a" * 64,
+                "from_owner": "ops-client",
+                "to_fingerprint": "sha256:" + "b" * 64,
+                "to_owner": "ops-device",
+                "reason": "approved-mobile-device-owner-split",
+                "approved_on": "2026-10-22",
+            }],
+        }
+        self.assertEqual([], RUNNER.regression_errors(new, old, migrations=manifest))
+        wrong = copy.deepcopy(manifest)
+        wrong["migrations"][0]["to_owner"] = "ops-browser"
+        self.assertTrue(any("migration evidence mismatch" in error for error in RUNNER.regression_errors(new, old, migrations=wrong)))
+        failed = copy.deepcopy(new)
+        failed[0]["status"] = "failed"
+        self.assertTrue(any("migration evidence mismatch" in error for error in RUNNER.regression_errors(failed, old, migrations=manifest)))
 
     def test_unrelated_critical_stop_prompt_fails_execution_signal(self) -> None:
         index = RUNNER.load_json(RUNNER.DEFAULT_INDEX)

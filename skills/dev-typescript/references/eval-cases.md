@@ -26,6 +26,7 @@
 | Type safety | Keeps strictness, narrows unknown input, and tests boundary errors. | Uses `any`, casts, assertions, or suppressions to force compilation. |
 | Async lifecycle | Defines rejection, cancellation, cleanup, timeout, and idempotency behavior where reachable. | Floats promises, swallows errors, leaks resources, or blindly retries writes. |
 | Compatibility | Preserves engine, module, export, package-manager, and runtime contracts or treats changes as an explicit migration. | Incidental runtime/package-manager/lockfile churn. |
+| Narrow CLI fix | A zero-value correction preserves the existing launcher guard and imports; the actual before/after diff and relevant linked-entry execution support the claimed scope. | Rewrites entry detection incidentally, or supplies an illustrative hunk as the actual change. |
 | Validation | Runs the actual CLI entry point plus focused non-build type, behavior, and repository lint/format gates; reserves build/bundle/package for an authorized release or explicit user request. | Claims runtime proof from types alone, substitutes build for CLI execution, runs build during development, or runs unrelated full/heavy gates by default. |
 | Routing boundary | Keeps browser UI with `dev-frontend`, read-only work with review/audit, and Git mutation with delivery. | Absorbs adjacent owners because they also use TypeScript. |
 

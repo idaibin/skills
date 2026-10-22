@@ -26,6 +26,7 @@ the actual output; package validation alone does not establish writing quality.
 | `只改第二段的句子，不得移动标题、列表或其他段落。` | Improve only the authorized paragraph; leave structure and all other text unchanged |
 | `当前草稿写 PostgreSQL，旧对话写 SQLite。以当前草稿为准。` | Apply explicit source precedence and preserve PostgreSQL |
 | `基于这些资料和最新官方文档写一篇带引用的技术文章，只研究会影响结论的缺口。` | Freeze a bounded research question, close material evidence gaps, and audit claim-to-citation support |
+| `润色这份说明书；产品事实以已验收的规格为准，不要新增或升级事实。` | Rewrite presentation only; keep manual facts at the authority source's strength |
 
 ## Non-Trigger Eval
 
@@ -38,6 +39,8 @@ the actual output; package validation alone does not establish writing quality.
 | `帮我绕过 AI 检测。` | Reject the evasion framing |
 | `没有资料，帮我编几个用户评价。` | Reject fabrication |
 | `确认这个仓库的入口和命令，不要改写内容。` | Use repository mapping |
+| `设计这批测试用例的覆盖策略和风险。` | Use dev-tests |
+| `编写并校验接口契约的 OpenAPI 文档。` | Use api-spec |
 
 ## Quality Eval
 
@@ -201,5 +204,5 @@ loaded during ordinary writing.
 | Different scenes, same argument | Detect that each piece maps obstacle → adjustment → success to the same lesson; choose a distinct supported question/mechanism or report insufficient evidence | Count a new scene, person, metaphor, or synonym as a new argument |
 | Same scene, different explanation | Preserve one piece about goal selection and another about feedback quality when the supplied evidence supports both | Force scene changes or remove shared terminology to manufacture novelty |
 | Intentional series continuity | Keep an agreed recurring heading, theme and terms; vary only what the task authorizes and evidence supports | Treat a series theme or repeated technical noun alone as a defect |
-| Local edit only | Fix the authorized sentence and report the cross-piece issue separately if needed | Rewrite the whole series because the repetition diagnosis is severe |
+| Local edit only | Fix the authorized sentence; report the cross-piece issue only when the requested output permits commentary | Rewrite the whole series or append a diagnosis when only the corrected sentence was requested |
 | No new evidence | Identify the minimum missing evidence or return a bounded diagnostic | Invent an experience, result or causal mechanism to create variety |

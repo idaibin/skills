@@ -68,3 +68,20 @@ The original 11 dirty files and this candidate's file count belong to different
 worktrees, not an 11-minus-three selection. All 11 original dirty files remain in
 place; none was staged from that working tree. Candidate hunks were authored from
 the clean fixed HEAD, including its original metadata and 92-case routing basis.
+
+## Follow-up acceptance hardening
+
+A separate default-agent audit of `addbb661b1f8180f35449822aaab0a0eb08ef7b2`
+found no blocking production regression. Its three bounded recommendations were
+adopted: the writing maintenance row now respects sentence-only output, legacy
+feedback coverage includes review-attempt without completion_state, and rejected
+pre-submit events must preserve an existing valid log byte-for-byte with distinct
+event IDs. No production recorder or runtime protocol rule changed.
+
+The fixed follow-up passed the canonical gate: 19 packages, 456 tests, 92/92
+routing, zero context warnings, synchronized protocols and DESIGN.md checks; exit 0.
+Raw output is retained in ignored `.codex/artifacts/continued-full-gate-20261022.log`.
+A second child independently checked the prior manifests, provider-owned review
+identity and 15 focused tests on the preceding basis; that earlier run does not
+claim to execute this 16-test follow-up. These checks add regression protection,
+not measured end-to-end efficiency or real client acceptance.

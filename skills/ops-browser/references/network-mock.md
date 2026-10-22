@@ -16,8 +16,11 @@ Do not ask again for the same authorized fallback. Mock never broadens productio
 write authority or proves real-service integration. If a required contract is missing,
 retain that gap rather than inventing a formally valid response.
 
-Keep reusable synthetic fixtures and scenario code in the project's existing test
-location. Record their contract source/version, wire shape, scenario purpose and
+Keep reusable synthetic fixtures and scenario code in the project's accepted test
+workspace, outside application source and release assets when that boundary applies.
+When the host or project selects an external Mock runner, use that runner;
+`ops-browser` owns page observation and does not start a competing interceptor.
+Record their contract source/version, wire shape, scenario purpose and
 known gaps in its maintained scenario/notes; keep per-run evidence in the ignored
 artifact location. Reuse a fixture only after checking the current contract, request
 and consumer; stale fixture success is not acceptance. Store no credentials, login

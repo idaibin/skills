@@ -27,3 +27,4 @@
 - Runtime, packaging, schema generation, integration, and multi-runtime parity checks are included only when reachable.
 - Missing required evidence is `Not verified`; irrelevant checks are not applicable.
 - Changed files, drift, exclusions, and remaining risks are reported before handoff.
+- Before handoff, compare the actual source diff with the authorized slice and reported paths; include any scope divergence in the handoff without requiring a separate archived diff for every task.

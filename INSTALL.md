@@ -28,6 +28,7 @@ dev-rust
 repo-audit
 ops-browser
 ops-client
+ops-device
 ask-ai
 human-writing
 ```
@@ -60,6 +61,7 @@ The publishable source directories are:
 - `skills/repo-audit`
 - `skills/ops-browser`
 - `skills/ops-client`
+- `skills/ops-device`
 - `skills/ask-ai`
 - `skills/human-writing`
 

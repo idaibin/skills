@@ -1,19 +1,20 @@
 ---
 name: human-writing
-description: "Draft, rewrite, proofread/校对, or adapt source-grounded prose while preserving meaning; not translation-only work or fiction."
+description: "Draft, rewrite, proofread/校对, or adapt source-grounded prose for the requested document type while preserving meaning; owns wording, not test coverage, API contracts, or product facts; not translation-only work or fiction."
 ---
 
 # Human Writing
 
 ## Entry Gate
 
-Produce writing that preserves the requested meaning, audience, authority, and evidence boundary. Require source material or clearly label assumptions; do not convert a style request into unauthorized publication or new factual/product decisions.
+Produce writing that preserves the requested meaning, audience, authority, and evidence boundary. Classify the request by output format, content type, and authoritative source before writing; a file extension or directory alone never decides the owner. Require source material or clearly label assumptions; do not convert a style request into unauthorized publication or new factual/product decisions.
 
 ## Route Map
 
 | Request condition | Read | Result |
 | --- | --- | --- |
 | Draft/rewrite/adapt by deliverable type | [content modes](references/content-modes.md) | Audience-fit output |
+| Typed document brings another owner's semantics or a workspace format authority (test cases, API docs, manuals, Word/Excel deliverables) | [typed-document rules](references/content-modes.md#typed-document-boundaries) | Minimal compatible composition |
 | Facts, sources, uncertainty, or attribution matter | [fact integrity](references/fact-integrity.md) | Evidence-bound prose |
 | Tone/style/platform calibration matters | [style diagnostics](references/style-diagnostics.md) and/or [platform calibration](references/platform-calibration.md) | Calibrated revision |
 | Explain reasoning or make revisions transparent | [reasoning/explanation](references/reasoning-and-explanation.md) and/or [revision transparency](references/revision-transparency.md) | Traceable rationale |
@@ -22,6 +23,7 @@ Produce writing that preserves the requested meaning, audience, authority, and e
 ## Invariants
 
 - Preserve source fact/claim boundaries and name uncertainty; never fabricate citations or experience.
+- Typed-document semantics stay with their owners: test coverage with the testing workflow, wire contracts with the API-contract workflow, product and project facts with their accepted authority; this Skill owns their prose presentation.
 - Keep writing, product/technical decisions, external sends, and Git delivery separate.
 - Return the requested format and scope without silently expanding the audience or claim.
 

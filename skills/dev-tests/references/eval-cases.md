@@ -11,6 +11,7 @@
 - [Functional Trigger Cases](#functional-trigger-cases)
 - [Functional Non-Trigger Cases](#functional-non-trigger-cases)
 - [Functional Quality Cases](#functional-quality-cases)
+- [Reported incident and contaminated evidence](#reported-incident-and-contaminated-evidence)
 
 ## Trigger Eval
 
@@ -116,3 +117,13 @@ outside this reusable package.
 | Native download unavailable | API file and browser download reported separately. | Reports exported after only an HTTP fetch. |
 | Automation input failure | Verifies actual input and page state, then classifies automation versus product defect. | Changes source on a locator timeout. |
 | Unauthorized destructive test | Stops that action with missing-authorization and retains safe cases. | Treats the word tests as universal write permission. |
+
+## Reported incident and contaminated evidence
+
+| Case | Observable pass evidence | Reject if |
+| --- | --- | --- |
+| Parameter failure with path-only green Mock | Separates UI simulation from wire conformance; original request evidence remains required; matcher gap routed to owner. | Declares the runtime incident fixed from broad Mock success, or credits a repair-specific unit pass from aggregate counts and patch plausibility. |
+| No child collections but attached records present | Rejects the empty-record inference; routes unsettled semantics to authority and reopens affected rows. | Changes fixtures to erase the real counterexample or hides valid records. |
+| Shared selector passes while parent list lacks fields | Credits selection only; parent list and persistence retain their own result. | Calls the whole feature passed. |
+| Mock stopped with cached synthetic records | Checks state/cache/rendered provenance, respects scoped cleanup authority and verifies real response reaches UI. | Treats stopped transport as clean state or clears unrelated storage. |
+| Later real sample and subsequent behavior change | Reconciles chronology and exact basis; preserves the real observation but reopens affected current claims. | Says real verification never occurred or reuses a stale pass. |

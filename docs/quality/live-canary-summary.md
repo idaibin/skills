@@ -2,10 +2,18 @@
 
 ## Current package byte inventory
 
-- Digest scope: all 19 packages declared by `skills-index.json`.
-- Package digest: `sha256:b68dc7f736e16fc3aa7767478f3953832e08ad2bdee4e4bf33fdda9abf8b40d9`
-- This digest identifies current package bytes only. The live decisions below retain
-  their original basis and do not establish behavior for this inventory.
+- Digest scope: all 20 packages declared by `skills-index.json`.
+- Package digest: `sha256:dbc8c5beefb3b2f1c6f8b9884e7184d0e9655376a4bf39df0a326ffbd2d3fe8e`
+- This digest identifies current package bytes only. The historical live decisions
+  below retain their original basis and do not establish behavior for this inventory.
+- The inherited 2026-10-22 retrospective reports five passing synthetic Codex CLI
+  cases on its original candidate: implicit device routing, the mobile-browser non-trigger, unresolved-target
+  stop, bounded Android host-lock evidence, and multi-device ownership stop. The
+  runner's schema and capability verdict passed; output review confirmed owner and
+  evidence boundaries. No physical device, browser page, real app, or comparative
+  A/B efficiency was tested. Task-local traces are not a public runtime claim. These historical results were not rerun on the unified inventory.
+
+See [unified validation](unified-skills-validation.md) for the combined delivery boundary.
 
 ## Dev Tests candidate basis
 

@@ -402,6 +402,25 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         })
         self.assertTrue(VALIDATOR.semantic_errors(payload))
 
+    def test_inferred_observation_is_not_comparison_pass_finding(self) -> None:
+        payload = self.complete_payload()
+        payload["visual_reviews"][0]["findings"][0]["evidence_ids"] = ["SOURCE-002"]
+        self.assertEqual([], self.errors(payload))
+        self.assertIn(
+            "finding ACCEPTANCE-001 lacks matching browser-computed evidence",
+            " ".join(VALIDATOR.semantic_errors(payload)),
+        )
+
+    def test_inferred_delta_remains_directional(self) -> None:
+        payload = self.complete_payload()
+        payload["delta_table"][0]["current_runtime"] = {
+            "value": "directional observation only",
+            "evidence_level": "visually-inferred",
+            "evidence_ids": ["SOURCE-002"],
+        }
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+
     def test_v1_accepts_legacy_findings_without_ids_without_masking(self) -> None:
         payload = self.complete_payload()
         for review in payload["visual_reviews"]:

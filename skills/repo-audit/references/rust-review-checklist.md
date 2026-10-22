@@ -125,8 +125,14 @@ the profile selected and mark the exact claim `Not verified`.
 
 ## 9. Common Evidence And Reporting
 
-- [ ] Run only non-mutating repository-defined commands that support selected
-      claims; record the exact command, result, and what it did not prove.
+- [ ] Prefer non-mutating repository-defined commands that support selected claims;
+      record the exact command, result, and what it did not prove. If none exists for
+      a falsifiable claim, use a task-scoped read-only scratch probe only when it
+      leaves source, tracked files, Git state, and shared runtime unchanged; record
+      the exact probe and its limits without calling it repository validation.
+- [ ] Capture tracked status/diff before and after check-only commands. Stop after
+      unexpected tracked drift, report validation contamination, mark affected
+      evidence `Not verified`, and do not revert it without authorization.
 - [ ] For selected structural lifecycle claims, trace manifests, registrations,
       imports/re-exports, features, tests, migrations, generated files,
       deployment paths, docs, indexes, and stale references as applicable.

@@ -93,6 +93,23 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
                 self.assertEqual(0, result.returncode, result.stderr)
         self.assertEqual(2, len(self.log.read_text(encoding="utf-8").splitlines()))
 
+    def test_rejected_pre_submit_event_preserves_existing_log(self) -> None:
+        self.assertEqual(0, self.run_recorder().returncode)
+        original = self.log.read_bytes()
+        self.event = {key: self.event[key] for key in (
+            "schema_version", "event_id", "event_type", "timestamp", "feedback_id",
+            "review_id", "round_id", "fixed_basis_hash", "provider",
+        )}
+        self.event["completion_state"] = "failed-before-submit"
+        for event_type in ("review-attempt", "response-captured", "verification-update"):
+            with self.subTest(event_type=event_type):
+                self.event["event_type"] = event_type
+                self.event["event_id"] = "rejected:" + event_type
+                result = self.run_recorder()
+                self.assertEqual(1, result.returncode)
+                self.assertIn("failed-before-submit", result.stderr)
+                self.assertEqual(original, self.log.read_bytes())
+
     def test_rejects_duplicate_event_id(self) -> None:
         self.assertEqual(0, self.run_recorder().returncode)
         result = self.run_recorder()
@@ -173,7 +190,7 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
             "final_acceptance",
             "user_correction",
         )
-        for event_type in ("response-captured", "verification-update"):
+        for event_type in ("review-attempt", "response-captured", "verification-update"):
             with self.subTest(event_type=event_type):
                 self.event["event_id"] = f"legacy:{event_type}:1:abcd"
                 self.event["event_type"] = event_type

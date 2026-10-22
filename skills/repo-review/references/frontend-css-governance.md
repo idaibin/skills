@@ -25,8 +25,12 @@ hand-edited.
   CSS proves only the implementation state and must not rewrite a Lanhu, Figma,
   screenshot, prototype, or accepted-current-surface target.
 - Do not call a visual slice complete from source declarations, lint, build, or one
-  screenshot. Selected-source completion requires two same-viewport/state runtime
-  comparisons and computed geometry/style evidence for the applicable acceptance IDs.
+  screenshot. Selected-source completion requires same-viewport/state runtime
+  comparisons, following the comparison-pass count in the
+  frontend visual evidence protocol (`required_comparison_passes`; omission means one)
+  and requires computed geometry/style evidence for applicable acceptance IDs. After a
+  confirmed correction, recheck the affected viewport/state against the same baseline;
+  honor any stricter accepted project requirement.
 
 ## Ownership
 

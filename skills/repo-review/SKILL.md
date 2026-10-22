@@ -38,6 +38,6 @@ checks, exclusions, and `Not verified` gaps.
 
 - Read [fixed-basis checklist](references/checklist.md) for immutable commit/range/snapshot or verified-package review; read [worktree checklist](references/worktree-checklist.md) for current Worktree review. Do not combine their basis acquisition rules.
 - Read [Standards/Spec](references/standards-and-spec.md) for every review.
-- Load each conditional reference named in the Route Map only when its condition applies, including [code quality](references/code-quality.md) for maintainability findings.
+- Load each conditional reference only when its condition applies; read [code quality](references/code-quality.md) for maintainability findings.
 - Read [usage](references/usage.md) for review modes and boundaries.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

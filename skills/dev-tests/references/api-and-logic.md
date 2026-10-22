@@ -54,6 +54,23 @@ to isolate a case. Use already supported task-scoped mechanisms where authorized
 otherwise leave the fault branch BLOCKED. Report contract gaps in fixtures without
 rewriting them simply to obtain a green test.
 
+For a parameter or response-semantics claim, inspect the fixture matcher as well
+as the response. A path-only success rule cannot prove identifier presence,
+placement or meaning; accepting two different identifiers with identical samples
+cannot prove which one the real service accepts. Vary relevant identifiers and
+metadata independently, exercise the declared missing/empty/whitespace behavior,
+and pair an invalid input with a structurally similar valid case where applicable.
+Do not require a parameter in a branch whose accepted contract permits omission.
+If field metadata describes child collections, independently verify whether it
+says anything about directly attached records before deriving an empty-state oracle.
+
+Stopping interception is not cleanup evidence. When switching from synthetic to
+real verification, inspect the applicable interception hooks, in-memory/framework
+state, persistent caches and rendered records. Remove only explicitly authorized,
+identifiable synthetic entries, preserve business/authentication data, and verify
+the real response reaches the page after permitted refresh or re-entry. Report
+unknown provenance or unapproved cleanup as a gap rather than clearing all storage.
+
 ## Evidence limits
 
 For asynchronous result/download journeys, map relevant faults to accepted states and

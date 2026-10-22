@@ -1,5 +1,10 @@
 # Contract-to-test coverage
 
+## Contents
+
+- [Reported failures and preserved behavior](#reported-failures-and-preserved-behavior)
+- [Generated coverage boundaries](#generated-coverage-boundaries)
+
 Identify repository/revision (plus dirty patch digest when applicable), applicable
 product/UI/API authorities and their acceptance status, feature/journey IDs and scope.
 Early analysis may use drafts: label assumptions and disputed outcomes provisional,
@@ -71,6 +76,35 @@ and assertions: a test name, count or configured workload is not coverage eviden
 For a requested release-readiness assessment, identify missing version-bound health
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
+
+## Reported failures and preserved behavior
+
+Bind the reported defect to the original entry/action, role/data, runtime/source
+identity and failing operation before selecting a repair retest. Missing original
+request evidence blocks the incident-closure claim, not every independent check.
+Keep a proposed cause separate from a reproduced defect and from an adjacent fix.
+Repeated unsuccessful repairs under the same assumption need a check that can
+distinguish explanations before another patch.
+
+Do not promote a repair-specific claim within a layer from an aggregate suite
+count, a plausible patch or a passing neighboring case. Credit the aggregate run
+separately. A repair-specific pass requires the named executed assertion, relevant
+input, basis and observed result; otherwise that subclaim remains not-run or
+Not verified even when the suite passed.
+
+For optimization or shared-component work, freeze request/field mappings, returned
+membership, identity/selection, permissions and accepted failure behavior. Trace
+different consumer modes and the parent page as well as the shared widget. Cover
+independent list, detail, selection, confirmation and required persisted readback
+outcomes; one passing selector cannot approve a blank parent list. Use the exact
+requested full-tree historical revision for comparisons; legacy equivalence alone
+does not settle correctness.
+
+When later observations contradict a field assumption or prior pass, preserve the
+original evidence and reopen only affected rows on the current basis. Reconcile
+linked reports and corrections in time order; never ignore a later real sample
+because an earlier summary says blocked, or promote an earlier real pass after a
+relevant implementation/contract change. Unsettled semantics return to their owner.
 
 ## Generated coverage boundaries
 

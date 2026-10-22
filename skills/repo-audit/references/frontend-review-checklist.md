@@ -127,7 +127,15 @@ When Selected-Source Visual Fidelity is selected:
 
 ## 10. Validation and Read-Only Boundary
 
-- Run only repository-defined non-mutating format checks, lint, typecheck, focused tests, builds, and generated-route checks relevant to selected profiles.
+- Prefer repository-defined non-mutating format checks, lint, typecheck, focused
+  tests and generated-route checks relevant to selected profiles. If no relevant check
+  exists for a falsifiable claim, use a task-scoped read-only scratch probe only when
+  it leaves source, tracked files, Git state, and shared runtime unchanged; record the
+  exact probe and its limits without calling it repository validation. Run a build only
+  in an authorized release phase or on an explicit build request.
+- Capture tracked status/diff before and after check-only commands. Stop after
+  unexpected tracked drift, report validation contamination, mark affected evidence
+  `Not verified`, and do not revert it without authorization.
 - Use `ops-browser` for browser/runtime evidence and `ops-client` for real desktop-window evidence.
 - Report exact failures and `Not verified` gaps.
 - Leave source files, generated files, docs, index, checkout, refs, branches, PRs, and remote state unchanged.

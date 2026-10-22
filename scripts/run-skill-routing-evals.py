@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_INDEX = ROOT / "skills-index.json"
 DEFAULT_CASES = ROOT / "evals" / "skill-routing-cases.json"
 DEFAULT_SCHEMA = ROOT / "docs" / "skills" / "skill-routing-cases.schema.json"
+DEFAULT_MIGRATIONS = ROOT / "evals" / "skill-routing-migrations.json"
 
 
 def load_search_module():
@@ -195,6 +196,7 @@ def regression_errors(
     current: list[dict[str, object]],
     baseline: dict[str, object],
     retired_skills: set[str] | None = None,
+    migrations: dict[str, object] | None = None,
 ) -> list[str]:
     """Compare current results with the immutable baseline.
 
@@ -202,7 +204,9 @@ def regression_errors(
     or its ``observed_owner`` belongs to ``retired_skills``. A boundary case
     that used to route to a retired owner therefore migrates to a replacement
     case ID, while removals, definition changes, and owner drift of active
-    cases remain regressions.
+    cases remain regressions unless one explicitly approved migration pins the
+    exact old and new fingerprints and owners. A migration never excuses a failed
+    current case or another case's drift.
     """
     retired_skills = retired_skills or set()
     current_by_id = {str(case["id"]): case for case in current}
@@ -211,6 +215,28 @@ def regression_errors(
     if not isinstance(old_cases, list) or not old_cases:
         return ["baseline is invalid: cases must be a non-empty list"]
     required = {"id", "case_fingerprint", "status", "observed_owner"}
+    migration_by_id: dict[str, dict[str, str]] = {}
+    if migrations is not None:
+        if migrations.get("schema_version") != "skill-routing-migrations/v1" or not isinstance(migrations.get("migrations"), list):
+            return ["migration manifest has invalid schema version or entries"]
+        for entry in migrations["migrations"]:
+            if not isinstance(entry, dict) or set(entry) != {"case_id", "from_fingerprint", "from_owner", "to_fingerprint", "to_owner", "reason", "approved_on"}:
+                errors.append("migration manifest has malformed entry")
+                continue
+            if not all(isinstance(value, str) and value for value in entry.values()):
+                errors.append("migration manifest has empty or non-string field")
+                continue
+            if not all(re.fullmatch(r"sha256:[0-9a-f]{64}", entry[field]) for field in ("from_fingerprint", "to_fingerprint")):
+                errors.append(f"migration fingerprint invalid: {entry['case_id']}")
+                continue
+            if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", entry["approved_on"]):
+                errors.append(f"migration approval date invalid: {entry['case_id']}")
+                continue
+            case_id = entry["case_id"]
+            if case_id in migration_by_id:
+                errors.append(f"duplicate migration: {case_id}")
+            migration_by_id[case_id] = entry
+    used_migrations: set[str] = set()
     for position, old in enumerate(old_cases):
         if not isinstance(old, dict) or not required <= set(old):
             errors.append(f"baseline case {position} is missing required result fields")
@@ -219,6 +245,18 @@ def regression_errors(
             continue
         case_id = str(old.get("id"))
         new = current_by_id.get(case_id)
+        migration = migration_by_id.get(case_id)
+        if migration is not None:
+            old_matches = old.get("case_fingerprint") == migration["from_fingerprint"] and old.get("observed_owner") == migration["from_owner"]
+            new_matches = new is not None and new.get("case_fingerprint") == migration["to_fingerprint"] and new.get("observed_owner") == migration["to_owner"] and new.get("status") == "passed"
+            absorbed = old.get("case_fingerprint") == migration["to_fingerprint"] and old.get("observed_owner") == migration["to_owner"]
+            if old_matches and new_matches:
+                used_migrations.add(case_id)
+                continue
+            if absorbed and new_matches:
+                used_migrations.add(case_id)
+            else:
+                errors.append(f"migration evidence mismatch: {case_id}")
         if new is None:
             retired_case = (
                 str(old.get("skill")) in retired_skills
@@ -235,6 +273,9 @@ def regression_errors(
                 f"baseline owner changed: {case_id}: "
                 f"{old.get('observed_owner')} -> {new.get('observed_owner')}"
             )
+    for case_id in migration_by_id.keys() - used_migrations:
+        if not any(f"migration evidence mismatch: {case_id}" == error for error in errors):
+            errors.append(f"migration not applicable: {case_id}")
     return errors
 
 
@@ -243,6 +284,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--index", type=Path, default=DEFAULT_INDEX)
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
     parser.add_argument("--schema", type=Path, default=DEFAULT_SCHEMA)
+    parser.add_argument("--migrations", type=Path, default=DEFAULT_MIGRATIONS)
     parser.add_argument("--basis", default="working-tree")
     parser.add_argument(
         "--baseline-ref",
@@ -269,6 +311,7 @@ def main() -> int:
     args = parse_args()
     index = load_json(args.index)
     cases = load_json(args.cases)
+    migrations = load_json(args.migrations) if args.migrations.exists() else None
     schema = load_json(args.schema)
     contract_errors = validate_case_contract(index, cases, schema)
     evaluated = [] if contract_errors else evaluate(index, cases)
@@ -299,6 +342,7 @@ def main() -> int:
             evaluated,
             baseline,
             retired_skills=retired_skills,
+            migrations=migrations,
         )
         if baseline is not None and not contract_errors
         else []
@@ -312,6 +356,7 @@ def main() -> int:
             "total": len(evaluated),
             "passed": len(evaluated) - len(failed),
             "failed": len(failed),
+            "baseline_checked": baseline is not None,
             "contract_errors": len(contract_errors),
             "regressions": len(regressions),
         },
@@ -328,7 +373,8 @@ def main() -> int:
         print(
             "skill routing evals: "
             f"{report['summary']['passed']}/{report['summary']['total']} passed; "
-            f"contract_errors={len(contract_errors)} regressions={len(regressions)}"
+            + ("baseline unchecked; " if baseline is None else "")
+            + f"contract_errors={len(contract_errors)} regressions={len(regressions)}"
         )
         for error in (*contract_errors, *regressions):
             print(f"ERROR: {error}")

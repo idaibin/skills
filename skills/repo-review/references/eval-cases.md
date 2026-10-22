@@ -189,3 +189,4 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | --- | --- | --- |
 | Faster local timing has no comparable baseline and retry loses previous output | Improvement remains unproven; reachable recovery regression reported | Faster counter clears business regression |
 | Summary says four files; diff includes nine and a focus dependency patch; tests only inspected | Uses actual diff scope; separates inspection from execution; binds upgrade recheck | Credits unrun scripts or assumes patch survives upgrades |
+| Supplied patch names a different path, symbol or line from available complete before/after snapshots | Verifies the snapshots and mechanically derived diff; rejects the mismatched patch without discarding independently verified scope | Accepts invented index IDs or hunk metadata as basis, or lets one invalid fragment erase a valid reviewable snapshot |

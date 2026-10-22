@@ -50,9 +50,12 @@ Record:
 
 1. Clean-regenerate the client and verify no unexplained drift.
 2. Verify representative adapters preserve method/path and parameter/body location,
-   then run frontend typecheck, build, and focused tests from repository commands.
-3. Exercise one real consumer through loading, success, and error with `ops-browser`
-   when live web evidence is required.
+   then run frontend typecheck and focused tests from repository commands. Run a build
+   only in an authorized release phase or when build, packaging, or artifacts are
+   explicitly requested.
+3. When live web evidence is required and already authorized, `ops-browser` owns
+   opening the documented page and reading the real consumer through loading, success,
+   and error; `dev-frontend` consumes and reports that result.
 4. Require clean-state CI reproduction for generation, contract validation,
    compatibility, client, backend tests, and frontend gates when in scope.
 

@@ -14,6 +14,7 @@ separate product or proof of physical-device, vendor-ROM or long-duration covera
 - [Recording](#recording)
 - [Storage and lifecycle](#storage-and-lifecycle)
 - [Other simulators and handoff](#other-simulators-and-handoff)
+- [iOS Simulator](#ios-simulator)
 
 ## Target and authority
 
@@ -140,11 +141,9 @@ attempt evidence until reconciled. Do not remove another task's ongoing environm
 
 ## Other simulators and handoff
 
-iOS Simulator needs its own available device/runtime, simulator-compatible app artifact
-and a supported UI-test/control harness. Android ADB commands and success do not establish
-iOS support; ordinary device packages are not simulator compatibility proof. Without a
-verified platform route, return that operation `Not verified` rather than substituting
-host clicks or requiring a physical device without an acceptance reason.
+Android ADB commands and success do not establish iOS support; ordinary device
+packages are not simulator-compatible artifacts. Do not substitute host clicks or
+a physical device for a missing virtual-device route.
 
 Return device and artifact identity, scoped commands/results, guest postconditions,
 screenshots/decoded recording evidence, host state intervals, failed attempts, cleanup
@@ -155,3 +154,22 @@ device, vendor launcher, hardware SDK, backend and deployed-environment verifica
 Official references: [emulator CLI](https://developer.android.com/studio/run/emulator-commandline),
 [ADB](https://developer.android.com/tools/adb),
 [AVD images and configuration](https://developer.android.com/studio/run/managing-avds).
+
+## iOS Simulator
+
+Bind the requested Simulator by current device ID/UDID, runtime and boot state;
+`booted` alone may identify more than one target. Verify a simulator-compatible
+artifact, bundle ID, installed version and target environment before launch.
+Select a supported `simctl`, XCTest/XCUITest or current device tool by its actual
+capability. Use an explicit target ID for install, launch, UI interaction, screenshot
+and recording rather than the unqualified `booted` shortcut when ambiguity exists.
+
+Inspect the current UI/accessibility tree or screenshot, perform a bounded authorized
+action, then assert the requested guest result. Decode captured images and inspect
+recorded frames; file creation alone is not visual proof. Keep Simulator behavior,
+host window state, and physical iPhone behavior separate. If no supported UI adapter
+can bind the requested target, return that operation `Not verified` while preserving
+independent build/installed-app evidence.
+
+Official references: [Simulator CLI and capture](https://developer.apple.com/library/archive/documentation/IDEs/Conceptual/iOS_Simulator_Guide/InteractingwiththeiOSSimulator/InteractingwiththeiOSSimulator.html),
+[Xcode command-line tools](https://developer.apple.com/documentation/xcode/xcode-command-line-tool-reference).
