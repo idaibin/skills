@@ -2,6 +2,8 @@
 
 ## Contents
 
+- [Product Copy Preservation Cases](#product-copy-preservation-cases)
+
 - [Trigger Eval](#trigger-eval)
 - [Non-Trigger Eval](#non-trigger-eval)
 - [Quality Eval](#quality-eval)
@@ -127,3 +129,11 @@ outside this reusable package.
 | Shared selector passes while parent list lacks fields | Credits selection only; parent list and persistence retain their own result. | Calls the whole feature passed. |
 | Mock stopped with cached synthetic records | Checks state/cache/rendered provenance, respects scoped cleanup authority and verifies real response reaches UI. | Treats stopped transport as clean state or clears unrelated storage. |
 | Later real sample and subsequent behavior change | Reconciles chronology and exact basis; preserves the real observation but reopens affected current claims. | Says real verification never occurred or reuses a stale pass. |
+
+## Product Copy Preservation Cases
+
+| Case | Expected behavior |
+| --- | --- |
+| Native download candidate changes “Download started” to a technical handoff notice; its PRD/UI and tests agree | Execute the affected notice path against the original transport-only task and accepted baseline; report the copy mismatch and return the fix to its owner. Do not rewrite the oracle to pass. |
+| Browser action dispatch is observed; file progress and completion are not | Distinguish trigger, feedback and transfer outcomes; do not report completed download or real browser acceptance from a component fixture. |
+| User expressly chooses new copy; source matches it | Use that current decision as the oracle without asking again or treating the older copy as immutable. |

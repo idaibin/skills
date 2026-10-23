@@ -30,6 +30,10 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 ## Invariants
 
+- Preserve existing user-facing copy and feedback type/timing unless the current request or an accepted Product/UI decision authorizes the change. A technical change alone is not that authority; an agent-written spec or test cannot supply it. Apply an explicit user copy choice without asking again; when choosing authorized wording, reuse accepted project terms and claim only observable states. Propose unsupported changes and continue unaffected work.
+
+- Within the authorized change, apply [unused-code evidence](references/code-quality.md#unused-and-dead-code) to code it makes obsolete; retain uncertain consumers and avoid broader cleanup. If a demonstrated instruction gap causes omission or rework, report the exact rule and a minimal candidate to its owner; do not rewrite governing instructions implicitly.
+
 - Before changing another business module, apply the [scope rule](references/codebase-design.md#decision-rules); reuse an existing approval for the same plan and scope.
 - Reuse the nearest maintained owner before creating; preserve routing, state/data, component, and styling ownership.
 - Treat size as a review signal, not a line-count rule; split only at a stable ownership, behavior, lifecycle, side-effect, or verification boundary.
