@@ -34,6 +34,10 @@ Record confirmed product facts, available data/actions/states, current component
 Resolve component and design-library mappings from live imports, wrappers, and
 consumers before naming them. Never promote a concept-only component or feature into
 the candidate, selected-source target, or product scope.
+For each new page or visible UI slice, name the closest accepted page when one exists
+and actual public component/style owner in the existing contract or handoff; reuse them
+when they fit. If none exists or an owner does not fit, record that fact and reason
+without inventing a reference or blocking unrelated slices.
 
 When several surfaces show the same discrepancy, fix one comparison basis and trace
 the shared shell, overlay, motion and component owner before writing page rules.

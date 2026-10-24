@@ -25,11 +25,14 @@ checklist alone does not complete the run.
 | API or business-state behavior participates | [API and logic](references/api-and-logic.md) | Wire, business status and independent persistence assertions |
 | Pages, UI or clicks participate | [page walkthrough](references/page-walkthrough.md) | Reachability, real interaction and visible outcomes |
 | Record functional cases, defects or recovery | [test record](references/test-record.md) | Finite coverage, case evidence and recovery queue |
+| Code deletion or instruction changes participate | [change preservation](references/change-preservation.md) | Original acceptance, affected consumers and qualified comparisons |
 | Scoped performance acceptance or before/after comparison participates | [performance measurement](references/performance-measurement.md) | Comparable metrics, protected journeys and qualified verdicts |
 | Role isolation, concurrent users or load scenarios apply | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |
 
 ## Invariants
+
+- Derive user-facing copy and feedback type/timing expectations from the original request and accepted Product/UI decisions, not candidate output. Exercise the affected state; distinguish action dispatch from progress/completion. Candidate specs, tests and green counts cannot approve an unsupported presentation change.
 
 - Product behavior belongs to `product-spec`, visual behavior to `ui-spec`, and wire
   semantics to `api-spec`. Test ambiguity cannot silently decide those contracts.
@@ -73,5 +76,6 @@ into “all tests passed” when required cells remain unresolved.
 - Read [test record](references/test-record.md) for functional plans, defects, coverage and recovery.
 - Read [roles and performance](references/roles-and-performance.md) only for relevant multi-user, authorization or performance requirements.
 - Read [result contract](references/result-contract.md) when consuming results or returning evidence.
+- Read [change preservation](references/change-preservation.md) when code deletion or instruction changes participate.
 - Read [performance measurement](references/performance-measurement.md) for scoped comparative performance acceptance.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary execution.

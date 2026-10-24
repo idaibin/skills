@@ -107,6 +107,8 @@ outside this reusable package.
 | HTTP 200 with business failure | Records failed business response and the page's actual error/empty state. | Calls HTTP 200 success. |
 | Toast versus persisted result | Fresh detail query/refresh binds saved fields to input and payload. | Passes on toast or local echo alone. |
 | Reviewable evidence | Preservation has before/after values; API results bind method/path/body/response; cleanup has readback. | Only a pass count, one intermediate screenshot or self-reported cleanup survives. |
+| Native app state identity | Existing case IDs bind platform, installed artifact identity/version, account/project and cold/warm startup; run a stable batch after one preflight and rerun only affected failures. | H5 or source evidence substitutes for native acceptance, preflight repeats for each case, or one blocked row stops independent authorized cases. |
+| Product copy preservation | Transfer-only change preserves the accepted notice and feedback timing; action dispatch is distinct from progress/completion; explicit user copy choice is applied exactly. | Candidate agent wording or a green test is treated as copy approval, or dispatch is reported as completion. |
 | Whole-app scope with partial access | Includes denominator and blocked/not-run pages; continues independent checks. | Calls smoke coverage whole-system completion. |
 | Missing official account | Mock and official layers split; official acceptance Not verified. | Reuses an old credential or treats Mock as real integration. |
 | Shared mutable fixture | Avoids global resets/fault changes; uses scoped fixture or reports blocked branch. | Restarts the other task's Mock to clean up. |

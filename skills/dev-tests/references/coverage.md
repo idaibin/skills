@@ -10,7 +10,11 @@ product/UI/API authorities and their acceptance status, feature/journey IDs and 
 Early analysis may use drafts: label assumptions and disputed outcomes provisional,
 route decisions to their authority, and refine examples with design/implementation.
 Exploratory observations can reveal gaps but cannot settle business policy or pass an
-acceptance row whose oracle is unresolved. Bind runtime/build identity before execution. Discover existing test directories, commands, fixtures,
+acceptance row whose oracle is unresolved. For native-app cases, bind platform and
+installed artifact identity/version to the account, project and cold/warm startup
+state in the existing case IDs and ledger. H5/browser or source evidence cannot
+substitute for an applicable native artifact/device result. Bind runtime/build identity
+before execution. Discover existing test directories, commands, fixtures,
 coverage reports and project evidence conventions. Source inspection locates checks;
 it does not demonstrate that the checks ran.
 

@@ -28,6 +28,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | `Fix the schedule admin form against the supplied backend contract. Before editing, find the existing selector and representative caller, then prove the POST path, changed body fields, enabled-only create selector, all-status filter, lazy organization lookup trigger, and response success rule; stop on any unresolved decisive conflict.` | Should trigger `dev-frontend`, complete the bounded owner/reuse search, then freeze the API contract and task-local revision before editing. | Prevents parallel implementation against guessed parameters, trigger timing, or duplicate components. |
 | `Fix the local loading/error rendering around this page's existing API call. Do not change its request or response contract.` | Should trigger `dev-frontend`; inherit the current verified API owner and freeze only the changed UI-state semantics and focused check. | A small API-backed UI fix must not be blocked by unrelated contract archaeology. |
 | `The user corrected the accepted request field after a worker returned an old implementation and one old hunk already landed.` | Create a new task-local freeze revision, reject the delayed old-revision result, inventory and reconcile the landed old hunk, then resume against the corrected revision. | A correction must close both in-flight and already-landed stale work. |
+| `Build a new settings page from the nearest accepted page, existing shared form components and the declared style owner when available.` | Name the closest accepted page if one exists and the actual component/style owners in the current contract or handoff; reuse fitting owners and explain a missing/non-fitting owner without blocking unrelated slices. | Reading a guide or saying “existing owners unchanged” does not prove actual reuse, or inventing a reference creates a false gate. |
 | `Fix this pure Options API component using data, computed, watch, this.$watch, activated/deactivated, and beforeRouteLeave; do not add Composition imports.` | Should trigger the Vue Options API branch. | Native Options reactivity and lifecycle. |
 | `Add this form to the existing AntD page using current patterns.` | Should trigger `dev-frontend`. | Component-system consistency. |
 | `Replace this React component's mutually exclusive compact, expanded, and overlay booleans with the repository's existing variant or compound composition without changing behavior.` | Should trigger the React component-composition branch. | Invalid prop-state combinations require a scoped implementation change. |
@@ -128,6 +129,8 @@ names, endpoints, props, slots, or visual values.
 | `stale-map`: project-map points to a moved/removed route or component | Recheck bounded live source before editing; do not invent a replacement. |
 
 ## Quality Eval
+
+Ordinary source changes preserve accepted copy and remove only proven obsolete code made unnecessary by that change; instruction gaps return to their owner. The cases below exercise that boundary.
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
@@ -264,3 +267,12 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Unify motion across route content, teleported dialogs and a scripted chart. | Trace one accepted policy and its actual consumers; preserve loading, positioning and user-choice precedence without importing another project's numeric defaults. |
 | A retained drawer reports closed before its model update; an old import resolves after reopen. | Reproduce the callback order and request generation; release old intent without closing or populating the new session. Separate component-fixture proof from first-painted browser evidence. |
 | Preload a slow panel whose mask appears late. | Locate shell/mask/content and main-thread costs; compare cold and warm paths without starting unauthorized business prefetch or treating shorter CSS duration as latency proof. |
+
+## Product Copy Preservation Cases
+
+| Case | Expected behavior |
+| --- | --- |
+| Switch package transfer from a buffered request to native download; existing notice says “Download started” | Change the transfer only; retain accepted wording and feedback type/timing. A technical explanation does not belong in product copy by default. |
+| Candidate PRD/UI marked Ready introduces “Handed to browser”; original request covers transport only | Treat the candidate wording as unapproved, retain the accepted baseline, and continue the authorized transfer work. |
+| User explicitly requests the notice “Downloading” | Apply that exact choice within scope without asking again; do not add completion claims, progress UI or other copy changes. |
+| No visible copy or feedback changes are needed | Complete the implementation without a copy rewrite, new governance document or extra approval. |

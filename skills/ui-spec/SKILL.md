@@ -41,7 +41,11 @@ after selecting a branch, read only its referenced modules.
 - Mark UI details absent from the accepted source as proposed, including added
   feedback placements or field-level errors; do not present them as accepted rules.
 - For implementation handoff, an unresolved required component/owner mapping keeps
-  that slice `Not Ready`. "Existing owners unchanged" alone does not identify them.
+  that slice `Not Ready`. For each new page or visible UI slice, name the closest
+  accepted page when one exists and actual public component/style owner in its existing
+  contract or handoff; reuse them when they fit. If no accepted page exists or an owner
+  does not fit, record that fact and reason without inventing a reference or blocking
+  unrelated slices. "Existing owners unchanged" alone does not identify them.
 - Do not duplicate shared tokens or component interfaces in a Feature Spec, introduce
   a parallel Registry/schema, or force `DESIGN.md` adoption for an unchanged local
   slice.
