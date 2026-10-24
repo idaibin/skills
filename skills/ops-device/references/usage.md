@@ -15,6 +15,11 @@ Record platform, physical/virtual kind, stable serial or UDID, OS/runtime, curre
 connection/boot state, app bundle/package, installed build and target environment.
 Select the exact device in every command or tool call. Names, list order, `booted`,
 an active simulator window, and previous-run IDs are hints, not unambiguous binding.
+For acceptance, bind each existing case ID to platform, installed artifact identity/version,
+account/project and cold/warm startup state. Establish identity and authorized access once
+for a stable batch; on artifact, identity or state drift, rerun only affected cases and keep
+independent authorized cases moving. H5 or source checks do not replace native artifact/device
+evidence.
 For a multi-device request, keep each target and its evidence separate. If a device
 reconnects or restarts, refresh identity before the next action.
 
@@ -58,6 +63,6 @@ Read [simulator operations](simulator-operations.md) for virtual-device details,
 Stop the affected action on unresolved device/app/context identity, missing adapter
 capability, absent authority, target drift, guest lock/authentication, or uncertain
 side effect. Preserve an uncertain submission and reconcile its exact target before
-any retry. Continue independently authorized read-only evidence. Report simulator,
+any retry. Continue independent authorized cases. Report simulator,
 physical-device, vendor-ROM, hardware, network and long-duration coverage only at the
 level directly observed.

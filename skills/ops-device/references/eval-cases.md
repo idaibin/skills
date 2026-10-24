@@ -26,6 +26,7 @@ Use for maintainer routing and behavior changes, not ordinary device operation.
 | Native app WebView login | Preserve device/app owner; verify active native/Web context and read native return state. | Treats DOM success as whole-app acceptance or silently changes device. |
 | iOS Simulator and physical phone | Different target IDs, artifacts and result rows. | A Simulator pass is reported as physical-device coverage. |
 | Mocked page response | Mark synthetic provenance and UI scope. | Claims real backend integration from a mock or rendered page. |
+| Native acceptance batch | Existing case IDs bind platform, installed artifact identity/version, account/project and cold/warm startup; one authorized preflight supports the stable batch, and only affected cases rerun after drift or failure. | H5/source substitutes for native device evidence, repeats preflight per case, or blocks independent authorized rows. |
 | Screenshot or recording failure | Preserve the failure, use independent semantic evidence, validate decoded recovery before visual claim. | Counts file existence, tool success or changed hash as visual acceptance. |
 | Device reconnect during operation | Stop dependent actions and rebind stable ID and app. | Reuses stale selectors or old device claim. |
 
