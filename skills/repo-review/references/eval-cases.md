@@ -2,6 +2,8 @@
 
 ## Contents
 
+- [Product Copy Preservation Cases](#product-copy-preservation-cases)
+
 - [Trigger Eval](#trigger-eval)
 - [Non-Trigger Eval](#non-trigger-eval)
 - [Independent Review Outlet Eval](#independent-review-outlet-eval)
@@ -190,3 +192,11 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Faster local timing has no comparable baseline and retry loses previous output | Improvement remains unproven; reachable recovery regression reported | Faster counter clears business regression |
 | Summary says four files; diff includes nine and a focus dependency patch; tests only inspected | Uses actual diff scope; separates inspection from execution; binds upgrade recheck | Credits unrun scripts or assumes patch survives upgrades |
 | Supplied patch names a different path, symbol or line from available complete before/after snapshots | Verifies the snapshots and mechanically derived diff; rejects the mismatched patch without discarding independently verified scope | Accepts invented index IDs or hunk metadata as basis, or lets one invalid fragment erase a valid reviewable snapshot |
+
+## Product Copy Preservation Cases
+
+| Case | Expected behavior |
+| --- | --- |
+| Transport-only request; candidate changes a notice and marks its own PRD/UI Ready; all tests pass | Report the unauthorized copy change with its original-request basis; agreement among candidate artifacts is not approval. |
+| User explicitly supplies replacement copy; candidate applies only that change | Accept the authorized wording; do not require a separate formal approval artifact. |
+| Download click dispatch succeeds but final file transfer is unobserved | Credit dispatch evidence only; flag any candidate claim that the file completed. |

@@ -25,6 +25,10 @@ required objects cannot be verified.
 
 ## Invariants
 
+- Check changed user-facing copy and feedback type/timing against the original request and accepted Product/UI decisions. Flag unsupported changes even when candidate specs/tests agree; technical implementation details and agent-authored Ready labels do not grant approval. Check state claims against observable evidence.
+
+- For deletions in the selected diff, verify [consumer evidence](references/code-quality.md#unused-and-dead-code) and preserved behavior; never force a deletion quota. When instructions change, judge them against the original task and retained constraints, not reduced length/calls. Report fixes to the owner; review stays read-only.
+
 - Do not mix evidence between bases; current content does not prove another SHA.
 - A review package, graph, test, or provider output is evidence only after basis verification.
 - Findings require concrete reachability/impact and exact owner; do not mutate source or Git.
