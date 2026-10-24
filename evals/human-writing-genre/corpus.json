@@ -1,0 +1,22 @@
+{
+  "schema_version": "human-writing-genre-corpus/2.0",
+  "owner": "human-writing evaluation maintainer",
+  "producer": "reviewed independent synthetic corpus design",
+  "consumers": [
+    "validate_corpus.py",
+    "mechanical_checks.py"
+  ],
+  "drift_policy": "Review and update inputs, oracles, schemas and hash manifest together; preserve prior run basis.",
+  "retirement": "Only after both named consumers migrate and compatibility/readback checks pass.",
+  "file_sha256": {
+    "README.md": "c9cfcae35e68fba0fa7d36522104f3aed31a6e529fdb483f9dedec71644adc3c",
+    "development-inputs.json": "c43e7b987c06aaaab64060d3f55ff5038c98f917ecd7174c893c3511e998a9eb",
+    "holdout-inputs.json": "9cc19751a86b4e943cb51700fdf243e3de860a97bdf611599e888b8d72327786",
+    "mechanical_checks.py": "f7c5d79f8e167db4d4359edf8bcf38a5cf754ef3b547c1ba892105c573f4f4af",
+    "methodology.md": "4124eea6c83c88f7d7f9863602d853d01cf2a5e3745063aafd34db04cab25c3f",
+    "oracles.json": "578d00f05a855f7a763b7b60c84531a7bd3a760261a6e3d648bc6a7bc91e70f2",
+    "review-result.schema.json": "4582b692615424f12da00379a95f10eed6ab009cb093db1857ad991a2d7125ff",
+    "validate_corpus.py": "7b0bf4bf529582cab059ef482f8aadaa180221b5e50572edbfa137b29423e675",
+    "writer-input.schema.json": "c269b3e3d86ade79ce223f67abf75645bd6625b834579ac2e07079a66593b28e"
+  }
+}

@@ -8,6 +8,7 @@ All claims, examples, and inferred relationships still inherit `fact-integrity.m
 
 - [Start With the Reader's Model](#start-with-the-readers-model)
 - [Build the Reasoning Chain](#build-the-reasoning-chain)
+- [Read Back The Argument](#read-back-the-argument)
 - [Separate Premise, Derivation, and Judgment](#separate-premise-derivation-and-judgment)
 - [Use Examples as Instruments](#use-examples-as-instruments)
 - [Explain Boundaries and Lifecycles](#explain-boundaries-and-lifecycles)
@@ -49,6 +50,20 @@ For long work, maintain both scales privately:
 - **bottom up:** at least one concrete section earns the central claim through evidence or derivation
 
 Do not force every short or straightforward artifact through this sequence.
+
+## Read Back The Argument
+
+For a long draft with weak ordering, repeated conclusions, or transitions that no
+longer fit, sketch a private reverse outline: what each paragraph says and what job
+it does in the argument. Read the title, headings, and paragraph openings together
+to see whether they match the finished body. Then check adjacent paragraph endings
+and openings for the actual relation: evidence, cause, contrast, qualification,
+sequence, or a deliberate break.
+
+Repair missing context or order only within the authorized scope. A connective
+cannot create causal evidence or resolve a contradiction. Keep an intentional
+discontinuity when it serves the voice or argument, and skip this pass for a clean
+short passage or a proofreading-only request. Do not expose the outline unless asked.
 
 ## Separate Premise, Derivation, and Judgment
 

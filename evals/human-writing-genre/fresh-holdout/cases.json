@@ -1,0 +1,146 @@
+[
+  {
+    "id": "fresh-message_email-01",
+    "primary_type": "message_email",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "long_multiparagraph",
+    "prompt": "请把素材改成一封发给合作方项目负责人林工的邮件，语气平和、直接，交代现在能做什么，以及需要对方确认什么。允许重组和删去重复表达；只输出邮件正文，不需要主题。",
+    "source_text": "【合成测试材料；人物、项目和经历均为虚构测试设定】\n林工您好。我们这边又看了一遍西岸展厅的样板交付安排，现在情况有点复杂，我想把几件事说清楚。原本周四一起送过去的，是木饰面样板和灯带样板。木饰面已经完成，周四上午可以按原计划送达；灯带样板还缺一个调光配件，目前供应商只确认了周五能发出，没确认我们什么时候能收到。\n\n如果您那边周四只看木饰面也可以，我们就先送这一项，灯带到齐后再约一次。这样会多一次现场确认，但至少不耽误木饰面选色。也可以等灯带齐了再合并送样，不过现在还给不出一个可靠的新日期。我们不想为了把日期写得好看就先承诺下来。\n\n想请您在周二下班前确认，是先看木饰面，还是等两项一起看。若先看，我们会提前把木饰面的三种颜色编号发给您。两种安排都不涉及重新报价，费用仍按现有确认单执行。谢谢。"
+  },
+  {
+    "id": "fresh-message_email-02",
+    "primary_type": "message_email",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Check whether this short message needs editing. If it is already clear and natural, return the message unchanged. Output only the message, without the synthetic-material label.",
+    "source_text": "[Synthetic test material; invented sender and circumstances.]\nHi Mara, I found your blue notebook in the meeting room. I've left it with reception. No rush to collect it—they're open until 6 today."
+  },
+  {
+    "id": "fresh-status_notice-01",
+    "primary_type": "status_notice",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "依据下面已确认的信息写一则给楼内员工看的简短通知。可以自行决定用一段还是短条目；不要让人误以为整栋楼停水。只输出通知。",
+    "source_text": "【合成测试材料；虚构设施安排】\n周三14:00—16:00检修五楼茶水间热水器。检修期间只有五楼茶水间不能接热水，冷水和其他楼层不受影响。员工可去四楼茶水间接热水。不需要预约。检修负责人：物业值班室。"
+  },
+  {
+    "id": "fresh-status_notice-02",
+    "primary_type": "status_notice",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "long_multiparagraph",
+    "prompt": "Rewrite this weekly update for the internal operations team. Reduce repetition and separate completed work from the remaining uncertainty in any clear format. Keep the update substantive, and output only the finished update.",
+    "source_text": "[Synthetic test material; all organizations, work, and observations are invented.]\nThis week we moved the North Depot stock count into the new register. All 418 shelf records have been entered, and Lea checked the totals against the signed count sheets. The totals match. That is the part we can call complete, though I have repeated the word complete in several earlier notes and want to be precise about what it covers.\n\nPhoto links are a different matter. Twenty-seven records still point to the old shared folder. The links work for depot staff, but the visiting audit team does not have access to that folder. This does not mean the stock records are missing. We have asked IT for a transfer method that preserves the filenames, and IT expects to suggest one on Tuesday; it has not committed to completing the transfer that day.\n\nUntil the photo links are moved, please keep using the signed sheets for any external evidence request. Lea will send the next update after IT replies. We are not asking depot staff to recount stock or upload duplicate pictures. The audit visit is still scheduled for the following Monday, and no change to that date has been agreed."
+  },
+  {
+    "id": "fresh-tutorial_howto-01",
+    "primary_type": "tutorial_howto",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "long_multiparagraph",
+    "prompt": "把素材整理成给首次值班志愿者的操作指南，减少绕口说明。可以用步骤，但不要改变顺序约束或替系统补充功能。只输出指南。",
+    "source_text": "【合成测试材料；虚构借还登记系统，规则仅适用于本题】\n社区工具柜的归还登记需要在值班平板上完成。先打开“工具柜登记”，再选“归还”。这个页面一开始会显示空白搜索框。请扫描工具盒外侧的条码；如果条码磨损，可以手动输入盒上印的六位编号。扫描和手动输入是两种替代方式，不必都做。\n\n找到记录以后，先核对屏幕上的工具名称和盒内实物是否一致，再检查配件清单。工具或配件有缺失时，选“待核对”，在备注中写清缺什么，然后把盒子放到黄色托盘，交给当班负责人处理。此时不要点“确认归还”。工具及配件都齐全时，才点“确认归还”，再将盒子放回编号相同的柜格。\n\n如果输入编号后仍找不到记录，先停在当前页面并联系当班负责人，不要新建借用记录。系统没有离线保存功能；平板断网时也先联系负责人，等负责人安排纸质登记。每次完成一盒以后再处理下一盒，避免把两盒的配件记混。"
+  },
+  {
+    "id": "fresh-tutorial_howto-02",
+    "primary_type": "tutorial_howto",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread only: fix spelling errors in the instruction below. Do not rewrite, reorder, or add advice. Return only the corrected instruction, without the synthetic-material label.",
+    "source_text": "[Synthetic test material; invented device instructions.]\nBefore cleaning the sensor, disconect the power cable. Wipe the lens with a dry, lint-free cloth. Do not spray cleaner directy onto the lens. Reconnect the cable after the lens is dry."
+  },
+  {
+    "id": "fresh-explanation_reference-01",
+    "primary_type": "explanation_reference",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只改写正文的最后一句，让不熟悉缓存的人也能理解。前两句原样保留，输出完整三句正文，不输出测试标签。不要补入本素材之外的技术细节。",
+    "source_text": "【合成测试材料；虚构系统的确定行为】\n缓存保存最近一次成功查询的结果。每条结果在缓存中保留十分钟，超过十分钟就不再使用。缓存未命中不等于数据不存在，只表示系统需要再去数据库查一次。"
+  },
+  {
+    "id": "fresh-explanation_reference-02",
+    "primary_type": "explanation_reference",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "long_multiparagraph",
+    "prompt": "Rewrite this reference explanation for new support staff. They know what an account is but have not used this export feature. Use any helpful organization, preserve the product behavior exactly, and output only the reference text.",
+    "source_text": "[Synthetic test material; this fictional product behavior is the complete authority for the task.]\nAn export snapshot is a copy of the account's records at the moment the export request is accepted. That moment is shown as “Snapshot time” on the download page. The file may take several minutes to prepare. A record edited while preparation is running will still appear with its earlier value, because file preparation does not move the snapshot time forward.\n\nOnly records the requesting user could access at snapshot time are included. An administrator who requests an export can therefore receive a different file from a member who makes a request at the same moment. This is expected and does not by itself indicate that records were deleted. The feature exports records, not attachments; attachment names are listed, but the files themselves are not included.\n\nThe download link is available for twenty-four hours after the file is ready. When that period ends, staff must request a new export rather than reuse the expired link. A new request creates a new snapshot. Staff can use the displayed snapshot time to explain apparent differences between an export and the current account view, but should check access permissions as well before concluding that timing explains the difference."
+  },
+  {
+    "id": "fresh-product_release-01",
+    "primary_type": "product_release",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "long_multiparagraph",
+    "prompt": "根据素材写给现有付费用户的发布说明，重点让人知道新增能力、使用范围和限制。可自行选择标题或条目；删去内部写作讨论。只输出发布说明。",
+    "source_text": "【合成测试材料；虚构产品与发布事实】\n本次更新的产品叫“页舟”，是团队用来整理项目文档的工具。新版加入了“收藏夹分组”：用户可以新建分组，把自己收藏的页面放进去，也能调整分组顺序。这个功能今天开始向全部付费工作区开放，免费工作区本次没有开放。现有收藏不会被删除，更新后会先放在“未分组”里，用户可以稍后再整理。\n\n分组只影响自己的收藏视图，同一工作区的其他成员看不到这些分组，也不会因此改变页面的访问权限。已经无法访问的页面仍可能在收藏里显示标题，但点击后不能打开；新增分组不会恢复访问。当前网页端支持创建和调整分组，手机端可以查看已有分组，还不能创建或调整顺序。\n\n这次不需要管理员开启开关。我们目前没有确定免费工作区的开放时间，也没有给出手机端编辑分组的日期。内部有人想写成“团队知识整理全面升级”，但这句话太空，外部说明还是把这次具体能做的事说清楚就好。"
+  },
+  {
+    "id": "fresh-product_release-02",
+    "primary_type": "product_release",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Turn the confirmed notes into a short in-app release announcement for existing users. Give them the change and the immediate limitation. Output only the announcement; a heading is optional.",
+    "source_text": "[Synthetic test material; invented release notes.]\nProduct: Meterline. Saved reports can now be renamed by their owner. Renaming changes the display title only; the share URL stays the same. Available to all accounts today. Reports owned by someone else cannot be renamed. No other report editing feature is part of this release."
+  },
+  {
+    "id": "fresh-research_opinion-01",
+    "primary_type": "research_opinion",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "把笔记写成一段给内部读书会的研究评论。保留我的谨慎判断，可以调整论述顺序，不需要引用格式，也不要补找研究。只输出评论。",
+    "source_text": "【合成测试材料；虚构小型调查，不对应真实论文】\n我整理了某市12家社区书店的问卷，9家说周末活动后当日进店人数增加。没有记录活动前的长期客流，也没有未办活动的对照店。我认为活动值得继续试，但这份问卷不能说明活动提高了长期销售额。下次想同步记录客流和销售额，至少持续八周。"
+  },
+  {
+    "id": "fresh-research_opinion-02",
+    "primary_type": "research_opinion",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "long_multiparagraph",
+    "prompt": "Edit this discussion draft for a research newsletter. Make the reasoning easier to follow without making the evidence stronger. The first-person judgment should remain recognizable. Do not add citations. Output only the edited commentary.",
+    "source_text": "[Synthetic test material; invented study, dataset, and author judgment.]\nI compared the help-desk records from two teams during a six-week trial of a shared question board. Team Cedar used the board and Team Flint kept its usual chat channel. Cedar logged fewer repeated questions by the final two weeks. I find that encouraging, because making answers easier to find was the reason for trying the board in the first place.\n\nStill, there is a measurement problem here. Cedar's lead asked staff to put every question on the board, while Flint's staff could answer one another in private messages. The records may therefore capture different shares of the questions people actually asked. The teams also handled different kinds of customer requests. I cannot tell from these logs whether the board itself caused the decline, or whether either team spent less time answering questions overall.\n\nMy view is that the board deserves another trial, rather than an immediate company-wide rollout. In the next trial I would agree on a common logging rule before starting and record time spent looking for answers as well as repeated questions. That would give us a better comparison, though it would still require care about differences in the teams' work. The present trial gives us a reason to investigate, not a reliable estimate of time saved."
+  },
+  {
+    "id": "fresh-social-01",
+    "primary_type": "social",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "long_multiparagraph",
+    "prompt": "从这些素材写两条社交发布候选：一条给街区微信群，方便附近的人参加；一条给公开社交账号，适合不了解我们的读者。两条各自成文，允许取舍不同信息；不要输出写作分析。",
+    "source_text": "【合成测试材料；虚构公益活动，不含真实用户经历】\n我们几个邻居想给家里闲置的小电器找一个继续使用的机会，约了这周六在榆树巷社区活动室办一次“小修理桌”。时间是下午两点到四点，不收检查费。愿意来的居民可以带一件台灯、电风扇或电水壶；这次场地和工具有限，不接电视、冰箱，也不接电池鼓包的设备。无需事先报名，但现场按到场顺序检查。\n\n参与的两位维修志愿者会先看能否处理，再解释问题。不能保证修好，若需要买零件，志愿者会先说明，由物主决定是否继续，不会直接替大家下单。来的人也可以只看看，听听怎么判断一个小故障是否值得修。活动没有线上直播，也没有远程诊断安排。\n\n我想传达的心情是：一件旧东西如果还能用，就多给它一点机会。我们只办过一次很小的邻里交换，这次修理桌是第一次尝试，所以不想把它写成成熟项目，也不想号召所有人捐东西。地点就在榆树巷社区活动室，楼层不需要补充。"
+  },
+  {
+    "id": "fresh-social-02",
+    "primary_type": "social",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Rewrite this into one concise social post for fellow birdwatchers. Keep the quiet, observant tone. There is no event or call to action to add. Output only the post.",
+    "source_text": "[Synthetic test material; invented observation and narrator.]\nI watched a grey heron from the east bank of Willow Pool this morning. It stood still for nearly ten minutes, then moved just two steps into the reeds. I didn't see it catch anything. That small, unhurried change was the part I kept thinking about on the walk home."
+  },
+  {
+    "id": "fresh-personal_nonfiction-01",
+    "primary_type": "personal_nonfiction",
+    "split": "fresh_holdout",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "下面是一段合成的个人随笔。只润色第二句，使衔接自然一些，保留作者朴素、不煽情的声音。第一句和第三句不要改；输出完整三句，不带测试标签。",
+    "source_text": "【合成测试材料；作者经历为虚构设定】\n搬家时，我把父亲留下的旧卷尺放进了厨房抽屉。它其实量东西也不怎么准了但我还是想留着，拿起来很顺手。我没打算拿它纪念什么，只是还没找到更愿意用的那一把。"
+  },
+  {
+    "id": "fresh-personal_nonfiction-02",
+    "primary_type": "personal_nonfiction",
+    "split": "fresh_holdout",
+    "language": "en",
+    "length_profile": "long_multiparagraph",
+    "prompt": "Reshape this synthetic personal essay for a small community magazine. Improve flow and trim repetition, while keeping the narrator hesitant and matter-of-fact. Do not turn the experience into advice for everyone. Output only the essay.",
+    "source_text": "[Synthetic test material; the narrator and all experiences are invented for evaluation.]\nFor three months I took the later bus home on Thursdays so I could attend a beginner pottery class above the hardware shop. I had expected to enjoy the wheel. In fact, I spent most of the first month making lopsided cylinders and wondering whether I had signed up for something I would only tolerate.\n\nThe part I liked was cleaning the table at the end. We scraped the clay into a bucket, wiped the boards and left the tools on a towel. Nobody was especially good at conversation by then, so we usually worked quietly. I liked knowing when the evening was finished. That sounds like a thin reason to keep going, but it was enough for me for a while.\n\nI stopped after the three-month course because the later bus was cancelled and the next one left too late. I haven't found another class. One of the uneven cups sits beside my sink holding a washing-up brush. I don't think the course changed my life, and I can't say I discovered a hidden talent. I am glad I went. The cup is useful, and I still remember the quiet business of putting the room back in order."
+  }
+]

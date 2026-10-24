@@ -1,0 +1,722 @@
+[
+  {
+    "id": "message_email-01",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "把这封给合作场馆的邮件整理得清楚、坦诚，可调整段落；保留全部安排、条件与尚未确定事项。只返回邮件正文，不加主题。",
+    "source_text": "陈老师，您好。上次电话后我们又核了一遍六月工作坊的人数和空间，我想先把现在能确认的部分发给您，免得两边分别在排。报名表里有二十四个人，其中四个人说可能晚到，但我们没有答应为迟到者单独重讲。我们希望使用二楼东侧教室，日期是6月18日，时间14:00到17:00，上午布置不在这次申请里。如果那个教室不能借，我们也可以考虑一楼的小厅，不过需要先看照片才能判断投影位置，不能现在就确认小厅。设备方面，我们自带电脑和一只转接头，请场馆提供投影仪与二十六把椅子。茶水可以由大家自己带，不必请您安排。\n费用现在有一个容易误会的地方：去年的报价不能直接沿用。我们的项目预算上限是1800元，这个数字包含场地和设备使用，但不是请您一定按这个价接；如果正常报价超过了，也请按实际情况告诉我，我们再回去调整内容。财务还在确认能否接受电子普通发票，周五之前不一定有答复。没确认前，烦请不要替我们开票，也不要先替我们垫付。\n另外，报名页上写的“适合第一次尝试的人”是说内容门槛，不是保证每个人都能完成作品。授课老师希望保留这个区别。您若方便，能否在本周四17:00前告知教室是否可用、场地与设备的分项报价，以及是否需要另签安全告知书？如果您需要更长时间核实，先告诉我预计回复的日子也可以。收到这些信息后，我们才能发出最终场地确认。谢谢您前面帮忙看场地。"
+  },
+  {
+    "id": "message_email-02",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "en",
+    "length_profile": "medium",
+    "prompt": "Rewrite this email to a university lab coordinator. Make the two requests easy to find and preserve the limits on what I can promise. Return the email body only.",
+    "source_text": "Dear Morgan,\nI have been going back through the notes from our visit, and there are two things on which I still need your help before I can make a plan for the students. We are bringing twelve visiting students on 9 July, with arrival at 10:30 and departure at noon. They have all completed our own introductory safety session. I understand that this does not replace your laboratory induction. Could you tell me whether the local induction can take place within that visiting window, and whether there is anything the students need to read before they arrive? We can ask them to read material in advance, but I cannot certify that they have passed your induction.\nThe other issue is access. Two students have asked whether the route from the north entrance to the demonstration room involves stairs. They have not shared medical details with me, and I do not want to ask them for those in an email that goes to the whole group. If you have a description of that route, or a contact who can discuss access privately, please send it to me. Please do not copy the student group into that discussion at this stage.\nWe had hoped to see the imaging equipment while it was running. If that is not possible on the day, a demonstration with the equipment switched off would still be useful. There is no need to arrange a special live run just for us. I will collect questions from the students beforehand, although I cannot promise that every student will send one. If possible, please reply by 2 July so I can send a single practical note to the group. Thank you for helping us prepare."
+  },
+  {
+    "id": "message_email-03",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅把第二句改得不催逼，其他字句和换行不要动。返回完整消息。",
+    "source_text": "小陆，初稿已发你邮箱。你今天必须看完，不然我没法往下做。若今天来不及，告诉我你方便反馈的时间。"
+  },
+  {
+    "id": "message_email-04",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对错字和标点，不润色；输出校对后的短信。",
+    "source_text": "阿姨，我到南站了，正在等公交。车票和药都带齐了，您别担心。我到了在给您打电话。"
+  },
+  {
+    "id": "message_email-05",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只检查错别字。没有错误就逐字返回原消息，不加说明。",
+    "source_text": "小齐，明天我可以从14点值班到16点。16点以后我不能继续值班，请在那之前安排好交接。谢谢。"
+  },
+  {
+    "id": "message_email-06",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Use the record to reply to a customer asking when their refund will arrive. Do not guess an arrival date. If it cannot be confirmed, say so in the reply and offer only a next step supported by the record. Return the reply only.",
+    "source_text": "The ticket was submitted to finance for review on Tuesday. Customer support can check whether the review is complete. Finance has not provided a processing time, and the refund has not yet been initiated."
+  },
+  {
+    "id": "message_email-07",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "改写成给同事的自然消息。引用、工单号和链接保持原样，只返回消息。",
+    "source_text": "关于 TKT-093，我已经看过页面。文档原话是“未收到回执不代表提交失败”。我建议先看 https://help.example.org/forms?lang=zh#receipt ，不要直接重复提交。我还没核对后台日志。"
+  },
+  {
+    "id": "message_email-08",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Make this decline less stiff, but do not imply I am free on another date. Return one message.",
+    "source_text": "Thank you for inviting me to join the panel on 16 August. Due to an existing commitment, I will not be able to participate. I am not currently able to suggest an alternative speaker."
+  },
+  {
+    "id": "message_email-09",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "把这些便签写成发给邻居的短消息，不责备，也不把观察写成定论。",
+    "source_text": "昨晚大约22点，家里听见持续敲击声，感觉来自楼上，但没确认。明早孩子有考试，想请对方今晚若有施工，尽量20点前结束。如果声音不是他家发出的，也请告知。"
+  },
+  {
+    "id": "message_email-10",
+    "primary_type": "message_email",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "为这封给供应商的邮件修正语病，不改变责任边界；主题行和签名原样保留。",
+    "source_text": "主题：补件核对 / PO-117\n林经理，三件样品中有一件缺少底座。我们尚未确认是漏装还是运输中遗失，请先协助核对出库照片。并不是所有样品都不能使用。\n周凝｜采购支持"
+  },
+  {
+    "id": "status_notice-01",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "将这份交接记录整理为给值班主管的工作汇报，分清已完成、风险和需要决定的事。不要添加截止承诺。只返回汇报。",
+    "source_text": "昨天夜班我们做的是冷库温度记录的补录，不是温控设备维修。A区的纸质记录共有三十六张，已经录入三十四张；另外两张上的时间看不清，留在异常夹，没有按相邻记录推算。B区有一张记录写着“低于下限”，但没有温度数字，我们只录了原文，没有填入最低温度。录入表已放到共享盘，文件名是 coldroom-log-r3.csv，表里空值表示原纸缺少可辨认数字，并不表示零度。\n设备方面，凌晨两点值班员看到B区显示屏短暂熄灭，约一分钟后自行亮起。我们没有连续录像，也没有拆机，不能据此说制冷系统停过。那一分钟里没有人工测温数据。早班已经知道这件事，但还没有确认是否安排技术人员到场。为了不让补录进度和设备状态混为一谈，我想在汇报里分别写。\n今天白班可以继续核对剩下两张纸，也可以先扫描整批原件，但只有一名同事能操作扫描仪。扫描会让纸张核对往后排，目前没法保证两项今天都完成。请主管决定先核哪一项。若选择先扫描，需要保留两张模糊原件，不能因为有扫描件就把原纸清掉。\n还有一个交接细节：共享盘里上周的 r2 文件没有删除，是为了保留追溯；本轮工作也没有改变库内货物的放行状态。出货仍由当班负责人按原流程判断，录入人员无权凭这张补录表批准出货。我的建议是先把显示屏异常登记给设备组，由他们判断检查范围；这个建议还没有得到批准。"
+  },
+  {
+    "id": "status_notice-02",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "en",
+    "length_profile": "medium",
+    "prompt": "Turn these notes into a notice for volunteers. Keep the fallback conditional and make the practical choices easy to see. Return the notice only.",
+    "source_text": "The riverside book exchange is planned for Saturday, 20 April, from 11:00 to 15:00. Volunteers should arrive at the west gate at 10:15, where Nia will distribute table assignments. We have permission to use the covered walkway if the ground is wet, but that space holds only four tables rather than the six planned for the lawn. This does not mean the exchange is cancelled whenever it rains. Nia will check the site at 09:00 and post the location in the volunteer chat. People should use that message rather than assume that the previous evening's weather forecast has settled the choice.\nDonated books will be accepted until 13:00. The exchange itself will remain open until 15:00. We cannot take magazines or books with visible mould, and volunteers should explain that without criticising the donor. Unsuitable items must stay with the donor; we have not arranged a disposal service. Books that remain at the end can be offered to the neighbourhood reading room only after its coordinator has agreed. That agreement has not yet been received.\nThere will be a short briefing beside the west gate before setup begins. Anyone who cannot lift boxes can help with sorting or the information table. Volunteers do not need to explain why they prefer those tasks. Please ask people to tell Nia by Thursday evening if they will be absent or arrive late, so she can adjust assignments. We do not have a replacement waiting for every role. The event page is https://example.org/exchange/april and should be included without changing its address."
+  },
+  {
+    "id": "status_notice-03",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只修改【风险】这一行，消除歧义，其他内容逐字保留。",
+    "source_text": "【进展】已完成18份合同的编号核对。\n【风险】剩余两份不一定今天不能完成，要看对方是否补齐附件。\n【下一步】收到附件后再核对金额。"
+  },
+  {
+    "id": "status_notice-04",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对通知中的错别字，不改措辞。",
+    "source_text": "阅览室本周三上午闭馆，下午13:00恢复开放。已借图书的到期日不受影向。自助还书箱照常使用。"
+  },
+  {
+    "id": "status_notice-05",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对。原文无误就逐字返回，不加说明。",
+    "source_text": "电梯将于周二08:00至09:00检修，楼梯照常开放。如需在这段时间内使用无台阶通道，请在来访前联系前台。"
+  },
+  {
+    "id": "status_notice-06",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Use these notes to write a short project-channel update. Do not invent a cause or a recovery time. Return the update only.",
+    "source_text": "Since 11:20, some test accounts have been unable to export reports. Production accounts were not included in this check, so their status is unknown. Investigation has started; the cause is not confirmed. The next status update is scheduled for 12:00."
+  },
+  {
+    "id": "status_notice-07",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "润色成面向住户的通知。编号、引用及网址原样保留。",
+    "source_text": "N-204。周五将清理自行车棚通道，不清理车架内正常停放的车辆。物业原话：“无人认领不等于同意处置。”请大家先查看 https://estate.example.org/notice/204?view=full 。未完成登记的车辆先挂牌，不直接搬离。"
+  },
+  {
+    "id": "status_notice-08",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Make this team update clearer without making the risk sound resolved.",
+    "source_text": "The archive migration has copied 420 of 500 folders. We have not checked permissions on the copied folders. Finishing the copy today would not by itself make the new archive ready for staff use."
+  },
+  {
+    "id": "status_notice-09",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "把便签写成校内停水通知；时间信息有缺口时保留缺口，不自行补齐。",
+    "source_text": "实验楼明天检修水管，开始时间09:30，结束时间待后勤确认；只停二、三层洗手池用水；消防供水不在停水范围；结束时间确认后在原通知补充。"
+  },
+  {
+    "id": "status_notice-10",
+    "primary_type": "status_notice",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "为主管整理成两句话，不能把建议写成决定。",
+    "source_text": "上周退回的九张报销单里，七张是缺签名，两张是附件不清。建议下月试用提交前检查表，但财务负责人尚未批准，也未决定由谁维护。"
+  },
+  {
+    "id": "tutorial_howto-01",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "这是虚构内部工具 Trail 的已批准操作笔记。改写成新同事能跟随的操作指南；保留技术行为，只组织和解释文字。命令、输出字面值与文件名不改，不补工具能力。只返回指南。",
+    "source_text": "Trail 用来把本地实验记录打包到暂存目录，不会上传到远端。第一次使用时，先向项目管理员确认自己拿到的是测试副本。原始记录放在 records/，工具只读取这个目录；暂存目录应为空，不能使用上一次打包留下的目录。我们在这份指南里统一用 stage-07/，但这只是示例名。若管理员还没有给你测试副本，就先停在这里，不要直接拿生产记录试。\n先运行 `trail check --input records/`。这一步只检查格式，不创建包，也不修复记录。输出是 `READY` 才能继续；如果显示 `MISSING_DATE`，请把对应文件名交给记录负责人补日期，自己不要根据文件修改时间推测。检查报告会列出文件名，但不会判断实验内容是否正确。显示 `READY` 也不代表已经得到对外分享许可，这两个判断不归同一环节处理。\n检查通过后，确认 stage-07/ 里没有文件，再运行 `trail pack --input records/ --out stage-07/`。打包成功会生成 bundle.zip 和 manifest.json。清单记录包内文件名和校验值，不包含访问口令。工具不会删除 records/ 中的原文件。暂存目录只用于本次交接，不要把另一批实验记录混进来；若发现来源混杂，也应先交管理员核对批次。如果命令报告输出目录非空，停下来请管理员确认；不要为了让命令通过而自行删除目录内容。\n最后运行 `trail verify --manifest stage-07/manifest.json`。输出 `MATCH` 表示当前暂存包与清单一致，仍然不能证明实验结论成立。若输出 `DIFF`，先保留现场，交管理员核对，不要覆盖清单再验证一次。把 `MATCH` 和打包日期记录到交接单之后，交接给项目管理员，由管理员决定是否迁移到共享区。本人完成打包不等于拥有对外分享权。本文没有解包、上传或清理旧包的步骤，也不要求操作者做这些动作。"
+  },
+  {
+    "id": "tutorial_howto-02",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "en",
+    "length_profile": "long",
+    "prompt": "Rewrite the approved notes below as a beginner-facing how-to for the fictional LensDesk application. Preserve the operations and stop conditions; do not invent buttons. Return the guide only.",
+    "source_text": "This procedure is for comparing two saved image sets in LensDesk. It does not modify the original images. Before opening a comparison, make sure that the two sets have already been exported by the imaging team. The viewer cannot export images from a camera. The set labelled reference is the earlier observation, not a statement that it is the correct result. Both sets must belong to the same sample. If the sample labels disagree, stop and ask the imaging team to identify the files rather than editing the labels yourself.\nIn the viewer, choose Compare, then select the reference set in the left picker and the later set in the right picker. Select Load. A grey preview means that the viewer has not yet loaded the pixels; it does not show an empty image. Wait for the label Loaded under both pickers before making observations. If the viewer reports Set incomplete, close the comparison and ask the imaging team for a complete export. Repeatedly selecting Load does not recover missing files.\nUse the linked zoom control to inspect the same region in both sets. This control changes the display only. It does not register the images or correct differences in camera position. If the edges do not line up, record that limitation with your observations. You may switch linked zoom off to inspect one image more closely, but return it to the linked state before recording a side-by-side observation.\nTo save a note, enter a description in Observation and select Save note. A saved note includes the two set identifiers and the text you entered. It does not include a screenshot. Copying the note to a report therefore does not give the report reader access to the image sets. Ask the imaging team separately if a report needs images. Do not describe a visible change as a measured change in size: this workflow supplies no scale calibration or measurement tool."
+  },
+  {
+    "id": "tutorial_howto-03",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅改“说明”段，使它易懂；命令块、标题和最后一行逐字不动。",
+    "source_text": "## 导出副本\n```sh\nboxlet export --mode copy --dest ./draft\n```\n说明：这个模式不等于把原文件移动走，运行后源目录还在。\n校验结果交给值班员。"
+  },
+  {
+    "id": "tutorial_howto-04",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅校对中文错字，保留全部键名和取值。",
+    "source_text": "在配置中将 `retry_limit` 设为 `0`，表示不自动重试，并不表示无限重试。保存后重新打开面板，确任显示的值仍为 `0`。"
+  },
+  {
+    "id": "tutorial_howto-05",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅校对这份虚构工具说明中的错别字。没有错误就逐字返回原文，不作解释。",
+    "source_text": "选择 Preview 可查看草稿，预览不会发布草稿。如需不保存就离开，请选择 Cancel。"
+  },
+  {
+    "id": "tutorial_howto-06",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Write an internal how-to from these notes. If an essential operation is missing, stop and identify the specific information needed. Do not guess commands from common software conventions.",
+    "source_text": "Goal: undo an accidental roster import. The tool is called rosterctl and is known to support importing. No undo capability, backup-recovery procedure, or administrator contact has been provided. The accidentally imported file is roster-june.csv."
+  },
+  {
+    "id": "tutorial_howto-07",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "改写为清楚的两步指南，链接和页面原话保留。",
+    "source_text": "先到 https://sandbox.example.org/access?team=lab#request 提交申请。页面提示“提交申请不等于获得访问权限”。等管理员确认后再打开数据页；未确认前不要把申请截图当作授权。"
+  },
+  {
+    "id": "tutorial_howto-08",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Make the troubleshooting paragraph easier to follow without changing the condition.",
+    "source_text": "If the indicator is amber and the log contains NO_SYNC, pause the import and send the log to support. Amber alone is not enough to trigger this procedure. Do not clear the log before sending it."
+  },
+  {
+    "id": "tutorial_howto-09",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "把笔记整理成给第一次值班的同事看的简要操作卡，不替他作审批决定。",
+    "source_text": "样本台账：登录后先选当天日期；检查登记总数是否与纸本一致；一致则标记“待复核”；不一致就把差异行号交给复核员。登记员不能点击“批准入库”，该按钮由复核员使用。"
+  },
+  {
+    "id": "tutorial_howto-10",
+    "primary_type": "tutorial_howto",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "整理说明文字，YAML块逐字保留，不纠正其中貌似奇怪的取值。",
+    "source_text": "此示例属于训练环境，地址不连真实服务。先复制配置，再请培训员分配练习令牌。\n```yaml\nendpoint: \"https://mock.example.org/v0\"\ntimeout_ms: -1\nmode: \"dry\"\n```\n本笔记没有解释 timeout_ms 的取值语义；不要凭示例推断生产配置。"
+  },
+  {
+    "id": "explanation_reference-01",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "将这份虚构队列服务 ParcelQ 的设计说明改成新加入后端团队的工程师能读懂的参考说明。允许重组，不能改合同、补算法或引入外部默认。代码和字段名原样保留。只返回说明。",
+    "source_text": "ParcelQ 的接收接口返回已接收，表示服务把任务记录到了持久存储中，不表示任务已经执行。调用方拿到 `receipt_id` 后，可以用它查询该次提交记录。任务真正执行成功时，状态才会变成 `done`。如果调用方在收到响应前断开连接，它可能不知道任务是否已经被接收，不能只凭连接中断判断服务端没有任务。\n`dedupe_key` 的用途是把短时间内重复提交识别为同一项工作。对同一项目、同一键值，服务在首次接收后的十分钟内返回原提交的 `receipt_id`，不再创建第二个任务。这个窗口从首次接收计算，不随每次重复请求延长。超过十分钟再用同一键，可能创建新任务；文档没有保证必定创建，也没有提供永久去重。不同项目即使用了相同键值，也不适用这里的跨请求合并规则。\n任务执行失败时，服务最多自动重试两次，也就是首次执行之外再尝试两次。失败记录并不会在开始重试时消失，因此查询时看到过一次失败，不代表任务最终必然失败。状态 `failed_final` 表示自动尝试已经结束，并非说明人工永远不能重新提交。人工重新提交仍要考虑上面那个十分钟窗口，否则可能拿回原提交记录，而不是产生新任务。\n服务为每次执行保留开始时间和结束时间，但是没有承诺不同任务按提交顺序开始，也没有承诺按提交顺序结束。一个小任务晚提交、早结束，不足以说明队列丢失了之前的大任务。排查时应先查各自的 `receipt_id`。调用方也不应把任务结束时间与响应接收时间混用：前者是执行记录中的时间，后者是客户端观察到接口响应的时间。\n示例返回为 `{\"status\":\"accepted\",\"receipt_id\":\"r-17\"}`。它只展示接收响应的形状，不能据此推断查询接口的字段、任务优先级或者计费规则。本说明也不对调用方业务的幂等性作保证；十分钟内的任务合并与业务端的重复扣款防护不是同一份合同。"
+  },
+  {
+    "id": "explanation_reference-02",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "en",
+    "length_profile": "long",
+    "prompt": "Edit this reference note for analysts who are comfortable with spreadsheets but new to the fictional metric Window Share. Explain the distinctions clearly using only the supplied definitions. Return the reference note, with no invented examples or formulas.",
+    "source_text": "Window Share describes the proportion of eligible observation windows that contain at least one recorded visit. A window is a complete thirty-minute interval during the study's scheduled observation hours. An interval is eligible only if its sensor was marked available for the whole interval. A visit recorded in a window that is not eligible does not enter either side of the ratio. The metric is therefore not the proportion of all visits that happened during scheduled hours.\nEach eligible window contributes either zero or one to the numerator. Three visits in one eligible window still contribute one, not three. The denominator is the number of eligible windows, including eligible windows with no recorded visit. If there are no eligible windows, the report displays N/A. That value is not a zero share and must not be included as zero when calculating a summary across sites.\nConsider the provided training record: Site North has ten eligible windows, and four of them contain visits. Site South has two eligible windows, both with visits. North's Window Share is 40%, and South's is 100%. Combining their eligible windows produces six visit-containing windows out of twelve eligible windows, or 50%. Taking the simple average of the two site percentages instead produces 70%; that answers a different question by giving each site the same weight. Neither should be labelled as the other.\nAvailability is recorded by the study team rather than inferred from whether visits occurred. A window with no visits is not automatically unavailable. A site with frequent sensor outages may have a high Window Share over its few eligible windows, so the report must show eligible-window counts beside the share. The metric by itself does not establish the number of people served, the length of their visits, or whether demand was satisfied. It is a descriptive measure of these recorded windows, not a causal estimate of the effect of changing opening hours."
+  },
+  {
+    "id": "explanation_reference-03",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只重写第二段以减少术语感，第一段逐字不变。",
+    "source_text": "在此训练协议中，ACK 表示接收方已把消息写入本地日志。\nACK 不蕴含下游消费者已成功处理，此二者之间不存在由本协议提供的等价关系。"
+  },
+  {
+    "id": "explanation_reference-04",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅校对错字，不调整技术概念。",
+    "source_text": "缓存命中说明这次读取找到了可用的缓存项，不代表源数据从未变动。此处的“过期”依据写入时记下的期限判段，而非用户最后一次查看的时间。"
+  },
+  {
+    "id": "explanation_reference-05",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread for errors only. If correct, return unchanged.",
+    "source_text": "In this report, latency is measured from request arrival to response completion. It excludes time spent waiting on the client before the request is sent."
+  },
+  {
+    "id": "explanation_reference-06",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "为非技术同事解释“我们已加密，所以平台看不到内容”是否能从这份材料推出。只给简短解释，材料不足就指明缺什么。",
+    "source_text": "材料仅写“传输过程中使用加密连接”。未说明存储加密、谁持有密钥、服务端是否解密，也未说明端到端加密。"
+  },
+  {
+    "id": "explanation_reference-07",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "润色为参考手册的一段，原始引用和链接不变。",
+    "source_text": "概念要分开。规格说“未返回匹配项，不表示记录不存在”。这里的查找只覆盖最近七天的索引。原规格链接为 https://spec.example.org/search/v2#scope 。更早记录要按归档流程另查。"
+  },
+  {
+    "id": "explanation_reference-08",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Clarify this rule without changing the Boolean condition.",
+    "source_text": "A record is flagged only if its status is pending and its age exceeds seven days. A pending record aged exactly seven days is not flagged. Records in any other status are not flagged by this rule."
+  },
+  {
+    "id": "explanation_reference-09",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "将这段解释写得适合客服内部阅读，不补产品承诺。",
+    "source_text": "此处“离线可读”只指已完整下载的文档正文。文档里的外部网页链接仍可能需要联网。正文下载成功并不能证明嵌入视频也已下载；当前笔记没有视频的离线规则。"
+  },
+  {
+    "id": "explanation_reference-10",
+    "primary_type": "explanation_reference",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只整理自然语言，JSON与开头元数据整行保留。",
+    "source_text": "spec_rev: 0.9-draft | owner: schema-team\n这个例子里的 null 代表未采集，不能当成空字符串。字段省略则代表本条记录不适用，与未采集不同。\n```json\n{\"room\":\"R2\",\"humidity\":null}\n```"
+  },
+  {
+    "id": "product_release-01",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "根据这份已定稿产品记录，写给现有团队管理员的发布说明。读者关心现在能做什么、哪些人可用、该怎么准备。只能使用记录中的事实，非承诺项必须保持非承诺。只返回发布说明。",
+    "source_text": "本次为虚构服务纸匣的2.6版更新，功能名称为“批次标签”。它允许团队管理员为一次导入的文档添加同一标签，然后在文档列表中按该标签筛选。已经存在的文档可以由管理员手动补标签，但不会因为升级自动获得标签。普通成员能够按已有标签筛选，无权创建或批量改标签。一个批次当前最多关联三个标签，标签名字最多二十个字符；限制由产品合同确定，文案不可自行调整。\n上线采用分批方式：6月3日起，先向参加试用并已确认的十二个团队开放。其余团队看到功能的日期还没有确定，不应写成全量上线，也不要暗示管理员能通过重新登录提前获得资格。试用团队无需迁移文档，原有检索和访问权限不变。给文档加标签不会让其他原本无权访问的人获得权限。管理员若希望试用，应联系现有客户支持入口登记，但登记并不保证本轮开通。\n本次更新没有标签自动生成，没有按内容推荐标签，也不支持跨团队共用标签。用户问到这些能力时，说明当前范围即可，不能把内部讨论里的可能方向写成下个版本的承诺。使用标签筛选是整理文档的另一种方式，我们没有测过节省多少时间，也没有足够证据承诺会减少多少重复劳动。\n试用期间价格沿用各团队现有合同，不能由这段记录推导出正式版免费。管理员可以在设置页的“批次标签”入口查看自己是否已开通；入口未出现时，先按未开通处理，无需重新导入文档。说明页地址为 https://docs.example.org/zhixiang/2.6/labels ，需要原样保留。"
+  },
+  {
+    "id": "product_release-02",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "en",
+    "length_profile": "medium",
+    "prompt": "Write release copy for existing users from the approved fictional product notes. Keep it helpful and restrained; include limitations that affect using the feature. Return the copy only.",
+    "source_text": "Harbor Notes version 1.8 adds a reading queue for individual accounts. A user can add a note to the queue from its menu and remove it after reading. The queue is private to that account. It is not a shared team task list, and adding a note does not notify its author. Notes still follow their existing access rules; the queue does not keep access after the user loses permission to the original note.\nThe feature will appear for accounts on the Standard plan on 12 September. It is not included for Guest accounts. Enterprise availability has not been scheduled. The team has approved the Standard launch date, but has not approved any statement about future availability for other account types. Users do not need to reinstall the application. An open browser tab may need to be refreshed before the queue appears.\nA queue holds up to forty notes. When it is full, the user must remove an item before adding another one. Removing a queue item does not delete the original note. There is no automatic archive of completed reading, and the product does not measure how long a user spends reading. We have no study showing that this feature improves learning or team productivity, so those should not appear as promises.\nThis release does not change the Standard plan price. That does not establish that future plans or features will have the same price. Existing keyboard shortcuts remain unchanged. The approved support address is help@harbor.example.org. The copy should direct users there if the feature is missing after they have refreshed a Standard-plan account on or after the launch date."
+  },
+  {
+    "id": "product_release-03",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只改“用途”段，让它具体，其余逐字保留。",
+    "source_text": "功能：导出筛选结果\n用途：实现数据价值的充分释放，帮助用户把当前筛选出的行保存为 CSV，方便交给同事核对。\n限制：仅管理员可导出。"
+  },
+  {
+    "id": "product_release-04",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对错字，版本、入口名称原样保留。",
+    "source_text": "版本 0.7.4 增加“最近打开”入口，最多显示十条记录。清除列表不会删出文件，也不会影响其他设备上的列表。"
+  },
+  {
+    "id": "product_release-05",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread only. If no correction is needed, return the source unchanged.",
+    "source_text": "You can now rename a saved view without changing its filters. This option is available to the view owner. Renaming a view does not change its sharing settings."
+  },
+  {
+    "id": "product_release-06",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "为产品页写一句“何时可以用”的说明；来源没有确定日子就写明状态，不替团队定日期。",
+    "source_text": "已完成邀请测试；公开开放时间尚未决定；等候名单仅用于通知，不保证优先资格。"
+  },
+  {
+    "id": "product_release-07",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "把这段说明改得顺口，引用、产品标识及链接不变。",
+    "source_text": "产品 Luma Desk 提供本地草稿。说明书写着“保存草稿不会自动发送给协作者”。草稿在当前设备保存，跨设备同步不在本版范围。了解更多：https://luma.example.org/help/drafts?rev=4 。"
+  },
+  {
+    "id": "product_release-08",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Rewrite as a brief release note. Preserve the distinction between default and mandatory.",
+    "source_text": "New workspaces default to weekly digest emails. Owners may switch digests off. Existing workspaces keep their current settings; the update does not opt them in."
+  },
+  {
+    "id": "product_release-09",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "改写成面向用户的功能介绍，不使用未经证实的性能说法。",
+    "source_text": "并排查看支持同时展示两份文档，用户可以独立滚动。没有自动找差异，也没有准确率或速度测试。两份文档均须用户已有权限。"
+  },
+  {
+    "id": "product_release-10",
+    "primary_type": "product_release",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅整理正文，开头 front matter 不动，输出完整 Markdown。",
+    "source_text": "---\ntitle: \"偏好设置更新\"\nrelease_id: \"pref-2026-08\"\n---\n本次把字体大小选项移到阅读设置中。原来选择的大小会保留。只是入口移动，不是增加新的字号。"
+  },
+  {
+    "id": "research_opinion-01",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "把这份合成研究便笺改写为给社区管理组的分析短文。既要有可辨认的建议，也要让读者分清观察、可能解释与未知。不得补研究或引文。保留所给数字及其分母。只返回短文。",
+    "source_text": "我们在三个社区试行晚间开放阅览室，想知道延长开放能否让更多住户使用空间。记录只覆盖五月的四个周三，没有随机分配社区，也没有试行前同口径的到访数据。东桥的开放时间由18点延到20点，四晚共记到访八十人次；北湾没有改时间，四晚共四十八人次；石巷延到21点，四晚共一百零二人次。这些都是门口计数的人次，不是去重人数，有人一晚可能来回进出。\n三个社区的阅览室大小不同，东桥和石巷试行期间还各办过一次亲子活动，北湾没有。我们不知道亲子活动占了多少到访，也没有逐小时记录，因此不能从总数算出延长的那两个或三个小时各带来多少人次。石巷到访最多，可以描述为这四个周三的观察结果，但不能据此直接判定21点是所有社区最合适的关门时间。\n我们另收了二十七份自愿填写的反馈，其中十九份希望延长开放，五份认为现有时间够用，三份没有勾选这一题。不能把十九除以二十四得到的比例写成全体住户支持率，未填写反馈的人是否支持我们不知道。反馈表里提到的主要困难是下班后赶不到，另有两人提到回家路线照明不足。这是两份反馈里的担忧，不是我们已经查证的照明安全事故。\n我的倾向是保留一个月试行，并补记每小时到访与活动安排，同时由管理组另行核对晚间值守成本。这个建议还未讨论通过，也不意味着要让志愿者无偿延长值班。若管理组不同意继续试行，现有材料仍可以作为设计下一次观察的起点。现在不宜发布“延长开放让使用率翻倍”的结论，因为我们连可比的试行前分母都没有。也不宜把资料不足理解成延长开放肯定无效；我们尚不能在这两种强结论之间作判断。"
+  },
+  {
+    "id": "research_opinion-02",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "en",
+    "length_profile": "long",
+    "prompt": "Rewrite this synthetic analysis for a manager deciding whether to expand a repair service. Keep the recommendation distinguishable from the evidence. Do not bring in external studies. Return the analysis only.",
+    "source_text": "The repair desk ran a six-week trial of appointment reminders. During the first three weeks, 60 appointments were booked and 18 were missed. During the next three weeks, when reminders were used, 80 appointments were booked and 16 were missed. The missed-appointment share was therefore 30% in the first period and 20% in the second. That is a difference of ten percentage points; it is not a fall of ten percent relative to the first rate.\nThis comparison is useful but incomplete. The trial did not assign appointments randomly to reminder and no-reminder groups. The second period also included two Saturday sessions, while the first had none. We do not know whether those sessions attracted people with different schedules, and the notes do not record how many people received or read a reminder. We can say that the second period had a lower recorded missed-appointment share. We cannot isolate the effect of the reminder from these records.\nAfter the trial, staff invited feedback from everyone who attended during its final week. Twelve people responded, and nine said the reminder was useful. We do not have the number of people invited, so a response rate cannot be calculated. Nine out of twelve describes these respondents, not everyone who booked an appointment or everyone in the neighbourhood. No survey was sent to people who missed an appointment.\nMy recommendation is to continue reminders for another trial period while recording delivery status and keeping opening times comparable. This is a proposed next step, not an approved budget decision. The service manager would still need to consider staff time and messaging costs; neither has been measured here. If continuation is not possible, the current result should be described as a promising observation with unresolved alternatives, rather than a proven saving or evidence that reminders never help."
+  },
+  {
+    "id": "research_opinion-03",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "仅把“结论”一句改到与数据强度相符，其他内容不变。",
+    "source_text": "记录：8名自愿参加者中，6人在第二次练习时用时更短；没有对照组。\n结论：这套方法必然让任何人更快。\n后续：考虑扩大观察。"
+  },
+  {
+    "id": "research_opinion-04",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对错字，不补论据或改观点。",
+    "source_text": "把会议时长变短，未必就能减少决策拖延。若议题在会前没有澄清，十分钟的会也可能只是把争议推到群聊里。这是我的工作观察，并非系统研宄结论。"
+  },
+  {
+    "id": "research_opinion-05",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对错别字和语法。若无须修改，逐字返回原文，不加说明。",
+    "source_text": "样本只包含交回表格的人。他们的回答或许有助于为更大规模的研究提出问题，但不能据此确定未回复者的看法。"
+  },
+  {
+    "id": "research_opinion-06",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Use the notes to answer a decision-maker who asks which option costs less. Write one short paragraph. If the costs cannot be compared, identify the missing information rather than guessing prices.",
+    "source_text": "Option A has a monthly fixed fee of 800 yuan; its per-use fee is not provided. Option B charges 3 yuan per use; its monthly fixed fee is not provided. Expected usage is undecided. Nobody has checked whether the two options cover the same services."
+  },
+  {
+    "id": "research_opinion-07",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "润色观点段，直接引文、出处标识及网址原样保留；这是虚构备忘录，不补真实文献。",
+    "source_text": "我赞成先小范围试行。备忘录 M-12 写道：“现有样本不足以估计全市需求。”材料见 https://notes.example.org/M-12#limits 。这支持谨慎试验，不支持说全市没有需求。"
+  },
+  {
+    "id": "research_opinion-08",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Make this opinion paragraph more direct. Keep the hedge attached to the correct claim.",
+    "source_text": "I think a written agenda may help this particular group prepare. I do not think every meeting needs an agenda, and I have not tested whether agendas make decisions faster."
+  },
+  {
+    "id": "research_opinion-09",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "将便笺写成有立场但不过度推断的简短分析。",
+    "source_text": "本月线上建议箱42条，现场卡片18条；同一人可能两边提交，未去重；我倾向保留两种入口，因为它们可能触及不同习惯的人；没收集提交者年龄，不能说线下更适合老年人。"
+  },
+  {
+    "id": "research_opinion-10",
+    "primary_type": "research_opinion",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "为研究组整理表述，开头记录行逐字保留。",
+    "source_text": "记录号=pilot-N4；状态=探索性\n本次没有发现两组完成率差异，但样本仅各12人，观察期三天。没有发现差异不等于证明两组效果相同，也不等于证明干预无效。"
+  },
+  {
+    "id": "social-01",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "根据这份个人记录，给朋友可见的朋友圈写三个候选，每个都能独立发布，表达组织和切入点要有实质区别。可以取舍细节，不虚构情绪、经历或他人身份，不写通用人生道理。只返回三个编号候选。",
+    "source_text": "这周六我第一次去社区修补角，带的是一把伞骨折了的旧伞。来之前我以为到了就有人替我修，实际是志愿者先把工具摆好，再让我自己拆开布边。我用小剪刀剪错了一根线，志愿者没笑，只把放螺丝的小盒子推近了一点，说先别急着缝回去。那把伞最后还没有修好，因为缺一枚合适的铆钉，我把零件装回纸袋，约好下周再来看看。下周有没有零件还不确定，对方没有保证。我在桌边待了一个半小时，旁边有人补书包，有人试着让台灯重新亮起来。我没问他们的名字，也不知道他们平时做什么。离开时我帮忙把桌面擦了，手指上还有一点黑色的油。我想分享的只是这次没有修完的小经历，不想把它写成一场改变生活的顿悟。也不用号召别人都去；我不知道修补角是否还能接待更多人。"
+  },
+  {
+    "id": "social-02",
+    "primary_type": "social",
+    "split": "development",
+    "language": "en",
+    "length_profile": "medium",
+    "prompt": "Use this personal account to write three distinct candidate posts for a small, friends-only feed. Each should have a different angle and organisation, not just different adjectives. You may select details; do not invent a lesson, dialogue, or a completed success. Return the three numbered candidates only.",
+    "source_text": "I spent Sunday morning trying to make a paper map of the walks I actually take around my neighbourhood. I had an old street map and a red pencil. The first thing I noticed was how little of the printed map I used: the corner shop, the library, the station and one narrow path behind the playing field. I drew the path in the wrong place at first and rubbed it out. There is still a pink mark where it used to be.\nI thought I would finish the map before lunch, but I stopped after about two hours because I could not remember where one side street came out. I have not gone back to check it yet. Nobody else has seen the map, and I am not planning to sell copies or start a mapping project. The thing I want to share is the oddly patchy drawing on my kitchen table. It made me notice a few gaps in my own knowledge of streets I often pass, but I do not want to claim that I discovered a new way of living or understood the whole neighbourhood."
+  },
+  {
+    "id": "social-03",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只把最后一句写得像本人随口说话，前两句不变。只返回完整短文。",
+    "source_text": "阳台那盆薄荷又长了一截。今天剪了两片放进温水里。愿每一个平凡的日子都被生命的绿意温柔照亮。"
+  },
+  {
+    "id": "social-04",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对错字，不替我加段子。",
+    "source_text": "晚饭试着把蘑菇切厚一点，结果外面焦了，里面还挺嫩。盘子摆得不怎么样，但我自己吃得很高性。"
+  },
+  {
+    "id": "social-05",
+    "primary_type": "social",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Check spelling and grammar only. If it is correct, return it unchanged.",
+    "source_text": "Found my old bus ticket inside a cookbook. I remember the trip, but not why I put the ticket next to the soup recipe."
+  },
+  {
+    "id": "social-06",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "把这份笔记写成两个社交平台短文候选，别编结果或自我介绍。",
+    "source_text": "我试了两次手冲咖啡，第一杯太淡，第二杯还没喝。没量水温，也没记粉水比。想发条随手记录，不做教程。"
+  },
+  {
+    "id": "social-07",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "写三个语气自然、切入点不同的候选。活动名、引用和链接若使用须原样；每个候选都要含链接。",
+    "source_text": "我周日在“桥边读书角”坐了二十分钟，读到一句“问题可以先放在这里”。我没读完那本书，书名没记下。活动页 https://reading.example.org/riverside?day=sun 。不替活动方招募，也不猜书名。"
+  },
+  {
+    "id": "social-08",
+    "primary_type": "social",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Write two distinct social-post candidates from the notes. Keep the uncertainty; no advice or moral.",
+    "source_text": "I saw a heron by the canal this morning. It might have been the same one as last week, but I cannot tell. I waited for it to take off; it was still standing there when I left."
+  },
+  {
+    "id": "social-09",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "改成一条适合朋友圈的短文，保留犹豫，不替我宣布决定。",
+    "source_text": "旧书店有一套我找过很久的画册，封面磨损，内页还算整齐。今天只翻了翻，没买。我不是不喜欢，只是还没想好家里放哪里。"
+  },
+  {
+    "id": "social-10",
+    "primary_type": "social",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只润色正文，不改第一行标签，也不要擅自加话题。",
+    "source_text": "可见范围：朋友；地点：不显示\n今天走到常去的面包店，发现店门换成蓝色了。买的还是原来那款，不知道新门是什么时候换的。"
+  },
+  {
+    "id": "personal_nonfiction-01",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "把这篇个人非虚构草稿整理得连贯一些，可调段落，保留叙述者的克制和记忆边界，不补对白或成长结论。只返回成稿。",
+    "source_text": "父亲搬出老房子那天，我负责把厨房抽屉清空。房子不是拆迁，也不是卖了，只是他觉得一个人住三楼，上下买菜有些费力，决定先搬到妹妹住的小区。至于以后还回不回来，我们那天没有讨论。我拿了三个纸箱，以为半小时就能装完，最后在厨房待到中午。\n抽屉里有一把缺了半截塑料柄的削皮刀，两卷已经发黄的保鲜膜，还有一叠用皮筋捆住的煤气缴费单。最旧的一张日期看不清了，我没有拿放大镜细看。小时候家里是否就用过这把削皮刀，我也不能确定。我记得母亲会把苹果切成四块，却不记得她用的是什么刀。她去世已经七年，那天我没有和父亲提起苹果的事。\n父亲在门口给纸箱写字，把“厨房”写在侧面，不写在箱顶，说这样叠起来也找得到。这句话我记得意思，原话大概不是现在写的这样。我问缴费单要不要留，他说先带着。我没有追问，也不认为这一句就能说明他舍不得整套房子。妹妹上午来了一趟，带走窗台上的两盆植物，之后去接孩子。她并没有参与我们中午对账单的整理。\n吃午饭时，我们在折叠桌边分了一盒炒饭。冰箱还没有断电，里面只剩半瓶酱油和一袋冻得看不出内容的东西。我没有打开那袋东西，也不知道后来是谁处理的。饭后我把削皮刀放进最后一个箱子，没问它是否还能用。最后出门的是父亲，我在楼下等车，看不到他锁门的动作。\n我后来有几次想把那天写成一次郑重告别，但这样写不符合我的记忆。我们一直在找胶带、算箱子的数量、确认钥匙放在哪儿。离开前没有人在门口停很久，也没有说这是最后一次。至今我仍不知道那把刀有没有被带进新厨房；我能确定的，只是当时把它放进了箱子。"
+  },
+  {
+    "id": "personal_nonfiction-02",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "en",
+    "length_profile": "long",
+    "prompt": "Edit this personal essay for flow. You may reorder paragraphs, but keep the quiet first-person voice and the limits of memory. Do not add dialogue, motives, or a resolved ending. Return the essay only.",
+    "source_text": "The first time I returned to the swimming pool after leaving school, I went in the afternoon because the timetable listed a public session then. I was thirty-four. I did not go as part of a plan to transform my health, although I had been thinking about swimming for several months. I took an old towel and bought a new pair of goggles at the desk. I cannot remember their colour now.\nThe changing-room benches seemed lower than I remembered. I do not know whether they had been replaced or whether that was simply how they looked to me. A child was trying to pull a sleeve through a wet coat while an adult held the coat open. I did not hear what they said. In my school years I often lost track of my locker key, but on this visit I kept checking the small plastic band around my wrist.\nI swam four lengths, rested at the shallow end, and then swam two more. The pool was twenty-five metres long. I had no watch and did not record how long any of that took. The person in the next lane passed me several times. I could see the steady movement of their feet, but I knew nothing about their training or why they were there. When I left the water, I felt tired and hungry. I did not feel that I had become my younger self again.\nAt the cafe I bought tea but no cake, because the last slice on the counter had already been reserved. This detail has stayed with me more clearly than the swim itself. I took the tea outside and waited for my bus, holding the paper cup with both hands. It was a dry afternoon; I do not remember whether it was warm.\nI went once more the following week. After that, my work schedule changed and I did not return that month. I have sometimes been tempted to make the first visit the beginning of a regular habit, but that is not what happened. The towel stayed on the back of a chair for a while. I do not know exactly how many days."
+  },
+  {
+    "id": "personal_nonfiction-03",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只改第二段，让时间关系清楚。其他两段原样保留。",
+    "source_text": "我大学毕业后第一次回县城，是十月。\n那家照相馆早就关了。至少我那次经过时，卷帘门上已经贴着招租纸；它究竟哪天停业，我不知道。\n我把带回来的相册又放进了包里。"
+  },
+  {
+    "id": "personal_nonfiction-04",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只校对错字和标点，不润色口气。",
+    "source_text": "奶奶总把针线放在饼干盒里。我小时候每次打开都以为能找到吃的，后来明知到里面没有饼干，还是会先看一眼。"
+  },
+  {
+    "id": "personal_nonfiction-05",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread only. If it is correct, return it unchanged.",
+    "source_text": "I kept the chipped mug because it fitted the shelf beside my desk. I cannot remember who gave it to me, though I used to be certain I would never forget."
+  },
+  {
+    "id": "personal_nonfiction-06",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "根据真实经历要点写一小段第一人称文字；没有的细节不能补，不必写完整故事。",
+    "source_text": "我第一次独自坐夜班火车，17岁，目的地是舅舅家所在的城市。只记得车厢灯整夜亮着，以及鞋放在床下。具体城市、季节、同行乘客和当时心情都记不清。"
+  },
+  {
+    "id": "personal_nonfiction-07",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "润色这一段，日记的直接引文及档案链接逐字不动，不扩写人物心理。",
+    "source_text": "我翻到日记的一页，写着“今天没有等到船”。旁边没有原因，也没写我等了多久。扫描在 https://archive.example.org/diary/p18#scan 。现在我甚至不能确定那天是否下雨。"
+  },
+  {
+    "id": "personal_nonfiction-08",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Make this paragraph easier to read without turning it into a reconciliation story.",
+    "source_text": "My brother and I carried the table downstairs. We had not spoken for months before that morning. Moving the table did not settle the argument; we discussed only which end would fit through the door."
+  },
+  {
+    "id": "personal_nonfiction-09",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "整理成连贯的第一人称段落，不替我补见到的东西。",
+    "source_text": "去年秋天去看以前住的巷子；入口围挡；从外面看不到老屋；碰到卖水果的人，但没问他巷子情况；不知道老屋还在不在；带去的旧钥匙没有试。"
+  },
+  {
+    "id": "personal_nonfiction-10",
+    "primary_type": "personal_nonfiction",
+    "split": "development",
+    "language": "zh",
+    "length_profile": "short",
+    "prompt": "只润色正文，笔记元数据逐字保留。",
+    "source_text": "written: 2026-02-11\nmemory-date: uncertain\n那次停电，我记得邻居端来一碗热汤，但不记得是哪一户。汤里有没有姜，我现在也说不准。不能因为后来大家常提三楼阿姨，就写成一定是她。"
+  }
+]

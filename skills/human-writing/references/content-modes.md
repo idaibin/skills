@@ -1,11 +1,12 @@
 # Content Modes
 
-Select one primary mode. Combine modes only when the user asks for a platform adaptation or mixed artifact. When the request names a document type, apply [Typed-Document Boundaries](#typed-document-boundaries) first.
+Choose the editing operation before the content mode. Combine content modes only when the requested reader task needs them. When the request names a document type, apply [Typed-Document Boundaries](#typed-document-boundaries) first. The shapes below are options, not required section checklists; preserve a supplied form and deliberate voice unless changing them serves the authorized task.
 
 All modes inherit `fact-integrity.md`. The rules below describe only mode-specific structure and emphasis; they do not redefine source precedence, attribution, semantic fidelity, relationship disclosure, or external-claim handling.
 
 ## Contents
 
+- [Operation And Reader Task](#operation-and-reader-task)
 - [Typed-Document Boundaries](#typed-document-boundaries)
 - [Short-Form](#short-form)
 - [Factual Soft Copy](#factual-soft-copy)
@@ -14,6 +15,37 @@ All modes inherit `fact-integrity.md`. The rules below describe only mode-specif
 - [Engineering Retrospective](#engineering-retrospective)
 - [Architecture Note](#architecture-note)
 - [Resource List](#resource-list)
+
+## Operation And Reader Task
+
+| Requested operation | Working boundary |
+| --- | --- |
+| Proofread / 校对 | Correct demonstrable spelling, grammar, punctuation, or consistency errors; keep argument, order, register, and deliberate wording. Each change must correct an actual error; synonym swaps are not proofreading. A clean source can return unchanged. |
+| Local edit | Improve the named span; preserve all text and markup outside it. Within the span, preserve its communicative act and author intent: a wish, question, observation, offer, or decision is not interchangeable. A serious issue elsewhere does not expand the edit. |
+| Structural rewrite | Reorder or combine material only within the granted scope; track unique claims and their conditions before moving or removing them. |
+| Draft | Compose from the supplied facts and author intent; missing experience or evidence stays a gap. |
+| Adapt / multiple candidates | Extract the supported claims first, then organize each artifact for its reader and container; preserve shared facts and disclosures. |
+
+Infer the reader's goal and existing knowledge from the brief and sources. Ask only
+when an unresolved audience choice would materially change the result. Add the
+context this reader needs, rather than explaining everything or assuming expertise
+from a job title alone.
+
+For professional or technical material, choose by what the reader needs to do:
+
+- **Learn by doing:** a tutorial gives a supported practice path and feedback.
+- **Complete a known task:** an operational guide leads with prerequisites, ordered
+  actions, expected result, and relevant recovery; place conceptual depth nearby or
+  separately rather than interrupting every step.
+- **Look something up:** reference prose makes names, fields, conditions, defaults,
+  and exceptions easy to find; preserve the accepted technical contract.
+- **Understand or decide:** explanation connects evidence, mechanism, alternatives,
+  and limits; use the explanation reference when that reasoning needs work.
+
+For a status update, lead with the decision or change that affects the recipient,
+then evidence, blockers, and a next action when supported. For an FAQ, answer the
+actual question before supporting detail; do not invent audience concerns to fill a
+template. These are presentation choices, not authority to set priorities or facts.
 
 ## Typed-Document Boundaries
 
@@ -49,18 +81,19 @@ Use for a social post, caption, announcement, concise opinion, or product note.
 
 ### Shape
 
-- one central claim
-- one concrete detail, scene, contrast, or mechanism
-- one ending that completes the thought
-- optional link or tag only when useful
+Choose a supported focal point and select the relevant source details. A short
+record may stop after its observation; it need not acquire a scene, personal turn,
+or lesson to fit a shape. Use a link or tag only when useful or requested.
 
 ### Editing rules
 
 - Start with the point, not a title-like preamble.
 - Do not squeeze a full article into bullets.
 - Avoid stacked slogans, hashtag piles, and three consecutive punchlines.
-- Keep one human turn: a decision, hesitation, contrast, or specific observation.
-- Remove any sentence that only repeats the claim.
+- Retain a supplied decision, hesitation, contrast, or observation when useful; do not manufacture a human turn or an extra action to connect details. For personal accounts, draft each candidate by selecting and recombining attested events, not by filling out a typical story. Check its action verbs against the source before returning it: a correction, retry, departure, return, creation, or reaction needs its own support. An incomplete event may stay incomplete; do not supply its expected next step. Delete an unsupported action clause rather than softening it into a vague attempt. A change of angle selects different evidence, not a different history. When adapting a factual first-person episode, keep its supplied event verbs and circumstances unless the requested edit needs a demonstrably equivalent rephrasing. Prefer selecting or omitting those clauses and changing focus, grouping, or order around them. Do not substitute a more specific posture, movement, destination, or follow-up action for a general source description. This preserves the author’s account while leaving room to vary presentation. Treat the account as a closed set of events: use an extract-first draft of its factual clauses, then revise their organization and nonfactual phrasing. Packing parts into a bag does not establish taking them home; leaving a place does not establish the destination. Keep the supported packing or leaving clause, or omit it. Do not add even an ordinary closing action to finish a candidate.
+- Remove any sentence that only repeats the claim. Making an abstract or ceremonial line conversational does not authorize replacing it with a new concrete proposal, decision, or experience; express its supported intent in ordinary language, or preserve it when no faithful improvement is clear.
+- When materially different candidates are requested, allocate a different supported primary fact or reader use to each before drafting. Reserve each optional focal detail for its candidate unless the brief requires repetition; necessary shared context and limits may repeat. Write around that focus instead of recapping the whole source in every candidate. When facts are sparse, a legitimate function can be very small: a pointer to a supplied resource need not retell the anecdote. Keep sparse alternatives sparse rather than padding them with an invented event or reaction.
+- Compare the finished candidates' information jobs, not their opening words. Two candidates centered on the same optional quotation or observation are still duplicates if they merely change order, synonyms, or secondary details. Revise the focus or useful form, not the facts. Do not force a hook, three points, or an uplift. If the source cannot support the requested distinction, state the smallest gap instead of manufacturing one. Keep this planning and comparison internal.
 - If the post recommends the author's own product or an interested party's product, state that relationship directly.
 - Compression must preserve the exact technical subject, operation, metric, baseline, qualifier, and source attribution. Omit a secondary claim rather than merge different scopes into one inaccurate sentence.
 - When the only evidence is a vendor, employer, sponsor, or product owner's report, keep `官方称`, `厂商测试`, or equivalent attribution in the post itself rather than hiding it behind a link.

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Independent blind review result",
+  "description": "One record per artifact per independent reviewer. Require all mandatory oracle assertion ids exactly once. hard_gate pass iff all mandatory assertions pass; fail if any fails; otherwise indeterminate. On non-pass gate, genre_scores must be empty. On pass, every applicable dimension scored 0-2; null needs an explicit applicability reason. These cross-record/conditional semantics must be checked by the review coordinator, beyond structural JSON-schema validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "artifact_id",
+    "case_id",
+    "reviewer_id",
+    "blindness_attestation",
+    "hard_gate",
+    "assertion_results",
+    "genre_scores",
+    "additional_claims",
+    "review_notes"
+  ],
+  "properties": {
+    "artifact_id": {
+      "type": "string"
+    },
+    "case_id": {
+      "type": "string"
+    },
+    "reviewer_id": {
+      "type": "string"
+    },
+    "blindness_attestation": {
+      "type": "object",
+      "required": [
+        "condition_hidden",
+        "sibling_outputs_hidden",
+        "other_review_hidden"
+      ],
+      "properties": {
+        "condition_hidden": {
+          "const": true
+        },
+        "sibling_outputs_hidden": {
+          "const": true
+        },
+        "other_review_hidden": {
+          "const": true
+        }
+      }
+    },
+    "hard_gate": {
+      "enum": [
+        "pass",
+        "fail",
+        "indeterminate"
+      ]
+    },
+    "assertion_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "assertion_id",
+          "verdict",
+          "source_evidence",
+          "output_evidence",
+          "reason"
+        ],
+        "properties": {
+          "assertion_id": {
+            "type": "string"
+          },
+          "verdict": {
+            "enum": [
+              "pass",
+              "fail",
+              "indeterminate"
+            ]
+          },
+          "source_evidence": {
+            "type": "string"
+          },
+          "output_evidence": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "mechanical_result": {
+            "enum": [
+              "pass",
+              "fail",
+              "not_applicable"
+            ]
+          }
+        }
+      }
+    },
+    "genre_scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "dimension",
+          "score",
+          "evidence",
+          "reason"
+        ],
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "score": {
+            "enum": [
+              0,
+              1,
+              2,
+              null
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "additional_claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "claim",
+          "support",
+          "source_evidence",
+          "output_evidence"
+        ],
+        "properties": {
+          "claim": {
+            "type": "string"
+          },
+          "support": {
+            "enum": [
+              "supported",
+              "unsupported",
+              "uncertain"
+            ]
+          },
+          "source_evidence": {
+            "type": "string"
+          },
+          "output_evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "review_notes": {
+      "type": "string"
+    }
+  }
+}

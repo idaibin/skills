@@ -9,6 +9,10 @@ the actual output; package validation alone does not establish writing quality.
 - [Non-Trigger Eval](#non-trigger-eval)
 - [Quality Eval](#quality-eval)
 - [Semantic-Unit Regression Eval](#semantic-unit-regression-eval)
+- [Length-contract and sparse-evidence regression](#length-contract-and-sparse-evidence-regression)
+- [Cross-Piece Semantic Repetition Eval](#cross-piece-semantic-repetition-eval)
+- [Editing Operation And Adaptation Regression](#editing-operation-and-adaptation-regression)
+- [Method Sources](#method-sources)
 
 ## Trigger Eval
 
@@ -206,3 +210,47 @@ loaded during ordinary writing.
 | Intentional series continuity | Keep an agreed recurring heading, theme and terms; vary only what the task authorizes and evidence supports | Treat a series theme or repeated technical noun alone as a defect |
 | Local edit only | Fix the authorized sentence; report the cross-piece issue only when the requested output permits commentary | Rewrite the whole series or append a diagnosis when only the corrected sentence was requested |
 | No new evidence | Identify the minimum missing evidence or return a bounded diagnostic | Invent an experience, result or causal mechanism to create variety |
+
+## Editing Operation And Adaptation Regression
+
+Use fixed synthetic inputs for baseline/candidate comparisons; evaluate meaning and
+reader utility, not detector scores, sentence-length variance, or rule-hit counts.
+Keep model, reasoning, permissions, and task inputs comparable. Retain actual outputs
+and traces outside the package; structural checks do not establish behavior.
+
+| Case and prompt | Pass condition |
+| --- | --- |
+| Fidelity: `去 AI 味，不加事实：在 18 个内部样本中，新方法可能改善检索效果，尚未复测。团队计划下月发布，日期未定。` | Keep sample, internal scope, possibility, no retest, planned status and unsettled date; no causal or launch guarantee. |
+| Modality: `Polish without changing meaning: Clients may retry. Operators must retain logs. Reviewers should check the version. The tool can export CSV.` | Permission, obligation, recommendation, and capability remain distinct. |
+| Scope: `只改第三句错字，其余逐字保留：第一句。第二句。请检查目票。第四句。` | Only `目票` becomes `目标`; no commentary or other edits. |
+| No-op: `只校对，有意重复和正式语气保留：本通知自明日起生效。请保留凭证。再次提醒：请保留凭证。` | Return unchanged; no compulsory novelty or informality. |
+| Legitimate forms: `去 AI 味但保留技术义和功能：这不是同步备份，而是异步复制。三项独立功能是导出、筛选和排序。实验未达到统计显著性；闭环控制中的 token 仅作标识。` | Real contrast, three functions, statistical term, control term, and identifier meaning survive. |
+| Sample boundary: style sample `我跑了三个月，终于明白慢一点也没关系。`; task facts `本版新增 CSV 导出，未做性能测试。`; ask for a similarly restrained release note | No transferred running experience, testing, feelings, or product history. |
+| Multi-container: facts `2.1 新增 CSV 导出。入口：设置→导出→CSV。无性能测试。`; ask for a release note, community post, and operational guide | Shared facts agree; release note highlights change, post offers one useful point, guide gives supplied steps. No invented path, response, or benefit. |
+| Social alternatives: facts `记录只存本地；可手动导出加密备份；跨设备同步尚未开发。`; ask for three short candidates | Different source-supported reader questions or uses, not the same full fact list reordered; retain relevant limits. No invented incident or promotion of optional manual export into a required/exclusive path. |
+| Long-form: paragraphs `缓存减少重复读取。` / `因此用户留存提高。` / `目前只有读取次数记录，没有留存数据。`; ask to repair order and logic | Do not assert retention improved or add causal evidence; retain the observed effect and evidence ceiling with a readable relation. |
+| Markup: a document with frontmatter `id: note-7`, heading `## Export`, link text `导出` targeting `./guide.md#export`, command `tool export --format csv`, and prose `导粗记录。`; ask for prose-only proofreading | Only prose typo changes; frontmatter, heading, link target, command, and markup stay exact. |
+| Critical stop: `写一段我亲测效率翻倍的真实体验。我没有测过，也不允许虚构。` | Name the missing measurement or offer a source-bound alternative; no invented experience or false completion. |
+| Nearest owner: `只判断主责，不执行：设计 API 的字段、错误码和 OpenAPI 契约。human-writing 是否主责？` | Contract workflow owns semantics; human-writing may help wording only. |
+
+## Method Sources
+
+Maintainer-only pointers for assessing the methods, not instructions to load or cite
+these sources in ordinary writing. Methods are summarized in original wording;
+third-party text and templates are not bundled. A source's popularity, self-evaluation,
+or detector score does not establish efficacy for this package.
+
+| Source / fixed basis | Relevant method and boundary |
+| --- | --- |
+| [Humanizer-zh](https://github.com/op7418/Humanizer-zh/blob/f4518a8eab97b8bfebc66a89d34320a89bef6930/SKILL.md), MIT | Fidelity and minimum useful editing; existing fact/voice/no-op rules already cover most advice. No forbidden-word checklist. |
+| [humanizer](https://github.com/blader/humanizer/blob/8c307f367c91bd974002f10f2be2965d642c13df/SKILL.md), MIT | Structural patterns are contextual signals; do not copy multi-draft output rituals or invent reactions. |
+| [copy-editing](https://github.com/coreyhaines31/marketingskills/blob/e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b/skills/copy-editing/SKILL.md) / [social](https://github.com/coreyhaines31/marketingskills/blob/e85f3cbc2e4a79bf33b2a12e9bdd9087d414735b/skills/social/SKILL.md), MIT | Editing operation and source-to-container adaptation; no fixed pass count, posting cadence, engagement claims, or mandatory hook/CTA. |
+| [non-autoregressive writing pass](https://github.com/msimchowitz/writing-skills/blob/214981fe02326f27b0fc8790d00eb4b731607073/for-agents/non-autoregressive-writing-pass/SKILL.md), MIT | Inspect finished paragraph openings and transitions with the whole argument available; no universal ban on contrast or short sentences. |
+| [Google audience](https://developers.google.com/tech-writing/one/audience) / [tone](https://developers.google.com/style/tone), web documentation | Match the reader's knowledge gap and task; natural technical prose need not imitate speech. |
+| [Diátaxis](https://diataxis.fr/), web documentation | Separate learning, completing a task, lookup, and understanding when the reader's needs differ; not four mandatory sections. |
+| [Purdue reverse outlining](https://owl.purdue.edu/owl/general_writing/the_writing_process/reverse_outlining.html), copyrighted web guidance | Independently summarized paragraph topic/function check; no reproduced exercise or fixed word quota. |
+
+Community X posts are discovery leads and author reports, not independent validation.
+Keep fiction, detector evasion, external publication, and scheduling outside this
+Skill's existing ownership boundary. Do not transfer fiction heuristics or findings
+about long fictional works into universal rules for professional or social prose.
