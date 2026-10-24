@@ -494,6 +494,28 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "command": "echo 'rg source'"}]}, owner, None, source))
         self.assertFalse(RUNNER.trace_inspected_owner(facts, owner, 1, source))
 
+    def test_complete_nl_numbered_source_establishes_owner_without_accepting_gaps_or_forgery(self) -> None:
+        path = "src/components/neutral-panel.ts"
+        source = (FIXTURE / path).read_text(encoding="utf-8")
+        output = "\n".join(f"{number:6}\t{line}" for number, line in enumerate(source.splitlines(), 1))
+        other_path = "src/components/neutral-panel.test.ts"
+        other_source = (FIXTURE / other_path).read_text(encoding="utf-8")
+        output += "\n" + "\n".join(f"{number:6}\t{line}" for number, line in enumerate(other_source.splitlines(), 1))
+        item = {"order": 1, "command": f"nl -ba {path}", "output": output}
+        owner = path + ":renderNeutralPanel"
+        facts = {"successful_commands": [item]}
+        self.assertTrue(RUNNER.trace_inspected_owner(facts, owner, None, source))
+        for incomplete in (
+            "\n".join(output.splitlines()[1:]),
+            output.replace("return `", "return altered`"),
+            output.replace("     2\t  return `", ""),
+        ):
+            with self.subTest(output=incomplete):
+                self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "output": incomplete}]}, owner, None, source))
+        for command in ("echo 'nl -ba src/components/neutral-panel.ts'", f"nl -ba src/components/another-panel.ts"):
+            with self.subTest(command=command):
+                self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "command": command}]}, owner, None, source))
+
     def test_owner_inspection_cannot_join_path_and_symbol_from_different_or_failed_items(self) -> None:
         events = [
             {"type": "item.completed", "item": {"id": "path", "type": "command_execution", "command": "rg source", "aggregated_output": "src/components/neutral-panel.ts", "status": "completed", "exit_code": 0}},

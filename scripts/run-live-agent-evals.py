@@ -657,6 +657,33 @@ def rg_captured_source(command: str, output: str, path: str, source_text: str) -
     return bool(lines) and all(captured.get(number) == text for number, text in enumerate(lines, 1))
 
 
+def nl_captured_source(command: str, output: str, path: str, source_text: str) -> bool:
+    """Accept complete ``nl -ba`` output only when every numbered line matches."""
+    if not any(
+        argv and Path(argv[0]).name == "nl" and path in argv and "-ba" in argv
+        for argv in command_argv_segments(command)
+    ):
+        return False
+    lines = source_text.splitlines()
+    if not lines:
+        return False
+    blocks: list[list[tuple[int, str]]] = []
+    current: list[tuple[int, str]] = []
+    for line in output.splitlines():
+        match = re.fullmatch(r"\s*(\d+)\t(.*)", line)
+        if match:
+            number, text = int(match[1]), match[2]
+            if number == 1:
+                if current:
+                    blocks.append(current)
+                current = []
+            current.append((number, text))
+    if current:
+        blocks.append(current)
+    expected = list(enumerate(lines, 1))
+    return any(block == expected for block in blocks)
+
+
 def trace_inspected_owner(facts: dict[str, Any], owner: str, before_order: int | None, source_text: str) -> bool:
     path, _, symbol = owner.partition(":")
     return bool(path and symbol and any(
@@ -665,6 +692,7 @@ def trace_inspected_owner(facts: dict[str, Any], owner: str, before_order: int |
         if (
             (argv_reads_path(item["command"], path) and source_text in (item.get("output") or ""))
             or rg_captured_source(item["command"], item.get("output") or "", path, source_text)
+            or nl_captured_source(item["command"], item.get("output") or "", path, source_text)
         )
         and symbol in (item.get("output") or "")
     ))
