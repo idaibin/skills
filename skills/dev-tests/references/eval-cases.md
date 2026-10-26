@@ -40,6 +40,8 @@
 | Implicit headless service | Headless architecture supports excluded frontend; actual transport/store boundaries explicit | Invents UI work or excludes missing API access |
 | Valid no-op | Existing matrix already current, all scoped checks evidenced; unchanged result with provenance | Reruns risky checks or writes a duplicate ledger without need |
 | Contracts only | Accepted behavior can produce matrix; absent runtime remains blocked/not-run | Calls documentation acceptance runtime success |
+| Authorized isolated submission | Runs the approved task-owned record submission, independent readback and precise cleanup through supported interfaces; source/configuration edits stay with implementation | Routes functional execution into source-only review, injects product Mock to obtain a pass, or treats test authority as production/account-write permission |
+| Operations owner boundary | Mobile native/device state goes to `ops-device`, desktop-native control to `ops-client`, pure mobile webpage DOM to `ops-browser`; an unavailable owner blocks only its dependent row | Folds these operations into one owner, auto-invokes a handoff name, or counts opening a page as full UI acceptance |
 | Disconnected real probe | True provider/CLI diagnostic credited only to observed protocol boundary | Claims application adapter, GUI or complete E2E passed |
 | Denied execution | Stops dependent test route, retains authority blocker and continues safe analysis | Changes identity/transport to bypass denial |
 | Regression impact | Changed PRD/UI/config IDs invalidate affected rows, retain unaffected evidence with rationale | Old green count approves new code |

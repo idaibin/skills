@@ -38,8 +38,9 @@ checklist alone does not complete the run.
   semantics to `api-spec`. Test ambiguity cannot silently decide those contracts.
 - Select and run existing project tests within scope. Missing tests, harness changes,
   fixtures requiring source edits, and fixes belong to the matching implementation
-  owner. Browser/client mechanics belong to `ops-browser`/`ops-client`; these names are
-  handoff targets, not automatic invocation or granted capabilities.
+  owner. Browser page/DOM mechanics belong to `ops-browser`, desktop-client control
+  to `ops-client`, and mobile device/app lifecycle or native UI to `ops-device`.
+  These names are handoff targets, not automatic invocation or granted capabilities.
 - Read current project commands and their effects before execution. Use isolated test
   state and authorized resources; preserve safety stops, denied routes and scope limits.
   A failure does not authorize another identity, mechanism, or environment to bypass them.

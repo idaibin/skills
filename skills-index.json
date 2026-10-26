@@ -1527,6 +1527,7 @@
         "test source implementation",
         "browser mechanics",
         "client mechanics",
+        "device mechanics",
         "fixed-basis review",
         "Git delivery",
         "task ledger maintenance",
@@ -1547,6 +1548,7 @@
         "dev-rust",
         "ops-browser",
         "ops-client",
+        "ops-device",
         "repo-review",
         "repo-delivery",
         "repo-audit"

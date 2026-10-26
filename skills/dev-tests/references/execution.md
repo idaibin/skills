@@ -20,9 +20,9 @@ Return these gate results to `repo-delivery`; testing grants no commit or merge 
    claims; bind its identity to results and record later changes instead of rewriting
    the original expectation. Reuse project evidence storage, not a second ledger.
 3. Run only authorized existing checks. Prefer isolated disposable test data/resources;
-   an “integration” label does not make a destructive or external effect safe. A browser
-   or native-client step transfers the scenario and oracle to its operations owner under
-   the same permission boundary. If that owner/capability is unavailable, block that row.
+   an “integration” label does not make a destructive or external effect safe. A browser,
+   desktop-client or device step transfers the scenario and oracle to its operations
+   owner under the same permission boundary. If that owner/capability is unavailable, block that row.
 4. Capture exact command or interaction recipe, working directory, runtime/build and
    dependency versions, start/end times, exit code, relevant assertions and artifact
    locations/digests. Scrub credentials and sensitive records from shareable evidence.
@@ -59,10 +59,15 @@ Unit, contract, integration, UI and E2E results retain their individual evidence
 
 ## Workspace and incident retest
 
-Resolve the authorized fixture/evidence workspace before writing. Keep verification
-read-only with respect to the target application; test/harness source changes need
-their implementation owner. Never inject Mock middleware, fake records, demo
-notifications or test controls into product code/configuration to obtain a pass.
+Resolve the authorized fixture/evidence workspace before writing. Do not edit the
+target application source or configuration during verification; test/harness source
+changes need their implementation owner. This does not prohibit already-authorized
+runtime interactions or isolated task-owned test-state writes through supported
+interfaces. Preserve the effects, denied-route, uncertain-write readback and cleanup
+gates above. A general testing request does not grant production business-data writes
+or account-setting changes; establish their specific authority before acting. Never
+inject Mock middleware, fake records, demo notifications or test controls into product
+code/configuration to obtain a pass.
 Where instructions require external test storage, nested docs, ignored folders and
 existing source-local test directories do not satisfy that boundary; preserve
 existing assets until their migration or removal is separately authorized.
