@@ -32,6 +32,13 @@ attempt only after its final submit marker. Terminal state, session identity, ef
 model evidence, fixed basis, and local verdict must come from their existing ledgers;
 the recorder never invents or upgrades evidence.
 
+`completion_state` is optional caller-reported metadata, not submission proof.
+For new producers, `submitted` means an observed accepted send, `ambiguous`
+means unresolved submission, and `completed` still requires the matching terminal
+and postcondition evidence. Explicit `failed-before-submit` is rejected for every
+feedback event type. The recorder keeps other existing string values and omitted
+fields compatible; it does not certify them or infer a missing transport state.
+
 Use `scripts/record_feedback.py` from this Skill package. Build one JSON object in a
 task-private temporary file, then invoke:
 
