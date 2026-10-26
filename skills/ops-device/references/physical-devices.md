@@ -2,6 +2,10 @@
 
 ## Android
 
+For Android screen/app-store handoffs and bounded device plans, read
+[phone debugging](phone-debugging.md) and the [Android runner](android-debug-runner.md).
+Keep browser-page acceptance with the browser owner; these provide device evidence.
+
 Enumerate connected Android targets and bind the requested physical device by its
 current ADB serial plus package identity. The Android documentation requires a
 specific target when multiple devices are connected; use `adb -s "$task_serial"`

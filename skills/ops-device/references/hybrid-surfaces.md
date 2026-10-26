@@ -10,6 +10,10 @@ If the page is in a native app's embedded WebView, `ops-device` retains app/cont
 and end-to-end flow ownership; browser methods can provide a bounded Web-content
 observation. A desktop client's embedded WebView remains `ops-client` owned.
 
+For installed native-base/resource-bundle drift, plugin availability and platform
+logs, read [hybrid runtime debugging](hybrid-mobile-debugging.md). That procedure does
+not expand installation, transport or external-write authority.
+
 ## Bind and switch context
 
 Record device ID, app package/bundle, current native or WebView context, page URL and

@@ -19,6 +19,9 @@ tool does not establish task ownership, authorization, or app acceptance.
 | Any mobile device operation | [usage](references/usage.md) | Target, authority, capability and evidence boundary |
 | Android Emulator or other virtual device | [simulator operations](references/simulator-operations.md) | Guest-bound controls and qualified host/guest result |
 | Physical Android or iOS device | [physical devices](references/physical-devices.md) | Bound device/app operation with direct postcondition |
+| Android collection, guarded device plan or short recording | [Android runner](references/android-debug-runner.md) | Explicit serial and bounded device evidence; no quiet-lifecycle certification |
+| Physical-phone app/store handoff diagnosis | [phone debugging](references/phone-debugging.md) | Device action and observed destination, separate from page acceptance |
+| Native base, resource bundle or plugin/runtime drift | [hybrid runtime debugging](references/hybrid-mobile-debugging.md) | Layered artifact/runtime evidence without implicit install or transport |
 | App WebView or mobile browser crosses native/Web context | [hybrid surfaces](references/hybrid-surfaces.md) | Stable owner and explicit context handoff |
 
 ## Invariants
@@ -54,5 +57,9 @@ simulator from physical-device and host state from guest state.
   targeting, platform preflight and device-specific effects.
 - Read [hybrid surfaces](references/hybrid-surfaces.md) for mobile browser, WebView,
   context switching and network evidence.
+- Read [Android runner](references/android-debug-runner.md) only for its existing
+  Android helper; [phone debugging](references/phone-debugging.md) for device/app
+  handoffs; and [hybrid runtime debugging](references/hybrid-mobile-debugging.md)
+  for native-base, resource-update or platform-log diagnosis.
 - Maintainers only: read [eval cases](references/eval-cases.md) when changing routing
   or behavior; do not load it during ordinary operation.

@@ -107,6 +107,11 @@ These document available command routes, not universal host-focus guarantees.
 
 ## Device operation loop
 
+The bundled [Android runner](android-debug-runner.md) supports an explicit serial for
+collection, guarded plans and short recordings. Its optional existing-AVD start route
+remains subject to the background/focus contract above and current launch authority;
+it does not provision images, install applications or prove host focus preservation.
+
 The following commands are examples after executable, serial, artifact, component,
 paths and operation authority have been resolved. Apply bounded host-side timeouts.
 
