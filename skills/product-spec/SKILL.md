@@ -15,7 +15,6 @@ only decisions needed for the requested slice.
 
 | Request condition | Read | Result |
 | --- | --- | --- |
-| Submission failure or an unknown completion outcome affects recovery | [recovery Ready gate](references/workflow.md#ready-for-an-implementation-slice) | Accepted outcome/input/retry rules and any Open recovery decision |
 | One feature needs behavior, states, and acceptance | [workflow](references/workflow.md) and [template](references/template.md) | Progressive Feature Spec |
 | Submission failure or uncertain completion affects recovery | [workflow](references/workflow.md#ready-for-an-implementation-slice) | Accepted input, outcome and safe-retry rules, or a scoped Open decision |
 | New product line/boundary reset is explicit | [workflow](references/workflow.md) | Foundation Spec |
