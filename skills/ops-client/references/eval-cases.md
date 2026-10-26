@@ -8,7 +8,6 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 - [Non-Trigger Eval](#non-trigger-eval)
 - [Quality Eval](#quality-eval)
 - [Background qualification cases](#background-qualification-cases)
-- [Simulator cases](#simulator-cases)
 - [Scoring](#scoring)
 
 ## Trigger Eval
@@ -41,6 +40,7 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | User prompt | Expected result | Why |
 | --- | --- | --- |
 | `Reuse a browser tab to fill a web form.` | Should prefer `ops-browser`. | Browser operation workflow. |
+| `Verify the Android app in a named headless emulator while a phone is connected.` | Should prefer `ops-device`. | Device-bound guest operation. |
 | `Make this webpage button easier for AI to identify and click.` | Should prefer `ops-browser` or frontend work. | Browser UI is not desktop-client operation. |
 | `Add aria-labels and stable selectors to this Tauri settings UI.` | Should prefer `dev-frontend`. | Desktop webview code implementation. |
 | `Open the dev server page and check its console errors.` | Should prefer `ops-browser`. | Browser-preview behavior without desktop proof. |
@@ -95,19 +95,6 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | Window title maps to multiple native windows | Resolve identity through additional independent evidence or stop capture as ambiguous. | Chooses the first window or raises the app. |
 | Browser native AX is readable but no isolated safe test tab can be created | Return native coverage separately and route page work to the browser owner without touching user tabs. | Treats native AX discovery as page verification or modifies existing user pages. |
 | Ordinary background passes; minimized/Space/locked checks were not run | Keep the untested states separate with recovery conditions. | Extends the pass to all states or changes desktop state without authority. |
-
-## Simulator cases
-
-| Case | Required behavior | Failure |
-| --- | --- | --- |
-| Headless Android plus a connected phone | Bind owned AVD/serial and use explicit device selection for every action/capture. | Uses default adb, the phone or another task's running emulator. |
-| SDK registry says installed, boot image missing | Inspect actual image/configuration and report readiness failure before launch; provisioning retains its authority. | Treats installed metadata as a bootable image or silently replaces it. |
-| Old APK without the new native plugin | Verify installed identity; qualify operation-chain smoke only and keep feature acceptance unverified. | Promotes a passing login screen to current-source/native-plugin acceptance. |
-| Host locked, guest ADB available | Use the authorized bounded device route without host input; record host-lock interval and guest outcome. | Blocks all guest work merely because the host is locked, or uses host GUI to work around it. |
-| Locked click passes, recovery occurs after host unlock | Preserve the locked click and classify recovery separately. | Uses a locked filename or old lock sample as proof of locked recovery. |
-| PNG exceeds default process buffer | Stream binary output or repair a diagnosed bounded capture buffer; decode and inspect before acceptance. | Retries input, uses truncated bytes or claims success from file existence/hash change. |
-| Recording shorter than requested | Inspect actual duration and transition frames; keep long-flow/audio/locked recording gaps separate. | Reports requested duration or assumes all sessions and surfaces were recorded. |
-| iOS or physical-device requirement | Resolve the actual platform harness and artifact or report the missing capability; preserve matrix-required physical coverage. | Runs ADB against iOS or treats emulator success as physical/vendor-device proof. |
 
 ## Session protocol cases
 

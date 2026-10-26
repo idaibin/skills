@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ops Device"
+  short_description: "Operate mobile devices and verify app state"
+  default_prompt: "Use $ops-device for the specified physical phone, emulator, or simulator. Bind the exact device and installed app, choose an authorized adapter based on current capability, inspect-act-verify, and label host, guest, UI, network, mock, and capture evidence separately. Route browser-page work to ops-browser without losing device context."

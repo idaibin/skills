@@ -1278,16 +1278,38 @@
       "mode": "explicit",
       "prompt": "Use $ops-client to report this recorded synthetic background qualification, without live app/browser calls or any mutations. The user authorized disposable text and reversible-control probes in SyntheticClient build 1.4.2, PID 4201, window 77 while WorkApp remained foreground. AXValue was declared writable and its setter returned success, but readback remained the original text; no input succeeded. A separate AXPress toggle changed 0 to 1 and was restored to 0 with readback. Continuous app-activation observation recorded no foreground changes; system keyboard-focus signals were unavailable. Window-scoped capture returned a transformed 200x150 thumbnail although AX window size was 1400x900. Classify the write failure, bounded successful toggle/restoration, keyboard-focus gap and unsuitable full-window capture separately. Do not retry, paste, type Enter, activate, submit or treat API success as application success. Return evidence-incomplete with client-input, continuous-keyboard-focus and full-window-capture unverified.",
       "expected_skill": "ops-client",
-      "excluded_skills": ["ops-browser"],
-      "required_observations": ["skill-selection", "artifact", "effect", "stop-honesty", "efficiency"],
-      "required_process": ["read-effective-instructions", "stop-not-ready"],
+      "excluded_skills": [
+        "ops-browser"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "artifact",
+        "effect",
+        "stop-honesty",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "stop-not-ready"
+      ],
       "required_source_owners": [],
       "allowed_changed_paths": [],
       "required_changed_paths": [],
       "required_effects": [],
-      "forbidden_effects": ["source-write", "git-write", "external-action", "browser-control"],
-      "required_artifacts": ["evidence-gap"],
-      "required_not_verified": ["client-input", "continuous-keyboard-focus", "full-window-capture"],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action",
+        "browser-control"
+      ],
+      "required_artifacts": [
+        "evidence-gap"
+      ],
+      "required_not_verified": [
+        "client-input",
+        "continuous-keyboard-focus",
+        "full-window-capture"
+      ],
       "expected_stop": "evidence-incomplete",
       "max_tool_calls": 6
     },
@@ -1295,18 +1317,44 @@
       "id": "ops-client-simulator-recorded-evidence",
       "kind": "specialized",
       "mode": "explicit",
-      "prompt": "Use $ops-client to interpret recorded synthetic Android headless evidence only; do not connect to any device, run ADB, alter the fixture, or operate a desktop app. The owned virtual device was bound to an explicit serial and Android ARM64 image. An older installed APK passed launch, a guest mode-switch tap, and decoded screenshots. macOS IOConsoleLocked was true before and after a 1.5-second click/capture interval. A capture-buffer repair and app reopen occurred only after the host was unlocked. A separate decoded recording lasted 2.8 seconds; no locked recording was attempted. Current source adds a native plugin absent from this APK, and another physical phone was connected. Report the observed operation-chain and short locked interval separately from current-feature, locked-reopen, locked-recording, long-unattended-run and physical-device coverage. Keep Android evidence separate from any iOS support. This report is a valid no-op; no new test execution is requested.",
-      "expected_skill": "ops-client",
-      "excluded_skills": ["ops-browser"],
-      "required_observations": ["skill-selection", "artifact", "effect", "stop-honesty", "efficiency"],
-      "required_process": ["read-effective-instructions", "deliver-owner-output"],
+      "prompt": "Use $ops-device to interpret recorded synthetic Android headless evidence only; do not connect to any device, run ADB, alter the fixture, or operate a desktop app. The owned virtual device was bound to an explicit serial and Android ARM64 image. An older installed APK passed launch, a guest mode-switch tap, and decoded screenshots. macOS IOConsoleLocked was true before and after a 1.5-second click/capture interval. A capture-buffer repair and app reopen occurred only after the host was unlocked. A separate decoded recording lasted 2.8 seconds; no locked recording was attempted. Current source adds a native plugin absent from this APK, and another physical phone was connected. Report the observed operation-chain and short locked interval separately from current-feature, locked-reopen, locked-recording, long-unattended-run and physical-device coverage. Keep Android evidence separate from any iOS support. This report is a valid no-op; no new test execution is requested.",
+      "expected_skill": "ops-device",
+      "excluded_skills": [
+        "ops-client",
+        "ops-browser"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "artifact",
+        "effect",
+        "stop-honesty",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
       "required_source_owners": [],
       "allowed_changed_paths": [],
       "required_changed_paths": [],
       "required_effects": [],
-      "forbidden_effects": ["source-write", "git-write", "external-action", "browser-control"],
-      "required_artifacts": ["owner-result"],
-      "required_not_verified": ["current-feature", "locked-reopen", "locked-recording", "long-unattended-run", "physical-device", "ios-runtime"],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action",
+        "browser-control"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "required_not_verified": [
+        "current-feature",
+        "locked-reopen",
+        "locked-recording",
+        "long-unattended-run",
+        "physical-device",
+        "ios-runtime"
+      ],
       "expected_stop": "completed",
       "max_tool_calls": 6
     },
@@ -1315,17 +1363,40 @@
       "kind": "specialized",
       "mode": "implicit",
       "prompt": "Choose the appropriate owner for a mobile app running inside an Android headless emulator on a Mac; it is not a browser page or a macOS-native app. This is a synthetic recorded preflight: the host is locked; two emulator serials and a physical phone are online; no virtual device is attributed to this task and no installation, launch or input is authorized. Do not run ADB or any real host/device tool, and do not modify files. Report the unresolved device ownership, preserve the host/guest distinction, stop at evidence-incomplete, and leave guest-interaction, installed-artifact and guest-capture unverified. Do not pick the first device, require a phone, unlock the Mac or assume no device route can operate while the host is locked.",
-      "expected_skill": "ops-client",
-      "excluded_skills": ["ops-browser"],
-      "required_observations": ["skill-selection", "artifact", "effect", "stop-honesty", "efficiency"],
-      "required_process": ["read-effective-instructions", "stop-not-ready"],
+      "expected_skill": "ops-device",
+      "excluded_skills": [
+        "ops-client",
+        "ops-browser"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "artifact",
+        "effect",
+        "stop-honesty",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "stop-not-ready"
+      ],
       "required_source_owners": [],
       "allowed_changed_paths": [],
       "required_changed_paths": [],
       "required_effects": [],
-      "forbidden_effects": ["source-write", "git-write", "external-action", "browser-control"],
-      "required_artifacts": ["evidence-gap"],
-      "required_not_verified": ["guest-interaction", "installed-artifact", "guest-capture"],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action",
+        "browser-control"
+      ],
+      "required_artifacts": [
+        "evidence-gap"
+      ],
+      "required_not_verified": [
+        "guest-interaction",
+        "installed-artifact",
+        "guest-capture"
+      ],
       "expected_stop": "evidence-incomplete",
       "max_tool_calls": 6
     },
@@ -2538,6 +2609,113 @@
       ],
       "expected_stop": "evidence-incomplete",
       "max_tool_calls": 6
+    },
+    {
+      "id": "ops-device-implicit-route",
+      "kind": "route",
+      "mode": "implicit",
+      "prompt": "Choose the owner for a synthetic Android app interaction on an explicitly identified emulator; distinguish the guest app from the host desktop. Do not connect to a device, run ADB or modify files.",
+      "expected_skill": "ops-device",
+      "excluded_skills": [
+        "ops-client",
+        "ops-browser"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "expected_stop": "completed",
+      "max_tool_calls": 5
+    },
+    {
+      "id": "ops-device-nearest-non-trigger",
+      "kind": "nearest",
+      "mode": "implicit",
+      "prompt": "Choose the owner for a synthetic mobile Chrome page DOM and network inspection. No device setup, installed-app operation, real browser control, or file change is requested.",
+      "expected_skill": "ops-browser",
+      "excluded_skills": [
+        "ops-device"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "deliver-owner-output"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "owner-result"
+      ],
+      "expected_stop": "completed",
+      "max_tool_calls": 5
+    },
+    {
+      "id": "ops-device-critical-stop",
+      "kind": "critical-stop",
+      "mode": "explicit",
+      "prompt": "Use $ops-device for a synthetic mobile app request, but two device serials are online and no target is attributed to this task. Do not select a device, run ADB, modify files or claim app acceptance. Report the target gap and stop.",
+      "expected_skill": "ops-device",
+      "excluded_skills": [
+        "ops-client",
+        "ops-browser"
+      ],
+      "required_observations": [
+        "skill-selection",
+        "process",
+        "artifact",
+        "effect",
+        "efficiency"
+      ],
+      "required_process": [
+        "read-effective-instructions",
+        "stop-not-ready"
+      ],
+      "required_source_owners": [],
+      "allowed_changed_paths": [],
+      "required_changed_paths": [],
+      "required_effects": [],
+      "forbidden_effects": [
+        "source-write",
+        "git-write",
+        "external-action"
+      ],
+      "required_artifacts": [
+        "evidence-gap"
+      ],
+      "expected_stop": "evidence-incomplete",
+      "max_tool_calls": 4
     }
   ]
 }

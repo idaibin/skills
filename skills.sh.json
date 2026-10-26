@@ -61,10 +61,11 @@
     },
     {
       "title": "Runtime Operations",
-      "description": "Skills for browser and desktop-client operation with state-safe evidence collection, visual comparison, and runtime geometry/style proof.",
+      "description": "Skills for browser, desktop-client, and mobile-device operation with target-bound runtime evidence.",
       "skills": [
         "ops-browser",
-        "ops-client"
+        "ops-client",
+        "ops-device"
       ]
     },
     {

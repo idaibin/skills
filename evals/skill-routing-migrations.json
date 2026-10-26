@@ -1,0 +1,14 @@
+{
+  "schema_version": "skill-routing-migrations/v1",
+  "migrations": [
+    {
+      "case_id": "ops-client-android-headless",
+      "from_fingerprint": "sha256:a25bd3a372be7bc66c7835a1a77b8ba4b06c648ef323fe63e462dc1037434285",
+      "from_owner": "ops-client",
+      "to_fingerprint": "sha256:66f1f5458a7fe815b084b709071e88d4cfd0982deeb8e8dd66cac685ce9ff957",
+      "to_owner": "ops-device",
+      "reason": "approved-mobile-device-owner-split",
+      "approved_on": "2026-10-26"
+    }
+  ]
+}

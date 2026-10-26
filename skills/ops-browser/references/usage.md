@@ -46,6 +46,11 @@ Use `ops-browser` for browser-based operations where existing tabs, sessions, st
 - Pure API inspection that does not require a browser session.
 - Frontend implementation or component refactors use `dev-frontend`; UI specification choices use `ui-spec`.
 - Desktop client verification that must inspect a real app window; use `ops-client`.
+- Mobile OS, installed app, physical phone, emulator or simulator state; use
+  `ops-device`. For a page in a mobile browser, retain browser-page ownership and
+  request only the needed device setup or guest-state evidence from `ops-device`.
+- Native mobile app WebView end-to-end acceptance; use `ops-device` as owner and
+  supply bounded DOM/network evidence only after device, app and Web context match.
 - Ongoing account goals, voice, editorial calendars, audience strategy, or engagement policy; the caller must supply those decisions before browser execution.
 - App-native ChatGPT Project/Thread discovery, creation, messaging, response reads, lifecycle tracking, and model-evidence policy; use `ask-ai`.
 

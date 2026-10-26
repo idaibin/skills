@@ -39,7 +39,8 @@
       "urn:skills:work-retro-request:v1",
       "urn:skills:work-retro-result:v1",
       "urn:skills:writing-output:v1",
-      "urn:skills:writing-request:v1"
+      "urn:skills:writing-request:v1",
+      "urn:skills:device-operation-request:v1"
     ],
     "known_local": [
       "urn:skills:repository-asset-snapshot:v1"
@@ -68,7 +69,7 @@
     },
     "runtime-operations": {
       "title": "Runtime Operations",
-      "description": "Browser and desktop-client operation with runtime evidence."
+      "description": "Browser, desktop-client, and mobile-device operation with target-bound runtime evidence."
     },
     "collaboration": {
       "title": "External AI Collaboration",
@@ -1006,7 +1007,8 @@
         "record an authorized browser interaction with native browser capture",
         "preserve a configurable unified or operation-mapped local-browser tab workspace",
         "continue already-authorized local browser acceptance after implementation",
-        "verify an existing frontend page with task-authorized contextual network Mock fallback and reusable local fixtures"
+        "verify an existing frontend page with task-authorized contextual network Mock fallback and reusable local fixtures",
+        "verify web content and requests in a mobile browser on a bound device"
       ],
       "keywords": [
         "browser operation",
@@ -1029,17 +1031,21 @@
         "tab group",
         "network mock",
         "cached navigation request-count verification",
-        "performance capture"
+        "performance capture",
+        "mobile browser page",
+        "phone browser DOM"
       ],
       "excludes": [
         "desktop-client verification",
         "frontend source implementation",
-        "ChatGPT orchestration"
+        "ChatGPT orchestration",
+        "mobile device or installed app operation"
       ],
       "related": [
         "ops-client",
         "ui-spec",
-        "dev-frontend"
+        "dev-frontend",
+        "ops-device"
       ],
       "capability_ids": [
         "browser.runtime.operate"
@@ -1080,7 +1086,6 @@
       "intents": [
         "operate or verify a real desktop client",
         "capture process and window evidence for Tauri, Electron, or native applications",
-        "operate mobile apps in task-owned Android emulators or platform simulators",
         "Submit and inspect scoped background tasks through app-owned session protocols"
       ],
       "keywords": [
@@ -1094,24 +1099,83 @@
         "background client operation",
         "AXValue",
         "AXPress",
-        "Android Emulator",
-        "headless",
-        "ADB",
-        "simulator",
-        "device serial",
         "session protocol",
         "background delegation",
         "progress query"
       ],
       "excludes": [
         "browser-page verification",
-        "desktop source implementation"
+        "desktop source implementation",
+        "mobile physical-device or simulator operation"
       ],
       "related": [
-        "ops-browser"
+        "ops-browser",
+        "ops-device"
       ],
       "capability_ids": [
         "client.runtime.operate"
+      ]
+    },
+    {
+      "name": "ops-device",
+      "category": "runtime-operations",
+      "owner": "ops-device",
+      "mutation_class": "client-control",
+      "required_capabilities": [
+        "filesystem-read",
+        "artifact-write",
+        "client-control",
+        "visual-evidence",
+        "command-runner"
+      ],
+      "allowed_effects": [
+        "read-repository",
+        "write-artifact",
+        "control-client-state",
+        "emit-findings",
+        "emit-handoff"
+      ],
+      "forbidden_effects": [
+        "write-source",
+        "write-git-state",
+        "control-browser-state",
+        "invoke-external-provider"
+      ],
+      "stop_states": [
+        "missing-authorization",
+        "scope-ambiguous",
+        "capability-unavailable",
+        "evidence-incomplete",
+        "runtime-unverified"
+      ],
+      "intents": [
+        "operate and verify a specified physical mobile device or virtual device",
+        "capture native mobile app, guest-state, and device-bound evidence",
+        "preserve device/app identity across mobile WebView and browser handoffs"
+      ],
+      "keywords": [
+        "mobile device",
+        "physical phone",
+        "Android Emulator",
+        "iOS Simulator",
+        "ADB serial",
+        "UDID",
+        "mobile app",
+        "headless emulator",
+        "WebView context",
+        "device recording"
+      ],
+      "excludes": [
+        "desktop-client window or app-owned session operation",
+        "browser-page DOM or network verification",
+        "mobile app source implementation"
+      ],
+      "related": [
+        "ops-browser",
+        "ops-client"
+      ],
+      "capability_ids": [
+        "device.runtime.operate"
       ]
     },
     {
@@ -2797,7 +2861,7 @@
       "capability_id": "client.runtime.operate",
       "capability_version": "1.1.0",
       "package": "ops-client",
-      "description": "Operate an authorized desktop client or emulator-hosted mobile app and capture runtime evidence.",
+      "description": "Operate an authorized desktop client and capture runtime evidence.",
       "accepts": [
         {
           "schema": "urn:skills:client-operation-request:v1",
@@ -2860,6 +2924,85 @@
       ],
       "evidence_requirements": [
         "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "device.runtime.operate",
+      "capability_version": "1.0.0",
+      "package": "ops-device",
+      "description": "Operate an authorized physical or virtual mobile device and capture installed-app and guest-state evidence.",
+      "accepts": [
+        {
+          "schema": "urn:skills:device-operation-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:runtime-observation:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "RUNTIME_TARGET_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "client-control",
+        "maximum_effects": [
+          "read-repository",
+          "write-artifact",
+          "emit-findings",
+          "emit-handoff",
+          "control-client-state"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization",
+          "host-runtime-confirmation"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope",
+          "task-artifact-root"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "device_and_app_identity",
         "runtime_observation_or_static_result"
       ],
       "adapter_binding": {

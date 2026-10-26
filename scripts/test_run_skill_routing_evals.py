@@ -40,7 +40,7 @@ class SkillRoutingEvalTests(unittest.TestCase):
                     args = SimpleNamespace(
                         index=ROOT / "skills-index.json", cases=ROOT / "evals" / "skill-routing-cases.json",
                         schema=ROOT / "docs" / "skills" / "skill-routing-cases.schema.json",
-                        basis="synthetic", baseline_ref="baseline-ref" if baseline is not None else None,
+                        migrations=Path("missing-migrations"), basis="synthetic", baseline_ref="baseline-ref" if baseline is not None else None,
                         write_report=None, json=as_json,
                     )
                     stdout = io.StringIO()
@@ -215,6 +215,67 @@ class SkillRoutingEvalTests(unittest.TestCase):
         self.assertTrue(any("definition changed" in error for error in errors))
         self.assertTrue(any("owner changed" in error for error in errors))
         self.assertTrue(any("case removed" in error for error in errors))
+
+    def test_approved_owner_migration_requires_exact_old_and_new_evidence(self) -> None:
+        old = {
+            "cases": [{
+                "id": "device-owner", "skill": "ops-client",
+                "case_fingerprint": "sha256:" + "a" * 64,
+                "status": "passed", "observed_owner": "ops-client",
+            }]
+        }
+        new = [{
+            "id": "device-owner", "skill": "ops-client",
+            "case_fingerprint": "sha256:" + "b" * 64,
+            "status": "passed", "observed_owner": "ops-device",
+        }]
+        manifest = {
+            "schema_version": "skill-routing-migrations/v1",
+            "migrations": [{
+                "case_id": "device-owner",
+                "from_fingerprint": "sha256:" + "a" * 64,
+                "from_owner": "ops-client",
+                "to_fingerprint": "sha256:" + "b" * 64,
+                "to_owner": "ops-device",
+                "reason": "approved-mobile-device-owner-split",
+                "approved_on": "2026-10-22",
+            }],
+        }
+        self.assertEqual([], RUNNER.regression_errors(new, old, migrations=manifest))
+        wrong = copy.deepcopy(manifest)
+        wrong["migrations"][0]["to_owner"] = "ops-browser"
+        self.assertTrue(any("migration evidence mismatch" in error for error in RUNNER.regression_errors(new, old, migrations=wrong)))
+        failed = copy.deepcopy(new)
+        failed[0]["status"] = "failed"
+        self.assertTrue(any("migration evidence mismatch" in error for error in RUNNER.regression_errors(failed, old, migrations=manifest)))
+
+        for field, value in (
+            ("from_fingerprint", "sha256:" + "c" * 64),
+            ("to_fingerprint", "sha256:" + "c" * 64),
+            ("from_owner", "ops-browser"),
+        ):
+            with self.subTest(mismatch=field):
+                changed = copy.deepcopy(manifest)
+                changed["migrations"][0][field] = value
+                self.assertTrue(any("migration evidence mismatch" in error for error in RUNNER.regression_errors(new, old, migrations=changed)))
+        duplicate = copy.deepcopy(manifest)
+        duplicate["migrations"].append(copy.deepcopy(duplicate["migrations"][0]))
+        self.assertTrue(any("duplicate migration" in error for error in RUNNER.regression_errors(new, old, migrations=duplicate)))
+        unused = copy.deepcopy(manifest)
+        unused["migrations"][0]["case_id"] = "unrelated"
+        self.assertTrue(any("migration not applicable" in error for error in RUNNER.regression_errors(new, old, migrations=unused)))
+        unrelated_old = copy.deepcopy(old)
+        extra = copy.deepcopy(old["cases"][0])
+        extra["id"] = "unrelated"
+        unrelated_old["cases"].append(extra)
+        self.assertIn("baseline case removed: unrelated", RUNNER.regression_errors(new, unrelated_old, migrations=manifest))
+        absorbed = {"cases": copy.deepcopy(new)}
+        self.assertEqual([], RUNNER.regression_errors(new, absorbed, migrations=manifest))
+        for field, value in (("case_fingerprint", "sha256:" + "c" * 64), ("observed_owner", "ops-browser"), ("status", "failed")):
+            with self.subTest(absorbed_drift=field):
+                changed = copy.deepcopy(new)
+                changed[0][field] = value
+                self.assertTrue(RUNNER.regression_errors(changed, absorbed, migrations=manifest))
 
     def test_unrelated_critical_stop_prompt_fails_execution_signal(self) -> None:
         index = RUNNER.load_json(RUNNER.DEFAULT_INDEX)

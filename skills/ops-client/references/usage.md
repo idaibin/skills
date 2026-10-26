@@ -17,9 +17,9 @@
 ## Summary
 
 Use `ops-client` for real desktop client operation, verification, and bounded Client Debug Evidence. It applies to Tauri, Electron, and Rust-rendered/native shells such as GPUI when real app-window evidence matters. Use the host's built-in diagnosis for cross-system root-cause coordination and `dev-frontend` for desktop webview code changes.
-For a mobile app running inside an emulator or simulator, use
-[simulator operations](simulator-operations.md) and bind the guest device/artifact;
-a headless guest does not require native host-window acceptance.
+Use `ops-device` for mobile physical phones, emulators and simulators; a headless
+guest does not require a desktop window. A desktop client's embedded WebView remains
+client-owned, with browser methods used only for bounded Web-content evidence.
 
 ## Trigger Examples
 
@@ -38,6 +38,7 @@ a headless guest does not require native host-window acceptance.
 ## Non-Triggers
 
 - Browser-only page inspection, form filling, upload/download, or console/network debugging; use `ops-browser`.
+- Mobile app, connected phone, emulator or simulator operation; use `ops-device`.
 - Desktop webview code implementation, IPC layering, or component refactors; use `dev-frontend`.
 - Generic repository map discovery without client launch review or real-window verification; use `repo-map`.
 - Dirty-tree review or commit planning; use `repo-review`.
@@ -126,8 +127,7 @@ interaction `Not verified`, and report the client goal as evidence-incomplete.
 
 ## Screen-Session Gate
 
-For device-bound simulator commands, apply the host/guest distinction in
-[simulator operations](simulator-operations.md#host-lock-and-sleep). The restrictions
+For a mobile guest, hand off to `ops-device` with the host/guest distinction. The restrictions
 below govern host desktop effects; they do not prohibit an independently authorized,
 verified guest-control route that neither wakes nor manipulates the host UI.
 
