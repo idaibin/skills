@@ -5,8 +5,13 @@ from __future__ import annotations
 
 import importlib.util
 import copy
+import contextlib
+import io
+import json
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -18,6 +23,45 @@ SPEC.loader.exec_module(RUNNER)
 
 
 class SkillRoutingEvalTests(unittest.TestCase):
+    def test_baseline_status_is_explicit_in_console_and_json(self) -> None:
+        paths = {
+            str(ROOT / "skills-index.json"): {"packages": []},
+            str(ROOT / "evals" / "skill-routing-cases.json"): {"cases": []},
+            str(ROOT / "docs" / "skills" / "skill-routing-cases.schema.json"): {},
+            str(ROOT / "evals" / "skill-routing-baseline.json"): {"cases": []},
+        }
+        for baseline, errors, checked in (
+            (None, [], False),
+            ({"cases": []}, [], True),
+            ({"cases": []}, ["invalid current contract"], False),
+        ):
+            for as_json in (True, False):
+                with self.subTest(checked=checked, errors=errors, json=as_json):
+                    args = SimpleNamespace(
+                        index=ROOT / "skills-index.json", cases=ROOT / "evals" / "skill-routing-cases.json",
+                        schema=ROOT / "docs" / "skills" / "skill-routing-cases.schema.json",
+                        basis="synthetic", baseline_ref="baseline-ref" if baseline is not None else None,
+                        write_report=None, json=as_json,
+                    )
+                    stdout = io.StringIO()
+                    with (
+                        patch.object(RUNNER, "parse_args", return_value=args),
+                        patch.object(RUNNER, "load_json", side_effect=lambda path: paths[str(path)]),
+                        patch.object(RUNNER, "validate_case_contract", return_value=errors),
+                        patch.object(RUNNER, "evaluate", return_value=[]),
+                        patch.object(RUNNER, "load_baseline", return_value=baseline),
+                        patch.object(RUNNER, "regression_errors", return_value=[]) as compare,
+                        patch.object(RUNNER.SEARCH, "package_entries", return_value=[]),
+                        contextlib.redirect_stdout(stdout),
+                    ):
+                        self.assertEqual(1 if errors else 0, RUNNER.main())
+                    self.assertEqual(1 if checked else 0, compare.call_count)
+                    if as_json:
+                        report = json.loads(stdout.getvalue())
+                        self.assertIs(checked, report["summary"]["baseline_checked"])
+                    else:
+                        self.assertEqual(not checked, "baseline unchecked" in stdout.getvalue())
+
     def test_published_baseline_covers_every_current_case(self) -> None:
         cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)
         baseline = RUNNER.load_json(ROOT / "evals" / "skill-routing-baseline.json")

@@ -294,13 +294,14 @@ def main() -> int:
     candidate_baseline = load_json(ROOT / "evals" / "skill-routing-baseline.json")
     candidate_owners = result_owners(candidate_baseline.get("cases"))
     retired_skills = (baseline_owners - current_owners) & (baseline_owners - candidate_owners)
+    baseline_checked = baseline is not None and not contract_errors
     regressions = (
         regression_errors(
             evaluated,
             baseline,
             retired_skills=retired_skills,
         )
-        if baseline is not None and not contract_errors
+        if baseline_checked
         else []
     )
     failed = [case for case in evaluated if case["status"] == "failed"]
@@ -312,6 +313,7 @@ def main() -> int:
             "total": len(evaluated),
             "passed": len(evaluated) - len(failed),
             "failed": len(failed),
+            "baseline_checked": baseline_checked,
             "contract_errors": len(contract_errors),
             "regressions": len(regressions),
         },
@@ -328,7 +330,8 @@ def main() -> int:
         print(
             "skill routing evals: "
             f"{report['summary']['passed']}/{report['summary']['total']} passed; "
-            f"contract_errors={len(contract_errors)} regressions={len(regressions)}"
+            + ("baseline unchecked; " if not baseline_checked else "")
+            + f"contract_errors={len(contract_errors)} regressions={len(regressions)}"
         )
         for error in (*contract_errors, *regressions):
             print(f"ERROR: {error}")
