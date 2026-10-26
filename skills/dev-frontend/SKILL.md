@@ -37,7 +37,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 - Before implementing a new page or visible UI slice, name the closest accepted page when one exists and the actual public component/style owner in the existing contract or handoff. Reuse that owner when it fits; if no accepted page exists or an owner does not fit, record that fact and the reason without inventing a reference or blocking unrelated slices.
 - Treat size as a review signal, not a line-count rule; split only at a stable ownership, behavior, lifecycle, side-effect, or verification boundary.
 - A no-op confirmation still reads and reports the exact owner path and symbol plus its matching contract; reuse a matching current-basis focused result, or run the check when that evidence is absent or stale.
-- During development, use source/diff checks, focused non-build checks, and the documented page through its existing service. Standalone build, bundle, or package commands require an authorized release phase or an explicit request for build, packaging, or artifacts.
+- Select validation by the changed risk and required project gates within the authorized task; follow the [validation boundary](references/checklist.md#validation). Prefer focused checks, honor explicit no-build constraints, and keep local compilation separate from runtime, release and deployment authority.
 - Keep Product behavior and UI visual readiness independent; source/build evidence does not prove browser/client/runtime acceptance.
 - Do not generate visual assets, operate browser/client state, review, or mutate Git.
 - Return this phase's evidence to the coordinator, who continues already-authorized
@@ -46,7 +46,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 ## Output Map
 
-Report scope, authorities, reuse decision, selected profiles, changed files/contracts, focused validation, documented-page evidence, any explicitly authorized build evidence, exclusions, and gaps.
+Report scope, authorities, reuse decision, selected profiles, changed files/contracts, focused validation, documented-page evidence, any task-authorized local build evidence, exclusions, and gaps.
 
 ## Reference Map
 

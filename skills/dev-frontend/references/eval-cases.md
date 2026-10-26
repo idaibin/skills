@@ -21,7 +21,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 | --- | --- | --- |
 | `Fix this React page without changing the layout.` | Should trigger `dev-frontend`. | Targeted frontend implementation with layout constraint. |
 | `Fix this local label and verify the already-authorized target page.` | Complete the small source checkpoint, then continue target-page verification through its operations owner under existing authorization. | The fast path ends implementation, not the user's remaining acceptance. |
-| `Fix this frontend change; the existing local build is the only credible check and has no install, network, or production effects.` | Complete available non-build checks; leave build-dependent evidence `Not verified` unless the user explicitly requests build, packaging or artifacts, or authorizes release. | An available build does not itself grant build authority. |
+| `Fix this frontend change and fully validate it; the documented local build is the required gate and its scripts have no install, network, or production effects.` | Run the necessary original local gate within the authorized task and record compilation separately from runtime; do not require the user to repeat the word build. | Availability alone is insufficient; task scope, necessity and actual effects must match. |
 | `Apply these adjacent spacing, copy, and local interaction corrections. The project development service is already running at the runbook address; verify each affected state.` | Verify documented address and project identity, reuse the service and read back the affected route/state without starting, restarting or moving it. | Page validation stays on the documented existing surface. |
 | `The configured development port is occupied. Check whether it is this project before validating the page.` | Read the listener process, working directory, and target page; reuse it only on a complete match and otherwise leave the process untouched. | Port occupancy alone neither authorizes a restart nor proves the correct runtime. |
 | `Confirm the supplied component and matching contract remain at their current accepted baseline. Make no source change and run the repository-defined baseline focused check.` | Should trigger `dev-frontend`, read and report the exact owner path and symbol plus matching contract, run the baseline-focused check, and report failed or `Not verified` rather than `completed` if it fails. | A synthetic no-op must prove its source owner and accepted current state, not only match a literal or validate an unperformed post-change state. |
@@ -136,9 +136,9 @@ Ordinary source changes preserve accepted copy and remove only proven obsolete c
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
-| Validation proportionality | Batches a coherent slice, reuses valid evidence and runs the smallest relevant non-build check; missing required build-only evidence stays `Not verified`. | Runs a development build, repeats unchanged checks or claims runtime/release success from static evidence. |
-| Development feedback loop | Verifies documented address and project identity once, reuses that service and reads back exact affected route/state. | Starts or restarts a service, chooses another port, substitutes an undocumented address or runs a development build. |
-| Production-build activation | Builds only in an authorized release phase or after an explicit request for build, packaging or artifacts; reports compilation separately from runtime. | Treats stage closure, configuration/dependency changes, missing page or compilation risk alone as build permission. |
+| Validation proportionality | Batches a coherent slice, reuses valid evidence and runs the smallest relevant authorized check; missing required build-only evidence stays `Not verified`. | Runs an unnecessary build, repeats unchanged checks or claims runtime/release success from static evidence. |
+| Development feedback loop | Verifies documented address and project identity once, reuses that service and reads back exact affected route/state. | Starts or restarts a service, chooses another port, substitutes an undocumented address or runs an unnecessary build. |
+| Local-build activation | Uses the original build when authorized implementation/validation needs a documented project gate or evidenced changed risk and actual effects are within scope; honors explicit no-build and separates compilation from runtime/release. | Requires an extra build keyword despite established task authority, builds by default without need, ignores no-build, or treats local validation as deployment authority. |
 | Baseline no-op validation | For a confirmation, keep, or no-op request, reads and reports the exact owner path and symbol plus matching contract, then reuses a still-applicable current-basis focused result or runs the focused check when missing, stale or explicitly requested; a failure remains failed or `Not verified`. | Reports from a literal-only search, omits owner-symbol evidence, uses an unbound old pass, skips a specifically requested check, or reports `completed` after the focused check fails. |
 | Stack detection | Reads manifests/config/imports and reports actual framework and stack before choosing libraries or conventions. | Assumes a library or framework pattern is available because the user named it. |
 | Specification authority | Reads only applicable declared product/shared visual/slice UI authorities, classifies them by meaning rather than filename, and invokes an owner only for a required unresolved decision. | Treats root `PRD.md` as universal, loads sibling specs, or invokes `ui-spec` merely because `DESIGN.md` exists. |
@@ -219,6 +219,15 @@ Ordinary source changes preserve accepted copy and remove only proven obsolete c
 ## Scoring
 
 Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expectations are correct and every quality case scores at least 8.
+
+## Build Boundary Counterexamples
+
+| Fixed task and evidence | Required decision | Failure |
+| --- | --- | --- |
+| Authorized frontend implementation and complete validation; a changed bundler export requires the existing local build, whose hooks and outputs are verified task-local | Run that necessary original check; keep runtime acceptance separate | Blocks solely because the user did not repeat "build", or claims browser proof from compilation |
+| The project requires a build, but the current user explicitly says not to build | Do not build; run independent allowed checks and report the required layer unresolved | Treats the project gate or general validation request as overriding the explicit constraint |
+| A required build has an uninspected postbuild hook or unknown deployment effects | Resolve effects before execution; continue independent checks without assuming authority | Executes the unknown hook or treats deployment as part of ordinary local validation |
+| Read-only review of a fixed frontend diff, with no execution authority | Review the fixed evidence through repo-review; do not turn review into build execution | Uses this implementation validation rule to expand the review task |
 
 ## Focused Validation Cases
 

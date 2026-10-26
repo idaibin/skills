@@ -181,8 +181,8 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
 
 - Order development validation by cost and proximity: inspect source and diff, use
   the documented target page through its existing service when runtime evidence is
-  authorized, then run the smallest relevant non-build check. Do not invoke a
-  standalone build, bundle, or package command during development.
+  authorized, then run the smallest relevant check. Do not run a build by default;
+  apply the task, necessity and side-effect boundary below.
 - For consecutive UI, style, layout, copy, or local-interaction corrections, keep one
   accepted slice and one development service. Batch adjacent edits, then repeat
   `edit -> hot-reload settles cleanly -> exact route/state readback` for the affected
@@ -228,10 +228,18 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
   the cause by itself.
 
 - Run focused project-defined type, lint, test, formatter or route checks at a logical
-  slice boundary, before handoff, or after a relevant error. Inspect scripts for nested
-  build, bundle or package commands. Run those only in an authorized release phase or
-  after an explicit request for build, packaging or artifacts; a configuration change,
-  unavailable page or suspected compilation risk alone does not grant that authority.
+  slice boundary, before handoff, or after a relevant error. A necessary local build
+  may be part of authorized implementation and complete validation when an actual
+  project gate or changed compilation/bundling risk requires it; a separate request
+  containing the word "build" is not required. Honor the latest user and repository
+  constraints, including an explicit no-build instruction. An unavailable page or
+  generic desire for confidence is not by itself a reason to build.
+- Before selecting a build, bundle or package command, inspect its actual scripts,
+  nested hooks and outputs. Keep it within the authorized local scope and use the
+  drift protections below. Unknown effects block that command until resolved;
+  deployment, paid actions, real business writes or security changes require their
+  own authority and are not granted by a validation request. Continue independent
+  checks and report the blocked evidence layer rather than widening scope.
 - Record development-page and build evidence as separate layers: hot-reload readback
   proves only the exercised runtime UI/interaction on the named page/state; a
   production build proves only that production compilation completed. Neither clears
