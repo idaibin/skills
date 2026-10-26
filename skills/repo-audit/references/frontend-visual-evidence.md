@@ -149,6 +149,12 @@ the design capture and implementation capture independently inspectable even whe
 overlay/diff is produced. Record tool, viewport, state, zoom, scroll position, artifact
 path/ID, and evidence limitations for every capture.
 
+For screenshot comparison, also freeze the browser/client and build identity, device
+pixel ratio when material, loaded fonts, locale/time zone, theme/color scheme, data or
+fixture, and reduced-motion/animation state. Do not mask real product variability just
+to stabilize a test. Exercise dynamic interaction separately from a static comparison,
+and never update all image baselines merely to remove unexplained failures.
+
 Whole-image RMSE, pixel similarity, perceptual distance, or another aggregate image
 metric is diagnostic only. It may help locate drift but cannot independently pass or
 fail the visual gate; critical states, assets, accessibility, computed styles, and
@@ -263,8 +269,12 @@ viewport/state, evidence-level, and completion semantics. Validity does not prov
 truth of evidence or UI quality. Reviewers must still inspect cited artifacts and
 reachable source.
 
-Every delta comparison value must cite evidence matching its declared evidence level;
-selected-source and target-contract columns cannot cite `browser-computed` evidence as
+Every delta comparison value must cite evidence matching its declared evidence level.
+Directional `visually-inferred` observations may remain in the delta table with their
+limits; they do not establish a comparison-pass finding or verified runtime coverage.
+Each comparison-pass finding requires browser-computed evidence from the same pass,
+viewport and state. Keep observations without that evidence directional or `Not verified`.
+The selected-source and target-contract columns cannot cite `browser-computed` evidence as
 their authority. Each computed check and each `verified` runtime coverage record must
 cite final-pass browser evidence tagged with the same runtime category, viewport, and
 state. One geometry observation cannot satisfy assets, font, contrast, focus, states,

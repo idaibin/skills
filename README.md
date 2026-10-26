@@ -48,7 +48,7 @@ and other supported agents.
 | `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
 | `api-spec` | Design or revise native API contracts and validate OpenAPI against accepted business behavior. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
-| `dev-tests` | Candidate: trace accepted contracts through layered tests and evidence; cross-project validation remains open. |
+| `dev-tests` | Plan risk-based coverage and execute functional acceptance across APIs, pages, UI and business journeys. |
 | `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |
 | `dev-frontend` | Implement and validate frontend features, refactors, tooling, and selected-source UI work. |
 | `dev-typescript` | Implement non-browser TypeScript and JavaScript services, CLIs, workers, MCP servers, libraries, and scripts across Node.js, Bun, and Deno. |
@@ -80,6 +80,7 @@ early risk/test design <-> product/UI and matching dev-* owner
 layered acceptance  -> dev-tests -> repo-review
 change review       -> repo-review
 Git delivery        -> repo-delivery
+functional acceptance -> dev-tests -> ops-browser / existing API runner
 browser/client/device proof -> ops-browser / ops-client / ops-device
 external AI         -> ask-ai
 ```

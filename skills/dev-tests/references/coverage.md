@@ -1,11 +1,20 @@
 # Contract-to-test coverage
 
+## Contents
+
+- [Reported failures and preserved behavior](#reported-failures-and-preserved-behavior)
+- [Generated coverage boundaries](#generated-coverage-boundaries)
+
 Identify repository/revision (plus dirty patch digest when applicable), applicable
 product/UI/API authorities and their acceptance status, feature/journey IDs and scope.
 Early analysis may use drafts: label assumptions and disputed outcomes provisional,
 route decisions to their authority, and refine examples with design/implementation.
 Exploratory observations can reveal gaps but cannot settle business policy or pass an
-acceptance row whose oracle is unresolved. Bind runtime/build identity before execution. Discover existing test directories, commands, fixtures,
+acceptance row whose oracle is unresolved. For native-app cases, bind platform and
+installed artifact identity/version to the account, project and cold/warm startup
+state in the existing case IDs and ledger. H5/browser or source evidence cannot
+substitute for an applicable native artifact/device result. Bind runtime/build identity
+before execution. Discover existing test directories, commands, fixtures,
 coverage reports and project evidence conventions. Source inspection locates checks;
 it does not demonstrate that the checks ran.
 
@@ -71,3 +80,40 @@ and assertions: a test name, count or configured workload is not coverage eviden
 For a requested release-readiness assessment, identify missing version-bound health
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
+
+## Reported failures and preserved behavior
+
+Bind the reported defect to the original entry/action, role/data, runtime/source
+identity and failing operation before selecting a repair retest. Missing original
+request evidence blocks the incident-closure claim, not every independent check.
+Keep a proposed cause separate from a reproduced defect and from an adjacent fix.
+Repeated unsuccessful repairs under the same assumption need a check that can
+distinguish explanations before another patch.
+
+Do not promote a repair-specific claim within a layer from an aggregate suite
+count, a plausible patch or a passing neighboring case. Credit the aggregate run
+separately. A repair-specific pass requires the named executed assertion, relevant
+input, basis and observed result; otherwise that subclaim remains not-run or
+Not verified even when the suite passed.
+
+For optimization or shared-component work, freeze request/field mappings, returned
+membership, identity/selection, permissions and accepted failure behavior. Trace
+different consumer modes and the parent page as well as the shared widget. Cover
+independent list, detail, selection, confirmation and required persisted readback
+outcomes; one passing selector cannot approve a blank parent list. Use the exact
+requested full-tree historical revision for comparisons; legacy equivalence alone
+does not settle correctness.
+
+When later observations contradict a field assumption or prior pass, preserve the
+original evidence and reopen only affected rows on the current basis. Reconcile
+linked reports and corrections in time order; never ignore a later real sample
+because an earlier summary says blocked, or promote an earlier real pass after a
+relevant implementation/contract change. Unsettled semantics return to their owner.
+
+## Generated coverage boundaries
+
+Keep file/module dependencies separate from exported-symbol consumers. A shared import
+does not establish a caller of every export; resolve the named symbol, alias, namespace
+member and callback handoff, and retain computed/instance-dependent references as gaps.
+Source-derived inventory rows and generic case scaffolds remain provisional until an
+accepted business oracle supplies the required observable outcomes.

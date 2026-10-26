@@ -34,6 +34,10 @@ Record confirmed product facts, available data/actions/states, current component
 Resolve component and design-library mappings from live imports, wrappers, and
 consumers before naming them. Never promote a concept-only component or feature into
 the candidate, selected-source target, or product scope.
+For each new page or visible UI slice, name the closest accepted page when one exists
+and actual public component/style owner in the existing contract or handoff; reuse them
+when they fit. If none exists or an owner does not fit, record that fact and reason
+without inventing a reference or blocking unrelated slices.
 
 When several surfaces show the same discrepancy, fix one comparison basis and trace
 the shared shell, overlay, motion and component owner before writing page rules.
@@ -96,13 +100,14 @@ Translate the selected source into implementable decisions:
   in the existing slice contract, without creating another matrix or global palette;
 - responsive reflow, touch/keyboard targets, contrast, semantic structure, and acceptance assertions.
 
-When Product requires retained input after a failed action, specify how values stay
-visible and reachable through feedback, scrolling, focus and the permitted recovery
-action. Compare entered values before failure, after feedback and during recovery on
-the affected viewport/state. When Product requires clearing instead, specify that
-failure state. UI does not decide whether an uncertain submission may be retried;
-missing Product policy blocks only that dependent transition, not confirmed unrelated
-states.
+When Product requires input to survive a failed action, specify how the retained
+values stay visible and reachable in the failure state: feedback placement,
+overlay/scroll ownership, focus destination, and the enabled recovery action.
+Bind assertions to the affected viewport/state and compare entered values before
+failure, after feedback, and during the permitted recovery. Follow accepted
+clear-on-failure and uncertain-outcome rules; UI must not choose retention or
+retry policy. Missing Product semantics blocks only the dependent UI transition,
+not already confirmed layout or unrelated states.
 
 When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in
 the adopted `DESIGN.md` and page-local role/placement/state mapping in the Feature
@@ -203,17 +208,20 @@ and basis but never upgrades either result.
 
 ## Evaluation And Handoff
 
-Check a supplied accepted UI contract against the requested assertions before
-proposing edits. If it already satisfies them, return a bounded no-change result.
-Keep contract readiness, artifact readback and runtime proof separate; missing
-browser evidence alone does not erase an accepted contract clause.
-Name the specific missing contract decision, such as an unresolved required component
-mapping; report unperformed artifact readback or runtime validation separately as
-`Not verified` rather than treating either as a contract defect.
+Evaluate the supplied accepted contract against the requested assertions before
+proposing changes. When it already satisfies them, return a bounded no-change
+result. Missing implementation evidence does not erase clauses supplied in that
+contract. Keep UI contract readiness, artifact publication, and runtime validation
+separate: a preview or an untested browser state is not itself a UI contract
+blocker. Name the specific missing contract evidence, such as an unresolved
+component mapping, and mark actual file readback or runtime behavior `Not verified`
+when it was not exercised.
 
-Run source identity, product truth, rights, required-state, mapping, responsive,
-viewport-matrix, accessibility, overflow, approval, and implementation-budget gates
-per slice. When SVG icons apply, also run icon owner, rights, family consistency,
+Run per-slice gates for selected-source identity, revision, selection, approval, rights,
+`use`, and `ignore`; product truth; required state; mapping; responsive and viewport
+matrix; accessibility; overflow; and implementation budget. Use the evaluation
+rubric's checklist for the full readiness criteria. When SVG icons apply, also run
+icon owner, rights, family consistency,
 render/state, safety, accessibility, fallback, and gallery-acceptance gates. Then
 compare source fidelity, task completion, information structure,
 interaction completeness, engineering fit, and evidence completeness. Emit one

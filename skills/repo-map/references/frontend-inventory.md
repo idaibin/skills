@@ -8,6 +8,13 @@ owners, tests, and the resolved `<design-root>/DESIGN.md` binding when adopted. 
 typed Assets and Edges such as `registers`, `renders`, `imports`, `calls`, `consumes`,
 `verifies`, `owned-by`, and `derived-from` according to the graph schema.
 
+For UI impact queries, do not stop at module imports. Trace the applicable non-import
+relationships: global CSS and selector reach, theme/token providers and generated
+outputs, shell/Layout composition, scroll and overlay hosts, route/menu/breadcrumb/
+document-title/i18n bindings, display names versus stable route/permission/deep-link
+identifiers, component type/tree position and `key`-based state retention, and the
+focused tests or fixtures that verify those owners.
+
 Keep Product Markdown, Feature UI Markdown, `DESIGN.md`, and live source as separate
 authorities. Graph records carry their IDs, paths, symbols, roles, hashes, and edges;
 they do not copy tokens, component interfaces, API schemas, page composition, or target-

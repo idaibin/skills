@@ -20,7 +20,7 @@ If the canonical gate changes files, exposes catalog drift, or invalidates the r
 
 1. Record source branch, HEAD, tree, status, exact package/catalog scope, canonical-gate command and result, and accepted review basis.
 2. Classify the release as one semantic catalog intent unless the accepted basis contains independently releasable packages with explicit separate history requirements.
-3. Stage exact accepted paths or hunks only. Inspect cached stat, name-status, and full diff; compare it with the declared allowlist.
+3. Stage exact accepted paths or hunks only. Inspect cached `diff --check`, stat, and name-status; inspect content hunks when scope is mixed, unreviewed, changed since review, or otherwise unresolved. Compare the staged scope with the declared allowlist.
 4. Perform only the authorized Git actions. Verify the resulting local commit and, when authorized, the exact remote ref/SHA.
 5. Do not create a tag, hosted release, pull request, or registry publication unless a separate owning workflow and explicit authorization cover it.
 

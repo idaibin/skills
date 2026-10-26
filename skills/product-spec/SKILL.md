@@ -15,6 +15,7 @@ only decisions needed for the requested slice.
 
 | Request condition | Read | Result |
 | --- | --- | --- |
+| Submission failure or an unknown completion outcome affects recovery | [recovery Ready gate](references/workflow.md#ready-for-an-implementation-slice) | Accepted outcome/input/retry rules and any Open recovery decision |
 | One feature needs behavior, states, and acceptance | [workflow](references/workflow.md) and [template](references/template.md) | Progressive Feature Spec |
 | Submission failure or uncertain completion affects recovery | [workflow](references/workflow.md#ready-for-an-implementation-slice) | Accepted input, outcome and safe-retry rules, or a scoped Open decision |
 | New product line/boundary reset is explicit | [workflow](references/workflow.md) | Foundation Spec |
@@ -27,11 +28,15 @@ only decisions needed for the requested slice.
 - Do not infer behavior from UI appearance, source, or tests when product authority is absent.
 - Keep product behavior separate from shared visual semantics, technical design, implementation, and runtime proof.
 - Stop each slice at its Ready gate; unknowns remain named, not silently decided.
+  Missing outcome/retry criteria are Open Product decisions, not implementation
+  details. Do not infer success or safe retry from an unqualified lookup result;
+  return confirmed behavior separately from the unresolved recovery slice.
 
 ## Output Map
 
 Return the one applicable current product artifact, source basis, decisions/states,
-acceptance, non-goals, unresolved questions, and next owner.
+acceptance, current scope, unresolved questions, and next owner. Keep removed scope
+and conversation history out of the terminal artifact.
 
 ## Reference Map
 

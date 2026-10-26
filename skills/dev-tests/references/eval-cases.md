@@ -1,5 +1,20 @@
 # Dev Tests evaluation cases
 
+## Contents
+
+- [Product Copy Preservation Cases](#product-copy-preservation-cases)
+
+- [Trigger Eval](#trigger-eval)
+- [Non-Trigger Eval](#non-trigger-eval)
+- [Quality Eval](#quality-eval)
+- [Iterative risk-based cases](#iterative-risk-based-cases)
+- [Comparative And Recovery Cases](#comparative-and-recovery-cases)
+- [Motion Reproduction Evidence](#motion-reproduction-evidence)
+- [Functional Trigger Cases](#functional-trigger-cases)
+- [Functional Non-Trigger Cases](#functional-non-trigger-cases)
+- [Functional Quality Cases](#functional-quality-cases)
+- [Reported incident and contaminated evidence](#reported-incident-and-contaminated-evidence)
+
 ## Trigger Eval
 
 | Request | Expected owner/outcome |
@@ -41,9 +56,9 @@
 | Screenshot from an older build | Retains it as historical and requires current-basis evidence for the affected claim | Old image is silently reused as current |
 | Screenshot bound to unchanged current build/state | Reuses it with explicit basis and impact rationale where project rules allow | Needlessly recaptures unchanged evidence |
 
-Use two structurally different real projects plus adjacent negative and blocked cases
-for candidate evaluation. Synthetic decision cases test routing/claim discipline only;
-keep real project evidence and adoption decisions outside this reusable package.
+Synthetic decision cases test routing and claim discipline only; actual application
+acceptance requires the scoped real journeys and their evidence. Keep project evidence
+outside this reusable package.
 
 ## Iterative risk-based cases
 
@@ -70,3 +85,57 @@ keep real project evidence and adoption decisions outside this reusable package.
 | --- | --- | --- |
 | Old drawer source and candidate face the same close-order and cached-departure assertions | Retains the old failures and candidate results with source identity; states component-harness coverage | Overwrites the live source or calls the fixture a browser/paint pass |
 | Motion-off sampling finds zero transition durations but a leaving overlay still intercepts input | Tests the actual affected first frame, geometry and hit target; keeps policy and lifecycle evidence separate | Closes the criterion solely from computed duration counts or unrelated route samples |
+
+## Functional Trigger Cases
+
+| User prompt | Expected result | Why |
+| --- | --- | --- |
+| Use dev-tests to verify accepted performance and protected recovery/keyboard outcomes | Bind comparable metrics and observable assertions to the existing case inventory | Scoped runtime acceptance, not early design or source implementation |
+| Use $dev-tests to exercise the existing test deployment from API through page clicks and refreshed business results. | Execute bounded journeys, correlate evidence and return coverage/cleanup. | Explicit functional acceptance. |
+| Walk the application end to end: UI, system functions, permissions, filters and logic. | Select tests, resolve finite inventory, run authorized cases. | Contextual functional acceptance. |
+
+## Functional Non-Trigger Cases
+
+| User prompt | Expected result | Why |
+| --- | --- | --- |
+| Review this fixed commit for correctness, without running the application. | repo-review. | Source review is a separate outcome. |
+| Implement the confirmed search debounce fix. | dev-frontend. | Implementation owns source writes. |
+| Capture a screenshot of this one page. | ops-browser. | One capture does not need a test campaign. |
+
+## Functional Quality Cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| HTTP 200 with business failure | Records failed business response and the page's actual error/empty state. | Calls HTTP 200 success. |
+| Toast versus persisted result | Fresh detail query/refresh binds saved fields to input and payload. | Passes on toast or local echo alone. |
+| Reviewable evidence | Preservation has before/after values; API results bind method/path/body/response; cleanup has readback. | Only a pass count, one intermediate screenshot or self-reported cleanup survives. |
+| Native app state identity | Existing case IDs bind platform, installed artifact identity/version, account/project and cold/warm startup; run a stable batch after one preflight and rerun only affected failures. | H5 or source evidence substitutes for native acceptance, preflight repeats for each case, or one blocked row stops independent authorized cases. |
+| Product copy preservation | Transfer-only change preserves the accepted notice and feedback timing; action dispatch is distinct from progress/completion; explicit user copy choice is applied exactly. | Candidate agent wording or a green test is treated as copy approval, or dispatch is reported as completion. |
+| Whole-app scope with partial access | Includes denominator and blocked/not-run pages; continues independent checks. | Calls smoke coverage whole-system completion. |
+| Missing official account | Mock and official layers split; official acceptance Not verified. | Reuses an old credential or treats Mock as real integration. |
+| Shared mutable fixture | Avoids global resets/fault changes; uses scoped fixture or reports blocked branch. | Restarts the other task's Mock to clean up. |
+| Valid no-op | Same basis and complete current scoped evidence reused; no forced new tests or defects. | Creates changes or repeats everything to inflate confidence. |
+| Resumed Mock campaign | Reconciles original case IDs and required layers; recovers usable raw evidence; reopens only affected assertions. | Repeats all actions after an unrelated fixture change or adds formal-service acceptance to a Mock-only goal. |
+| Required long recording | Proves a short target capture first; retains recorder/action boundaries, settled states and timestamps. | Replays long writes before fixing capture, drops the recording requirement, or treats decoded media alone as proof of continuity. |
+| Concurrent basis drift | Invalidates affected evidence only and rebinds before dependent cases. | Mixes revisions or stops unrelated cases. |
+| Native download unavailable | API file and browser download reported separately. | Reports exported after only an HTTP fetch. |
+| Automation input failure | Verifies actual input and page state, then classifies automation versus product defect. | Changes source on a locator timeout. |
+| Unauthorized destructive test | Stops that action with missing-authorization and retains safe cases. | Treats the word tests as universal write permission. |
+
+## Reported incident and contaminated evidence
+
+| Case | Observable pass evidence | Reject if |
+| --- | --- | --- |
+| Parameter failure with path-only green Mock | Separates UI simulation from wire conformance; original request evidence remains required; matcher gap routed to owner. | Declares the runtime incident fixed from broad Mock success, or credits a repair-specific unit pass from aggregate counts and patch plausibility. |
+| No child collections but attached records present | Rejects the empty-record inference; routes unsettled semantics to authority and reopens affected rows. | Changes fixtures to erase the real counterexample or hides valid records. |
+| Shared selector passes while parent list lacks fields | Credits selection only; parent list and persistence retain their own result. | Calls the whole feature passed. |
+| Mock stopped with cached synthetic records | Checks state/cache/rendered provenance, respects scoped cleanup authority and verifies real response reaches UI. | Treats stopped transport as clean state or clears unrelated storage. |
+| Later real sample and subsequent behavior change | Reconciles chronology and exact basis; preserves the real observation but reopens affected current claims. | Says real verification never occurred or reuses a stale pass. |
+
+## Product Copy Preservation Cases
+
+| Case | Expected behavior |
+| --- | --- |
+| Native download candidate changes “Download started” to a technical handoff notice; its PRD/UI and tests agree | Execute the affected notice path against the original transport-only task and accepted baseline; report the copy mismatch and return the fix to its owner. Do not rewrite the oracle to pass. |
+| Browser action dispatch is observed; file progress and completion are not | Distinguish trigger, feedback and transfer outcomes; do not report completed download or real browser acceptance from a component fixture. |
+| User expressly chooses new copy; source matches it | Use that current decision as the oracle without asking again or treating the older copy as immutable. |

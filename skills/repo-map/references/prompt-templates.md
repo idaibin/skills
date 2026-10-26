@@ -27,9 +27,12 @@ Do not silently refresh a stale snapshot.
 ## Derived navigation render
 
 ```text
-Run repository.map.render from query result <result-id>.
+Run repository.map.render using the selected adapter's supported repository,
+scan/snapshot, and input references. Bind the render to the validated input snapshot
+required by the request; use only fields and identifiers declared by that adapter.
 Format/path: <Markdown or HTML output>
-Include snapshot ID, basis, coverage and regeneration capability.
+Include the adapter-exposed input snapshot identity, basis, coverage and regeneration
+capability.
 Mark the output derived and prohibit it as a gate input.
 ```
 

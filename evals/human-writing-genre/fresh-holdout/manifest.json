@@ -1,0 +1,12 @@
+{
+  "version": "fresh-holdout-r4",
+  "independent_inputs": 16,
+  "per_type": 2,
+  "frozen_before_writer_execution": true,
+  "candidate_snapshot_manifest_sha256": "e1c8407683981c670ee7e06098250955c2d068da7a90b071f3609fe8e41f804e",
+  "file_sha256": {
+    "cases.json": "b4105892e6286322616babd1112141f33eaf92a5affe5d240b6795201445c584",
+    "oracles.json": "e20d019b8e1da01d31ddb5781c115bb410ad166982796d05b1aee11665fd5415"
+  },
+  "notes": "Separate 16-case held-out extension; original96 corpus/oracles unchanged. Additional runs do not increase independent-input count."
+}

@@ -1,9 +1,16 @@
-# Dev Tests candidate evaluation
+# Dev Tests evaluation
 
-## Current basis and scope
+## Current scope
+
+`dev-tests` is the unified testing entry for risk-based coverage and functional
+acceptance across API, page, UI and business journeys. The package includes the
+functional workflow and its recovery/evidence requirements. Package consolidation
+does not certify an unobserved project runtime. The current [installation limits](../../INSTALL.md) remain in force: this candidate is not stable for automatic installation or adoption. The declared browser-control capability still requires explicit user authorization and host-runtime confirmation; it does not grant either.
+
+## Historical candidate basis
 
 Candidate capability: `testing.coverage.verify@0.1.1`, based on
-`23cc6b0a30abf15dd86cbb6cd148d13c731cca97`. No stable promotion or installation.
+`23cc6b0a30abf15dd86cbb6cd148d13c731cca97`. This is the retained historical evaluation basis.
 The distinct output is risk-based contract-to-boundary acceptance evidence. Product,
 UI/API decisions, source/test implementation, browser/client mechanics, task-ledger
 maintenance, fixed-basis review and Git delivery retain their existing owners.
@@ -55,11 +62,9 @@ Public cases remain synthetic; project facts and runtime receipts stay project-o
   missing capability and denied routes cannot raise the evidence level. No quantitative
   quality/time/cost improvement or generalized full-stack completion is claimed.
 
-## Remaining adoption gate
+## Runtime evidence limits
 
-Keep candidate status until representative accepted application journeys, including
-real entry-to-outcome E2E, have current-basis evidence and independent adoption review.
-Include role/concurrency/performance checks where relevant, with agreed budgets and
-permissions. Required blocked UI/runtime checks cannot be waived. Canonical adoption
-artifact publication remains a separately scoped governance step; no automatic
-publication, deployment, installation or promotion follows from catalog checks.
+Representative application journeys need current-basis execution evidence, including
+entry-to-outcome E2E where required. Role, concurrency and performance checks require
+scoped budgets and permissions. Required blocked UI/runtime checks remain open; catalog
+checks do not authorize project deployment or establish production health.

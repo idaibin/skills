@@ -28,6 +28,7 @@ commit.
 
 ## Trigger Examples
 
+- `Prepare the already scoped changes for delivery and explain the remaining gates; do not stage, commit, or push.` This is delivery preflight only; preparation supplies no mutation authority.
 - `Review the staged scope, commit, and push this branch.`
 - `This completed task slice is focused-tested; commit it locally so I can continue, but do not push.`
 - `For this task branch, commit each completed focused-tested feature slice locally as a semantic milestone; fixups may target those milestones, checkpoints only before named high-risk rewrites, and never push.`

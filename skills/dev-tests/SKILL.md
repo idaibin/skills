@@ -1,6 +1,6 @@
 ---
 name: dev-tests
-description: "Design risk-based test coverage early and verify it iteratively across backend, API, frontend and end-to-end boundaries. Run existing scoped tests; route missing test implementation to its code owner."
+description: "Plan risk-based coverage and execute functional acceptance across backend, APIs, pages, UI, business logic and end-to-end journeys. Run existing scoped checks; route source fixes to their owner."
 ---
 
 # Dev Tests
@@ -12,6 +12,8 @@ journey. During product/design work, identify risks, testability gaps and provis
 checks without waiting for implementation. Resolve applicable authorities, their
 acceptance status, target basis, environment and permission before execution; only
 settled oracles support acceptance verdicts. Reuse the project test plan and its IDs.
+When asked to execute functional acceptance, run the reachable authorized cases; a
+checklist alone does not complete the run.
 
 ## Route Map
 
@@ -19,10 +21,18 @@ settled oracles support acceptance verdicts. Reuse the project test plan and its
 | --- | --- | --- |
 | Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
-| Role isolation, concurrent users, load or performance applies | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
+| Execute a functional acceptance campaign or resume its case inventory | [functional workflow](references/workflow.md) | Real journeys, correlated results, retest and cleanup |
+| API or business-state behavior participates | [API and logic](references/api-and-logic.md) | Wire, business status and independent persistence assertions |
+| Pages, UI or clicks participate | [page walkthrough](references/page-walkthrough.md) | Reachability, real interaction and visible outcomes |
+| Record functional cases, defects or recovery | [test record](references/test-record.md) | Finite coverage, case evidence and recovery queue |
+| Code deletion or instruction changes participate | [change preservation](references/change-preservation.md) | Original acceptance, consumer regressions and qualified comparison |
+| Scoped performance acceptance or before/after comparison participates | [performance measurement](references/performance-measurement.md) | Comparable metrics, protected journeys and qualified verdicts |
+| Role isolation, concurrent users or load scenarios apply | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |
 
 ## Invariants
+
+- Derive user-facing copy and feedback type/timing expectations from the original request and accepted Product/UI decisions, not candidate output. Exercise the affected state; distinguish action dispatch from progress/completion. Candidate specs, tests and green counts cannot approve an unsupported presentation change.
 
 - Product behavior belongs to `product-spec`, visual behavior to `ui-spec`, and wire
   semantics to `api-spec`. Test ambiguity cannot silently decide those contracts.
@@ -44,6 +54,10 @@ settled oracles support acceptance verdicts. Reuse the project test plan and its
   `repo-delivery` separately authorized Git actions. No deployment, installation,
   publication, production load, or implicit promotion follows from testing.
 
+- Consolidate delegated case results into the frozen inventory before selecting more
+  work. An agent terminal state closes only its assigned execution, not another
+  evidence layer or the run verdict.
+
 ## Output Map
 
 Return the [result contract](references/result-contract.md): frozen basis and authority
@@ -56,6 +70,12 @@ into “all tests passed” when required cells remain unresolved.
 
 - Read [coverage](references/coverage.md) when deriving or reconciling the acceptance matrix.
 - Read [execution](references/execution.md) before running checks or making regression claims.
+- Read [functional workflow](references/workflow.md) for functional campaigns and resumed case inventories.
+- Read [API and logic](references/api-and-logic.md) for network, business status and persistence.
+- Read [page walkthrough](references/page-walkthrough.md) for real UI journeys and browser evidence.
+- Read [test record](references/test-record.md) for functional plans, defects, coverage and recovery.
 - Read [roles and performance](references/roles-and-performance.md) only for relevant multi-user, authorization or performance requirements.
 - Read [result contract](references/result-contract.md) when consuming results or returning evidence.
+- Read [change preservation](references/change-preservation.md) when code deletion or instruction changes participate.
+- Read [performance measurement](references/performance-measurement.md) for scoped comparative performance acceptance.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary execution.

@@ -171,6 +171,8 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         provider_is_unavailable = "set stop_state to not-verified" in command[-1]
         selected_skill = "ui-spec" if nearest_negative else "dev-frontend"
         stop_state = "evidence-incomplete" if nearest_negative else "missing-authorization" if critical_stop else "not-verified" if provider_is_unavailable else "completed"
+        if getattr(self, "wrong_stop", False):
+            stop_state = "missing-authorization"
         not_verified = (
             ["development-runtime", "production-build"]
             if "Report these unverified validation layers" in prompt
@@ -237,14 +239,71 @@ class RunLiveAgentEvalTests(unittest.TestCase):
                 sandbox="danger-full-access",
             )
 
-    def test_output_schema_allows_only_the_runtime_stop_value(self) -> None:
+    def test_output_schema_does_not_leak_expected_stop_oracle(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             schema_path = Path(temporary) / "output-schema.json"
-            RUNNER.output_schema(schema_path, "completed")
+            RUNNER.output_schema(schema_path)
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
         stop_schema = schema["properties"]["stop_state"]
-        self.assertEqual(["completed"], stop_schema["enum"])
-        self.assertNotIn("completed after source edit", stop_schema["enum"])
+        self.assertEqual(list(RUNNER.STOP_STATES), stop_schema["enum"])
+        with tempfile.TemporaryDirectory() as temporary:
+            second = Path(temporary) / "second-schema.json"
+            RUNNER.output_schema(second)
+            self.assertEqual(schema, json.loads(second.read_text(encoding="utf-8")))
+
+    def test_trace_usage_deduplicates_exact_events_and_sums_distinct_stable_turns(self) -> None:
+        first = {"type": "turn.completed", "turn_id": "turn-1", "usage": {
+            "input_tokens": 100, "cached_input_tokens": 70, "output_tokens": 20,
+            "reasoning_output_tokens": 8,
+        }}
+        second = {"type": "turn.completed", "turn_id": "turn-2", "usage": {
+            "input_tokens": 100, "cached_input_tokens": 70, "output_tokens": 20,
+            "reasoning_output_tokens": 8,
+        }}
+        with tempfile.TemporaryDirectory() as temporary:
+            trace = Path(temporary) / "trace.jsonl"
+            trace.write_text("".join(json.dumps(event) + "\n" for event in (first, first, second)), encoding="utf-8")
+            usage = RUNNER.trace_facts(trace)["usage"]
+        self.assertEqual(2, usage["terminal_events"])
+        self.assertEqual("partial", usage["status"])
+        self.assertEqual(200, usage["input_tokens"])
+        self.assertEqual(140, usage["cached_input_tokens"])
+        self.assertIsNone(usage["cache_write_input_tokens"])
+        self.assertEqual(40, usage["output_tokens"])
+        self.assertEqual(16, usage["reasoning_output_tokens"])
+
+    def test_trace_usage_preserves_partial_fields_and_rejects_ambiguous_or_missing_terminals(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            trace = Path(temporary) / "trace.jsonl"
+            partial = {"type": "turn.completed", "usage": {"input_tokens": 123, "output_tokens": 7}}
+            trace.write_text(json.dumps(partial) + "\n", encoding="utf-8")
+            usage = RUNNER.trace_facts(trace)["usage"]
+            self.assertEqual("partial", usage["status"])
+            self.assertEqual(123, usage["input_tokens"])
+            self.assertEqual(7, usage["output_tokens"])
+            self.assertIsNone(usage["reasoning_output_tokens"])
+            second = {"type": "turn.completed", "usage": {"input_tokens": 123, "output_tokens": 7}, "meta": "duplicate-without-stable-id"}
+            trace.write_text(json.dumps(partial) + "\n" + json.dumps(second) + "\n", encoding="utf-8")
+            usage = RUNNER.trace_facts(trace)["usage"]
+            self.assertEqual("not-verified-ambiguous-terminal-events", usage["status"])
+            self.assertIsNone(usage["input_tokens"])
+            conflict_a = {"type": "turn.completed", "turn_id": "turn-conflict", "usage": {"input_tokens": 10}}
+            conflict_b = {"type": "turn.completed", "turn_id": "turn-conflict", "usage": {"input_tokens": 11}}
+            trace.write_text(json.dumps(conflict_a) + "\n" + json.dumps(conflict_b) + "\n", encoding="utf-8")
+            usage = RUNNER.trace_facts(trace)["usage"]
+            self.assertEqual("not-verified-conflicting-terminal-events", usage["status"])
+            self.assertIsNone(usage["input_tokens"])
+            trace.write_text("{}\n", encoding="utf-8")
+            usage = RUNNER.trace_facts(trace)["usage"]
+            self.assertEqual("not-verified", usage["status"])
+            self.assertEqual(0, usage["terminal_events"])
+            self.assertIsNone(usage["input_tokens"])
+
+    def test_model_is_required_by_cli_parser(self) -> None:
+        with patch.object(sys, "argv", ["run-live-agent-evals.py"]):
+            with self.assertRaises(SystemExit) as raised:
+                RUNNER.main()
+        self.assertEqual(2, raised.exception.code)
 
     def test_runtime_stop_enum_distinguishes_normal_critical_and_provider_cases(self) -> None:
         self.assertEqual(
@@ -279,6 +338,38 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertIn("without inventorying every catalog file", prompt)
         self.assertIn("<candidate-catalog-root>/<name>/SKILL.md", prompt)
         self.assertIn("do not read a globally or project-installed copy", prompt)
+
+    def test_prompt_resolves_references_from_candidate_package_without_requiring_them(self) -> None:
+        explicit = self.case("dev-frontend-critical-stop")
+        prompt = RUNNER.build_eval_prompt(explicit, "provider note")
+        self.assertIn("relative references from the package containing that candidate Skill path", prompt)
+        self.assertIn("Read its complete SKILL.md", prompt)
+        self.assertNotIn("must read its references", prompt)
+        implicit = self.case("dev-frontend-implicit-route")
+        self.assertIn("resolve relative references from that candidate package", RUNNER.build_eval_prompt(implicit, "provider note"))
+
+    def test_candidate_skill_package_digest_changes_with_package_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            package = root / "skills" / "sample-skill"
+            package.mkdir(parents=True)
+            candidate = package / "SKILL.md"
+            candidate.write_text("candidate one\n", encoding="utf-8")
+            first = RUNNER.skill_package_digest("sample-skill", root)
+            candidate.write_text("candidate two\n", encoding="utf-8")
+            second = RUNNER.skill_package_digest("sample-skill", root)
+        self.assertNotEqual(first, second)
+        self.assertTrue(first.startswith("sha256:"))
+
+    def test_status_summary_separates_failures_from_owner_oracle_gaps(self) -> None:
+        summary = RUNNER.result_status_summary([
+            {"case_id": "failed-case", "status": "failed", "not_verified": []},
+            {"case_id": "oracle-gap", "status": "not-verified", "not_verified": ["owner-artifact-oracle"]},
+            {"case_id": "passed-case", "status": "passed", "not_verified": []},
+        ])
+        self.assertEqual({"passed": 1, "failed": 1, "blocked": 0, "not-verified": 1}, summary["status_counts"])
+        self.assertEqual(["failed-case"], summary["failed_cases"])
+        self.assertEqual(["oracle-gap"], summary["owner_artifact_oracle_gaps"])
 
     def test_numbered_file_read_is_observable_path_evidence(self) -> None:
         self.assertTrue(
@@ -384,6 +475,46 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertTrue(RUNNER.trace_loaded_skill(facts, "dev-frontend", first_write))
         self.assertTrue(RUNNER.trace_inspected_owner(facts, "src/components/neutral-panel.ts:renderNeutralPanel", first_write, (FIXTURE / "src/components/neutral-panel.ts").read_text(encoding="utf-8")))
         self.assertTrue(RUNNER.trace_ran_focused_check(facts, True, last_write))
+
+    def test_complete_rg_context_establishes_owner_without_accepting_partial_or_other_file(self) -> None:
+        path = "src/components/neutral-panel.ts"
+        source = (FIXTURE / path).read_text(encoding="utf-8")
+        output = "\n".join(f"./{path}-{number}-{line}" for number, line in enumerate(source.splitlines(), 1))
+        item = {"order": 1, "command": "rg -n -C 3 data-neutral-panel .", "output": output}
+        owner = path + ":renderNeutralPanel"
+        facts = {"successful_commands": [item]}
+        self.assertTrue(RUNNER.trace_inspected_owner(facts, owner, None, source))
+        for incomplete in (
+            output.splitlines()[0],
+            output.replace(path, "src/components/another-panel.ts"),
+            output.replace("return `", "return altered`"),
+        ):
+            with self.subTest(output=incomplete):
+                self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "output": incomplete}]}, owner, None, source))
+        self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "command": "echo 'rg source'"}]}, owner, None, source))
+        self.assertFalse(RUNNER.trace_inspected_owner(facts, owner, 1, source))
+
+    def test_complete_nl_numbered_source_establishes_owner_without_accepting_gaps_or_forgery(self) -> None:
+        path = "src/components/neutral-panel.ts"
+        source = (FIXTURE / path).read_text(encoding="utf-8")
+        output = "\n".join(f"{number:6}\t{line}" for number, line in enumerate(source.splitlines(), 1))
+        other_path = "src/components/neutral-panel.test.ts"
+        other_source = (FIXTURE / other_path).read_text(encoding="utf-8")
+        output += "\n" + "\n".join(f"{number:6}\t{line}" for number, line in enumerate(other_source.splitlines(), 1))
+        item = {"order": 1, "command": f"nl -ba {path}", "output": output}
+        owner = path + ":renderNeutralPanel"
+        facts = {"successful_commands": [item]}
+        self.assertTrue(RUNNER.trace_inspected_owner(facts, owner, None, source))
+        for incomplete in (
+            "\n".join(output.splitlines()[1:]),
+            output.replace("return `", "return altered`"),
+            output.replace("     2\t  return `", ""),
+        ):
+            with self.subTest(output=incomplete):
+                self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "output": incomplete}]}, owner, None, source))
+        for command in ("echo 'nl -ba src/components/neutral-panel.ts'", f"nl -ba src/components/another-panel.ts"):
+            with self.subTest(command=command):
+                self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "command": command}]}, owner, None, source))
 
     def test_owner_inspection_cannot_join_path_and_symbol_from_different_or_failed_items(self) -> None:
         events = [
@@ -573,6 +704,23 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         ):
             self.assertFalse(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
 
+    def test_git_write_classifier_ignores_only_literal_printer_text(self) -> None:
+        for command in (
+            "echo 'git commit -m fake'",
+            "cat /tmp/git-notes.txt",
+            "cat /tmp/git/source.md",
+            "printf '%s\\n' 'git update-ref refs/heads/fake HEAD'",
+            "/bin/zsh -lc \"echo 'git commit'\"",
+        ):
+            self.assertFalse(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
+        for command in (
+            "echo $(git status --short)",
+            "printf '%s\\n' `git status --short`",
+            "env git update-ref refs/heads/fake HEAD",
+            "/bin/zsh -lc \"echo 'git commit'; git add -A\"",
+        ):
+            self.assertTrue(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
+
     def test_git_write_classification_handles_quoted_separators_and_conditionals(self) -> None:
         # Real composite command from the 2026-09-11 repo-audit live run: read-only
         # diffs plus an if/then/else whose echo argument contains a quoted semicolon.
@@ -689,6 +837,56 @@ class RunLiveAgentEvalTests(unittest.TestCase):
             result["not_verified"],
         )
         self.assertEqual(4, result["efficiency"]["tool_calls"])
+        self.assertGreaterEqual(result["trace"]["wall_time_ms"], 0)
+        self.assertEqual("not-verified", result["trace"]["usage"]["status"])
+        self.assertIsNone(result["trace"]["usage"]["input_tokens"])
+
+    def test_wrong_observed_stop_state_fails_independent_case_grading(self) -> None:
+        case = self.case("dev-frontend-explicit-source-change")
+        self.wrong_stop = True
+        try:
+            with tempfile.TemporaryDirectory() as temporary, patch.object(RUNNER.subprocess, "run", side_effect=self.fake_codex):
+                result = RUNNER.run_case(case, fixture=FIXTURE, output_root=Path(temporary), model="synthetic-model", reasoning="medium", sandbox="workspace-write", provider_evidence=None)
+        finally:
+            del self.wrong_stop
+        self.assertEqual("missing-authorization", result["stop"]["state"])
+        self.assertEqual("failed", result["status"])
+
+    def test_changed_source_without_edit_events_is_unverified_not_a_proven_process_failure(self) -> None:
+        def without_edit_events(command, **kwargs):
+            result = self.fake_codex(command, **kwargs)
+            if command[:2] != ["codex", "exec"]:
+                return result
+            events = [json.loads(line) for line in result.stdout.splitlines()]
+            captured = "\n".join(json.dumps(event) for event in events if event.get("item", {}).get("type") != "file_change")
+            return subprocess.CompletedProcess(result.args, result.returncode, stdout=captured, stderr=result.stderr)
+
+        case = self.case("dev-frontend-explicit-source-change")
+        with tempfile.TemporaryDirectory() as temporary, patch.object(RUNNER.subprocess, "run", side_effect=without_edit_events):
+            result = RUNNER.run_case(case, fixture=FIXTURE, output_root=Path(temporary), model="synthetic-model", reasoning="medium", sandbox="workspace-write", provider_evidence=None)
+        self.assertEqual("not-verified", result["status"])
+        self.assertFalse(result["trace"]["write_order_verified"])
+
+    def test_completed_self_report_cannot_manufacture_an_owner_deliverable(self) -> None:
+        case = dict(self.case("dev-frontend-critical-stop"))
+        case.update(expected_stop="completed", required_artifacts=["owner-result"],
+                    required_process=["read-effective-instructions", "deliver-owner-output"])
+
+        def completed_without_deliverable(command, **kwargs):
+            result = self.fake_codex(command, **kwargs)
+            if command[:2] == ["codex", "exec"]:
+                last = Path(command[command.index("--output-last-message") + 1])
+                message = json.loads(last.read_text())
+                message["stop_state"] = "completed"
+                last.write_text(json.dumps(message))
+            return result
+
+        with tempfile.TemporaryDirectory() as temporary, patch.object(RUNNER.subprocess, "run", side_effect=completed_without_deliverable):
+            result = RUNNER.run_case(case, fixture=FIXTURE, output_root=Path(temporary), model="synthetic-model", reasoning="medium", sandbox="workspace-write", provider_evidence=None)
+        self.assertEqual("not-verified", result["status"])
+        self.assertNotIn("owner-result", result["artifacts"])
+        self.assertNotIn("deliver-owner-output", result["process"])
+        self.assertIn("owner-artifact-oracle", result["not_verified"])
 
     def test_nearest_negative_uses_evidence_incomplete_without_source_write(self) -> None:
         case = self.case("dev-frontend-nearest-negative")
@@ -1013,15 +1211,23 @@ class RunLiveAgentEvalTests(unittest.TestCase):
                 patch.object(
                     sys,
                     "argv",
-                    ["run-live-agent-evals.py", "--case", "dev-frontend-explicit-source-change", "--output-dir", str(output)],
+                    ["run-live-agent-evals.py", "--case", "dev-frontend-explicit-source-change", "--model", "synthetic-model", "--output-dir", str(output)],
                 ),
                 contextlib.redirect_stdout(io.StringIO()),
             ):
                 self.assertEqual(1, RUNNER.main())
             summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+            manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
             validation_log = (output / "validation.log").read_text(encoding="utf-8")
         self.assertTrue(summary["schema_valid"])
         self.assertEqual("not-passed", summary["capability_verdict"])
+        self.assertEqual({"passed": 0, "failed": 0, "blocked": 0, "not-verified": 1}, summary["status_counts"])
+        self.assertEqual({"runner", "validator", "cases"}, set(manifest["source_hashes"]))
+        self.assertEqual(RUNNER.sha256_file(SCRIPT), manifest["source_hashes"]["runner"])
+        self.assertEqual(RUNNER.sha256_file(RUNNER.VALIDATOR_PATH), manifest["source_hashes"]["validator"])
+        self.assertEqual(RUNNER.sha256_file(RUNNER.ROOT / "evals/live-agent-cases.json"), manifest["source_hashes"]["cases"])
+        self.assertIn("dev-frontend", manifest["candidate_skill_packages"])
+        self.assertEqual(RUNNER.skill_package_digest("dev-frontend"), manifest["candidate_skill_packages"]["dev-frontend"])
         self.assertIn("schema_valid: true", validation_log)
         self.assertIn("capability_verdict: not-passed", validation_log)
 

@@ -207,14 +207,6 @@
       "expected_outcome": "route"
     },
     {
-      "id": "ui-spec-parameterized-background",
-      "skill": "ui-spec",
-      "class": "normal",
-      "prompt": "Specify a parameterized visual background in the accepted UI contract, including source rights and a readable text-safe area.",
-      "expected_owner": "ui-spec",
-      "expected_outcome": "route"
-    },
-    {
       "id": "ui-spec-svg-icon-system",
       "skill": "ui-spec",
       "class": "normal",
@@ -289,30 +281,6 @@
       "expected_owner": "dev-typescript",
       "expected_stop": "missing-authorization",
       "expected_outcome": "stop"
-    },
-    {
-      "id": "dev-typescript-non-browser-negation",
-      "skill": "dev-frontend",
-      "class": "boundary",
-      "prompt": "Implement this Node.js library bug fix on non-browser TypeScript source.",
-      "expected_owner": "dev-typescript",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "dev-typescript-issue-regression-fix",
-      "skill": "dev-typescript",
-      "class": "normal",
-      "prompt": "fix a JavaScript date library regression and add a regression test",
-      "expected_owner": "dev-typescript",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "dev-typescript-issue-library-bug",
-      "skill": "dev-typescript",
-      "class": "normal",
-      "prompt": "fix javascript library bug",
-      "expected_owner": "dev-typescript",
-      "expected_outcome": "route"
     },
     {
       "id": "dev-java-normal",
@@ -450,38 +418,6 @@
       "expected_outcome": "reroute"
     },
     {
-      "id": "ops-client-foreground-continuity",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Operate this desktop client while preserving desktop foreground continuity for the user's active app.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-background-qualification",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Qualify background client operation with AXValue and AXPress while preserving desktop foreground continuity; verify the postcondition and restore disposable test state.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-zcode-cli-session",
-      "skill": "ops-client",
-      "class": "normal",
-      "prompt": "Use the installed ZCode client's CLI to read an exact existing task session in the background; do not touch the desktop window.",
-      "expected_owner": "ops-client",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-external-review-owner",
-      "skill": "ops-client",
-      "class": "boundary",
-      "prompt": "Choose an external AI provider and request an independent review of a source patch.",
-      "expected_owner": "ask-ai",
-      "expected_outcome": "reroute"
-    },
-    {
       "id": "ops-client-critical-stop",
       "skill": "ops-client",
       "class": "critical-stop",
@@ -491,10 +427,59 @@
       "expected_outcome": "stop"
     },
     {
-      "id": "ops-client-android-headless",
+      "id": "ops-device-normal",
+      "skill": "ops-device",
+      "class": "normal",
+      "prompt": "Operate the specified Android physical phone, verify the installed mobile app and capture device-bound guest state.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-device-boundary",
+      "skill": "ops-device",
+      "class": "boundary",
+      "prompt": "Operate the specified mobile browser page in Chrome and capture browser DOM and computed-style evidence on its web content.",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "ops-device-critical-stop",
+      "skill": "ops-device",
+      "class": "critical-stop",
+      "prompt": "Operate this mobile app on a connected physical device, but the target scope is ambiguous among several serials; stop.",
+      "expected_owner": "ops-device",
+      "expected_stop": "scope-ambiguous",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "ops-device-ios-physical",
+      "skill": "ops-device",
+      "class": "normal",
+      "prompt": "Verify the installed iOS app on the specified paired physical iPhone by UDID, not on the Simulator.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-device-webview",
+      "skill": "ops-device",
+      "class": "normal",
+      "prompt": "Verify login inside the Android native app WebView and then the native app return state on this exact device.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-browser-phone-page",
+      "skill": "ops-browser",
+      "class": "normal",
+      "prompt": "Check the DOM and real network request of this webpage in mobile Chrome on the bound phone.",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-device-boundary",
       "skill": "ops-client",
       "class": "boundary",
-      "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
+      "prompt": "Control this specified iOS Simulator and verify the installed mobile app, not the desktop client.",
       "expected_owner": "ops-device",
       "expected_outcome": "reroute"
     },
@@ -540,14 +525,6 @@
       "expected_outcome": "reroute"
     },
     {
-      "id": "human-writing-natural-rewrite",
-      "skill": "human-writing",
-      "class": "normal",
-      "prompt": "Perform a natural rewrite of this source-grounded article without changing its facts or author voice.",
-      "expected_owner": "human-writing",
-      "expected_outcome": "route"
-    },
-    {
       "id": "human-writing-critical-stop",
       "skill": "human-writing",
       "class": "critical-stop",
@@ -555,6 +532,30 @@
       "expected_owner": "human-writing",
       "expected_stop": "evidence-incomplete",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "human-writing-typed-doc-normal",
+      "skill": "human-writing",
+      "class": "normal",
+      "prompt": "Rewrite the wording of this source-grounded manual; keep every verified fact at its stated authority and strength.",
+      "expected_owner": "human-writing",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "human-writing-doc-type-boundary",
+      "skill": "human-writing",
+      "class": "boundary",
+      "prompt": "Author and validate the OpenAPI interface documentation for the accepted API contract.",
+      "expected_owner": "api-spec",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "human-writing-test-doc-boundary",
+      "skill": "human-writing",
+      "class": "boundary",
+      "prompt": "Design the test coverage and test cases for the documented login flow.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "reroute"
     },
     {
       "id": "api-spec-normal",
@@ -597,6 +598,111 @@
       "expected_owner": "api-spec",
       "expected_stop": "evidence-incomplete",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "dev-tests-functional-normal",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "Run end-to-end testing and functional testing across APIs, UI walkthrough, clicks and business logic, reporting test coverage.",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-tests-functional-boundary",
+      "skill": "dev-tests",
+      "class": "boundary",
+      "prompt": "Review this fixed commit for correctness and standards without running the application.",
+      "expected_owner": "repo-review",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "dev-tests-functional-critical-stop",
+      "skill": "dev-tests",
+      "class": "critical-stop",
+      "prompt": "Run end-to-end testing and functional testing, but authorization to delete business records is missing; stop that action.",
+      "expected_owner": "dev-tests",
+      "expected_stop": "missing-authorization",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "ui-spec-parameterized-background",
+      "skill": "ui-spec",
+      "class": "normal",
+      "prompt": "Specify a parameterized visual background in the accepted UI contract, including source rights and a readable text-safe area.",
+      "expected_owner": "ui-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-non-browser-negation",
+      "skill": "dev-frontend",
+      "class": "boundary",
+      "prompt": "Implement this Node.js library bug fix on non-browser TypeScript source.",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-issue-regression-fix",
+      "skill": "dev-typescript",
+      "class": "normal",
+      "prompt": "fix a JavaScript date library regression and add a regression test",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-typescript-issue-library-bug",
+      "skill": "dev-typescript",
+      "class": "normal",
+      "prompt": "fix javascript library bug",
+      "expected_owner": "dev-typescript",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-foreground-continuity",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Operate this desktop client while preserving desktop foreground continuity for the user's active app.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-background-qualification",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Qualify background client operation with AXValue and AXPress while preserving desktop foreground continuity; verify the postcondition and restore disposable test state.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-zcode-cli-session",
+      "skill": "ops-client",
+      "class": "normal",
+      "prompt": "Use the installed ZCode client's CLI to read an exact existing task session in the background; do not touch the desktop window.",
+      "expected_owner": "ops-client",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "ops-client-external-review-owner",
+      "skill": "ops-client",
+      "class": "boundary",
+      "prompt": "Choose an external AI provider and request an independent review of a source patch.",
+      "expected_owner": "ask-ai",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "ops-client-android-headless",
+      "skill": "ops-client",
+      "class": "boundary",
+      "prompt": "Operate a task-owned Android Emulator headless through ADB with an exact device serial; capture the mobile app and verify guest state while the host remains locked.",
+      "expected_owner": "ops-device",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "human-writing-natural-rewrite",
+      "skill": "human-writing",
+      "class": "normal",
+      "prompt": "Perform a natural rewrite of this source-grounded article without changing its facts or author voice.",
+      "expected_owner": "human-writing",
+      "expected_outcome": "route"
     },
     {
       "id": "work-retro-normal",
@@ -745,63 +851,6 @@
       "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
       "expected_owner": "ops-client",
       "expected_outcome": "route"
-    },
-    {
-      "id": "ops-device-normal",
-      "skill": "ops-device",
-      "class": "normal",
-      "prompt": "Operate the specified Android physical phone, verify the installed mobile app and capture device-bound guest state.",
-      "expected_owner": "ops-device",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-device-boundary",
-      "skill": "ops-device",
-      "class": "boundary",
-      "prompt": "Operate the specified mobile browser page in Chrome and capture browser DOM and computed-style evidence on its web content.",
-      "expected_owner": "ops-browser",
-      "expected_outcome": "reroute"
-    },
-    {
-      "id": "ops-device-critical-stop",
-      "skill": "ops-device",
-      "class": "critical-stop",
-      "prompt": "Operate this mobile app on a connected physical device, but the target scope is ambiguous among several serials; stop.",
-      "expected_owner": "ops-device",
-      "expected_stop": "scope-ambiguous",
-      "expected_outcome": "stop"
-    },
-    {
-      "id": "ops-device-ios-physical",
-      "skill": "ops-device",
-      "class": "normal",
-      "prompt": "Verify the installed iOS app on the specified paired physical iPhone by UDID, not on the Simulator.",
-      "expected_owner": "ops-device",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-device-webview",
-      "skill": "ops-device",
-      "class": "normal",
-      "prompt": "Verify login inside the Android native app WebView and then the native app return state on this exact device.",
-      "expected_owner": "ops-device",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-browser-phone-page",
-      "skill": "ops-browser",
-      "class": "normal",
-      "prompt": "Check the DOM and real network request of this webpage in mobile Chrome on the bound phone.",
-      "expected_owner": "ops-browser",
-      "expected_outcome": "route"
-    },
-    {
-      "id": "ops-client-device-boundary",
-      "skill": "ops-client",
-      "class": "boundary",
-      "prompt": "Control this specified iOS Simulator and verify the installed mobile app, not the desktop client.",
-      "expected_owner": "ops-device",
-      "expected_outcome": "reroute"
     }
   ]
 }

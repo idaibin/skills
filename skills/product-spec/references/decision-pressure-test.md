@@ -25,8 +25,13 @@ decision instead of interviewing the user about it.
 3. Compute the current frontier: unresolved material decisions whose prerequisites are
    settled. Select the decision with the greatest downstream effect; prefer boundaries,
    permissions, failure semantics, and acceptance over local preferences.
-4. Ask one bounded question from the current frontier and wait for its answer. When
-   two or three meaningful mutually exclusive product outcomes exist, prefer the
+4. Ask one bounded question from the current frontier and wait for its answer. If the
+   user explicitly asks to receive all remaining questions together, present the
+   current evidence-backed inventory in one batch: group independent questions,
+   label any answer that depends on an earlier choice as conditional, and do not
+   treat a bundled prompt or unanswered item as confirmation. Resolve dependent
+   decisions only after their prerequisites are answered. Avoid repeating settled decisions.
+   When two or three meaningful mutually exclusive product outcomes exist, prefer the
    current host mode's native structured-choice affordance; put the recommendation
    first and state each option as a user-visible outcome. If that affordance is
    unavailable, identify the limitation at its actual scope and use concise numbered
@@ -39,6 +44,19 @@ decision instead of interviewing the user about it.
    - the principal trade-off;
    - the materially different alternative being rejected, when one exists;
    - the affected product slices.
+   For a product/API evidence conflict, offer "follow the confirmed product rule",
+   "follow the accepted interface constraint", or "record the conflict as Open"
+   only where each is a genuine possible product outcome for this decision. Cite the
+   specific conflicting sources and describe the user-visible consequence of each
+   choice. An API document does not silently override product behavior; a product
+   answer does not establish the wire contract or backend feasibility. Route API
+   fields, contract constraints and service-side authorization semantics to the
+   project's API owner; route implementation feasibility to the actual service or
+   implementation owner. The product owner selects the product outcome. If that
+   outcome remains undecided, keep the affected product slice Open. If the outcome
+   is confirmed but technical feasibility is unverified, retain the product decision
+   and block only the dependent implementation handoff, naming the next owner.
+   Never recommend an unverified source or feasibility claim as established fact.
 5. Record the answer using the workflow's Confirmed, Assumption, Open Question,
    Rejected, or Deferred state. For a confirmed material choice, retain its context,
    evidence or constraints, reason, principal trade-off, rejected alternative when

@@ -15,13 +15,22 @@ configuration, arguments and persisted readback.
 ## Installed configuration roots
 
 Resolve the executable inside the current app, version and help. In the qualified
-macOS CLI 0.16.9, process-local configuration accepts these variables:
+macOS CLI 0.17.0 (native-review live-canary 2026-10-20; exact-session resume canary
+2026-10-21), process-local configuration accepts these variables:
 
 | Variable | Installed-runtime meaning |
 | --- | --- |
 | ZCODE_DATA_BASE_DIR | Parent of the account's .zcode directory; not that directory itself |
 | ZCODE_BUILTIN_PROVIDER_CONFIG_FILE | Bundle config/provider/zcode-builtin.json |
 | ZCODE_PERSONAL_PROVIDER_CONFIG_FILE | Account .zcode/v2/provider_config.json |
+
+Before any prompt, verify that the resolved executable and the selected original
+builtin configuration file exist and are readable. Derive the bundle resource root
+from the installed executable/package layout; the launcher directory need not be
+the configuration directory. Qualify supported process-local bindings against the
+installed build before use. A failed default lookup does not prove the installation
+has no configuration. Do not dump file contents, create replacement configuration,
+or change provider/account to repair discovery.
 
 The desktop may resolve a different account root from the shell default. Locate its
 actual task index/configuration through verified process open files, installed path
@@ -47,7 +56,7 @@ const args = [
 ];
 ```
 
-In 0.16.9 the denylist is variadic: place --prompt after it, and positional commands
+In 0.17.0 the denylist is variadic: place --prompt after it, and positional commands
 such as doctor before it, or they can be consumed as tool names. Check current help
 before reuse. The qualified headless flow did not support /model as a model-selection
 route; preserve the verified session binding rather than treating that slash prompt
@@ -70,6 +79,9 @@ rows through session/turn/trace and provider_id, model_id and variant.
 
 --cwd does not contain CLI session/cache persistence. Mode and tool-name filters do
 not enforce filesystem paths; require suitable isolation for the accepted operation.
+In 0.17.0 --resume itself is not repository-bound: resuming an exact SID under a
+--cwd from a different repository succeeds, so repository binding relies on the
+caller-side session registry, not on the CLI.
 Do not repair unresolved binding by switching account/model or creating a substitute
 session.
 

@@ -72,6 +72,11 @@ def evaluate(path: Path, *, stage: str = "candidate", shared: str = "present", a
             approval_path.unlink(missing_ok=True)
 
 
+def starter_template_section(name: str) -> str:
+    template = ROOT / "skills" / "ui-spec" / "assets" / "DESIGN.md"
+    return CHECKER.parse_document_bytes(template.read_bytes())[1][name]
+
+
 class DesignMdCompletenessTests(unittest.TestCase):
     def status(self, result):
         return result["shared_authority_completeness"]["status"]
@@ -83,6 +88,12 @@ class DesignMdCompletenessTests(unittest.TestCase):
         chinese = "主色用于关键操作，表面色用于内容区域。错误状态保持独立语义，并确保文字、图标和焦点在不同背景下清晰可辨。"
         self.assertTrue(CHECKER.meaningful_prose(chinese))
         self.assertFalse(CHECKER.meaningful_prose("颜色很好看"))
+
+    def test_application_prose_replaces_ungoverned_starter_sections(self) -> None:
+        result = evaluate(FIXTURES / "complete.md")
+        self.assertEqual("ready-for-human-approval", self.status(result))
+        self.assertNotIn("Overview retains starter template prose", self.errors(result))
+        self.assertNotIn("Elevation & Depth retains starter template prose", self.errors(result))
 
     def test_complete_first_adoption_is_ready_for_human_approval(self) -> None:
         result = evaluate(FIXTURES / "complete.md")
@@ -180,6 +191,30 @@ class DesignMdCompletenessTests(unittest.TestCase):
             "frontmatter name must replace the starter placeholder", self.errors(evaluate(path))
         )
 
+    def test_overview_starter_template_fails_full_completeness_evaluation(self) -> None:
+        path = self.mutate(
+            "complete.md",
+            lambda text: re.sub(
+                r"(?ms)(^## Overview\s*\n).*?(?=^## |\Z)",
+                lambda match: match.group(1) + "\n" + starter_template_section("Overview") + "\n\n",
+                text,
+                count=1,
+            ),
+        )
+        self.assertIn("Overview retains starter template prose", self.errors(evaluate(path)))
+
+    def test_elevation_template_detection_is_case_insensitive(self) -> None:
+        path = self.mutate(
+            "complete.md",
+            lambda text: re.sub(
+                r"(?ms)(^## Elevation & Depth\s*\n).*?(?=^## |\Z)",
+                lambda match: match.group(1) + "\n" + starter_template_section("Elevation & Depth").swapcase() + "\n\n",
+                text,
+                count=1,
+            ),
+        )
+        self.assertIn("Elevation & Depth retains starter template prose", self.errors(evaluate(path)))
+
     def test_token_dump_and_empty_canonical_sections_fail(self) -> None:
         path = self.mutate(
             "complete.md",
@@ -262,6 +297,30 @@ class DesignMdCompletenessTests(unittest.TestCase):
             official_lint=lint, official_status=status, lint_command=command,
         )
         self.assertEqual("ready-for-human-approval", self.status(result))
+
+    def test_main_reports_corrupt_starter_asset_as_not_verified_json(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory)
+            (package / "scripts").mkdir()
+            (package / "assets").mkdir()
+            (package / "assets" / "DESIGN.md").write_text("missing frontmatter fence\n")
+            design = FIXTURES / "complete.md"
+            argv = [
+                "checker", str(design), "--stage", "candidate", "--shared-components", "present",
+                "--source-ref", "selected-source:test", "--source-artifact", str(SOURCE_ARTIFACT),
+                "--source-sha256", SOURCE_HASH, "--source-status", "approved",
+            ]
+            output = io.StringIO()
+            with (
+                mock.patch.object(sys, "argv", argv),
+                mock.patch.object(CHECKER, "__file__", str(package / "scripts" / "check.py")),
+                mock.patch.object(CHECKER, "run_official_lint", return_value=(lint_pass(design), 0, "official-lint-fixture")),
+                contextlib.redirect_stdout(output),
+            ):
+                self.assertEqual(2, CHECKER.main())
+            result = json.loads(output.getvalue())
+            self.assertEqual("not-verified", result["status"])
+            self.assertIn("frontmatter must start on line 1", result["error"])
 
     def test_main_rejects_source_artifact_drift(self) -> None:
         design = self.mutate("complete.md", lambda text: text)

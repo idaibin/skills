@@ -160,6 +160,17 @@ runtime identity evidence remains `Not verified`.
 Use `ops-browser-routes/v1` when stable projects, sites, or operation types should go
 directly to a known surface.
 
+A match clause accepts only these fields; each value is a non-empty string list.
+Fields within one clause all match; `any` selects among alternative clauses.
+
+| Field | Example | Match |
+| --- | --- | --- |
+| `project_roots` | `["/path/to/project"]` | Request cwd is within a listed root |
+| `origins` | `["https://example.test"]` | Exact normalized origin |
+| `hosts` | `["example.test"]` | Host or its subdomains |
+| `operation_types` | `["inspect"]` | Exact operation type, case-insensitive |
+| `keywords` | `["report"]` | Case-insensitive substring in request text |
+
 ```json
 {
   "schema_version": "ops-browser-routes/v1",

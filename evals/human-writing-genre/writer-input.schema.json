@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Frozen human-writing writer input",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "id",
+      "primary_type",
+      "split",
+      "language",
+      "length_profile",
+      "prompt",
+      "source_text"
+    ],
+    "properties": {
+      "id": {
+        "type": "string",
+        "minLength": 1
+      },
+      "primary_type": {
+        "enum": [
+          "message_email",
+          "status_notice",
+          "tutorial_howto",
+          "explanation_reference",
+          "product_release",
+          "research_opinion",
+          "social",
+          "personal_nonfiction"
+        ]
+      },
+      "split": {
+        "enum": [
+          "development",
+          "holdout"
+        ]
+      },
+      "language": {
+        "enum": [
+          "zh",
+          "en"
+        ]
+      },
+      "length_profile": {
+        "enum": [
+          "short",
+          "medium",
+          "long"
+        ]
+      },
+      "prompt": {
+        "type": "string",
+        "minLength": 1
+      },
+      "source_text": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

@@ -25,6 +25,10 @@ required objects cannot be verified.
 
 ## Invariants
 
+- Check changed user-facing copy and feedback type/timing against the original request and accepted Product/UI decisions. Flag unsupported changes even when candidate specs/tests agree; technical implementation details and agent-authored Ready labels do not grant approval. Check state claims against observable evidence.
+
+- For deletions in the selected diff, verify [consumer evidence](references/code-quality.md#unused-and-dead-code) and preserved behavior; never force a deletion quota. When instructions change, judge them against the original task and retained constraints, not reduced length/calls. Report fixes to the owner; review stays read-only.
+
 - Do not mix evidence between bases; current content does not prove another SHA.
 - A review package, graph, test, or provider output is evidence only after basis verification.
 - Findings require concrete reachability/impact and exact owner; do not mutate source or Git.
@@ -38,6 +42,6 @@ checks, exclusions, and `Not verified` gaps.
 
 - Read [fixed-basis checklist](references/checklist.md) for immutable commit/range/snapshot or verified-package review; read [worktree checklist](references/worktree-checklist.md) for current Worktree review. Do not combine their basis acquisition rules.
 - Read [Standards/Spec](references/standards-and-spec.md) for every review.
-- Load each conditional reference named in the Route Map only when its condition applies, including [code quality](references/code-quality.md) for maintainability findings.
+- Load each conditional reference only when its condition applies; read [code quality](references/code-quality.md) for maintainability findings.
 - Read [usage](references/usage.md) for review modes and boundaries.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

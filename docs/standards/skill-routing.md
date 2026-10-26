@@ -29,7 +29,7 @@ identity, installed adapters, or completed evidence.
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `api-spec` | native API wire contracts and OpenAPI authoring or validation after business decisions | named native contract artifacts only |
 | `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
-| `dev-tests` | contract-to-layer coverage, authorized existing checks and qualified test evidence | scoped test artifacts; no source/test implementation, browser/client mechanics or Git |
+| `dev-tests` | risk-based coverage, authorized functional acceptance, correlated API/UI/business evidence and existing checks | scoped test artifacts; no source/test implementation, browser/client mechanics or Git |
 | `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
 | `dev-frontend` | requested frontend implementation plus selected-source mapping and risk-matched visual closure | source files |
@@ -157,11 +157,11 @@ push actions. Without those conditions, the external-review owner supplies only 
 necessary files or review package. Review publication never creates a pull request,
 updates `main`, force-pushes, or counts as reviewer approval.
 
-The `dev-tests` candidate owns cross-layer acceptance evidence, not another task ledger.
+`dev-tests` owns cross-layer acceptance evidence, not another task ledger.
 Missing tests route to the implementation owner, runtime mechanics to operations, and
 contract ambiguity to Product/UI/API owners. Existing implementation checks stay with
 implementation; compose `dev-tests` when a separate layered acceptance result is needed.
-This candidate does not certify any project or become stable merely by being listed.
+Listing the capability does not certify any project or unobserved runtime layer.
 
 This is not mandatory ceremony. A known non-browser TypeScript/JavaScript, Java, or Rust implementation can start directly
 with `dev-typescript`, `dev-java`, or `dev-rust`. `repo-review` evaluates correctness, security, performance, and

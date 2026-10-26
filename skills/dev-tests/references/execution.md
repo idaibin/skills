@@ -56,3 +56,27 @@ Do not modify tests to match observed behavior when it contradicts accepted requ
 When no relevant existing test exists, return the missing assertion and owner; a manual
 observation may support only what it actually checks, not pretend automated coverage.
 Unit, contract, integration, UI and E2E results retain their individual evidence levels.
+
+## Workspace and incident retest
+
+Resolve the authorized fixture/evidence workspace before writing. Keep verification
+read-only with respect to the target application; test/harness source changes need
+their implementation owner. Never inject Mock middleware, fake records, demo
+notifications or test controls into product code/configuration to obtain a pass.
+Where instructions require external test storage, nested docs, ignored folders and
+existing source-local test directories do not satisfy that boundary; preserve
+existing assets until their migration or removal is separately authorized.
+
+Retest the original failing action against the repaired basis and its real boundary
+when incident closure requires it. Record method/path/parameter values and response
+without authentication data, correlate them to the page result, and exercise
+affected caller modes. A larger Mock suite, historical diff or independent static
+review cannot substitute for the unavailable original runtime retest.
+
+## Assertion scope
+
+Name the assertions actually executed. Reaching an intercepted request with a syntactic
+URL is a smoke result, not method/path/payload/response conformance. Contract assertions
+need an independently accepted expected value; copying the implementation into an
+expectation cannot prove correctness. A runner intended to signal assertion failure
+must return a failing process status when such a check fails.

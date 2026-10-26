@@ -1,0 +1,146 @@
+[
+  {
+    "id": "message_email-11",
+    "primary_type": "message_email",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "把这封学生给导师的邮件写得清楚得体，可调整段落，但不能扩大我承诺完成的工作。只返回邮件正文，不加主题。",
+    "source_text": "老师，访谈提纲我按批注改了两处：把工作经历那一题拆开，并删掉了一个重复追问。其他建议还没处理完，不能说已经逐条落实。我周一只能交修改版提纲，不能同时交录音转写；那份录音有一段说话声重叠，我还没确认是否听得清楚，不想用猜的补上。\n原计划是周二联系三位受访者约时间，不过还没有发出邀请。我担心如果提纲方向仍需大改，现在就发邀请会让对方重复准备。因此我想先请您确认这两处调整是否合适，再决定要不要约人。如果只是局部措辞问题，我可以边改边准备邀请；如果研究问题要重定，就需要先停下来讨论，不能保证仍按原时间完成。\n我知道您这周在外开会，不一定能在周一前回复。如果您暂时没空，我会按原计划先交提纲，把待确认的问题单独标出来，不会把没确认的部分写成您已同意。是否需要另约讨论时间，也请您方便时告诉我。谢谢。"
+  },
+  {
+    "id": "message_email-12",
+    "primary_type": "message_email",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread only the body. Preserve the first line and the quoted sentence exactly. Return the full message.",
+    "source_text": "To: archive@example.org | Ref: BX-804\nWe recieved six folders yesterday. The donor wrote, \"Dates are approximate; names are not verified.\" Could you keep that note with the folders?"
+  },
+  {
+    "id": "status_notice-11",
+    "primary_type": "status_notice",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "只校对正文中的用字和标点，不压缩或重组记录；第一行元数据完整保留。返回完整记录。",
+    "source_text": "班次=B2；记录号=2026-061\n本班完成了四台设备的外观检查，未开展性能测试。三号机外壳有划痕，已拍照留挡；划痕是在本次检查中发现的，不等于已经查明它何时出现。其余三台没有观察到外壳破损，但不能据此外推内部部件正常。\n检查前，接班员核对了设备编号，确认与台账一致。三号机旁的工具盒当时没有上锁，盒内工具数量未清点，因此记录只写发现时的状态，不写“工具完整”。外观照片已经放进本班交接文件夹，尚未由设备组复核。文件夹可供当班主管查看，不代表已经授权对外发送。\n本班已把划痕一事告知接班员。是否需要停用三号机，由设备负责人按原流程判断，检查人员没有作出停用决定，也没有批准继续使用。下一班请先查看交接照片；若现场状态有变化，再补充记录。补充记录应保留原发现时间，不要覆盖本班已经填写的条目。"
+  },
+  {
+    "id": "status_notice-12",
+    "primary_type": "status_notice",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Rewrite this notice for tenants in plain English. Do not add penalties or change either exception.",
+    "source_text": "From 1 June, parcels may be left in the staffed reception area between 09:00 and 17:00. Refrigerated deliveries are excluded. A parcel already accepted before 17:00 may be collected until reception closes at 18:00; this does not extend the delivery window."
+  },
+  {
+    "id": "tutorial_howto-11",
+    "primary_type": "tutorial_howto",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "只改写第三行起的说明正文，让第一次练习的人能看懂。前两行版本和步骤逐字保留；不改技术流程，不猜缺少的按钮。返回完整指南。",
+    "source_text": "版本：DriftLab 0.4（练习版）\n步骤一：选中清单，再点“核对”。\n说明：核对通过后才可申请封存，核对本身不替代申请，也不会自动把清单转成已封存。练习界面会把本次结果显示在清单下方，操作者应先看清结果再继续。结果只覆盖选中的清单，不代表同一目录里的其他清单也已经核对。\n如果核对不通过，并非永久不能封存，而是应先把差异交给保管员确认。差异列表中有行号和字段名，操作者可以把它们一并交给保管员，但不应为了得到通过结果自行改动原始登记内容。保管员确认如何处理之前，先保留本次结果，不重复提交封存申请。界面暂时没有显示结果时，应等培训员查看，不能把没有结果当成通过。\n申请封存时还需要填写交接人和本次练习编号。交接人应与培训员发下来的练习单一致；不记得编号时，先回看练习单，不猜编号。填写完这些信息后，操作者可以提交申请，由保管员复核。提交成功只说明申请已收到，不等于保管员已经批准。练习台上没有提供多久一定批准的承诺，也不能根据另一位学员上次等了多久推算这次时间。\n如果提交后发现交接人写错，先告诉培训员。本笔记没有给出撤回或编辑已提交申请的操作，因此不能按别的软件经验寻找同名按钮试点。培训员会另行确认当前练习该如何处理。在得到答复前，保留练习单和申请记录即可，不需要再新建一份相同申请。练习结束后，是否清理记录也由培训员决定，操作者不自行删除。\n这些限制适用于当前练习版，不是在描述生产版能力。培训员尚未说明生产版是否采用同样的角色、界面或审批流程；阅读本说明时，只需把这次练习的操作和停止条件分清，不要据此向实际业务人员承诺某种功能。"
+  },
+  {
+    "id": "tutorial_howto-12",
+    "primary_type": "tutorial_howto",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread the prose only. Do not edit the command, even if it looks unusual. Return the complete text.",
+    "source_text": "This exercise uses a temporary workspace. After the trainer confirms that it contains no original records, run:\n```sh\nlab-purge --scope demo --confirm no\n```\nThe command has been aproved for this exercise; its flag semantics are outside these notes."
+  },
+  {
+    "id": "explanation_reference-11",
+    "primary_type": "explanation_reference",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "将这份内部参考笔记改写得适合刚接手数据报表的人阅读。分清两个时间、可推论的范围与尚缺资料；不补系统事实或自行规定正常阈值。只返回参考说明。",
+    "source_text": "事件时间来自设备记录，入库时间来自服务器接收。两者是不同环节的时间，不能混用。设备可以先记录事件，稍后再连上网络发送；服务器也可能先收到数据，过一会儿才被报表查询到。当前表中的入库时间只指服务器接收，不是报表页面首次展示的时间。读者若把两者写成同一个概念，会把查询环节的等待也算到设备发送上。\n事件时间与入库时间的差并不只可能由网络造成。设备时钟偏差也可能影响它，离线后补传是另一个可能原因。材料没有给出设备的时钟校准情况，也没有给出用于判定正常或异常的延迟阈值。因此，看到一个较大的差值时，可以说明两个记录时间相隔较久，但不能仅据此断言网络故障或设备坏了。反过来，差值很小也不能证明设备时钟准确。\n有一条训练记录的事件时间是09:58，入库时间是10:03。按这两个显示值，相差五分钟；这不等于我们已经测得网络传输耗时五分钟。如果设备时钟比标准时间慢，差值里可能包含时钟偏差；如果数据曾离线保存，差值也可能包含等待连接的时间。这里列的是解释差值的可能路径，并没有确认这一条记录实际经过哪一路径。\n另有一条训练记录的事件时间晚于入库时间。不能把它直接改成入库之前的某一分钟来“修正顺序”，也不能据此断言服务器提前收到了未来事件。应先保留原记录，向设备维护方核对时钟和记录来源。现有笔记没有提供自动校准命令或允许编辑原始时间字段的权限。\n制作报表时，应把两列标成“事件时间”和“入库时间”，并说明来源不同。若需要另算数据到页面的可见延迟，还需页面观测时间；这份表没有该字段，不能用入库时间代替。笔记也没有说明所有设备使用同一时区，因此跨设备直接比较前，还需要确认时区口径。缺少这些资料并不说明记录没有用途，但它限定了我们能从记录里作出的判断。"
+  },
+  {
+    "id": "explanation_reference-12",
+    "primary_type": "explanation_reference",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread the explanatory prose only. Keep the field names exactly as written.",
+    "source_text": "`is_ready` indicates that local validation has passed. It does not mean that `release_approved` is true. Approval is granted seperately by the release owner."
+  },
+  {
+    "id": "product_release-11",
+    "primary_type": "product_release",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "根据已批准记录，为项目管理员写发布说明。说明可选能力、角色限制和实际准备事项；别把建议、后续设想或未定日期写成要求或承诺。只返回发布说明。",
+    "source_text": "新版本允许为项目添加只读观察员。是否邀请由项目管理员决定；不邀请也可继续使用原有项目功能。观察员能查看获邀项目里的文字内容和评论，但不能编辑，也不能下载附件。附件名称会显示在正文位置，显示名称不等于具有下载权限。这个版本未改变现有成员角色，管理员无需把原来的成员重新邀请为观察员。\n功能将先向收到开通通知的团队开放，其他团队的时间还没确定。管理员可以在项目成员页查看是否已有“邀请观察员”入口；未出现时不需要新建项目来尝试获得入口。支持团队可以登记需求，但登记不保证当周开通。当前记录没有给出各团队正式开通的统一日期。\n邀请链接三天内有效，超过时间需管理员重新发起邀请。链接只能用于指定项目，接受邀请不会让观察员看到团队其他项目。管理员可以移除观察员；移除后，该观察员失去该项目的查看权限，但过去在外部手动记下的内容不会因此被平台收回。这里没有自动水印、外发追踪或远程删除能力的承诺。\n试用期间不额外计费，正式计费方式尚未决定。我们建议管理员在邀请前说明观察员可以看到的内容范围，这是一条使用建议，不是系统强制填写的新表单。是否增加按段落限制查看的能力还没有决定，不能把它写进下个版本计划。"
+  },
+  {
+    "id": "product_release-12",
+    "primary_type": "product_release",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread only the prose below. Preserve the metadata line and the quoted button label.",
+    "source_text": "release_key=atlas-3.2; audience=editors\nThe \"Restore layout\" button resets panel positions, not document contents. Custom panel colours are also retained. The action requires a seperate confirmation."
+  },
+  {
+    "id": "research_opinion-11",
+    "primary_type": "research_opinion",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "将这份合成工作观察整理为一篇有立场的分析短文，保留不同工作需求、数据局限和实际约束，不补案例或研究引用。只返回短文。",
+    "source_text": "我支持让员工自选安静工位，但这不等于每个人每天都要独坐。有人需要随时讨论，有人需要不被打断。现有办公室没有足够空间同时满足所有安排，所以我的建议是先试半天预约，而不是立即改造整层。这个判断来自最近两周收集的工作记录，记录的用途是找出要讨论的问题，不是证明一种办公方式对所有人都更有效。\n这两周有十八人自愿填写记录，其中十一人至少提到一次临时讨论打断了手头工作，八人至少提到一次需要找同事当面确认。两类人有重叠，不能把十一加八当成十九个不同的人。我们没有要求所有员工填写，也没有记录每类需求各持续多久，所以不能从这份记录推算全公司需要多少个安静座位。它至少说明，在愿意记录的人当中，这两种需求都存在，不能只照顾其中一种。\n我并不认为安静区就应该完全禁止交流。有人需要到工位确认紧急问题，现有讨论间也常被预约。若试行半天预约，应先说明在什么情况下可以打断、需要讨论时去哪里，以及预约后临时不用该怎么释放座位。这些规则还没讨论通过，不能把我提出的问题写成已经生效的管理要求。也不能靠把所有讨论赶到走廊来证明安静区有效，因为噪声可能只是移到了别处。\n成本同样需要看。行政同事只确认目前可以挪出四个位置，还没有估算隔断、标识或调整电源的费用。四个位置并不是最终可提供数量，后续还要核对消防通道和日常通行。我的建议是先在无需施工的前提下试两周，记录实际预约、空置和冲突情况，再讨论是否值得继续。如果条件不允许试行，也应说明具体卡在哪里，而不是宣称员工根本不需要。\n支持自选的理由，是给不同任务留出一些选择，并不来自已经测量到的产出提升。我们没有同口径的工作效率数据，也没有把不同岗位随机分配到不同座位。因而即使有人试行后觉得更顺手，也应把它作为体验反馈，不能直接写成改造让效率提高了某个百分比。"
+  },
+  {
+    "id": "research_opinion-12",
+    "primary_type": "research_opinion",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread the prose. Leave the citation marker, quotation and URL unchanged.",
+    "source_text": "The memo [B7] says, \"The counts describe entries, not unique visitors.\" This distinction is relevent because the same person may enter twice. Source: https://memo.example.org/b7?format=txt"
+  },
+  {
+    "id": "social-11",
+    "primary_type": "social",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "medium",
+    "prompt": "根据这份个人记录，写三个适合朋友可见社交平台的候选。每个能独立发出，切入点和组织要有实质区别，可以选择细节，不强求写长；不补心理归因，不写励志结尾。只返回三个编号候选。",
+    "source_text": "傍晚在小区长椅上等雨停，鞋尖湿了。手机有电，但没拿出来。那天我没有特意要“断网”或做什么练习，只是把它留在外套口袋里。雨小一点就回家了，没等到完全停。这次大约坐了十来分钟，不是一个下午。\n长椅旁边有一辆儿童滑板车，车把上挂着透明塑料袋。我没有看见车主，不知道是谁放的，也没碰它。远处有人撑伞经过，隔着雨我看不清脸，更谈不上认出是哪位邻居。回来后把湿鞋放在门口，换了拖鞋去烧水，这些就是我记得的动作。\n想发一条随手记录，是因为那十来分钟在平常通勤里有点不一样。但我不想把没看手机写成克服了手机依赖，也不想把等雨写成终于学会慢下来。我没有拍照片，配图也还没决定。这只是一次没等到雨完全停就起身回家的小事。"
+  },
+  {
+    "id": "social-12",
+    "primary_type": "social",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread the body only; keep the visibility line and the quotation exactly. Return one post.",
+    "source_text": "visibility: close-friends | location: hidden\nMy sister labelled the empty jar \"For somthing useful.\" I kept her spelling on the label. I still havent found a use for it."
+  },
+  {
+    "id": "personal_nonfiction-11",
+    "primary_type": "personal_nonfiction",
+    "split": "holdout",
+    "language": "zh",
+    "length_profile": "long",
+    "prompt": "把这篇个人非虚构草稿整理得连贯，保留第一人称的有限观察。可以调整段落，不补家族往事、对白或和解式结尾。只返回成稿。",
+    "source_text": "姑姑把收音机交给我，说它以前放在爷爷屋里。我没有见过爷爷用它，也不知道它还能不能响。那天我们在她家厨房收拾一个纸箱，箱子里还有几本旧杂志和一只没有盖子的眼镜盒。收音机压在杂志下面，我先看到的是伸出来的天线，不是它正面的刻度。至于那几本杂志是否也属于爷爷，姑姑没说，我没问。\n我小时候见爷爷的次数不多。他是否爱听广播，我记忆里没有可靠的片段。后来家里有人提起过他早起，但早起也不能证明他每天听广播。我想写的是这次转交，不是把别人零散的话拼成我亲眼见过的日常。收音机背面贴着一张纸，有几笔褪色的字，我看不清，没把它当成爷爷的签名。\n姑姑没有让我修好它，也没说一定要摆在哪里。她只确认我愿意带走，我点了头。回家路上，我用围巾把它包住，放在布袋底部，怕天线被别的东西压弯。我没有打开后盖，所以不知道里面有没有电池，更不知道元件是否完整。布袋一路提在手里，经过哪几条街，我现在已经记不清了。\n到家后我把它放上书架，旁边是一本还没看完的地图册。书架上原来摆着一个空花瓶，我把花瓶挪到窗台，为收音机留了位置。整个过程里我没有通电，也没有试着转动旋钮。放好以后，屋里仍只有平时的声音；不能为了让文章有一个动人的瞬间，写成收音机忽然传出了爷爷熟悉的节目。\n后来姑姑问我有没有放好，我发了一张书架照片给她。她回了一个点头的表情，没有提过去的事。我也没有追问。这次交接没有解决什么家族争论，我们本来就没有为这台机器争执。它现在还在书架上，但我不清楚下一次搬家会把它放在哪里。就目前而言，我能说的是我接下了它，并为它挪开了一只花瓶；至于它曾经陪谁度过哪些早晨，那不在我的记忆范围里。"
+  },
+  {
+    "id": "personal_nonfiction-12",
+    "primary_type": "personal_nonfiction",
+    "split": "holdout",
+    "language": "en",
+    "length_profile": "short",
+    "prompt": "Proofread the prose only. Keep the archive marker and the recorded quotation exactly, including its spelling.",
+    "source_text": "[notebook:C-19]\nThe page says, \"We arived after dark.\" I do not remember who wrote that line. My own memory begins the next morning, with a blue bucket beside the door. I have never been certian that the bucket belonged to us."
+  }
+]

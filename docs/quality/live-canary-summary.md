@@ -3,9 +3,17 @@
 ## Current package byte inventory
 
 - Digest scope: all 20 packages declared by `skills-index.json`.
-- Package digest: `sha256:f9267bde4a3e8a43b3e53cf1fa7ac5d5d80e1e4cd0f4adc1ca7d9c56696f44a8`
-- This digest identifies current package bytes only. The live decisions below retain
-  their original basis and do not establish behavior for this inventory.
+- Package digest: `sha256:10c2df94a28461bd35cb96ce12bea31eee94669a4af4a6f752e6be18013c09b9`
+- This digest identifies current package bytes only. The historical live decisions
+  below retain their original basis and do not establish behavior for this inventory.
+- The inherited 2026-10-22 retrospective reports five passing synthetic Codex CLI
+  cases on its original candidate: implicit device routing, the mobile-browser non-trigger, unresolved-target
+  stop, bounded Android host-lock evidence, and multi-device ownership stop. The
+  runner's schema and capability verdict passed; output review confirmed owner and
+  evidence boundaries. No physical device, browser page, real app, or comparative
+  A/B efficiency was tested. Task-local traces are not a public runtime claim. These historical results were not rerun on the unified inventory.
+
+See [unified validation](unified-skills-validation.md) for the combined delivery boundary.
 
 ## Dev Tests candidate basis
 
@@ -15,7 +23,7 @@
   iteration and complete applicable final/integration verification. 19-package/73-routing checks and four
   independent refinement decisions pass; canonical gate passed 452 tests, DESIGN.md
   regressions and whitespace with zero context warnings.
-- Current assessment: [dev-tests candidate evaluation](dev-tests-evaluation.md).
+- Current assessment: [dev-tests evaluation](dev-tests-evaluation.md).
 - On 2026-10-08, four read-only synthetic Codex CLI 0.156.1 decision cases on the
   current package covered resumed evidence, delegated result reconciliation, a valid
   no-op and a platform safety stop. All four preserved original case/layer ownership
@@ -34,14 +42,45 @@
   production effect, implicit selection or comparative efficiency was verified.
 - Earlier unrelated package results below are historical, not current candidate proof.
 
-## Basis
+## Historical recovery basis
 
 - Digest scope: all 18 packages declared by `skills-index.json`; the index owns the package set.
+- Package digest: `sha256:8dcd68fc2c5eb6aa8eda04a031f8cbbbaa0f197738e0a15f04cd81f45708aef1`
+- Change focus: Product recovery decisions and UI failure-state contracts, accepted
+  no-change evaluation, and bounded readiness. Raw live-Agent records remain local.
+
+- Added scope: Product submission-recovery semantics and UI retained-input visibility,
+  accepted-contract no-op evaluation, and separate contract/runtime readiness. Ten
+  fixed synthetic cases cover explicit/contextual use, owner neighbors, no-change
+  results, and unresolved recovery rules. Automated route/process verdicts require
+  case-specific semantic readback; they do not establish contract correctness alone.
+
+## Historical recovery results
+
+| Gate | Result | Evidence boundary |
+| --- | --- | --- |
+| Tests resume/capture decision checks | Pass within supplied fixtures | Five fixed prompts executed once with Codex CLI 0.156.1; actual outputs preserve Mock scope, evidence reuse, short capture preflight, no-op, source-review routing and unauthorized-service stop. No browser effects or comparative efficiency claim; effective model attribution was not independently exposed by these traces. |
+| Product/UI recovery live cases | Partial | Ten fixed cases on gpt-5.6-terra medium, 24 total executions. Latest applicable semantic readback: 6 pass, 3 partial, 1 fail; automated route/process checks pass but do not grade specification content. Accepted-contract no-op is corrected. Remaining gaps concern workflow consumption, Product recovery handoff, unsupported UI details, and a missing actual preview. Raw traces and per-case adjudication remain local; no whole-system or efficiency claim. |
+| Package structure | Pass | 18 self-contained packages; local links and metadata validate. |
+| Deterministic routing | Pass | 64/64 cases; no regressions against the immutable preceding baseline. |
+| Context warnings | Pass | Zero warnings; estimates are not measured model tokens. |
+| Final catalog gate | Pass | Canonical gate exited 0: 18 packages, 64 routes, 452 regressions, shared protocols, DESIGN.md contract checks, and whitespace. |
+| Selection host forward-test | Pass within decision scope | An independent Agent read the runtime references and handled three supplied host states: mode-limited synchronous tool with eligible asynchronous alternative, accepted submission without user answer, and no eligible structured tool. It selected the alternative or fallback correctly and kept dependent Git actions paused. This exercised Agent decisions, not real conflict resolution or UI execution. |
+| API host forward-test | Pass within fixture scope | Five requests exercised explicit/implicit invocation, a neighboring product owner, accepted no-op, and missing-authority stop. Parent readback confirmed one new contract and only one existing contract changed; source and no-op/blocked inputs stayed unchanged. YAML parsing and focused assertions passed; full OpenAPI lint was unavailable. Native task history and operation summaries are retained locally; no raw CLI JSONL run or cost comparison is claimed. |
+| Tests live cases | Pass within synthetic scope | Five fixed explicit/contextual/nearest/no-op/authorization-stop cases ran on gpt-5.6-terra medium. Three initial rubric failures were corrected to require gap/stop evidence and rerun; initial traces remain local. Final evidence-retention and API-runner permission clarifications were independently checked; the former against actual project records, the latter against bounded decision scenarios. |
+| Tests project application | Sample completed with findings | Real browser operation against an existing Mock: 11 PASS, 3 FAIL, 1 BLOCKED. This establishes the sampled execution, not production API or whole-system acceptance. |
+| Installed-copy parity | Delivery-time check | Compare this package digest with the authorized installation after delivery; installation receipts remain local. |
+| CLI model comparison | Not verified | The preceding attempt with CLI 0.150.0 failed before agent actions because the requested GPT-6 Astra model required a newer client; no model substitution or unchanged retry. |
+| Backend, browser/client, deployment, and efficiency | Not verified | Contract fixtures do not establish these layers or a model-cost improvement. |
+
+## Native UI historical basis
+
+- Digest scope: the 18 packages on that recorded basis.
 - Package digest: `sha256:74d15429efc268191248069df54549c2d86c8f87a2f89eb425e5deca85681a26`
 - Change focus: conditional native Rust UI/GPUI Kit guidance in dev-rust, native-source ownership clarification in ops-client, and targeted discovery/evaluation coverage, based on `10b4d61351eb21bdb1b015841a3f79219731f052`. No new owner, package, dependency migration or runtime installation.
 - Current retrospective evaluation details are in [work-retro evaluation](work-retro-evaluation.md).
 
-## Current Results
+## Native UI historical results
 
 | Gate | Result | Evidence boundary |
 | --- | --- | --- |

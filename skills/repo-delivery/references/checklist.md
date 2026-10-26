@@ -42,7 +42,7 @@ does not authorize staging or committing.
   artifact. Consume the evidence; do not capture screenshots, operate a browser/client,
   or issue a new visual verdict.
 - Run cached `diff --check`, stat, and name-status before each commit; inspect content
-  hunks only when scope is mixed, changed since review, or otherwise unresolved.
+  hunks only when scope is mixed, unreviewed, changed since review, or otherwise unresolved.
 - Verify final local and remote refs once after delivery.
 
 ## Human Selection
@@ -139,7 +139,7 @@ option, an empty response, or elapsed time never supplies a decision or approval
 
 - Push only the requested branch or ref.
 - Fetch before comparing or integrating remote state.
-- Do not rebase, merge, force-push, or change upstream unless the delivery target requires it.
+- Ordinary push does not require integration. Rebase or merge only for an authorized divergent sync or integration target; do not force-push or change upstream unless the delivery target requires it.
 - Use `--force-with-lease` only when rewrite delivery is explicitly requested and repo guidance permits it.
 - Verify the pushed remote ref once, preferably inside the same bounded transaction;
   do not return to the model between push and readback.
@@ -164,15 +164,11 @@ option, an empty response, or elapsed time never supplies a decision or approval
 ## Branch Integration Strategy
 
 - Fix the target tip and source range before deciding how history should land.
-- Unless the user already named the exact merge/rebase/cherry-pick/squash strategy in
-  the current authorization, present 2–3 mutually exclusive strategies through the
-  applicable capability under [Human Selection](#human-selection) and stop before mutation. Recommendation is
-  advice, not approval; a generic request to merge, sync, commit, or push is insufficient.
-- Preserve source commits when each is meaningful, reviewed, independently coherent, dependency-ordered, and useful for future traceability or rollback.
-- Squash when the source history is WIP/fixup-heavy, conflict-repair-heavy, mechanically fragmented, or intentionally represents one outcome; also follow an explicit one-commit or repository-policy requirement.
-- Fold fixup, conflict-only, and validation-repair commits into their owning intent instead of preserving them as important history.
+- Follow the effective project or host strategy when one is specified. Otherwise, default to a non-squash rebase onto the fixed target tip; replay source commits in their original order and preserve their individual boundaries. Determine publication/consumption from the source-only commits that will actually be replayed, not from the already-published upstream baseline. Rebase changes commit SHAs, so this default does not apply when original SHAs must remain stable.
+- Strategy selection is separate from authorization to execute integration. Freeze the source and target SHAs, actual replay set, file scope, exclusions, branch protection and sharing state before mutation. An authorized ordinary rebase with no conflict or sensitive semantic overlap proceeds directly. If a replayed source commit is published/consumed, sharing is unverified, a conflict or sensitive overlap appears, or policy defeats the default, show 2–3 viable strategies under [Human Selection](#human-selection) and await the actual answer.
+- Do not default to squash, amend, reorder, or drop commits. Use those transformations only when explicitly selected or required by repository policy and separately authorized for the exact rewrite.
 - Use a partial cherry-pick only when partial integration is explicit; account for every omitted source commit and verify the resulting target tree matches the approved scope.
-- Record the chosen strategy and why the rejected alternative was less faithful to the reviewed intent.
+- Record the selected or applicable default strategy and why it fits the fixed basis.
 
 ## Squash-To-Main
 

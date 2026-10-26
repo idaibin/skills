@@ -17,6 +17,7 @@
       "urn:skills:client-operation-request:v1",
       "urn:skills:delivery-receipt:v1",
       "urn:skills:delivery-request:v1",
+      "urn:skills:device-operation-request:v1",
       "urn:skills:domain-contract:v1",
       "urn:skills:frontend-change-request:v1",
       "urn:skills:java-change-request:v1",
@@ -39,8 +40,7 @@
       "urn:skills:work-retro-request:v1",
       "urn:skills:work-retro-result:v1",
       "urn:skills:writing-output:v1",
-      "urn:skills:writing-request:v1",
-      "urn:skills:device-operation-request:v1"
+      "urn:skills:writing-request:v1"
     ],
     "known_local": [
       "urn:skills:repository-asset-snapshot:v1"
@@ -1362,14 +1362,18 @@
         "article",
         "documentation",
         "source-grounded",
-        "natural rewrite"
+        "natural rewrite",
+        "说明书"
       ],
       "excludes": [
         "translation-only requests",
         "fiction",
         "AI-detection evasion"
       ],
-      "related": [],
+      "related": [
+        "dev-tests",
+        "api-spec"
+      ],
       "capability_ids": [
         "writing.source.adapt"
       ]
@@ -1440,12 +1444,14 @@
       "name": "dev-tests",
       "category": "repository-engineering",
       "owner": "dev-tests",
-      "mutation_class": "artifact-write",
+      "mutation_class": "browser-control",
       "required_capabilities": [
         "filesystem-read",
         "git-read",
         "artifact-write",
-        "command-runner"
+        "command-runner",
+        "browser-control",
+        "visual-evidence"
       ],
       "allowed_effects": [
         "read-repository",
@@ -1453,12 +1459,12 @@
         "read-git-state",
         "write-artifact",
         "emit-findings",
-        "emit-handoff"
+        "emit-handoff",
+        "control-browser-state"
       ],
       "forbidden_effects": [
         "write-source",
         "write-git-state",
-        "control-browser-state",
         "control-client-state",
         "invoke-external-provider"
       ],
@@ -1468,13 +1474,17 @@
         "capability-unavailable",
         "evidence-incomplete",
         "missing-authorization",
-        "unsafe-or-destructive"
+        "unsafe-or-destructive",
+        "runtime-unverified"
       ],
       "intents": [
         "design early risk-based tests and testability checks with provisional assumptions",
         "verify layered test coverage against accepted product and UI contracts",
         "run existing scoped tests and reconcile backend API frontend and end-to-end evidence",
-        "select impacted regression tests after contract or source changes"
+        "select impacted regression tests after contract or source changes",
+        "plan and execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic",
+        "run system testing and regression with correlated business-state evidence",
+        "report test coverage, defects, affected retests and cleanup"
       ],
       "keywords": [
         "layered test coverage",
@@ -1494,7 +1504,23 @@
         "testability",
         "performance measurement",
         "failure recovery tests",
-        "keyboard regression tests"
+        "keyboard regression tests",
+        "end-to-end testing",
+        "functional testing",
+        "system testing",
+        "acceptance testing",
+        "regression testing",
+        "test cases",
+        "test coverage",
+        "business logic",
+        "UI walkthrough",
+        "功能测试",
+        "系统测试",
+        "接口测试",
+        "页面走查",
+        "点击测试",
+        "逻辑测试",
+        "测试流程"
       ],
       "excludes": [
         "product behavior decisions",
@@ -1503,7 +1529,12 @@
         "client mechanics",
         "fixed-basis review",
         "Git delivery",
-        "task ledger maintenance"
+        "task ledger maintenance",
+        "source-only change review",
+        "source implementation",
+        "single screenshot capture",
+        "API contract authoring",
+        "Git mutation"
       ],
       "related": [
         "product-spec",
@@ -1517,10 +1548,12 @@
         "ops-browser",
         "ops-client",
         "repo-review",
-        "repo-delivery"
+        "repo-delivery",
+        "repo-audit"
       ],
       "capability_ids": [
-        "testing.coverage.verify"
+        "testing.coverage.verify",
+        "test.acceptance.execute"
       ]
     }
   ],
@@ -3241,6 +3274,94 @@
         "basis_or_scope_identity",
         "runtime_observation_or_static_result",
         "native_contract_authority_and_verification_dimensions"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "test.acceptance.execute",
+      "capability_version": "1.0.0",
+      "package": "dev-tests",
+      "description": "Execute scoped functional acceptance and correlate API, page, UI, click and business-state evidence.",
+      "accepts": [
+        {
+          "schema": "urn:skills:repository-scope:v1",
+          "kind": "portable"
+        },
+        {
+          "schema": "urn:skills:browser-operation-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:runtime-observation:v1",
+          "kind": "portable"
+        },
+        {
+          "schema": "urn:skills:audit-findings:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "browser-control",
+        "maximum_effects": [
+          "read-repository",
+          "read-git-state",
+          "read-source",
+          "write-artifact",
+          "control-browser-state",
+          "emit-findings",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization",
+          "host-runtime-confirmation"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope",
+          "task-artifact-root"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result"
       ],
       "adapter_binding": {
         "policy": "runtime-only",

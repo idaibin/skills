@@ -38,9 +38,14 @@ after selecting a branch, read only its referenced modules.
   handoffs and evidence bind the accepted comparison-basis revision.
 - Do not invent product behavior, exact values, assets, component ownership, rights,
   runtime facts, or shared semantics. Tag unknowns with the defined evidence level.
-- Mark details absent from the accepted source as proposed. Resolve required component
-  and shared-owner mappings before that slice is `Ready`; "owners unchanged" alone
-  does not identify them.
+- Mark UI details absent from the accepted source as proposed, including added
+  feedback placements or field-level errors; do not present them as accepted rules.
+- For implementation handoff, an unresolved required component/owner mapping keeps
+  that slice `Not Ready`. For each new page or visible UI slice, name the closest
+  accepted page when one exists and actual public component/style owner in its existing
+  contract or handoff; reuse them when they fit. If no accepted page exists or an owner
+  does not fit, record that fact and reason without inventing a reference or blocking
+  unrelated slices. "Existing owners unchanged" alone does not identify them.
 - Do not duplicate shared tokens or component interfaces in a Feature Spec, introduce
   a parallel Registry/schema, or force `DESIGN.md` adoption for an unchanged local
   slice.
@@ -54,10 +59,11 @@ after selecting a branch, read only its referenced modules.
 
 ## Output Map
 
-Return `ui.contract.specify@1.2.0` with lifecycle/profile, source identity and rights,
-authority disposition, slice IDs, applicable layout/state/interaction/accessibility and
-asset contracts, delta/evidence references, comparison basis, per-slice readiness, and
-named gaps. Candidate output additionally returns both ignored paths/hashes and handoff
+Return `ui.contract.specify@1.2.0` with lifecycle/profile, selected-source
+identity/revision, selection/approval, rights/use/ignore boundaries, authority
+disposition, slice IDs, applicable layout/state/interaction/accessibility and asset
+contracts, delta/evidence references, comparison basis, per-slice readiness, and named
+gaps. Candidate output additionally returns both ignored paths/hashes and handoff
 status. Store task-local evidence under verified ignored `.codex/artifacts/`. Include
 DESIGN, viewport, SVG, or runtime-evidence fields only when the corresponding
 module was activated.

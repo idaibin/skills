@@ -319,11 +319,11 @@ def evaluate(record: dict[str, Any]) -> dict[str, Any]:
                 "locked-session policy prohibits browser profile import",
             ),
         }
-        for key, (policy_key, reason) in prohibited_constraints.items():
+        for key, (_, reason) in prohibited_constraints.items():
             value = controller_constraints.get(key, False)
             if not isinstance(value, bool):
                 raise ValueError(f"controller_constraints.{key} must be a boolean")
-            if value and (key == "requires_debug_enablement" or lock_policy.get(policy_key) is not False):
+            if value:
                 reasons.append(reason)
 
         if selected_browser_available:

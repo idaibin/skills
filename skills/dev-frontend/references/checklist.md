@@ -84,7 +84,7 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
 
 ## Reuse-First Gate
 
-- Start from a current `repo-map` directory/file inventory, or reproduce the same targeted search when it is unavailable or stale.
+- Apply the [Required Context](#required-context) owner/basis branches first; use a current `repo-map` inventory or bounded current-source discovery only when those branches require it.
 - Search relevant routes, pages, layouts, components, hooks/composables, services, stores, shared UI, tests, exports, and symbols before creating anything.
 - Classify candidates as:
   - direct reuse: behavior and ownership already match
@@ -192,6 +192,9 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
   or restart a server, stop another process, or choose another port for validation.
   If the address is unavailable, uncertain or mismatched, leave page acceptance
   `Not verified` and report the documented service recovery condition.
+- When authorized browser page readback is required, `ops-browser` owns opening the
+  documented page and reading the affected route/state; `dev-frontend` consumes and
+  reports that result.
 - For a one-owner local style, template, icon, copy, or similarly bounded component
   change with no API/state/public/shared/build/runtime impact, batch the edits and use
   the running dev/compiler diagnostics as the first signal. If they remain clean,

@@ -21,6 +21,11 @@ basis, scope, and extractor coverage.
 ## Query Gate
 
 Require a compatible validated snapshot and bind the query to its immutable identity.
+For a current-source question, compare the recorded source basis with the requested
+current basis before accepting the result. Snapshot integrity validation does not
+establish freshness. A mismatch permits a clearly historical answer against that
+snapshot, but leaves the current-source answer stale until an explicit refresh;
+do not silently select the latest snapshot or rescan.
 Return only requested owners, relations, consumers, impact, conflicts, drift, or
 coverage. A miss is `Not found in this snapshot`, never repository-wide absence.
 

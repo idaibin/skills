@@ -38,6 +38,7 @@ GROUP_TO_SECTION = {
 }
 REQUIRED_BASE_GROUPS = ("colors", "typography", "spacing", "rounded")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+TEMPLATE_PROSE_SECTIONS = frozenset(("Overview", "Elevation & Depth"))
 
 
 def sha256(path: Path) -> str:
@@ -173,6 +174,20 @@ def meaningful_prose(content: str) -> bool:
     return len(compact) >= 40 and len(units) >= 8 and len({unit.casefold() for unit in units}) >= 4
 
 
+def contains_starter_template_prose(section_name: str, content: str) -> bool:
+    if section_name not in TEMPLATE_PROSE_SECTIONS:
+        return False
+    template_path = Path(__file__).resolve().parents[1] / "assets" / "DESIGN.md"
+    _, template_sections = parse_document_bytes(template_path.read_bytes())
+
+    def normalize(value: str) -> str:
+        return re.sub(r"\s+", " ", value).strip().casefold()
+
+    candidate = normalize(narrative_content(content))
+    template = normalize(narrative_content(template_sections.get(section_name, "")))
+    return bool(template) and template in candidate
+
+
 def narrative_content(content: str) -> str:
     return re.sub(r"```.*?```|~~~.*?~~~", " ", content, flags=re.DOTALL)
 
@@ -232,6 +247,8 @@ def evaluate_document(
         if not isinstance(value, str) or not value.strip() or "replace with" in value.lower():
             errors.append(f"frontmatter {field} must replace the starter placeholder")
     for section_name in CANONICAL_SECTIONS:
+        if contains_starter_template_prose(section_name, sections.get(section_name, "")):
+            errors.append(f"{section_name} retains starter template prose")
         if not meaningful_prose(sections.get(section_name, "")):
             errors.append(f"{section_name} requires non-placeholder application semantics")
 
@@ -388,7 +405,7 @@ def main() -> int:
             raise RuntimeError("source artifact changed during validation; result is stale")
         if args.approval_record and args.approval_record.read_bytes() != approval_bytes:
             raise RuntimeError("approval record changed during validation; result is stale")
-    except (OSError, RuntimeError) as error:
+    except (OSError, RuntimeError, ValueError) as error:
         print(json.dumps({"status": "not-verified", "error": str(error)}))
         return 2
     print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))

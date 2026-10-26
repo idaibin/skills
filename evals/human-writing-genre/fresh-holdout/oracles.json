@@ -1,0 +1,601 @@
+[
+  {
+    "id": "fresh-message_email-01",
+    "must_preserve": [
+      "木饰面可按原计划周四上午送达；原计划木饰面与灯带一起送样。",
+      "灯带缺调光配件；供应商仅确认周五发出，收到时间未确认，合并送样没有可靠新日期。",
+      "由林工在周二下班前选择先看木饰面或等两项一起；先看将另约灯带确认，并提前发三种木饰面颜色编号。",
+      "两种安排均不重新报价，费用按现有确认单执行。"
+    ],
+    "must_not_add": [
+      "灯带周五送达或确定的补送日期。",
+      "对方已同意分批送样、赔付、折扣、退款或新收费。"
+    ],
+    "scope_checks": [
+      "输出仅为邮件正文；可重组、去重，不要求沿用原段落或逐句覆盖情绪铺垫。",
+      "请求对方选择方案，不能替对方作决定；缺少到货日期可直接说明，无需停笔询问。"
+    ],
+    "literal_checks": [],
+    "genre_checks": [
+      {
+        "dimension": "收件人行动",
+        "score_0": "没有可识别的选择请求或截止点",
+        "score_1": "有请求但选择关系或截止点表达费解",
+        "score_2": "选择、截止点与后续安排清楚"
+      },
+      {
+        "dimension": "邮件语气",
+        "score_0": "出现无来源责备或施压承诺",
+        "score_1": "基本平和但重复妨碍理解",
+        "score_2": "礼貌直接，信息顺序便于林工作决定"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-message_email-02",
+    "must_preserve": [
+      "Blue notebook found in meeting room, left with reception; reception open until 6 today.",
+      "The sender tells Mara there is no rush."
+    ],
+    "must_not_add": [
+      "A notebook delivery offer, ownership verification requirement, or a claim that reception opens tomorrow."
+    ],
+    "scope_checks": [
+      "This is a deliberate no-op: the message is clear and natural; return it unchanged, omitting only the material label.",
+      "Do not assess or reward structural rewriting."
+    ],
+    "literal_checks": [
+      {
+        "text": "Hi Mara, I found your blue notebook in the meeting room. I've left it with reception. No rush to collect it—they're open until 6 today.",
+        "mode": "exact_body"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "完成请求",
+        "score_0": "改写、添加说明或保留测试标签",
+        "score_1": "消息不变但有多余包装",
+        "score_2": "仅原消息，原样返回"
+      },
+      {
+        "dimension": "消息完整性",
+        "score_0": "遗漏取件位置或营业截止点",
+        "score_1": "内容保留但版面有非必要变化",
+        "score_2": "完整保留原有简短消息"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-status_notice-01",
+    "must_preserve": [
+      "周三14:00—16:00检修五楼茶水间热水器。",
+      "影响仅为五楼茶水间热水；冷水及其他楼层不受影响。",
+      "可到四楼茶水间接热水，无需预约。"
+    ],
+    "must_not_add": [
+      "整栋楼停水、冷水停供、恢复后的水质要求或不存在的联系电话。"
+    ],
+    "scope_checks": [
+      "可选择段落或条目，不用补造标题、日期或联系号码。",
+      "通知对象为楼内员工，不改成给施工方的操作指令。"
+    ],
+    "literal_checks": [
+      {
+        "text": "物业值班室",
+        "mode": "if_referenced"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "影响边界",
+        "score_0": "误导为整楼或冷水停供",
+        "score_1": "边界正确但读者需反复推断",
+        "score_2": "时间、位置与仅热水受影响一读可知"
+      },
+      {
+        "dimension": "员工可执行性",
+        "score_0": "未提供替代取水点",
+        "score_1": "有替代点但被冗余内容淹没",
+        "score_2": "四楼取热水且无需预约明确可见"
+      }
+    ],
+    "conditional_fidelity": [
+      "可省略检修负责人；若提供，负责人为物业值班室，不得换成其他主体或编造联系方式。"
+    ]
+  },
+  {
+    "id": "fresh-status_notice-02",
+    "must_preserve": [
+      "All 418 shelf records entered; Lea checked totals against signed count sheets and they match.",
+      "27 photo links still target old folder; depot staff can access them, visiting auditors cannot; records themselves are not missing.",
+      "IT expects to suggest a filename-preserving transfer method Tuesday, without committing to transfer completion Tuesday.",
+      "Use signed sheets for external evidence requests until links move; Lea updates after IT replies; no recount or duplicate uploads requested.",
+      "Audit remains scheduled for following Monday; no date change agreed."
+    ],
+    "must_not_add": [
+      "An audit delay, completed photo transfer, IT guarantee, data loss, or a new staff recount requirement."
+    ],
+    "scope_checks": [
+      "Reorganization and deduplication allowed; preserve operational facts, not the meta-comment about earlier repetitive notes.",
+      "No named calendar date is necessary; relative days are sufficient for this internal weekly update."
+    ],
+    "literal_checks": [],
+    "genre_checks": [
+      {
+        "dimension": "状态可辨认",
+        "score_0": "把录入完成与链接迁移混为完成",
+        "score_1": "事实正确但完成项与待办混杂",
+        "score_2": "清楚区分录入完成、访问问题及IT待回复"
+      },
+      {
+        "dimension": "团队下一步",
+        "score_0": "提出来源外工作或遗漏临时证据办法",
+        "score_1": "下一步存在但责任或触发点含糊",
+        "score_2": "临时办法、无需做的事及Lea更新触发点清楚"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-tutorial_howto-01",
+    "must_preserve": [
+      "打开“工具柜登记”并选“归还”；条码扫描或手输六位编号二选一。",
+      "找到记录后先核对名称与实物再查配件；齐全才确认归还并放回相同编号柜格。",
+      "工具或配件缺失则选“待核对”、备注缺项、放黄色托盘交当班负责人，不确认归还。",
+      "找不到记录时留在当前页联系负责人，不新建借用记录；断网联系负责人安排纸质登记，系统无离线保存。",
+      "每次处理完一盒再处理下一盒。"
+    ],
+    "must_not_add": [
+      "自动同步、离线缓存、补登记权限、重置账户或跳过核验的操作。"
+    ],
+    "scope_checks": [
+      "可以改为步骤或按异常分支组织；保留核对先后和确认归还的条件。",
+      "系统规则已足够，缺少软件截图或真实链接不构成停笔理由。"
+    ],
+    "literal_checks": [
+      {
+        "text": "工具柜登记",
+        "mode": "must_include"
+      },
+      {
+        "text": "归还",
+        "mode": "must_include"
+      },
+      {
+        "text": "待核对",
+        "mode": "must_include"
+      },
+      {
+        "text": "确认归还",
+        "mode": "must_include"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "步骤与分支",
+        "score_0": "正常流程或缺件分支执行错误",
+        "score_1": "流程正确但分支位置难找",
+        "score_2": "正常操作与缺件/无记录/断网分支清楚"
+      },
+      {
+        "dimension": "首次上手",
+        "score_0": "假定志愿者知道未解释的操作或添功能",
+        "score_1": "大致可用但替代输入或一盒一处理不明显",
+        "score_2": "新手可按文操作且无需猜测两种输入关系"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-tutorial_howto-02",
+    "must_preserve": [
+      "Disconnect power before cleaning; dry lint-free cloth; do not spray cleaner directly on lens; reconnect after dry."
+    ],
+    "must_not_add": [
+      "A drying time, solvent recommendation, permission to spray the cloth, or new electrical procedure."
+    ],
+    "scope_checks": [
+      "Only spelling fixes: disconect → disconnect and directy → directly; other wording and sentence order stay unchanged.",
+      "No structural-rewrite criterion applies."
+    ],
+    "literal_checks": [],
+    "genre_checks": [
+      {
+        "dimension": "校对范围",
+        "score_0": "改变步骤或大量重写",
+        "score_1": "两处拼写修正但附加非请求说明",
+        "score_2": "仅修正两处拼写并返回正文"
+      },
+      {
+        "dimension": "指令保真",
+        "score_0": "改变断电或禁喷条件",
+        "score_1": "条件保留但引入多余表达",
+        "score_2": "原有安全条件及顺序完整保留"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-explanation_reference-01",
+    "must_preserve": [
+      "前两句定义缓存内容与十分钟保留/过期不用规则。",
+      "缓存未命中只说明需要再查数据库，不能据此推断数据不存在。"
+    ],
+    "must_not_add": [
+      "每十分钟自动刷新、后台预热、数据库一定有数据、缓存错误或额外时延数值。"
+    ],
+    "scope_checks": [
+      "编辑仅限第三句；前两句原样，输出完整三句。",
+      "允许第三句使用通俗改述，不要求保留“命中”术语或唯一措辞。"
+    ],
+    "literal_checks": [
+      {
+        "text": "缓存保存最近一次成功查询的结果。每条结果在缓存中保留十分钟，超过十分钟就不再使用。",
+        "mode": "immutable_span"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "解释有效性",
+        "score_0": "把未命中解释成不存在或系统损坏",
+        "score_1": "解释正确但仍需专业知识才能理解",
+        "score_2": "清楚说明没在缓存找到与数据库仍需查询的关系"
+      },
+      {
+        "dimension": "局部范围",
+        "score_0": "修改前两句或追加其他段落",
+        "score_1": "前两句保留但输出有多余包装",
+        "score_2": "仅第三句改写，完整三句正文"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-explanation_reference-02",
+    "must_preserve": [
+      "Snapshot is fixed when request is accepted; snapshot time is displayed on the download page; preparation may take several minutes and does not advance snapshot.",
+      "Edits during preparation appear with earlier value; inclusion depends on requesting user access at snapshot time.",
+      "Admin/member files can differ at same moment; difference alone does not establish deletion.",
+      "Records exported; attachment names listed but attachment files excluded.",
+      "Link available 24 hours after file ready; after expiry request new export with new snapshot; compare time and permissions before attributing differences solely to time."
+    ],
+    "must_not_add": [
+      "An exact preparation SLA, attachment downloads, exporting inaccessible records, an expiry measured from request time, or account deletion claims."
+    ],
+    "scope_checks": [
+      "May reorganize into headings, paragraphs, or a compact reference list; no mandatory structure.",
+      "Explain only the fictional specified behavior; real product documentation or new implementation detail is unnecessary."
+    ],
+    "literal_checks": [
+      {
+        "text": "Snapshot time",
+        "mode": "if_referenced"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "概念边界",
+        "score_0": "混淆请求时点、准备时段或下载有效期",
+        "score_1": "边界正确但需读者自行拼接",
+        "score_2": "三个时间概念及各自影响容易区分"
+      },
+      {
+        "dimension": "支持排查价值",
+        "score_0": "用单一原因武断解释文件差异",
+        "score_1": "提到时间和权限但解释松散",
+        "score_2": "能据此解释旧值、权限差异与附件范围"
+      }
+    ],
+    "conditional_fidelity": [
+      "The displayed field may be described without quoting its label. If named as a UI field, its source label is “Snapshot time”; do not invent another field name."
+    ]
+  },
+  {
+    "id": "fresh-product_release-01",
+    "must_preserve": [
+      "今天向全部付费工作区开放个人收藏分组功能；本次不开放免费工作区。",
+      "可创建分组、移动自己的收藏页面并调整分组顺序；现有收藏保留，更新后先处于未分组状态。",
+      "仅个人收藏视图可见，不改变页面权限；失去访问权的收藏可能显示标题，点击仍打不开。",
+      "网页端支持创建/调整，手机端仅查看已有分组；无需管理员开关。"
+    ],
+    "must_not_add": [
+      "共享分组、权限恢复、免费开放日期、移动编辑时间表、性能提升数字或需管理员配置。"
+    ],
+    "scope_checks": [
+      "转为面向付费用户的说明，去掉内部讨论；允许不写尚无日期的未来事项。",
+      "不强制营销句、标题或特定段落数；功能入口位置未知，可不提供操作路径。"
+    ],
+    "literal_checks": [
+      {
+        "text": "页舟",
+        "mode": "if_referenced"
+      },
+      {
+        "text": "收藏夹分组",
+        "mode": "if_referenced"
+      },
+      {
+        "text": "未分组",
+        "mode": "if_referenced"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "发布可用信息",
+        "score_0": "只写口号，能力和范围不清楚",
+        "score_1": "主要能力清楚但适用端或用户范围难找",
+        "score_2": "用户可辨本次能力、开放范围与端侧限制"
+      },
+      {
+        "dimension": "权限预期",
+        "score_0": "暗示分组让他人可见或恢复访问",
+        "score_1": "权限事实存在但不易理解",
+        "score_2": "个人视图与页面访问权的边界清晰"
+      }
+    ],
+    "conditional_fidelity": [
+      "产品名可省略；如命名产品，名称为“页舟”。功能和默认分组可用普通语言说明；如按界面正式标签命名，分别为“收藏夹分组”和“未分组”。",
+      "未来路线图可省略；如提及，免费工作区开放与手机端编辑分组日期均未确定，不得转成日期承诺。"
+    ]
+  },
+  {
+    "id": "fresh-product_release-02",
+    "must_preserve": [
+      "Report owners can now rename their saved reports; all accounts have it today.",
+      "Only display title changes; share URL stays same; cannot rename reports owned by others."
+    ],
+    "must_not_add": [
+      "Editing report content, delegated ownership rights, redirect behavior, a new share link or paid-plan requirement."
+    ],
+    "scope_checks": [
+      "Short in-app announcement; title optional; no need to enumerate unrelated features absent from release.",
+      "Must not request external publication or invent a settings path."
+    ],
+    "literal_checks": [
+      {
+        "text": "Meterline",
+        "mode": "if_referenced"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "发布重点",
+        "score_0": "没有说明谁能重命名什么",
+        "score_1": "功能正确但所有者条件埋藏",
+        "score_2": "新增操作及所有者限制易读"
+      },
+      {
+        "dimension": "用户预期",
+        "score_0": "暗示链接变化或内容可编辑",
+        "score_1": "链接不变说明不够直接",
+        "score_2": "明确显示标题变更且现有分享链接不变"
+      }
+    ],
+    "conditional_fidelity": [
+      "The in-app announcement need not repeat the product brand. If the brand is named, it is Meterline."
+    ]
+  },
+  {
+    "id": "fresh-research_opinion-01",
+    "must_preserve": [
+      "某市12家社区书店问卷，9家报告周末活动后当日进店人数增加。",
+      "缺少活动前长期客流与未办活动对照；不能据此说明长期销售额提高。",
+      "作者认为值得继续试，计划下次同步记录客流/销售额至少八周。"
+    ],
+    "must_not_add": [
+      "统计显著性、已证实的因果效应、销量增幅、真实论文引用或样本代表全市。"
+    ],
+    "scope_checks": [
+      "输出一段内部研究评论，允许不同论述顺序。",
+      "不必因缺少对照而停止写作；这是必须保留的证据限制。"
+    ],
+    "literal_checks": [],
+    "genre_checks": [
+      {
+        "dimension": "论证校准",
+        "score_0": "把当天进店变化推为长期销售因果",
+        "score_1": "结论谨慎但未连接样本与缺口",
+        "score_2": "观察、证据限制与继续试验的判断关系明确"
+      },
+      {
+        "dimension": "作者立场",
+        "score_0": "抹去继续试的判断或改为全面否定",
+        "score_1": "保留立场但后续观测计划不清",
+        "score_2": "谨慎支持尝试并提出素材中的观测改进"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-research_opinion-02",
+    "must_preserve": [
+      "Six-week comparison: Cedar used shared board; Flint usual chat; Cedar logged fewer repeated questions in final two weeks.",
+      "Cedar lead required every question on board; Flint could use private messages, creating different capture rates; customer request types also differ.",
+      "Logs do not establish board caused decline, whether either team spent less total answering time, or reliable time-saved estimate.",
+      "Author encouraged and favors another trial over immediate company-wide rollout; proposes common logging rule and recording answer-search time plus repeated questions, with remaining work-type caveat."
+    ],
+    "must_not_add": [
+      "Numerical productivity savings, randomized assignment, equivalent team workloads, statistical certainty, or outside citations."
+    ],
+    "scope_checks": [
+      "May reorganize and shorten repeated caveats while retaining distinct measurement and workload limits.",
+      "Preserve first-person evaluative stance; cautious wording need not match original modal verbs exactly."
+    ],
+    "literal_checks": [],
+    "genre_checks": [
+      {
+        "dimension": "研究推理",
+        "score_0": "把日志差异当成因果或节省工时证据",
+        "score_1": "保留谨慎结论但局限和建议衔接弱",
+        "score_2": "观察、测量问题和下次试验设计形成可理解论证"
+      },
+      {
+        "dimension": "观点归属",
+        "score_0": "把个人建议写成已批准公司决策",
+        "score_1": "作者立场存在但力度改变",
+        "score_2": "鼓励继续试验、暂缓全面推广的立场可辨"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-social-01",
+    "must_preserve": [
+      "提供两条独立成文的候选，分别面向街区微信群与公开社交账号；前者便于附近居民参与，后者让不了解活动的读者获得足够背景。",
+      "真正邀请读者到场的候选应给出本周六下午两点到四点、榆树巷社区活动室，以及足以判断如何参加的方式；不要求两条逐项重复全部参加细节。",
+      "保留活动给仍可使用的旧物多一点机会的心情，可改述。两条均不得承诺包修好、扩大维修服务或写成成熟项目。"
+    ],
+    "must_not_add": [
+      "保证修复、免费零件、收集捐赠、线上直播、远程诊断、长期固定举办或已有修理成绩。"
+    ],
+    "scope_checks": [
+      "必须有两个可区分、各自成文且体现指定受众的候选；可用简短标签区分，不要求等长或逐项重复来源事实。",
+      "按每条实际表达检查邀请信息：真正邀请到场时应有时间、地点和可理解的参与方式；携带设备邀请检查对应品类及安全边界。只介绍活动而未作到场或携带邀请的候选，不强制加入同样的参加清单。",
+      "受众适配可通过信息选择和背景量体现，不强制两条作同样邀请；准确选择设备子集合法，遗漏未选品类本身不扣覆盖分。",
+      "conditional_fidelity细节可省略，提及时核查事实、情态、费用范围与安全服务边界；不得把可选细节重新作为每条必需覆盖项。"
+    ],
+    "literal_checks": [
+      {
+        "text": "榆树巷社区活动室",
+        "mode": "if_referenced",
+        "scope": "Formal location naming; an actual attendance invitation must supply an unambiguous venue as required semantically."
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "受众适配",
+        "score_0": "缺少候选，或未体现指定受众且无法理解活动",
+        "score_1": "两条均可读，但附近居民的参与需要与陌生读者的背景需要区分不足",
+        "score_2": "两条各自成文，信息选择分别适合附近居民与陌生读者；无需重复所有参加细节"
+      },
+      {
+        "dimension": "活动预期",
+        "score_0": "保证修好或扩大为全品类/不安全服务",
+        "score_1": "基本准确，但实际邀请的参与方式或相关服务边界不清",
+        "score_2": "活动表达亲切，实际邀请具备必要信息，相关维修非保证和安全服务边界清楚"
+      }
+    ],
+    "conditional_fidelity": [
+      "邀请携带设备时，范围可选择台灯、电风扇、电水壶中的准确子集，不必穷举全部可接与不接品类；不得扩大到电视、冰箱或任意电器。相关安全服务边界仍须明确，不能让携带邀请产生接收电池鼓包设备的印象。若交代数量，每人一件。纯旁观邀请无需列携带清单。",
+      "可按各候选的受众取舍无需报名、现场按到场顺序检查、检查免费等非核心参加细节，不要求两版逐项重复；提及时必须准确。检查免费不能改成维修及零件均免费，也不能编造预约、收费或名额规则。",
+      "志愿者人数及诊断流程可省略；若写人数，是两位；若写流程，是先看能否处理再解释问题。不能保证修好，不得改成接到即修好。",
+      "零件流程可省略；如提及，需要购买时先说明，由物主决定是否继续，志愿者不会擅自下单；不得暗示零件免费或强制购买。",
+      "可旁观、首次尝试、此前只有一次小型邻里交换、无直播和无远程诊断等背景可按受众省略；提及时必须与源文一致，不得虚构修理成果或线上服务。"
+    ]
+  },
+  {
+    "id": "fresh-social-02",
+    "must_preserve": [
+      "Keep the concrete observation of a grey heron being still and then moving into the reeds, with the quiet contrast between stillness and a small, unhurried movement.",
+      "Preserve the narrator’s observation limit: not seeing a catch cannot become a claim that a catch occurred or that none occurred. Retain a modest personal afterthought about the small movement rather than inventing an event or universal lesson."
+    ],
+    "must_not_add": [
+      "A successful catch, claims about all herons, exact clock time, conservation status, invitation or event."
+    ],
+    "scope_checks": [
+      "One concise post; preserve the stillness/small-movement observation and quiet personal voice while allowing legal compression of secondary time, count and location details.",
+      "Do not require an inventory of every original observation. Judge selected details for fidelity; omitted details are not errors when the central observation and evidence boundary remain intact.",
+      "No hashtags or platform format required; no need to remove all personal reflection or to add an event or call to action."
+    ],
+    "literal_checks": [
+      {
+        "text": "Willow Pool",
+        "mode": "if_referenced"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "观察声线",
+        "score_0": "变成宣传号召或宏大道理",
+        "score_1": "事实正确但语气明显热闹夸张",
+        "score_2": "安静观察及个人余味可辨"
+      },
+      {
+        "dimension": "社交可读性",
+        "score_0": "关键观察散失或输出分析",
+        "score_1": "成文但重复影响简洁",
+        "score_2": "单条自然简洁，保留具体的静止与小幅移动观察；不要求穷举晨间、时长或步数"
+      }
+    ],
+    "conditional_fidelity": [
+      "Morning, nearly ten minutes, two steps, the walk home, and the east-bank/Willow Pool location may be selectively compressed or omitted. If retained, they must match the source: this morning, nearly ten minutes (not a fixed longer duration), two steps into the reeds, and reflection on the walk home.",
+      "If named, the place is Willow Pool; if the bank is specified, it is the east bank. Omission does not authorize relocation, a different time, invented behavior or a successful catch.",
+      "The explicit sentence about not seeing a catch may be omitted if the shorter post makes no claim about a catch. Any catch-related wording must preserve what the narrator did and did not observe; species identification remains grey heron, without invented certainty, doubt or expert confirmation."
+    ]
+  },
+  {
+    "id": "fresh-personal_nonfiction-01",
+    "must_preserve": [
+      "旧卷尺为父亲留下，搬家时放厨房抽屉。",
+      "量得不太准但顺手所以想留着。",
+      "作者明确无意借它纪念什么，只是还没找到更愿意用的。"
+    ],
+    "must_not_add": [
+      "父亲去世、父子关系、遗物象征、怀念动机或更换卷尺计划。"
+    ],
+    "scope_checks": [
+      "只润色第二句；第一、第三句原样。",
+      "不得把朴素保留理由改为悼念、感恩或人生哲理。"
+    ],
+    "literal_checks": [
+      {
+        "text": "搬家时，我把父亲留下的旧卷尺放进了厨房抽屉。",
+        "mode": "immutable_span"
+      },
+      {
+        "text": "我没打算拿它纪念什么，只是还没找到更愿意用的那一把。",
+        "mode": "immutable_span"
+      }
+    ],
+    "genre_checks": [
+      {
+        "dimension": "声线与动机",
+        "score_0": "添加悼念或象征解释",
+        "score_1": "未添经历但措辞明显煽情",
+        "score_2": "顺手而保留的朴素动机成立"
+      },
+      {
+        "dimension": "局部编辑",
+        "score_0": "改动受保护句或只输出第二句",
+        "score_1": "句子保留但额外解释",
+        "score_2": "完整三句，仅第二句衔接改善"
+      }
+    ],
+    "conditional_fidelity": []
+  },
+  {
+    "id": "fresh-personal_nonfiction-02",
+    "must_preserve": [
+      "Three months of Thursday beginner pottery above hardware shop, requiring later bus; first month lopsided cylinders and ambivalence.",
+      "Cleaning tables/tools quietly after class was what narrator liked; knowing evening finished was enough reason to continue for a while.",
+      "Stopped after three-month course because later bus cancelled and next too late; has not found another class.",
+      "Uneven cup beside sink holds washing-up brush; glad to have gone without claiming life transformation or hidden talent."
+    ],
+    "must_not_add": [
+      "Grief, burnout diagnosis, friendship, career change, awards, a newly found class, universal therapeutic effects or advice everyone should try pottery."
+    ],
+    "scope_checks": [
+      "Structural rewrite and trimming allowed; preserve distinctive cleanup sequence or enough concrete detail to support its appeal, not every tool noun.",
+      "Synthetic label is provenance metadata and need not appear in the finished essay; first-person narrator remains the invented source narrator.",
+      "No request for real personal information or publication action is needed."
+    ],
+    "literal_checks": [],
+    "genre_checks": [
+      {
+        "dimension": "个人叙述弧线",
+        "score_0": "改成普遍建议或天赋发现故事",
+        "score_1": "事实在但清理的吸引力与停课原因衔接弱",
+        "score_2": "期望、有限乐趣、实际停课原因与仍感欣慰连贯"
+      },
+      {
+        "dimension": "作者声线",
+        "score_0": "加入戏剧转折或强烈人生启示",
+        "score_1": "总体克制但抹平犹豫和有限肯定",
+        "score_2": "犹豫、具体观察和有限肯定同时保留"
+      }
+    ],
+    "conditional_fidelity": []
+  }
+]

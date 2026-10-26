@@ -13,6 +13,8 @@
 
 Prefer explicit user decisions, accepted requirements, current business contracts, established domain documentation, representative tests, and then current code behavior. Code proves current behavior, not automatically business intent. Label each material statement `Confirmed`, `Inferred`, `Conflict`, or `Not verified`.
 
+A current-turn user statement or decision can be the identified source for analysis within its stated scope. It does not by itself grant permission to write a durable artifact; the Artifact Gate still requires an existing authoritative source and explicit authorization for the named write scope.
+
 ## Default Terminology And Rules Pass
 
 - Give one canonical business term one meaning inside the relevant scope.
@@ -28,7 +30,7 @@ Load only when state or transition order changes business meaning. Record applic
 
 ## Bounded Context Profile
 
-Load only when canonical language, business owner, consistency rule, permission authority, source of truth, or external contract differs materially. Use repository-native boundary terms where available; do not impose technical DDD patterns or split contexts by folder/team names.
+Load only when resolving the ambiguity requires an explicit cross-owner boundary decision, such as deciding boundary language or identifying materially distinct owner scope, consistency rules, permission authority, source of truth, or external contract. An overloaded term with different owner-local meanings stays in the default pass when no cross-boundary rule or authority decision is needed. Use repository-native boundary terms where available; do not impose technical DDD patterns or split contexts by folder/team names.
 
 ## Artifact Gate
 
@@ -41,6 +43,8 @@ An artifact update requires all three:
 Otherwise return the decision in chat and leave repository files unchanged.
 
 ## Output Template
+
+Include affected owners and the next semantic handoff in the existing sections where clear; a separate section is not required.
 
 ```markdown
 # Domain Decision

@@ -154,6 +154,19 @@ replacement route. Retain only the requested final recording and screenshots; re
 task-owned partial recordings and temporary capture files when their identity and
 ownership are verified.
 
+When the user explicitly authorizes a reconstructed browser recording, keep it bound
+to the verified tab and capture target. Prefer a tab-viewport frame stream over a
+desktop/window capture when the requested deliverable is page content only. Read back
+the effective viewport, verify every recorded frame has that exact size, and do not
+include browser chrome, device toolbars, the host application, or unrelated tabs.
+Use a task-owned localhost receiver and temporary directory when the active adapter
+cannot persist frame data itself; acknowledge each frame, retain its order or capture
+timestamp, and stop the stream before post-recording cleanup or navigation. Encode one
+derived video, label it as reconstructed rather than native continuous capture, and
+verify its dimensions, duration, first/intermediate/final states, and absence of
+unrequested UI before delivery. A fast frame sequence proves only the ordered rendered
+states it contains, not real-time interaction timing.
+
 Do not replace a failed interaction with direct navigation and then call the
 interaction verified. Direct navigation may prove only that the destination renders.
 If the user explicitly requests a keyframe, slideshow, or reconstructed video, label

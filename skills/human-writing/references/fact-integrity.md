@@ -5,6 +5,7 @@ Good prose cannot repair unsupported content. Build a source ledger before draft
 ## Contents
 
 - [Source Ledger](#source-ledger)
+- [Source-Based Editing Check](#source-based-editing-check)
 - [Editing Directives And Claim Authority](#editing-directives-and-claim-authority)
 - [Claim Trace](#claim-trace)
 - [Research-To-Draft Loop](#research-to-draft-loop)
@@ -84,11 +85,41 @@ Apply `verbatim` by default to:
 - version numbers
 - URLs
 - quotations
+- machine-facing frontmatter, explicit IDs, link targets, and data fields
 - legal or security warnings
+
+Preserve heading text and hierarchy when the task protects structure or their wording serves anchors or references. Change them only within the requested scope and check affected references.
 
 Visibility controls whether material may appear. Transformation policy controls how permitted material may change and never expands visibility. A verbatim command can still be background-only or do-not-disclose; required attribution does not grant permission to expose a private quotation.
 
 Apply both axes to the smallest practical semantic unit: claim, quotation, command, identifier, field, or contiguous span. A document or message may define defaults, but narrower classifications override them. Split a derived sentence when independently governed claims can be separated; otherwise apply the strictest applicable policy.
+
+## Source-Based Editing Check
+
+Build from supported source clauses rather than first inventing a fluent scene and
+checking only its headline facts. Keep already suitable wording when changing it
+has no concrete benefit for this reader and operation.
+
+During drafting, pair each retained source assertion with its draft clause.
+Before returning each artifact, including every alternative, audit the actual final
+clauses against those source spans and compare in both directions. When moving or
+combining clauses, keep each time or condition attached to the same action:
+
+- **Draft to source:** match each factual or first-person clause to support for its
+  actor, action/state, time, relationship, modality, and condition direction. Include implied claims in
+  transitions, descriptions, and instructions. A plausible antecedent or next event
+  is still a new claim; sending an artifact does not establish who created it. Lexical overlap or ordinary expectations are not sufficient support for a factual paraphrase: seeing A first does not establish later seeing B; a prohibition for one actor does not grant another actor permission; applying an object does not imply creating it. An omission does not establish its cause or the author's memory state. Preserve the source's conditional direction: `if P, Q` and `Q only if P` are not interchangeable. When their equivalence is unclear, retain the original connective rather than choosing a stronger or weaker gate.
+- **Source to draft:** retain the claims, exclusions, conditions, protected text,
+  and scope the task requires. A chosen detail in one candidate does not authorize
+  adding a missing detail to another.
+
+When equivalence is doubtful, revert the whole affected clause to the source wording; do not replace one unsupported detail with another. Omit an
+optional claim. Do not resolve uncertainty by choosing a more specific technical
+interpretation, time anchor, permission, requirement, or event. Preserve an author's
+intent as intent: `不想` is not a promise of `不会`, even with `暂时`. An undated
+past event does not become `今天` to make a post immediate. Do not add an event merely
+to connect two supplied observations. This check is internal; return only the
+artifact when that is what the user requested. Authorized analytical inferences remain clearly distinguished from supplied facts under Derived Claims.
 
 ## Editing Directives And Claim Authority
 
@@ -179,16 +210,16 @@ Use this loop only when the user requests research, citations, or current extern
 ## Rewrite Rules
 
 - Apply source precedence before merging draft, conversation, notes, or examples.
-- Preserve supplied facts from the winning source.
+- Preserve supplied facts from the winning source. Check newly added clauses as well as retained facts: fluent scene details, dates, sequence, spatial relationships, or measurement endpoints still need source support. Do not complete a plausible scene or turn a preference into a commitment.
 - Keep author judgments attributed and proportionate.
 - Use background evidence to locate sequence, turning points, and consequences. Convert it into first-person experience only when an author-supplied source or explicit instruction supports the author's participation, perception, decision, or judgment. Otherwise keep the statement neutral, attribute it, mark it as inference, or omit it.
-- Preserve actor roles separately from claim status. `proposes`, `executes`, `checks`, `recommends`, `approves`, `accepts`, and `publishes` are not interchangeable.
+- Preserve actor roles separately from claim status. Being responsible, participating, proposing, executing, checking, recommending, approving, accepting, and publishing are not interchangeable. A named responsible party does not establish who performs the work; co-participation does not establish who invited or assigned whom. Keep the event impersonal or name only the supplied relationship when its actor or arrangement is unspecified. Keep identity and location modifiers attached to the entities the source actually describes.
 - Omit unknown claims, label them `Not verified`, or research them before use.
 - Preserve protected text exactly unless the user explicitly requests a verified correction.
 - Do not turn a plan into a completed result.
 - Do not turn correlation into causation.
 - Do not turn a single experience into a universal rule.
-- Do not change `may`, `can`, `usually`, or `in my case` into certainty for rhetorical force.
+- Preserve choice, refusal, capability, permission, recommendation, and obligation. Choosing not to do something does not establish inability to do it; missing notes do not authorize an inference about the author's ability. Preserve that intent rather than supplying a reason. In particular, `may`, `might`, `could`, `can`, `should`, and `must` are not interchangeable. Keep uncertainty such as `usually` or `in my case`; brevity does not authorize stronger modality. An available option does not establish a requirement, default, or exclusive path: `can export manually` does not mean `must export manually` or `only manual export is supported`.
 - Do not present documented capability as personally tested behavior.
 - Keep source dates and scope when a claim can change over time.
 - Preserve attribution when the source has a material interest. `The vendor reports`, `according to the company's benchmark`, and `independently verified` are not interchangeable.
@@ -227,7 +258,7 @@ conflict.
 
 ## Drafting From Sparse Notes
 
-Sparse notes do not authorize plausible details.
+Sparse notes do not authorize plausible details. A missing field in the notes does not establish that the fact is unknown, unavailable, absent, or not yet decided in the world. Omit an optional missing field; if it is essential, identify the information gap in the supplied material rather than inventing a status for it.
 
 Allowed:
 

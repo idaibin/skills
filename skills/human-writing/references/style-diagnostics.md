@@ -29,6 +29,8 @@ Prefer, in order:
 
 Record a small voice fingerprint: sentence density, paragraph length, use of first person, confidence markers, preferred transitions, treatment of uncertainty, and typical endings. Preserve recurring habits only when they help recognition or meaning. Do not imitate accidental errors or manufacture quirks.
 
+A style sample contributes cadence, register, and rhetorical choices, not its biography, opinions, evidence, or distinctive incidents. Use the task’s own sources for content.
+
 Neutral source material stays neutral. Never add `我亲自`, `终于`, `踩坑`, emotions, incidents, or experiential authority without evidence.
 
 ## Cluster Diagnosis
@@ -51,6 +53,13 @@ Parallel sentences, stable technical nouns, tables, and lists may be the cleares
 Repeated questions can mark the reader's next inference; repeated code can expose one controlled change; a long detour can eliminate a plausible wrong model; a heading-free passage can preserve a continuous derivation. Treat these as defects only when they fail to perform that job. Every editorial rule should name the reader failure it prevents rather than target a surface pattern.
 
 Do not turn frequent model habits into universal bans. Passive voice can keep the object of interest in focus; a dash can preserve a real cadence; an adverb, rhetorical question, list of three, or repeated technical noun can be the clearest choice. Rewrite only when the form contributes to a diagnosed cluster or weakens meaning, trust, rhythm, or reader comprehension.
+
+A request to remove an AI-like template does not by itself ask to neutralize the
+author's advocacy, criticism, enthusiasm, or genuine rhetorical contrast. Distinguish
+naturalness from de-hyping. If restrained wording is requested, reduce empty
+amplification while retaining the direction and supported strength of the claim;
+if equivalence is uncertain, keep the original expression. Never turn an unsupported
+“research shows” claim into an unattributed fact by deleting only the attribution.
 
 ## Semantic Compression
 

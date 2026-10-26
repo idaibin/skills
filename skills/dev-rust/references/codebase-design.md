@@ -1,6 +1,21 @@
 # Conditional Codebase Design
 
-Load this reference only when a change or review materially affects a public module/interface, seam placement, cross-caller abstraction, or testability. Repository-native `service`, `API`, `component`, `boundary`, and other established terms remain authoritative; the terms below are reasoning aids, not a mandatory vocabulary migration.
+Load this reference before touching a component, module, or page outside the current business scope, or when a change or review materially affects a public module/interface, seam placement, cross-caller abstraction, or testability. Repository-native `service`, `API`, `component`, `boundary`, and other established terms remain authoritative; the terms below are reasoning aids, not a mandatory vocabulary migration.
+
+## Cross-Module Business Gate
+
+Before editing outside the current business module, read the affected owner and real
+callers; establish business purpose, permissions, state transitions, data effects,
+and existing behavior. A dependency or reuse opportunity is not write authorization.
+Do not change another module's existing logic or code speculatively.
+
+If existing behavior or implementation conflicts with the new requirement, present
+the current behavior, conflict, proposed options, affected consumers, and exact write
+scope. Wait for the user's explicit agreement on the plan and permitted changes before
+editing that boundary. Do not rewrite its contract first to manufacture permission.
+Reuse an existing explicit decision for the same plan/scope; continue independent
+work already authorized. Behavior-preserving work inside an explicitly approved
+cross-module scope needs no repeated approval.
 
 ## Evidence Questions
 
@@ -10,6 +25,15 @@ Load this reference only when a change or review materially affects a public mod
 - **Leverage:** do several real callers or tests receive useful capability from one stable interface?
 - **Deletion test:** if the abstraction disappeared, would its complexity vanish, or would it reappear across real callers? Vanishing complexity usually signals a pass-through layer.
 - **Public-interface test:** can behavior be verified through the same interface callers use, without private-state inspection or implementation-coupled mocks?
+
+## Terminal Content
+
+Implement the accepted final state. Within authorized scope, remove rejected or
+retired code, configuration, entries, examples and active references; do not replace
+them with negative declarations, conversation attribution, rationale comments or
+placeholders. Do not add compatibility branches merely to preserve a rejected design.
+If real consumers or data dependencies remain, resolve the impact through the
+cross-module business gate before deletion. Preserve unrelated work.
 
 ## Decision Rules
 

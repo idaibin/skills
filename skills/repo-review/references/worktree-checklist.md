@@ -124,3 +124,12 @@ This checklist is read-only. Do not edit, create, delete, rename, or format work
 - Use Conventional Commits.
 - Keep the message concise.
 - Match the user's requested language or repository convention; otherwise use concise English.
+
+## Generated test evidence
+
+For an affected generated inventory or test runner, check whether file-level imports
+are mislabeled as function callers, including aliases and namespace/callback consumers.
+Compare PASS wording with the assertions and their independent oracle; source-derived
+scaffolds do not establish business coverage. Trace the documented rerun path against
+existing manual results/recovery notes and evidence digests, so a green rerun cannot
+silently erase observations or leave an apparently current stale index.

@@ -33,6 +33,7 @@
 | Identity | Stable asset IDs survive an unambiguous rename; ambiguous matches become issues. | Path-only permanent IDs or guessed reconciliation. |
 | Relations | Both endpoints close or the edge is explicitly unresolved with source locator. | Silent missing target or hand-authored edge. |
 | Drift | Changed content, extractor version, deletion and rename affect snapshot state. | Resolving path treated as fresh without hash/basis check. |
+| Valid historical snapshot after a source edit | Integrity may still pass; compare recorded and requested bases, qualify historical results and stop the current-source claim until explicit refresh. | Treats validation success or a latest-snapshot default as current-source proof, or silently rescans. |
 | Tombstones | Deleted identities remain queryable for historical Runs. | Hard deletion destroys historical refs. |
 | Authority | Native Product/DESIGN/source/contract remains owner; duplicate active claims conflict. | Graph copies bodies or chooses precedence silently. |
 | Query | Reverse/forward impact is bounded by relation/depth/row limits. | Unbounded traversal or unrelated repository scan. |

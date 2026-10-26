@@ -41,7 +41,9 @@ create commits on a timer or from implementation authorization alone.
 2. Record staged, unstaged, untracked, and unrelated content before staging.
 3. Reuse slice evidence and run focused validation when possible. A checkpoint may
    record failure or `Not verified`; it must not disguise incomplete work as passing.
-4. Stage exact paths or hunks and inspect cached stat, name-status, and full diff.
+4. Stage exact paths or hunks and inspect cached `diff --check`, stat, and name-status.
+   Inspect content hunks only when scope is mixed, unreviewed, changed since review,
+   or otherwise unresolved.
 5. Use a durable semantic message. A checkpoint message identifies the preserved
    scope; repository policy still controls message format.
 6. Commit, recheck the full Worktree, and report what the commit protects, what remains

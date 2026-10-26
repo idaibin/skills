@@ -278,7 +278,8 @@ conversation independently. Never copy one provider's ID, URL, tab, or evidence 
 the other provider's adapter.
 
 `conversation_policy` controls conversation reuse inside the resolved persistent
-container. `new-per-task` creates exactly one new conversation for the authorized task
+container and defaults to `new-per-task` when omitted. `new-per-task` creates exactly
+one new conversation for the authorized task
 inside that verified container; `reuse-verified` reuses only an explicitly mapped
 conversation. It never changes the provider or container and does not authorize a
 second submit when creation or submission is ambiguous.

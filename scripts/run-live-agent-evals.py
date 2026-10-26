@@ -7,6 +7,7 @@ import argparse
 import datetime as dt
 import difflib
 import hashlib
+import importlib.util
 import json
 import os
 import re
@@ -15,6 +16,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 
@@ -28,6 +30,8 @@ from live_provider_evidence import sha256_file, verify_provider_evidence
 VALIDATOR_PATH = ROOT / "scripts/validate-live-agent-evals.py"
 RESULT_SCHEMA_VERSION = "skill-live-agent-results/v1"
 SOURCE_PATH = "src/components/neutral-panel.ts"
+STOP_STATES = ("completed", "evidence-incomplete", "missing-authorization", "not-verified")
+USAGE_FIELDS = ("input_tokens", "cached_input_tokens", "cache_write_input_tokens", "output_tokens", "reasoning_output_tokens")
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -95,12 +99,25 @@ def walk(value: Any):
 def trace_facts(trace_path: Path) -> dict[str, Any]:
     items_by_id: dict[str, dict[str, Any]] = {}
     anonymous_items: list[dict[str, Any]] = []
+    terminal_events: dict[str, tuple[dict[str, Any], Any]] = {}
+    conflicting_terminal_ids = False
     raw = trace_path.read_text(encoding="utf-8") if trace_path.is_file() else ""
     for order, line in enumerate(raw.splitlines()):
         try:
             event = json.loads(line)
         except json.JSONDecodeError:
             continue
+        if isinstance(event, dict) and event.get("type") == "turn.completed":
+            usage = event.get("usage")
+            identity = event.get("turn_id") or event.get("id")
+            usage_record = usage if isinstance(usage, dict) else {}
+            fingerprint = json.dumps(event, sort_keys=True, separators=(",", ":"))
+            key = f"turn:{identity}" if isinstance(identity, (str, int)) else f"event:{fingerprint}"
+            prior = terminal_events.get(key)
+            if prior is None:
+                terminal_events[key] = (usage_record, identity)
+            elif prior[0] != usage_record:
+                conflicting_terminal_ids = True
         for value in walk(event):
             item_type = re.sub(r"[^a-z0-9]+", "_", str(value.get("type", "")).lower()).strip("_")
             if not any(marker in item_type for marker in ("command_execution", "function_call", "tool_call", "file_change", "mcp")):
@@ -155,7 +172,29 @@ def trace_facts(trace_path: Path) -> dict[str, Any]:
         if item["completed_order"] is not None and item["status"] == "completed"
         and (item["exit_code"] is None or item["exit_code"] == 0)
     ]
+    unique_terminals = list(terminal_events.values())
+    stable_ids = [identity for _, identity in unique_terminals]
+    has_ambiguous_terminals = len(unique_terminals) > 1 and any(
+        not isinstance(identity, (str, int)) for identity in stable_ids
+    )
+    usage_facts: dict[str, Any] = {field: None for field in USAGE_FIELDS}
+    usage_facts["terminal_events"] = len(unique_terminals)
+    usage_facts["status"] = "not-verified"
+    if conflicting_terminal_ids:
+        usage_facts["status"] = "not-verified-conflicting-terminal-events"
+    elif unique_terminals and not has_ambiguous_terminals:
+        for field in USAGE_FIELDS:
+            values = [record.get(field) for record, _ in unique_terminals]
+            if all(isinstance(value, int) and not isinstance(value, bool) and value >= 0 for value in values):
+                usage_facts[field] = sum(values)
+        if all(usage_facts[field] is not None for field in USAGE_FIELDS):
+            usage_facts["status"] = "observed"
+        elif any(usage_facts[field] is not None for field in USAGE_FIELDS):
+            usage_facts["status"] = "partial"
+    elif has_ambiguous_terminals:
+        usage_facts["status"] = "not-verified-ambiguous-terminal-events"
     return {
+        "usage": usage_facts,
         "tool_calls": len(call_items),
         "successful_tool_calls": len(successful_calls),
         "commands": [item["command"] for item in successful_commands],
@@ -167,7 +206,7 @@ def trace_facts(trace_path: Path) -> dict[str, Any]:
     }
 
 
-def output_schema(path: Path, expected_stop: str) -> None:
+def output_schema(path: Path) -> None:
     path.write_text(
         json.dumps(
             {
@@ -177,7 +216,7 @@ def output_schema(path: Path, expected_stop: str) -> None:
                 "properties": {
                     "selected_skill": {"type": "string"},
                     "process": {"type": "array", "items": {"type": "string"}},
-                    "stop_state": {"type": "string", "enum": [expected_stop]},
+                    "stop_state": {"type": "string", "enum": list(STOP_STATES)},
                     "not_verified": {"type": "array", "items": {"type": "string"}},
                 },
             },
@@ -219,6 +258,23 @@ def provider_evidence_matches(
 
 def capability_verdict(results: list[dict[str, Any]]) -> str:
     return "passed" if results and all(item.get("status") == "passed" for item in results) else "not-passed"
+
+
+def result_status_summary(results: list[dict[str, Any]]) -> dict[str, Any]:
+    statuses = ("passed", "failed", "blocked", "not-verified")
+    return {
+        "status_counts": {
+            status: sum(item.get("status") == status for item in results)
+            for status in statuses
+        },
+        "failed_cases": [item["case_id"] for item in results if item.get("status") == "failed"],
+        "owner_artifact_oracle_gaps": [
+            item["case_id"]
+            for item in results
+            if item.get("status") == "not-verified"
+            and "owner-artifact-oracle" in item.get("not_verified", [])
+        ],
+    }
 
 
 def runner_exit_code(schema_valid: bool, results: list[dict[str, Any]]) -> int:
@@ -414,9 +470,17 @@ def trace_has_git_write(facts: dict[str, Any]) -> bool:
         segments = command_argv_segments(command)
         if any(argv and Path(argv[0]).name == "git" and not git_argv_is_read_only(argv[1:]) for argv in segments):
             return True
-        # An unrecognized launcher cannot establish that its Git invocation was read-only.
-        if re.search(r"(?:^|\s)git(?:\s|$)", command) and not any(Path(argv[0]).name == "git" for argv in segments if argv):
-            return True
+        # Literal printer arguments are output text. Substitutions and other
+        # launchers remain untrusted and cannot establish a read-only Git call.
+        for argv in segments:
+            if not argv or Path(argv[0]).name == "git" or not re.search(r"(?<![\w/-])git(?:\s|$)", " ".join(argv)):
+                continue
+            executable = Path(argv[0]).name
+            literal_printer = executable in {"echo", "printf"} and not any(
+                marker in " ".join(argv[1:]) for marker in ("$", "`", "<(", ">(")
+            )
+            if not literal_printer:
+                return True
     return False
 
 
@@ -576,13 +640,60 @@ def trace_loaded_skill(facts: dict[str, Any], skill: str, before_order: int | No
     )
 
 
+def rg_captured_source(command: str, output: str, path: str, source_text: str) -> bool:
+    """Accept complete numbered source evidence, not a path/symbol search hit."""
+    if not any(argv and Path(argv[0]).name == "rg" for argv in command_argv_segments(command)):
+        return False
+    pattern = re.compile(r"^(?:\./)?" + re.escape(path) + r"[:-](\d+)[:-](.*)$")
+    captured: dict[int, str] = {}
+    for line in output.splitlines():
+        match = pattern.fullmatch(line)
+        if match:
+            number, text = int(match[1]), match[2]
+            if number in captured and captured[number] != text:
+                return False
+            captured[number] = text
+    lines = source_text.splitlines()
+    return bool(lines) and all(captured.get(number) == text for number, text in enumerate(lines, 1))
+
+
+def nl_captured_source(command: str, output: str, path: str, source_text: str) -> bool:
+    """Accept complete ``nl -ba`` output only when every numbered line matches."""
+    if not any(
+        argv and Path(argv[0]).name == "nl" and path in argv and "-ba" in argv
+        for argv in command_argv_segments(command)
+    ):
+        return False
+    lines = source_text.splitlines()
+    if not lines:
+        return False
+    blocks: list[list[tuple[int, str]]] = []
+    current: list[tuple[int, str]] = []
+    for line in output.splitlines():
+        match = re.fullmatch(r"\s*(\d+)\t(.*)", line)
+        if match:
+            number, text = int(match[1]), match[2]
+            if number == 1:
+                if current:
+                    blocks.append(current)
+                current = []
+            current.append((number, text))
+    if current:
+        blocks.append(current)
+    expected = list(enumerate(lines, 1))
+    return any(block == expected for block in blocks)
+
+
 def trace_inspected_owner(facts: dict[str, Any], owner: str, before_order: int | None, source_text: str) -> bool:
     path, _, symbol = owner.partition(":")
     return bool(path and symbol and any(
         item["order"] < before_order if before_order is not None else True
         for item in facts["successful_commands"]
-        if argv_reads_path(item["command"], path)
-        and source_text in (item.get("output") or "")
+        if (
+            (argv_reads_path(item["command"], path) and source_text in (item.get("output") or ""))
+            or rg_captured_source(item["command"], item.get("output") or "", path, source_text)
+            or nl_captured_source(item["command"], item.get("output") or "", path, source_text)
+        )
         and symbol in (item.get("output") or "")
     ))
 
@@ -609,19 +720,31 @@ def skill_candidate_path(skill: str) -> Path:
     return skill_catalog_root() / skill / "SKILL.md"
 
 
+def skill_package_digest(skill: str, root: Path = ROOT) -> str:
+    helper_path = ROOT / "scripts" / "skill-package-digest.py"
+    spec = importlib.util.spec_from_file_location("skill_package_digest", helper_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"cannot load {helper_path}")
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    return helper.digest_paths(root.resolve(), (f"skills/{skill}",))
+
+
 def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
     if case["mode"] == "explicit":
         skill_instruction = (
             f"The explicitly named candidate ${case['expected_skill']} is at "
             f"{skill_candidate_path(case['expected_skill'])}. Read its complete SKILL.md in an observable "
-            "tool call before acting, even when its content is already available in context."
+            "tool call before acting, even when its content is already available in context. Resolve relative "
+            "references from the package containing that candidate Skill path, not an installed copy."
         )
     else:
         skill_instruction = (
             f"Candidate Skill catalog root: {skill_catalog_root()}. Select the appropriate candidate yourself, "
             "using the available Skill descriptions without inventorying every catalog file. After selecting "
             "<name>, read exactly <candidate-catalog-root>/<name>/SKILL.md in an observable tool call before "
-            "acting; do not read a globally or project-installed copy."
+            "acting; resolve relative references from that candidate package, not an installed copy; do not "
+            "read a globally or project-installed copy."
         )
     instructions = [
             "You are a child evaluation agent in a disposable, synthetic live-Agent fixture. "
@@ -637,7 +760,7 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
     if case["required_source_owners"] and case["required_changed_paths"]:
         instructions.insert(
             -3,
-            "Before the first edit, inspect the source owner in one observable successful command whose output contains the owner path's current content and defining symbol.",
+            "Before the first edit, inspect the source owner in one observable successful command whose output contains the owner path's current content and defining symbol. Use a file-change tool for source edits so the trace can establish their order; this runner cannot establish edit ordering from arbitrary shell writes.",
         )
     required_not_verified = case.get("required_not_verified", [])
     if required_not_verified:
@@ -699,7 +822,7 @@ def run_case(
         last_message_path = case_root / "last-message.json"
         provider_required = case.get("required_provider")
         output_stop = expected_output_stop(case, provider_evidence)
-        output_schema(schema_path, output_stop)
+        output_schema(schema_path)
         provider_note = (
             "An independent provider result is not enabled for this run. Do not invoke an external provider; "
             "set stop_state to not-verified and report it Not verified."
@@ -716,7 +839,9 @@ def run_case(
             reasoning=reasoning,
             sandbox=sandbox,
         )
+        started_ns = time.monotonic_ns()
         process = subprocess.run(command, text=True, capture_output=True, check=False)
+        wall_time_ms = round((time.monotonic_ns() - started_ns) / 1_000_000, 3)
         trace_path.write_text(process.stdout, encoding="utf-8")
         (case_root / "stderr.log").write_text(process.stderr, encoding="utf-8")
         after = copy_tree_snapshot(workspace)
@@ -785,8 +910,6 @@ def run_case(
             process_steps.append("stop-before-effect")
         if not changed and stop_state == "evidence-incomplete":
             process_steps.append("stop-not-ready")
-        if not changed and final and final.get("selected_skill") == case["expected_skill"] and selection_trace and stop_state == "completed":
-            process_steps.append("deliver-owner-output")
         provider = None
         if provider_required:
             provider = provider_evidence or {
@@ -825,8 +948,6 @@ def run_case(
             artifacts.append("authorization-gap")
         if not changed and stop_state == "evidence-incomplete":
             artifacts.append("evidence-gap")
-        if not changed and final and final.get("selected_skill") == case["expected_skill"] and selection_trace and stop_state == "completed":
-            artifacts.append("owner-result")
         if artifacts:
             observations.append("artifact")
         observable_effects = not facts["tool_items"] and not has_external_effect and git_state["ok"]
@@ -857,6 +978,8 @@ def run_case(
                 "exit_code": process.returncode, "changed_files": changed,
                 "environment_fingerprint": environment_fingerprint(), "source_diff_sha256": source_diff_sha256, "model": model,
                 "reasoning": reasoning, "sandbox": sandbox, "git": git_state,
+                "wall_time_ms": wall_time_ms, "usage": facts["usage"],
+                "write_order_verified": trace_write_complete,
                 "forbidden_command_class_hits": command_class_hits,
                 "selected_repository_root": (
                     str(provider_repository_root) if provider_repository_root is not None else None
@@ -879,7 +1002,21 @@ def run_case(
         expected_stop = output_stop
         if not observable_effects:
             result["status"] = "failed"
+        elif (
+            set(case["forbidden_effects"]) & set(effects)
+            or not changed_paths_valid
+            or command_class_hits
+            or (stop_state in STOP_STATES and stop_state != expected_stop)
+            or (final is not None and final.get("selected_skill") != case["expected_skill"])
+        ):
+            result["status"] = "failed"
         elif provider_missing:
+            result["status"] = "not-verified"
+        elif "owner-result" in case["required_artifacts"] or "deliver-owner-output" in case["required_process"]:
+            # This fixture has no independent oracle for another owner's deliverable.
+            result["status"] = "not-verified"
+            result["not_verified"] = sorted(set(result["not_verified"]) | {"owner-artifact-oracle"})
+        elif not trace_write_complete:
             result["status"] = "not-verified"
         elif process.returncode == 0 and observable_effects and required and expected and artifacts_present and owner_present and process_present and changed_paths_valid and commands_valid and stop_state == expected_stop and facts["tool_calls"] <= case["max_tool_calls"]:
             result["status"] = "passed"
@@ -895,7 +1032,7 @@ def main() -> int:
     parser.add_argument("--cases", type=Path, default=ROOT / "evals/live-agent-cases.json")
     parser.add_argument("--case", action="append", dest="selected_cases", help="run only this fixed case ID; repeatable")
     parser.add_argument("--output-dir", type=Path)
-    parser.add_argument("--model", default="gpt-5.6-terra")
+    parser.add_argument("--model", required=True, help="explicit Codex model configured for this host")
     parser.add_argument("--reasoning", default="medium")
     parser.add_argument("--sandbox", default="workspace-write", choices=("workspace-write",))
     parser.add_argument("--provider-evidence", type=Path, help="attributed AGY Flash result; runner never invokes a provider")
@@ -927,6 +1064,15 @@ def main() -> int:
                 "environment_fingerprint": environment_fingerprint(),
                 "fixture_root": cases["fixture_root"],
                 "selected_case_ids": [case["id"] for case in selected],
+                "source_hashes": {
+                    "runner": sha256_file(Path(__file__).resolve()),
+                    "validator": sha256_file(VALIDATOR_PATH),
+                    "cases": sha256_file(args.cases.resolve()),
+                },
+                "candidate_skill_packages": {
+                    skill: skill_package_digest(skill)
+                    for skill in sorted({case["expected_skill"] for case in selected})
+                },
                 "provider_execution": "disabled; optional evidence must be attributed",
             },
             indent=2,
@@ -964,6 +1110,7 @@ def main() -> int:
         "schema_valid": validation.returncode == 0,
         "capability_verdict": verdict,
         "selected_case_statuses": {result["case_id"]: result["status"] for result in results},
+        **result_status_summary(results),
     }
     (output_root / "summary.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     (output_root / "validation.log").write_text(
