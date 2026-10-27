@@ -1,4 +1,4 @@
 interface:
   display_name: "Product Spec"
   short_description: "Turn product ambiguity into an implementation-ready spec"
-  default_prompt: "Use $product-spec to turn this feature or authorized product-document rebuild into the smallest current implementation-ready product contract without implementing source changes."
+  default_prompt: "Use $product-spec for the requested product definition or source-evidence reconstruction; keep observed candidates separate from accepted implementation-ready product contracts."

@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "skills-reviewed-consolidation-candidate",
-  "fingerprint": "sha256:0e62b1fa11bf3985a6e6dc6ef8e816ace55b755ab85d037e51c55af388080a46",
+  "basis": "skills-integration-candidate",
+  "fingerprint": "sha256:32a63373e8d4fbc2f5aa0ee1121d495eac233f6a7f2083c2cd9148a35dded825",
   "summary": {
-    "total": 102,
-    "passed": 102,
+    "total": 106,
+    "passed": 106,
     "failed": 0,
     "baseline_checked": true,
     "contract_errors": 0,
@@ -1234,6 +1234,54 @@
       "observed_owner": "ops-client",
       "expected_stop": null,
       "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "product-reconstruction-capability",
+      "case_fingerprint": "sha256:ebc6e840f0035503c82b75db4465eb6b0eafbcd40c4033cb94fb127fa9a4d514",
+      "class": "normal",
+      "skill": "product-spec",
+      "expected_owner": "product-spec",
+      "observed_owner": "product-spec",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "product-reconstruction-source-stop",
+      "case_fingerprint": "sha256:809c864e4cc3dea66792438c474bea7809182a036015cea9cdf6d1460f036b3d",
+      "class": "critical-stop",
+      "skill": "product-spec",
+      "expected_owner": "product-spec",
+      "observed_owner": "product-spec",
+      "expected_stop": "evidence-incomplete",
+      "observed_stop": "evidence-incomplete",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "api-reconstruction-capability",
+      "case_fingerprint": "sha256:4d8111cc3f5d6076662a1b3c9a997e2d2452b483024b65c22d2ba5301704188c",
+      "class": "normal",
+      "skill": "api-spec",
+      "expected_owner": "api-spec",
+      "observed_owner": "api-spec",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "api-reconstruction-source-stop",
+      "case_fingerprint": "sha256:997f81181df18438c08b8e7bf0f73188d4597e30532d6edb0c323dfb8c75ced4",
+      "class": "critical-stop",
+      "skill": "api-spec",
+      "expected_owner": "api-spec",
+      "observed_owner": "api-spec",
+      "expected_stop": "evidence-incomplete",
+      "observed_stop": "evidence-incomplete",
       "status": "passed",
       "failures": []
     }

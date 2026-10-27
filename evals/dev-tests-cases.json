@@ -110,6 +110,50 @@
         "blocked required gate remains incomplete",
         "not all unrelated tests or merge authority"
       ]
+    },
+    {
+      "id": "mounted-owner-evidence-boundary",
+      "prompt": "Use dev-tests to classify three supplied observations for one accepted controlled-selector contract, without execution or edits. A: extracted component methods and a hand-written DOM stub pass, but no real framework component or parent mounted. B: a current-basis mounted real component and parent receive native DOM click events; retained receipts bind emitted values, parent binding, watcher settlement and visible selected state to each step; the data service is stubbed. C: an otherwise equivalent mounted trace emits the requested value but the parent-bound value and settled DOM remain stale. Return the separate evidenced boundaries and smallest missing check for each; do not infer browser layout, device touch or real-service acceptance.",
+      "oracle": [
+        "A credits only extracted-method/stub boundary; real component event-parent-watcher-DOM chain unverified",
+        "B credits the actually observed mounted interaction boundary despite stubbed service",
+        "C fails the affected mounted parent/state assertion, not hidden by isolated-method green counts",
+        "missing mounted checks route to implementation owner using the real owner and parent; no broad infrastructure or unrelated rerun",
+        "mounted DOM does not prove real browser geometry, real service or native device touch"
+      ]
+    },
+    {
+      "id": "locator-precondition-isolation",
+      "prompt": "Use dev-tests to diagnose a synthetic browser test without executing or editing. The accepted contract requires five selectable controls. Current DOM evidence shows five button controls, each containing an SVG with the same selector class; the test uses that broad class and finds ten nodes. Two attempts fail the identical count precondition before any click. Another authorized independent case has a valid locator and available runtime. State product versus automation evidence, the next bounded action, and whether to repeat all cases or repair product code.",
+      "oracle": [
+        "failed locator/precondition is automation evidence; unexercised business action remains blocked or not run",
+        "inspect current DOM and scope to actual controls against the accepted contract; do not blindly change expected count to ten",
+        "retain the two outcomes and stop the unchanged hypothesis; no third identical attempt",
+        "route test locator repair to its existing implementation owner and rerun only affected assertions after repair",
+        "continue the independent authorized case; no speculative product patch or full rerun"
+      ]
+    },
+    {
+      "id": "resume-summary-and-oracle-state",
+      "prompt": "Use dev-tests to reconcile supplied synthetic records; no actions or edits. Accepted plan P1 and frozen basis F1 remain current. Original case C7 has an old failed attempt and a newer complete passing receipt on F1; the current case row, module summary and top summary disagree because two still show the old result. Preserve manual investigation notes. Separately, proposed plan P2 has a freeze ID and a completed experimental run but no authority accepting its changed expected behavior. Describe the current record and acceptance states, what must reconcile, and whether either situation requires replaying valid actions.",
+      "oracle": [
+        "reconcile current result for original C7 and its evidence layer from the newest matching complete receipt",
+        "derive affected module and top summaries from current case rows; retain original failure and manual notes",
+        "keep P2 candidate or provisional without an acceptance authority; freeze and execution are not oracle approval",
+        "no continuation case or second ledger, no needless replay of current unaffected evidence",
+        "unresolved or changed basis must remain explicit rather than manufacturing a pass"
+      ]
+    },
+    {
+      "id": "platform-label-is-not-native-proof",
+      "prompt": "Use dev-tests to classify synthetic multi-platform evidence without actions. Current H5 browser receipts prove the accepted mouse interaction. Passing Node tests are named Android and iOS but call extracted logic with fabricated touch objects; they contain no installed artifact, device runtime or actual touch sequence. Separately, one current Android device receipt does identify the installed artifact, account category, cold/warm state and actual touch-to-parent-value/visible-state outcome for a single case. No iOS device receipt exists. Return precise per-case/per-platform claims and the smallest remaining checks; do not demand a real service for an explicitly Mock-scoped outcome.",
+      "oracle": [
+        "credit H5 mouse only and Node tests only at their extracted logic boundary",
+        "platform names and synthetic touch objects are not native runtime evidence",
+        "credit the one actually evidenced Android device case only, not the full module or iOS",
+        "iOS and other required unobserved native cells remain unverified, blocked or not run with their actual reason",
+        "retain the accepted Mock scope and continue independently authorized cases"
+      ]
     }
   ]
 }

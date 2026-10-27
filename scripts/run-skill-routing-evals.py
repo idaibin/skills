@@ -118,6 +118,10 @@ def validate_case_contract(
             expected_stop = str(case["expected_stop"])
             if case["expected_owner"] != skill:
                 errors.append(f"{case_id}: critical stop must retain its owning skill")
+            if capability_id and expected_stop == "evidence-incomplete":
+                codes = capabilities.get(str(capability_id), {}).get("failure_codes", [])
+                if not any(item.get("code") == "EVIDENCE_INCOMPLETE" and item.get("recovery") for item in codes):
+                    errors.append(f"{case_id}: capability {capability_id} must declare EVIDENCE_INCOMPLETE and recovery")
             if expected_stop not in entries[skill]["stop_states"]:
                 errors.append(
                     f"{case_id}: stop {expected_stop} is absent from {skill}.stop_states"

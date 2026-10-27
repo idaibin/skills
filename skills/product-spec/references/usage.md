@@ -13,6 +13,7 @@
 | --- | --- | --- |
 | Feature Spec | One feature needs product behavior and acceptance defined | One progressive feature document |
 | Foundation Spec | A new product/product line or product-boundary reset is explicit | One foundation document |
+| Evidence Reconstruction | Explicit existing-product reverse documentation, without promoting implementation to intended product truth | Observed candidate and owner gaps |
 | Artifact Update | A named existing fact source and confirmed changes are supplied | A bounded update to that artifact |
 
 Clarification is an internal phase in every mode. Search repository evidence first.

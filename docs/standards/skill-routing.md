@@ -238,3 +238,14 @@ token rule does not claim general natural-language negation understanding.
 - Read-only, source-write, Git-write, browser, and external-action boundaries remain
   distinct.
 - The affected trigger, non-trigger, and edge scenarios still behave as intended.
+
+## Existing-implementation reconstruction
+
+Explicit product/API reverse-documentation uses the evidence profile of product-spec
+or api-spec, with separate product.evidence.reconstruct / api.evidence.reconstruct
+capabilities and observed-projection outputs. These do not relax the normal accepted
+business semantics or Ready gates. repo-map still owns source navigation, domain-modeling
+shared meaning, and human-writing source-grounded prose. No new public Skill, workflow
+Stage or mandatory project-side structured format is introduced.
+
+An explicit capability-ID critical-stop case for missing evidence also checks that the selected capability declares EVIDENCE_INCOMPLETE with a recovery; a package-level stop label cannot substitute for its failure contract.

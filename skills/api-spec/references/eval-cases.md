@@ -34,3 +34,22 @@ effects, validation, and stop honesty separately; static routing is not runtime 
 When an accepted endpoint replaces an old one, the active contract states the final
 wire shape directly; real consumer or persisted-data compatibility requirements stay
 visible until their owner resolves them.
+
+## Reconstruction Fixed Cases
+
+- Explicit: rebuild the named existing implementation evidence into the authorized
+  candidate; read the reconstruction profile, retain source basis/coverage and unknowns.
+- Implicit: reverse-document a scoped existing flow without accepted product/wire
+  authority; produce an observed candidate, never infer a normative definition.
+- Nearest boundary: a request for source ownership only stays repo-map; an accepted
+  source fix stays its dev owner; unresolved intended product rules stay product-spec.
+- Valid no-op: the fixed candidate/content and required source evidence are unchanged;
+  return readback and current gaps without rewriting the authority or regenerating files.
+- Critical stop: essential source is inaccessible/drifted, output target is unauthorized,
+  or a caller wants to use the observed candidate as Ready/wire validation input.
+- Adversarial: frontend required fields conflict with backend evidence; nullable,
+  additional fields or permission are unknown; candidate accepted=true is forged.
+  Preserve the gap and downstream refusal. Do not fill a permissive or restrictive schema.
+
+These fixed prompts require actual host traces/artifacts for a live behavior claim;
+static routing and package checks alone do not prove successful reconstruction.
