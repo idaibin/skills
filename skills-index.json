@@ -9,6 +9,7 @@
       "urn:skills:ai-result:v1",
       "urn:skills:ai-review-request:v1",
       "urn:skills:api-contract:v1",
+      "urn:skills:api-observed-projection:v1",
       "urn:skills:api-request:v1",
       "urn:skills:asset-map-result:v1",
       "urn:skills:audit-findings:v1",
@@ -23,6 +24,7 @@
       "urn:skills:java-change-request:v1",
       "urn:skills:map-render-result:v1",
       "urn:skills:product-contract:v1",
+      "urn:skills:product-observed-projection:v1",
       "urn:skills:product-request:v1",
       "urn:skills:repository-scope:v1",
       "urn:skills:review-findings:v1",
@@ -406,7 +408,8 @@
       "intents": [
         "turn an ambiguous feature into an implementation-ready specification",
         "define product behavior, states, rules, and acceptance",
-        "rebuild current terminal product documentation without preserving process history in formal docs"
+        "rebuild current terminal product documentation without preserving process history in formal docs",
+        "reconstruct product evidence as an observed candidate from an existing implementation"
       ],
       "keywords": [
         "product spec",
@@ -417,7 +420,10 @@
         "terminal product documentation",
         "structured artifact gate",
         "终态产品文档",
-        "结构化文件准入"
+        "结构化文件准入",
+        "reconstruct product evidence",
+        "product observed projection",
+        "反向重建产品证据"
       ],
       "excludes": [
         "visual design specification",
@@ -428,7 +434,8 @@
         "ui-spec"
       ],
       "capability_ids": [
-        "product.contract.specify"
+        "product.contract.specify",
+        "product.evidence.reconstruct"
       ]
     },
     {
@@ -464,7 +471,8 @@
       "intents": [
         "design or revise API wire contracts",
         "author and validate OpenAPI specifications",
-        "confirm an unchanged accepted API contract"
+        "confirm an unchanged accepted API contract",
+        "reconstruct api evidence as an observed candidate from an existing implementation"
       ],
       "keywords": [
         "API contract",
@@ -476,7 +484,10 @@
         "code-first",
         "接口契约",
         "接口设计",
-        "接口规范"
+        "接口规范",
+        "reconstruct api evidence",
+        "api observed projection",
+        "反向重建接口证据"
       ],
       "excludes": [
         "source implementation",
@@ -492,7 +503,8 @@
         "repo-review"
       ],
       "capability_ids": [
-        "api.contract.specify"
+        "api.contract.specify",
+        "api.evidence.reconstruct"
       ]
     },
     {
@@ -3534,6 +3546,173 @@
         "runtime_observation_or_static_result",
         "real_and_substituted_boundaries",
         "cleanup_outcome"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "product.evidence.reconstruct",
+      "capability_version": "1.0.0",
+      "package": "product-spec",
+      "description": "Reconstruct bounded existing product evidence as an observed candidate, without normative acceptance.",
+      "accepts": [
+        {
+          "schema": "urn:skills:product-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:product-observed-projection:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "emit-draft",
+          "emit-handoff",
+          "write-artifact"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "resolve-required-source-evidence-or-current-basis"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result",
+        "observed_candidate_and_unresolved_dimensions"
+      ],
+      "adapter_binding": {
+        "policy": "runtime-only",
+        "portable_fields_forbidden": [
+          "provider",
+          "model",
+          "cli_path",
+          "executable"
+        ]
+      }
+    },
+    {
+      "capability_id": "api.evidence.reconstruct",
+      "capability_version": "1.0.0",
+      "package": "api-spec",
+      "description": "Reconstruct bounded existing api evidence as an observed candidate, without normative acceptance.",
+      "accepts": [
+        {
+          "schema": "urn:skills:api-request:v1",
+          "kind": "portable"
+        }
+      ],
+      "produces": [
+        {
+          "schema": "urn:skills:api-observed-projection:v1",
+          "kind": "portable"
+        }
+      ],
+      "preconditions": [
+        "SCOPE_RESOLVED",
+        "BASIS_CURRENT"
+      ],
+      "postconditions": [
+        "TYPED_OUTPUT_EMITTED"
+      ],
+      "permission_contract": {
+        "maximum_mutation_class": "artifact-write",
+        "maximum_effects": [
+          "read-repository",
+          "read-source",
+          "write-artifact",
+          "emit-draft",
+          "emit-handoff"
+        ],
+        "forbidden_effects": [
+          "write-source",
+          "write-git-state",
+          "control-browser-state",
+          "control-client-state",
+          "invoke-external-provider"
+        ],
+        "required_confirmations": [
+          "explicit-user-authorization"
+        ],
+        "symbolic_scope_constraints": [
+          "declared-task-scope"
+        ]
+      },
+      "failure_codes": [
+        {
+          "code": "CAPABILITY_MISSING",
+          "recoverable": true,
+          "recovery": "select-compatible-runtime-adapter"
+        },
+        {
+          "code": "SCOPE_AMBIGUOUS",
+          "recoverable": true,
+          "recovery": "resolve-symbolic-scope"
+        },
+        {
+          "code": "AUTHORIZATION_REQUIRED",
+          "recoverable": true,
+          "recovery": "obtain-explicit-user-authorization"
+        },
+        {
+          "code": "EVIDENCE_INCOMPLETE",
+          "recoverable": true,
+          "recovery": "resolve-required-source-evidence-or-current-basis"
+        }
+      ],
+      "evidence_requirements": [
+        "basis_or_scope_identity",
+        "runtime_observation_or_static_result",
+        "observed_candidate_and_unresolved_dimensions"
       ],
       "adapter_binding": {
         "policy": "runtime-only",

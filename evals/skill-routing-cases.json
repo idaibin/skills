@@ -851,6 +851,44 @@
       "prompt": "Submit scoped background delegation and progress query through an installed client session protocol.",
       "expected_owner": "ops-client",
       "expected_outcome": "route"
+    },
+    {
+      "id": "product-reconstruction-capability",
+      "skill": "product-spec",
+      "capability_id": "product.evidence.reconstruct",
+      "class": "normal",
+      "prompt": "Reconstruct product evidence as an observed projection for this fixed implementation scope.",
+      "expected_owner": "product-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "product-reconstruction-source-stop",
+      "skill": "product-spec",
+      "capability_id": "product.evidence.reconstruct",
+      "class": "critical-stop",
+      "prompt": "Reconstruct product evidence as an observed projection, but source is unavailable; stop the affected slice.",
+      "expected_owner": "product-spec",
+      "expected_stop": "evidence-incomplete",
+      "expected_outcome": "stop"
+    },
+    {
+      "id": "api-reconstruction-capability",
+      "skill": "api-spec",
+      "capability_id": "api.evidence.reconstruct",
+      "class": "normal",
+      "prompt": "Reconstruct api evidence as an observed projection for this fixed implementation scope.",
+      "expected_owner": "api-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "api-reconstruction-source-stop",
+      "skill": "api-spec",
+      "capability_id": "api.evidence.reconstruct",
+      "class": "critical-stop",
+      "prompt": "Reconstruct api evidence as an observed projection, but source is unavailable; stop the affected slice.",
+      "expected_owner": "api-spec",
+      "expected_stop": "evidence-incomplete",
+      "expected_outcome": "stop"
     }
   ]
 }

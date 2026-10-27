@@ -1,6 +1,6 @@
 ---
 name: product-spec
-description: "Define feature behavior, scope, states, and acceptance in a product specification."
+description: "Define product behavior and acceptance, or reconstruct source-grounded product evidence as an explicitly unaccepted candidate."
 ---
 
 # Product Specification
@@ -16,6 +16,7 @@ only decisions needed for the requested slice.
 | Request condition | Read | Result |
 | --- | --- | --- |
 | Submission failure or an unknown completion outcome affects recovery | [recovery Ready gate](references/workflow.md#ready-for-an-implementation-slice) | Accepted outcome/input/retry rules and any Open recovery decision |
+| Explicitly reconstruct current product evidence from an existing implementation | [source reconstruction](references/source-reconstruction.md) | Observed candidate and owner decisions; never automatic Ready |
 | One feature needs behavior, states, and acceptance | [workflow](references/workflow.md) and [template](references/template.md) | Progressive Feature Spec |
 | New product line/boundary reset is explicit | [workflow](references/workflow.md) | Foundation Spec |
 | Confirmed changes update a named fact source | [documentation boundaries](references/documentation-boundaries.md) | Bounded artifact update |
@@ -24,7 +25,7 @@ only decisions needed for the requested slice.
 
 ## Invariants
 
-- Do not infer behavior from UI appearance, source, or tests when product authority is absent.
+- Do not promote UI appearance, source, or tests into product authority. The reconstruction profile may label observations and inferences separately; accepted product decisions still require the product owner.
 - Keep product behavior separate from shared visual semantics, technical design, implementation, and runtime proof.
 - Stop each slice at its Ready gate; unknowns remain named, not silently decided.
   Missing outcome/retry criteria are Open Product decisions, not implementation
@@ -35,7 +36,7 @@ only decisions needed for the requested slice.
 
 Return the one applicable current product artifact, source basis, decisions/states,
 acceptance, current scope, unresolved questions, and next owner. Keep removed scope
-and conversation history out of the terminal artifact.
+and conversation history out of the terminal artifact. Reconstruction returns the separately labelled observed candidate, fixed evidence refs, contradictions/unknowns and next owner; it is not an accepted Product contract.
 
 ## Reference Map
 
@@ -44,5 +45,6 @@ and conversation history out of the terminal artifact.
 - Read [documentation boundaries](references/documentation-boundaries.md) for authority and placement.
 - Read [prototype evidence](references/prototype-evidence.md) only when prototype evidence applies.
 - Read [decision pressure test](references/decision-pressure-test.md) only for a material decision challenge.
+- Read [source reconstruction](references/source-reconstruction.md) only for an explicitly requested existing-product evidence rebuild.
 - Read [usage](references/usage.md) for public modes and nearest owners.
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary runtime.

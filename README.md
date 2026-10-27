@@ -45,8 +45,8 @@ and other supported agents.
 | `work-retro` | Retrospect across work history and propose evidence-backed, context-scoped improvements. |
 | `repo-map` | Scan, query, and render repository asset relationships, ownership, coverage, and drift. |
 | `domain-modeling` | Resolve shared business terms, rules, lifecycles, and domain boundaries. |
-| `product-spec` | Turn product decisions into implementation-ready behavior, states, and acceptance criteria. |
-| `api-spec` | Design or revise native API contracts and validate OpenAPI against accepted business behavior. |
+| `product-spec` | Define accepted product behavior or reconstruct a scoped observed candidate from source evidence. |
+| `api-spec` | Define native API contracts after business acceptance, or reconstruct source evidence as a non-normative observed candidate. |
 | `ui-spec` | Turn an accepted visual source into a traceable UI contract. |
 | `dev-tests` | Plan risk-based coverage and execute functional acceptance across APIs, pages, UI and business journeys. |
 | `to-task` | Create and reconcile a durable project task ledger from accepted contracts and findings. |

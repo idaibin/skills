@@ -287,5 +287,19 @@ class SkillRoutingEvalTests(unittest.TestCase):
         self.assertIn("missing required", errors[0])
 
 
+class ReconstructionFailureContractTests(unittest.TestCase):
+    def test_evidence_stop_requires_declared_capability_failure_and_recovery(self) -> None:
+        index = RUNNER.load_json(RUNNER.DEFAULT_INDEX)
+        cases = RUNNER.load_json(RUNNER.DEFAULT_CASES)
+        schema = RUNNER.load_json(RUNNER.DEFAULT_SCHEMA)
+        for capability_id in ("product.evidence.reconstruct", "api.evidence.reconstruct"):
+            candidate = json.loads(json.dumps(index))
+            capability = next(row for row in candidate["capabilities"] if row["capability_id"] == capability_id)
+            capability["failure_codes"] = [row for row in capability["failure_codes"] if row["code"] != "EVIDENCE_INCOMPLETE"]
+            errors = RUNNER.validate_case_contract(candidate, cases, schema)
+            self.assertTrue(any(capability_id in error and "EVIDENCE_INCOMPLETE" in error for error in errors))
+        self.assertEqual([], RUNNER.validate_case_contract(index, cases, schema))
+
+
 if __name__ == "__main__":
     unittest.main()
