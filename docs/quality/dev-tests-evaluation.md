@@ -62,6 +62,13 @@ Public cases remain synthetic; project facts and runtime receipts stay project-o
   missing capability and denied routes cannot raise the evidence level. No quantitative
   quality/time/cost improvement or generalized full-stack completion is claimed.
 
+- 2026-10-24 evaluation-only addendum: four synthetic decision cases were added for
+  mounted owner/parent evidence, locator preconditions, current-summary/oracle state,
+  and platform identity. JSON parsing, catalog validation, two existing status/owner-
+  oracle regressions and scoped whitespace checks passed offline. No new agent was
+  run; live mounted/native behavior and quality/efficiency results remain Not verified.
+  The historical results above are unchanged.
+
 ## Runtime evidence limits
 
 Representative application journeys need current-basis execution evidence, including
