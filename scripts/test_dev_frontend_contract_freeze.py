@@ -14,6 +14,9 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         cls.skill = (ROOT / "skills/dev-frontend/SKILL.md").read_text(encoding="utf-8")
+        cls.usage = (
+            ROOT / "skills/dev-frontend/references/usage.md"
+        ).read_text(encoding="utf-8")
         cls.checklist = (
             ROOT / "skills/dev-frontend/references/checklist.md"
         ).read_text(encoding="utf-8")
@@ -63,6 +66,27 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
         self.assertIn("Shotgun surgery", self.decomposition)
         self.assertIn("Apply the deletion test", self.decomposition)
         self.assertIn("File and function decomposition", self.evals)
+
+    def test_existing_surface_audit_without_diff_routes_to_repo_audit(self) -> None:
+        # Read the actual discovery copy: the index-only matcher cannot catch this.
+        description = next(
+            line for line in self.skill.splitlines() if line.startswith("description:")
+        )
+        with self.subTest(request="Audit existing React architecture/state without a diff or edits"):
+            self.assertIn("change-based reviews to repo-review", description)
+            self.assertIn("audits without a change basis to repo-audit", description)
+            self.assertNotIn("Use repo-review for review-only requests", description)
+            self.assertIn("review; use `repo-audit`", self.usage)
+
+    def test_known_frontend_fix_discovers_its_own_package_test_commands(self) -> None:
+        non_triggers = self.usage.split("## Non-Triggers", 1)[1].split("## Output", 1)[0]
+        graph_route = next(line for line in non_triggers.splitlines() if "`repo-map`" in line)
+        with self.subTest(request="Fix one known React line; find test/lint in package.json, no graph"):
+            self.assertIn("Cross-repository or repository-wide", graph_route)
+            self.assertIn("graph queries; use `repo-map`", graph_route)
+            self.assertIn("task-local fix with known source", graph_route)
+            self.assertIn("`dev-frontend` owner discovers `package.json` test/lint commands directly", graph_route)
+            self.assertNotIn("Repository onboarding or command discovery; use `repo-map`", non_triggers)
 
 
 if __name__ == "__main__":

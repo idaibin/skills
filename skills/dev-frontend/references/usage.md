@@ -51,7 +51,7 @@ error states, remove the touched duplicate DTO, and verify loading/success/error
 
 ## Non-Triggers
 
-- Repository onboarding or command discovery; use `repo-map`.
+- Cross-repository or repository-wide asset/relationship graph queries; use `repo-map`. For a task-local fix with known source, the current `dev-frontend` owner discovers `package.json` test/lint commands directly.
 - Large future planning before implementation; use the host's built-in planning.
 - Diagnosis-only work before any frontend source change is requested; use the host's built-in diagnosis under effective instructions.
 - Git diff ownership, staging plans, or commit readiness; use `repo-review`. Use `repo-delivery` for actual staging, commit, push, or delivery.
