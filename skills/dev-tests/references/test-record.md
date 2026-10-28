@@ -31,6 +31,18 @@ For preservation or equality assertions retain both before/after values and the 
 not only a pass boolean. Keep sanitized method/path/body and response evidence for API
 assertions, and actual readback for cleanup; a report's assertion is not its own proof.
 
+## Evidence sufficiency
+
+For a large matrix, capture a representative case first and report its byte volume
+and projected growth to the coordinating owner. Request the relevant elements,
+properties and state transitions; a full DOM/style dump at every step needs a stated
+diagnostic reason. Reuse unchanged observations only with matching assertion, basis
+and state. Preserve required raw failure observations and before/after proof; a small
+summary or a successful runner exit cannot replace them. If capture resources are
+insufficient, retain the affected evidence gap rather than dropping cases or claiming
+a pass. Hand off which evidence supports current claims, failures and recovery, and
+which outputs are reproducible intermediates; this does not authorize storage cleanup.
+
 ## Defects
 
 Each defect includes case ID, impact/severity, classification (product, contract,

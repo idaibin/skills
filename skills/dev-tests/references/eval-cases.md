@@ -62,6 +62,14 @@ Synthetic decision cases test routing and claim discipline only; actual applicat
 acceptance requires the scoped real journeys and their evidence. Keep project evidence
 outside this reusable package.
 
+## Evidence volume cases
+
+| Case | Pass evidence | Reject if |
+| --- | --- | --- |
+| Hundreds of route/state combinations would serialize full DOM/style trees on every scroll | Measures one representative output, requests assertion-relevant observations and reports projected growth; required coverage and raw failure proof remain intact. | Starts unbounded dumps, silently drops cases, or replaces necessary raw evidence with pass counts. |
+| Old runner says passed while its case says NOT_VERIFIED; a later timestamp exists | Keeps actual case verdict and basis separate; identifies current and failure evidence for the host retention owner. | Calls the old case accepted, infers a valid replacement from recency, or deletes shared/unknown artifacts under test authority. |
+| A bounded defect genuinely requires a complete DOM snapshot within available resources | Retains that snapshot and its identity at the observed boundary. | Applies a universal no-full-snapshot rule or claims a measured storage improvement without a comparable run. |
+
 ## Iterative risk-based cases
 
 | Case | Pass evidence | Reject if |

@@ -94,6 +94,13 @@ verified` and name the exact trace, HAR, console export, screenshot, or manual
 inspection needed. A screenshot does not prove network, storage, or backend
 state.
 
+For repeated DOM/style observations, select the elements and properties required by
+the current assertion. Capture one representative sample and report its byte volume
+before scaling across routes or scroll positions. A full snapshot is justified by a
+specific diagnostic need; avoid repeatedly serializing unchanged trees or embedding
+the same full response in every observation. Preserve raw values needed for the
+claim, and report capture limits to the testing owner without changing its oracle.
+
 ## Runtime Ownership And Non-Interrupting Operation
 
 When this task starts a local runtime, create a small task ledger before launch:

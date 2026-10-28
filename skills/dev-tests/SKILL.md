@@ -50,6 +50,9 @@ checklist alone does not complete the run.
 - Rebind evidence after requirement, UI, code, configuration or environment changes.
   Reuse unaffected evidence only with an explicit impact rationale; old green results
   cannot approve a new basis by default.
+- Select raw observations for the actual assertions and estimate output growth before
+  scaling a capture matrix. Follow the [test record](references/test-record.md) for
+  evidence sufficiency; storage retention and cleanup remain with the host owner.
 - Produce test evidence, not a competing task ledger or a release verdict. `to-task`
   owns durable work reconciliation, `repo-review` the fixed-basis review, and
   `repo-delivery` separately authorized Git actions. No deployment, installation,
