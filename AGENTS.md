@@ -44,6 +44,10 @@ under the repository's established `docs/` structure.
 
 ## Project Structure
 
+- `integrations/codex/` owns reusable Codex-specific custom agent configurations.
+  Edit these tracked sources before updating installed copies; follow its README
+  for installation and byte-for-byte parity checks. Keep host-specific agents
+  outside portable `skills/` packages and the Skill catalog indexes.
 - `skills/` contains publishable or reusable skill packages.
 - `skills-index.json` is the repository-level semantic discovery and execution-
   boundary contract used by `scripts/search-skills.py`; portable runtime activation

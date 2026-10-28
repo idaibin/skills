@@ -107,6 +107,7 @@ to use each package's portable `SKILL.md` metadata.
 - [Installation and updates](INSTALL.md)
 - [Skill authoring standard](docs/skills/skill-standard.md)
 - [Routing and ownership](docs/standards/skill-routing.md)
+- [Codex agent configurations](integrations/codex/README.md)
 - [Repository contribution rules](AGENTS.md)
 - [Package contribution rules](skills/AGENTS.md)
 
