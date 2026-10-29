@@ -563,7 +563,7 @@ class AskAIProviderProfileTests(unittest.TestCase):
                                            str(alias), digest)
             self.assertEqual([["--version"]],
                              [json.loads(line) for line in marker.read_text().splitlines()])
-            self.assertEqual(str(first), result["executable"])
+            self.assertEqual(str(first.resolve()), result["executable"])
             self.assertEqual("entrypoint-drift", result["help"]["reason"])
             self.assertEqual("not-verified", result["identity"])
 
