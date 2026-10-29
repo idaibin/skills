@@ -189,7 +189,8 @@ manifest in this path.
 
 ## Lint And Diff Gates
 
-The official lint and diff gates require external tool access and network authorization.
+Use the existing pinned local CLI from [the DESIGN.md contract](design-md-contract.md#cli-and-version-policy);
+require network authorization only for a step that downloads a package or uses the network.
 Run lint for every changed `<design-root>/DESIGN.md`. Run diff against the previous accepted file for an
 update; record diff as `Not applicable` for the first accepted creation instead of
 inventing a baseline. If a required tool cannot run, mark the gate `Not verified` and

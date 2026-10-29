@@ -394,6 +394,24 @@ class DesignMdCompletenessTests(unittest.TestCase):
                 CHECKER.run_official_lint(b"# Design")
             run.assert_not_called()
 
+    def test_workflow_requires_network_permission_only_for_network_effects(self) -> None:
+        # Static instruction alignment; this does not assert network isolation.
+        workflow = (ROOT / "skills/ui-spec/references/workflow.md").read_text(encoding="utf-8")
+        gate = workflow.split("## Lint And Diff Gates\n", 1)[1].split("\n## ", 1)[0]
+        gate = re.sub(r"\s+", " ", gate)
+        self.assertIn("Use the existing pinned local CLI", gate)
+        self.assertIn("design-md-contract.md#cli-and-version-policy", gate)
+        self.assertIn("require network authorization only for a step that downloads a package or uses the network", gate)
+        self.assertNotIn("gates require external tool access and network authorization", gate)
+        self.assertIn("Run lint for every changed", gate)
+        self.assertIn("Run diff against the previous accepted file", gate)
+        self.assertIn("first accepted creation", gate)
+        self.assertIn("mark the gate `Not verified` and keep the readiness result `Not Ready`", gate)
+        contract = (ROOT / "skills/ui-spec/references/design-md-contract.md").read_text(encoding="utf-8")
+        self.assertIn("existing `@google/design.md@0.4.0` package", contract)
+        self.assertIn("Obtain authorization before any CLI step that downloads a package or uses the network", contract)
+        self.assertIn("does not\ninstall dependencies", contract)
+
     def test_wrong_parser_version_never_installs(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             Path(directory, "package.json").write_text(json.dumps({"name": "@google/design.md", "version": "0.0.0"}))
