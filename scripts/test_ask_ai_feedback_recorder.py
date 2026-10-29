@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+import runpy
 import subprocess
 import sys
 import tempfile
@@ -64,6 +65,106 @@ class AskAIFeedbackRecorderTests(unittest.TestCase):
         if os.name != "nt":
             lock_mode = self.log.with_suffix(".jsonl.lock").stat().st_mode & 0o777
             self.assertEqual(0o600, lock_mode)
+
+    def output_snapshot(self):
+        return {
+            str(path.relative_to(self.root)): (
+                path.stat().st_mode & 0o777,
+                path.read_bytes() if path.is_file() else None,
+            )
+            for path in self.root.rglob("*")
+            if path not in (self.config, self.event_file)
+        }
+
+    def assert_config_rejected_without_writes(self, text):
+        self.config_case = getattr(self, "config_case", 0) + 1
+        self.event["event_id"] = f"config-rejection:{self.config_case}"
+        self.config.write_text(text, encoding="utf-8")
+        before = self.output_snapshot()
+        result = self.run_recorder()
+        self.assertEqual(1, result.returncode, result.stdout + result.stderr)
+        self.assertIn("feedback-deferred:", result.stderr)
+        self.assertEqual(before, self.output_snapshot())
+
+    def test_config_enablement_cannot_be_overridden_by_nested_or_duplicate_keys(self):
+        base = f"schema_version: ask-ai-feedback/v1\nround_log: {self.log}\n"
+        for tail in (
+            "enabled: false\nsummary:\n  enabled: true\n",
+            "enabled: false\nenabled: true\n",
+            "enabled: true\nenabled: false\n",
+            'enabled: "true"\n', "enabled: 'true'\n", "", "enabled: yes\n",
+            f"enabled: true\nround_log: {self.root / 'other.jsonl'}\n",
+            "enabled: true\nschema_version: ask-ai-feedback/v1\n",
+        ):
+            with self.subTest(tail=tail):
+                self.assert_config_rejected_without_writes(base + tail)
+
+    def test_unsupported_or_malformed_config_is_rejected_before_any_output(self):
+        base = f"schema_version: ask-ai-feedback/v1\nenabled: true\nround_log: {self.log}\n"
+        for tail in (
+            "summary:\n  enabled: true\n", "  extra: value\n", "not a mapping\n",
+            "extra: [a, b]\n", "extra: {a: b}\n", "extra: |\n", "extra: >\n",
+            "extra: &anchor value\n", "extra: *anchor\n", "extra: !tag value\n",
+            "extra: null\n", "extra: ~\n", "extra:\n", "extra: a: b\n",
+            "extra: 'unterminated\n", 'extra: "unterminated\n',
+            "extra: 'value' trailing\n", 'extra: "value" trailing\n',
+        ):
+            with self.subTest(tail=tail):
+                self.assert_config_rejected_without_writes(base + tail)
+
+    def test_invalid_decoded_log_paths_preserve_missing_and_existing_outputs(self):
+        base = "schema_version: ask-ai-feedback/v1\nenabled: true\nround_log: "
+        for existing in (False, True):
+            if existing:
+                self.assertEqual(0, self.run_recorder().returncode)
+                lock = self.log.with_suffix(".jsonl.lock")
+                lock.write_bytes(b"existing-lock")
+                lock.chmod(0o640)
+            for suffix in ("\x00", "\ud800", "\udfff", "\udc80"):
+                with self.subTest(existing=existing, suffix=repr(suffix)):
+                    self.assert_config_rejected_without_writes(
+                        base + json.dumps(str(self.root / "new-parent" / "feedback.jsonl") + suffix) + "\n"
+                    )
+            self.config.write_text(base + str(self.log) + "\n", encoding="utf-8")
+
+    def test_flat_config_paths_and_unknown_scalar_settings_remain_compatible(self):
+        for index, (name, quote) in enumerate((
+            ("state#plain", "plain"), ("state #single", "single"),
+            ("state #double", "double"), ("state with spaces", "plain"),
+            ("状态#保留", "double"), ("state'quote", "single"),
+        )):
+            with self.subTest(name=name, quote=quote):
+                log = self.root / name / "feedback.jsonl"
+                value = str(log)
+                if quote == "single":
+                    value = "'" + value.replace("'", "''") + "'"
+                elif quote == "double":
+                    value = json.dumps(value, ensure_ascii=False)
+                self.config.write_text(
+                    "# user configuration\nschema_version: ask-ai-feedback/v1\n"
+                    f"enabled: true # local opt-in\nround_log: {value} # path\n"
+                    "retention: 30\nthreshold: 0.75\nlabel: user setting\nextra: ''\n",
+                    encoding="utf-8",
+                )
+                self.event["event_id"] = f"config-path:{index}"
+                result = self.run_recorder()
+                self.assertEqual(0, result.returncode, result.stderr)
+                self.assertTrue(log.exists(), result.stdout)
+                self.assertEqual(self.event, json.loads(log.read_text(encoding="utf-8")))
+                self.assertTrue(log.with_suffix(".jsonl.lock").exists())
+
+    def test_config_scalar_preserves_relative_and_windows_path_text(self):
+        load_config = runpy.run_path(str(RECORDER))["load_config"]
+        for value in ("状态#保留/feedback.jsonl", r"C:\fixture\state#keep\feedback.jsonl"):
+            for encoded in (value, "'" + value + "'", json.dumps(value)):
+                with self.subTest(value=value, encoded=encoded):
+                    self.config.write_text(
+                        "schema_version: ask-ai-feedback/v1\nenabled: true\n"
+                        f"round_log: {encoded}\n", encoding="utf-8",
+                    )
+                    self.assertEqual(value, load_config(self.config)["round_log"])
+        self.assertFalse(self.log.parent.exists())
+
 
     def test_rejects_all_feedback_events_failed_before_submit(self) -> None:
         self.event = {key: self.event[key] for key in (

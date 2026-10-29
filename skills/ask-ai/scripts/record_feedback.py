@@ -139,18 +139,46 @@ VERIFICATION_ONLY_FIELDS = {
 }
 
 
+def config_scalar(raw: str) -> str | bool:
+    """Read the documented flat scalar subset, not arbitrary YAML."""
+    value = raw.lstrip(" \t")
+    if value.startswith('"'):
+        parsed, end = json.JSONDecoder().raw_decode(value)
+        tail = value[end:]
+    elif value.startswith("'"):
+        match = re.match(r"'((?:[^']|'')*)'", value)
+        if match is None:
+            raise ValueError("unterminated single-quoted config value")
+        parsed = match.group(1).replace("''", "'")
+        tail = value[match.end():]
+    else:
+        value = re.split(r"(?:^|[ \t]+)#", value, maxsplit=1)[0].rstrip(" \t")
+        if (not value or value[0] in "[]{}&*!|>%@`\"'"
+                or value in {"---", "..."} or value.lower() in {"null", "~"}
+                or re.search(r":(?:[ \t]|$)", value)
+                or re.match(r"[-?:](?:[ \t]|$)", value)):
+            raise ValueError("unsupported or empty config value")
+        if value.lower() in {"true", "false"}:
+            return value.lower() == "true"
+        return value
+    if tail and not re.fullmatch(r"[ \t]+(?:#.*)?", tail):
+        raise ValueError("unexpected text after quoted config value")
+    return parsed
+
+
 def load_config(path: Path) -> dict:
     text = path.read_text(encoding="utf-8")
     values: dict[str, object] = {}
-    for raw_line in text.splitlines():
-        line = raw_line.split("#", 1)[0].strip()
-        if not line or ":" not in line:
+    for line in text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
             continue
-        key, raw_value = (part.strip() for part in line.split(":", 1))
-        if raw_value.lower() in {"true", "false"}:
-            values[key] = raw_value.lower() == "true"
-        else:
-            values[key] = raw_value.strip('"\'')
+        match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_-]*)[ \t]*:(.*)", line)
+        if match is None:
+            raise ValueError("feedback config requires unindented scalar key/value lines")
+        key, raw_value = match.groups()
+        if key in values:
+            raise ValueError(f"duplicate feedback config key: {key}")
+        values[key] = config_scalar(raw_value)
     if values.get("schema_version") != "ask-ai-feedback/v1":
         raise ValueError("unsupported feedback config schema")
     if values.get("enabled") is not True:
@@ -158,6 +186,11 @@ def load_config(path: Path) -> dict:
     round_log = values.get("round_log")
     if not isinstance(round_log, str) or not round_log:
         raise ValueError("round_log is required")
+    if "\0" in round_log:
+        raise ValueError("round_log contains a NUL character")
+    # Validate decoded path bytes before append_event can create any parent/lock.
+    round_log.encode("utf-8", errors="strict")
+    os.fsencode(round_log)
     return values
 
 
