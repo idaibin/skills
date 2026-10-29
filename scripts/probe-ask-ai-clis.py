@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Probe ask-ai coding-agent CLI discovery without submitting provider work."""
+"""Discover coding-agent CLI paths without launching unqualified programs.
+
+Version/help execution requires --verified-cli PROVIDER EXECUTABLE SHA256 from an
+existing headless qualification. Computing a new hash alone is not qualification.
+"""
 
 from __future__ import annotations
 
@@ -7,12 +11,14 @@ import argparse
 import hashlib
 import json
 import os
+import plistlib
 import shutil
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 from typing import Any
+from xml.parsers.expat import ExpatError
 
 
 PROVIDERS = (
@@ -177,9 +183,101 @@ def public_result(result: dict[str, Any]) -> dict[str, Any]:
     return {key: value for key, value in result.items() if key != "output"}
 
 
+def bundle_entrypoint_blocker(executable: Path) -> str | None:
+    """Preserve bundle identity even when its main executable is a symlink."""
+    for bundle in executable.parents:
+        if bundle.suffix.lower() != ".app":
+            continue
+        contents = bundle / "Contents"
+        try:
+            with (contents / "Info.plist").open("rb") as handle:
+                metadata = plistlib.load(handle)
+            if not isinstance(metadata, dict):
+                return "bundle-entrypoint-unverified"
+            name = metadata.get("CFBundleExecutable")
+            if not isinstance(name, str) or not name:
+                return "bundle-entrypoint-unverified"
+            main = contents / "MacOS" / name
+            if main.resolve() == executable.resolve() or (
+                main.exists() and executable.exists() and main.samefile(executable)
+            ):
+                return "desktop-entrypoint"
+        except (OSError, ValueError, RuntimeError, plistlib.InvalidFileException, ExpatError):
+            return "bundle-entrypoint-unverified"
+        break
+    return None
+
+
+def resolve_qualified_executable(
+    executable: Path, expected_digest: str,
+) -> tuple[Path | None, str | None]:
+    """Check bundle context along every symlink hop, then bind the final bytes."""
+    blocker = bundle_entrypoint_blocker(executable)
+    if blocker:
+        return None, blocker
+    pending = list(executable.parts[1:])
+    resolved = Path(executable.anchor)
+    links = 0
+    try:
+        while pending:
+            name = pending.pop(0)
+            if name == "..":
+                resolved = resolved.parent
+                continue
+            candidate = resolved / name
+            if candidate.is_symlink():
+                links += 1
+                if links > 40:
+                    return None, "entrypoint-resolution-failed"
+                target = Path(os.readlink(candidate))
+                reference = target if target.is_absolute() else candidate.parent / target
+                blocker = bundle_entrypoint_blocker(reference.joinpath(*pending))
+                if blocker:
+                    return None, blocker
+                if target.is_absolute():
+                    resolved = Path(target.anchor)
+                    pending = list(target.parts[1:]) + pending
+                else:
+                    pending = list(target.parts) + pending
+            else:
+                resolved = candidate
+    except (OSError, RuntimeError):
+        return None, "entrypoint-resolution-failed"
+    if not resolved.is_file() or not os.access(resolved, os.X_OK):
+        return None, "executable-unavailable"
+    try:
+        digest = hashlib.sha256()
+        with resolved.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+        if digest.hexdigest() != expected_digest:
+            return None, "executable-digest-mismatch"
+    except OSError:
+        return None, "executable-unreadable"
+    return resolved, None
+
+
+def unrun_probe(reason: str) -> dict[str, Any]:
+    return {"status": "not-run", "reason": reason, "output": ""}
+
+
+def qualified_probe(
+    executable: str, option: str, expected_digest: str, *, cwd: Path,
+    env: dict[str, str], timeout: int, expected_executable: str | None = None,
+) -> dict[str, Any]:
+    resolved, blocker = resolve_qualified_executable(Path(executable), expected_digest)
+    if blocker:
+        return unrun_probe(blocker)
+    assert resolved is not None
+    if expected_executable is not None and str(resolved) != expected_executable:
+        return unrun_probe("entrypoint-drift")
+    result = run([str(resolved), option], cwd=cwd, env=env, timeout=timeout)
+    return {**result, "executable": str(resolved)}
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Run discovery-only version/help probes for ask-ai coding-agent CLIs."
+        description="Discover coding-agent CLI paths; execute version/help only for qualified entries."
     )
     parser.add_argument("--repo", type=Path, default=Path.cwd(), help="Git repository to keep unchanged")
     parser.add_argument(
@@ -191,7 +289,26 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--timeout", type=int, default=15, help="Seconds per command")
     parser.add_argument("--output", type=Path, help="Optional JSON output path")
-    return parser.parse_args()
+    parser.add_argument(
+        "--verified-cli", nargs=3, action="append", default=[],
+        metavar=("PROVIDER", "EXECUTABLE", "SHA256"),
+        help="Execute version/help for this exact absolute headless entry using its existing "
+             "qualification fingerprint; a newly calculated hash does not prove background safety. "
+             "Repeat for selected providers. Other entries return present/not-run.",
+    )
+    args = parser.parse_args()
+    providers = {provider for provider, _, _ in PROVIDERS}
+    qualified = {}
+    for provider, executable, digest in args.verified_cli:
+        if provider not in providers or provider in qualified:
+            parser.error("--verified-cli requires a known provider exactly once")
+        if not Path(executable).is_absolute():
+            parser.error("--verified-cli executable must be an absolute path")
+        if len(digest) != 64 or any(c not in "0123456789abcdefABCDEF" for c in digest):
+            parser.error("--verified-cli SHA256 must contain 64 hexadecimal characters")
+        qualified[provider] = (executable, digest.lower())
+    args.verified_cli = qualified
+    return args
 
 
 def main() -> int:
@@ -214,7 +331,11 @@ def main() -> int:
         )
         probes = []
         for provider, candidates, identity_terms in PROVIDERS:
-            executable = resolve_executable(candidates, args.bin_dir)
+            qualified = args.verified_cli.get(provider)
+            executable = (
+                qualified[0]
+                if qualified else resolve_executable(candidates, args.bin_dir)
+            )
             if not executable:
                 probes.append(
                     {
@@ -225,13 +346,26 @@ def main() -> int:
                 )
                 continue
 
-            version = run([executable, "--version"], cwd=root, env=env, timeout=args.timeout)
-            help_result = run([executable, "--help"], cwd=root, env=env, timeout=args.timeout)
+            if qualified:
+                version = qualified_probe(executable, "--version", qualified[1],
+                                          cwd=root, env=env, timeout=args.timeout)
+                help_result = (
+                    unrun_probe(version["reason"]) if version["status"] == "not-run" else
+                    qualified_probe(executable, "--help", qualified[1], cwd=root, env=env,
+                                    timeout=args.timeout, expected_executable=version["executable"])
+                )
+            else:
+                version = unrun_probe("qualification-required")
+                help_result = unrun_probe("qualification-required")
+            execution_path = version.get("executable", executable)
             if provider.startswith("qoder-cli-"):
-                identity, identity_evidence = qoder_identity(provider, executable, version, help_result)
+                identity, identity_evidence = qoder_identity(provider, execution_path, version, help_result)
             else:
                 identity_text = f"{version['output']}\n{help_result['output']}".lower()
-                command_succeeded = any(_command_succeeded(result) for result in (version, help_result))
+                command_succeeded = (
+                    all(result["status"] != "not-run" for result in (version, help_result))
+                    and any(_command_succeeded(result) for result in (version, help_result))
+                )
                 identity = (
                     "matched"
                     if command_succeeded and any(term in identity_text for term in identity_terms)
@@ -241,8 +375,8 @@ def main() -> int:
             probes.append(
                 {
                     "provider": provider,
-                    "discovery": "present",
-                    "executable": executable,
+                    "discovery": "present" if Path(executable).is_file() else "missing",
+                    "executable": execution_path,
                     "identity": identity,
                     **({"identity_evidence": identity_evidence} if identity_evidence is not None else {}),
                     "version": public_result(version),
@@ -263,6 +397,9 @@ def main() -> int:
         "providers": probes,
         "limitations": [
             "No provider prompt was submitted.",
+            "Unqualified entries were not launched; version/help may report not-run with a reason.",
+            "Caller-supplied fingerprints bind existing headless qualification, not a new safety test "
+            "or a sandbox for executable dependencies and side effects.",
             "Authentication, permissions, structured output, sessions, resume, and billing were not tested.",
             "Presence and help output do not establish runtime conformance.",
         ],

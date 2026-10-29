@@ -3,11 +3,19 @@
 
 from __future__ import annotations
 
+import contextlib
+import hashlib
 import importlib.util
+import io
+import json
+import os
+import plistlib
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -349,6 +357,215 @@ class AskAIProviderProfileTests(unittest.TestCase):
         )
         self.assertEqual("matched", global_versioned_identity)
         self.assertTrue(all(global_versioned_evidence.values()))
+
+    def make_discovery_fixture(self, directory: str) -> tuple[Path, Path, Path]:
+        root = Path(directory)
+        repository = root / "repository"
+        repository.mkdir()
+        subprocess.run(["git", "init", "--quiet"], cwd=repository, check=True)
+        subprocess.run(
+            ["git", "-c", "user.name=Test", "-c", "user.email=test-invalid",
+             "commit", "--quiet", "--allow-empty", "-m", "base"],
+            cwd=repository, check=True,
+        )
+        bin_dir = root / "bin"
+        bin_dir.mkdir()
+        return repository, bin_dir, root / "invocations.jsonl"
+
+    def write_probe_executable(self, path: Path, marker: Path, *, mutate: bool = False) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            f"#!{sys.executable}\n"
+            "import json, sys\nfrom pathlib import Path\n"
+            f"with Path({str(marker)!r}).open('a') as log:\n"
+            "    log.write(json.dumps(sys.argv[1:]) + '\\n')\n"
+            "print('ZCode CLI fixture')\n"
+            + ("if '--version' in sys.argv:\n"
+               "    with Path(__file__).open('a') as target: target.write('\\n# changed\\n')\n"
+               if mutate else ""),
+            encoding="utf-8",
+        )
+        path.chmod(0o755)
+
+    def discover_fixture(self, repository: Path, bin_dir: Path, *extra: str) -> dict:
+        output = io.StringIO()
+        with mock.patch.object(PROBE, "PROVIDERS", (("zcode", ("zcode",), ("zcode",)),)), \
+             mock.patch.object(sys, "argv", [str(PROBE_PATH), "--repo", str(repository),
+                                             "--bin-dir", str(bin_dir), *extra]), \
+             contextlib.redirect_stdout(output):
+            self.assertEqual(0, PROBE.main())
+        return json.loads(output.getvalue())["providers"][0]
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_discovery_does_not_launch_an_unqualified_path_wrapper(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            self.write_probe_executable(bin_dir / "zcode", marker)
+            result = self.discover_fixture(repository, bin_dir)
+            self.assertFalse(marker.exists(), "discovery executed an unqualified program")
+            self.assertEqual("present", result["discovery"])
+            self.assertEqual("not-verified", result["identity"])
+            self.assertEqual("not-run", result["version"]["status"])
+            self.assertEqual("not-run", result["help"]["status"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_qualified_cli_runs_only_version_and_help(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            executable = bin_dir / "zcode"
+            self.write_probe_executable(executable, marker)
+            digest = hashlib.sha256(executable.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(executable), digest)
+            self.assertEqual([["--version"], ["--help"]],
+                             [json.loads(line) for line in marker.read_text().splitlines()])
+            self.assertEqual("matched", result["identity"])
+            self.assertEqual("not-run", result["runtime_conformance"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_gui_main_symlink_is_not_started_even_with_a_matching_digest(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            contents = Path(directory) / "ZCode.app" / "Contents"
+            executable = contents / "MacOS" / "ZCode"
+            self.write_probe_executable(executable, marker)
+            (contents / "Info.plist").write_bytes(plistlib.dumps({"CFBundleExecutable": "ZCode"}))
+            link = bin_dir / "zcode"
+            link.symlink_to(executable)
+            digest = hashlib.sha256(executable.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(link), digest)
+            self.assertFalse(marker.exists())
+            self.assertEqual("desktop-entrypoint", result["version"]["reason"])
+            self.assertEqual("not-run", result["help"]["status"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_qualified_bundle_resource_cli_is_not_mistaken_for_the_gui(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            contents = Path(directory) / "ZCode.app" / "Contents"
+            executable = contents / "Resources" / "cli" / "zcode"
+            self.write_probe_executable(executable, marker)
+            (contents / "Info.plist").write_bytes(plistlib.dumps({"CFBundleExecutable": "ZCode"}))
+            digest = hashlib.sha256(executable.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(executable), digest)
+            self.assertEqual("matched", result["identity"])
+            self.assertEqual(2, len(marker.read_text().splitlines()))
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_gui_bundle_context_is_preserved_through_symlink_chains(self) -> None:
+        for route in ("direct", "file-alias", "directory-alias"):
+            with self.subTest(route=route), tempfile.TemporaryDirectory() as directory:
+                repository, bin_dir, marker = self.make_discovery_fixture(directory)
+                outside = Path(directory) / "outside" / "desktop"
+                self.write_probe_executable(outside, marker)
+                contents = Path(directory) / "ZCode.app" / "Contents"
+                launcher = contents / "MacOS" / "ZCode"
+                launcher.parent.mkdir(parents=True)
+                launcher.symlink_to(outside)
+                (contents / "Info.plist").write_bytes(plistlib.dumps({"CFBundleExecutable": "ZCode"}))
+                selected = launcher
+                if route == "file-alias":
+                    selected = bin_dir / "zcode"
+                    selected.symlink_to(launcher)
+                elif route == "directory-alias":
+                    alias = bin_dir / "bundle-bin"
+                    alias.symlink_to(launcher.parent, target_is_directory=True)
+                    selected = alias / "ZCode"
+                digest = hashlib.sha256(outside.read_bytes()).hexdigest()
+                result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                               str(selected), digest)
+                self.assertFalse(marker.exists())
+                self.assertEqual("desktop-entrypoint", result["version"]["reason"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_truncated_bundle_metadata_returns_not_run(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            contents = Path(directory) / "ZCode.app" / "Contents"
+            executable = contents / "MacOS" / "ZCode"
+            self.write_probe_executable(executable, marker)
+            (contents / "Info.plist").write_text('<?xml version="1.0"?><plist><dict>')
+            digest = hashlib.sha256(executable.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(executable), digest)
+            self.assertFalse(marker.exists())
+            self.assertEqual("bundle-entrypoint-unverified", result["version"]["reason"])
+            self.assertEqual("not-run", result["help"]["status"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_bundle_main_hardlink_alias_is_not_started(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            contents = Path(directory) / "ZCode.app" / "Contents"
+            launcher = contents / "MacOS" / "ZCode"
+            self.write_probe_executable(launcher, marker)
+            alias = launcher.with_name("zcode-alias")
+            os.link(launcher, alias)
+            (contents / "Info.plist").write_bytes(plistlib.dumps({"CFBundleExecutable": "ZCode"}))
+            digest = hashlib.sha256(alias.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(alias), digest)
+            self.assertFalse(marker.exists())
+            self.assertEqual("desktop-entrypoint", result["version"]["reason"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_invalid_qualified_entry_never_falls_back_to_path(self) -> None:
+        for missing in (False, True):
+            with self.subTest(missing=missing), tempfile.TemporaryDirectory() as directory:
+                repository, bin_dir, marker = self.make_discovery_fixture(directory)
+                executable = bin_dir / "zcode"
+                self.write_probe_executable(executable, marker)
+                selected = Path(directory) / "missing-zcode" if missing else executable
+                result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                               str(selected), "0" * 64)
+                self.assertFalse(marker.exists())
+                self.assertEqual("not-run", result["version"]["status"])
+                self.assertEqual("not-run", result["help"]["status"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_executable_drift_after_version_blocks_help(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            executable = bin_dir / "zcode"
+            self.write_probe_executable(executable, marker, mutate=True)
+            digest = hashlib.sha256(executable.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(executable), digest)
+            self.assertEqual([["--version"]],
+                             [json.loads(line) for line in marker.read_text().splitlines()])
+            self.assertEqual("pass", result["version"]["status"])
+            self.assertEqual("not-run", result["help"]["status"])
+            self.assertEqual("executable-digest-mismatch", result["help"]["reason"])
+            self.assertEqual("not-verified", result["identity"])
+
+    @unittest.skipUnless(os.name == "posix", "fixture uses an executable shebang")
+    def test_symlink_target_drift_blocks_help_even_with_identical_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            repository, bin_dir, marker = self.make_discovery_fixture(directory)
+            first = Path(directory) / "first" / "zcode"
+            second = Path(directory) / "second" / "zcode"
+            alias = bin_dir / "zcode"
+            self.write_probe_executable(first, marker)
+            with first.open("a") as handle:
+                handle.write(
+                    "if '--version' in sys.argv:\n"
+                    f"    Path({str(alias)!r}).unlink()\n"
+                    f"    Path({str(alias)!r}).symlink_to({str(second)!r})\n"
+                )
+            second.parent.mkdir()
+            second.write_bytes(first.read_bytes())
+            second.chmod(0o755)
+            alias.symlink_to(first)
+            digest = hashlib.sha256(first.read_bytes()).hexdigest()
+            result = self.discover_fixture(repository, bin_dir, "--verified-cli", "zcode",
+                                           str(alias), digest)
+            self.assertEqual([["--version"]],
+                             [json.loads(line) for line in marker.read_text().splitlines()])
+            self.assertEqual(str(first), result["executable"])
+            self.assertEqual("entrypoint-drift", result["help"]["reason"])
+            self.assertEqual("not-verified", result["identity"])
 
     def test_probe_fingerprint_detects_rewrites_of_an_already_modified_file(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
