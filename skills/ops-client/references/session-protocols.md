@@ -16,6 +16,9 @@ configuration source, account boundary and exact workspace/session. A directory'
 real path may differ from the stored workspace key; preserve the application's key.
 Inspect installed help/schema/implementation only for unresolved fields. Do not open
 a debugging port, restart the app or copy credentials to make a protocol work.
+Resolve a headless executable from installed package metadata before running help
+or version probes. A desktop launcher is not a CLI merely because it accepts argv;
+do not invoke it or an activating app-selection helper for background discovery.
 
 Reuse a qualification record whose executable/protocol/configuration, operation,
 tool policy and session conditions still match. Keep the record in caller-owned
@@ -39,6 +42,11 @@ Do not retry an unchanged failed route or switch adapters around a policy denial
    idempotency, an uncertain submission must not be replayed.
 4. Query or subscribe within a bounded interval and budget. Bind status, message,
    tool-call/result and approval events to this session and the submitted turn.
+   Reuse the selected process/session transport; do not activate or reselect a
+   desktop window to inspect progress. Prefer events when supported, back off on
+   unchanged state and stop monitoring on a terminal result or exhausted budget.
+   Budget exhaustion leaves completion unverified; preserve the last observed state
+   without cancelling the task.
    Separate queued, running, waiting-for-approval, terminal-success, terminal-failure
    and unknown using the actual protocol's states. Do not invent percentage complete.
 5. Validate completion from matching user input, terminal event, assistant result and

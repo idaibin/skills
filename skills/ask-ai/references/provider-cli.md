@@ -201,6 +201,9 @@ When user configuration requires delegated CLI execution, the primary coordinato
 first freezes the task, exact argument array, provider/model, operation IDs, workspace,
 and artifact contract. It then delegates that sealed invocation to one smallest
 capable CLI executor whose effective runtime identity is verified before delegation.
+Carry foreground and input constraints in that handoff. CLI submission, monitoring
+and result capture default to background process/session operations; they never
+authorize desktop selection, activation or GUI input as a fallback.
 The delegated CLI executor may perform exactly one process start, monitor only that
 original process/provider session, and capture terminal and artifact metadata. It may
 not alter the command, task, provider, model, basis, scope, or paths; submit another

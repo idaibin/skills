@@ -1,7 +1,8 @@
 # Background Client Operations
 
-Use this profile when another application must remain foreground or when the user
-requests a bounded qualification of that capability. It does not promise universal
+Use this profile for delegated task submission, monitoring and result readback,
+when another application must remain foreground, or when the user requests a
+bounded qualification of that capability. It does not promise universal
 control of applications, custom canvases or every screen-session state.
 For mobile apps inside a simulator, use `ops-device`'s device-bound route;
 host AX and a host window are not prerequisites for an authorized headless guest.

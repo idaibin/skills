@@ -101,6 +101,11 @@ Use these cases when changing `ops-client` triggers, modes, platform adapters, w
 | Case | Expected result |
 | --- | --- |
 | Explicit background delegation through a current app-owned stdio API | Bind workspace/session/model, enforce task tool scope, submit once and query matching progress/terminal state without GUI input. |
+| Submit an authorized task to the named desktop client and wait for its result, without mentioning background mode | Apply background constraints before client selection, submit once through a qualified app-owned route and monitor the same session without selecting or activating a window. |
+| Progress is available only through a helper that raises the client window | Stop that query route and report progress unavailable; retain the task/session, continue independent work and do not activate then restore focus. |
+| A version probe resolves to the desktop GUI launcher | Inspect package metadata to locate a genuine headless entry before invocation; do not repeatedly launch the GUI to discover a CLI. |
+| The user switches apps during a delegated task, or the monitoring budget expires | Preserve the user's foreground; continue only independently safe session reads within budget, then report the last observed state and missing completion evidence without cancelling or resubmitting. |
+| An explicit request asks to press a named GUI button with no conflicting foreground constraint | Execute the authorized bounded GUI interaction without duplicate approval; do not extend it to later monitoring or reclaim focus after the user switches apps. |
 | Contextual progress query after a timed-out send | Reconcile existing messages/events; do not resend an uncertain operation or delete the session. |
 | Recorded accepted send followed by a terminal configuration error | Report received then failed; do not claim task completion or silently change account/model. |
 | Read tool task completed; screenshots and write tools untested | Report actual read/tool/result evidence and focus coverage only; keep coding writes, desktop synchronization and capture unverified. |

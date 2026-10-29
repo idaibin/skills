@@ -52,7 +52,7 @@ client-owned, with browser methods used only for bounded Web-content evidence.
   does not lift a cancelled write or paused interaction. Older plans, summaries, and
   scheduled requests cannot resume it. Preserve the foreground and screen-session
   gates independently of that authorization.
-- For a background or focus-preserving request, apply [background operations](background-operations.md) before selection or mutation. Its qualification branch applies only when the user has requested testing the uncertain route; ordinary use requires established operation-specific focus behavior.
+- For task delegation, monitoring, result readback or an explicit focus-preserving request, apply [background operations](background-operations.md) before selection or mutation. Its qualification branch applies only when the user has requested testing the uncertain route; ordinary use requires established operation-specific focus behavior.
 - Process and runtime source are part of the evidence, not optional setup.
 - When the task starts from a repository, identify the client app location and startup command before claiming verification.
 - Before starting or restarting the client, require explicit authorization for the
@@ -60,8 +60,8 @@ client-owned, with browser methods used only for bounded Web-content evidence.
   an existing instance or active user workflow. Relevant source changes alone do not
   authorize rebuild or restart.
 - App selection, Accessibility press, and semantic targeting may activate a window even
-  when they do not move the pointer. A request to interact with an exact named app,
-  including `@Computer` plus that app, covers the requested bounded interaction and
+  when they do not move the pointer. An explicit GUI-action request for a named app,
+  including `@Computer` with that action, covers the requested bounded interaction and
   incidental activation; do not demand another approval for that same action. If the
   user requires another app to remain foreground, record that app and establish a
   proven background-safe, window-scoped route before binding or acting, or follow an
