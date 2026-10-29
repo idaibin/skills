@@ -166,7 +166,7 @@ def meaningful_prose(content: str) -> bool:
     without_fences = narrative_content(content)
     without_markup = re.sub(r"`[^`]*`|[*_#>|\-]", " ", without_fences)
     units = re.findall(
-        r"[A-Za-z0-9_]+|[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]",
+        r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]|[^\W_\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]+",
         without_markup,
         flags=re.UNICODE,
     )
@@ -192,8 +192,10 @@ def narrative_content(content: str) -> str:
     return re.sub(r"```.*?```|~~~.*?~~~", " ", content, flags=re.DOTALL)
 
 
-def normalized_identity(value: str | None) -> str:
-    return unicodedata.normalize("NFKC", value or "").strip().casefold()
+def normalized_identity(value: object) -> str:
+    if not isinstance(value, str):
+        return ""
+    return unicodedata.normalize("NFKC", value).strip().casefold()
 
 
 def evaluate_document(
@@ -313,7 +315,13 @@ def evaluate_document(
         implementer = record.get("implementer_id")
         if record.get("status") != "approved" or approval_design_sha256 != design_hash:
             errors.append("human approval record must bind the exact current DESIGN.md SHA-256")
-        identities = tuple(normalized_identity(value) for value in (approved_by, proposer, implementer))
+        identity_fields = {
+            "approved_by_id": approved_by, "proposer_id": proposer, "implementer_id": implementer,
+        }
+        identities = tuple(normalized_identity(value) for value in identity_fields.values())
+        for field, identity in zip(identity_fields, identities):
+            if not identity:
+                errors.append(f"approval record {field} must be a non-empty string")
         if not all(identities):
             errors.append("approval record requires stable approver, proposer, and implementer identities")
         elif len(set(identities)) != 3:

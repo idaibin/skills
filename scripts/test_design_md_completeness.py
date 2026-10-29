@@ -28,6 +28,14 @@ SPEC.loader.exec_module(CHECKER)
 
 SOURCE_ARTIFACT = FIXTURES / "source-evidence.txt"
 SOURCE_HASH = CHECKER.sha256(SOURCE_ARTIFACT)
+MULTILINGUAL_OVERVIEWS = {
+    "english": "This restrained system supports dense operational work while preserving a calm, high-contrast hierarchy for repeated daily use.",
+    "russian": "Эта система предназначена для ежедневной работы с большим объёмом данных. Контраст помогает различать основные действия и второстепенное содержимое.",
+    "arabic": "يدعم هذا النظام العمل اليومي مع البيانات الكثيفة ويحافظ على تسلسل بصري واضح. يميز التباين بين الإجراءات الرئيسية والمحتوى الثانوي.",
+    "hindi": "यह प्रणाली दैनिक कार्य और सघन जानकारी के लिए बनाई गई है। स्पष्ट दृश्य क्रम मुख्य कार्यों और सहायक सामग्री के बीच अंतर बनाए रखता है.",
+}
+
+
 def lint_pass(path: Path) -> dict:
     text = path.read_text(encoding="utf-8")
     raw = text.split("---", 2)[1]
@@ -88,6 +96,53 @@ class DesignMdCompletenessTests(unittest.TestCase):
         chinese = "主色用于关键操作，表面色用于内容区域。错误状态保持独立语义，并确保文字、图标和焦点在不同背景下清晰可辨。"
         self.assertTrue(CHECKER.meaningful_prose(chinese))
         self.assertFalse(CHECKER.meaningful_prose("颜色很好看"))
+        for language, text in MULTILINGUAL_OVERVIEWS.items():
+            with self.subTest(language=language):
+                self.assertTrue(CHECKER.meaningful_prose(text))
+
+    def test_multilingual_overview_preserves_candidate_readiness(self) -> None:
+        for language, text in MULTILINGUAL_OVERVIEWS.items():
+            with self.subTest(language=language):
+                path = self.mutate("complete.md", lambda document: re.sub(
+                    r"(?s)(## Overview\n).*?(?=\n## Colors)",
+                    lambda match: match[1] + "\n" + text + "\n", document,
+                ))
+                result = evaluate(path)
+                self.assertEqual([], self.errors(result))
+                self.assertEqual("ready-for-human-approval", self.status(result))
+
+    def test_unicode_words_do_not_swallow_adjacent_cjk_units(self) -> None:
+        texts = (
+            "UI界面为每日密集操作保留明确层级与一致反馈。API状态使用独立颜色和可读标签表达等待失败与恢复。Web内容区域通过留白和对比区分主要任务与辅助信息。App焦点始终清晰可见，支持键盘连续完成常见工作。",
+            "API接口状态保持清晰可辨，UI页面层级支持持续操作，Web正文通过对比突出主要任务，App错误恢复使用明确提示并保留输入内容。",
+            "UI画面では主要な操作を明確に示します。API状態の変化は読みやすいラベルで伝えます。Web本文は十分な余白で整理します。App操作の焦点は常に見えるようにします。",
+        )
+        for text in texts:
+            with self.subTest(text=text):
+                self.assertTrue(CHECKER.meaningful_prose(text))
+                path = self.mutate("complete.md", lambda document: re.sub(
+                    r"(?s)(## Overview\n).*?(?=\n## Colors)",
+                    lambda match: match[1] + "\n" + text + "\n", document,
+                ))
+                self.assertEqual("ready-for-human-approval", self.status(evaluate(path)))
+
+    def test_prose_size_diversity_and_markup_guards_are_unchanged(self) -> None:
+        # Structural thresholds only: this does not certify semantic quality.
+        boundary = "alpha bravo charm delta eagle fable gamma hotel"
+        self.assertTrue(CHECKER.meaningful_prose(boundary))
+        for text in (
+            boundary.replace("hotel", "innn"),
+            "alphabet bravo charm delta eagle fable gamma",
+            "alpha " * 10,
+            "система " * 10,
+            "النظام " * 10,
+            "", "*** ___ ### >>> ---", "☀ ☂ ☃ ☄ ★ ☆ ☇ ☈ " * 10,
+            "```text\n" + boundary + "\n```",
+            "~~~text\n" + boundary + "\n~~~",
+            "`" + boundary + "`",
+        ):
+            with self.subTest(text=text):
+                self.assertFalse(CHECKER.meaningful_prose(text))
 
     def test_application_prose_replaces_ungoverned_starter_sections(self) -> None:
         result = evaluate(FIXTURES / "complete.md")
@@ -265,6 +320,73 @@ class DesignMdCompletenessTests(unittest.TestCase):
             approval_record_sha256=CHECKER.sha256(record),
         )
         self.assertIn("human approver, proposer, and implementer identities must be distinct", self.errors(result))
+
+    def approval_main(self, changes):
+        design = FIXTURES / "complete.md"
+        values = {
+            "status": "approved", "design_sha256": CHECKER.sha256(design),
+            "approved_by_id": "design-owner", "proposer_id": "spec-author",
+            "implementer_id": "frontend-owner",
+        }
+        values.update(changes)
+        with tempfile.TemporaryDirectory() as directory:
+            record = Path(directory) / "approval.json"
+            record.write_text(json.dumps(values), encoding="utf-8")
+            argv = [
+                "checker", str(design), "--stage", "adopted", "--shared-components", "present",
+                "--source-ref", "selected-source:fixture", "--source-artifact", str(SOURCE_ARTIFACT),
+                "--source-sha256", SOURCE_HASH, "--source-status", "approved",
+                "--approval-record", str(record), "--approval-record-sha256", CHECKER.sha256(record),
+            ]
+            output = io.StringIO()
+            with (
+                mock.patch.object(sys, "argv", argv),
+                mock.patch.object(CHECKER, "run_official_lint", return_value=(lint_pass(design), 0, "policy-only-parser-fixture")),
+                contextlib.redirect_stdout(output),
+            ):
+                try:
+                    status = CHECKER.main()
+                except Exception as error:
+                    self.fail(f"checker must return structured rejection, not {type(error).__name__}: {error}")
+            return status, json.loads(output.getvalue())
+
+    def test_main_rejects_non_string_approval_identities_as_json(self) -> None:
+        for field in ("approved_by_id", "proposer_id", "implementer_id"):
+            for value in (123, 0, 1.5, True, False, None, {}, {"id": "owner"}, [], ["owner"]):
+                with self.subTest(field=field, value=value):
+                    status, result = self.approval_main({field: value})
+                    self.assertEqual(1, status)
+                    self.assertEqual("not-ready", self.status(result))
+                    self.assertIn(f"approval record {field} must be a non-empty string", self.errors(result))
+
+    def test_main_rejects_empty_approval_identities_as_json(self) -> None:
+        for field in ("approved_by_id", "proposer_id", "implementer_id"):
+            for value in ("", " \t\n", "\u3000"):
+                with self.subTest(field=field, value=value):
+                    status, result = self.approval_main({field: value})
+                    self.assertEqual(1, status)
+                    self.assertEqual("not-ready", self.status(result))
+                    self.assertIn(f"approval record {field} must be a non-empty string", self.errors(result))
+
+    def test_main_preserves_unicode_identity_and_approval_boundaries(self) -> None:
+        status, result = self.approval_main({
+            "approved_by_id": " 审批负责人 ", "proposer_id": "Автор спецификации",
+            "implementer_id": "منفذ الواجهة",
+        })
+        self.assertEqual(1, status)
+        self.assertEqual("awaiting-trusted-approval-verification", self.status(result))
+        self.assertEqual([], self.errors(result))
+        status, result = self.approval_main({"approved_by_id": " ＡＵＴＨＯＲ ", "proposer_id": "author"})
+        self.assertEqual(1, status)
+        self.assertEqual("not-ready", self.status(result))
+        self.assertIn("human approver, proposer, and implementer identities must be distinct", self.errors(result))
+
+    def test_invalid_identity_does_not_replace_exact_hash_gate(self) -> None:
+        status, result = self.approval_main({"approved_by_id": 123, "design_sha256": "a" * 64})
+        self.assertEqual(1, status)
+        self.assertEqual("not-ready", self.status(result))
+        self.assertIn("approval record approved_by_id must be a non-empty string", self.errors(result))
+        self.assertIn("human approval record must bind the exact current DESIGN.md SHA-256", self.errors(result))
 
     def test_missing_parser_binding_never_installs(self) -> None:
         with mock.patch.dict("os.environ", {}, clear=True), mock.patch.object(CHECKER.subprocess, "run") as run:
