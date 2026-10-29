@@ -18,6 +18,25 @@ The portable Skill defines the mechanism. Every path, retention setting, thresho
 and enablement choice remains in user configuration. Missing, invalid, or disabled
 configuration means no persistent feedback write.
 
+The package recorder accepts a flat scalar subset, not arbitrary YAML: one
+unindented `key: value` per line, with identifier keys (letters/underscore followed
+by letters, digits, underscores or hyphens). Blank lines and comments are allowed.
+Use unquoted `true`/`false` (case-insensitive) for booleans; quoted `"true"` is text
+and does not enable recording. Other plain values remain text, including numeric
+settings and paths with spaces, colons or backslashes. A `#` starts a comment only
+at the start of an unquoted value or after whitespace; `state#keep` stays literal.
+Single-quoted text escapes an apostrophe as `''`; double-quoted text uses JSON
+string escapes. Quoted `#` stays literal. After a closing quote only whitespace
+and an optional comment are accepted.
+
+Unknown flat scalar settings remain available to the configuration owner, including
+quoted empty strings. Duplicate keys, nested/indented mappings, lists, anchors,
+tags, block scalars, `null`/`~`, missing/unquoted empty values and malformed quoting
+are unsupported and rejected before output. `round_log` must be nonempty text,
+without NUL or invalid Unicode, encodable for the current filesystem. Invalid
+configuration must not create a log, lock or parent directory or modify existing
+ones; it does not repair user configuration automatically.
+
 ## Terminal Chain
 
 For one logical provider round, reuse one `feedback_id` and append, when applicable:
