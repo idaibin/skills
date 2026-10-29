@@ -54,6 +54,25 @@ def _type_matches(value: Any, expected: str) -> bool:
     raise ValueError(f"unsupported schema type: {expected}")
 
 
+def _json_equal(value: Any, expected: Any) -> bool:
+    """Compare JSON instances without Python's bool/number equivalence."""
+    if isinstance(value, bool) or isinstance(expected, bool):
+        return type(value) is type(expected) and value == expected
+    if isinstance(value, list) or isinstance(expected, list):
+        return (
+            isinstance(value, list) and isinstance(expected, list)
+            and len(value) == len(expected)
+            and all(_json_equal(left, right) for left, right in zip(value, expected))
+        )
+    if isinstance(value, dict) or isinstance(expected, dict):
+        return (
+            isinstance(value, dict) and isinstance(expected, dict)
+            and value.keys() == expected.keys()
+            and all(_json_equal(value[key], expected[key]) for key in value)
+        )
+    return value == expected
+
+
 def schema_errors(
     value: Any,
     schema: dict[str, Any],
@@ -81,7 +100,7 @@ def schema_errors(
     if "if" in schema and not schema_errors(value, schema["if"], root, path):
         errors.extend(schema_errors(value, schema.get("then", {}), root, path))
 
-    if "const" in schema and value != schema["const"]:
+    if "const" in schema and not _json_equal(value, schema["const"]):
         errors.append(f"{path}: must equal {schema['const']!r}")
     if "enum" in schema and value not in schema["enum"]:
         errors.append(f"{path}: value is not in enum {schema['enum']!r}")
