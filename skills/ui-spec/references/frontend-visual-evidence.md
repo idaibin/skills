@@ -194,6 +194,10 @@ for every frozen target; repeating one viewport does not cover another breakpoin
 Matrix evidence must bind its target ID, viewport/state/fingerprint, and task-owned
 artifact bytes. The selected-source comparison may satisfy one matrix
 target; additional breakpoints use separately artifact-bound matrix evidence.
+For `Complete`, each matrix evidence item must resolve by `capture_id` to a
+final-pass runtime record for its declared target, with matching artifact locator,
+hashes, byte length, viewport/state, and fingerprint. An unknown target cannot
+exempt browser-computed evidence from capture closure.
 
 Generic placeholders are not normal product assets. A fallback may cover one missing
 or failed item only when the contract permits it; it must not replace all product
@@ -287,17 +291,23 @@ or responsive coverage.
 closure, not a product, page, or design-platform schema. For every design and
 runtime capture in every comparison pass, it records the capture ID, pass, role,
 artifact locator, manifest SHA-256, content-summary SHA-256, viewport, state, and
-target fingerprint. The capture fields in the review and every browser-computed
-evidence item for that runtime pass MUST match that closure record exactly.
+target fingerprint. Capture IDs are globally unique. Each review selects its
+primary design/runtime records by capture ID, with matching pass and role; its
+capture fields and non-matrix browser-computed evidence MUST match those records
+exactly. Matrix evidence instead binds its declared target's runtime record in the
+actual final review pass. An additional matrix capture does not require another
+comparison or a separate design capture.
 
 Each closure record carries an embedded canonical `capture_manifest` and
 `content_summary`; their SHA-256 values are computed from UTF-8 JSON with sorted
 keys and compact separators, not accepted as caller-supplied labels. The manifest
 must restate the capture ID/pass/role/artifact/artifact SHA-256/byte length/
 viewport/state/target fingerprint; the summary must restate the capture ID,
-artifact, artifact SHA-256, and byte length. The same hash and length MUST appear
-in the visual-review capture, its browser-computed evidence, and the canonical
-final restoration receipt. Artifact locators MUST use
+artifact, artifact SHA-256, and byte length. The visual-review capture and its
+browser-computed evidence MUST repeat their record's hashes and byte length;
+matrix evidence repeats its own runtime record's fields. The canonical final
+restoration receipt binds the review-selected final primary runtime, never an
+additional matrix record chosen by capture-list order. Artifact locators MUST use
 the task-owned `artifact://task/<task_id>/...` namespace. This protocol does not
 read arbitrary local paths: a missing or unparsable embedded record fails closed.
 The target fingerprint is the same canonical SHA-256 computation over exactly
@@ -311,8 +321,13 @@ without regenerating its manifest, summary, browser evidence, and receipt also
 fails. The validator never resolves filesystem paths, URLs, or a locator outside
 that task namespace.
 
-The closure target viewport, state, and fingerprint MUST match every closed
-capture. A stale or substituted screenshot, structured evidence record, document,
+The closure target viewport, state, and fingerprint MUST match every primary
+comparison capture. An additional capture is allowed only as a runtime record
+actually referenced by valid final-pass matrix evidence for a declared target;
+its viewport, state, and fingerprint MUST match that target, with the same
+artifact-byte, canonical manifest, and content-summary checks. Additional design
+or unreferenced records do not qualify for this matrix exception.
+A stale or substituted screenshot, structured evidence record, document,
 or content summary therefore cannot be combined with another pass to claim
 completion. A target viewport/state/fingerprint mismatch is a closure failure, not
 a visual exception.
