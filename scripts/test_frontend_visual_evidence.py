@@ -691,6 +691,22 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         )
         self.assertTrue(VALIDATOR.semantic_errors(payload))
 
+    @staticmethod
+    def refresh_capture_record(record: dict[str, object]) -> None:
+        # Build fixture bindings independently of the production hash helper.
+        record["capture_manifest"] = {
+            key: record[key] for key in (
+                "capture_id", "pass", "role", "artifact", "artifact_sha256",
+                "artifact_bytes", "viewport", "state", "target_fingerprint",
+            )
+        }
+        record["content_summary"].update({
+            key: record[key] for key in ("capture_id", "artifact", "artifact_sha256", "artifact_bytes")
+        })
+        for field in ("capture_manifest", "content_summary"):
+            canonical = json.dumps(record[field], sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+            record[field + "_sha256"] = "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
     def add_mobile_runtime_target(self, payload: dict[str, object]) -> None:
         viewport = {"width": 390, "height": 844, "zoom": 1}
         state = "synthetic mobile populated state at scroll origin"
@@ -707,6 +723,7 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         )
         artifact = f"artifact://task/{payload['task_id']}/responsive-mobile"
         artifact_bytes = b"synthetic responsive mobile capture"
+        review_pass = payload["visual_reviews"][-1]["pass"]
         evidence = copy.deepcopy(
             next(
                 item
@@ -719,6 +736,7 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
                 "id": "FIXTURE-MOBILE-RESPONSIVE",
                 "claim": "Synthetic mobile responsive evidence",
                 "source": artifact,
+                "review_pass": review_pass,
                 "matrix_target_id": "synthetic-mobile-populated",
                 "viewport": viewport,
                 "state": state,
@@ -737,16 +755,190 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
                 "bytes_base64": base64.b64encode(artifact_bytes).decode("ascii"),
             }
         )
+        record = {
+            "capture_id": f"synthetic-pass-{review_pass}-mobile-runtime",
+            "pass": review_pass,
+            "role": "runtime",
+            "artifact": artifact,
+            "artifact_sha256": evidence["artifact_sha256"],
+            "artifact_bytes": len(artifact_bytes),
+            "viewport": viewport,
+            "state": state,
+            "target_fingerprint": target_fingerprint,
+            "content_summary": {"summary": "Synthetic independent mobile measurement summary"},
+        }
+        self.refresh_capture_record(record)
+        payload["capture_closure"]["captures"].append(record)
+        evidence.update({
+            key: record[key] for key in ("capture_id", "capture_manifest_sha256", "content_summary_sha256")
+        })
 
     def test_verified_responsive_coverage_requires_every_frozen_target(self) -> None:
         payload = self.complete_payload()
         self.add_mobile_runtime_target(payload)
+        self.assertEqual([], self.errors(payload))
         self.assertEqual([], VALIDATOR.semantic_errors(payload))
 
         missing_mobile = self.complete_payload()
         target = copy.deepcopy(payload["required_runtime_matrix"][-1])
         missing_mobile["required_runtime_matrix"].append(target)
         self.assertTrue(VALIDATOR.semantic_errors(missing_mobile))
+
+    def test_matrix_capture_is_independent_without_extra_comparisons(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "visual-evidence.json"
+            for single_pass in (False, True):
+                payload = self.complete_payload(single_pass=single_pass)
+                reviews = copy.deepcopy(payload["visual_reviews"])
+                receipt = copy.deepcopy(payload["capture_closure"]["restoration_receipts"])
+                self.add_mobile_runtime_target(payload)
+                self.assertEqual(reviews, payload["visual_reviews"])
+                self.assertEqual(receipt, payload["capture_closure"]["restoration_receipts"])
+                self.assertEqual(2 * len(reviews) + 1, len(payload["capture_closure"]["captures"]))
+                for ordering in ("original", "reversed", "rotated"):
+                    with self.subTest(single_pass=single_pass, ordering=ordering):
+                        if ordering == "reversed":
+                            payload["capture_closure"]["captures"].reverse()
+                            payload["evidence"].reverse()
+                        elif ordering == "rotated":
+                            records = payload["capture_closure"]["captures"]
+                            records.append(records.pop(0))
+                        self.assertEqual([], self.errors(payload))
+                        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+                        artifact.write_text(json.dumps(payload), encoding="utf-8")
+                        VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
+
+    def test_matrix_evidence_cannot_skip_capture_closure(self) -> None:
+        # Reconstruct the old false-positive mobile fixture: real mobile bytes
+        # but desktop capture/manifest/summary bindings and no mobile record.
+        for field, value in (
+            (None, None), ("review_pass", 999), ("review_pass", 1),
+            ("capture_id", "ABSENT-CAPTURE"),
+            ("capture_manifest_sha256", "sha256:" + "0" * 64),
+            ("content_summary_sha256", "sha256:" + "0" * 64),
+        ):
+            with self.subTest(field=field, value=value):
+                payload = self.complete_payload()
+                self.add_mobile_runtime_target(payload)
+                payload["capture_closure"]["captures"].pop()
+                evidence = payload["evidence"][-1]
+                desktop = payload["visual_reviews"][-1]["runtime_capture"]
+                evidence.update({key: desktop[key] for key in ("capture_id", "capture_manifest_sha256", "content_summary_sha256")})
+                if field is not None:
+                    evidence[field] = value
+                self.assertEqual([], self.errors(payload))
+                self.assertIn("must close to its final-pass runtime capture", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_matrix_capture_rejects_each_evidence_binding_drift(self) -> None:
+        for field, value in (
+            ("review_pass", 999), ("capture_id", "ABSENT-CAPTURE"),
+            ("capture_id", "synthetic-pass-2-runtime"),
+            ("capture_manifest_sha256", "sha256:" + "0" * 64),
+            ("content_summary_sha256", "sha256:" + "0" * 64),
+            ("artifact_sha256", "sha256:" + "0" * 64), ("artifact_bytes", 36),
+            ("source", "artifact://task/synthetic-visual-evidence-example/pass-2-runtime"),
+            ("viewport", {"width": 391, "height": 844, "zoom": 1}),
+            ("state", "synthetic other state"), ("target_fingerprint", "sha256:" + "0" * 64),
+        ):
+            with self.subTest(field=field, value=value):
+                payload = self.complete_payload()
+                self.add_mobile_runtime_target(payload)
+                payload["evidence"][-1][field] = value
+                self.assertEqual([], self.errors(payload))
+                self.assertIn("must close to its final-pass runtime capture", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_matrix_capture_requires_real_final_pass_and_runtime_role(self) -> None:
+        for field, value in (("pass", 1), ("pass", 999), ("role", "design")):
+            with self.subTest(field=field, value=value):
+                payload = self.complete_payload()
+                self.add_mobile_runtime_target(payload)
+                record = payload["capture_closure"]["captures"][-1]
+                record[field] = value
+                self.refresh_capture_record(record)
+                evidence = payload["evidence"][-1]
+                evidence["review_pass"] = record["pass"]
+                evidence["capture_manifest_sha256"] = record["capture_manifest_sha256"]
+                self.assertEqual([], self.errors(payload))
+                self.assertIn("must close to its final-pass runtime capture", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_matrix_capture_digests_are_recomputed_not_just_equal(self) -> None:
+        for field, diagnostic in (
+            ("capture_manifest_sha256", "capture manifest SHA-256 does not match canonical manifest bytes"),
+            ("content_summary_sha256", "content summary SHA-256 does not match canonical summary bytes"),
+        ):
+            with self.subTest(field=field):
+                payload = self.complete_payload()
+                self.add_mobile_runtime_target(payload)
+                payload["capture_closure"]["captures"][-1][field] = "sha256:" + "0" * 64
+                payload["evidence"][-1][field] = "sha256:" + "0" * 64
+                self.assertEqual([], self.errors(payload))
+                self.assertIn(diagnostic, " ".join(VALIDATOR.semantic_errors(payload)))
+        payload = self.complete_payload()
+        self.add_mobile_runtime_target(payload)
+        alias = copy.deepcopy(payload["capture_closure"]["artifact_contents"][-1])
+        alias["artifact"] += "-alias"
+        payload["capture_closure"]["artifact_contents"].append(alias)
+        payload["evidence"][-1]["source"] = alias["artifact"]
+        self.assertEqual([], self.errors(payload))
+        self.assertIn("must close to its final-pass runtime capture", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_unknown_matrix_target_cannot_bypass_browser_evidence_closure(self) -> None:
+        payload = self.complete_payload()
+        self.add_mobile_runtime_target(payload)
+        unknown = copy.deepcopy(payload["evidence"][-1])
+        unknown.update({"id": "UNKNOWN-MATRIX-EVIDENCE", "matrix_target_id": "undeclared-target"})
+        payload["evidence"].append(unknown)
+        self.assertEqual([], self.errors(payload))
+        self.assertIn("runtime matrix evidence references undeclared target undeclared-target", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_additional_capture_requires_actual_matrix_binding(self) -> None:
+        for role in ("design", "runtime"):
+            with self.subTest(role=role):
+                payload = self.complete_payload()
+                self.add_mobile_runtime_target(payload)
+                extra = copy.deepcopy(payload["capture_closure"]["captures"][-1])
+                extra.update({"capture_id": "synthetic-unreferenced-capture", "role": role})
+                self.refresh_capture_record(extra)
+                payload["capture_closure"]["captures"].append(extra)
+                self.assertEqual([], self.errors(payload))
+                self.assertIn("additional capture synthetic-unreferenced-capture requires bound final-pass runtime matrix evidence", " ".join(VALIDATOR.semantic_errors(payload)))
+        payload = self.complete_payload()
+        self.add_mobile_runtime_target(payload)
+        payload["capture_closure"]["captures"].append(copy.deepcopy(payload["capture_closure"]["captures"][-1]))
+        self.assertEqual([], self.errors(payload))
+        self.assertIn("capture_closure capture IDs must be unique", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_primary_capture_id_does_not_replace_pass_role_checks(self) -> None:
+        for field, value in (("pass", 999), ("role", "runtime")):
+            with self.subTest(field=field):
+                payload = self.complete_payload()
+                record = payload["capture_closure"]["captures"][0]
+                record[field] = value
+                self.refresh_capture_record(record)
+                payload["visual_reviews"][0]["design_capture"]["capture_manifest_sha256"] = record["capture_manifest_sha256"]
+                self.assertEqual([], self.errors(payload))
+                self.assertIn("primary capture pass or role differs for pass 1 design", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_mobile_capture_cannot_replace_primary_final_receipt(self) -> None:
+        payload = self.complete_payload()
+        self.add_mobile_runtime_target(payload)
+        mobile = payload["capture_closure"]["captures"][-1]
+        receipt = payload["capture_closure"]["restoration_receipts"][0]
+        receipt.update({key: mobile[key] for key in ("target_fingerprint", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256", "content_summary_sha256")})
+        receipt.pop("receipt_canonical_sha256")
+        canonical = json.dumps(receipt, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+        receipt["receipt_canonical_sha256"] = "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        self.assertEqual([], self.errors(payload))
+        self.assertIn("canonical final restoration receipt must bind the final runtime capture exactly", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_complete_requires_matrix_closure_even_if_responsive_is_not_applicable(self) -> None:
+        payload = self.complete_payload()
+        self.add_mobile_runtime_target(payload)
+        payload["evidence"].pop()
+        payload["capture_closure"]["captures"].pop()
+        payload["runtime_coverage"]["responsive_breakpoints"].update({"status": "not-applicable", "evidence_ids": []})
+        self.assertEqual([], self.errors(payload))
+        self.assertIn("Complete verdict lacks runtime matrix evidence for synthetic-mobile-populated", " ".join(VALIDATOR.semantic_errors(payload)))
 
     def test_complete_requires_every_frozen_target_even_when_coverage_is_not_applicable(self) -> None:
         payload = self.complete_payload()

@@ -421,19 +421,15 @@ def _complete_capture_closure_errors(
         return ["Complete capture_closure is structurally incomplete"]
     artifact_bytes, artifact_errors = _task_artifact_bytes(artifact_contents, payload.get("task_id"))
     errors.extend(artifact_errors)
-    records: dict[tuple[object, object], dict[str, object]] = {}
-    capture_ids: set[object] = set()
+    records: dict[object, dict[str, object]] = {}
     for record in captures:
         if not isinstance(record, dict):
             continue
-        key = (record.get("pass"), record.get("role"))
-        if key in records:
-            errors.append("capture_closure cannot contain conflicting records for one pass and role")
-        records[key] = record
         capture_id = record.get("capture_id")
-        if capture_id in capture_ids:
+        if capture_id in records:
             errors.append("capture_closure capture IDs must be unique")
-        capture_ids.add(capture_id)
+        else:
+            records[capture_id] = record
         if not _task_owned_locator(record.get("artifact"), payload.get("task_id")):
             errors.append("capture closure artifact locator must remain under the task-owned artifact root")
         actual_bytes = artifact_bytes.get(record.get("artifact"))
@@ -456,37 +452,51 @@ def _complete_capture_closure_errors(
             errors.append("content summary must bind its capture ID and artifact locator")
         elif record.get("content_summary_sha256") != _canonical_sha256(summary):
             errors.append("content summary SHA-256 does not match canonical summary bytes")
-        if (
-            record.get("viewport") != target.get("viewport")
-            or record.get("state") != target.get("state")
-            or record.get("target_fingerprint") != target.get("target_fingerprint")
-        ):
-            errors.append("capture_closure target viewport, state, and fingerprint must agree")
     expected_target_fingerprint = _canonical_sha256({"viewport": target.get("viewport"), "state": target.get("state")})
     if target.get("target_fingerprint") != expected_target_fingerprint:
         errors.append("capture_closure target fingerprint must match canonical viewport and state")
     final_runtime: dict[str, object] | None = None
     final_runtime_pass: object = None
+    primary_capture_ids: set[object] = set()
+    primary_runtime: dict[object, dict[str, object]] = {}
     for review in reviews:
         if not isinstance(review, dict):
             continue
         review_pass = review.get("pass")
         for role, capture_name in (("design", "design_capture"), ("runtime", "runtime_capture")):
             capture = review.get(capture_name)
-            record = records.get((review_pass, role))
+            record = records.get(capture.get("capture_id")) if isinstance(capture, dict) else None
             if not isinstance(capture, dict) or not isinstance(record, dict):
                 errors.append(f"Complete verdict lacks closed {role} capture for pass {review_pass}")
                 continue
+            primary_capture_ids.add(record.get("capture_id"))
+            if record.get("pass") != review_pass or record.get("role") != role:
+                errors.append(f"primary capture pass or role differs for pass {review_pass} {role}")
+            if (
+                record.get("viewport") != target.get("viewport")
+                or record.get("state") != target.get("state")
+                or record.get("target_fingerprint") != target.get("target_fingerprint")
+            ):
+                errors.append("capture_closure target viewport, state, and fingerprint must agree")
             for field in ("capture_id", "artifact", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256", "content_summary_sha256", "viewport", "state", "target_fingerprint"):
                 if capture.get(field) != record.get(field):
                     errors.append(f"capture closure drift for pass {review_pass} {role}: {field}")
             if role == "runtime":
+                primary_runtime[review_pass] = record
                 final_runtime = record
                 final_runtime_pass = review_pass
+    required_targets = {
+        item.get("id"): item
+        for item in payload.get("required_runtime_matrix", [])
+        if isinstance(item, dict) and isinstance(item.get("id"), str)
+    }
     matrix_records: dict[object, dict[str, object]] = {}
     for item in evidence_by_id.values():
         target_id = item.get("matrix_target_id")
         if item.get("level") != "browser-computed" or not isinstance(target_id, str):
+            continue
+        if target_id not in required_targets:
+            errors.append(f"runtime matrix evidence references undeclared target {target_id}")
             continue
         if target_id in matrix_records:
             errors.append(
@@ -494,18 +504,16 @@ def _complete_capture_closure_errors(
             )
             continue
         matrix_records[target_id] = item
-    for target_id, target in {
-        item.get("id"): item
-        for item in payload.get("required_runtime_matrix", [])
-        if isinstance(item, dict) and isinstance(item.get("id"), str)
-    }.items():
+    matrix_capture_ids: set[object] = set()
+    final_review_pass = reviews[-1].get("pass") if reviews and isinstance(reviews[-1], dict) else None
+    for target_id, target in required_targets.items():
         item = matrix_records.get(target_id)
         if not isinstance(item, dict):
             errors.append(f"Complete verdict lacks runtime matrix evidence for {target_id}")
             continue
         artifact = item.get("source")
         actual_bytes = artifact_bytes.get(artifact)
-        if (
+        artifact_bound = not (
             not _task_owned_locator(artifact, payload.get("task_id"))
             or actual_bytes is None
             or item.get("artifact_sha256") != _bytes_sha256(actual_bytes)
@@ -513,14 +521,34 @@ def _complete_capture_closure_errors(
             or item.get("viewport") != target.get("viewport")
             or item.get("state") != target.get("state")
             or item.get("target_fingerprint") != target.get("target_fingerprint")
-        ):
+        )
+        if not artifact_bound:
             errors.append(f"runtime matrix evidence for {target_id} is not artifact-bound")
+        record = records.get(item.get("capture_id"))
+        if (
+            not artifact_bound
+            or not isinstance(record, dict)
+            or record.get("role") != "runtime"
+            or record.get("pass") != final_review_pass
+            or item.get("review_pass") != record.get("pass")
+            or item.get("source") != record.get("artifact")
+            or any(
+                item.get(field) != record.get(field)
+                for field in ("capture_id", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256", "content_summary_sha256", "viewport", "state", "target_fingerprint")
+            )
+        ):
+            errors.append(f"runtime matrix evidence for {target_id} must close to its final-pass runtime capture")
+        else:
+            matrix_capture_ids.add(record.get("capture_id"))
+    for capture_id in records:
+        if capture_id not in primary_capture_ids and capture_id not in matrix_capture_ids:
+            errors.append(f"additional capture {capture_id} requires bound final-pass runtime matrix evidence")
     for item in evidence_by_id.values():
         if item.get("level") != "browser-computed":
             continue
         if isinstance(item.get("matrix_target_id"), str):
             continue
-        record = records.get((item.get("review_pass"), "runtime"))
+        record = primary_runtime.get(item.get("review_pass"))
         if not isinstance(record, dict) or any(
             item.get(field) != record.get(field)
             for field in ("capture_id", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256", "content_summary_sha256", "viewport", "state", "target_fingerprint")
