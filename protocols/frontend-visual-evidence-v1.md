@@ -139,7 +139,8 @@ Preserve stricter accepted project requirements: when they require a minimum pas
 count, record it as `required_comparison_passes`; omission means one. Do not invent
 a higher count. An unresolved failure never becomes a pass merely by reaching a count.
 
-Give new findings a stable `id` and reuse it across passes. For compatibility with
+Give new findings a stable `id` and reuse it across passes. An explicit ID occurs at
+most once in each pass and keeps the same `acceptance_id` across passes. For compatibility with
 older v1 artifacts, `id` remains optional; validators identify an ID-less finding by
 its severity, acceptance ID, and stable occurrence order within each pass so two
 findings on the same acceptance item cannot mask one another.

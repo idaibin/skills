@@ -260,6 +260,7 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
     required_passes = payload.get("required_comparison_passes", 1)
     if stage == "final" and isinstance(required_passes, int) and len(reviews) < required_passes:
         errors.append("final evidence does not meet the accepted required_comparison_passes")
+    finding_acceptance: dict[str, object] = {}
     for index, review in enumerate(reviews, start=1):
         if not isinstance(review, dict):
             continue
@@ -289,8 +290,20 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
                         f"visual review pass {index} computed check {check.get('category')} "
                         "lacks matching category evidence"
                     )
+        pass_finding_ids: set[str] = set()
         for finding in review.get("findings", []):
             if isinstance(finding, dict):
+                finding_id = finding.get("id")
+                if isinstance(finding_id, str):
+                    if finding_id in pass_finding_ids:
+                        errors.append(f"visual review pass {index} finding IDs must be unique within a pass: {finding_id}")
+                    pass_finding_ids.add(finding_id)
+                    acceptance_id = finding.get("acceptance_id")
+                    if finding_id in finding_acceptance:
+                        if finding_acceptance[finding_id] != acceptance_id:
+                            errors.append(f"finding {finding_id} must retain its acceptance_id across passes")
+                    else:
+                        finding_acceptance[finding_id] = acceptance_id
                 ids = finding.get("evidence_ids", [])
                 referenced.update(ids)
                 if not _has_matching_runtime_evidence(ids, evidence_by_id, index, runtime):
