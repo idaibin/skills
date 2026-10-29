@@ -88,6 +88,33 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
             self.assertIn("`dev-frontend` owner discovers `package.json` test/lint commands directly", graph_route)
             self.assertNotIn("Repository onboarding or command discovery; use `repo-map`", non_triggers)
 
+    def test_visual_rubric_preserves_qualifying_first_pass_and_required_rechecks(self) -> None:
+        # Static rubric regression, not proof that an Agent performed the comparison.
+        rows = [line for line in self.evals.splitlines() if line.startswith("| Visual comparison gate |")]
+        self.assertEqual(1, len(rows))
+        cells = [cell.strip() for cell in rows[0].strip("|").split("|")]
+        self.assertEqual(3, len(cells))
+        _, expected, reject = cells
+        for term in (
+            "one qualifying comparison", "full required coverage", "same viewport/state",
+            "computed geometry/style", "After a confirmed fix", "new runtime evidence",
+            "evidence is invalidated", "stricter accepted project pass requirements",
+        ):
+            with self.subTest(expected=term):
+                self.assertIn(term, expected)
+        for term in (
+            "solely to reach two", "skips a required recheck", "screenshot alone",
+            "SCSS inspection", "build/lint success",
+        ):
+            with self.subTest(reject=term):
+                self.assertIn(term, reject)
+                self.assertNotIn(term, expected)
+        self.assertNotIn("Two-pass visual gate", self.evals)
+        protocol = (ROOT / "protocols/frontend-visual-evidence-v1.md").read_text(encoding="utf-8")
+        self.assertIn("If all\napplicable acceptance passes, close without repeating an unchanged comparison", protocol)
+        self.assertIn("required_comparison_passes", protocol)
+        self.assertIn("omission means one", protocol)
+
 
 if __name__ == "__main__":
     unittest.main()
