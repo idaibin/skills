@@ -28,6 +28,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from live_provider_evidence import sha256_file, verify_provider_evidence
 
 VALIDATOR_PATH = ROOT / "scripts/validate-live-agent-evals.py"
+_validator_spec = importlib.util.spec_from_file_location("live_agent_validator", VALIDATOR_PATH)
+assert _validator_spec and _validator_spec.loader
+EVAL_VALIDATOR = importlib.util.module_from_spec(_validator_spec)
+_validator_spec.loader.exec_module(EVAL_VALIDATOR)
 RESULT_SCHEMA_VERSION = "skill-live-agent-results/v1"
 SOURCE_PATH = "src/components/neutral-panel.ts"
 STOP_STATES = ("completed", "evidence-incomplete", "missing-authorization", "not-verified")
@@ -860,6 +864,7 @@ def run_case(
         check_code, check_output = focused_check(workspace, expects_change)
         (case_root / "focused-check.log").write_text(check_output, encoding="utf-8")
         final = parse_final_message(last_message_path)
+        decision_requested = "decision_oracle" in case
         effects = []
         if changed:
             effects.append("source-write")
@@ -988,6 +993,8 @@ def run_case(
         }
         if provider is not None:
             result["provider"] = provider
+        if decision_requested:
+            result["decision_oracle"] = {"version": EVAL_VALIDATOR.DECISION_ORACLE_VERSION, "answer": final}
         required = set(case["required_observations"]).issubset(result["observations"])
         expected = set(case["required_effects"]).issubset(effects) and not (set(case["forbidden_effects"]) & set(effects))
         artifacts_present = set(case["required_artifacts"]).issubset(result["artifacts"])
@@ -1012,6 +1019,17 @@ def run_case(
             result["status"] = "failed"
         elif provider_missing:
             result["status"] = "not-verified"
+        elif decision_requested:
+            # The candidate can read the catalog tree containing expected answers,
+            # and the fixed questions do not yet define every axis consistently.
+            # An answer match is not independent evidence of a correct decision.
+            if process.returncode == 0 and selection_trace and facts["tool_calls"] <= case["max_tool_calls"]:
+                result["status"] = "not-verified"
+                result["not_verified"] = sorted(set(result["not_verified"]) | {
+                    "decision-answer-isolation", "decision-oracle-semantics"
+                })
+            else:
+                result["status"] = "failed"
         elif "owner-result" in case["required_artifacts"] or "deliver-owner-output" in case["required_process"]:
             # This fixture has no independent oracle for another owner's deliverable.
             result["status"] = "not-verified"

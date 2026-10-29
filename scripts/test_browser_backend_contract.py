@@ -99,6 +99,43 @@ class BrowserBackendContractTests(unittest.TestCase):
         self.assertIn("only within verified host policy and user authority", lifecycle)
         self.assertIn("Cleanup does not enlarge viewport control authority", usage)
 
+    def test_explicit_deterministic_fixture_routes_before_navigation(self) -> None:
+        skill = self.read("skills/ops-browser/SKILL.md")
+        mock = " ".join(self.read("skills/ops-browser/references/network-mock.md").split())
+        route = next(line for line in skill.splitlines() if "[Network Mock]" in line)
+        self.assertIn("explicitly authorized deterministic frontend fixtures", route)
+        self.assertIn("install request-stage protection before navigation", mock)
+        self.assertIn("no real API failure is required", mock)
+        self.assertIn("Record the authorization source, target and allowed effects with the run evidence", mock)
+        self.assertIn("stop if that authority is unverified", mock)
+        self.assertNotIn("Observe real APIs first. When an API fails", mock)
+
+    def test_ordinary_real_service_diagnosis_does_not_automatically_mock(self) -> None:
+        mock = " ".join(self.read("skills/ops-browser/references/network-mock.md").split())
+        self.assertIn("For ordinary real-service diagnosis, observe real APIs first", mock)
+        self.assertIn("synthetic inputs are within the task's accepted scope", mock)
+        self.assertIn("valid empty business results separately; they are not defects", mock)
+        self.assertIn("does not implement missing UI or prove real-service integration", mock)
+
+    def test_mock_keeps_contract_unknown_request_and_provenance_boundaries(self) -> None:
+        mock = " ".join(self.read("skills/ops-browser/references/network-mock.md").split())
+        self.assertIn("If a required contract is missing, retain that gap rather than inventing", mock)
+        self.assertIn("Unknown rules, invalid fixtures and handler errors never fall back to the real network", mock)
+        self.assertIn("a consumer-derived shape remains distinct from a formal contract", mock)
+        self.assertIn("contract source/version", mock)
+        self.assertIn("known gaps", mock)
+        self.assertIn("Mock never broadens production write authority", mock)
+
+    def test_adapter_qualification_reuses_matching_proof_without_dropping_controls(self) -> None:
+        mock = " ".join(self.read("skills/ops-browser/references/network-mock.md").split())
+        self.assertIn("Qualify the adapter on first use or after version/capability drift", mock)
+        self.assertIn("reuse matching proof across business cases", mock)
+        self.assertIn("Verify each invocation's target/connection epoch, coverage and isolation remain within that proof", mock)
+        self.assertIn("worker/service-worker, extension and proxy changes", mock)
+        for control in ("cross-context negative controls", "warm HTTP cache hit", "cold read in the other context",
+            "one event consumer/cursor", "atomic pause claim tied to connection epoch", "record stale IDs without retrying them"):
+            self.assertIn(control, mock)
+
     def test_agentic_handoff_cannot_carry_write_authority(self) -> None:
         protocol = self.read("protocols/browser-operation-v1.md")
         self.assertIn("An LLM browser agent handoff must use", protocol)

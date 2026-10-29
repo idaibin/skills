@@ -29,6 +29,86 @@ OBSERVATIONS = {
 }
 COMMAND_CLASSES = {"production-build"}
 
+# Only these fixed, decision-only cases have an independently checked answer oracle.
+# This does not provide an oracle for arbitrary owner deliverables or live actions.
+DECISION_ORACLE_VERSION = "bounded-decision/v1"
+DECISION_ANSWER_VOCABULARY = {
+    "not_verified": frozenset({
+        "delivery",
+        "fixture-F-result",
+        "git-ssh",
+        "lane-A-result",
+        "lane-B-result",
+        "other-browser-routes",
+        "report-execution",
+        "report-terminal",
+        "report-trigger",
+        "send-acceptance",
+    }),
+    "process": frozenset({
+        "blocked:all-lanes",
+        "delivery:all-recipients-confirmed",
+        "delivery:confirmed",
+        "failure:all-browsers",
+        "failure:all-git",
+        "failure:github-api",
+        "failure:tab-T1",
+        "next:alternate-transport-for-A",
+        "next:authorized-fixture-F",
+        "next:authorized-lane-B",
+        "next:authorized-local-check",
+        "next:read-ownership-and-unsaved-state",
+        "next:retry-A",
+        "preserve:read-only-R",
+        "prohibited:all-project-execution",
+        "report:executed",
+        "report:executing",
+        "report:triggered",
+        "send:accepted",
+        "stop:lane-A",
+    }),
+}
+DECISION_CASE_OWNERS = {
+    "repo-delivery-bounded-api-only": "repo-delivery",
+    "ops-browser-bounded-old-tab-only": "ops-browser",
+    **{f"to-task-bounded-{suffix}": "to-task" for suffix in (
+        "local-read-only", "independent-lane", "security-denial", "approval-pending",
+        "trigger-only", "execution-only", "send-accepted", "delivery-confirmed",
+        "wrong-delivery-binding", "accepted-only",
+    )},
+}
+
+
+def decision_expectation(case: dict[str, object]) -> dict[str, object] | None:
+    oracle = case.get("decision_oracle")
+    if not isinstance(oracle, dict) or set(oracle) != {"version", "expected_final"}:
+        return None
+    if oracle["version"] != DECISION_ORACLE_VERSION:
+        return None
+    owner = DECISION_CASE_OWNERS.get(case.get("id"))
+    if owner is None or case.get("expected_skill") != owner or case.get("kind") != "specialized":
+        return None
+    expected = oracle["expected_final"]
+    if not isinstance(expected, dict) or set(expected) != {"selected_skill", "process", "stop_state", "not_verified"}:
+        return None
+    if expected["selected_skill"] != owner or expected["stop_state"] != case.get("expected_stop"):
+        return None
+    allowed_stop = "not-verified" if case["id"] == "to-task-bounded-approval-pending" else (
+        "missing-authorization" if case["id"] == "to-task-bounded-security-denial" else "completed"
+    )
+    if expected["stop_state"] != allowed_stop:
+        return None
+    for key in ("process", "not_verified"):
+        values = expected[key]
+        if (not strings(values) or not values or len(values) != len(set(values))
+            or not set(values).issubset(DECISION_ANSWER_VOCABULARY[key])):
+            return None
+    if any(case.get(key) != [] for key in (
+        "required_source_owners", "allowed_changed_paths", "required_changed_paths", "required_effects"
+    )) or not {"source-write", "git-write", "external-action"}.issubset(case.get("forbidden_effects", [])):
+        return None
+    return expected
+
 
 def load_json(path: Path) -> dict[str, object]:
     value = json.loads(path.read_text(encoding="utf-8"))
@@ -107,7 +187,9 @@ def case_errors(cases: dict[str, object]) -> list[str]:
         observations = case.get("required_observations", [])
         if isinstance(observations, list) and not set(observations).issubset(OBSERVATIONS):
             errors.append(f"{case_id}: unknown required observation")
-        if case.get("expected_stop") not in STOP_STATES:
+        if "decision_oracle" in case and decision_expectation(case) is None:
+            errors.append(f"{case_id}: invalid fixed decision oracle")
+        if case.get("expected_stop") not in STOP_STATES and decision_expectation(case) is None:
             errors.append(f"{case_id}: invalid expected stop")
         if not isinstance(case.get("max_tool_calls"), int) or case["max_tool_calls"] < 1:
             errors.append(f"{case_id}: max_tool_calls must be positive")
@@ -170,6 +252,9 @@ def result_errors(cases: dict[str, object], results: dict[str, object]) -> list[
             errors.append(f"{case_id}: invalid result status")
             continue
         if status != "passed":
+            continue
+        if "decision_oracle" in case:
+            errors.append(f"{case_id}: decision answer isolation and oracle semantics are not verified")
             continue
         if result.get("selected_skill") != case["expected_skill"]:
             errors.append(f"{case_id}: selected skill does not match the case")

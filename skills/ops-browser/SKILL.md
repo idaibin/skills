@@ -28,7 +28,7 @@ cannot establish the missing browser target.
 | Runtime visual comparison applies | [visual evidence](references/frontend-visual-evidence.md) | Same-state capture/comparison |
 | DevTools/console/network debugging or performance capture applies | [DevTools debugging](references/devtools-debugging.md) | Scoped observation |
 | A page runs in a physical phone browser or native-app WebView | [usage](references/usage.md) | Browser evidence with bound device/app context and a scoped device handoff |
-| Browser acceptance encounters an abnormal/empty API and task context permits synthetic test inputs | [Network Mock](references/network-mock.md) | Scoped response replacement, request lifecycle and separate Mock evidence |
+| Browser acceptance uses explicitly authorized deterministic frontend fixtures, or encounters an abnormal/empty API with task-authorized synthetic inputs | [Network Mock](references/network-mock.md) | Scoped response replacement, request lifecycle and separate Mock evidence |
 | Axure/Lanhu evidence extraction applies | [Axure evidence](references/axure-product-evidence.md) and/or [Lanhu evidence](references/lanhu-ui-evidence.md) | Qualified source evidence |
 
 ## Invariants

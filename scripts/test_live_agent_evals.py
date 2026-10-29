@@ -77,6 +77,13 @@ class LiveAgentEvalTests(unittest.TestCase):
                     ),
                 },
             }
+            if "decision_oracle" in case:
+                result["status"] = "not-verified"
+                result["not_verified"] = case["decision_oracle"]["expected_final"]["not_verified"]
+                result["decision_oracle"] = {
+                    "version": case["decision_oracle"]["version"],
+                    "answer": case["decision_oracle"]["expected_final"],
+                }
             if "required_provider" in case:
                 result["provider"] = {
                     "channel": "AGY",

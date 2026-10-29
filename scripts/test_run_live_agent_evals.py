@@ -1264,5 +1264,171 @@ class RunLiveAgentEvalTests(unittest.TestCase):
             self.assertEqual(0, RUNNER.focused_check(workspace, True)[0])
 
 
+
+
+class BoundedDecisionConsumerTests(unittest.TestCase):
+    """Offline forward integration; recorded facts never become action events."""
+
+    def cases(self):
+        return [case for case in CASES["cases"] if "decision_oracle" in case]
+
+    def run_answer(self, case, answer, *, exit_code=0, read_exit=0, extra_command=None, mutate=None, cli=False):
+        def fake_process(command, **kwargs):
+            if command[0] != "codex":
+                return REAL_SUBPROCESS_RUN(command, **kwargs)
+            if mutate:
+                mutate(Path(command[command.index("--cd") + 1]))
+            Path(command[command.index("--output-last-message") + 1]).write_text(json.dumps(answer))
+            skill = RUNNER.skill_candidate_path(case["expected_skill"])
+            events = [{"type": "item.completed", "item": {
+                "id": "read-1", "type": "command_execution", "command": f"cat {skill}",
+                "aggregated_output": skill.read_text(), "status": "completed", "exit_code": read_exit}}]
+            if extra_command:
+                events.append({"type": "item.completed", "item": {
+                    "id": "extra", "type": "command_execution", "command": extra_command,
+                    "aggregated_output": "", "status": "completed", "exit_code": 0}})
+            return subprocess.CompletedProcess(command, exit_code, "".join(json.dumps(e) + "\n" for e in events), "")
+        with tempfile.TemporaryDirectory() as temporary, patch.object(RUNNER.subprocess, "run", side_effect=fake_process):
+            if cli:
+                output = Path(temporary) / "output"
+                with patch.object(sys, "argv", ["run-live-agent-evals.py", "--case", case["id"],
+                    "--model", "offline-fake", "--output-dir", str(output)]), contextlib.redirect_stdout(io.StringIO()):
+                    code = RUNNER.main()
+                result = json.loads((output / "results.json").read_text())["case_results"][0]
+                result["entrypoint_exit"] = code
+                return result
+            return RUNNER.run_case(case, fixture=FIXTURE, output_root=Path(temporary),
+                model="offline-fake", reasoning="medium", sandbox="workspace-write", provider_evidence=None)
+
+    def test_fixed_decisions_remain_unverified_without_isolation(self):
+        self.assertEqual(12, len(self.cases()))
+        for case in self.cases():
+            with self.subTest(case=case["id"]):
+                result = self.run_answer(case, case["decision_oracle"]["expected_final"])
+                self.assertEqual("not-verified", result["status"])
+                self.assertEqual(1, RUNNER.runner_exit_code(True, [result]))
+                self.assertIn("decision-answer-isolation", result["not_verified"])
+                self.assertIn("decision-oracle-semantics", result["not_verified"])
+                self.assertNotIn("owner-result", result["artifacts"])
+                self.assertNotIn("deliver-owner-output", result["process"])
+                self.assertFalse(set(result["process"]) & set(case["decision_oracle"]["expected_final"]["process"]))
+
+    def test_wrong_stage_answers_are_rejected_by_real_consumer(self):
+        wrong = ["failure:all-git", "failure:all-browsers", "prohibited:all-project-execution",
+            "blocked:all-lanes", "next:alternate-transport-for-A", "next:retry-A",
+            "report:executing", "send:accepted", "delivery:confirmed",
+            "delivery:all-recipients-confirmed", "delivery:confirmed", "delivery:confirmed"]
+        for case, token in zip(self.cases(), wrong):
+            with self.subTest(case=case["id"]):
+                answer = json.loads(json.dumps(case["decision_oracle"]["expected_final"]))
+                answer["process"].append(token)
+                result = self.run_answer(case, answer)
+                self.assertEqual("not-verified", result["status"])
+                self.assertEqual(1, RUNNER.runner_exit_code(True, [result]))
+
+    def test_missing_extra_duplicate_and_wrong_version_fail_closed(self):
+        case = self.cases()[0]
+        expected = case["decision_oracle"]["expected_final"]
+        for field in expected:
+            answer = dict(expected); del answer[field]
+            self.assertNotEqual("passed", self.run_answer(case, answer)["status"])
+        for field in ("process", "not_verified"):
+            answer = dict(expected); answer[field] = expected[field] + expected[field][:1]
+            self.assertNotEqual("passed", self.run_answer(case, answer)["status"])
+        answer = dict(expected, unexpected=True)
+        self.assertNotEqual("passed", self.run_answer(case, answer)["status"])
+        altered = json.loads(json.dumps(case)); altered["decision_oracle"]["version"] = "bounded-decision/v0"
+        self.assertNotEqual("passed", self.run_answer(altered, expected)["status"])
+
+    def test_original_exit_read_effect_and_oracle_gates_still_apply(self):
+        case = self.cases()[0]; answer = case["decision_oracle"]["expected_final"]
+        for options in ({"exit_code": 1}, {"read_exit": 1}, {"extra_command": "ssh example.invalid"}):
+            self.assertNotEqual("passed", self.run_answer(case, answer, **options)["status"])
+        legacy = dict(case); legacy.pop("decision_oracle")
+        self.assertEqual("not-verified", self.run_answer(legacy, answer)["status"])
+
+    def test_original_process_observation_budget_path_and_git_gates_still_apply(self):
+        case = self.cases()[0]; answer = case["decision_oracle"]["expected_final"]
+        for key, value in (("required_process", ["deliver-owner-output"]),
+            ("required_observations", ["source-owner"]), ("required_artifacts", ["focused-check"]),
+            ("max_tool_calls", 0)):
+            altered = dict(case); altered[key] = value
+            self.assertNotEqual("passed", self.run_answer(altered, answer)["status"], key)
+        for mutate in (
+            lambda workspace: (workspace / "extra.txt").write_text("unexpected"),
+            lambda workspace: (workspace / ".git" / "config").write_text("unexpected"),
+        ):
+            self.assertNotEqual("passed", self.run_answer(case, answer, mutate=mutate)["status"])
+
+    def test_standalone_validator_rechecks_decision_evidence(self):
+        case = self.cases()[0]; answer = case["decision_oracle"]["expected_final"]
+        result = self.run_answer(case, answer)
+        payload = {"schema_version": RUNNER.RESULT_SCHEMA_VERSION,
+            "selected_case_ids": [case["id"]], "case_results": [result]}
+        self.assertEqual([], RUNNER.EVAL_VALIDATOR.result_errors(CASES, payload))
+        result["status"] = "passed"
+        self.assertTrue(RUNNER.EVAL_VALIDATOR.result_errors(CASES, payload))
+        for bad in (None, {"version": "bounded-decision/v0", "answer": answer},
+            {"version": "bounded-decision/v1", "answer": dict(answer, process=["failure:all-git"])}):
+            result["decision_oracle"] = bad
+            self.assertTrue(RUNNER.EVAL_VALIDATOR.result_errors(CASES, payload))
+        altered = json.loads(json.dumps(case)); altered["id"] = "to-task-bounded-unregistered"
+        self.assertIsNone(RUNNER.EVAL_VALIDATOR.decision_expectation(altered))
+        altered = json.loads(json.dumps(case)); altered["decision_oracle"]["version"] = "bounded-decision/v0"
+        self.assertTrue(RUNNER.EVAL_VALIDATOR.case_errors(dict(CASES, cases=CASES["cases"] + [altered])))
+
+    def test_closed_vocabulary_matches_full_prompt_vocabulary_for_all_fixed_cases(self):
+        for case in self.cases():
+            supplied = json.loads(case["prompt"].partition("Vocabulary: ")[2])
+            self.assertEqual(RUNNER.EVAL_VALIDATOR.DECISION_ANSWER_VOCABULARY,
+                {key: frozenset(values) for key, values in supplied.items()})
+            self.assertIsNotNone(RUNNER.EVAL_VALIDATOR.decision_expectation(case))
+
+    def test_expected_answer_vocabulary_rejects_unknown_definition_on_both_axes(self):
+        original = self.cases()[0]
+        valid_result = self.run_answer(original, original["decision_oracle"]["expected_final"])
+        for axis in ("process", "not_verified"):
+            with self.subTest(axis=axis):
+                case = json.loads(json.dumps(original))
+                case["decision_oracle"]["expected_final"][axis] = ["unknown-stage"]
+                answer = case["decision_oracle"]["expected_final"]
+                cases = dict(CASES, cases=[case if c["id"] == case["id"] else c for c in CASES["cases"]])
+                definition_errors = RUNNER.EVAL_VALIDATOR.case_errors(cases)
+                consumed = self.run_answer(case, answer)
+                # Independently challenge the standalone validator with a forged pass;
+                # a failed consumer result alone would skip its passed-result checks.
+                forged = json.loads(json.dumps(valid_result))
+                forged["status"] = "passed"
+                forged["decision_oracle"]["answer"] = answer
+                forged["not_verified"] = answer["not_verified"]
+                payload = {"schema_version": RUNNER.RESULT_SCHEMA_VERSION,
+                    "selected_case_ids": [case["id"]], "case_results": [forged]}
+                result_errors = RUNNER.EVAL_VALIDATOR.result_errors(cases, payload)
+                print(f"unknown definition axis={axis}: case_errors={len(definition_errors)}, "
+                    f"consumer={consumed['status']}, result_errors={len(result_errors)}")
+                self.assertEqual((True, False, True),
+                    (bool(definition_errors), consumed["status"] == "passed", bool(result_errors)))
+
+    def test_actual_main_exit_rejects_four_wrong_delivery_stages(self):
+        suffixes = ("trigger-only", "execution-only", "send-accepted", "accepted-only")
+        for suffix in suffixes:
+            case = next(c for c in self.cases() if c["id"] == "to-task-bounded-" + suffix)
+            answer = json.loads(json.dumps(case["decision_oracle"]["expected_final"]))
+            good = self.run_answer(case, answer, cli=True)
+            self.assertEqual("not-verified", good["status"])
+            self.assertEqual(1, good["entrypoint_exit"])
+            answer["process"].append("delivery:confirmed")
+            bad = self.run_answer(case, answer, cli=True)
+            self.assertEqual("not-verified", bad["status"])
+            self.assertEqual(1, bad["entrypoint_exit"])
+
+    def test_verifier_expectation_is_not_in_prompt(self):
+        for case in self.cases():
+            prompt = RUNNER.build_eval_prompt(case, "Do not invoke any external provider.")
+            self.assertNotIn("expected_final", prompt)
+            self.assertNotIn("decision_oracle", prompt)
+            self.assertNotIn("expected_stop", prompt)
+
+
 if __name__ == "__main__":
     unittest.main()

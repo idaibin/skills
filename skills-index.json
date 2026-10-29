@@ -1019,7 +1019,7 @@
         "record an authorized browser interaction with native browser capture",
         "preserve a configurable unified or operation-mapped local-browser tab workspace",
         "continue already-authorized local browser acceptance after implementation",
-        "verify an existing frontend page with task-authorized contextual network Mock fallback and reusable local fixtures",
+        "verify an existing frontend page with explicitly authorized deterministic network Mock fixtures or contextual fallback",
         "verify web content and requests in a mobile browser on a bound device"
       ],
       "keywords": [
