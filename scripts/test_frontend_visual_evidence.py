@@ -465,6 +465,55 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         })
         self.assertTrue(VALIDATOR.semantic_errors(payload))
 
+    def test_explicit_finding_ids_are_unique_within_each_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "visual-evidence.json"
+            for stage in ("pass-1", "final"):
+                for acceptance in ("ACCEPTANCE-001", "ACCEPTANCE-002"):
+                    for statuses in (("open", "fixed"), ("fixed", "open"), ("fixed", "fixed")):
+                        with self.subTest(stage=stage, acceptance=acceptance, statuses=statuses):
+                            payload = self.stage_payload(stage) if stage == "pass-1" else self.complete_payload(single_pass=True)
+                            evidence_id = "RUNTIME-PASS-1" if stage == "pass-1" else "RUNTIME-PASS-2-GEOMETRY"
+                            finding = {
+                                "id": "F-SAME", "severity": "P1", "acceptance_id": "ACCEPTANCE-001",
+                                "evidence_ids": [evidence_id], "status": statuses[0],
+                                "summary": "Synthetic first acceptance finding",
+                            }
+                            payload["visual_reviews"][0]["findings"] = [
+                                finding, {**finding, "acceptance_id": acceptance, "status": statuses[1]},
+                            ]
+                            self.assertEqual([], self.errors(payload))
+                            artifact.write_text(json.dumps(payload), encoding="utf-8")
+                            with self.assertRaisesRegex(ValueError, "finding IDs must be unique within a pass"):
+                                VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
+
+    def test_explicit_finding_id_retains_acceptance_across_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "visual-evidence.json"
+            for complete in (False, True):
+                with self.subTest(complete=complete):
+                    payload = self.complete_payload() if complete else copy.deepcopy(self.fixture)
+                    payload["visual_reviews"][1]["findings"][0]["acceptance_id"] = "ACCEPTANCE-002"
+                    self.assertEqual([], self.errors(payload))
+                    artifact.write_text(json.dumps(payload), encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "finding FINDING-001 must retain its acceptance_id across passes"):
+                        VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
+
+    def test_distinct_finding_ids_on_one_acceptance_remain_independent(self) -> None:
+        payload = self.complete_payload(single_pass=True)
+        finding = {
+            "id": "F-OPEN", "severity": "P1", "acceptance_id": "ACCEPTANCE-001",
+            "evidence_ids": ["RUNTIME-PASS-2-GEOMETRY"], "status": "open",
+            "summary": "Synthetic independent acceptance failure",
+        }
+        payload["visual_reviews"][0]["findings"] = [finding, {**finding, "id": "F-FIXED", "status": "fixed"}]
+        self.assertEqual([], self.errors(payload))
+        self.assertIn("open P0/P1 findings", " ".join(VALIDATOR.semantic_errors(payload)))
+        finding["status"] = "fixed"
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+        # Reusing one ID in a later pass for the same acceptance is a valid fix.
+        self.assertEqual([], VALIDATOR.semantic_errors(self.complete_payload()))
+
     def test_inferred_observation_is_not_comparison_pass_finding(self) -> None:
         payload = self.complete_payload()
         payload["visual_reviews"][0]["findings"][0]["evidence_ids"] = ["SOURCE-002"]
@@ -500,6 +549,12 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
             "summary": "Independent legacy blocker",
         })
         self.assertTrue(VALIDATOR.semantic_errors(payload))
+        # Two ID-less findings on one acceptance retain separate occurrence
+        # identities; both may close in the later pass without requiring IDs.
+        payload["visual_reviews"][1]["findings"].append(
+            copy.deepcopy(payload["visual_reviews"][1]["findings"][0])
+        )
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
 
     def test_complete_rejects_not_verified_list(self) -> None:
         payload = self.complete_payload()
