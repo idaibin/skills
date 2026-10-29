@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import copy
 import base64
+import hashlib
 import importlib.util
 import json
 import re
@@ -203,6 +204,68 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
         self.assertEqual([], self.errors(self.fixture))
         self.assertEqual([], VALIDATOR.semantic_errors(self.fixture))
         VALIDATOR.validate_artifact(FIXTURE_PATH, SCHEMA_PATH)
+
+    def test_const_uses_json_instance_equality(self) -> None:
+        # JSON numbers compare by value, but booleans are a separate type,
+        # including inside arrays and objects (JSON Schema Core 4.2.2).
+        cases = (
+            (True, True, True), (False, False, True),
+            (True, 1, False), (1, True, False),
+            (False, 0, False), (0, False, False),
+            (True, 1.0, False), (0.0, False, False),
+            (1, 1.0, True), (1.0, 1, True), (0, -0.0, True),
+            (1, 2, False), (True, False, False),
+            (None, None, True), (None, False, False),
+            ("true", True, False), ("1", 1, False),
+            ("same", "same", True), ("same", "different", False),
+            ([1, {"flag": True}], [1.0, {"flag": True}], True),
+            ([1, {"flag": True}], [1, {"flag": 1}], False),
+            ({"items": [False]}, {"items": [0]}, False),
+            ({"a": 1, "b": [True]}, {"b": [True], "a": 1.0}, True),
+            ({"a": 1}, {"a": 1, "b": 2}, False),
+            ({"a": 1}, {"b": 1}, False),
+            ([1], [1, 2], False), ([1, 2], [2, 1], False),
+            ([], {}, False), ({}, [], False),
+        )
+        for value, expected, equal in cases:
+            with self.subTest(value=value, expected=expected, equal=equal):
+                errors = VALIDATOR.schema_errors(value, {"const": expected})
+                self.assertEqual(not equal, bool(errors), errors)
+
+    def test_visual_review_true_constants_reject_non_booleans(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "visual-evidence.json"
+            for field in ("same_state", "same_viewport"):
+                for value in (True, 1, 1.0, False, 0, 0.0, "true", None):
+                    with self.subTest(field=field, value=value):
+                        payload = self.complete_payload(single_pass=True)
+                        payload["visual_reviews"][0][field] = value
+                        artifact.write_text(json.dumps(payload), encoding="utf-8")
+                        if value is True:
+                            VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
+                        else:
+                            with self.assertRaisesRegex(ValueError, field + ": must equal True"):
+                                VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
+
+    def test_restoration_authorized_const_rejects_non_booleans(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            artifact = Path(directory) / "visual-evidence.json"
+            for value in (True, 1, 1.0, False, 0, 0.0, "true", None):
+                with self.subTest(value=value):
+                    payload = self.complete_payload(single_pass=True)
+                    receipt = payload["capture_closure"]["restoration_receipts"][0]
+                    receipt["authorized_restoration_actions"][0]["authorized"] = value
+                    # Keep the receipt internally consistent so hash rejection
+                    # cannot mask a broken const check. This is not host authority.
+                    receipt.pop("receipt_canonical_sha256")
+                    canonical = json.dumps(receipt, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+                    receipt["receipt_canonical_sha256"] = "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+                    artifact.write_text(json.dumps(payload), encoding="utf-8")
+                    if value is True:
+                        VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
+                    else:
+                        with self.assertRaisesRegex(ValueError, "authorized: must equal True"):
+                            VALIDATOR.validate_artifact(artifact, SCHEMA_PATH)
 
     def test_aggregate_image_metrics_are_diagnostic_only(self) -> None:
         self.assertIn("Whole-image RMSE", self.protocol)
