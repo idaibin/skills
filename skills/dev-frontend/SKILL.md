@@ -1,6 +1,6 @@
 ---
 name: dev-frontend
-description: "Implement frontend UI changes in the existing stack. Use repo-review for review-only requests."
+description: "Implement frontend UI changes in the existing stack. Route change-based reviews to repo-review and existing-surface audits without a change basis to repo-audit."
 ---
 
 # Frontend Implementation
