@@ -52,7 +52,8 @@ Evaluate every requested slice independently.
 - Emit `Ready for dev-frontend <slice>` only when that slice passes all gates.
 - Unconfirmed slices remain listed in the shared index with blockers.
 - One incomplete slice does not block unrelated ready slices.
-- Mark overall result `Partial` when any requested slice is unready or missing required gates.
+- Mark overall result `Partial` only when it contains both ready and blocked slices,
+  as defined by the [readiness checklist](evaluation-rubric.md#end-of-work-readiness-checklist).
 - Mark overall result `Complete` only when all requested slices are ready.
 
 ## Design System Change Gate for Multi-Slice

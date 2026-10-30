@@ -131,6 +131,32 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         self.assertIn("separate interaction states", candidate)
         self.assertIn("never send from\nthis Skill", candidate)
 
+    def test_ui_multi_surface_readiness_uses_existing_checklist(self) -> None:
+        # Static consumer/owner alignment, not an Agent readiness evaluation.
+        target = "evaluation-rubric.md#end-of-work-readiness-checklist"
+        sections = {}
+        for name, heading in (
+            ("multi-surface.md", "Readiness and Partial Results"),
+            ("workflow.md", "Evaluation And Handoff"),
+        ):
+            text = self.read(f"skills/ui-spec/references/{name}")
+            section = text.split(f"## {heading}\n", 1)[1].split("\n## ", 1)[0]
+            sections[name] = re.sub(r"\s+", " ", section)
+            self.assertIn(target, re.findall(r"\[[^\]]+\]\(([^)]+)\)", section))
+        multi = sections["multi-surface.md"]
+        self.assertIn("`Partial` only when it contains both ready and blocked slices", multi)
+        self.assertNotIn("when any requested slice is unready or missing required gates", multi)
+        self.assertNotIn("mark an incomplete multi-surface result `Partial`", sections["workflow.md"])
+        self.assertIn("One incomplete slice does not block unrelated ready slices", multi)
+        self.assertIn("`Complete` only when all requested slices are ready", multi)
+        self.assertIn("only when that slice passes all gates", multi)
+        self.assertIn("Unconfirmed slices remain listed in the shared index with blockers", multi)
+        rubric = self.read("skills/ui-spec/references/evaluation-rubric.md")
+        checklist = re.sub(r"\s+", " ", rubric.split("## End-of-Work Readiness Checklist\n", 1)[1])
+        self.assertIn("Use `Partial` only when a multi-slice result contains both ready and blocked slices", checklist)
+        self.assertIn("If an item fails, stop at that item", checklist)
+        self.assertIn("report non-blocking `Not verified` gaps without downgrading the slice", checklist)
+
     def test_consumers_use_the_same_resolved_design_root(self) -> None:
         paths = (
             "protocols/specification-authorities-v1.md",

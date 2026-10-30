@@ -226,7 +226,8 @@ icon owner, rights, family consistency,
 render/state, safety, accessibility, fallback, and gallery-acceptance gates. Then
 compare source fidelity, task completion, information structure,
 interaction completeness, engineering fit, and evidence completeness. Emit one
-readiness verdict per slice and mark an incomplete multi-surface result `Partial`.
+readiness verdict per slice and derive the multi-surface result from the
+[readiness checklist](evaluation-rubric.md#end-of-work-readiness-checklist).
 Hand the unchanged per-slice viewport matrix, accepted artifacts, and unresolved gaps
 to `dev-frontend`, `repo-audit`, and `ops-browser`/`ops-client`; include traceability
 and asset gates, and request runtime evidence from the operations owner after
