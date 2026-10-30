@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import re
 import unittest
 
 
@@ -114,6 +115,29 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
         self.assertIn("If all\napplicable acceptance passes, close without repeating an unchanged comparison", protocol)
         self.assertIn("required_comparison_passes", protocol)
         self.assertIn("omission means one", protocol)
+
+    def test_generated_client_build_uses_the_current_validation_boundary(self) -> None:
+        # A consumer reference must reuse the existing build decision owner, not
+        # retain the obsolete release/explicit-build-only gate beside its link.
+        # This checks contract consistency, not live Agent or build execution.
+        protocol = (ROOT / "skills/dev-frontend/references/protocol-contracts.md").read_text(encoding="utf-8")
+        verification = protocol.split("## Verification\n", 1)[1]
+        adapter_step = verification.split("\n2. ", 1)[1].split("\n3. ", 1)[0]
+        targets = re.findall(r"\[[^\]]+\]\(([^)]+)\)", adapter_step)
+        self.assertIn("checklist.md#validation", targets)
+        self.assertNotRegex(
+            " ".join(adapter_step.split()),
+            r"only in an authorized release phase|(?:build, packaging, or artifacts are )?explicitly requested",
+        )
+        self.assertIn("Build evidence\n  follows the authorization rule above", self.checklist)
+        for boundary in (
+            'a separate request\n  containing the word "build" is not required',
+            "including an explicit no-build instruction",
+            "Unknown effects block that command until resolved",
+            "deployment, paid actions, real business writes or security changes require their\n  own authority",
+        ):
+            with self.subTest(boundary=boundary):
+                self.assertIn(boundary, self.checklist)
 
 
 if __name__ == "__main__":
