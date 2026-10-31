@@ -87,6 +87,34 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         gate = workflow_gate.group("gate")
         self.assert_complete_lifecycle(gate, context="product-spec workflow gate")
 
+    def test_product_mode_oracle_preserves_observed_reconstruction_boundary(self) -> None:
+        # Static oracle/profile consistency, not a scored reconstruction task.
+        evals = self.read("skills/product-spec/references/eval-cases.md")
+        quality = evals.split("## Quality Eval\n", 1)[1].split("\n## ", 1)[0]
+        rows = [
+            [cell.strip() for cell in line.split("|")[1:-1]]
+            for line in quality.splitlines()
+            if line.startswith("| Mode selection |")
+        ]
+        self.assertEqual(1, len(rows))
+        self.assertEqual(3, len(rows[0]))
+        _, expected, rejected = rows[0]
+        for mode in ("Feature Spec", "Foundation Spec", "Artifact Update"):
+            self.assertIn(mode, expected)
+        self.assertIn("for product definition", expected)
+        self.assertIn("explicitly requested Evidence Reconstruction", expected)
+        self.assertIn("only the observed-candidate profile", expected)
+        self.assertNotIn("Exposes only Feature Spec, Foundation Spec, and Artifact Update", expected)
+        for forbidden in ("Discovery", "grill", "Brief", "Standard"):
+            self.assertIn(forbidden, rejected)
+        self.assertIn("promotes an observed reconstruction candidate into an accepted or Ready product contract", rejected)
+        profile = re.sub(r"\s+", " ", self.read("skills/product-spec/references/source-reconstruction.md"))
+        self.assertIn("Use only when the user explicitly asks", profile)
+        self.assertIn("observed/inferred/accepted distinctions", profile)
+        self.assertIn("Do not call it Ready or implementation-authorizing", profile)
+        self.assertIn("without the owner's explicit decision", profile)
+        self.assertIn("The product owner accepts exact scope/version/content", profile)
+
     def test_structured_projection_consumers_keep_complete_lifecycle(self) -> None:
         for path in LIFECYCLE_GATE_PATTERNS:
             for index, gate in enumerate(self.lifecycle_gates(path)):
