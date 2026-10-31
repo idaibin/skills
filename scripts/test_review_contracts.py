@@ -191,6 +191,58 @@ class ReviewContractTests(unittest.TestCase):
         }
         jsonschema.Draft202012Validator(ASSET_MAP_SCHEMA).validate(result)
 
+    def test_asset_map_envelope_preserves_capability_version_pairs(self) -> None:
+        # Data-contract compatibility only; this does not invoke a Graph adapter.
+        result = {
+            "schema_version": "1.0",
+            "capability_id": "repository.asset.scan",
+            "capability_version": "2.0.0",
+            "repository_id": "fixture",
+            "snapshot_ref": "scan:fixture",
+            "basis": {"head_sha": "1" * 40, "worktree_state": "clean"},
+            "scope": {"includes": ["src/**"], "exclusions": []},
+            "coverage": {"files_scanned": 1},
+            "validation": {"valid": True, "issues": []},
+        }
+        validator = jsonschema.Draft202012Validator(ASSET_MAP_SCHEMA)
+        for capability, version in (
+            ("repository.asset.scan", "2.0.0"),
+            ("repository.asset.scan", "1.0.0"),  # Existing v1 envelope compatibility.
+            ("repository.asset.query", "1.0.0"),
+        ):
+            with self.subTest(accepted=(capability, version)):
+                candidate = {**result, "capability_id": capability, "capability_version": version}
+                validator.validate(candidate)
+        for capability, version in (
+            ("repository.asset.scan", "0.0.0"),
+            ("repository.asset.scan", "2.0.1"),
+            ("repository.asset.scan", "3.0.0"),
+            ("repository.asset.query", "2.0.0"),
+            ("repository.asset.query", "3.0.0"),
+            ("repository.asset.unknown", "1.0.0"),
+            ("repository.asset.unknown", "2.0.0"),
+            ("repository.asset.scan", 2),
+        ):
+            with self.subTest(rejected=(capability, version)), self.assertRaises(jsonschema.ValidationError):
+                validator.validate({**result, "capability_id": capability, "capability_version": version})
+        for required in (
+            "schema_version", "capability_id", "capability_version", "repository_id",
+            "snapshot_ref", "basis", "scope", "coverage", "validation",
+        ):
+            invalid = copy.deepcopy(result)
+            del invalid[required]
+            with self.subTest(missing=required), self.assertRaises(jsonschema.ValidationError):
+                validator.validate(invalid)
+        for field, value in (
+            ("schema_version", "2.0"),
+            ("unexpected", True),
+            ("snapshot_ref", "not-a-scan"),
+            ("validation", {"valid": True}),
+            ("validation", {"issues": []}),
+        ):
+            with self.subTest(invalid=(field, value)), self.assertRaises(jsonschema.ValidationError):
+                validator.validate({**result, field: value})
+
     def test_pass_cannot_hide_blocking_or_scope_failure(self) -> None:
         for mutation in ("blocking", "scope", "spec"):
             with self.subTest(mutation=mutation):

@@ -4,10 +4,14 @@
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "capability_id", "capability_version", "repository_id", "snapshot_ref", "basis", "scope", "coverage", "validation"],
+  "allOf": [
+    { "if": { "properties": { "capability_version": { "const": "2.0.0" } } },
+      "then": { "properties": { "capability_id": { "const": "repository.asset.scan" } } } }
+  ],
   "properties": {
     "schema_version": { "const": "1.0" },
     "capability_id": { "enum": ["repository.asset.scan", "repository.asset.query"] },
-    "capability_version": { "const": "1.0.0" },
+    "capability_version": { "enum": ["1.0.0", "2.0.0"] },
     "repository_id": { "type": "string", "minLength": 1 },
     "snapshot_ref": { "type": "string", "pattern": "^scan:" },
     "basis": { "type": "object" },
