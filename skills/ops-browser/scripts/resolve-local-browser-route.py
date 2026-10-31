@@ -73,6 +73,23 @@ def _url_parts(url: str | None) -> tuple[str | None, str | None]:
     return f"{parsed.scheme.lower()}://{authority}", host
 
 
+def _configured_origin(value: str) -> str:
+    normalized = value.rstrip("/").lower()
+    try:
+        parsed = urlsplit(normalized)
+        if (
+            parsed.scheme in {"http", "https"}
+            and normalized == f"{parsed.scheme}://{parsed.netloc}"
+            and parsed.username is None
+            and parsed.password is None
+            and parsed.port == {"http": 80, "https": 443}[parsed.scheme]
+        ):
+            return normalized.rsplit(":", 1)[0]
+    except ValueError:
+        pass
+    return normalized
+
+
 def _within_project(cwd: str | None, roots: list[str]) -> bool:
     if not cwd:
         return False
@@ -108,7 +125,7 @@ def _matches_clause(
         if field == "project_roots":
             matched = _within_project(cwd, values)
         elif field == "origins":
-            normalized = {value.rstrip("/").lower() for value in values}
+            normalized = {_configured_origin(value) for value in values}
             matched = origin is not None and origin.lower() in normalized
         elif field == "hosts":
             normalized = {value.lower().lstrip(".") for value in values}
