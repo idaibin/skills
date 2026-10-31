@@ -115,6 +115,48 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
         self.assertIn("without the owner's explicit decision", profile)
         self.assertIn("The product owner accepts exact scope/version/content", profile)
 
+    def test_java_conformance_work_is_distinct_from_completion(self) -> None:
+        # Static authority/gate consistency, not execution of Java implementation.
+        text = self.read("skills/dev-java/references/protocol-contracts.md")
+        normalized = re.sub(r"\s+", " ", text)
+        self.assertIn(
+            "Explicitly authorized implementation may establish conformance to the exact accepted "
+            "contract within the approved source scope; existing unresolved-authority and "
+            "decisive-input stop conditions still apply.",
+            normalized,
+        )
+        self.assertIn(
+            "Automated reliance on implementation conformance or delivery completion MUST stop "
+            "when any applicable condition is true:",
+            normalized,
+        )
+        self.assertNotIn("Implementation automation or delivery completion MUST stop", normalized)
+        for boundary in (
+            "the owner is wrong or ambiguous",
+            "acceptance is not bound to the exact scope/version/content hash",
+            "an accepted business-exposure rule still conflicts with a reachable source route",
+            "Owner acceptance otherwise makes the contract authoritative before Java implementation",
+            "incomplete implementation or lifecycle evidence does not demote that authority",
+        ):
+            with self.subTest(boundary=boundary):
+                self.assertIn(boundary, normalized)
+        completion_gate = text.split("condition is true:\n", 1)[1].split(
+            "\nFor code-first automation", 1
+        )[0]
+        self.assertEqual(
+            [
+                "- code-first generation has no executable producer bound to the fixed Git basis;",
+                "- contract-first Java routes/DTOs/security/errors do not conform to the accepted contract;",
+                "- only parser/schema validation has passed;",
+                "- no fixed legacy baseline or compatibility comparison exists for existing consumers;",
+                "- non-LLM consumer, validator, drift policy, or retirement rule is missing;",
+                "- an actual generated derivative has no declared producer;",
+                "- operation errors are mechanically copied rather than resolved from reachable code;",
+                "- unresolved handbook, UI, or decision content remains embedded in OpenAPI.",
+            ],
+            [line for line in completion_gate.splitlines() if line.startswith("- ")],
+        )
+
     def test_structured_projection_consumers_keep_complete_lifecycle(self) -> None:
         for path in LIFECYCLE_GATE_PATTERNS:
             for index, gate in enumerate(self.lifecycle_gates(path)):

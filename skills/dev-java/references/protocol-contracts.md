@@ -72,8 +72,10 @@ business-exposure rule still conflicts with a reachable source route. Owner acce
 otherwise makes the contract authoritative before Java implementation; incomplete
 implementation or lifecycle evidence does not demote that authority.
 
-Implementation automation or delivery completion MUST stop when any applicable
-condition is true:
+Explicitly authorized implementation may establish conformance to the exact accepted
+contract within the approved source scope; existing unresolved-authority and
+decisive-input stop conditions still apply. Automated reliance on implementation
+conformance or delivery completion MUST stop when any applicable condition is true:
 
 - code-first generation has no executable producer bound to the fixed Git basis;
 - contract-first Java routes/DTOs/security/errors do not conform to the accepted contract;
