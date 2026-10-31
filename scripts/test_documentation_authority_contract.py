@@ -157,6 +157,59 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
             [line for line in completion_gate.splitlines() if line.startswith("- ")],
         )
 
+    def test_rust_native_rest_oracle_keeps_independent_contract_overlay(self) -> None:
+        evals = self.read("skills/dev-rust/references/eval-cases.md")
+        trigger = evals.split("## Trigger Eval\n", 1)[1].split("\n## Non-Trigger Eval", 1)[0]
+        prompt = (
+            "`Add this REST handler using the repository's native route, DTO, client, and tests; "
+            "do not introduce schema generation.`"
+        )
+        rows = [
+            [cell.strip() for cell in line.split("|")[1:-1]]
+            for line in trigger.splitlines()
+            if line.startswith("| " + prompt + " |")
+        ]
+        self.assertEqual(1, len(rows))
+        self.assertEqual(3, len(rows[0]))
+        _, expected, why = rows[0]
+        self.assertIn("Baseline + Contract", expected)
+        self.assertIn("any other independently applicable overlays", expected)
+        self.assertIn("mark protocol automation `Not applicable`", expected)
+        self.assertNotIn("Baseline only", expected)
+        self.assertEqual("HTTP implementation does not itself require OpenAPI.", why)
+
+    def test_rust_behavior_oracle_reuses_meaningful_checks_without_fabricating_red(self) -> None:
+        # Static consistency with the shared protocol, not a scored Rust task.
+        evals = self.read("skills/dev-rust/references/eval-cases.md")
+        quality = evals.split("## Quality Eval\n", 1)[1].split("\n## ", 1)[0]
+        rows = [
+            [cell.strip() for cell in line.split("|")[1:-1]]
+            for line in quality.splitlines()
+            if line.startswith("| Behavior-first slices |")
+        ]
+        self.assertEqual(1, len(rows))
+        self.assertEqual(3, len(rows[0]))
+        _, expected, rejected = rows[0]
+        for requirement in (
+            "reuses an existing check with an independent expected result",
+            "adds/extends one for meaningful uncovered risk",
+            "implements a coherent slice",
+            "reports whether red was observed",
+            "preserves an explicitly adopted TDD workflow",
+            "If no honest seam exists, records another focused validation path and its reason",
+        ):
+            with self.subTest(requirement=requirement):
+                self.assertIn(requirement, expected)
+        for forbidden in (
+            "Duplicates implementation logic in expectations",
+            "adds implementation-mirroring checks for a reversible low-impact edit",
+            "ignores required project TDD",
+            "claims red-green evidence without observing red before green",
+        ):
+            with self.subTest(forbidden=forbidden):
+                self.assertIn(forbidden, rejected)
+        self.assertNotIn("works one failing behavior test", expected)
+
     def test_structured_projection_consumers_keep_complete_lifecycle(self) -> None:
         for path in LIFECYCLE_GATE_PATTERNS:
             for index, gate in enumerate(self.lifecycle_gates(path)):
