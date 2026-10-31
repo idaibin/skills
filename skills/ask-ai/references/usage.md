@@ -98,8 +98,10 @@ Option handling:
   first two surfaces. Generic Standard Chat uses a browser route or Package-only.
 - Follow `provider-chatgpt.md` for explicit routing, versioned durable preferences,
   capability/source preflight, exact target mapping, model/reasoning evidence, and
-  browser fallback. When no durable record exists, try App-native first only when the
-  verified Project/Quick Chat mapping passes.
+  browser fallback. Honor an explicit current route first; without one, apply the valid
+  configured route, otherwise the browser preference whose default is Codex in-app.
+  Use App-native only when explicitly requested or configured and the verified
+  Project/Quick Chat mapping passes.
 - Follow `app-native-thread-protocol.md` for App-native ledger fields, legal
   transitions, uncertain-return reconciliation, completion, and retry invariants.
 - Use Codex to collect evidence, apply fixes, run tests, and challenge ChatGPT findings locally.

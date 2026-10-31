@@ -93,6 +93,38 @@ class AppNativeCanaryTests(unittest.TestCase):
         self.assertIn("an empty available source is", routing)
         self.assertIn("legal for a new Quick Chat", routing)
 
+    def test_chatgpt_route_consumers_keep_native_opt_in_and_browser_default(self) -> None:
+        references = ROOT / "skills" / "ask-ai" / "references"
+        usage = (references / "usage.md").read_text(encoding="utf-8")
+        usage_route = usage.split("- Follow `provider-chatgpt.md`", 1)[1].split(
+            "\n- Follow `app-native-thread-protocol.md`", 1
+        )[0]
+        evals = (references / "eval-cases.md").read_text(encoding="utf-8")
+        package_row = next(
+            line for line in evals.splitlines()
+            if line.startswith("| `Send this review-package.md to ChatGPT for one review round.` |")
+        )
+        consumers = {"usage": usage_route, "package-eval": package_row.split("|", 2)[2]}
+        for source, text in consumers.items():
+            normalized = " ".join(text.split())
+            with self.subTest(source=source, contract="route-order"):
+                self.assertRegex(
+                    normalized,
+                    r"explicit current route.*valid configured route.*"
+                    r"otherwise.*browser preference whose default is Codex in-app",
+                )
+            with self.subTest(source=source, contract="native-opt-in"):
+                self.assertIn(
+                    "Use App-native only when explicitly requested or configured and",
+                    normalized,
+                )
+            with self.subTest(source=source, contract="native-mapping"):
+                self.assertIn("verified Project/Quick Chat mapping", normalized)
+                self.assertIn(
+                    "mapping passes" if source == "usage" else "mapping and package gates pass",
+                    normalized,
+                )
+
     def test_quick_chat_requires_explicit_request_and_omits_project_id(self) -> None:
         result = CANARY.classify(snapshot())
         self.assertEqual("ready", result["status"])
