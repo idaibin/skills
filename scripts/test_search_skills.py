@@ -621,6 +621,53 @@ class SearchSkillsTests(unittest.TestCase):
                 self.assertTrue(SEARCH.has_authorized_delivery_action(query))
                 self.assertEqual("repo-delivery", SEARCH.search(index, query)[0]["name"])
 
+    def test_repo_delivery_cjk_pending_approval_is_occurrence_local(self) -> None:
+        """Pending intent is not a grant; later grants and other actions stay distinct."""
+        cases = {
+            "提交需要批准。": (False, [("commit", "deny")]),
+            "提交这些更改需要批准。": (False, [("commit", "deny")]),
+            "等待批准后提交这些更改。": (False, [("commit", "deny")]),
+            "推送这个分支等待批准。": (False, [("push", "deny")]),
+            "已授权你提交这些更改。": (True, [("commit", "reauthorize")]),
+            "请提交这些更改，随后取消授权。": (False, [("commit", "command"), ("revoke", "revoke")]),
+            "提交这些更改需要批准。但现在已授权你提交这些更改。": (True, [("commit", "deny"), ("commit", "reauthorize")]),
+            "提交这些更改需要批准, 现在已授权你提交这些更改。": (True, [("commit", "deny"), ("commit", "reauthorize")]),
+            "已授权你提交这些更改不需要批准。": (True, [("commit", "reauthorize")]),
+            "已授权你提交这些更改, 提交这些更改等待批准。": (False, [("commit", "reauthorize"), ("commit", "deny")]),
+            "已授权你提交这些更改，但提交这些更改等待批准。": (False, [("commit", "reauthorize"), ("commit", "deny")]),
+            "已授权你提交这些更改, 推送这个分支等待批准。": (True, [("commit", "reauthorize"), ("push", "deny")]),
+            "提交这些更改需要批准, 已授权你推送这个分支。": (True, [("commit", "deny"), ("push", "reauthorize")]),
+            "请提交这些更改, 随后取消授权。": (False, [("commit", "command"), ("revoke", "revoke")]),
+            "提交这些更改需要批准, 随后取消授权, 现在已授权你提交这些更改。": (True, [("commit", "deny"), ("revoke", "revoke"), ("commit", "reauthorize")]),
+            "已授权你无需等待批准即可提交这些更改。": (True, [("commit", "reauthorize")]),
+            "已授权你无须等待批准即可提交这些更改。": (True, [("commit", "reauthorize")]),
+        }
+        index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))
+        for query, (expected, events) in cases.items():
+            with self.subTest(query=query):
+                parsed = SEARCH.parse_delivery_intent(query)
+                self.assertEqual(expected, parsed.authorized)
+                self.assertEqual(events, [(event.action, event.modality) for event in parsed.events])
+                self.assertEqual(expected, "repo-delivery" in {item["name"] for item in SEARCH.search(index, query)})
+
+        for term in ("暂存", "提交", "推送", "合并", "变基", "打标签", "发布", "清理"):
+            for status in ("需要", "等待", "尚未", "待定", "待"):
+                for query in (
+                    f"请{term}这些 Git 更改{status}批准。",
+                    f"{status}批准后{term}这些 Git 更改。",
+                ):
+                    with self.subTest(kind="pending-vocabulary", query=query):
+                        parsed = SEARCH.parse_delivery_intent(query)
+                        self.assertFalse(parsed.authorized)
+                        self.assertEqual([(SEARCH.CHINESE_ACTION_CANONICAL[term], "deny")], [(event.action, event.modality) for event in parsed.events])
+                        self.assertNotIn("repo-delivery", {item["name"] for item in SEARCH.search(index, query)})
+
+        # Preserve the existing bounded predicate; this is not a full language parser.
+        for gap, matches in ((12, True), (13, False)):
+            for query in ("提交" + "甲" * gap + "需要批准", "需要批准" + "甲" * gap + "提交"):
+                with self.subTest(kind="association-window", gap=gap, query=query):
+                    self.assertEqual(matches, bool(SEARCH.CHINESE_APPROVAL_PENDING_RE.search(query)))
+
     def test_repo_delivery_second_review_equivalence_classes_are_occurrence_bound(self) -> None:
         """Keep review questions, PR publishing, and non-Git homonyms outside delivery."""
         index = json.loads((ROOT / "skills-index.json").read_text(encoding="utf-8"))

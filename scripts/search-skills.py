@@ -680,7 +680,7 @@ CHINESE_ACTION_CANONICAL = {
     "拉取": "pull",
 }
 CHINESE_STATUS_QUESTION_RE = re.compile(r"^\s*(?:(?:如何|怎么|怎样|是否|能否|可否|什么时候|哪个)|(?:帮我)?(?:确认|检查|查看).{0,12}(?:是否|能否|可否)).*(?:暂存|提交|推送|合并|变基|打标签|发布|清理)")
-CHINESE_APPROVAL_PENDING_RE = re.compile(r"(?:暂存|提交|推送|合并|变基|打标签|发布|清理).{0,12}(?:需要|等待|尚未|待定|待)批准|(?:需要|等待|尚未|待定|待)批准.{0,12}(?:暂存|提交|推送|合并|变基|打标签|发布|清理)")
+CHINESE_APPROVAL_PENDING_RE = re.compile(r"(?:暂存|提交|推送|合并|变基|打标签|发布|清理).{0,12}(?<!不)(?<!无需)(?<!无须)(?:需要|等待|尚未|待定|(?<!等)待)批准|(?<!不)(?<!无需)(?<!无须)(?:需要|等待|尚未|待定|(?<!等)待)批准.{0,12}(?:暂存|提交|推送|合并|变基|打标签|发布|清理)")
 
 
 def chinese_delivery_actions(query: str) -> tuple[set[str], set[str]]:
@@ -1046,12 +1046,16 @@ def parse_delivery_intent(query: str) -> DeliveryIntent:
             ))
         for term, action in CHINESE_ACTION_CANONICAL.items():
             for cjk_match in re.finditer(re.escape(term), segment):
-                prior = list(re.finditer(r"[，；]|但|随后|然后", segment[: cjk_match.start()]))
-                following = re.search(r"[，；]|但|随后|然后", segment[cjk_match.end() :])
+                prior = list(re.finditer(r"[,，；]|但|随后|然后", segment[: cjk_match.start()]))
+                following = re.search(r"[,，；]|但|随后|然后", segment[cjk_match.end() :])
                 local_start = prior[-1].end() if prior else 0
                 local_end = cjk_match.end() + following.start() if following else len(segment)
                 local = segment[local_start:local_end]
-                denied = any(negation in local for negation in CHINESE_NEGATION) or "不能" in local
+                denied = (
+                    any(negation in local for negation in CHINESE_NEGATION)
+                    or "不能" in local
+                    or bool(CHINESE_APPROVAL_PENDING_RE.search(local))
+                )
                 explicit = bool(re.search(r"(?:你可以|允许你|授权你|已授权).{0,12}" + re.escape(term), local))
                 command = bool(re.match(r"\s*(?:请|麻烦|请你)", local)) or bool(
                     re.search(r"(?:更改|改动|分支|仓库|工作区|本地|测试|构建|Git|main)", local)
