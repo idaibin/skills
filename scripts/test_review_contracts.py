@@ -80,6 +80,38 @@ def valid_noop_findings() -> dict:
 
 
 class ReviewContractTests(unittest.TestCase):
+    def test_visual_completion_rubric_preserves_qualifying_pass_and_rechecks(self) -> None:
+        # Static rubric/protocol alignment, not proof of a rendered comparison.
+        evals = (ROOT / "skills/repo-review/references/eval-cases.md").read_text(encoding="utf-8")
+        quality = evals.split("## Quality Eval\n", 1)[1].split("\n## ", 1)[0]
+        rows = [
+            [cell.strip() for cell in line.split("|")[1:-1]]
+            for line in quality.splitlines()
+            if line.startswith("| Visual-completion profile |")
+        ]
+        self.assertEqual(1, len(rows))
+        self.assertEqual(3, len(rows[0]))
+        _, expected, rejected = rows[0]
+        for term in (
+            "source/revision/approval", "separate source/current/target rows", "mapping",
+            "one qualifying same-viewport/state comparison", "full required coverage",
+            "correction", "evidence-invalidation", "stricter accepted project rechecks",
+            "computed checks", "real assets/fallback", "states and specified breakpoints",
+        ):
+            with self.subTest(expected=term):
+                self.assertIn(term, expected)
+        for term in (
+            "solely to reach two without a stricter accepted project requirement",
+            "skips a required recheck", "a single screenshot", "static checks", "generic fallback assets",
+        ):
+            with self.subTest(rejected=term):
+                self.assertIn(term, rejected)
+        self.assertNotIn("two same-viewport/state passes", expected)
+        protocol = " ".join((ROOT / "skills/repo-review/references/frontend-visual-evidence.md").read_text(encoding="utf-8").split())
+        self.assertIn("If all applicable acceptance passes, close without repeating an unchanged comparison", protocol)
+        self.assertIn("Every required runtime recheck needs new runtime evidence", protocol)
+        self.assertIn("required_comparison_passes`; omission means one", protocol)
+
     def test_adopted_ui_governance_requires_behavioral_closure(self) -> None:
         skill = (ROOT / "skills/repo-review/SKILL.md").read_text(encoding="utf-8")
         design = (ROOT / "skills/repo-review/references/ui-components-and-tokens.md").read_text(encoding="utf-8")
