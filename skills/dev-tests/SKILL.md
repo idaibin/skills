@@ -19,6 +19,7 @@ checklist alone does not complete the run.
 
 | Request condition | Read | Result |
 | --- | --- | --- |
+| AI-generated Playwright journeys or test healing apply | [AI E2E acceptance](references/playwright-e2e.md) | Frozen cases, bounded authoring handoff and native-runner evidence |
 | Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
 | Execute a functional acceptance campaign or resume its case inventory | [functional workflow](references/workflow.md) | Real journeys, correlated results, retest and cleanup |
@@ -72,6 +73,7 @@ into “all tests passed” when required cells remain unresolved.
 
 ## Reference Map
 
+- Read [Playwright E2E](references/playwright-e2e.md) only for coordinating generated browser-test acceptance.
 - Read [coverage](references/coverage.md) when deriving or reconciling the acceptance matrix.
 - Read [execution](references/execution.md) before running checks or making regression claims.
 - Read [functional workflow](references/workflow.md) for functional campaigns and resumed case inventories.

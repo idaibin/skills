@@ -13,6 +13,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 
 | Request condition | Read | Result |
 | --- | --- | --- |
+| Author or repair frontend Playwright journey tests | [Playwright test authoring](references/playwright-e2e.md) | Accepted-case scripts; no acceptance or business-oracle rewrite |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
 | Product behavior, copy, page interaction, layout, or visual acceptance changes | [specification authorities](references/specification-authorities.md) | Owning contracts ready before source |
 | Toolchain, dependencies, routing, stack migration, or render/effect semantics change | Relevant section of [stack guidelines](references/stack-guidelines.md) | Stack-specific constraints |
@@ -50,6 +51,7 @@ Report scope, authorities, reuse decision, selected profiles, changed files/cont
 
 ## Reference Map
 
+- Read [Playwright E2E](references/playwright-e2e.md) only for authoring or repairing frontend Playwright tests.
 - Read only applicable [checklist](references/checklist.md) sections for baseline implementation; use the Route Map for stack and framework detail.
 - Load each condition-specific reference named in the Route Map only when its condition applies.
 - Read [frontend visual gate example](references/frontend-visual-gate-example.md) only when constructing visual evidence.
