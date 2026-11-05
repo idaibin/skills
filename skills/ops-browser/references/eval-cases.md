@@ -12,6 +12,7 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 - [Non-Trigger Eval](#non-trigger-eval)
 - [Quality Eval](#quality-eval)
 - [Scoring](#scoring)
+- [Input Boundary And Feedback Cases](#input-boundary-and-feedback-cases)
 
 ## Trigger Eval
 
@@ -200,6 +201,18 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | --- | --- | --- |
 | Focus attribution | Waits for transition settlement and distinguishes browser-chrome focus loss from background-control escape. | Patches source or declares a focus trap defect from BODY alone. |
 | Evidence layer | Separates isolated stubs, earlier render coverage, current served build and real API assertions. | Counts resting pages as workflow coverage or stubs as persistence proof. |
+
+## Input Boundary And Feedback Cases
+
+These are synthetic candidate scenarios, not executed results. Bind observations to
+the actual page/runtime, contract, viewport/state and input path. A browser result
+does not establish which Skill was loaded or caused the outcome.
+
+| Case | Request / fixture | Expected behavior | Reject if |
+| --- | --- | --- | --- |
+| Read-only input boundary acceptance | Check an existing field whose accepted contract defines limit `N`, counting unit, input paths and an overflow-feedback trigger. Source edits and submission are outside scope. | Exercise below/at the limit and attempted overflow through the named paths using normal browser input. Record the resulting value and contract-required feedback separately; preserve source and submission boundaries. | Infers feedback from an attribute or value alone, substitutes programmatic value assignment for the requested input path, or changes source/submits to manufacture acceptance. |
+| Mixed acceptance results | Current targeted evidence shows value enforcement and focus passing, required feedback absent at its specified trigger, and an applicable theme not exercised. | Report the first two as verified, feedback as failed, and the theme as `Not verified`, each within the observed scope. Return the failure to its owner; neither claim overall acceptance nor require unrelated checks before that owner can diagnose it. | Merges failed and untested items into one unknown, reports the whole form passed, attributes outcomes to a Skill without loading/execution evidence, or demands whole-application certification. |
+| Missing trigger or source-fix request | The supplied report lacks the accepted feedback trigger, or the requested next step is a permanent source fix. | Preserve observable facts and the contract-conformance gap; obtain the missing contract for a dependent verdict, or hand the source change to `dev-frontend`. Continue independent authorized observation. | Invents the expected hint/timing, silently edits source from the browser, promotes the report to independent verification, or treats an unbound runtime as fixed-revision acceptance. |
 
 ## Portal Request-Count Cases
 

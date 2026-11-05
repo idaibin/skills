@@ -14,6 +14,7 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 - Scoring
 - [Cross-Module Scope Cases](#cross-module-scope-cases)
 - [Shared Motion And Overlay Cases](#shared-motion-and-overlay-cases)
+- [Input Boundary And Feedback Cases](#input-boundary-and-feedback-cases)
 
 ## Trigger Eval
 
@@ -239,6 +240,18 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Selected-source comparison passes with full required coverage on the first round | Close with one qualifying runtime comparison unless the project requires more | Repeats unchanged captures just to reach two |
 | First comparison identifies a real layout defect | Fix within scope and recheck the affected state with new runtime evidence | Claims completion from the first capture or a static reread |
 | Implement and inspect the local page, both already authorized | Coordinator continues through the runtime owner and resolves introduced defects | Stops to ask again merely at the Skill boundary |
+
+## Input Boundary And Feedback Cases
+
+These are synthetic candidate scenarios, not executed results. Supply the accepted
+limit, counting unit, input paths, feedback owner and trigger in each fixture; do not
+derive them from the current implementation or a report of another project.
+
+| Case | Request / fixture | Expected behavior | Reject if |
+| --- | --- | --- | --- |
+| Authorized feedback repair | A field already enforces limit `N`; the accepted contract also requires existing shared feedback on an attempted overflow. Restore that feedback and verify the affected state. | Read the contract, field/feedback owners and representative consumer. Preserve the limit and accepted wording; check below/at the limit and attempted overflow through the contract-specified input paths. Verify value enforcement and required feedback separately, with target-runtime evidence for any runtime claim. | Treats `maxlength`, a truncated value or a passing source check as proof of feedback; invents an inline error/retry control or rewrites the contract to match the implementation. |
+| Existing feedback is sufficient | The accepted contract uses a persistent limit hint and an existing form summary, with no additional inline error. Current-basis evidence covers the named boundary states; confirm the implementation without changing behavior. | Inspect the exact owner and matching contract, reuse applicable focused evidence, and preserve the accepted feedback type/timing. | Adds a new overflow message, duplicates the existing hint, or changes feedback merely because another project required it. |
+| Feedback trigger is unresolved | A report says input was capped without a hint, but the accepted trigger is unavailable or conflicting. An independent local label correction is also authorized. | Keep the reported symptom attributed; resolve the decisive contract gap before changing feedback. Continue the independent correction and report the unresolved feedback scope. | Guesses whether feedback belongs at the limit, attempted overflow, blur or submit; treats the report as a proved root cause; blocks all independent work or self-approves a new rule. |
 
 ## Cross-Module Scope Cases
 
