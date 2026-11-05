@@ -9,30 +9,35 @@ Agent installation, model configuration or a new test framework.
 
 ## Procedure
 
-1. Resolve accepted Product/UI/API expectations, application and test-source basis,
-   environment, target URL, test-data/account scope and side-effect authority.
-   Freeze a finite case/project inventory before generation. Each case identifies
-   prerequisite, steps, expected visible result, applicable API/persistence result,
-   cleanup and evidence. Current behavior is an observation, not the business oracle.
+1. Default to current-code/runtime-derived planning for existing projects; a full
+   PRD and approval of every inferred case are not prerequisites. Apply the existing
+   coverage rules: available confirmed Product/UI/API decisions prevail; otherwise
+   label current-behavior baselines and provisional inferences. Resolve application
+   and test-source basis, target, environment, account/data and side-effect authority.
+   Freeze a finite case/project inventory and expected outcomes before the asserted
+   run, including prerequisites, visible/API results, evidence source and cleanup.
 2. Reuse the actual runner, configuration and fixtures. Preflight the locked version,
    browser, seed/login and required services. Resolve host-provided planning,
    generation or repair adapters only when present; names or installed files do not
    prove that the current host loaded or executed them. No extra Agent is mandatory.
-3. Delegate scoped live exploration to the browser owner. Pass the accepted plan,
-   observed locators/states and test-asset scope to the implementation owner for
+3. Delegate scoped live exploration to the browser owner. Pass the evidence-labeled
+   plan, observed locators/states and test-asset scope to the implementation owner for
    missing scripts. Frontend journeys stay with the frontend implementation owner;
    non-browser runner/configuration work goes to its actual source owner.
 4. When scripts exist, freeze their basis and run the selected native test command.
    Keep the application checkout read-only for acceptance. Execute real clicks,
    input, navigation and visible assertions with real services where required.
    Mock tests, API-only tests and source inspection remain separately labeled.
-5. Preserve each failing result. Distinguish test defects, product defects and
-   environment blockers; send only the authorized repair to its owner. Set a finite
-   repair budget, then re-run affected cases on the new basis. An owner handoff does
+5. Preserve each failing result. Distinguish test defects, product defects,
+   expectation conflicts and environment blockers. Explore disputed or unverifiable
+   business meaning within budget, then record evidence, affected IDs and the question
+   for later human confirmation. Continue independent cases; defer only dependent
+   business verdicts or unsafe operations. Send only authorized repairs to their owner.
+   Set a finite repair budget, then re-run affected cases on the new basis. An owner handoff does
    not require repeated permission for actions already authorized.
 6. Reconcile native output and process exit against the original inventory, not a
-   new inventory inferred from whatever tests remain. Preserve passed, failed,
-   blocked, not-run and excluded separately. Missing access is blocked, not excluded.
+   new inventory inferred from whatever tests remain. A baseline/inference pass is
+   not business approval. Preserve passed, failed, blocked, not-run and excluded separately. Missing access is blocked, not excluded.
 
 ## Acceptance safeguards
 

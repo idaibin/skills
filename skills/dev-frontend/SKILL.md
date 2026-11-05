@@ -7,13 +7,16 @@ description: "Implement frontend UI changes in the existing stack. Route change-
 
 ## Entry Gate
 
-Implement the smallest authorized frontend slice in the existing stack. Read effective guidance, current Worktree, target route/component, and only applicable Product/UI/DESIGN authorities. Stop when a decisive behavior or visual contract is unresolved.
+Implement the smallest authorized frontend slice in the existing stack. Read effective guidance, current Worktree, target route/component, and only applicable Product/UI/DESIGN authorities. Stop when a decisive behavior or visual contract is unresolved for a product change.
+For test-only authoring, an evidence-labeled current-behavior baseline or provisional
+inference is sufficient; a complete PRD is not required. Record conflicts for later
+human confirmation and continue independent tests without changing product behavior.
 
 ## Route Map
 
 | Request condition | Read | Result |
 | --- | --- | --- |
-| Author or repair frontend Playwright journey tests | [Playwright test authoring](references/playwright-e2e.md) | Accepted-case scripts; no acceptance or business-oracle rewrite |
+| Author or repair frontend Playwright journey tests | [Playwright test authoring](references/playwright-e2e.md) | Evidence-labeled scripts; no business-policy approval |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
 | Product behavior, copy, page interaction, layout, or visual acceptance changes | [specification authorities](references/specification-authorities.md) | Owning contracts ready before source |
 | Toolchain, dependencies, routing, stack migration, or render/effect semantics change | Relevant section of [stack guidelines](references/stack-guidelines.md) | Stack-specific constraints |

@@ -39,17 +39,27 @@ If the host/CLI/version is unavailable, report that boundary without silent fall
 
 ## Use the integration
 
-Provide one bounded task, with the exact accepted case inventory and application/test
-basis. The same host may perform the roles sequentially; separate agents are optional.
+Provide one bounded task and application/test basis. For existing projects, default
+to deriving the case inventory from current source, interfaces, existing tests and
+available live behavior; a complete PRD or reconstructed spec is not a prerequisite.
+Use available confirmed rules first, label baselines/inferences, and freeze the plan
+before generation/execution. The same host may perform the roles sequentially;
+separate agents are optional.
 
 > Explore only the authorized target and test data using the existing seed fixtures.
-> Plan cases from accepted requirements and preserve their IDs and expected outcomes.
+> Infer scoped cases from current code and real observations without waiting for a PRD.
+> Preserve confirmed rules; label baseline/inferred expectations and freeze their IDs
+> and outcomes before execution. Never copy an actual result into its expected value.
+> Explore conflicting or unverifiable business meaning within budget, then record the
+> evidence, affected IDs and precise question for later human confirmation. Continue
+> independent cases; withhold only dependent business verdicts or unsafe operations.
 > Generate executable tests using the existing runner and test-asset location.
 > Run the selected native suite and preserve the command, exit and raw report.
 > Classify failures before repair; change only authorized tests or business source.
 > Never skip, fixme, mark expected failure, drop cases, weaken assertions or rebaseline
 > visual differences to make a required case pass. Stop on policy/sandbox denial.
-> Return case-by-case results, actual evidence, blockers and unexecuted layers.
+> Return case-by-case results, expectation sources, pending human decisions, actual
+> evidence, blockers and unexecuted layers. A green baseline is not business approval.
 
 Adopt `forbidOnly: true`, zero acceptance retries, JSON reporting, failure-only
 screenshots and `trace: 'retain-on-failure'` where they fit the existing configuration.

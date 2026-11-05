@@ -8,10 +8,15 @@ description: "Plan risk-based coverage and execute functional acceptance across 
 ## Entry Gate
 
 Own a bounded test-coverage and evidence decision for a declared feature, change, or
-journey. During product/design work, identify risks, testability gaps and provisional
+journey. For existing projects, default to deriving and running cases from current
+code, interfaces and available page observations; a complete PRD is not required.
+Record conflicts or unverifiable business meanings for later human confirmation,
+continue independent checks, and withhold only dependent business verdicts or unsafe
+operations. During product/design work, identify risks, testability gaps and provisional
 checks without waiting for implementation. Resolve applicable authorities, their
 acceptance status, target basis, environment and permission before execution; only
-settled oracles support acceptance verdicts. Reuse the project test plan and its IDs.
+settled business oracles support business-acceptance verdicts; baseline regression
+and provisional exploration retain their narrower meaning. Reuse the project test plan and its IDs.
 When asked to execute functional acceptance, run the reachable authorized cases; a
 checklist alone does not complete the run.
 

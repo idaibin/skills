@@ -2,6 +2,7 @@
 
 ## Contents
 
+- [Existing-project default](#existing-project-default)
 - [Reported failures and preserved behavior](#reported-failures-and-preserved-behavior)
 - [Generated coverage boundaries](#generated-coverage-boundaries)
 
@@ -9,8 +10,8 @@ Identify repository/revision (plus dirty patch digest when applicable), applicab
 product/UI/API authorities and their acceptance status, feature/journey IDs and scope.
 Early analysis may use drafts: label assumptions and disputed outcomes provisional,
 route decisions to their authority, and refine examples with design/implementation.
-Exploratory observations can reveal gaps but cannot settle business policy or pass an
-acceptance row whose oracle is unresolved. For native-app cases, bind platform and
+Exploratory observations can reveal gaps but cannot settle business policy or pass a
+business-acceptance row whose oracle is unresolved. For native-app cases, bind platform and
 installed artifact identity/version to the account, project and cold/warm startup
 state in the existing case IDs and ledger. H5/browser or source evidence cannot
 substitute for an applicable native artifact/device result. Bind runtime/build identity
@@ -21,7 +22,9 @@ it does not demonstrate that the checks ran.
 Build or update the project's existing matrix. Each row names its requirement or risk,
 observable expected outcome, affected code or boundary, test layer, scenario, fixture,
 role, environment, check and evidence. A missing or disputed expected outcome is a
-contract gap: route it to its authority rather than deriving success from implementation.
+business-contract gap: record it for its human owner without stopping independent
+baseline regression or bounded exploration. Do not derive business acceptance from
+implementation agreement; use the existing-project default below.
 A layer may contain multiple boundary-specific rows: an external protocol can pass
 while the application adapter in the same layer remains not-run. Never collapse these
 into an unqualified whole-layer pass.
@@ -81,6 +84,36 @@ For a requested release-readiness assessment, identify missing version-bound hea
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
 
+## Existing-project default
+
+Without a complete PRD, automatically infer a bounded scenario inventory from the
+current source, reachable routes/callers, native interfaces, state transitions,
+validation branches, existing tests and available real-page observations. Do not
+require a reconstructed specification or human approval of every inferred case before
+planning, script generation and authorized execution. Use available confirmed rules
+first and keep missing documentation local to the claims that actually need it.
+
+Do not queue every inference for approval merely because documentation is missing;
+queue only material conflicts or unknowns that change a scoped outcome, permission
+or business-acceptance decision. Routine evidenced baseline cases proceed directly.
+
+In the existing oracle/evidence notes, distinguish confirmed rules, recorded
+current-behavior baselines and provisional inferences, with their source paths/ref
+and observations. Freeze each expected outcome before the asserted run; never read
+the actual result and use it as that run's expected value. A baseline pass proves
+consistency with that baseline. An inference pass supports a hypothesis; neither
+settles business policy. Naming alone is a hypothesis, not a verified behavior.
+
+When sources conflict or code/runtime cannot establish business meaning, perform a
+bounded discriminating check when safe. Record the question, competing meanings,
+evidence, affected case IDs and human decision owner in the existing gap/issue record.
+Continue independent tests without repeatedly requesting confirmation. Only the
+dependent business verdict remains unresolved; safe exploratory steps may still run.
+Unclear permissions or unsafe side effects stop the affected operation immediately.
+Do not auto-approve a known defect, override a confirmed rule or repair product source
+merely to match an inference. Preserve failures and later human decisions, update only
+affected assumptions/tests, and rerun only affected cases plus required regressions.
+
 ## Reported failures and preserved behavior
 
 Bind the reported defect to the original entry/action, role/data, runtime/source
@@ -115,5 +148,7 @@ relevant implementation/contract change. Unsettled semantics return to their own
 Keep file/module dependencies separate from exported-symbol consumers. A shared import
 does not establish a caller of every export; resolve the named symbol, alias, namespace
 member and callback handoff, and retain computed/instance-dependent references as gaps.
-Source-derived inventory rows and generic case scaffolds remain provisional until an
-accepted business oracle supplies the required observable outcomes.
+Source-derived rows may generate and execute baseline regression and provisional
+exploratory tests without an accepted business oracle. Keep their expectation source
+and limits explicit under the existing-project default; only a business-acceptance
+claim requires the corresponding confirmed rule. Unexecuted scaffolds remain not-run.

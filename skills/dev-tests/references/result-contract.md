@@ -8,7 +8,8 @@ format with these semantic fields rather than requiring a second database or led
 
 - Repository and immutable revision or Worktree patch digest; selected feature/change/journey.
 - Applicable product, UI and API sources with versions, acceptance status and IDs;
-  provisional assumptions and unresolved oracles for early design.
+  or current source/runtime evidence and labeled assumptions for existing-project
+  regression/exploration. A complete PRD is not a required input.
 - Requested test layers, relevant environments/roles and execution scope/permissions.
 - Existing project commands, fixtures, evidence sources, budgets and exclusions.
 
@@ -40,6 +41,23 @@ comparability limitations. Return separate conclusions for improvement, accepted
 budget, protected journeys and existing/missing regression protection. Keep script
 inspection distinct from execution. Link dependency-sensitive assertions to their
 revalidation trigger rather than claiming they survive upgrades.
+
+## Oracle basis and pending human decisions
+
+Use existing oracle, evidence and gap notes, not new row states or another ledger.
+Label each expectation as a confirmed rule, current-behavior baseline or provisional
+inference, with source paths/ref and observations. Report native assertion outcomes
+separately from business correctness: `passed` on a baseline means consistency with
+that baseline; `passed` on an inference only supports the hypothesis. A mismatch
+is evidence to investigate, not automatically a confirmed product defect.
+
+For a conflict or unverifiable business meaning, retain the exact question, competing
+interpretations, evidence, affected case IDs and human decision owner. Defer that
+business verdict and continue independent cases. Safe exploratory steps need not wait;
+unknown permissions or unsafe effects stop the affected operation. Missing full PRD
+alone is neither a whole-run blocker nor grounds to exclude cases. A later human
+decision updates the affected oracle/tests and triggers scoped reruns while preserving
+old evidence. Do not report all business requirements accepted while decisions remain.
 
 ## Row states
 
