@@ -20,6 +20,12 @@ these installed agent copies.
 with the implementation owner, and storage cleanup requires the host's scoped
 authority. Instructions constrain behavior; they do not create a read-only sandbox.
 
+## Playwright Test Agents
+
+For project-local planning, test generation and bounded repair, use the
+[Playwright E2E integration](playwright-e2e.md). Official definitions stay owned by
+the project-pinned Playwright generator; this catalog does not vendor them.
+
 ## Install and verify
 
 From this repository root, inspect any existing local difference before replacing

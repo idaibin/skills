@@ -2,9 +2,14 @@
 
 ## Contract to observation
 
-Use the API owner's formal contract, accepted feature behavior and actual frontend
-consumer. Record the contract version/path and unresolved conflicts. Do not infer
-wire semantics by reading an unauthorized backend repository or by copying Mock data.
+Use available confirmed API rules, feature behavior and the actual frontend consumer.
+When a formal contract is unavailable, use the [existing-project default](coverage.md#existing-project-default)
+to derive regression/exploration cases from authorized source and live observations.
+Missing documentation alone does not block those cases. Freeze expectations and label
+their basis; a baseline or inferred pass does not establish wire-contract acceptance.
+Record source/contract paths and revisions plus material conflicts in the existing
+gap notes; continue independent cases. Do not infer wire semantics by reading an
+unauthorized backend repository or by copying Mock data.
 
 Execute direct requests only through a host-owned API runner whose permission
 contract independently allows the exact environment, method, resource and read/write

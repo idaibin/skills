@@ -7,12 +7,16 @@ description: "Implement frontend UI and project-native UI guidance in the existi
 
 ## Entry Gate
 
-Implement the smallest authorized frontend slice in the existing stack. Read effective guidance, current Worktree, target route/component, and only applicable Product/UI/DESIGN authorities. Stop when a decisive behavior or visual contract is unresolved.
+Implement the smallest authorized frontend slice in the existing stack. Read effective guidance, current Worktree, target route/component, and only applicable Product/UI/DESIGN authorities. Stop when a decisive behavior or visual contract is unresolved for a product change.
+For test-only authoring, an evidence-labeled current-behavior baseline or provisional
+inference is sufficient; a complete PRD is not required. Record conflicts for later
+human confirmation and continue independent tests without changing product behavior.
 
 ## Route Map
 
 | Request condition | Read | Result |
 | --- | --- | --- |
+| Author or repair frontend Playwright journey tests | [Playwright test authoring](references/playwright-e2e.md) | Evidence-labeled scripts; no business-policy approval |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
 | Explicit project UI guidance create/update request | [project UI guidance](references/checklist.md#project-ui-guidance) | Evidence-backed project rules and checks |
 | Product behavior, copy, page interaction, layout, or visual acceptance changes | [specification authorities](references/specification-authorities.md) | Owning contracts ready before source |
@@ -51,6 +55,7 @@ Report scope, authorities, reuse decision, selected profiles, changed files/cont
 
 ## Reference Map
 
+- Read [Playwright E2E](references/playwright-e2e.md) only for authoring or repairing frontend Playwright tests.
 - Read only applicable [checklist](references/checklist.md) sections for baseline implementation; use the Route Map for stack and framework detail.
 - Load each condition-specific reference named in the Route Map only when its condition applies.
 - Read [frontend visual gate example](references/frontend-visual-gate-example.md) only when constructing visual evidence.

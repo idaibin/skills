@@ -8,7 +8,7 @@ operation, or external-AI collaboration—and keeps its authority boundary expli
 
 ## Quick Start
 
-Browse the 19 available Skills:
+Browse the 20 available Skills:
 
 ```bash
 npx skills@latest add idaibin/skills --list

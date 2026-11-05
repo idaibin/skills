@@ -8,10 +8,15 @@ description: "Plan risk-based coverage and execute functional acceptance across 
 ## Entry Gate
 
 Own a bounded test-coverage and evidence decision for a declared feature, change, or
-journey. During product/design work, identify risks, testability gaps and provisional
+journey. For existing projects, default to deriving and running cases from current
+code, interfaces and available page observations; a complete PRD is not required.
+Record conflicts or unverifiable business meanings for later human confirmation,
+continue independent checks, and withhold only dependent business verdicts or unsafe
+operations. During product/design work, identify risks, testability gaps and provisional
 checks without waiting for implementation. Resolve applicable authorities, their
 acceptance status, target basis, environment and permission before execution; only
-settled oracles support acceptance verdicts. Reuse the project test plan and its IDs.
+settled business oracles support business-acceptance verdicts; baseline regression
+and provisional exploration retain their narrower meaning. Reuse the project test plan and its IDs.
 When asked to execute functional acceptance, run the reachable authorized cases; a
 checklist alone does not complete the run.
 
@@ -19,6 +24,7 @@ checklist alone does not complete the run.
 
 | Request condition | Read | Result |
 | --- | --- | --- |
+| AI-generated Playwright journeys or test healing apply | [AI E2E acceptance](references/playwright-e2e.md) | Frozen cases, bounded authoring handoff and native-runner evidence |
 | Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
 | Execute a functional acceptance campaign or resume its case inventory | [functional workflow](references/workflow.md) | Real journeys, correlated results, retest and cleanup |
@@ -72,6 +78,7 @@ into “all tests passed” when required cells remain unresolved.
 
 ## Reference Map
 
+- Read [Playwright E2E](references/playwright-e2e.md) only for coordinating generated browser-test acceptance.
 - Read [coverage](references/coverage.md) when deriving or reconciling the acceptance matrix.
 - Read [execution](references/execution.md) before running checks or making regression claims.
 - Read [functional workflow](references/workflow.md) for functional campaigns and resumed case inventories.
