@@ -7,6 +7,7 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
 ## Contents
 
 - [Required Context](#required-context)
+- [Project UI Guidance](#project-ui-guidance)
 - [Contract Freeze Gate](#contract-freeze-gate)
 - [Reuse-First Gate](#reuse-first-gate)
 - [Stack And Structure](#stack-and-structure)
@@ -34,12 +35,37 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
   question, consume at most one bounded query from an existing compatible snapshot.
   If none exists, use bounded current-source discovery rather than scanning/rendering.
 - Check existing imports and nearby patterns before adding libraries, aliases, icons, helpers, or components.
-- For selected-source work, read the current product/UI slice, resolved `<design-root>/DESIGN.md`,
+- For selected-source work, read the current product/UI slice, project-declared shared design/token owners,
   selected-source evidence, delta rows, and readiness. Stop on unavailable source,
   `Partial`/`Not Ready`, unresolved target viewport/state, or missing P1 asset owner.
 - Map every applicable acceptance ID to owner file/component,
   reuse/extend/wrap/new, asset/data owner, and static/runtime verification before
   editing. Do not copy browser-computed current values into the source target.
+
+## Project UI Guidance
+
+Use this section only when creating/updating project UI guidance is in scope. Missing
+optional docs alone do not require authoring or block a bounded implementation.
+
+- Derive project facts from actual manifests, source, exports, configuration, and
+  representative consumers. Separate observed conventions, proposed decisions, and
+  adopted requirements; repetition in legacy code does not approve a known defect.
+- Keep `AGENTS.md` concise: applicable scope, critical constraints, real component and
+  style/token/feedback owners, naming conventions, relevant reference paths, and exact
+  check commands with working directories. Keep full APIs and values in their owners.
+- Record each hard rule's scope, expected behavior, and verification method. Preserve
+  explicit project requirements; select ordinary implementation details within task
+  authority rather than requesting approval for every missing preference.
+- Extend existing docs first. Add nested instructions only for genuine subtree
+  differences. Verify the selected client's discovery/inclusion behavior; a linked
+  document is not automatically loaded and no precedence rule is universal to clients.
+- Do not fabricate commands, existing paths, supported themes, or passing checks.
+  Identify real gaps and unrun checks; an authorized proposed command remains proposed
+  until implemented and exercised. Verify referenced paths after relevant changes.
+- Treat external design-system guidelines as references. Adopt only applicable rules
+  within scope; preserve project behavior and required platform/accessibility
+  semantics instead of importing another product's copy, palette, feedback policy,
+  directory layout, or performance thresholds wholesale.
 
 ## Contract Freeze Gate
 
@@ -160,10 +186,11 @@ framework lifecycle, API, or native-runtime checks. Review remains with its owne
   contract and all consumers are migrated; do not leave competing type families.
 - Keep form validation, controlled state, table pagination, sorting, filtering, modal lifecycle, and drawer lifecycle aligned with existing local patterns.
 - For a page-level modal, Drawer, portal/Teleport, or overlay-host change, freeze the
-  exact host/container, route, entrypoint, and open state. Verify the outer mask blocks
-  background interaction, each affected entrypoint opens the same owned surface,
-  nested selectors/popovers remain usable above the parent layer without clipping,
-  dismissal restores the intended state, and keyboard focus returns to the owner.
+  exact host/container, route, entrypoint, open state, and modal/non-modal contract.
+  For modal surfaces verify background blocking and appropriate focus containment;
+  do not add either to a non-modal sidebar by analogy. Verify affected entrypoints,
+  nested selectors/popovers, stacking/clipping, dismissal, and the intended focus
+  destination after closing.
 - Distinguish pending, failed, successful-empty, populated, and background-refresh
   states before defaulting async data to an empty collection. When cached successful
   data remains valid during a refresh failure, keep it visible and report the refresh

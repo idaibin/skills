@@ -76,12 +76,27 @@ Choose **Feature Spec** unless at least one answer is yes:
 - Must several surfaces adopt a changed shared rule?
 - Is an accepted shared-system owner being created, extracted, maintained, or evaluated?
 
-If not, reference existing owners and keep the specification local. A boundary that
-has not adopted `DESIGN.md` does not need to create it for this local path. If yes,
-resolve the shared `<design-root>` and either open its adopted `DESIGN.md` or begin the
-independently approved first-adoption path, then change only the shared closure.
-Artifact presence does not prove acceptance: pending, rejected, or stale candidates
-are not proof; verify live owners before reuse and require approval before promotion.
+If not, reference existing owners and keep the specification local. If yes, resolve
+the project-declared shared visual guidance, token source, component contracts and
+their affected consumers, then change only the owned specification. Shared changes
+do not themselves authorize migrating those owners or creating `DESIGN.md`.
+
+Choose validation from current project guidance, accepted contracts and consumers:
+
+- A project-native authority keeps its existing location, format and checks. Plain
+  CSS variables and component documentation need no Google format or token generator.
+- Explicit Google `DESIGN.md` adoption activates the format/lint/diff profile in
+  [the DESIGN.md contract](design-md-contract.md). A filename alone is not adoption.
+- The additional `ui-spec-design-completeness/1` profile applies only when explicitly
+  adopted or required by an existing accepted consumer. Its strict source/approval
+  gates remain mandatory there; Google format adoption alone does not activate it.
+
+Record which profile applies in the existing authority disposition, without adding a
+registry. When no shared authority exists and establishing one is in scope, use the
+smallest project-native contract supported by accepted decisions; resolve only a
+material undecided format/owner choice. Existing files show current implementation,
+not automatic acceptance. Preserve settled approvals and apply the project's actual
+promotion requirements to proposed changes.
 
 ## Specification Pass
 
@@ -110,8 +125,8 @@ retry policy. Missing Product semantics blocks only the dependent UI transition,
 not already confirmed layout or unrelated states.
 
 When SVG icons apply, load `svg-icon-system.md`. Keep shared icon-family semantics in
-the adopted `DESIGN.md` and page-local role/placement/state mapping in the Feature
-Spec. Exact viewBox, stroke, size, and color values require accepted evidence; the
+the project-declared shared visual authority and page-local role/placement/state mapping
+in the Feature Spec. Exact viewBox, stroke, size, and color values require accepted evidence; the
 implementation owner, not `ui-spec`, produces the SVG source.
 
 For the primary task, specify only applicable task-completion geometry: critical
@@ -180,32 +195,32 @@ the source target. Define product-asset ownership and isolated fallback behavior
 | --- | --- | --- |
 | Feature Spec, one slice | the repository's existing UI-spec location; otherwise `docs/ui/<slice-id>/spec.md` as a fallback | source annotations, component/token mapping, state matrix, acceptance checklist |
 | Feature Spec, multiple domains | one short shared UI index plus one independently loadable contract per confirmed domain | only shared facts and per-slice links/status in the index |
-| Design System Spec | `<design-root>/DESIGN.md` (the only shared visual artifact for that boundary) | feature-spec references and relevant owner approvals |
+| Design System Spec | the existing project-declared shared visual contract; `<design-root>/DESIGN.md` when adopted | feature-spec references and applicable owner approvals |
 
 For multiple surfaces, apply [the multi-surface scope gate](multi-surface.md). Produce
-only what removes a real implementation ambiguity. The shared System update should be
-single-sourced in `<design-root>/DESIGN.md`; do not create or maintain a separate Design System
-manifest in this path.
+only what removes a real implementation ambiguity. Update each shared decision in its
+existing authority; keep live token values and component APIs with their source owners.
+Do not create a parallel Design System manifest.
 
 ## Lint And Diff Gates
 
+Run the checks required by the resolved authority and changed scope. Only for explicit
+Google-format adoption, apply the following format checks:
+
 Use the existing pinned local CLI from [the DESIGN.md contract](design-md-contract.md#cli-and-version-policy);
 require network authorization only for a step that downloads a package or uses the network.
-Run lint for every changed `<design-root>/DESIGN.md`. Run diff against the previous accepted file for an
-update; record diff as `Not applicable` for the first accepted creation instead of
-inventing a baseline. If a required tool cannot run, mark the gate `Not verified` and
-keep the readiness result `Not Ready`.
+Reuse existing authorization where it covers that step. Run lint for every changed
+Google-format file. Run diff against the previous accepted file for an update; record
+diff as `Not applicable` for the first accepted creation instead of inventing a baseline.
+If a required tool cannot run, mark the gate `Not verified` and keep the readiness result `Not Ready`
+for dependent slices.
 
-Official lint success is only `official-format-valid`. For first adoption and every
-Design System Spec, next run the package completeness checker from
-`design-md-contract.md`. It requires the eight canonical H2 sections in order, machine
-tokens or reviewed official omissions, prose-to-token application semantics, source
-binding, shared-component truth, and (for adopted stage) exact-hash approval binding.
-Only `ready-for-human-approval` may enter the approval request. The local adopted check
-stops at `awaiting-trusted-approval-verification`; only independently trusted human
-approval evidence bound to the exact immutable result identity may satisfy the downstream completeness
-gate. It does not rewrite the producer result. An immutable content manifest alone binds bytes
-and basis but never upgrades either result.
+Official lint proves format only. Run the package completeness checker only for the
+explicitly adopted `ui-spec-design-completeness/1` policy or an accepted consumer that
+requires it. Preserve all of that profile's source, section, token and independent
+approval gates; a local adopted check is not trusted approval. Other projects record
+the policy as `Not applicable`, not as passed. A missing required check remains
+`Not verified` and blocks only the dependent readiness claim.
 
 ## Evaluation And Handoff
 

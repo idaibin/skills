@@ -11,10 +11,13 @@
 
 ## Scope and Source
 
-- `<design-root>/DESIGN.md` is the canonical shared visual authority for the proven
-  shared visual boundary.
-- This document defines how this Skill uses the official Google `DESIGN.md` spec and
-  the CLI for shared-system changes only.
+- Load this profile only when the project explicitly adopts the Google `DESIGN.md`
+  format, including an authorized first adoption, or an accepted consumer already
+  requires its additional completeness policy. A filename or shared token/component
+  change alone does not activate either requirement.
+- Resolve `<design-root>` and the file's declared authority from project guidance and
+  consumers. Preserve existing token/component owners and project approval rules;
+  format selection does not authorize an authority migration.
 - Canonical spec snapshot:
   `https://github.com/google-labs-code/design.md/blob/9bf8eae67128b6cc55ad9bf86665767deb4c11cd/docs/spec.md`
 
@@ -31,17 +34,21 @@
 
 ## Core Semantics
 
-- YAML frontmatter tokens are normative contract values.
+- YAML frontmatter is optional in the Google format. When present, its tokens are
+  normative values for that document's declared scope.
 - Markdown prose is the application guidance for how those tokens are used.
-- Only the resolved `<design-root>/DESIGN.md` can carry long-lived token and component semantics for that boundary.
+- Reference the document only for the shared semantics it actually owns; leave
+  component APIs and separately owned live token values at their existing sources.
 - Frontmatter `version` is optional. Do not use an edit or approval date as its
   default value; omit it when the project has no semantic version policy.
-- Preserve the content of legacy unknown Markdown sections when editing, but move it
-  under the matching canonical H2 as H3/body before completeness can pass; do not
-  silently delete valid token names or component properties.
+- Keep applicable standard sections in their specified order; the Google format
+  permits omitting irrelevant sections and preserving unknown headings. Do not
+  silently delete valid token names, component properties or project-local content.
+  Fixed eight-section completeness is the separate opt-in policy below.
 - Duplicate section headings fail validation. Keep the package regression guard because
   prior CLI behavior could return zero while reporting the duplicate as a warning.
-- Diff compares token-level changes and is the regression gate for shared visual updates.
+- Diff compares token-level changes; also inspect changed prose and affected consumers
+  for semantic regressions.
 - For the first accepted DESIGN.md creation, record diff as `Not applicable`; do not invent a before file.
 - Lint returns exit code `0` when no errors remain; warnings may exist and still be
   accepted except for duplicate H2, which is always a blocker in this repository.
@@ -53,9 +60,14 @@ Official lint proves only `official-format-valid`: YAML and Markdown can be pars
 the official structural rules pass. It never proves that a project has supplied a
 complete adopted shared visual authority.
 
-Run `python3 scripts/validate-design-md-completeness.py` after official lint. Its
-`ui-spec-design-completeness/1` result is the project policy consumer, not another
-token schema. It returns `ready-for-human-approval` for a complete first-adoption
+Run `python3 scripts/validate-design-md-completeness.py` after official lint only when
+`ui-spec-design-completeness/1` is explicitly adopted by the project or required by
+an existing accepted consumer. Google format adoption alone does not require this
+policy; otherwise report it `Not applicable`, never passed. An adopted policy cannot
+be skipped by relabeling the document or its consumer.
+
+This strict policy adds eight-section completeness, source binding and independent
+approval; it is not part of the Google format. It returns `ready-for-human-approval` for a complete first-adoption
 candidate. A local adopted-stage record that binds the exact current DESIGN.md hash
 returns `awaiting-trusted-approval-verification`, never `complete`: a local record and
 caller-supplied hash cannot prove human identity. Independently trusted human approval
@@ -65,6 +77,14 @@ official lint reports zero. All consumers require that same exact immutable resu
 approval evidence bound to different bytes or basis is stale and cannot clear the gate.
 
 ## First Creation
+
+For Google format without the additional policy, author only applicable sections and
+source-backed content, run official format checks, and follow the project's actual
+acceptance process. Do not require the strict template, extra token groups or an
+independent approver merely because the file is new.
+
+The following template and all eight steps apply only to the explicitly adopted
+`ui-spec-design-completeness/1` policy:
 
 1. Copy `assets/DESIGN.md` to the resolved `<design-root>`.
 2. Replace its name, description, and prose only from verified sources.
@@ -96,9 +116,10 @@ approval evidence bound to different bytes or basis is stale and cannot clear th
 ## Validation Boundary
 
 - Obtain authorization before any CLI step that downloads a package or uses the network.
+  Existing task authorization satisfies this when it covers that step.
 - Treat a blocked required CLI step as `Not verified`; do not mark the affected slice `Ready`.
-- The checker does not redefine Google token types. It only enforces this Skill's
-  adoption completeness, section semantics, source binding, and approval binding.
+- The checker does not redefine Google token types. It enforces the explicitly
+  adopted policy's completeness, section semantics, source and approval binding.
 
 The completeness validator consumes an existing `@google/design.md@0.4.0` package
 through `DESIGN_MD_PACKAGE_ROOT`. It checks the package identity/version and does not

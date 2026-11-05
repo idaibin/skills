@@ -78,22 +78,25 @@ then select only the profiles required by the request.
   [DESIGN.md compliance](frontend-design-md-compliance.md) for the bounded
   contract-to-runtime chain. Load [specs](specification-authorities.md) when a
   selected profile depends on Product/UI contracts; resolve them by meaning
-  rather than filename, consume Product Markdown, UI Markdown, and resolved
-  `DESIGN.md` before comparing current source, and hand off only unresolved
-  decisions required by the audit outcome.
+  rather than filename. Read applicable product/slice UI contracts, project-declared
+  shared guidance, actual token/value owners, and component interfaces before
+  comparing current source. `DESIGN.md` is required only when adopted; hand off only
+  unresolved decisions required by the audit outcome.
 - For Selected-source visual fidelity, load
   [visual evidence](frontend-visual-evidence.md), keep source targets distinct
   from browser-computed runtime, and require reviewable source/runtime
   comparison plus computed evidence for exact runtime claims. Do not treat
   build/lint success or one screenshot as visual acceptance.
-- When adoption/completeness is in scope, verify official-format evidence
-  separately from the `ui-spec-design-completeness/1` result and exact
-  design-hash approval. A local `awaiting-trusted-approval-verification`
-  result without a satisfied consumer claim is blocking; only independently trusted
-  human approval evidence bound to the exact immutable result identity and basis clears it, without
-  rewriting the producer result. Do not use lint zero, current theme/CSS, or
-  immutable content-manifest integrity to clear a missing, untrusted, or `not-ready`
-  shared authority.
+- When Google DESIGN.md format is adopted or its adoption is explicitly in scope,
+  verify the applicable official-format evidence. A shared component/token change
+  does not itself require this format. Apply `ui-spec-design-completeness/1` and
+  trusted approval only when the project explicitly adopts that additional policy or
+  an established accepted consumer requires it.
+  For that policy, a local `awaiting-trusted-approval-verification` result without a
+  satisfied consumer claim remains blocking; independently trusted human approval
+  must bind the exact immutable result identity and basis without rewriting the
+  producer result. Preserve adopted requirements: lint zero, current theme/CSS, and
+  content integrity cannot clear missing, untrusted, or `not-ready` policy evidence.
 - When State/data/contracts reaches an adopted OpenAPI or generated-client
   chain, load [protocol contracts](frontend-protocol-contracts.md) and audit
   only the frontend consumer boundary.
@@ -136,7 +139,7 @@ visual fidelity, state the source/revision/approval, evidence levels, target
 viewport/state, comparison passes available, and whether the
 `frontend-visual-evidence/v1` artifact validates. Summarize ownership map,
 selected state/data/layout/accessibility/performance/build/desktop evidence,
-component/injection/router/lifetime contracts, DESIGN.md token/prose
+component/injection/router/lifetime contracts, shared guidance/token
 consistency, implementation drift from source, and residual risks.
 
 ## Trigger Examples

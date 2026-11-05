@@ -1,10 +1,10 @@
 {
   "schema_version": "skill-routing-eval-report/v1",
-  "basis": "skills-integration-candidate",
-  "fingerprint": "sha256:32a63373e8d4fbc2f5aa0ee1121d495eac233f6a7f2083c2cd9148a35dded825",
+  "basis": "working-tree",
+  "fingerprint": "sha256:1de77e392ade08c1f86a8414736808626a6a9a6f3924d9910124dc782f20fb8b",
   "summary": {
-    "total": 106,
-    "passed": 106,
+    "total": 110,
+    "passed": 110,
     "failed": 0,
     "baseline_checked": true,
     "contract_errors": 0,
@@ -1282,6 +1282,54 @@
       "observed_owner": "api-spec",
       "expected_stop": "evidence-incomplete",
       "observed_stop": "evidence-incomplete",
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ui-spec-project-native-authority",
+      "case_fingerprint": "sha256:f008ed48dd4187305741f32b2f03949fbf4cec3e918b24acede24c68b2f5d797",
+      "class": "normal",
+      "skill": "ui-spec",
+      "expected_owner": "ui-spec",
+      "observed_owner": "ui-spec",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "dev-frontend-ui-guidance",
+      "case_fingerprint": "sha256:5263886850b3e18ed2c66f4a6cb8bc5ff9c8e659ae63ad6e499247025f4f08cf",
+      "class": "normal",
+      "skill": "dev-frontend",
+      "expected_owner": "dev-frontend",
+      "observed_owner": "dev-frontend",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "repo-map-guidance-boundary",
+      "case_fingerprint": "sha256:bab7900f523c5472fa41dbbce92ed0a451f84623cffb9570548d5e4caf8bef8d",
+      "class": "boundary",
+      "skill": "repo-map",
+      "expected_owner": "dev-frontend",
+      "observed_owner": "dev-frontend",
+      "expected_stop": null,
+      "observed_stop": null,
+      "status": "passed",
+      "failures": []
+    },
+    {
+      "id": "ops-browser-overlay-contract",
+      "case_fingerprint": "sha256:9669d897b87893ec1d17e2e9a45a35191391fdf0ef7af4bf1b0cd1537f36389d",
+      "class": "normal",
+      "skill": "ops-browser",
+      "expected_owner": "ops-browser",
+      "observed_owner": "ops-browser",
+      "expected_stop": null,
+      "observed_stop": null,
       "status": "passed",
       "failures": []
     }

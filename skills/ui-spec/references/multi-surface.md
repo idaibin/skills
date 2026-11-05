@@ -19,9 +19,9 @@ default unless facts prove they are one domain.
 | One page/flow | One Feature Spec contract |
 | Multiple connected surfaces in one domain | One domain-level Feature Spec contract |
 | Multiple independent domains with shared visual rules | One short shared index + one independently loadable Feature Spec per domain |
-| Shared token/component semantic change across slices | Design System Spec update to resolved `<design-root>/DESIGN.md` |
+| Shared token/component semantic change across slices | Design System Spec update to the project-declared shared visual authority |
 
-The shared index contains only source identity, the resolved `DESIGN.md` link and accepted
+The shared index contains only source identity, the shared visual authority link and accepted
 revision, inventory, per-slice links, per-slice status, exclusions, and dependencies.
 Do not copy shared visual rules into the index.
 
@@ -39,7 +39,7 @@ Read only this order when implementing one slice:
 
 1. effective repository guidance and declared authority paths or exceptions
 2. applicable product foundation/index facts and target product slice
-3. resolved `<design-root>/DESIGN.md`
+3. project-declared shared visual guidance and relevant source owners
 4. shared UI index (for multi-slice tasks only)
 5. target UI slice contract
 
@@ -60,11 +60,11 @@ Evaluate every requested slice independently.
 
 When a request requires shared token/component change:
 
-- Update resolved `<design-root>/DESIGN.md` content.
-- Before handoff, use the existing parser binding from the
-  [CLI version policy](design-md-contract.md#cli-and-version-policy) to run official
-  lint and diff against the resolved design root:
-  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js lint --format json <design-root>/DESIGN.md`
-  - `node <DESIGN_MD_PACKAGE_ROOT>/dist/index.js diff <before-DESIGN.md> <design-root>/DESIGN.md --format json`
+- Resolve the affected shared contract and consumers, then update that existing owner.
+- Apply [the profile gate](workflow.md#profile-gate): project-native checks by default,
+  Google lint/diff only for explicit format adoption, and strict completeness only
+  when the project or an accepted consumer requires that policy.
+- Preserve existing acceptance and approval requirements. Missing required evidence
+  blocks the dependent slices, not unrelated surfaces.
 
 No additional machine artifact is required for this gate.

@@ -14,8 +14,9 @@ load it for every frontend edit or use it to redesign an approved surface.
 
 ## Authority And Purpose
 
-1. Read the applicable product behavior, UI contract, resolved `<design-root>/DESIGN.md`, and existing
-   component or motion tokens before choosing an implementation.
+1. Read applicable product/UI guidance and actual component/feedback owners. Read
+   `DESIGN.md`, state specifications, or motion tokens where adopted; missing optional
+   documents do not create a requirement for a new specification or state.
 2. State the communication purpose: state indication, action feedback, spatial
    relationship, change explanation, or prevention of a jarring transition. Remove or
    omit motion with no purpose unless an approved contract explicitly requires it.

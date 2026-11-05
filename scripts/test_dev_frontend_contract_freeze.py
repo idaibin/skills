@@ -50,11 +50,13 @@ class DevFrontendContractFreezeTests(unittest.TestCase):
         self.assertIn("one old hunk already landed", self.evals)
 
     def test_adopted_ui_governance_is_conditional_and_project_native(self) -> None:
-        self.assertIn("only when the authorized change affects", self.ui_governance)
-        self.assertIn("Do not require these assets", self.ui_governance)
-        self.assertIn("Component -> Semantic -> Primitive", self.ui_governance)
-        self.assertIn("authored CSS custom-property\n   self-reference", self.ui_governance)
-        self.assertIn("project-native gate", self.ui_governance)
+        contract = re.sub(r"\s+", " ", self.ui_governance)
+        self.assertIn("only where the project adopts them", contract)
+        self.assertIn("An absent optional record is not a blocker", contract)
+        self.assertIn("do not assume a fixed number of tiers", contract)
+        self.assertIn("Where `Component -> Semantic -> Primitive` is adopted", contract)
+        self.assertIn("custom-property self-reference", contract)
+        self.assertIn("actual project gate", contract)
         self.assertIn("Adopted UI governance", self.evals)
 
     def test_decomposition_uses_ownership_instead_of_line_limits(self) -> None:

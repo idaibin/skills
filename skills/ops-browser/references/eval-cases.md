@@ -17,6 +17,7 @@ Use these cases when changing `ops-browser` triggers, modes, capability prefligh
 
 | User prompt | Expected result | Why |
 | --- | --- | --- |
+| `Verify this existing Drawer/Form composition against the stated padding, scroll, and non-modal keyboard contract; no visual reference image is involved.` | Use applicable runtime coverage, measure composed geometry and exercise focus/dismissal/background behavior under the stated contract; preserve unexercised gaps. | Runtime interaction acceptance does not require a selected-source visual-completion artifact. |
 | `Mock missing APIs on this existing page using a supplied project scenario.` | Bind the owned tab and versioned runner; validate actual wire fields, cover XHR/Fetch, reject unknown controlled requests, assert UI plus hits, and close with protection active. | Authorized network response substitution shares the browser owner. |
 | `The page has no implemented action; inject controls to make the Mock test pass.` | Reject fabricated UI acceptance and return the missing implementation to its owner. | Mock supplies data, not product implementation. |
 | `Reuse an existing browser tab to verify this page.` | Should trigger `ops-browser` and preflight tab control. | Browser operation with tab reuse. |

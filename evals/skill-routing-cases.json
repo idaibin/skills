@@ -889,6 +889,38 @@
       "expected_owner": "api-spec",
       "expected_stop": "evidence-incomplete",
       "expected_outcome": "stop"
+    },
+    {
+      "id": "ui-spec-project-native-authority",
+      "skill": "ui-spec",
+      "class": "normal",
+      "prompt": "Write a UI specification for this accepted visual contract using the project-native shared visual authority; no Google DESIGN.md format is adopted.",
+      "expected_owner": "ui-spec",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "dev-frontend-ui-guidance",
+      "skill": "dev-frontend",
+      "class": "normal",
+      "prompt": "Maintain frontend UI guidance in AGENTS.md using the actual UI component and CSS owners.",
+      "expected_owner": "dev-frontend",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "repo-map-guidance-boundary",
+      "skill": "repo-map",
+      "class": "boundary",
+      "prompt": "Maintain frontend UI guidance in AGENTS.md using the actual UI component and CSS owners.",
+      "expected_owner": "dev-frontend",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "ops-browser-overlay-contract",
+      "skill": "ops-browser",
+      "class": "normal",
+      "prompt": "Verify the existing browser page with Playwright against the Drawer padding, scroll, and non-modal keyboard contract.",
+      "expected_owner": "ops-browser",
+      "expected_outcome": "route"
     }
   ]
 }

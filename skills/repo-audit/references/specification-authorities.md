@@ -6,12 +6,12 @@
   semantics, compatibility, and product acceptance. Use the repository's declared
   requirement authority or established convention. `PRD` is an authority role, not
   a required root filename or a universal Markdown schema.
-- **Shared visual semantics:** the resolved `<design-root>/DESIGN.md` when effective
-  guidance, shared-system ownership, and actual consumers prove that boundary and it
-  adopts the Google DESIGN.md contract. It owns shared tokens, component semantics,
-  variants, and cross-surface visual rules. Official format lint alone is insufficient:
-  consumers require the applicable UI Spec completeness result and exact-hash approval
-  before treating it as adopted authority.
+- **Shared visual semantics:** the project-declared design guidance and component
+  contracts own shared intent, variants, and cross-surface rules. Use the resolved
+  `<design-root>/DESIGN.md` when it is the adopted owner; the filename alone does not
+  establish Google format or an additional approval policy. Actual token/variable
+  sources own values and references, and component source/types own public APIs.
+  Preserve the project's declared relationship between these owners.
 - **Slice UI contract:** the accepted selected-source contract for one page, flow, or
   domain. It owns layout, component/token mapping, interaction, responsive and
   accessibility rules, and UI acceptance.
@@ -26,21 +26,28 @@ approval state.
 
 1. Read effective repository guidance and any declared authority paths or exceptions.
    Project guidance such as `AGENTS.md` may declare adoption, actual locations, and
-   exceptions; it does not redefine or duplicate the product/UI contract schema and
-   owner workflow carried by the applicable Skill.
+   exceptions. Skills supply the workflow; they do not replace project contracts
+   with a universal filename, schema, token hierarchy, or approval process.
 2. Read the repository's existing product foundation or shared index only when the
    target slice depends on it, then read the target product slice. Do not load sibling
    slices by default.
-3. When UI contracts are relevant, resolve and read `<design-root>/DESIGN.md`, then
-   the project-declared UI index when applicable and the target UI slice. Do not infer
-   the design root from the Git root or treat generated metadata as shared authority.
-   When the boundary claims adoption, verify the official spec commit/CLI lint and
-   `ui-spec-design-completeness/1` result. A missing, `not-ready`, stale-hash,
-   format-only, or local `awaiting-trusted-approval-verification` result is blocking
-   and handed to `ui-spec`, not repaired from implementation source. Only a satisfied
-   consumer completeness claim produced from independently trusted human approval
-   evidence bound to the exact immutable result identity and basis clears adoption; the producer result remains
-   `awaiting-trusted-approval-verification`.
+3. When UI contracts are relevant, resolve the actual shared owners, any applicable
+   UI index, and the target slice. Do not infer authority from the Git root, a filename,
+   generated metadata, or the existence of a reusable component. Apply only the
+   declared validation profile:
+   - Project-native contracts use their existing checks and approval rules; shared
+     changes do not require migration to Google DESIGN.md.
+   - Explicit Google format adoption requires its pinned format/lint evidence and
+     applicable diff. Format validity does not prove accepted design decisions.
+   - Require `ui-spec-design-completeness/1` and its independent approval binding only
+     when that additional policy is explicitly adopted or an established consumer
+     requires it. Preserve those requirements: a missing, `not-ready`, stale-hash,
+     format-only, or local `awaiting-trusted-approval-verification` result cannot clear
+     that gate. Only independently trusted human approval bound to the exact immutable
+     result identity and basis satisfies its consumer claim; the producer result stays
+     `awaiting-trusted-approval-verification`.
+   Resolve uncertain policy ownership before a dependent readiness claim. Do not mark
+   an existing required policy inapplicable merely to use a lighter path.
 4. Cross-check implementation and runtime evidence against those contracts without
    silently treating current code as approval for an unresolved product or visual
    decision.

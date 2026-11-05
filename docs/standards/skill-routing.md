@@ -28,11 +28,11 @@ identity, installed adapters, or completed evidence.
 | `domain-modeling` | shared business terms, rules, and ambiguity | named fact source only |
 | `product-spec` | feature behavior, scope, states, and acceptance | named product artifact only |
 | `api-spec` | native API wire contracts and OpenAPI authoring or validation after business decisions | named native contract artifacts only |
-| `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with resolved design-root DESIGN.md as sole shared visual authority and per-slice Feature Specs | specification artifacts only |
+| `ui-spec` | traceable selected-source UI specification, source/current/target deltas, with project-declared shared design/token/component owners and per-slice Feature Specs | specification artifacts only |
 | `dev-tests` | risk-based coverage, authorized functional acceptance, correlated API/UI/business evidence and existing checks | scoped test artifacts; no source/test implementation, browser/client mechanics or Git |
 | `to-task` | durable task-ledger creation and reconciliation from accepted contracts, findings, and evidence | named task artifact only |
 | `repo-review` | current Worktree/index or fixed revision review, including conditional selected-source visual completion and documentation-authority review | read-only |
-| `dev-frontend` | requested frontend implementation plus selected-source mapping and risk-matched visual closure | source files |
+| `dev-frontend` | requested frontend implementation and project-native UI guidance, plus selected-source mapping and risk-matched visual closure | source files |
 | `dev-typescript` | requested non-browser TypeScript/JavaScript implementation for Node.js, Bun, or Deno | source files |
 | `dev-java` | requested Java/Spring implementation and migration | source files |
 | `dev-rust` | requested Rust implementation | source files |
@@ -185,11 +185,16 @@ coverage.
 
 For a frontend surface with applicable contracts, `dev-frontend` reads the effective
 instructions, product requirements or product Feature Spec, selected-source UI
-Feature Spec, resolved `<design-root>/DESIGN.md`, any existing repo-map only for navigation, then live
-source/config before editing. The two Feature Spec types have separate authorities;
+Feature Spec, project-declared shared design/token/component owners, any existing
+repo-map only for navigation, then live source/config before editing. The two Feature Spec types have separate authorities;
 when both apply they are both read, while missing optional artifacts remain separate
-`Not verified` gaps only when they affect behavior or acceptance. The resolved `DESIGN.md`
-owns shared visual semantics; themes and component libraries are implementation adapters. A
+`Not verified` gaps only when they affect behavior or acceptance. Use resolved
+`DESIGN.md` when it is the adopted shared owner; its filename alone does not establish
+Google format or an extra approval policy. Require Google format checks only when
+that format is explicitly adopted, and `ui-spec-design-completeness/1` plus its trusted
+approval binding only when that additional policy or an established consumer requires
+it. Preserve those requirements for adopted projects. Actual theme/token sources own
+values and references; component source/types own public APIs. A
 Component/Layout `repo-audit` frontend profile may trace that contract to adapters,
 components/consumers, and runtime evidence. `repo-review` keeps the sole
 change-basis gateway and adds this check only for visual or UI-contract changes.

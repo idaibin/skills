@@ -1344,11 +1344,11 @@ class ValidatorTests(unittest.TestCase):
             for item in index["capabilities"]
         }
         self.assertEqual("2.0.0", versions["repository.asset.scan"])
-        self.assertEqual("1.2.0", versions["ui.contract.specify"])
+        self.assertEqual("1.3.0", versions["ui.contract.specify"])
         self.assertEqual("1.2.0", versions["browser.runtime.operate"])
         self.assertEqual("1.1.0", versions["client.runtime.operate"])
         self.assertEqual("1.1.0", versions["external.ai.collaborate"])
-        self.assertEqual("1.3.0", versions["frontend.source.implement"])
+        self.assertEqual("1.4.0", versions["frontend.source.implement"])
         self.assertEqual("1.1.0", versions["task.ledger.maintain"])
 
     def test_dev_frontend_noop_contract_requires_owner_identity(self) -> None:

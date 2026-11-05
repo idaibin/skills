@@ -26,6 +26,7 @@ cannot establish the missing browser target.
 | External-AI turn, attachment/submission, or structured operation handoff | Applicable sections of [browser operation protocol](references/browser-operation-protocol.md) | Correlated side-effect and response evidence |
 | Local workspace/browser ownership applies | [local workspaces](references/local-browser-workspaces.md) | Verified target selection |
 | Runtime visual comparison applies | [visual evidence](references/frontend-visual-evidence.md) | Same-state capture/comparison |
+| Focused UI geometry or overlay-interaction acceptance applies | [runtime coverage](references/frontend-visual-evidence.md#required-runtime-coverage) | Contract-scoped geometry and interaction evidence |
 | DevTools/console/network debugging or performance capture applies | [DevTools debugging](references/devtools-debugging.md) | Scoped observation |
 | A page runs in a physical phone browser or native-app WebView | [usage](references/usage.md) | Browser evidence with bound device/app context and a scoped device handoff |
 | Browser acceptance encounters an abnormal/empty API and task context permits synthetic test inputs | [Network Mock](references/network-mock.md) | Scoped response replacement, request lifecycle and separate Mock evidence |

@@ -5,6 +5,11 @@ appearance or when a review claims visual completion. It joins specification,
 implementation, browser evidence, audit, and fixed-basis review without changing
 their owners or mutation boundaries.
 
+For focused geometry or overlay-interaction acceptance without a selected visual
+source, use only the applicable [runtime coverage](#required-runtime-coverage)
+items and the existing project evidence format. That path does not require a
+selected-source comparison or the structured visual-completion artifact below.
+
 This reusable protocol, its schema, validator, and committed examples are
 project-neutral: they contain no project, brand, page, domain-field,
 design-platform, or business defaults. Real source identities, paths, component
@@ -99,7 +104,7 @@ The UI contract must include a delta table with one row per material difference:
 | current runtime | Value plus traceable evidence IDs or `Not verified`. |
 | target contract | Exact accepted value or explicitly `proposed` value with approval. |
 | priority | P0-P3 from user impact and blocking order. |
-| owner | Shared `DESIGN.md` owner or page/component-local owner. |
+| owner | Project-declared shared design/token owner or page/component-local owner. |
 | validation | Observable comparison, computed check, state, and viewport. |
 
 Keep selected-source target and current-runtime values in separate columns even when
@@ -107,7 +112,7 @@ they happen to match. Never summarize current dimensions as an "already aligned"
 "safe to preserve" design target until independent selected-source evidence supports
 the same value.
 
-Do not change shared `DESIGN.md` tokens for a single-page adaptation. Use shared
+Do not change shared tokens for a single-page adaptation. Use shared
 authority only when shared semantics, reusable component contracts, or cross-surface
 rules actually change.
 
@@ -171,12 +176,23 @@ evidence IDs and a reason:
 - actual font inheritance and fallback, including native controls;
 - truncation/wrapping/localization behavior;
 - final composited foreground/background contrast;
-- cross-section and main/sidebar alignment;
-- card/control dimensions and hit areas;
+- cross-section and main/sidebar alignment, including effective composed insets;
+- card/control dimensions and hit areas; applicable scroll ownership, overflow and clipping;
 - applicable hover, held press, persistent selection and visible keyboard focus;
 - applicable loading, empty, error, permission, and disabled states;
 - responsive behavior at the desktop target and every key breakpoint named by the
   slice contract.
+
+Carry forward the affected acceptance IDs from the UI/implementation contract. For
+nested containers, measure the composed inset and actual scroll owner; equal padding
+values alone do not prove duplicate responsibility, and token use alone does not
+prevent it. For affected overlays, verify their modal or non-modal contract through
+Tab/Shift+Tab, Escape/dismissal, focus return, and background interaction/scrolling.
+A Drawer name does not require modal focus containment or background blocking. Apply
+the accepted active-overlay and dismissal rules; a static image cannot prove them.
+Record geometry under the existing alignment/dimension categories and interaction
+under `hover_focus` with acceptance IDs; no additional schema or all-pages matrix is
+required. Unexercised applicable behavior remains `Not verified`.
 
 For affected interaction colors, check actual component variants on their relevant
 surfaces/themes, including combined states. Primary tokens may not own link, danger,
