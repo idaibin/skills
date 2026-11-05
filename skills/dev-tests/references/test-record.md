@@ -20,9 +20,15 @@ Keep one current result per case and evidence layer, linking its latest basis an
 evidence; historical attempt notes are not the current status. Reconcile that row when
 a result changes instead of adding a competing summary or a new continuation case.
 
-| ID / requirement | Route / journey / role | Preconditions and input | Steps | Expected result | Layer / evidence | Result |
+| ID / requirement | Route / journey / role | Preconditions and input | Steps | Expected result / basis | Layer / evidence | Result |
 | --- | --- | --- | --- | --- | --- | --- |
-| stable project ID | exact owned surface | dataset and initial state | real actions in order | observable assertions | linked current evidence | PASS / FAIL / BLOCKED / NOT RUN / N/A |
+| stable project ID | exact owned surface | dataset and initial state | real actions in order | observable assertions and their basis | linked current evidence | PASS / FAIL / BLOCKED / NOT RUN / N/A |
+
+In the existing expected-result/evidence cells, record confirmed rule,
+current-behavior baseline or provisional inference and its source paths/ref before execution. A native
+PASS is not business approval. Preserve pending questions, affected IDs and the human
+decision owner under the existing [oracle basis](result-contract.md#oracle-basis-and-pending-human-decisions)
+notes; continue independent cases without adding another ledger or result state.
 
 For writes include the readback and cleanup step. A case passes only if every required
 assertion has matching evidence. Split independently useful layers when one is blocked;
