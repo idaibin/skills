@@ -203,6 +203,11 @@ reuse one threshold for every role or treat a nominal opaque token as proof of i
 rendered translucent indicator. Record sampled, inherited and unexercised coverage
 separately; one component fixture or resting route capture is not a complete workflow.
 
+The structured matrix, `capture_id`, and final-pass requirements in the next paragraph
+apply only to the structured visual-completion artifact path. Focused geometry or
+overlay-interaction acceptance uses the project's existing evidence format and
+applicable requirements.
+
 Freeze those required viewport/state pairs in `required_runtime_matrix` before runtime
 acceptance. Each target has a stable ID and a canonical fingerprint of its viewport and
 state. `responsive_breakpoints: verified` requires distinct browser-computed evidence
