@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Validate UI Spec shared-authority completeness after official DESIGN.md lint."""
+"""Validate explicitly adopted ui-spec-design-completeness/1 after Google format lint.
+
+This strict project/consumer policy adds section, source and independent-approval
+requirements. It is not required by a DESIGN.md filename or Google format adoption.
+"""
 
 from __future__ import annotations
 

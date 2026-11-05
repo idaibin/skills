@@ -81,7 +81,7 @@ a UI contract. Trace the smallest relevant chain in order:
 ```text
 product requirements or product Feature Spec
   -> selected-source UI Feature Spec
-  -> resolved design-root DESIGN.md
+  -> project-declared shared UI/token owners (<design-root>/DESIGN.md when adopted)
   -> implementation adapter/config
   -> runtime/browser evidence
 ```
@@ -89,9 +89,10 @@ product requirements or product Feature Spec
 `repo-map` may shorten navigation but never proves compliance. Check shared token and
 component semantics, layout/pattern use, and the reachable consumer only to the
 extent the change requires. The two Feature Spec types do not substitute for one
-another: when both apply, read each. Missing optional artifacts do not add ceremony,
-but a missing product authority or UI authority that affects behavior or acceptance is
-separately `Not verified`; missing runtime/browser evidence is a distinct
+another: when both apply, read each. Preserve the project's division between shared
+semantic guidance, exact token values, and component APIs. Missing optional artifacts
+do not add ceremony. A missing product or UI authority that affects behavior or
+acceptance is separately `Not verified`; missing runtime/browser evidence is a distinct
 rendered-behavior `Not verified`. Do not infer exact visual values from pixels, make
 this a mandatory `repo-audit` handoff, or open a parallel review entry point.
 

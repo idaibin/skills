@@ -6,6 +6,8 @@ Use `dev-frontend` as the first frontend coding skill after repository context i
 
 ## Best For
 
+- Explicitly create or update project-native frontend UI guidance and checks from actual source/configuration; missing optional docs alone do not trigger this work.
+
 - Implementing a UI fix without changing unrelated layout.
 - Adding or changing forms, tables, modals, drawers, settings pages, or dashboards.
 - Cleaning confused imports, duplicate component paths, oversized page files, or unclear component boundaries.

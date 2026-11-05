@@ -1,6 +1,6 @@
 ---
 name: ui-spec
-description: "Turn selected visual evidence into a UI Feature Spec or shared DESIGN.md contract; not image generation or implementation."
+description: "Turn selected visual evidence into a UI Feature Spec or project-owned shared visual contract; not image generation or implementation."
 ---
 
 # UI Specification
@@ -17,18 +17,19 @@ after selecting a branch, read only its referenced modules.
   source; otherwise stop as `evidence-incomplete`.
 - Read effective repository guidance and current Worktree status before an authorized
   artifact write.
-- Keep Product behavior, Feature UI Markdown, adopted `DESIGN.md`, component source,
-  runtime evidence, and Git delivery as separate authorities.
+- Keep Product behavior, Feature UI Markdown, project-declared shared visual guidance,
+  component/token source, runtime evidence, and Git delivery as separate authorities.
 
 ## Route Map
 
 | Request state | Load | Result |
 | --- | --- | --- |
 | Applicability or source selection is unclear | [usage](references/usage.md) and [visual source](references/visual-source.md) | Resolve scope/source or stop |
-| Direction is exploratory and unapproved | [candidate direction](references/candidate-visual-direction.md) | Ignored local candidate spec plus synchronized complete generation prompt; `DESIGN.md` unchanged; `Not Ready` |
+| Direction is exploratory and unapproved | [candidate direction](references/candidate-visual-direction.md) | Ignored local candidate spec plus synchronized complete generation prompt; accepted shared authority unchanged; `Not Ready` |
 | A page, flow, or accepted surface is selected | [workflow](references/workflow.md) and [documentation boundaries](references/documentation-boundaries.md) | Feature Spec and per-slice readiness |
 | Check whether a supplied accepted UI contract needs a change | [contract evaluation](references/workflow.md#evaluation-and-handoff) and [evaluation rubric](references/evaluation-rubric.md) | Bounded contract delta or no-change result |
-| Shared visual semantics are being adopted or changed | [DESIGN.md contract](references/design-md-contract.md) | Approved, linted `<design-root>/DESIGN.md`; Feature Specs reference it |
+| Shared visual semantics are being adopted or changed | [profile gate](references/workflow.md#profile-gate) and [documentation boundaries](references/documentation-boundaries.md) | Bounded update to the project-declared shared authority |
+| The project explicitly adopts Google DESIGN.md format or its additional completeness policy | [DESIGN.md contract](references/design-md-contract.md) | Applicable format/policy evidence for resolved `<design-root>/DESIGN.md` |
 | Several independent surfaces are in scope | [multi-surface](references/multi-surface.md) | Shared index plus independently loadable slices/verdicts |
 | An accepted surface requires a parameterized visual background | [visual asset contract](references/visual-asset-contract.md) | Source-bound recipe, readable area, fallback and target-surface acceptance |
 
@@ -47,8 +48,8 @@ after selecting a branch, read only its referenced modules.
   does not fit, record that fact and reason without inventing a reference or blocking
   unrelated slices. "Existing owners unchanged" alone does not identify them.
 - Do not duplicate shared tokens or component interfaces in a Feature Spec, introduce
-  a parallel Registry/schema, or force `DESIGN.md` adoption for an unchanged local
-  slice.
+  a parallel Registry/schema, or force Google `DESIGN.md` adoption because shared
+  semantics change. Preserve the project's existing authority and approval requirements.
 - A structured projection is conditional: use it only when a named owner, producer,
   non-LLM consumer, semantic version, executable validator, drift policy, and retirement rule
   already exist.
@@ -59,13 +60,13 @@ after selecting a branch, read only its referenced modules.
 
 ## Output Map
 
-Return `ui.contract.specify@1.2.0` with lifecycle/profile, selected-source
+Return `ui.contract.specify@1.3.0` with lifecycle/profile, selected-source
 identity/revision, selection/approval, rights/use/ignore boundaries, authority
 disposition, slice IDs, applicable layout/state/interaction/accessibility and asset
 contracts, delta/evidence references, comparison basis, per-slice readiness, and named
 gaps. Candidate output additionally returns both ignored paths/hashes and handoff
 status. Store task-local evidence under verified ignored `.codex/artifacts/`. Include
-DESIGN, viewport, SVG, or runtime-evidence fields only when the corresponding
+DESIGN/policy, viewport, SVG, or runtime-evidence fields only when the corresponding
 module was activated.
 
 ## Reference Map

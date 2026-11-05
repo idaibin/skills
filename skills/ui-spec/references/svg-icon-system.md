@@ -17,9 +17,10 @@ acceptance contract; `dev-frontend` owns SVG source changes and implementation.
 
 ## Shared Visual Contract
 
-When icon style is shared across surfaces, place it under `## Components` as
-`### Iconography` in the adopted `<design-root>/DESIGN.md`. Record only approved or
-explicitly proposed semantics:
+When icon style is shared across surfaces, update its existing project-declared
+shared contract. For an adopted Google-format `DESIGN.md`, use `## Components` /
+`### Iconography` where appropriate; icon work does not force format adoption.
+Record only approved or explicitly proposed semantics:
 
 - family and style, such as outline, filled, or duotone;
 - canonical `viewBox`, optical live area, and safe-area rule;

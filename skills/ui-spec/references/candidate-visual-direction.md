@@ -76,12 +76,12 @@ proof, browser verification, or approval.
 Only explicit named human approval bound to the selected output and candidate hashes
 promotes the direction. After approval:
 
-- reconcile only approved shared visual semantics into the resolved adopted
-  `<design-root>/DESIGN.md` and run its required approval/lint/diff gates;
+- reconcile only approved shared visual semantics into the project's existing shared
+  authority and run its applicable acceptance and validation gates;
 - keep page-local composition, behavior, and interaction in the independent Feature
-  Spec rather than expanding `DESIGN.md`;
+  Spec rather than expanding the shared contract;
 - hand the accepted source and Feature Spec to `dev-frontend`;
 - require same-viewport, same-state real-browser acceptance through the runtime owner.
 
 Until promotion completes, report `Candidate direction: Not Ready for dev-frontend`
-and `DESIGN.md unchanged`.
+and `accepted shared authority unchanged`.

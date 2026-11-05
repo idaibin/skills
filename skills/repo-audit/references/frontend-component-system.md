@@ -91,17 +91,21 @@ only when their interaction contract is genuinely feature-specific.
 
 ## Adopted UI Boundary And Token Pipeline
 
-When the inspected project declares an adoption record, audit it against live source
-rather than assuming `components/ui` or a Registry exists everywhere:
+When the inspected project declares a UI/component or token boundary, audit its
+contract and any adopted records against live source rather than assuming
+`components/ui`, a Registry, or an adoption record exists everywhere:
 
 - trace restricted third-party imports to declared adapter roots and bounded escape
   hatches; broad disables or undeclared business imports are boundary drift;
-- compare the human component contract, Registry source/public imports, files on disk,
-  exports, dependencies, and real consumers without treating the Registry as the props
-  or runtime authority;
-- verify `Component -> Semantic -> Primitive`, generated output parity, business-only
-  Semantic consumption, component-token owner containment, and rejection of unknown,
-  cyclic, bypass, or authored CSS self-references;
+- compare applicable component guidance, public imports, files on disk, exports,
+  dependencies, and real consumers; check Registry parity when that projection is
+  adopted without treating the Registry as the props or runtime authority;
+- verify the actual token dependency graph, value owner, permitted consumers, and
+  applicable rejection of unknown references, cycles, bypasses, or authored CSS
+  self-references. Enforce `Component -> Semantic -> Primitive`, business-only Semantic
+  consumption, or component-token containment only when adopted; check generated
+  parity only for actual generated consumers. Plain maintained CSS variables need no
+  generator or additional tier;
 - distinguish static validator evidence from keyboard, focus, responsive, theme, and
   rendered visual evidence. Whole-image similarity metrics are diagnostic and cannot
   replace critical state, computed-style, geometry, or accessibility checks.

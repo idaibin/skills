@@ -1,6 +1,6 @@
 ---
 name: dev-frontend
-description: "Implement frontend UI changes in the existing stack. Route change-based reviews to repo-review and existing-surface audits without a change basis to repo-audit."
+description: "Implement frontend UI and project-native UI guidance in the existing stack. Route change-based reviews to repo-review and existing-surface audits without a change basis to repo-audit."
 ---
 
 # Frontend Implementation
@@ -14,6 +14,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | Request condition | Read | Result |
 | --- | --- | --- |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
+| Explicit project UI guidance create/update request | [project UI guidance](references/checklist.md#project-ui-guidance) | Evidence-backed project rules and checks |
 | Product behavior, copy, page interaction, layout, or visual acceptance changes | [specification authorities](references/specification-authorities.md) | Owning contracts ready before source |
 | Toolchain, dependencies, routing, stack migration, or render/effect semantics change | Relevant section of [stack guidelines](references/stack-guidelines.md) | Stack-specific constraints |
 | Framework state, lifecycle, routing, or component API semantics change | Selected [framework profile](references/framework-profiles.md) | Framework-compatible change |
@@ -22,7 +23,7 @@ Implement the smallest authorized frontend slice in the existing stack. Read eff
 | Behavior/public seam, ownership, or quality concern applies | [behavior first](references/behavior-first.md), [codebase design](references/codebase-design.md), and/or [code quality](references/code-quality.md) | Scoped design/validation |
 | A touched file, component, or function mixes independent UI, state, data, side-effect, or business responsibilities | [decomposition](references/decomposition.md) | Cohesive owners and readable orchestration |
 | Styling system or CSS ownership changes | [styling systems](references/styling-systems.md) or [CSS governance](references/frontend-css-governance.md) for the changed concern | Scoped styling |
-| Shared components/tokens or layout ownership changes | [components/tokens](references/ui-components-and-tokens.md) or [layout](references/frontend-layout-governance.md) | Applicable visual contract |
+| Component consumption/composition, shared components/tokens, or layout ownership changes | [components/tokens](references/ui-components-and-tokens.md) or [layout](references/frontend-layout-governance.md) | Applicable visual contract |
 | Interaction feedback, animation, or visual direction changes | [interaction/motion](references/interaction-motion-quality.md) or [visual direction](references/visual-direction-and-anti-slop.md) | Applicable interaction/visual contract |
 | Accepted UI contract has a parameterized background | [components/tokens](references/ui-components-and-tokens.md), [interaction/motion](references/interaction-motion-quality.md), and [visual evidence](references/frontend-visual-evidence.md) | Contract-mapped component, fallback and target-surface evidence |
 | Selected-source visual closure applies | [specification authorities](references/specification-authorities.md) and [visual evidence](references/frontend-visual-evidence.md) | Runtime comparison boundary |

@@ -244,7 +244,7 @@ class DocumentationAuthorityContractTests(unittest.TestCase):
             "complete generation prompt",
             "content hashes",
             "`ask-ai`",
-            "`DESIGN.md` unchanged",
+            "accepted shared authority unchanged",
             "Not Ready for dev-frontend",
         ):
             with self.subTest(required=required):

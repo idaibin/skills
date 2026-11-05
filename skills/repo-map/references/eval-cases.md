@@ -20,6 +20,7 @@
 | `Implement this one-owner CSS fix, and create or refresh a repository map first.` | `dev-frontend` should use direct bounded source discovery; do not scan/render merely for implementation. |
 | `Review this diff for P0-P3 defects.` | `repo-review`, not repo-map |
 | `Create root and child AGENTS.md files.` | separate artifact-writing/guidance owner |
+| `Document this frontend's existing component and padding rules in AGENTS.md; no graph runtime is installed.` | Route to the frontend guidance owner for direct source inspection; no graph prerequisite or repo-map-authored guidance. |
 | `Prove the endpoint works in production.` | runtime/evidence owner; static Graph is insufficient |
 | `List the top-level directories and owning manifests; do not map runtime, data, integration, compatibility, or delivery authorities.` | Keep project grounding inactive and return the bounded navigation answer. |
 | `The maintained record already names the exact current file, owner, and function; edit that local feature.` | Return to the implementation owner without a repo-map query, scan, or render. |
@@ -36,6 +37,7 @@
 | Valid historical snapshot after a source edit | Integrity may still pass; compare recorded and requested bases, qualify historical results and stop the current-source claim until explicit refresh. | Treats validation success or a latest-snapshot default as current-source proof, or silently rescans. |
 | Tombstones | Deleted identities remain queryable for historical Runs. | Hard deletion destroys historical refs. |
 | Authority | Native Product/DESIGN/source/contract remains owner; duplicate active claims conflict. | Graph copies bodies or chooses precedence silently. |
+| Guidance handoff | Gives the writing owner bounded source locations and unresolved conflicts under existing authorization; observed facts remain distinct from adopted rules. | Authors guidance from this profile, re-asks the same permission, or invents graph evidence to continue. |
 | Query | Reverse/forward impact is bounded by relation/depth/row limits. | Unbounded traversal or unrelated repository scan. |
 | Implementation handoff | Returns one basis-bound slice with owner/entry, canonical and reuse candidates, decisive chain, proven consumers, focused checks, and unresolved/conflicts. | Returns a broad inventory, creates a sidecar, refreshes without request, or presents map records as live source authority. |
 | Exact implementation match | Does not query when current context already matches file, owner, and function; current source verification stays with the implementation owner. | Requeries or rescans merely to reconfirm the same known feature. |

@@ -1,4 +1,4 @@
 interface:
   display_name: "Frontend Implementation"
   short_description: "Implement frontend with traceable visual closure"
-  default_prompt: "Use $dev-frontend to map accepted requirements to source owners, implement scoped frontend changes, and compare the same runtime state with the selected source; recheck after a correction or when required by the accepted project contract."
+  default_prompt: "Use $dev-frontend to map accepted requirements to source owners, implement scoped frontend or project-native UI guidance changes, and compare the same runtime state with the selected source; recheck after a correction or when required by the accepted project contract."
