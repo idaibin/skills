@@ -1,5 +1,13 @@
 # Retrospective
 
+## Contents
+
+- [1. Bound the inquiry](#1-bound-the-inquiry)
+- [2. Establish the evidence](#2-establish-the-evidence)
+- [3. Find useful patterns](#3-find-useful-patterns)
+- [4. Distill scoped proposals](#4-distill-scoped-proposals)
+- [5. Return, without taking over adjacent work](#5-return-without-taking-over-adjacent-work)
+
 ## 1. Bound the inquiry
 
 Record the user's question, requested sources/time range, projects/domains, cutoff,
@@ -82,6 +90,14 @@ writing persistent memory or rules. Before any adoption, identify the existing a
 new evidence, counterevidence, reviewer/decision owner, and expiry or revisit trigger.
 
 ## 5. Return, without taking over adjacent work
+
+Give each proposed lesson one existing destination: incident/task evidence for a
+single event, native troubleshooting/design guidance for a verified project-specific
+solution, the owning professional Skill or shared standard for a supported reusable
+practice, or personal settings for an explicitly confirmed personal preference.
+Do not create a universal memory ledger, duplicate project facts into a dashboard,
+or promote a single failure into a global rule. Name applicability, evidence and a
+revalidation condition; keep adoption as a separately authorized owner action.
 
 Use [contract](contract.md) and [validation](validation.md). Route repository graphs to
 repo-map, accepted task-ledger changes to to-task, source changes to the implementation

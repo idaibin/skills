@@ -31,6 +31,7 @@ coverage claim, not permission to read restricted stores.
 - Shared lessons must state their applicable context and exceptions. Never export a
   project's local rule to every project merely because it appeared in one session.
 - Read current owner guidance and checks before proposing new text or automation.
+- Give each lesson one existing owner and destination: incident evidence, project knowledge, shared Skill/standard, or explicitly confirmed personal preference; proposals never become rules automatically.
   Prefer a navigation pointer, existing check repair, or deletion over duplicate rules.
 - Write only the requested retrospective artifact. Do not change source, persistent
   memory, global instructions, other Skills, task state, Git, accounts, or schedules.

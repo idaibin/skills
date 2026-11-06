@@ -27,6 +27,7 @@ the ledger unchanged.
 - Create tasks only for confirmed outcomes; unresolved decisions remain with their native owner.
 - Derive status from criterion-specific evidence. Build, report, or command success never upgrades a higher runtime/deployment layer.
 - Preserve valid completed work; reopen only the affected task and downstream dependents on basis drift or findings.
+- Reconcile resumable checkpoints into the original task, separating confirmed causes from hypotheses and linking remedy/verification evidence; never create a parallel project-memory ledger.
 - Do not implement, operate clients, review mutable output, mutate Git, or claim continuous execution.
 
 ## Output Map

@@ -139,6 +139,15 @@ accepted order is a valid no-op and ordering grants no execution permission.
 
 ## Outcome and Retry Continuity
 
+When an authorized reconciliation follows a material blocker, accepted decision,
+verification result or handoff, update the original task's current checkpoint using
+its existing fields. Retain symptom/impact, basis/environment, confirmed cause or
+labelled hypothesis, attempted remedy, observed result/evidence, and one next action
+or resume condition where applicable. Reference detailed attempt logs; preserve their
+failures without copying transcripts into the ledger. An unchanged checkpoint is a
+valid no-op. Do not create a separate memory file, promote an unverified workaround
+to a durable project rule, or change outcome/acceptance during status reconciliation.
+
 Keep each fix tied to its original feature and acceptance ID across renamed slices,
 owners, and alternative routes. Preserve the first failure and what changed the
 hypothesis; passing a child check does not make the parent feature runtime-accepted.
