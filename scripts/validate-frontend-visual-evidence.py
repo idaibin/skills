@@ -340,6 +340,8 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
     if dangling:
         errors.append(f"unknown evidence IDs referenced: {dangling}")
 
+    reusable_ids, reuse_errors = _reviewed_reuse(payload, evidence_by_id)
+    errors.extend(reuse_errors)
     verdict = payload.get("final_verdict", {})
     if stage == "final" and reviews and isinstance(coverage, dict):
         last_review = reviews[-1] if isinstance(reviews[-1], dict) else {}
@@ -349,8 +351,15 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
             if not isinstance(record, dict) or record.get("status") != "verified":
                 continue
             ids = record.get("evidence_ids", [])
-            if not ids or not _has_matching_runtime_evidence(
-                ids, evidence_by_id, last_pass, runtime, name
+            if not ids or not (
+                _has_matching_runtime_evidence(ids, evidence_by_id, last_pass, runtime, name)
+                or any(
+                    evidence_id in reusable_ids
+                    and name in evidence_by_id[evidence_id].get("categories", [])
+                    and evidence_by_id[evidence_id].get("viewport") == runtime.get("viewport")
+                    and evidence_by_id[evidence_id].get("state") == runtime.get("state")
+                    for evidence_id in ids
+                )
             ):
                 errors.append(
                     f"verified runtime coverage {name} lacks matching final-pass browser-computed evidence"
@@ -401,13 +410,110 @@ def semantic_errors(payload: dict[str, object]) -> list[str]:
             ]
             if open_blockers:
                 errors.append(f"Complete verdict has open P0/P1 findings: {open_blockers}")
-        errors.extend(_complete_capture_closure_errors(payload, evidence_by_id))
+    if (isinstance(verdict, dict) and verdict.get("status") == "Complete") or payload.get("evidence_reuse"):
+        errors.extend(_complete_capture_closure_errors(payload, evidence_by_id, reusable_ids))
     return errors
 
 
-def _complete_capture_closure_errors(
+def _reviewed_reuse(
     payload: dict[str, object], evidence_by_id: dict[str, dict[str, object]]
+) -> tuple[set[str], list[str]]:
+    """Authorize only explicitly retained observations across every reviewed change.
+
+    Source/diff/environment truth still requires human inspection. Hashes close the
+    supplied review records; they are not proof of actual source or browser behavior.
+    """
+    entries = payload.get("evidence_reuse", [])
+    if not entries:
+        return set(), []
+    errors: list[str] = []
+    reusable: set[str] = set()
+    reviews = payload.get("visual_reviews", [])
+    if payload.get("stage") != "final" or not reviews:
+        return set(), ["evidence reuse requires final-stage visual reviews"]
+    # Pass labels are untrusted input. Reject gaps before deriving any traversal
+    # from them; work must remain bounded by the actual review records.
+    if any(not isinstance(review, dict) or type(review.get("pass")) is not int
+           or review["pass"] != index for index, review in enumerate(reviews, start=1)):
+        return set(), ["evidence reuse requires contiguous review passes starting at 1"]
+    final_pass = len(reviews)
+    closure = payload.get("capture_closure", {})
+    artifacts, artifact_errors = _task_artifact_bytes(
+        closure.get("artifact_contents", []) if isinstance(closure, dict) else [], payload.get("task_id")
+    )
+    errors.extend(artifact_errors)
+    contract_sha256 = _canonical_sha256({key: payload.get(key) for key in (
+        "selected_source", "delta_table", "implementation_mapping", "required_runtime_matrix"
+    )})
+    targets = {item.get("id") for item in payload.get("required_runtime_matrix", []) if isinstance(item, dict)}
+    coverage = payload.get("runtime_coverage", {})
+    used_ids = {evidence_id for record in coverage.values() if isinstance(record, dict)
+                and record.get("status") == "verified" for evidence_id in record.get("evidence_ids", [])}
+    seen: set[str] = set()
+    for entry in entries:
+        evidence_id = entry.get("evidence_id")
+        item = evidence_by_id.get(evidence_id)
+        start = item.get("review_pass") if isinstance(item, dict) else None
+        prefix = f"evidence reuse {evidence_id}"
+        initial_errors = len(errors)
+        if evidence_id in seen:
+            errors.append(f"{prefix} is duplicated")
+        seen.add(evidence_id)
+        if (not item or item.get("level") != "browser-computed" or type(start) is not int
+                or not 1 <= start < final_pass or entry.get("through_pass") != final_pass
+                or evidence_id not in used_ids):
+            errors.append(f"{prefix} must retain referenced prior-pass browser-computed evidence through the final pass")
+            continue
+        if entry.get("evidence_sha256") != _canonical_sha256(item):
+            errors.append(f"{prefix} must preserve the original evidence record digest")
+        categories = set(item.get("categories", []))
+        if item.get("matrix_target_id") and categories != {"responsive_breakpoints"}:
+            errors.append(f"{prefix} matrix reuse is limited to responsive breakpoint evidence")
+        source = reviews[start - 1]
+        if not categories or (not item.get("matrix_target_id") and any(
+            not any(check.get("category") == category and evidence_id in check.get("evidence_ids", [])
+                    for check in source.get("computed_checks", []) if isinstance(check, dict))
+            for category in categories
+        )):
+            errors.append(f"{prefix} lacks its original category computed check")
+        if any(evidence_id in finding.get("evidence_ids", []) and finding.get("status") == "open"
+               for finding in source.get("findings", []) if isinstance(finding, dict)):
+            errors.append(f"{prefix} cannot carry an originally failing observation")
+        for before_review, after_review in zip(reviews[start - 1:-1], reviews[start:]):
+            current_pass = after_review["pass"]
+            before = before_review.get("reviewed_basis", {})
+            after = after_review.get("reviewed_basis", {})
+            impact = after_review.get("change_impact", {})
+            label = f"{prefix} across pass {current_pass - 1}->{current_pass}"
+            if (not before or not after or before.get("contract_sha256") != contract_sha256
+                    or after.get("contract_sha256") != contract_sha256
+                    or not before.get("environment_sha256")
+                    or before.get("environment_sha256") != after.get("environment_sha256")):
+                errors.append(f"{label} requires unchanged bound contract and runtime environment")
+            if (not impact or impact.get("from_pass") != current_pass - 1
+                    or impact.get("scope_complete") is not True
+                    or impact.get("before_basis_sha256") != _canonical_sha256(before)
+                    or impact.get("after_basis_sha256") != _canonical_sha256(after)):
+                errors.append(f"{label} lacks a complete adjacent change-impact review bound to both bases")
+                continue
+            diff = artifacts.get(impact.get("diff_artifact"))
+            if not diff or impact.get("diff_sha256") != _bytes_sha256(diff):
+                errors.append(f"{label} lacks resolved hash-bound source-diff bytes")
+            if not set(impact.get("affected_matrix_target_ids", [])).issubset(targets):
+                errors.append(f"{label} names an undeclared affected matrix target")
+            if (categories.intersection(impact.get("affected_categories", []))
+                    or item.get("matrix_target_id") in impact.get("affected_matrix_target_ids", [])):
+                errors.append(f"{label} was affected and requires fresh evidence")
+        if len(errors) == initial_errors:
+            reusable.add(evidence_id)
+    return reusable, errors
+
+
+def _complete_capture_closure_errors(
+    payload: dict[str, object], evidence_by_id: dict[str, dict[str, object]],
+    reusable_ids: set[str] | None = None,
 ) -> list[str]:
+    reusable_ids = reusable_ids or set()
     errors: list[str] = []
     closure = payload.get("capture_closure")
     reviews = payload.get("visual_reviews", [])
@@ -529,7 +635,7 @@ def _complete_capture_closure_errors(
             not artifact_bound
             or not isinstance(record, dict)
             or record.get("role") != "runtime"
-            or record.get("pass") != final_review_pass
+            or (record.get("pass") != final_review_pass and item.get("id") not in reusable_ids)
             or item.get("review_pass") != record.get("pass")
             or item.get("source") != record.get("artifact")
             or any(
@@ -537,12 +643,12 @@ def _complete_capture_closure_errors(
                 for field in ("capture_id", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256", "content_summary_sha256", "viewport", "state", "target_fingerprint")
             )
         ):
-            errors.append(f"runtime matrix evidence for {target_id} must close to its final-pass runtime capture")
+            errors.append(f"runtime matrix evidence for {target_id} must close to its final-pass runtime capture or reviewed original capture")
         else:
             matrix_capture_ids.add(record.get("capture_id"))
     for capture_id in records:
         if capture_id not in primary_capture_ids and capture_id not in matrix_capture_ids:
-            errors.append(f"additional capture {capture_id} requires bound final-pass runtime matrix evidence")
+            errors.append(f"additional capture {capture_id} requires bound final-pass or reviewed retained runtime matrix evidence")
     for item in evidence_by_id.values():
         if item.get("level") != "browser-computed":
             continue

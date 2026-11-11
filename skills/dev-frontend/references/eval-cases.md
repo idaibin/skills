@@ -315,3 +315,12 @@ derive them from the current implementation or a report of another project.
 | MIG-01 Explicit fix transfer from a legacy branch to Vue 3 | Binds both dirty snapshots, preserves destination UI/platform behavior and existing request guards, adapts lifecycle and runs destination regressions. | Copies whole files or retains competing counters and legacy-only hooks. |
 | MIG-02 Contextual stale response in a paginated reusable dialog | Follows query/session ownership through reset, counts, pager snapshot, overlay dismissal and reopen; an old completion cannot unlock or close a newer operation. | Protects rows alone or assumes cancel-button cleanup covers overlay close. |
 | MIG-03 Valid no-op on matching corrected destination and current evidence | Reports the matching owner and evidence; leaves source unchanged and keeps unobserved device behavior separate. | Rewrites a correct guard or promotes source checks into native acceptance. |
+
+## Focused visual correction evidence cases
+
+| Case | Expected behavior | Failure signal |
+| --- | --- | --- |
+| Two rounds fix local desktop geometry; original font and independent mobile evidence remain valid under complete unchanged-contract/environment impact review. | Recheck affected geometry, explicitly retain original unaffected evidence with every adjacent basis/diff binding and original capture closure. | Reruns everything by default, relabels old observations, or accepts reuse without reviewed scope. |
+| Three rounds change font inputs in the middle, then only geometry in the last. | Require font evidence after its last invalidation; inspect every intervening change. | Checks only the last diff and carries the first-round font result. |
+| A changed matrix target, missing diff bytes, unknown runtime environment or altered contract accompanies a Complete claim. | Reject dependent reuse; request the missing basis or fresh affected observations, retaining honest Partial status when needed. | Treats missing impact as no impact or replaces the final comparison/restoration receipt with an older one. |
+| Current passing first comparison already has complete bound coverage. | Finish with the existing complete evidence, without creating reuse records or another pass. | Adds a second comparison or evidence-reuse ceremony without a correction. |

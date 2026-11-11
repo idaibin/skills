@@ -9,6 +9,8 @@ import hashlib
 import importlib.util
 import json
 import re
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -107,7 +109,7 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
                 payload.pop(key)
         return payload
 
-    def complete_payload(self, *, single_pass: bool = False) -> dict[str, object]:
+    def complete_payload(self, *, single_pass: bool = False, third_pass: bool = False) -> dict[str, object]:
         payload = copy.deepcopy(self.fixture)
         payload["final_verdict"]["status"] = "Complete"
         payload["final_verdict"]["remaining_gaps"] = []
@@ -142,6 +144,22 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
             for item in payload["evidence"]:
                 if item["level"] == "browser-computed":
                     item["review_pass"] = 1
+        if third_pass:
+            review = copy.deepcopy(payload["visual_reviews"][-1])
+            review["pass"] = 3
+            replacements = {}
+            for item in list(payload["evidence"]):
+                if item.get("review_pass") == 2:
+                    replacement = copy.deepcopy(item)
+                    replacement["id"] = item["id"] + "-THIRD"
+                    replacement["review_pass"] = 3
+                    replacements[item["id"]] = replacement["id"]
+                    payload["evidence"].append(replacement)
+            for record in review["computed_checks"] + review["findings"]:
+                record["evidence_ids"] = [replacements.get(item, item) for item in record["evidence_ids"]]
+            for record in payload["runtime_coverage"].values():
+                record["evidence_ids"] = [replacements.get(item, item) for item in record["evidence_ids"]]
+            payload["visual_reviews"].append(review)
         target_viewport = payload["visual_reviews"][-1]["runtime_capture"]["viewport"]
         target_state = payload["visual_reviews"][-1]["runtime_capture"]["state"]
         target_fingerprint = VALIDATOR._canonical_sha256({"viewport": target_viewport, "state": target_state})
@@ -184,7 +202,8 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
             if item["level"] == "browser-computed":
                 runtime = runtime_by_pass[item["review_pass"]]
                 item.update({key: runtime[key] for key in ("capture_id", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256", "content_summary_sha256", "target_fingerprint")})
-                if "responsive_breakpoints" in item.get("categories", []):
+                if ("responsive_breakpoints" in item.get("categories", [])
+                        and item["review_pass"] == payload["visual_reviews"][-1]["pass"]):
                     item["matrix_target_id"] = payload["required_runtime_matrix"][0]["id"]
                     item["source"] = runtime["artifact"]
         final_runtime = runtime_by_pass[payload["visual_reviews"][-1]["pass"]]
@@ -199,6 +218,209 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
             "canonical_final_receipt_id": "synthetic-final-restoration",
         }
         return payload
+
+    def reuse_payload(self, *, matrix: bool = False, third_pass: bool = False) -> dict[str, object]:
+        payload = self.complete_payload(third_pass=third_pass)
+        if matrix:
+            self.add_mobile_runtime_target(payload)
+            evidence_id = "FIXTURE-MOBILE-RESPONSIVE"
+            item = next(item for item in payload["evidence"] if item["id"] == evidence_id)
+            record = next(record for record in payload["capture_closure"]["captures"]
+                          if record["capture_id"] == item["capture_id"])
+            record["pass"] = 1
+            self.refresh_capture_record(record)
+        else:
+            evidence_id = payload["runtime_coverage"]["font_fallback"]["evidence_ids"][0]
+            item = next(item for item in payload["evidence"] if item["id"] == evidence_id)
+            record = next(record for record in payload["capture_closure"]["captures"]
+                          if record["pass"] == 1 and record["role"] == "runtime")
+            checks = payload["visual_reviews"][-1]["computed_checks"]
+            check = next(check for check in checks if evidence_id in check["evidence_ids"])
+            checks.remove(check)
+            payload["visual_reviews"][0]["computed_checks"].append(check)
+        item["review_pass"] = 1
+        item["source"] = record["artifact"]
+        item.update({field: record[field] for field in (
+            "capture_id", "artifact_sha256", "artifact_bytes", "capture_manifest_sha256",
+            "content_summary_sha256", "target_fingerprint"
+        )})
+        contract = VALIDATOR._canonical_sha256({key: payload[key] for key in (
+            "selected_source", "delta_table", "implementation_mapping", "required_runtime_matrix"
+        )})
+        for review in payload["visual_reviews"]:
+            review["reviewed_basis"] = {
+                "implementation_sha256": VALIDATOR._bytes_sha256(f"synthetic source pass {review['pass']}".encode()),
+                "contract_sha256": contract,
+                "environment_sha256": VALIDATOR._bytes_sha256(b"synthetic unchanged runtime inputs"),
+            }
+        for previous, review in zip(payload["visual_reviews"], payload["visual_reviews"][1:]):
+            diff = f"synthetic desktop card geometry correction {previous['pass']} to {review['pass']}".encode()
+            locator = f"artifact://task/{payload['task_id']}/source-diff-{review['pass']}"
+            payload["capture_closure"]["artifact_contents"].append({
+                "artifact": locator, "bytes_base64": base64.b64encode(diff).decode(),
+            })
+            review["change_impact"] = {
+                "from_pass": previous["pass"],
+                "before_basis_sha256": VALIDATOR._canonical_sha256(previous["reviewed_basis"]),
+                "after_basis_sha256": VALIDATOR._canonical_sha256(review["reviewed_basis"]),
+                "diff_artifact": locator, "diff_sha256": VALIDATOR._bytes_sha256(diff),
+                "scope_complete": True, "affected_categories": ["card_dimensions"],
+                "affected_matrix_target_ids": [payload["required_runtime_matrix"][0]["id"]],
+                "reason": "Synthetic reviewed local desktop geometry change; fonts and mobile branch unchanged.",
+            }
+        payload["evidence_reuse"] = [{
+            "evidence_id": evidence_id, "evidence_sha256": VALIDATOR._canonical_sha256(item),
+            "through_pass": payload["visual_reviews"][-1]["pass"],
+            "reason": "Retain the original unaffected observation with its original capture.",
+        }]
+        return payload
+
+    def test_focused_correction_reuses_unaffected_font_without_relabeling(self) -> None:
+        payload = self.reuse_payload()
+        original = copy.deepcopy(next(item for item in payload["evidence"]
+                                      if item["id"] == payload["evidence_reuse"][0]["evidence_id"]))
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+        self.assertEqual(1, original["review_pass"])
+        self.assertEqual(original, next(item for item in payload["evidence"] if item["id"] == original["id"]))
+        del payload["evidence_reuse"]
+        self.assertIn("font_fallback lacks matching final-pass", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_focused_correction_reuses_unaffected_independent_matrix_target(self) -> None:
+        payload = self.reuse_payload(matrix=True)
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+        payload["visual_reviews"][-1]["change_impact"]["affected_matrix_target_ids"].append("synthetic-mobile-populated")
+        self.assertIn("was affected and requires fresh evidence", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_rejects_affected_categories_without_recheck(self) -> None:
+        payload = self.reuse_payload()
+        payload["visual_reviews"][-1]["change_impact"]["affected_categories"].append("font_fallback")
+        self.assertIn("was affected and requires fresh evidence", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_checks_every_intervening_change_not_only_last(self) -> None:
+        payload = self.reuse_payload(third_pass=True)
+        self.assertEqual([], self.errors(payload))
+        self.assertEqual([], VALIDATOR.semantic_errors(payload))
+        payload["visual_reviews"][1]["change_impact"]["affected_categories"].append("font_fallback")
+        self.assertIn("across pass 1->2 was affected", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_rejects_missing_or_nonadjacent_impact_review(self) -> None:
+        for mutation in ("missing", "wrong-pass", "scope-incomplete", "wrong-before", "wrong-after"):
+            with self.subTest(mutation=mutation):
+                payload = self.reuse_payload(third_pass=True)
+                review = payload["visual_reviews"][1]
+                if mutation == "missing":
+                    del review["change_impact"]
+                elif mutation == "wrong-pass":
+                    review["change_impact"]["from_pass"] = 2
+                elif mutation == "scope-incomplete":
+                    review["change_impact"]["scope_complete"] = False
+                else:
+                    review["change_impact"][mutation.removeprefix("wrong-") + "_basis_sha256"] = "sha256:" + "f" * 64
+                self.assertIn("complete adjacent change-impact", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_rejects_unbound_or_changed_contract_environment_basis(self) -> None:
+        for field in ("implementation_sha256", "contract_sha256", "environment_sha256"):
+            payload = self.reuse_payload()
+            payload["visual_reviews"][-1]["reviewed_basis"][field] = "sha256:" + "f" * 64
+            self.assertTrue(VALIDATOR.semantic_errors(payload))
+        payload = self.reuse_payload()
+        payload["selected_source"]["revision"] = "changed-source"
+        self.assertIn("unchanged bound contract", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_rejects_unresolved_tampered_or_empty_diff_bytes(self) -> None:
+        for mutation in ("missing", "tampered", "empty", "external"):
+            with self.subTest(mutation=mutation):
+                payload = self.reuse_payload()
+                impact = payload["visual_reviews"][-1]["change_impact"]
+                artifact = payload["capture_closure"]["artifact_contents"][-1]
+                if mutation == "missing":
+                    payload["capture_closure"]["artifact_contents"].pop()
+                elif mutation == "external":
+                    impact["diff_artifact"] = "https://synthetic.invalid/diff"
+                else:
+                    value = b"" if mutation == "empty" else b"tampered source diff"
+                    artifact["bytes_base64"] = base64.b64encode(value).decode()
+                    if mutation == "empty":
+                        impact["diff_sha256"] = VALIDATOR._bytes_sha256(value)
+                self.assertIn("hash-bound source-diff bytes", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_rejects_original_evidence_relabeling_or_binding_drift(self) -> None:
+        for field, value in (("review_pass", 2), ("artifact_bytes", 5),
+                             ("capture_id", "other"), ("target_fingerprint", "sha256:" + "f" * 64)):
+            with self.subTest(field=field):
+                payload = self.reuse_payload()
+                item = next(item for item in payload["evidence"] if item["id"] == payload["evidence_reuse"][0]["evidence_id"])
+                item[field] = value
+                self.assertTrue(VALIDATOR.semantic_errors(payload))
+
+    def test_reuse_requires_original_computed_check_and_passing_observation(self) -> None:
+        for mutation in ("check", "finding"):
+            payload = self.reuse_payload()
+            evidence_id = payload["evidence_reuse"][0]["evidence_id"]
+            source = payload["visual_reviews"][0]
+            if mutation == "check":
+                source["computed_checks"] = [check for check in source["computed_checks"] if evidence_id not in check["evidence_ids"]]
+            else:
+                source["findings"][0]["evidence_ids"].append(evidence_id)
+            self.assertTrue(VALIDATOR.semantic_errors(payload))
+
+    def test_reuse_does_not_replace_final_capture_or_restoration_receipt(self) -> None:
+        payload = self.reuse_payload()
+        payload["capture_closure"]["restoration_receipts"][0]["final_pass"] = 1
+        self.assertIn("bind the final runtime capture", " ".join(VALIDATOR.semantic_errors(payload)))
+        payload = self.reuse_payload()
+        payload.pop("capture_closure")
+        self.assertIn("requires capture_closure", " ".join(VALIDATOR.semantic_errors(payload)))
+
+    def test_reuse_rejects_unknown_duplicate_or_unused_evidence_and_target(self) -> None:
+        for mutation in ("unknown", "duplicate", "unused", "target"):
+            payload = self.reuse_payload()
+            if mutation == "unknown":
+                payload["evidence_reuse"][0]["evidence_id"] = "missing-evidence"
+            elif mutation == "duplicate":
+                payload["evidence_reuse"].append(copy.deepcopy(payload["evidence_reuse"][0]))
+            elif mutation == "target":
+                payload["visual_reviews"][-1]["change_impact"]["affected_matrix_target_ids"] = ["missing-target"]
+            else:
+                payload["runtime_coverage"]["font_fallback"]["evidence_ids"] = []
+            self.assertTrue(VALIDATOR.semantic_errors(payload))
+
+    def test_reuse_rejects_sparse_huge_pass_labels_with_bounded_work(self) -> None:
+        # A subprocess deadline makes a regression fail without hanging this suite
+        # or accumulating millions of errors in the test process. Startup is not
+        # used as a performance score; the assertion is bounded rejection.
+        for labels in ((1, 2, 10**9), (1, 10**9, 3), (1, 2, 10**30), (1, 2, 2)):
+            with self.subTest(labels=labels):
+                payload = self.reuse_payload(third_pass=True)
+                for review, label in zip(payload["visual_reviews"], labels):
+                    review["pass"] = label
+                payload["evidence_reuse"][0]["through_pass"] = labels[-1]
+                if labels[1] == 2:
+                    self.assertEqual([], self.errors(payload))
+                result = subprocess.run(
+                    [sys.executable, "-B", "-c", (
+                        "import importlib.util,json,sys; "
+                        "s=importlib.util.spec_from_file_location('validator',sys.argv[1]); "
+                        "m=importlib.util.module_from_spec(s); s.loader.exec_module(m); "
+                        "print(json.dumps(m.semantic_errors(json.load(sys.stdin))))"
+                    ), str(SCRIPT)],
+                    input=json.dumps(payload), text=True, capture_output=True,
+                    timeout=5, check=True,
+                )
+                errors = json.loads(result.stdout)
+                self.assertIn("evidence reuse requires contiguous review passes starting at 1", errors)
+                self.assertLess(len(errors), 100)
+
+    def test_reuse_fields_fail_schema_when_proof_is_incomplete(self) -> None:
+        for owner, field in (("reuse", "evidence_sha256"), ("impact", "affected_categories"),
+                             ("impact", "affected_matrix_target_ids"), ("basis", "implementation_sha256")):
+            payload = self.reuse_payload()
+            record = {"reuse": payload["evidence_reuse"][0], "impact": payload["visual_reviews"][-1]["change_impact"],
+                      "basis": payload["visual_reviews"][-1]["reviewed_basis"]}[owner]
+            del record[field]
+            self.assertTrue(self.errors(payload))
 
     def test_example_fixture_is_valid(self) -> None:
         self.assertEqual([], self.errors(self.fixture))
@@ -901,7 +1123,7 @@ class FrontendVisualEvidenceTests(unittest.TestCase):
                 self.refresh_capture_record(extra)
                 payload["capture_closure"]["captures"].append(extra)
                 self.assertEqual([], self.errors(payload))
-                self.assertIn("additional capture synthetic-unreferenced-capture requires bound final-pass runtime matrix evidence", " ".join(VALIDATOR.semantic_errors(payload)))
+                self.assertIn("additional capture synthetic-unreferenced-capture requires bound final-pass or reviewed retained runtime matrix evidence", " ".join(VALIDATOR.semantic_errors(payload)))
         payload = self.complete_payload()
         self.add_mobile_runtime_target(payload)
         payload["capture_closure"]["captures"].append(copy.deepcopy(payload["capture_closure"]["captures"][-1]))

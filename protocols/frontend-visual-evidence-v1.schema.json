@@ -52,7 +52,22 @@
     "readiness": { "$ref": "#/$defs/readiness" },
     "runtime_coverage": { "$ref": "#/$defs/runtimeCoverage" },
     "final_verdict": { "$ref": "#/$defs/finalVerdict" },
-    "capture_closure": { "$ref": "#/$defs/captureClosure" }
+    "capture_closure": { "$ref": "#/$defs/captureClosure" },
+    "evidence_reuse": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_id", "through_pass", "reason", "evidence_sha256"],
+        "properties": {
+          "evidence_id": { "type": "string", "minLength": 1 },
+          "through_pass": { "type": "integer", "minimum": 2 },
+          "reason": { "type": "string", "minLength": 1 },
+          "evidence_sha256": { "$ref": "#/$defs/sha256" }
+        }
+      }
+    }
   },
   "allOf": [
     {
@@ -128,7 +143,8 @@
             { "required": ["implementation_mapping"] },
             { "required": ["visual_reviews"] },
             { "required": ["runtime_coverage"] },
-            { "required": ["final_verdict"] }
+            { "required": ["final_verdict"] },
+            { "required": ["evidence_reuse"] }
           ]
         }
       }
@@ -141,7 +157,8 @@
           "anyOf": [
             { "required": ["visual_reviews"] },
             { "required": ["runtime_coverage"] },
-            { "required": ["final_verdict"] }
+            { "required": ["final_verdict"] },
+            { "required": ["evidence_reuse"] }
           ]
         }
       }
@@ -154,7 +171,8 @@
         "not": {
           "anyOf": [
             { "required": ["runtime_coverage"] },
-            { "required": ["final_verdict"] }
+            { "required": ["final_verdict"] },
+            { "required": ["evidence_reuse"] }
           ]
         }
       }
@@ -339,6 +357,8 @@
       "additionalProperties": false,
       "required": ["pass", "design_capture", "runtime_capture", "same_viewport", "same_state", "comparison", "computed_checks", "findings", "verdict"],
       "properties": {
+        "reviewed_basis": { "$ref": "#/$defs/reviewedBasis" },
+        "change_impact": { "$ref": "#/$defs/changeImpact" },
         "pass": { "type": "integer", "minimum": 1 },
         "design_capture": { "$ref": "#/$defs/capture" },
         "runtime_capture": { "$ref": "#/$defs/capture" },
@@ -368,6 +388,43 @@
         },
         "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
         "verdict": { "enum": ["fail", "pass", "Partial", "Not Ready"] }
+      }
+    },
+    "reviewedBasis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["implementation_sha256", "contract_sha256", "environment_sha256"],
+      "properties": {
+        "implementation_sha256": { "$ref": "#/$defs/sha256" },
+        "contract_sha256": { "$ref": "#/$defs/sha256" },
+        "environment_sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "changeImpact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from_pass", "before_basis_sha256", "after_basis_sha256", "diff_artifact",
+        "diff_sha256", "scope_complete", "affected_categories", "affected_matrix_target_ids", "reason"
+      ],
+      "properties": {
+        "from_pass": { "type": "integer", "minimum": 1 },
+        "before_basis_sha256": { "$ref": "#/$defs/sha256" },
+        "after_basis_sha256": { "$ref": "#/$defs/sha256" },
+        "diff_artifact": { "type": "string", "minLength": 1 },
+        "diff_sha256": { "$ref": "#/$defs/sha256" },
+        "scope_complete": { "const": true },
+        "affected_categories": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/runtimeCategory" }
+        },
+        "affected_matrix_target_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "reason": { "type": "string", "minLength": 1 }
       }
     },
     "coverageRecord": {

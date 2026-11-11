@@ -27,6 +27,7 @@ it never supplies a reusable target contract for a project.
 - [Required Runtime Coverage](#required-runtime-coverage)
 - [Degraded Evidence](#degraded-evidence)
 - [Handoff Artifact](#handoff-artifact)
+- [Focused Correction And Evidence Reuse](#focused-correction-and-evidence-reuse)
 - [Capture Closure And Restoration](#capture-closure-and-restoration)
 - [Completion Rule](#completion-rule)
 
@@ -216,9 +217,11 @@ Matrix evidence must bind its target ID, viewport/state/fingerprint, and task-ow
 artifact bytes. The selected-source comparison may satisfy one matrix
 target; additional breakpoints use separately artifact-bound matrix evidence.
 For `Complete`, each matrix evidence item must resolve by `capture_id` to a
-final-pass runtime record for its declared target, with matching artifact locator,
-hashes, byte length, viewport/state, and fingerprint. An unknown target cannot
-exempt browser-computed evidence from capture closure.
+final-pass runtime record, or its original runtime record under
+[reviewed evidence reuse](#focused-correction-and-evidence-reuse), for its declared
+target. The artifact locator, hashes, byte length, viewport/state, and fingerprint
+must match. An unknown target cannot exempt browser-computed evidence from capture
+closure.
 
 Generic placeholders are not normal product assets. A fallback may cover one missing
 or failed item only when the contract permits it; it must not replace all product
@@ -310,10 +313,73 @@ limits; they do not establish a comparison-pass finding or verified runtime cove
 Each comparison-pass finding requires browser-computed evidence from the same pass,
 viewport and state. Keep observations without that evidence directional or `Not verified`.
 The selected-source and target-contract columns cannot cite `browser-computed` evidence as
-their authority. Each computed check and each `verified` runtime coverage record must
-cite final-pass browser evidence tagged with the same runtime category, viewport, and
-state. One geometry observation cannot satisfy assets, font, contrast, focus, states,
+their authority. Each computed check must cite browser evidence from its own pass. Each `verified`
+runtime coverage record must cite final-pass browser evidence or explicitly reviewed
+retained evidence under the rules below, tagged with the same runtime category,
+viewport, and state. One geometry observation cannot satisfy assets, font, contrast, focus, states,
 or responsive coverage.
+
+## Focused Correction And Evidence Reuse
+
+After a correction, recheck affected categories and runtime-matrix targets only.
+Unchanged observations can close `final` coverage through optional `evidence_reuse`,
+without recapturing them or changing their original pass, capture, category, bytes,
+or bindings. Without this opt-in proof, the final-pass requirement still applies.
+This is within-task reuse across recorded comparison rounds, not reuse across tasks,
+unrecorded changes, target-contract revisions, or unknown runtime environments.
+
+For each reused evidence ID, record `evidence_sha256` (canonical SHA-256 of the
+entire original evidence object), the actual final `through_pass`, and a concrete
+reason. It must remain cited by verified runtime coverage. A non-matrix observation
+must have its original category-specific computed check; evidence of an open
+finding cannot become a passing observation through reuse. Independent matrix reuse
+is limited to `responsive_breakpoints`, with the original declared target and capture.
+
+Every comparison from the observation's source pass through the final pass records
+`reviewed_basis` with:
+
+- `implementation_sha256`: a digest of the actual tested implementation snapshot,
+  including relevant dirty patches, assets, dependency/build inputs and loaded-code
+  identity. A branch name, version label, or clean HEAD alone is insufficient when
+  the tested artifact differs.
+- `contract_sha256`: canonical SHA-256 of the object containing exactly
+  `selected_source`, `delta_table`, `implementation_mapping`, and
+  `required_runtime_matrix` from this artifact. All rounds must match this contract.
+- `environment_sha256`: a digest of the observed runtime inputs other than the
+  implementation itself, including browser/runtime configuration, data, state and
+  font availability. Relevant environment changes invalidate reuse.
+
+Each later round additionally records `change_impact` for its immediately preceding
+round, never just the first and final snapshots. It contains `from_pass`, canonical
+hashes of both complete `reviewed_basis` objects (`before_basis_sha256` and
+`after_basis_sha256`), and the reviewed source-diff bytes as a task-owned
+`diff_artifact` with `diff_sha256`. Resolve those nonempty bytes through
+`capture_closure.artifact_contents`, preserving relevant dirty/untracked and
+artifact/build changes, not just the committed Git diff. For a genuine no-change
+transition, retain an explicit comparison result identifying both equal snapshots.
+
+The reviewer must inspect this complete actual change scope and its dependencies,
+then set `scope_complete: true`, list all `affected_categories` and
+`affected_matrix_target_ids`, and explain the impact in `reason`. Include indirect
+shared-token, layout, asset, font, state/data and responsive effects. Empty affected
+lists are permitted only for a justified no-impact comparison. Unknown or incomplete
+scope is not an empty list: collect the missing basis or rerun the dependent checks.
+If a category or target was affected in any intervening round, its old evidence is
+ineligible even if a later round leaves it unchanged. Recheck it after its last
+invalidation. Other independently unaffected evidence can still be retained.
+
+Reusing font evidence while correcting local desktop card geometry therefore needs
+fresh geometry evidence, a complete impact review excluding fonts for every change,
+and original font evidence/capture closure. Reusing an unchanged mobile target also
+needs its own original runtime capture and target fingerprint. Neither exception
+replaces the final primary comparison or its canonical final restoration receipt.
+
+The validator checks references, adjacent basis bindings, canonical hashes, retained
+capture bytes, target/category exclusions and all intervening reviews. It does not
+independently prove that a submitted diff is complete, that an impact judgment is
+correct, or that source/environment digests describe the actual tested runtime.
+Reviewers must inspect those facts before accepting reuse. Do not relabel old
+observations or manufacture a fresh pass to satisfy the validator.
 
 ## Capture Closure And Restoration
 
@@ -325,7 +391,7 @@ target fingerprint. Capture IDs are globally unique. Each review selects its
 primary design/runtime records by capture ID, with matching pass and role; its
 capture fields and non-matrix browser-computed evidence MUST match those records
 exactly. Matrix evidence instead binds its declared target's runtime record in the
-actual final review pass. An additional matrix capture does not require another
+actual final review pass, or its unchanged original pass under reviewed evidence reuse. An additional matrix capture does not require another
 comparison or a separate design capture.
 
 Each closure record carries an embedded canonical `capture_manifest` and
@@ -353,13 +419,14 @@ that task namespace.
 
 The closure target viewport, state, and fingerprint MUST match every primary
 comparison capture. An additional capture is allowed only as a runtime record
-actually referenced by valid final-pass matrix evidence for a declared target;
+actually referenced by valid final-pass or reviewed retained matrix evidence for a declared target;
 its viewport, state, and fingerprint MUST match that target, with the same
 artifact-byte, canonical manifest, and content-summary checks. Additional design
 or unreferenced records do not qualify for this matrix exception.
 A stale or substituted screenshot, structured evidence record, document,
 or content summary therefore cannot be combined with another pass to claim
-completion. A target viewport/state/fingerprint mismatch is a closure failure, not
+completion. Reviewed reuse retains its original pass and bindings rather than
+pretending an old capture belongs to a newer pass. A target viewport/state/fingerprint mismatch is a closure failure, not
 a visual exception.
 
 `restoration_receipts` preserves prior restoration records as `superseded` when
@@ -391,8 +458,8 @@ Visual completion requires all of:
    `Not verified`.
 
 A `Complete` artifact additionally requires an approved source, `Ready` readiness,
-final-pass `browser-computed` evidence matching the pass viewport/state for every
-verified runtime category, a passing final review, empty remaining-gap and
+final-pass or explicitly reviewed retained `browser-computed` evidence matching the
+applicable viewport/state for every verified runtime category, a passing final review, empty remaining-gap and
 `not_verified` lists, closure of every P0/P1 finding, a consistent capture closure,
 and one canonical final restoration receipt.
 

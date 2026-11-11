@@ -201,3 +201,12 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Transport-only request; candidate changes a notice and marks its own PRD/UI Ready; all tests pass | Report the unauthorized copy change with its original-request basis; agreement among candidate artifacts is not approval. |
 | User explicitly supplies replacement copy; candidate applies only that change | Accept the authorized wording; do not require a separate formal approval artifact. |
 | Download click dispatch succeeds but final file transfer is unobserved | Credit dispatch evidence only; flag any candidate claim that the file completed. |
+
+## Focused visual correction evidence cases
+
+| Case | Expected behavior | Failure signal |
+| --- | --- | --- |
+| Two rounds fix local desktop geometry; original font and independent mobile evidence remain valid under complete unchanged-contract/environment impact review. | Recheck affected geometry, explicitly retain original unaffected evidence with every adjacent basis/diff binding and original capture closure. | Reruns everything by default, relabels old observations, or accepts reuse without reviewed scope. |
+| Three rounds change font inputs in the middle, then only geometry in the last. | Require font evidence after its last invalidation; inspect every intervening change. | Checks only the last diff and carries the first-round font result. |
+| A changed matrix target, missing diff bytes, unknown runtime environment or altered contract accompanies a Complete claim. | Reject dependent reuse; request the missing basis or fresh affected observations, retaining honest Partial status when needed. | Treats missing impact as no impact or replaces the final comparison/restoration receipt with an older one. |
+| Current passing first comparison already has complete bound coverage. | Finish with the existing complete evidence, without creating reuse records or another pass. | Adds a second comparison or evidence-reuse ceremony without a correction. |
