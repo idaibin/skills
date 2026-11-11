@@ -47,6 +47,13 @@ Read existing retrospective/guidance authorities before proposing another one. I
 old claimed artifact is missing today, report unavailable rather than nonexistent or
 never created. Current repository/file state is separate from historical behavior.
 
+A stopped reply or terminal conversation turn does not establish task completion.
+For outcome or improvement claims, identify the completed or stably ended work and
+reconcile its pending execution and external results. Retain failed and cancelled
+attempts. A still-running task may supply known facts or stable fragments for analysis,
+but its unresolved result is not a success, failure, or measured improvement. Do not
+retry an uncertain action or take over its writer to finish the retrospective.
+
 ## 3. Find useful patterns
 
 For each material finding reconstruct: intended outcome → actual sequence → observed
@@ -69,6 +76,13 @@ Mechanical failures call for the cheapest existing deterministic check or wiring
 Judgment calls may justify a focused reviewer reference. Keep always-loaded guidance
 short and navigational; do not assume implementation agents need no quality guidance
 or reviewers have unlimited context. Use actual task evidence to decide placement.
+
+For a disputed judgment, retain the original decision, its evidence and assumptions,
+then identify the counterevidence and affected context. Propose the smallest revision:
+narrow an applicability condition, replace the decision, or withdraw it. If the evidence
+does not decide between explanations, keep the judgment unresolved and name the next
+discriminating check. A reasonable local decision need not become a universal rule;
+neither a counterexample nor a user correction alone proves the proposed repair works.
 
 ## 4. Distill scoped proposals
 

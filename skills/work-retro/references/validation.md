@@ -6,6 +6,31 @@ permissions, and stopping condition. Run only the checks authorized for this tas
 If executing a proposed fix belongs to another owner, provide its test plan and mark
 execution Not verified rather than doing the fix under retrospective authority.
 
+## Real-task validation plan
+
+When a proposal merits practical validation, use the original failed task or a
+structurally similar real deliverable, with its original owner and accepted quality
+criteria. A practice task still has to deliver the requested result; do not derive a
+weaker oracle from the proposal, the candidate output, or an easier demonstration.
+Provide this plan to the execution owner; retrospective authority does not run it.
+For interaction findings, name the actual user input and observable response that
+the owner should exercise. Static presence of an attribute, rule or configuration
+does not by itself verify that interaction.
+
+Evaluate delivery quality first, then observed rework, elapsed time, calls and other
+available measurements. A faster candidate that fails the original acceptance is
+rejected. Preserve failed attempts and unmatched conditions; missing elapsed-time or
+usage evidence stays unknown, not zero and not an estimate from message timestamps.
+Use a fixed comparable baseline before claiming an improvement. A comparison is not
+mandatory for every retrospective, and a synthetic case is not real-task adoption.
+
+Keep the stages distinct: evidence and scoped proposal; fixed candidate and regression;
+authorized delivery; observed installation/loading where applicable; and subsequent
+real-task results against the accepted criteria. A commit or matching installed files
+alone cannot establish loading or benefit. Revisit the judgment when later evidence
+contradicts it; keep project exceptions with their existing owners. Do not hot-change
+instructions in an active task or install the candidate as part of retrospective work.
+
 ## Minimum case set
 
 - Two structurally different positives: for example one repository session and a

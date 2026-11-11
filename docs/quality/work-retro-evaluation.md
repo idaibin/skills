@@ -1,6 +1,45 @@
 # work retro: candidate evaluation
 
-## Fixed basis
+## Current real-task validation follow-up
+
+- Repository base: `a9ee5c1b7086b86d94879bfc067ce4b292594551`.
+- First follow-up package hash: `f7cb1b28aeb0a7ee5a28aca578889eab98542ffb6545ce1c9c39ecf1d0a8464e`, using sorted repository-relative paths, NUL, then bytes.
+- Eleven fixed inputs/oracles: `evals/work-retro-cases.json`, SHA-256 `972d84a206ebcd4a2d3d03d802581e4678fa789e42634107a9bebfd88a7d1cda`.
+- The original eight cases are retained. Three new cases cover a terminal reply with
+  unresolved work, practice that must retain the original delivery acceptance, and
+  a local judgment revised by counterevidence. These are synthetic behavior cases,
+  not replays of private conversations or evidence of real-user improvement.
+- One fresh native task received only the Skill, non-evaluation references and the
+  eleven prompts without oracle fields. Its complete output is fixed at SHA-256
+  `22561134717dc21a435fb06fada7e5ad309de374e6953c30a45efeb35cd847cf`.
+  It is one task containing eleven responses, not eleven isolated processes.
+- Independent output review found ten cases fully satisfied and one partially
+  satisfied, with no critical output failure. `summary-duplication` did not explicitly
+  plan actual keyboard interaction; its other evidence/authority conditions passed.
+  This first result is retained, not converted into an eleven-case pass.
+- The refined package hash is `64fa2859397fc5586f2f794a3eba66b0b3f15d0fded99ee86c99c0693304e782`.
+  The validation method now requires actual user input and observable response for
+  interaction findings, rather than relying on static attribute/configuration presence.
+  The original partial case and three new cases form a separate targeted re-evaluation;
+  it does not re-execute or replace the first eleven-case result.
+- That fresh native task used the same four prompts without oracles or prior answers.
+  Independent output review found all four satisfied their original criteria, including
+  actual keyboard interaction in the previously partial case. Output SHA-256:
+  `e237381f6b0513f7bcba20a0f6af675a5d9ff1be400ac44996f6a294be51dc9f`.
+  This is a separate four-case result, not a final eleven-case rerun or a measured gain.
+- Native outputs and retained operation summaries are not a platform-exported tool
+  transcript. Output review alone cannot independently certify unobserved tool effects.
+- No installation, actual host loading, subsequent real-task improvement, measured
+  time/token savings, controlled behavioral A/B comparison or cross-host generalization
+  is established. Keep candidate status; the original task owner must separately
+  authorize and verify a bounded real-task pilot. Test and review evidence does not
+  supply that adoption authority.
+
+The implementation change links existing retrospective and validation methods; it
+does not add a runtime collector, telemetry ledger, automatic trial or persistent-rule
+writer. The historical results below retain their original source and candidate basis.
+
+## Historical fixed basis
 
 - Repository base: `293010c60183e006b6844b4a7b1b34980223eddf`.
 - Candidate: `skills/work-retro`, provider-neutral version `work.retrospective.analyze` 1.0.0.
