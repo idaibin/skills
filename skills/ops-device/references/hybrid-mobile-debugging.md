@@ -1,6 +1,6 @@
 # Hybrid Mobile Runtime Debugging
 
-Use when Android native-shell / uni-app / WebView behavior crosses the installed
+Use when hybrid native-shell / uni-app / WebView behavior crosses the installed
 base, resource update, native plugin and backend boundary. Keep project-specific
 commands and historical artifacts in their owning project; this reference captures
 the reusable decision rules from device-debugging evidence.
@@ -18,11 +18,19 @@ the reusable decision rules from device-debugging evidence.
 
 Bind project checkout/commit, effective configuration/environment, installed package,
 version/signing identity, native base and loaded resource bundle independently.
-An APK, WGT and H5 build with similar names are different surfaces. An installed
+An APK, WGT, HAP and H5 build with similar names are different surfaces. An installed
 custom debug base can load changed resources without proving the native base changed.
 Verify platform, ABI, minimum SDK and native plugin availability against the artifact
 before attributing a failure to page source. A stale or plugin-incomplete package may
 verify a control chain only; it cannot certify the requested feature.
+
+For a partial-patch package, record its actual base and included patch fingerprints;
+the workspace HEAD or matching version label does not establish its contents. For a
+HAP extracted from a signed application archive, retain parent/child hashes and the
+derivation record. An emulator run of the child is not a physical-device run of the
+signed parent. Installed package metadata and the delivered artifact's byte hash are
+different observations; verify their relationship or retain that identity gap. Supply
+these observations to the existing project acceptance record, not a second device ledger.
 
 Use current project runtime docs and existing acceptance tools before inventing a
 second business automation engine. Verify tool manifests, installed CLI help and

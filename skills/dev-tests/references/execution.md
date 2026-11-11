@@ -1,5 +1,13 @@
 # Existing-check execution
 
+## Contents
+
+- [Execution sequence](#execution-sequence)
+- [Cross-target evidence](#cross-target-evidence)
+- [Assertion scope](#assertion-scope)
+
+## Execution sequence
+
 Match verification to the stage and change impact. During iteration, run focused checks
 and necessary adjacent regressions; a wording edit, isolated logic fix and cross-module
 change need different scope. Before final submission/commit, require the complete
@@ -27,6 +35,11 @@ Return these gate results to `repo-delivery`; testing grants no commit or merge 
    dependency versions, start/end times, exit code, relevant assertions and artifact
    locations/digests. Scrub credentials and sensitive records from shareable evidence.
    Verify the observed application/process corresponds to the frozen target.
+   Bind the running mode as well as the port: an existing preview/Mock service is not
+   ordinary development merely because its app name and URL match. Use the project's
+   declared mode-specific oracle/runner option; when they disagree, classify the
+   setup mismatch before waiting through the same incompatible cases. Do not restart
+   another owner's service or change expected product behavior to manufacture a pass.
 5. On failure distinguish assertion/product failure, harness failure and unmet environment
    prerequisite. Preserve the first failure and a minimal reproducible sequence. A failed
    assertion is `failed`; inability to exercise it is `blocked`. Never count missing
@@ -38,6 +51,17 @@ Return these gate results to `repo-delivery`; testing grants no commit or merge 
 7. Verify cleanup and residual processes/resources for each run. Stop at the declared
    acceptance scope or a named prerequisite/authorization blocker; return incomplete
    dependent claims rather than cycling through alternate denied execution paths.
+
+## Cross-target evidence
+
+For cross-branch/runtime reuse, bind the original test hash, explicit destination
+source root, runtime and dependency resolution. Record adapter changes and exclusions
+without weakening behavioral assertions. Calling a legacy lifecycle method directly
+does not prove the new framework invokes it; require actual lifecycle dispatch for
+that claim, and route missing adapters/tests to their implementation owner. Where
+available, compare known failing and corrected source under the same oracle. Report
+raw runner failures separately from assertion defects and harness failures; retain
+excluded/discovered counts so omitted lifecycle cases cannot disappear into a pass.
 
 When tests resolve packages through another checkout/application, temporary links or
 ambient modules, record that dependency provenance as part of the run identity. Such

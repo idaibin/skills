@@ -145,6 +145,14 @@ relevant implementation/contract change. Unsettled semantics return to their own
 
 ## Generated coverage boundaries
 
+For cached or incremental consumers, cross navigation with the operation actually in
+flight: first read, refresh, continuation or user action. A loaded-page detail round
+trip does not cover a pending continuation. Assert retained rows/page/query/position
+and the next requested page together. For resource reuse, observe stable resource
+identity and necessary request counts, then removal/context disposal. Pair cancelled
+action checks with a valid active-context action; a permanently disabled action is
+not a successful stale-result fix. Select only rows required by the affected contract.
+
 Keep file/module dependencies separate from exported-symbol consumers. A shared import
 does not establish a caller of every export; resolve the named symbol, alias, namespace
 member and callback handoff, and retain computed/instance-dependent references as gaps.
