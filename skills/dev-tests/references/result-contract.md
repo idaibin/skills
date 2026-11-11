@@ -18,7 +18,7 @@ Missing input blocks only dependent rows; preserve feasible independent checks.
 ## Result
 
 - Basis: repository/revision/patch, contract versions, runtime/build/configuration identity.
-- Coverage rows: requirement/risk ID, layer, scenario, role, real/stubbed boundary, oracle,
+- Coverage rows: requirement/risk ID, platform/device kind, layer, scenario, role, real/stubbed boundary, oracle,
   fixture/source, command or recipe, run identity, state and supporting evidence. Keep
   separate rows for differently verified boundaries within the same layer. Maintain one
   current state per case and boundary; link historical attempts without presenting
@@ -32,7 +32,9 @@ Missing input blocks only dependent rows; preserve feasible independent checks.
   evidence from current-basis acceptance.
 - Conclusion: which scoped requirements are proven, whether the first real E2E exists
   and exactly where it begins/ends, and which required layers remain open.
-- Handoff: bounded input for implementation, operations, `to-task`, fixed-basis review or
+- Handoff: existing result location, reusable case/boundary IDs with basis/impact rationale,
+  next action and resource ownership/release state, following the [test record](test-record.md#summary-and-resume).
+  Supply bounded input for implementation, operations, `to-task`, fixed-basis review or
   authorized delivery. A target owner name is not proof it ran or permission to run it.
 
 For comparative performance rows include metric/start-end definition, baseline and

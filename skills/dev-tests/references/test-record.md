@@ -4,6 +4,15 @@ Adapt the project's existing record rather than creating a second ledger. With n
 existing record, use a concise Markdown report in its authorized evidence location.
 Keep normative specs separate from run results. No extra machine schema is required.
 
+## Contents
+
+- [Scope and basis](#scope-and-basis)
+- [Inventory and cases](#inventory-and-cases)
+- [Evidence sufficiency](#evidence-sufficiency)
+- [Defects](#defects)
+- [Summary and resume](#summary-and-resume)
+- [Safe reruns](#safe-reruns)
+
 ## Scope and basis
 
 Record: objective and included/excluded modules; authority paths/revisions; source
@@ -12,13 +21,23 @@ surface/tab; sanitized role/account category; data source/fixture version; viewp
 theme and time; allowed writes and cleanup. Identify missing identity rather than
 filling it from an older report.
 
+For packaged applications, extend the existing basis record with artifact type/path,
+hash, build provenance and actual patch scope; package/version/signing identity;
+installed target and physical/emulated device kind; native base/plugin and loaded
+resource-update identity where applicable. Keep parent/derived artifact hashes and
+their extraction relationship. A same-version partial patch build or extracted
+simulator artifact does not represent the whole checkout or a signed physical-device
+run. Record unknown bindings explicitly; no additional identity database is needed.
+
 ## Inventory and cases
 
 Keep an explicit page/function inventory when testing a whole application. For each
 included function list applicable roles, states and journeys, with exclusions justified.
-Keep one current result per case and evidence layer, linking its latest basis and raw
+Keep one current result per case, platform/device kind and evidence layer, linking its latest basis and raw
 evidence; historical attempt notes are not the current status. Reconcile that row when
 a result changes instead of adding a competing summary or a new continuation case.
+Platform and evidence layer are separate dimensions: reuse case design, not verdicts,
+between a browser, an emulator and a physical device or between Mock and real service.
 
 | ID / requirement | Route / journey / role | Preconditions and input | Steps | Expected result / basis | Layer / evidence | Result |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -77,6 +96,13 @@ fault settings, tabs and files separately from business success.
 End with the finite recovery queue: case, dependency/decision, precise resume action.
 An honest completed run may find defects or remain partial; it cannot claim whole
 system acceptance until the agreed coverage and required evidence are complete.
+
+Keep the existing handoff concise: actual checkout/source basis; artifact/target and
+loaded resources; authoritative result/evidence location; reusable completed case/layer
+IDs and impact rationale; next bounded action with its prerequisite; account lease,
+device lock, service/proxy/fault ownership and release/readback state. Store only
+sanitized references, never credentials or lease tokens. Recheck path access and
+resource identity on receipt; historical paths, PIDs and ports are not current facts.
 
 ## Safe reruns
 

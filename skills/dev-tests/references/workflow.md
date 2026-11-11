@@ -17,6 +17,15 @@ distinguish same-port IPv4/IPv6 listeners and multiple checkouts. HTTP reachabil
 does not prove runtime identity. A proxy and its upstream belong in the environment
 record. Verify the rendered application, route, role and dataset before interacting.
 
+For packaged or multi-platform runs, bind source, artifact lineage, installed base and
+loaded resources as described in the [test record](test-record.md#scope-and-basis).
+Establish account/resource ownership and check that the authorized role and dataset
+can exercise the planned branches before scaling a batch. An observed empty state
+can pass its own assertion while nonempty detail/pagination remains blocked by missing
+data. Follow the project's bounded identity-switch and credential procedures; missing
+data does not authorize creating records or changing permissions. Reuse this preflight
+within a stable batch; refresh only the bindings affected by a target or state change.
+
 Inspect current scripts/configuration and choose actual declared commands. Reuse the
 nearest effective tests; do not invent `test`/`lint` commands, treat a build as testing,
 or launch new infrastructure implicitly. Capture a task-local baseline before tests.
@@ -58,6 +67,10 @@ On resume, reconcile latest evidence into the original case IDs before choosing 
 Name the missing assertion and why existing evidence cannot answer it. Recover usable
 raw evidence before repeating actions; a fixture version change invalidates only cases
 whose consumed data or behavior changed. Reproduce stale defect claims before repair.
+Reuse the journey and stable ID across platforms, but keep each platform/device kind
+and real/Mock boundary's verdict independent. Prefer one available-data, read-only
+journey across the requested targets before expanding the matrix; this is sequencing,
+not permission to reduce the agreed scope.
 
 When the project maintains a generated asset/case catalogue, consume its existing
 stable IDs and run its drift/reference checks before selecting cases. Reconcile
@@ -105,6 +118,15 @@ automatically a product bug. After two failures for the same cause, retain both
 outcomes and stop that unchanged hypothesis; continue only with diagnostic evidence
 for a different route, while independent cases may proceed. A flawed Mock may hide missing fields or replacement
 semantics; verify against the contract before changing any fixture.
+
+For asynchronous filters, switches or loads, correlate action time, request identity
+and parameters, response arrival and the settled visible state. Compare baseline and
+candidate with the same input, role/data, cache/network conditions and bounded readiness
+criterion; an early screenshot or an extra click is not proof of a second-click defect.
+Inspect Mock matching and capture/log completeness before attributing a mismatch to
+the product. Equal settled results do not prove a repair changed behavior. Retain the
+first observation, any harness correction and the new result as separate attempts;
+an unexercised business assertion remains unverified.
 
 Test ownership does not authorize source repair. When repair is already in scope,
 the coordinator continues through the implementation owner, with required spec updates

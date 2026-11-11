@@ -184,6 +184,9 @@ Ordinary source changes preserve accepted copy and remove only proven obsolete c
 | Multi-section page ownership | Keeps route context, navigation, composition, and genuinely shared orchestration in a thin shell; assigns each independently stateful business tab/section its API, form, table, drawer, validation, and lifecycle owner; adds a focused ownership invariant when a credible seam exists. | Leaves independent business sections as large page-level conditional branches, duplicates shared owners per section, or enforces arbitrary line-count/component-per-file rules. |
 | File and function decomposition | Uses size only to trigger inspection; checks evidence-backed divergent change and shotgun surgery where relevant; applies the deletion test; separates presentation, business rules, data effects, lifecycle state, adapters, and orchestration at stable ownership/test seams; preserves local conventions and public behavior; leaves cohesive units intact. | Enforces line limits, infers change smells from counts, creates file-per-function or pass-through wrapper chains, moves logic merely to shorten a file, creates generic helper dumping grounds, or expands into unrelated legacy cleanup. |
 | New-file placement | Explains why existing candidates are insufficient and follows the current directory, naming, props, state, styling, export, and test conventions. | Creates a parallel `shared`, `common`, `ui`, `components`, hook/composable, store, or service layer. |
+| Feature surface and placement | Before adding or splitting, distinguishes summary/list/detail/layout, maps native owners and consumers, preserves external registry codes, and records missing surfaces without implementing them implicitly. | Names all business code after its first hosting page, imports cards from route pages, or claims full feature completion from a working card registry. |
+| Lifecycle adapter and local simplicity | Keeps domain options in their feature and lifecycle/cleanup in a fitting adapter; retains a cohesive one-use file and tool-required config when justified. | Requires multiple consumers for every resource boundary, forces one-file folders, or merges browser/Node config solely to reduce file count. |
+| Structure and identifier consumers | Tracks routes, scoped styles, resource URLs, ARIA/anchors and external selectors across moves; ensures negative checks retain a positively identified target. | Deletes IDs after searching only product imports, leaves selectors stale, or counts zero matches as preservation. |
 | DOM minimality | Removes or avoids wrappers, fragments, components, and classes that do not provide layout, semantics, state, accessibility, animation ownership, or reuse value. | Adds nested wrappers only to pass class names or group a single child. |
 | Layout path | Uses the shortest valid DOM path, prefers Flexbox for one-dimensional composition, and uses Grid only for genuine two-dimensional relationships. | Adds wrappers for simple alignment or uses multiple layout systems for one flow. |
 | Alignment ownership | Applies horizontal/vertical alignment or centering at the owning parent without adding a centering-only child wrapper. | Repeats alignment across parent and child layers or centers content that should follow normal flow. |
@@ -278,6 +281,8 @@ derive them from the current implementation or a report of another project.
 | Defer initial list startup; resize may query before its queue executes. | One necessary initial list request, independent ranking, later pagination/resize still query; precise untested runtime race is reported. |
 | The user requests only readonly diagnosis of slow navigation. | Route to the audit/review owner; no frontend source edits. |
 | A trace and source already show the proposed copy is conditional. | Confirm the exact existing seam as a no-op without inventing another optimization. |
+| A cached list has two completed pages; its third page is pending when detail opens. | Preserve accepted rows/query/position and resume page three; cover the actual router/KeepAlive seam, not only a loaded-list round trip. |
+| Appending five items recreates twenty successful image URLs; delayed external-open callbacks outlive departure. | Reconcile resources by identity and expire action intent at its accepted context boundary; retain valid active-context actions and avoid replaying writes. |
 
 ## Measured Outcome Cases
 
@@ -302,3 +307,11 @@ derive them from the current implementation or a report of another project.
 | Candidate PRD/UI marked Ready introduces “Handed to browser”; original request covers transport only | Treat the candidate wording as unapproved, retain the accepted baseline, and continue the authorized transfer work. |
 | User explicitly requests the notice “Downloading” | Apply that exact choice within scope without asking again; do not add completion claims, progress UI or other copy changes. |
 | No visible copy or feedback changes are needed | Complete the implementation without a copy rewrite, new governance document or extra approval. |
+
+## Cross-version correction cases
+
+| Case | Expected behavior | Failure signal |
+| --- | --- | --- |
+| MIG-01 Explicit fix transfer from a legacy branch to Vue 3 | Binds both dirty snapshots, preserves destination UI/platform behavior and existing request guards, adapts lifecycle and runs destination regressions. | Copies whole files or retains competing counters and legacy-only hooks. |
+| MIG-02 Contextual stale response in a paginated reusable dialog | Follows query/session ownership through reset, counts, pager snapshot, overlay dismissal and reopen; an old completion cannot unlock or close a newer operation. | Protects rows alone or assumes cancel-button cleanup covers overlay close. |
+| MIG-03 Valid no-op on matching corrected destination and current evidence | Reports the matching owner and evidence; leaves source unchanged and keeps unobserved device behavior separate. | Rewrites a correct guard or promotes source checks into native acceptance. |

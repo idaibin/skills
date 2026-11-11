@@ -1,9 +1,52 @@
 # Frontend Decomposition
 
-Load this reference when the authorized change touches a file, component, hook,
-composable, store, service, or function that mixes independently changing
+Load this reference before adding, moving or splitting frontend units, and when a
+touched component, hook, store, service or function mixes independently changing
 responsibilities. File or function length is a review signal only; cohesion,
 ownership, coupling, lifecycle, and verification determine whether to split.
+
+## Contents
+
+- [Decide Placement Before Editing](#decide-placement-before-editing)
+- [Diagnose Before Splitting](#diagnose-before-splitting)
+- [Ownership Targets](#ownership-targets)
+- [Preserve Locality](#preserve-locality)
+- [Avoid Cosmetic Decomposition](#avoid-cosmetic-decomposition)
+- [Completion Gate](#completion-gate)
+
+## Decide Placement Before Editing
+
+Use the existing design/task or a concise implementation note to name each affected
+responsibility, native owner/path, real consumer, dependency direction, reuse decision
+and behavior to preserve. Resolve ordinary placement within the accepted scope; ask
+only for a material unresolved product or architecture decision, not every filename.
+
+- Inventory the affected feature's summary/card, complete list, detail and navigation
+  surfaces. A working card or registry entry does not implement the whole feature;
+  record missing or out-of-scope surfaces without inventing routes or empty pages.
+- Own feature cards and private subcomponents by their business feature even when first
+  used on a homepage. Pages compose them; components do not import a page to reuse a
+  nested card. Keep a registry only where real dynamic composition consumes it, with
+  explicit local mappings and unchanged external codes.
+- Separate a shared route/layout lifetime from an individual page when both exist.
+  Preserve refresh, history, return position, cache identity and context-switch cleanup;
+  moving a file does not prove these behaviors survived.
+- Keep business chart options/data in the feature; an existing chart/platform adapter
+  owns instance creation, resizing, cancellation and disposal. A meaningful resource
+  boundary can justify an adapter with one current consumer; a pass-through cannot.
+- Give shared structure/state/style one actual component owner when its semantics fit.
+  Shared CSS alone is not component reuse. Keep local styles local; standalone shared
+  styles follow project convention and a bounded namespace. Do not move them through
+  global, page and component owners merely to reduce imports or shorten files.
+- Separate runtime assets from design references and verification artifacts. Check
+  consumers before moving/deleting; keep naming tied to role or feature, not the tool
+  that produced the file. Keep generated/vendor code under its existing authority.
+- Keep native config entry points and distinct runtime/type environments discoverable.
+  Merge only through supported tool configuration with equivalent checks; fewer root
+  files, one-file directories or another project's layout are not sufficient evidence.
+
+This names responsibilities, not mandatory directory names, a component quota, or a
+requirement to reorganize untouched code. Extend the nearest adopted structure.
 
 ## Diagnose Before Splitting
 
@@ -93,5 +136,9 @@ Do not use any of these as a completion target:
   private markup or call order unless that order is the contract.
 - Existing behavior, layout, accessibility, API semantics, and failure states remain
   unchanged unless explicitly authorized and verified.
+- Reconcile moves/renames with routes, dynamic registries, exports, style scopes,
+  resource URLs, IDs/ARIA/anchors and external test consumers, plus the existing docs.
+  A missing local import does not prove an identifier or tool entry is unused. Ensure
+  negative tests still target a positively identified surface after selector changes.
 - Report the resulting owners and any intentionally retained large cohesive unit; do
   not claim success from reduced line counts alone.

@@ -33,6 +33,13 @@ Select exactly one profile from repository evidence before applying framework-sp
 - Preserve native `data`, `computed`, watch options or owned `this.$watch`, `methods`, `provide`/`inject`, component Router guards, and lifecycle.
 - Keep dynamic watcher teardown, request cancellation, and `mounted`/`unmounted`/`activated`/`deactivated` ownership visible.
 - Do not add Composition imports, translate lifecycle mechanically, or convert the component merely to apply a rule.
+- When transferring a fix between Vue 2 and Vue 3, bind both worktrees and the
+  effective destination runtime, including local patches. Preserve destination
+  platform branches and existing guards instead of copying whole files. Vue 2
+  `beforeDestroy`/`destroyed` become Vue 3 `beforeUnmount`/`unmounted`; framework
+  component teardown and host page hooks such as uni-app `onUnload` are distinct.
+  Exercise real framework dispatch, not just a manually called hook. Keep one
+  owner for each request/session counter when equivalent fixes overlap.
 
 ## Shared Vue Contracts
 

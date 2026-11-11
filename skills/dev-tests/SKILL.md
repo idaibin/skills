@@ -31,7 +31,7 @@ checklist alone does not complete the run.
 | API or business-state behavior participates | [API and logic](references/api-and-logic.md) | Wire, business status and independent persistence assertions |
 | Pages, UI or clicks participate | [page walkthrough](references/page-walkthrough.md) | Reachability, real interaction and visible outcomes |
 | Record functional cases, defects or recovery | [test record](references/test-record.md) | Finite coverage, case evidence and recovery queue |
-| Code deletion or instruction changes participate | [change preservation](references/change-preservation.md) | Original acceptance, consumer regressions and qualified comparison |
+| Deletion, moves/renames, identifiers, enforcement rules or instructions change | [change preservation](references/change-preservation.md) | Original acceptance, positive controls, consumer regressions and qualified comparison |
 | Scoped performance acceptance or before/after comparison participates | [performance measurement](references/performance-measurement.md) | Comparable metrics, protected journeys and qualified verdicts |
 | Role isolation, concurrent users or load scenarios apply | [roles and performance](references/roles-and-performance.md) | Authorized scenarios, metric interpretation and comparable measurements |
 | Compose a result for review or another owner | [result contract](references/result-contract.md) | Versioned basis, coverage, evidence and handoff |

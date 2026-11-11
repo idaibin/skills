@@ -3,6 +3,39 @@
   "classification": "synthetic, project-neutral, decision-only",
   "cases": [
     {
+      "id": "partial-package-and-derived-target",
+      "prompt": "Use dev-tests and ops-device to classify these supplied synthetic records without operating any app or modifying files. Source S2 has several uncommitted changes. Package P keeps version 4.2 but was built from S1 plus patch X only. Child HAP H was extracted from signed archive A and ran one read-only case on an identified Harmony emulator. Only H has a retained byte hash; A has a filename. The installed package metadata matches version 4.2; loaded resource-update identity is missing. H5 Mock evidence separately proves the same case's long-ID parameter. A summary says the whole S2 checkout and signed physical-device package passed. Return the supported claims, gaps and smallest next checks in the existing case record.",
+      "oracle": [
+        "bind actual S1 plus X, not S2 or version label",
+        "retain parent hash and derivation gap; installed metadata is not artifact byte identity",
+        "keep loaded-resource identity unverified",
+        "credit observed emulator and H5 Mock assertions separately with their limits",
+        "no signed physical-device or whole-checkout pass, no implicit build/install or new ledger"
+      ]
+    },
+    {
+      "id": "empty-data-bounded-preflight",
+      "prompt": "Assess the remaining acceptance work from synthetic records. Existing cases C1 empty-state, C2 populated detail and C3 pagination use the same authorized account/project. A current matching receipt proves C1's empty state; the account has no records for C2/C3. The run is read-only. Project account rules permit one identity switch only after an explicit no-project or identity-permission mismatch; neither occurred. Another unrelated case has current complete passing evidence and verified cleanup. Return states and the next bounded work; do not execute anything.",
+      "oracle": [
+        "C1 pass is scoped to empty state",
+        "C2 and C3 blocked by absent data, not pass or excluded",
+        "no identity switch or new records without matching condition and authority",
+        "reuse unaffected current passing evidence without rerun",
+        "recover an authorized existing dataset and continue in original IDs"
+      ]
+    },
+    {
+      "id": "settled-filter-and-capture-correction",
+      "prompt": "Use dev-tests to interpret synthetic attempts, no execution or edits. On old and candidate packages, one click sends the correct filter request. An early frame before response shows the prior list and was labeled a two-click product defect. Under matched account/data/cache/network and the same bounded readiness criterion, both packages show the correct selected filter and list after their response, with equal settled results. A separate empty-floor assertion failed because its harness omitted one interception-log category; raw records show that category. Return defect attribution, improvement claim, evidence retention and minimal retest scope.",
+      "oracle": [
+        "correlate action, request, response and stable UI instead of requiring another click",
+        "equal matched settled results do not demonstrate repair improvement",
+        "classify the log omission as harness evidence, not product failure",
+        "retain original observations, correction and retest separately",
+        "route harness repair to owner and retest affected assertions only; no speculative product patch"
+      ]
+    },
+    {
       "id": "explicit-full-flow",
       "prompt": "Use dev-tests to assess accepted PRD R1 and UI U1: a save should persist exactly once and display confirmation. Current build b7 has 18 unit passes, direct handler tests and a screenshot. There are no HTTP, interaction or persistence receipts. Return the layered acceptance result and next smallest checks. Do not execute or modify anything.",
       "oracle": [
