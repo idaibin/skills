@@ -14,10 +14,33 @@ Use the first applicable source:
 5. for an independently isolated browser only, the package fallback:
    `1920 x 1080` CSS pixels for desktop Web and the named
    `iPhone 15` portrait device profile for mobile Web. For another user-named category,
-   choose one minimal representative viewport and report it as an assumption.
+   choose one minimal representative viewport and report it as an assumption;
+6. for a built-in browser whose shared viewport change is explicitly authorized by
+   both effective host policy and the user, choose one minimal representative
+   viewport without another dimensions question and report it as an assumption.
+   Record the shared control scope and restoration requirement; this fallback does
+   not establish isolation or authorize a previously prohibited change.
 
 Do not add unrequested breakpoint coverage. A current explicit user value overrides
 every older or broader default.
+
+## Surface defaults
+
+- Built-in browser: choose and apply the resolved viewport without asking the user
+  to choose dimensions when the host exposes an authorized viewport control. Verify
+  its scope and read back the result; being built-in does not by itself prove isolation.
+- Playwright: choose and set the resolved viewport without asking the user in a
+  task-owned isolated context. Preserve applicable host execution and headless rules.
+- Local user browser: use its current viewport without resizing. Do not block ordinary inspection on a size mismatch
+  with an isolated-browser default. Read and report the actual size. Only an
+  explicit responsive or exact-viewport acceptance requirement makes another size
+  necessary; use an authorized isolated surface if allowed, or leave only that
+  dependent claim `Not verified`. Do not silently replace a user-fixed local surface.
+
+Automatic size selection does not authorize changes to shared user state or expand
+browser control, account, navigation, or external-write permissions. Keep required
+source/runtime comparisons at matching actual viewport/state; current local size
+alone does not prove unexecuted responsive coverage.
 
 ## Application
 

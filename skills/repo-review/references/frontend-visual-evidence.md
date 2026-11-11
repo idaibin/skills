@@ -239,6 +239,15 @@ resource download:
 4. never switch silently to another visual source or call the unavailable original
    asset verified.
 
+For a built-in browser or task-owned isolated Playwright context, choose the
+applicable viewport without asking the user to choose dimensions, within verified
+host control authority. For an existing local user browser, use its current viewport;
+do not resize or block ordinary inspection merely to match a fallback size. An
+explicit responsive or exact-viewport requirement still needs matching evidence;
+otherwise mark only that dependent claim `Not verified`. Do not silently substitute
+another surface for a user-fixed local route. Source/runtime comparison still needs
+matching actual viewport/state and all required coverage.
+
 Browser work must preserve user state. Record initial tab, viewport, zoom, scroll, and
 target identity. Resolve viewport control permission from the effective host policy
 and user authorization before using setters or lifecycle operations. A task-owned tab

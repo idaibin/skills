@@ -99,6 +99,25 @@ class BrowserBackendContractTests(unittest.TestCase):
         self.assertIn("only within verified host policy and user authority", lifecycle)
         self.assertIn("Cleanup does not enlarge viewport control authority", usage)
 
+    def test_viewport_defaults_distinguish_builtin_playwright_and_local(self) -> None:
+        policy = self.read("skills/ops-browser/references/viewport-policy.md")
+        for term in (
+            "Built-in browser", "Playwright", "without asking the user",
+            "Local user browser", "use its current viewport",
+            "Do not block ordinary inspection on a size mismatch",
+            "explicit responsive or exact-viewport acceptance",
+            "does not authorize changes to shared user state",
+            "shared viewport change is explicitly authorized",
+            "both effective host policy and the user",
+            "without another dimensions question",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, policy)
+        protocol = self.read("protocols/frontend-visual-evidence-v1.md")
+        self.assertIn("use its current viewport", protocol)
+        self.assertIn("one qualifying comparison", protocol)
+        self.assertIn("all required coverage", protocol)
+
     def test_agentic_handoff_cannot_carry_write_authority(self) -> None:
         protocol = self.read("protocols/browser-operation-v1.md")
         self.assertIn("An LLM browser agent handoff must use", protocol)

@@ -42,7 +42,7 @@ cannot establish the missing browser target.
   target and meet the evidence need. A mobile browser page remains browser-owned;
   device launch, guest state and permissions belong to `ops-device`. A native app's
   WebView remains owned by its device or desktop-client Skill.
-- Resolve viewport control authority from host policy and user authorization. Task-owned tabs do not prove isolation; when shared-state changes are prohibited or their scope is unknown, use passive observation and stop affected operations.
+- Resolve viewport control authority from host policy and user authorization. Choose built-in browser and isolated Playwright dimensions without an extra size question; use a local user browser at its current size unless responsive or exact-viewport acceptance requires otherwise. Task-owned tabs do not prove isolation; when shared-state changes are prohibited or their scope is unknown, use passive observation and stop only affected operations.
 
 ## Output Map
 
