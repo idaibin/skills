@@ -41,6 +41,12 @@ Receipt lifecycle, storage layout, adapter name, or product-specific schema name
 Expose a provider-neutral input/result contract; the calling host owns translation,
 retention, and delivery receipts outside `skills/<name>/`.
 
+For a bundled CLI or script, resolve its entrypoint relative to the actual loaded
+Skill directory. Use the task's working directory for project arguments. A host
+registration can be reused when it binds the same package entrypoint. Installation
+or invocation of a Skill must not require global commands, shell profile changes,
+or persistent environment variables for its bundled tools.
+
 ## Metadata
 
 - `name` and `description` are required.
