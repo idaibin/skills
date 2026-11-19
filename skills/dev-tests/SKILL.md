@@ -38,7 +38,7 @@ checklist alone does not complete the run.
 
 ## Invariants
 
-- Derive user-facing copy and feedback type/timing expectations from the original request and accepted Product/UI decisions, not candidate output. Exercise the affected state; distinguish action dispatch from progress/completion. Candidate specs, tests and green counts cannot approve an unsupported presentation change.
+- Derive visible copy, control and feedback expectations from the original request and accepted Product/UI decisions. Check the rendered failure state for unapproved additions. When pending or unknown writes can reach a subsequent independent action, exercise the sequence: the original write cannot repeat while unresolved, and the independent action remains usable and submits as specified. Verify actual dispatch separately from completion. Candidate specs and green tests supply no approval.
 
 - Product behavior belongs to `product-spec`, visual behavior to `ui-spec`, and wire
   semantics to `api-spec`. Test ambiguity cannot silently decide those contracts.

@@ -201,6 +201,7 @@ Score each quality case from 0 to 10. Minimum pass: all trigger/non-trigger expe
 | Transport-only request; candidate changes a notice and marks its own PRD/UI Ready; all tests pass | Report the unauthorized copy change with its original-request basis; agreement among candidate artifacts is not approval. |
 | User explicitly supplies replacement copy; candidate applies only that change | Accept the authorized wording; do not require a separate formal approval artifact. |
 | Download click dispatch succeeds but final file transfer is unobserved | Credit dispatch evidence only; flag any candidate claim that the file completed. |
+| A fixed diff adds an unapproved recovery banner and uses a shared cancellation-result flag to disable the fresh reservation form. Candidate tests assert both behaviors. | Require changes for the visible additions and the overbroad guard. Check the actual cancel-then-create transition in the evidence; a green snapshot based on the candidate cannot justify a pass. |
 
 ## Focused visual correction evidence cases
 

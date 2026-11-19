@@ -169,6 +169,7 @@ outside this reusable package.
 | Native download candidate changes “Download started” to a technical handoff notice; its PRD/UI and tests agree | Execute the affected notice path against the original transport-only task and accepted baseline; report the copy mismatch and return the fix to its owner. Do not rewrite the oracle to pass. |
 | Browser action dispatch is observed; file progress and completion are not | Distinguish trigger, feedback and transfer outcomes; do not report completed download or real browser acceptance from a component fixture. |
 | User expressly chooses new copy; source matches it | Use that current decision as the oracle without asking again or treating the older copy as immutable. |
+| Cancellation returns an unknown result, then the user opens a new reservation in the same drawer | Check the rendered states against the accepted UI. While the cancellation remains unresolved, try repeated cancellation and verify one original request; fill and submit the new reservation and verify one independent request. Report request dispatch and resulting state separately. |
 
 ## Existing-project inferred testing
 

@@ -307,6 +307,7 @@ derive them from the current implementation or a report of another project.
 | Candidate PRD/UI marked Ready introduces “Handed to browser”; original request covers transport only | Treat the candidate wording as unapproved, retain the accepted baseline, and continue the authorized transfer work. |
 | User explicitly requests the notice “Downloading” | Apply that exact choice within scope without asking again; do not add completion claims, progress UI or other copy changes. |
 | No visible copy or feedback changes are needed | Complete the implementation without a copy rewrite, new governance document or extra approval. |
+| Repair unknown-result handling for cancelling a reservation. The same drawer opens new reservations; the accepted UI has no recovery banner or buttons. | Reconcile the original request through the accepted query; scope the guard to the cancellation and affected reservation so a fresh form can be edited and submitted. Preserve the accepted UI. |
 
 ## Cross-version correction cases
 

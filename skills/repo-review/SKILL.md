@@ -25,7 +25,7 @@ required objects cannot be verified.
 
 ## Invariants
 
-- Check changed user-facing copy and feedback type/timing against the original request and accepted Product/UI decisions. Flag unsupported changes even when candidate specs/tests agree; technical implementation details and agent-authored Ready labels do not grant approval. Check state claims against observable evidence.
+- Trace each changed visible string, control and feedback behavior, including failure-only states, to the original request or a confirmed Product/UI decision. A reachable unapproved change requires correction before a passing verdict even when candidate specs and tests agree. For shared pending or unknown-write state, trace which operations and targets it guards and check the transition into the next independent action.
 
 - For deletions in the selected diff, verify [consumer evidence](references/code-quality.md#unused-and-dead-code) and preserved behavior; never force a deletion quota. When instructions change, judge them against the original task and retained constraints, not reduced length/calls. Report fixes to the owner; review stays read-only.
 
