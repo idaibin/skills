@@ -328,6 +328,7 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertIn("observable tool call", prompt)
         self.assertIn("Before the first edit", prompt)
         self.assertIn("defining symbol", prompt)
+        self.assertIn(f"Tool-call budget: {case['max_tool_calls']}", prompt)
 
     def test_implicit_prompt_exposes_catalog_not_expected_owner_or_skill_path(self) -> None:
         case = self.case("dev-frontend-implicit-source-change")
@@ -516,6 +517,22 @@ class RunLiveAgentEvalTests(unittest.TestCase):
             with self.subTest(command=command):
                 self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [{**item, "command": command}]}, owner, None, source))
 
+    def test_numbered_cat_batch_binds_the_actual_source_before_any_edit(self) -> None:
+        path = "src/components/neutral-panel.ts"
+        source = (FIXTURE / path).read_text()
+        lines = source.splitlines()
+        numbered = "\n".join(f"{n:6}\t{line}" for n, line in enumerate(lines, 1))
+        command = f'/bin/zsh -lc "cat -n {path} other.ts"'
+        for next_line in (1, len(lines) + 1):
+            output = numbered + f"\n{next_line:6}\tother file"
+            item = {"order": 2, "command": command, "output": output}
+            facts = {"successful_commands": [item]}
+            owner = path + ":renderNeutralPanel"
+            self.assertTrue(RUNNER.trace_inspected_owner(facts, owner, 3, source))
+            self.assertFalse(RUNNER.trace_inspected_owner(facts, owner, 2, source))
+            for wrong in ({"command": "cat -n other.ts"}, {"output": output.replace(lines[1], "truncated")}):
+                self.assertFalse(RUNNER.trace_inspected_owner({"successful_commands": [item | wrong]}, owner, 3, source))
+
     def test_owner_inspection_cannot_join_path_and_symbol_from_different_or_failed_items(self) -> None:
         events = [
             {"type": "item.completed", "item": {"id": "path", "type": "command_execution", "command": "rg source", "aggregated_output": "src/components/neutral-panel.ts", "status": "completed", "exit_code": 0}},
@@ -703,6 +720,13 @@ class RunLiveAgentEvalTests(unittest.TestCase):
             "git config --local --list",
         ):
             self.assertFalse(RUNNER.trace_has_git_write({"all_commands": [command], "commands": []}), command)
+
+    def test_directory_glob_in_search_does_not_hide_a_second_git_command(self) -> None:
+        search = "rg --files --hidden -g '!.git'"
+        facts = {"commands": [f'/bin/zsh -lc "{search}"']}
+        self.assertFalse(RUNNER.trace_has_git_write(facts))
+        mixed = {"commands": [f'/bin/zsh -lc "{search} && git add -A"']}
+        self.assertTrue(RUNNER.trace_has_git_write(mixed))
 
     def test_git_write_classifier_ignores_only_literal_printer_text(self) -> None:
         for command in (

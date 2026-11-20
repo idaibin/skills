@@ -473,7 +473,7 @@ def trace_has_git_write(facts: dict[str, Any]) -> bool:
         # Literal printer arguments are output text. Substitutions and other
         # launchers remain untrusted and cannot establish a read-only Git call.
         for argv in segments:
-            if not argv or Path(argv[0]).name == "git" or not re.search(r"(?<![\w/-])git(?:\s|$)", " ".join(argv)):
+            if not argv or Path(argv[0]).name == "git" or not re.search(r"(?<![\w./-])git(?:\s|$)", " ".join(argv)):
                 continue
             executable = Path(argv[0]).name
             literal_printer = executable in {"echo", "printf"} and not any(
@@ -657,12 +657,14 @@ def rg_captured_source(command: str, output: str, path: str, source_text: str) -
     return bool(lines) and all(captured.get(number) == text for number, text in enumerate(lines, 1))
 
 
-def nl_captured_source(command: str, output: str, path: str, source_text: str) -> bool:
-    """Accept complete ``nl -ba`` output only when every numbered line matches."""
-    if not any(
-        argv and Path(argv[0]).name == "nl" and path in argv and "-ba" in argv
-        for argv in command_argv_segments(command)
-    ):
+def numbered_captured_source(command: str, output: str, path: str, source_text: str) -> bool:
+    """Bind a named file read to its complete numbered source block."""
+    readers = [argv for argv in command_argv_segments(command) if argv and path in argv[1:]]
+    numbered_cat = [
+        argv for argv in readers if Path(argv[0]).name == "cat"
+        and argv[1] in {"-n", "--number"} and all(not arg.startswith("-") for arg in argv[2:])
+    ]
+    if not numbered_cat and not any(Path(argv[0]).name == "nl" and "-ba" in argv for argv in readers):
         return False
     lines = source_text.splitlines()
     if not lines:
@@ -681,7 +683,13 @@ def nl_captured_source(command: str, output: str, path: str, source_text: str) -
     if current:
         blocks.append(current)
     expected = list(enumerate(lines, 1))
-    return any(block == expected for block in blocks)
+    if any(block == expected for block in blocks):
+        return True
+    # Some cat implementations number multiple files continuously. When the
+    # owner is the first file, the full prefix must match before the next file.
+    return any(argv[2] == path and len(argv) > 3 for argv in numbered_cat) and any(
+        block[:len(expected)] == expected for block in blocks
+    )
 
 
 def trace_inspected_owner(facts: dict[str, Any], owner: str, before_order: int | None, source_text: str) -> bool:
@@ -692,7 +700,7 @@ def trace_inspected_owner(facts: dict[str, Any], owner: str, before_order: int |
         if (
             (argv_reads_path(item["command"], path) and source_text in (item.get("output") or ""))
             or rg_captured_source(item["command"], item.get("output") or "", path, source_text)
-            or nl_captured_source(item["command"], item.get("output") or "", path, source_text)
+            or numbered_captured_source(item["command"], item.get("output") or "", path, source_text)
         )
         and symbol in (item.get("output") or "")
     ))
@@ -752,6 +760,12 @@ def build_eval_prompt(case: dict[str, Any], provider_note: str) -> str:
             "Keep evaluation writes within this fixture.",
             "Follow its AGENTS.md. Never stage, commit, push, or access external services.",
             skill_instruction,
+            f"Tool-call budget: {case['max_tool_calls']} calls, including file edits. "
+            "Batch independent reads in a single shell invocation (for example, cat several files). "
+            "Read the applicable host instructions, candidate entry and fixture instructions together when known. "
+            "Keep the full entry and required source evidence visible. Combine dependent steps only after their "
+            "prerequisites are established. The runner captures Git state before and after the task. "
+            "Use that capture for bookkeeping and spend calls on the requested work and focused check.",
             case["prompt"],
             "Run the repository-defined focused check." if case["required_changed_paths"] else "Do not modify the fixture; report only the requested owner result or stop.",
             provider_note,

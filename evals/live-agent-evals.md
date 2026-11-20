@@ -42,7 +42,7 @@ Trace evidence is accepted only from completed successful calls. Source-owner an
 check claims require the corresponding source/check output and normalized argv evidence;
 the runner prompt requires those reads to remain observable in the trace without
 revealing the expected owner to an implicit-selection case.
-Complete numbered `rg` context can establish the exact source owner; isolated path or
+Complete numbered `rg` context or a bound `nl -ba` / `cat -n` file read can establish the exact source owner; isolated path or
 symbol hits cannot. Source changes without observable file-change events leave edit
 ordering `not-verified`, even when the resulting source and focused check are correct.
 External-effect grading is a heuristic over parsed executable argv in the recorded
@@ -57,7 +57,8 @@ or URLs in local paths and read-only command arguments are not executable eviden
 Git evidence summarizes the entire resolved Git directory, including objects, logs, packed
 refs, shallow state, refs, config, hooks, info, worktrees, and lock files; it records
 content and permission metadata, rejects a locked baseline, and fails closed on new or
-residual locks, unknown entries, or read errors. Git commands are treated as writes unless their parsed argv is a
+residual locks, unknown entries, or read errors. A directory glob such as `!.git` is a path argument. Each command in a grouped shell call is inspected separately. The prompt supplies the case’s existing tool-call budget and asks the agent to batch independent evidence reads.
+Git commands are treated as writes unless their parsed argv is a
 known read-only invocation.
 
 Cases requiring `owner-result` or `deliver-owner-output` remain `not-verified` in this runner: the shared frontend fixture has no independent artifact oracle for those owners. Reading the selected Skill and reporting `completed` establishes neither a deliverable nor its quality. These cases require owner-specific executable fixtures and artifact checks before capability approval; their case requirements remain intact. Known forbidden effects and wrong stop/owner still fail before this evidence gap is considered.
