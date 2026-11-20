@@ -9,6 +9,14 @@ from pathlib import Path
 
 
 PROTOCOLS = {
+    Path("protocols/frontend-ui-regression-v1.md"): (
+        Path("skills/dev-frontend/references/frontend-ui-regression.md"),
+        Path("skills/repo-review/references/frontend-ui-regression.md"),
+    ),
+    Path("scripts/replay-ui-regression.py"): (
+        Path("skills/dev-frontend/scripts/replay-ui-regression.py"),
+        Path("skills/repo-review/scripts/replay-ui-regression.py"),
+    ),
     Path("protocols/frontend-css-governance-v1.md"): (
         Path("skills/dev-frontend/references/frontend-css-governance.md"),
         Path("skills/repo-audit/references/frontend-css-governance.md"),
