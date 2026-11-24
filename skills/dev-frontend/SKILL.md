@@ -16,7 +16,7 @@ human confirmation and continue independent tests without changing product behav
 
 | Request condition | Read | Result |
 | --- | --- | --- |
-| Author or repair frontend Playwright journey tests | [Playwright test authoring](references/playwright-e2e.md) | Evidence-labeled scripts; no business-policy approval |
+| Author or maintain frontend Playwright journeys from a test plan or retrospective | [Playwright test authoring](references/playwright-e2e.md) | Runnable case mapping, observable assertions and evidence boundaries |
 | New or changed UI copy/controls, selected design, or repeated interaction | [Visible UI change checks](references/frontend-ui-regression.md) | Original authority, same-state comparison and public interaction owner checked for affected rows |
 | Any frontend source change | Applicable sections of [checklist](references/checklist.md) | Reuse-first implementation |
 | Explicit project UI guidance create/update request | [project UI guidance](references/checklist.md#project-ui-guidance) | Evidence-backed project rules and checks |

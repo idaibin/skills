@@ -25,6 +25,10 @@ runtime, runner, lockfile, module, fixture and authentication owners. Runner-onl
    of that same assertion run. Carry its ID through the project's existing title/annotation convention. Do not invent an
    additional registry; adopt a required title prefix only for an explicitly selected
    report adapter. Cover the visible outcome, not merely the successful click.
+   For a single-field edit, seed distinguishable existing values, change only that
+   field through the UI and compare the outgoing identity and untouched fields
+   with the fixture. When persistence matters, specify the independent readback
+   in the test plan.
 4. Use locator auto-waiting and web-first assertions. Wait for a relevant response or
    state transition rather than fixed sleeps or universal network-idle waits. Verify
    the actual response/business result when the scoped case requires it. Refresh
@@ -58,6 +62,15 @@ without authority. After a human decision, update affected tests and rerun the r
 cases while retaining previous failures; no whole-module approval wait is required.
 
 ## Handoff
+
+When a feature spans several pages or journey files, select its cases from the
+existing runner inventory. Select whole feature-owned groups or use case metadata
+for mixed groups. List and execute from the same selection so a new group member
+appears in both modes without maintaining a second allowlist.
+Prefer the runner's native list mode. A custom runner can list IDs before opening
+a browser, resolving credentials or contacting an application. Check a cross-page
+case, a focused subset and an empty match. Keep separate runners visible in the
+plan, and record listed IDs separately from cases that produced a runtime result.
 
 Return changed test/config paths, case mapping and expectation sources, unchanged
 or revised basis, static results, actual runtime evidence where available, failure classification and

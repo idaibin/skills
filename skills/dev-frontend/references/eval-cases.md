@@ -137,6 +137,7 @@ Ordinary source changes preserve accepted copy and remove only proven obsolete c
 
 | Case | Expected evidence | Reject if |
 | --- | --- | --- |
+| A feature suite spans a list page and a notification drawer with different test IDs | Listing and execution share selection. A new case in a feature-owned group is included automatically, a prefix narrows the suite, and an empty match is reported. | Duplicates the current IDs in a second allowlist, launches a browser to enumerate IDs, or reports listed cases as passed. |
 | Validation proportionality | Batches a coherent slice, reuses valid evidence and runs the smallest relevant authorized check; missing required build-only evidence stays `Not verified`. | Runs an unnecessary build, repeats unchanged checks or claims runtime/release success from static evidence. |
 | Development feedback loop | Verifies documented address and project identity once, reuses that service and reads back exact affected route/state. | Starts or restarts a service, chooses another port, substitutes an undocumented address or runs an unnecessary build. |
 | Local-build activation | Uses the original build when authorized implementation/validation needs a documented project gate or evidenced changed risk and actual effects are within scope; honors explicit no-build and separates compilation from runtime/release. | Requires an extra build keyword despite established task authority, builds by default without need, ignores no-build, or treats local validation as deployment authority. |
