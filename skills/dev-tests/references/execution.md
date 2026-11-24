@@ -102,6 +102,10 @@ without authentication data, correlate them to the page result, and exercise
 affected caller modes. A larger Mock suite, historical diff or independent static
 review cannot substitute for the unavailable original runtime retest.
 
+If a test stops before its business assertion, record the first failed prerequisite. To test an environment hypothesis, keep code, input and command fixed in two isolated child processes and change one inherited setting. Verify the intended assertion becomes reachable and report the original gate separately. Preserve user-wide configuration and existing access controls.
+
+For repeated cases, reconcile the planned hosts, IDs and round numbers against the individual receipts. Count missing, duplicate and failed rounds explicitly. Report the first failure on its own basis alongside the fixed run. Attribute each claim to the layer actually observed, including app code, external authentication, asset origin, proxy or deployed response.
+
 ## Assertion scope
 
 Name the assertions actually executed. Reaching an intercepted request with a syntactic

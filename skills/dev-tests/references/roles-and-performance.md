@@ -25,6 +25,15 @@ explicitly report missing budgets. Do not invent numeric pass thresholds. Declar
 - relevant CPU, memory, connection/storage/resource use;
 - agreed budget, abort threshold and cleanup.
 
+Choose a closed workload for fixed active users or an open workload for independently
+scheduled arrivals. In a closed loop slower replies reduce the rate of new iterations.
+Report achieved arrivals, dropped iterations and completed requests or business operations
+in their own units. Smoke-test correctness before steady, stress, spike or soak runs as
+needed. Report HTTP and business failures separately, and check backlog and pool recovery
+after load subsides. With k6, gate required business checks with thresholds and verify
+that a sample breaching the agreed threshold produces a nonzero exit and a sample
+within it passes. Count failed checks even when their rate stays within budget.
+
 ## Frontend Measurement Interpretation
 
 Distinguish field user-experience metrics, laboratory diagnostics, business-interaction

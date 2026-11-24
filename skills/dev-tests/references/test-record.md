@@ -4,6 +4,12 @@ Adapt the project's existing record rather than creating a second ledger. With n
 existing record, use a concise Markdown report in its authorized evidence location.
 Keep normative specs separate from run results. No extra machine schema is required.
 
+Keep reusable cases and executable test assets in the adopted test workspace. Put
+one-off reports, logs and captured evidence in the host-approved, ignored run-local
+location by default; use a maintained documentation location only when the user or
+project explicitly requires a durable report. Preserve existing evidence and its
+consumers unless migration or removal is separately authorized.
+
 ## Contents
 
 - [Scope and basis](#scope-and-basis)

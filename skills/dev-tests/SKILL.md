@@ -20,9 +20,11 @@ and provisional exploration retain their narrower meaning. Reuse the project tes
 When asked to execute functional acceptance, run the reachable authorized cases; a
 checklist alone does not complete the run.
 
-When the request is limited to updating test assets, map historical decisions and
-corrections to the project's existing case IDs. Validate the changed assets in the
-available environment and report exactly which assertions ran.
+For test-asset updates, establish the reported issue and evidence limits first.
+Update guidance and existing cases, align the owning docs, then retest and report
+the observed layer, proposed fix, owner and verification method.
+
+For a new, disputed or previously false-green case, use the [case-oracle check](references/coverage.md#checking-the-case-itself) before relying on its verdict.
 
 ## Route Map
 

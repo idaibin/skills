@@ -1,5 +1,13 @@
 # API and business logic
 
+## Contents
+
+- [Contract to observation](#contract-to-observation)
+- [Case selection](#case-selection)
+- [Shared contracts and service limits](#shared-contracts-and-service-limits)
+- [Fixtures and fault control](#fixtures-and-fault-control)
+- [Evidence limits](#evidence-limits)
+
 ## Contract to observation
 
 Use available confirmed API rules, feature behavior and the actual frontend consumer.
@@ -46,7 +54,24 @@ Select cases that apply; this is not authority for security probes, load testing
 credential changes or destructive data operations. Discover read-versus-write behavior
 even for GETs such as mark-read or launch endpoints before invoking them.
 
+## Shared contracts and service limits
+
+| Risk | Discriminating checks |
+| --- | --- |
+| Contract drift | Compare the owner's shared schema and accepted exceptions with the operation's request, success/error responses, raw observations and consumer mapping. Check direction, nesting, nullability and scalar type. Use different non-default page numbers; request and response may use different names. For options, use independently seeded label/value pairs. Swap two same-typed IDs as a failing control and reorder intact pairs when order is free. Attribute response shape, pair matching, visible selection and submitted ID to their respective observations. Vary dynamic source independently in two samples, including error responses where it applies. An example literal alone cannot establish a constant. |
+| Authorization | Use an approved decision table with synthetic owner, peer and other tenant. Check allowed and denied decisions, returned fields, side effects and independent readback. Distinguish policy-unit checks from enforcement by a running service. |
+| Pagination and sorting | With fixed rows exercise first, full, partial last and empty pages. Put tied sort values across a boundary; check documented tie-breaker, direction and null handling. Compare all ordered IDs with an independent list. For changing data use the accepted cursor/snapshot or offset consistency guarantee. |
+| Concurrency | Coordinate independent operations at a known boundary. Cover both orders, duplicate versus separate intent, conflicting versions, rollback, and timeout after commit. Count durable effects and re-read by business key. Bind the expected outcome to the agreed idempotency scope and consistency window. |
+| Query cost and overflow | At two bounded cardinalities record query count, rows examined/returned, bytes, elapsed time and applicable plan or budget. Compare equal filters and cache states. Test page offsets, counts, IDs and money at their representation boundaries through storage, wire and consumer. |
+| Cache lifecycle | Scope keys by tenant, identity and query. Exercise miss, hit, expiry, update/delete, late repopulation and authoritative readback under the accepted freshness rule. Distinguish an expired old session key from overlapping rotations. Root cause requires correlated server observations. |
+
 ## Fixtures and fault control
+
+For transaction, locking or uniqueness claims, execute the relevant storage behavior on
+an isolated instance of the target engine. Inject failure between dependent writes and
+read the committed outcome independently. For migrations, seed records in the previous
+format, apply the migration and verify existing data and a new write through supported
+entry points. Record which storage and migration paths the test actually exercised.
 
 Label Mock, intercepted, test-service and real-service results separately. Inspect
 the fixture's schema, status semantics, pagination/filter behavior and persistence

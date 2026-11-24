@@ -13,6 +13,8 @@ the shell, shared component, UI adapter and page owners before attributing a vis
 issue. Compare like-for-like states against the accepted reference, not whichever
 other checkout happens to look right. Contracts can supersede a legacy comparison.
 
+When comparing create and edit, choose an existing record whose value differs from the create default and from the first list option. Check the actual record ID, hydrate from detail, edit, save, reopen and read the same ID. For an enabled sensitive field, distinguish missing, masked and valid leading-zero values as permitted by the contract. Use synthetic values for recordings and retain presence, type, length or equality for real data.
+
 ## Walk the page
 
 | Surface | What must be observed |
@@ -32,6 +34,12 @@ changing strategy. A controlled input or editor must show the intended value bef
 calling it filled; use its native supported controls, not direct app-state mutation.
 
 ## UI evidence
+
+Use simulated DOM tests for state and event assertions. Use a rendering browser for
+geometry, hit testing and scrolling. Bind an approved screenshot to its OS, browser,
+viewport, fonts, theme and data. Record keyboard and assistive-technology checks
+separately from automated accessibility findings; a clean scan covers its rules only.
+For a native WebView integration claim, exercise the target host and system interaction.
 
 For asynchronous overlays, exercise focus across loading, failure, retry, busy controls,
 control replacement and close. Check applicable Tab/Shift+Tab containment and restored

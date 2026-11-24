@@ -2,6 +2,7 @@
 
 ## Contents
 
+- [Checking the case itself](#checking-the-case-itself)
 - [Existing-project default](#existing-project-default)
 - [Turning history into regression cases](#turning-history-into-regression-cases)
 - [Reported failures and preserved behavior](#reported-failures-and-preserved-behavior)
@@ -84,6 +85,27 @@ and assertions: a test name, count or configured workload is not coverage eviden
 For a requested release-readiness assessment, identify missing version-bound health
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
+
+## Checking the case itself
+
+Describe the subject, test level and real dependencies, quality attribute, purpose and
+execution method independently. One automated browser journey can exercise functional
+regression across several components. Count its case ID once. A static review can
+establish a contract conflict. A runtime verdict needs an observed result at its claimed
+boundary. For confirmation, replay the original failure. For regression, select the
+other behaviors exposed to the change, including consumers of a shared component.
+
+Use equivalence classes and adjacent boundary values for input limits, decision tables
+for interacting conditions and transition tables for lifecycle rules. For a latest-query
+rule, observe A and B dispatched, B rendered, then A delivered to the still-mounted
+consumer. Compare the final row identities, count and current error state. Exercise the
+cancelled-request and debounce paths separately when they apply.
+
+Name the independent authority, version, operation, role, initial state, unit, observable outcome and counterexample. Distinguish an accepted rule from an example, an observed baseline and a question. Trace who produced the expected and actual values. A document, mock and client type copied from the same response represent one source.
+
+For a new or disputed high-risk case, freeze inputs and oracle. Run a known-good example and a single relevant bad variant under the same harness. Check that the good example passes, the bad one fails at the intended assertion, and restoring the good example passes again. Include a legitimate variation likely to be over-rejected, such as another valid source or a second independent action. A setup error or an unobserved input cannot qualify the control. Reuse matching evidence on an unchanged basis.
+
+If both variants pass, record a test gap. If the accepted example fails, check setup, reachability and oracle before assigning a defect. If the trigger never occurred, record an inconclusive execution. If authorities conflict, retain the competing meanings and owner decision needed. Require evidence to declare either success or failure.
 
 ## Existing-project default
 

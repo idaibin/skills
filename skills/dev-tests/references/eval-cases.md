@@ -2,6 +2,8 @@
 
 ## Contents
 
+- [Oracle discrimination](#oracle-discrimination)
+
 - [Product Copy Preservation Cases](#product-copy-preservation-cases)
 
 - [Existing-project inferred testing](#existing-project-inferred-testing)
@@ -162,6 +164,16 @@ outside this reusable package.
 | The live port belongs to the app but runs its isolated preview mode | Selects the declared preview oracle after verifying process/mode; ordinary-mode acceptance remains separate. | Repeats incompatible cases, restarts another owner's service, or calls a timeout a product defect. |
 | A two-page list navigates away while page three is pending | Tests the interrupted continuation, retained rows/query/position and next request together. | A loaded-list return or first-page-only test is reported as complete cache coverage. |
 | Cancelling a stale external-open action passes | Also verifies an active action still opens and only its authorized write follows. | The negative passes only because all opens were disabled. |
+
+## Oracle discrimination
+
+A cold page silently replaces a failed thumbnail with a valid placeholder. A list route, a form and the final screenshot all look healthy. Require the expected image bytes to decode on the normal path. Report the fallback interaction separately when the original returns a 404 or corrupt body. In a repeated suite, replace one successful row with a duplicate of another. A correct verifier identifies the missing scenario or repeated round even though the total is unchanged.
+
+| Case | Expected behavior |
+| --- | --- |
+| An operation and its generated client both rename shared option fields. The owner schema permits two error origins and asymmetric paging keys. | Freeze each direction and shared shape. Reject renamed keys and swapped same-typed IDs against independent pairs. Accept intact reordered pairs where order is free. Keep a shape-only pass separate from selection and submission evidence. |
+| A newer search is visible while an earlier successful request is still held. Both returned rows can be distinguished. | Wait for the old response and rendering, then assert exact current rows and count. A separate debounce scenario observes whether the earlier request was dispatched at all. |
+| A fixed-user load run exits zero. Business checks failed and throughput fell as responses slowed. | Report the failed business checks and achieved load. Inspect the threshold and load model before drawing any capacity conclusion. |
 
 ## Product Copy Preservation Cases
 
