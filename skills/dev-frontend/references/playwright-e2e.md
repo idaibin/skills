@@ -40,6 +40,16 @@ runtime, runner, lockfile, module, fixture and authentication owners. Runner-onl
    IDs and expectation labels back for authorized browser execution through the
    existing owners. An owner change does not by itself require another agent, task or user confirmation.
 
+## Races and repeated interactions
+
+For debounced input or tab switching, observe selection, dispatch, completion and rendered result separately. Exercise one cold action, a burst, a warm revisit and clear/unmount while pending. A re-clickable link may require a request per click even when only the latest response may navigate. Use distinguishable A/B values, release B first and prove that A subsequently reached a still-observing page. Check attempted navigation, final destination or visible data, stale errors and loading ownership. For simultaneous expiry signals release both orders and count actual redirects within the agreed session scope.
+
+For latency fix the route, data, cache, device and recording overhead. Separate event-to-feedback, event-to-dispatch, service duration, response-to-DOM and presentation when measurable. Record repeated samples and their spread. A request count, framework tick or DOM timestamp alone cannot establish perceived latency.
+
+For a full-document update, start the main-frame request and navigation observers before the user action. Correlate the new document with the navigation type, executing old/new entry identity, final URL and a usable destination control. Capture normal-speed behavior separately from an intentionally delayed fault demonstration. Match the requested recording surface: page video covers content, while address-bar or reload-control claims require actual browser-window evidence.
+
+For images, observe requests and errors before navigation or fallback substitution. Match the intended asset (including redirects), status, media type and decoded nonzero dimensions. Use controlled missing and corrupt-success responses to prove the original-asset assertion fails even when the page renders a healthy placeholder. Sample transfer metrics before extra decode or font probes that could fetch additional bytes.
+
 ## Repair limits
 
 Repair a demonstrated test defect without silently changing the frozen expectation. Preserve

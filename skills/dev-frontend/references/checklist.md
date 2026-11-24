@@ -110,6 +110,8 @@ optional docs alone do not require authoring or block a bounded implementation.
 
 ## Reuse-First Gate
 
+For repeated screens, trace the public component, class/token and page state owner across two consumers. Check an accepted exception, computed appearance and actual keyboard/pointer behavior. Prefer user-facing locators to incidental private classes. Check initial, loading, empty, error and recovery states against approved copy. Exercise draft cancel and save/reopen, long content, focus return and reduced-motion settings where applicable. Check that decorative motion cannot delay the next available action or leave an overlay intercepting input.
+
 - Apply the [Required Context](#required-context) owner/basis branches first; use a current `repo-map` inventory or bounded current-source discovery only when those branches require it.
 - Search relevant routes, pages, layouts, components, hooks/composables, services, stores, shared UI, tests, exports, and symbols before creating anything.
 - Classify candidates as:

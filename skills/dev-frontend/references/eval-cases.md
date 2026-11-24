@@ -4,6 +4,8 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 
 ## Contents
 
+- [Late navigation controls](#late-navigation-controls)
+
 - [Product Copy Preservation Cases](#product-copy-preservation-cases)
 
 - Trigger Eval
@@ -15,6 +17,12 @@ Use these cases when changing `dev-frontend` triggers, stack guidance, layout-ow
 - [Cross-Module Scope Cases](#cross-module-scope-cases)
 - [Shared Motion And Overlay Cases](#shared-motion-and-overlay-cases)
 - [Input Boundary And Feedback Cases](#input-boundary-and-feedback-cases)
+
+## Late navigation controls
+
+| Case | Expected behavior |
+| --- | --- |
+| A re-clickable inbox link receives the second result first. The page unloads before the first result can arrive. | Keep the consumer observable until both arrivals. Distinguish attempted and final navigation and preserve legitimate repeated clicks. |
 
 ## Trigger Eval
 
