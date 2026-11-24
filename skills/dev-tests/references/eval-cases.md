@@ -45,6 +45,7 @@ Structural preservation cases use the original behavior, not the rewritten selec
 
 | Case | Observable pass evidence | Reject if |
 | --- | --- | --- |
+| Archived feedback and commits, plan update in an incomplete environment | Reuses the original case ID, reconciles the latest accepted decision, names the observable change, preserved sibling and independent readback. Validates the test asset and reports its execution state. | Starts a live incident investigation, uses an old pass as current acceptance, or supplies only proposed changes. |
 | Explicit layered feature | Separate backend/API/page/function/E2E rows, current authorities and reproducible checks | Counts unit totals as full E2E |
 | Implicit headless service | Headless architecture supports excluded frontend; actual transport/store boundaries explicit | Invents UI work or excludes missing API access |
 | Valid no-op | Existing matrix already current, all scoped checks evidenced; unchanged result with provenance | Reruns risky checks or writes a duplicate ledger without need |

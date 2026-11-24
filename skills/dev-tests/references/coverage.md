@@ -3,6 +3,7 @@
 ## Contents
 
 - [Existing-project default](#existing-project-default)
+- [Turning history into regression cases](#turning-history-into-regression-cases)
 - [Reported failures and preserved behavior](#reported-failures-and-preserved-behavior)
 - [Generated coverage boundaries](#generated-coverage-boundaries)
 
@@ -113,6 +114,23 @@ Unclear permissions or unsafe side effects stop the affected operation immediate
 Do not auto-approve a known defect, override a confirmed rule or repair product source
 merely to match an inference. Preserve failures and later human decisions, update only
 affected assumptions/tests, and rerun only affected cases plus required regressions.
+
+## Turning history into regression cases
+
+Group repeated reports, archived chats and commits by the user action and outcome.
+Read later corrections before choosing the expectation. Use a commit to locate
+the affected path and a prior run to identify which assertion it actually exercised.
+Carry unresolved business expectations into the plan with their source and owner.
+
+Reuse the existing case ID. Record the entry, actor, starting data, action, expected
+change and the adjacent value or record that must survive. For example, deleting
+one occurrence needs two distinguishable occurrences. Check the target after
+refresh and check that the other occurrence remains. Map the case to exact native
+runner IDs or a documented manual procedure. State which observations use a
+fixture and which require a second account or an independent service readback.
+
+For a plan or script update, verify that the documented selection resolves to
+the intended cases. Record selection, execution and historical outcomes separately.
 
 ## Reported failures and preserved behavior
 

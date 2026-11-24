@@ -20,12 +20,16 @@ and provisional exploration retain their narrower meaning. Reuse the project tes
 When asked to execute functional acceptance, run the reachable authorized cases; a
 checklist alone does not complete the run.
 
+When the request is limited to updating test assets, map historical decisions and
+corrections to the project's existing case IDs. Validate the changed assets in the
+available environment and report exactly which assertions ran.
+
 ## Route Map
 
 | Request condition | Read | Result |
 | --- | --- | --- |
 | AI-generated Playwright journeys or test healing apply | [AI E2E acceptance](references/playwright-e2e.md) | Frozen cases, bounded authoring handoff and native-runner evidence |
-| Design early checks or reconcile risk-based coverage against contracts | [coverage](references/coverage.md) | Requirement-to-layer matrix and qualified gaps |
+| Design checks or turn prior incidents, chats and commits into regression coverage | [coverage](references/coverage.md) | Case IDs, assertions, runner mapping and required evidence |
 | Run existing checks, rerun failures, or choose regression scope | [execution](references/execution.md) | Reproducible scoped runs and evidence-bound outcomes |
 | Execute a functional acceptance campaign or resume its case inventory | [functional workflow](references/workflow.md) | Real journeys, correlated results, retest and cleanup |
 | API or business-state behavior participates | [API and logic](references/api-and-logic.md) | Wire, business status and independent persistence assertions |
