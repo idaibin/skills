@@ -55,6 +55,7 @@ persistent selection, business-disabled, and request-pending states. Preserve th
 existing component/library state owner and applicable semantics; a palette override
 or pointer cursor does not establish complete feedback across its variants.
 
+- Keep an authorized form submit action clickable before validation. On activation, validate required inputs and explain the first failure. Show loading throughout the request, suppress duplicate writes, complete the success flow, and on failure show feedback, retain inputs and restore the action. When a write outcome is uncertain, make status checks visible and safe to retry with the original request identity.
 - Trace every reachable activation path for an async write: click, native form submit,
   keyboard activation, and alternate retry/action entrypoints. When overlap would
   duplicate a side effect, admit synchronously at the shared handler owner before
