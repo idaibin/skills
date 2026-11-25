@@ -1501,11 +1501,13 @@
         "select impacted regression tests after contract or source changes",
         "plan and execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic",
         "run system testing and regression with correlated business-state evidence",
-        "report test coverage, defects, affected retests and cleanup"
+        "report test coverage, defects, affected retests and cleanup",
+        "summarize prior test receipts by original case ID and terminal outcome"
       ],
       "keywords": [
         "layered test coverage",
         "test acceptance matrix",
+        "测试回执",
         "backend tests",
         "API tests",
         "frontend page tests",

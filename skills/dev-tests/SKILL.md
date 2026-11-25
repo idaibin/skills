@@ -1,6 +1,6 @@
 ---
 name: dev-tests
-description: "Plan risk-based coverage and execute functional acceptance across backend, APIs, pages, UI, business logic and end-to-end journeys. Run existing scoped checks; route source fixes to their owner."
+description: "Summarize test receipts (测试回执), plan risk-based coverage and run scoped functional acceptance across backend, APIs, pages, UI, business logic and end-to-end journeys. Use for historical results even when no rerun is requested; route source fixes to their owner."
 ---
 
 # Dev Tests
@@ -17,14 +17,13 @@ checks without waiting for implementation. Resolve applicable authorities, their
 acceptance status, target basis, environment and permission before execution; only
 settled business oracles support business-acceptance verdicts; baseline regression
 and provisional exploration retain their narrower meaning. Reuse the project test plan and its IDs.
-When asked to execute functional acceptance, run the reachable authorized cases; a
-checklist alone does not complete the run.
+Execute reachable authorized cases when functional acceptance is requested.
 
-For test-asset updates, establish the reported issue and evidence limits first.
-Update guidance and existing cases, align the owning docs, then retest and report
-the observed layer, proposed fix, owner and verification method.
+For test-asset updates, trace the issue and evidence limits, update guidance, cases and owning docs, then report retests by layer, fix and owner.
 
-For a new, disputed or previously false-green case, use the [case-oracle check](references/coverage.md#checking-the-case-itself) before relying on its verdict.
+To summarize a prior run, verify case ID and terminal status or name the missing evidence. [Prior test receipts](references/prior-test-receipts.md) covers summaries without a rerun.
+
+For new, disputed or previously false-green cases, use the [case-oracle check](references/coverage.md#checking-the-case-itself). For search races, report separately what request dispatch proves about debounce and what the final row IDs and count prove after late delivery to the mounted page.
 
 ## Route Map
 
@@ -84,15 +83,15 @@ into “all tests passed” when required cells remain unresolved.
 
 ## Reference Map
 
-- Read [Playwright E2E](references/playwright-e2e.md) only for coordinating generated browser-test acceptance.
-- Read [coverage](references/coverage.md) when deriving or reconciling the acceptance matrix.
-- Read [execution](references/execution.md) before running checks or making regression claims.
-- Read [functional workflow](references/workflow.md) for functional campaigns and resumed case inventories.
-- Read [API and logic](references/api-and-logic.md) for network, business status and persistence.
-- Read [page walkthrough](references/page-walkthrough.md) for real UI journeys and browser evidence.
-- Read [test record](references/test-record.md) for functional plans, defects, coverage and recovery.
-- Read [roles and performance](references/roles-and-performance.md) only for relevant multi-user, authorization or performance requirements.
-- Read [result contract](references/result-contract.md) when consuming results or returning evidence.
-- Read [change preservation](references/change-preservation.md) when code deletion or instruction changes participate.
-- Read [performance measurement](references/performance-measurement.md) for scoped comparative performance acceptance.
+- Generated browser journeys: [Playwright E2E](references/playwright-e2e.md).
+- Acceptance matrix: [coverage](references/coverage.md).
+- Existing checks: [execution](references/execution.md). Old results: [prior test receipts](references/prior-test-receipts.md).
+- Campaigns and resumed inventories: [functional workflow](references/workflow.md).
+- Network, business status and persistence: [API and logic](references/api-and-logic.md).
+- Real user interaction: [page walkthrough](references/page-walkthrough.md).
+- Cases, defects and recovery: [test record](references/test-record.md).
+- Multi-user, authorization and load: [roles and performance](references/roles-and-performance.md).
+- Results and handoffs: [result contract](references/result-contract.md).
+- Deletions, moves and rule changes: [change preservation](references/change-preservation.md).
+- Comparative performance: [performance measurement](references/performance-measurement.md).
 - Maintainers only: read [eval cases](references/eval-cases.md); do not load it during ordinary execution.

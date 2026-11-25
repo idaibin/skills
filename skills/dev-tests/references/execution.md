@@ -3,6 +3,7 @@
 ## Contents
 
 - [Execution sequence](#execution-sequence)
+- [Reusing a case receipt](prior-test-receipts.md)
 - [Cross-target evidence](#cross-target-evidence)
 - [Assertion scope](#assertion-scope)
 

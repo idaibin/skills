@@ -98,8 +98,7 @@ other behaviors exposed to the change, including consumers of a shared component
 Use equivalence classes and adjacent boundary values for input limits, decision tables
 for interacting conditions and transition tables for lifecycle rules. For a latest-query
 rule, observe A and B dispatched, B rendered, then A delivered to the still-mounted
-consumer. Compare the final row identities, count and current error state. Exercise the
-cancelled-request and debounce paths separately when they apply.
+consumer. After A settles and rendering completes on that same view, check B’s exact row identities, order, count and current error state. If A is still pending, credit only B’s intermediate render. For debounce, count requests actually dispatched during the input burst; for cancellation, observe abort. Neither path exercises an older response reaching a live handler.
 
 Name the independent authority, version, operation, role, initial state, unit, observable outcome and counterexample. Distinguish an accepted rule from an example, an observed baseline and a question. Trace who produced the expected and actual values. A document, mock and client type copied from the same response represent one source.
 
