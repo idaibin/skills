@@ -1,6 +1,6 @@
 ---
 name: product-spec
-description: "Define product behavior and acceptance, or reconstruct source-grounded product evidence as an explicitly unaccepted candidate."
+description: "Define feature-local permissions, outcomes and acceptance, or reconstruct source-grounded product evidence as an explicitly unaccepted candidate."
 ---
 
 # Product Specification
@@ -9,7 +9,9 @@ description: "Define product behavior and acceptance, or reconstruct source-grou
 
 Own current product facts and acceptance, not implementation architecture or visual
 semantics. Require a named product authority or authorized artifact target; resolve
-only decisions needed for the requested slice.
+only decisions needed for the requested slice. When decision makers disagree on a
+feature’s allowed actors or terminal states, list the alternatives and who can
+resolve them. Report evidence-incomplete until the product authority decides.
 
 ## Route Map
 
