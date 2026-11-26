@@ -718,12 +718,20 @@ def chinese_action_has_git_context(action: str, query: str) -> bool:
         return "暂存" in query
     if action == "pull":
         return bool(re.search(r"拉取.{0,12}(?:远程|origin|上游|分支|仓库|Git)", query, re.IGNORECASE))
-    return bool(re.search(r"更改|改动|分支|仓库|工作区|本地|测试|构建|Git|main", query))
+    return bool(re.search(r"代码|更改|改动|分支|仓库|工作区|Git|main", query, re.IGNORECASE))
 
 
 def chinese_occurrence_has_git_context(action: str, clause: str) -> bool:
     """Keep each CJK action bound to its own object and negation clause."""
     if re.search(r"(?:数据库|db|事务|按钮)", clause, re.IGNORECASE):
+        return False
+    if re.match(r"\s*(?:请你?|帮我|麻烦)?(?:测试|验证|检查|回归)", clause) and not re.search(
+        r"(?:通过|完成|结束)后|(?:再|接着)提交", clause
+    ):
+        return False
+    if action != "commit" and "本地" in clause:
+        return True
+    if action == "commit" and re.search(r"重复提交|提交(?:订单|表单|请求|申请|数据)", clause):
         return False
     return chinese_action_has_git_context(action, clause)
 
@@ -1058,7 +1066,7 @@ def parse_delivery_intent(query: str) -> DeliveryIntent:
                 )
                 explicit = bool(re.search(r"(?:你可以|允许你|授权你|已授权).{0,12}" + re.escape(term), local))
                 command = bool(re.match(r"\s*(?:请|麻烦|请你)", local)) or bool(
-                    re.search(r"(?:更改|改动|分支|仓库|工作区|本地|测试|构建|Git|main)", local)
+                    re.search(r"(?:代码|更改|改动|分支|仓库|工作区|Git|main)", local, re.IGNORECASE)
                 ) or explicit
                 local_inquiry = bool(CHINESE_STATUS_QUESTION_RE.search(local)) or "想知道能否" in local or "我想知道是否可以" in local
                 modality = "inquiry" if local_inquiry else "deny" if denied else "reauthorize" if explicit else "command" if command else "mention"
@@ -1224,6 +1232,8 @@ def explicit_source_request(entry: dict[str, object], query: str) -> bool:
     """Preserve a domain-matched writer in a composite audit/spec request."""
     if entry.get("mutation_class") != "source-write" or primary_action(query) != "implementation":
         return False
+    actions = chinese_test_actions(query)
+    test_requested = bool(actions & {"design-tests", "run-tests"})
     stack = task_stack(query)
     return stack is not None and str(entry.get("name")) in STACK_OWNER[stack]
 
@@ -1330,6 +1340,31 @@ def score_query_entry(entry: dict[str, object], query: str) -> tuple[int, list[s
     return (0, []) if denied_score >= score else (score, reasons)
 
 
+def chinese_test_actions(query: str) -> set[str]:
+    """Identify clause-local test deliverables and explicit execution limits."""
+    actions = set()
+    for clause in re.split(r"[，,。；;！!？?]|然后|随后|同时|并且|但是|但", query):
+        denial = re.search(
+            r"(?:不要|不用|无需|禁止|跳过|不再|不)\s*(?:执行|运行|做|跑)?\s*"
+            r"(?:回归|接口|功能|自动化)?测试", clause
+        )
+        if denial:
+            actions.add("deny-execution")
+            clause = clause[:denial.start()]
+        if NEGATED_CLAUSE_RE.match(clause.strip()):
+            continue
+        if re.search(r"(?:设计|列出|编写|补充|生成).{0,18}测试(?:用例|方案)", clause):
+            actions.add("design-tests")
+        elif re.search(
+            r"^\s*(?:请你?|帮我|麻烦)?\s*(?:只做|执行|运行|做|跑)?测试"
+            r"|回归测试|异常与竞态测试|接口测试|功能测试|边界测试", clause
+        ):
+            actions.add("run-tests")
+        if re.search(r"(?:设计|修订|编写|更新).{0,12}(?:接口|API)\s*(?:契约|合同|规范)", clause, re.I):
+            actions.add("design-contract")
+    return actions
+
+
 def search(
     index: dict[str, object],
     query: str,
@@ -1338,6 +1373,8 @@ def search(
     host_scope: object = None,
 ) -> list[dict[str, object]]:
     results: list[dict[str, object]] = []
+    actions = chinese_test_actions(query)
+    test_requested = bool(actions & {"design-tests", "run-tests"})
     stack = task_stack(query)
     action = primary_action(query)
     packages = package_entries(index)
@@ -1366,6 +1403,16 @@ def search(
             if explicitly_named
             else package_capabilities
         )
+        if entry_name == "dev-tests":
+            if not test_requested and ("deny-execution" in actions or ("design-contract" in actions and not explicitly_named)):
+                continue
+            if "deny-execution" in actions or ("design-tests" in actions and "run-tests" not in actions):
+                selected_capabilities = [cap for cap in selected_capabilities
+                                         if cap.get("capability_id") != "test.acceptance.execute"]
+                if not selected_capabilities:
+                    continue
+        if entry_name == "api-spec" and test_requested and "design-contract" not in actions and not explicitly_named:
+            continue
         read_only_only_request = (
             READ_ONLY_REQUEST_RE.search(query)
             and action != "implementation"
@@ -1423,6 +1470,9 @@ def search(
             elif action == "audit" and entry_name == "repo-audit":
                 score += 50
                 reasons.append(f"explicit {stack} audit owner")
+        if entry_name == "dev-tests" and test_requested:
+            score += 50
+            reasons.append("requested test coverage or execution")
         if authorized_delivery:
             # Structured intent is a stronger routing contract than incidental
             # discovery-token overlap (for example ``git fetch --prune origin``).
