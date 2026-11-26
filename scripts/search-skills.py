@@ -1343,23 +1343,34 @@ def score_query_entry(entry: dict[str, object], query: str) -> tuple[int, list[s
 def chinese_test_actions(query: str) -> set[str]:
     """Identify clause-local test deliverables and explicit execution limits."""
     actions = set()
-    for clause in re.split(r"[，,。；;！!？?]|然后|随后|同时|并且|但是|但", query):
-        denial = re.search(
-            r"(?:不要|不用|无需|禁止|跳过|不再|不)\s*(?:执行|运行|做|跑)?\s*"
-            r"(?:回归|接口|功能|自动化)?测试", clause
+    # Coordinated verbs may share a sentence. Classify each action and its
+    # local negation before deciding which capabilities are eligible.
+    for clause in re.split(
+        r"[，,。；;！!？?]|然后|随后|同时|并且|但是|但"
+        r"|(?:并|再)(?=(?:不|执行|运行|设计|编写|列出|补充|生成|做|跑))", query
+    ):
+        design = re.search(r"(?:设计|列出|编写|补充|生成).{0,18}测试(?:用例|方案)", clause)
+        execute = re.search(
+            r"(?:执行|运行|做|跑)\s*(?:已有的?|现有的?|全部|这些)?\s*"
+            r"(?:回归|接口|功能|自动化|边界)?测试", clause
         )
-        if denial:
-            actions.add("deny-execution")
-            clause = clause[:denial.start()]
+        # Bare test nouns request execution unless they name the case being designed.
+        if not execute and not design:
+            execute = re.search(
+                r"(?:^\s*(?:请你?|帮我|麻烦)?\s*|回归|异常与竞态|接口|功能|边界"
+                r"|不要|不用|无需|禁止|跳过|不再|不)测试", clause
+            )
+        for match, positive, negative in (
+            (design, "design-tests", "deny-design"),
+            (execute, "run-tests", "deny-execution"),
+        ):
+            if match:
+                # Include the match for a bare negated noun such as 不测试.
+                denied = re.search(r"(?:不要|不用|无需|禁止|跳过|不再|不)\s*$", clause[:match.start()])
+                negated_noun = re.match(r"(?:不要|不用|无需|禁止|跳过|不再|不)", match.group())
+                actions.add(negative if denied or negated_noun else positive)
         if NEGATED_CLAUSE_RE.match(clause.strip()):
             continue
-        if re.search(r"(?:设计|列出|编写|补充|生成).{0,18}测试(?:用例|方案)", clause):
-            actions.add("design-tests")
-        elif re.search(
-            r"^\s*(?:请你?|帮我|麻烦)?\s*(?:只做|执行|运行|做|跑)?测试"
-            r"|回归测试|异常与竞态测试|接口测试|功能测试|边界测试", clause
-        ):
-            actions.add("run-tests")
         if re.search(r"(?:设计|修订|编写|更新).{0,12}(?:接口|API)\s*(?:契约|合同|规范)", clause, re.I):
             actions.add("design-contract")
     return actions
@@ -1404,11 +1415,16 @@ def search(
             else package_capabilities
         )
         if entry_name == "dev-tests":
-            if not test_requested and ("deny-execution" in actions or ("design-contract" in actions and not explicitly_named)):
+            if not test_requested and (actions & {"deny-design", "deny-execution"} or ("design-contract" in actions and not explicitly_named)):
                 continue
+            denied_caps = set()
+            if "deny-design" in actions:
+                denied_caps.add("testing.coverage.verify")
             if "deny-execution" in actions or ("design-tests" in actions and "run-tests" not in actions):
+                denied_caps.add("test.acceptance.execute")
+            if denied_caps:
                 selected_capabilities = [cap for cap in selected_capabilities
-                                         if cap.get("capability_id") != "test.acceptance.execute"]
+                                         if cap.get("capability_id") not in denied_caps]
                 if not selected_capabilities:
                     continue
         if entry_name == "api-spec" and test_requested and "design-contract" not in actions and not explicitly_named:
