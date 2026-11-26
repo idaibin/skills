@@ -3226,7 +3226,7 @@
       "capability_id": "api.contract.specify",
       "capability_version": "1.0.0",
       "package": "api-spec",
-      "description": "Specify native API wire contracts and validate their OpenAPI artifacts.",
+      "description": "Specify native API wire contracts; validate OpenAPI when adopted or explicitly requested.",
       "accepts": [
         {
           "schema": "urn:skills:api-request:v1",
