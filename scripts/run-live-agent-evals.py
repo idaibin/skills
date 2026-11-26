@@ -25,6 +25,7 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from live_owner_fixture import FIXTURES, prepare_owner_input
 from live_provider_evidence import sha256_file, verify_provider_evidence
 
 VALIDATOR_PATH = ROOT / "scripts/validate-live-agent-evals.py"
@@ -206,14 +207,15 @@ def trace_facts(trace_path: Path) -> dict[str, Any]:
     }
 
 
-def output_schema(path: Path) -> None:
+def output_schema(path: Path, owner_task: bool = False) -> None:
     path.write_text(
         json.dumps(
             {
                 "type": "object",
                 "additionalProperties": False,
-                "required": ["selected_skill", "process", "stop_state", "not_verified"],
+                "required": ["selected_skill", "process", "stop_state", "not_verified"] + (["deliverable"] if owner_task else []),
                 "properties": {
+                    **({"deliverable": {"type": "string"}} if owner_task else {}),
                     "selected_skill": {"type": "string"},
                     "process": {"type": "array", "items": {"type": "string"}},
                     "stop_state": {"type": "string", "enum": list(STOP_STATES)},
@@ -551,6 +553,9 @@ def command_argv_segments(command: str) -> list[list[str]]:
     if len(argv) >= 3 and Path(argv[0]).name in {"sh", "bash", "zsh"} and any(flag in argv[1:-1] for flag in ("-c", "-lc")):
         segments: list[list[str]] = []
         for part in split_shell_body(argv[-1]):
+            # The unquoted opening brace introduces a shell command group.
+            if re.match(r"^\{\s", part):
+                part = part[1:].lstrip()
             try:
                 tokens = shlex.split(part)
             except ValueError:
@@ -828,7 +833,12 @@ def run_case(
     with tempfile.TemporaryDirectory(prefix="skill-live-agent-") as temporary:
         workspace = Path(temporary) / "fixture"
         shutil.copytree(fixture, workspace)
-        initialize_fixture_repository(workspace)
+        fixture_spec = load_json(FIXTURES).get(case["id"])
+        brief = None
+        if fixture_spec:
+            brief = prepare_owner_input(workspace, case_root, fixture_spec, initialize_fixture_repository)
+        else:
+            initialize_fixture_repository(workspace)
         baseline_git = git_snapshot(workspace)
         before = copy_tree_snapshot(workspace)
         schema_path = case_root / "output-schema.json"
@@ -836,7 +846,7 @@ def run_case(
         last_message_path = case_root / "last-message.json"
         provider_required = case.get("required_provider")
         output_stop = expected_output_stop(case, provider_evidence)
-        output_schema(schema_path)
+        output_schema(schema_path, owner_task=fixture_spec is not None)
         provider_note = (
             "An independent provider result is not enabled for this run. Do not invoke an external provider; "
             "set stop_state to not-verified and report it Not verified."
@@ -844,6 +854,11 @@ def run_case(
             else "Do not invoke any external provider."
         )
         prompt = build_eval_prompt(case, provider_note)
+        if brief:
+            prompt += ("\nSupplied materials for this task:\n" + brief +
+                       "\nPut the requested written work or implementation snippet in deliverable. "
+                       "The response itself is the delivery channel. Work within the stated planning, "
+                       "review or snippet scope. Source changes and live operations are outside this task.")
         command = build_codex_command(
             workspace=workspace,
             schema_path=schema_path,
@@ -1080,6 +1095,8 @@ def main() -> int:
                 "selected_case_ids": [case["id"] for case in selected],
                 "source_hashes": {
                     "runner": sha256_file(Path(__file__).resolve()),
+                    "owner_fixtures": sha256_file(FIXTURES),
+                    "fixture_setup": sha256_file(SCRIPT_DIR / "live_owner_fixture.py"),
                     "validator": sha256_file(VALIDATOR_PATH),
                     "cases": sha256_file(args.cases.resolve()),
                 },
@@ -1093,6 +1110,8 @@ def main() -> int:
         ) + "\n",
         encoding="utf-8",
     )
+    shutil.copyfile(args.cases, output_root / "case-definitions.json")
+    shutil.copyfile(FIXTURES, output_root / "owner-fixtures.json")
     results = [
         run_case(
             case,

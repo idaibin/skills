@@ -1,4 +1,5 @@
 """Static guidance regressions only; these do not prove live Agent behavior."""
+import json
 from pathlib import Path
 import re
 import tomllib
@@ -17,6 +18,24 @@ class TestingEntryContracts(unittest.TestCase):
         cls.record = (REFS / "test-record.md").read_text()
         cls.result = (REFS / "result-contract.md").read_text()
         cls.cases = (REFS / "eval-cases.md").read_text()
+
+    def test_browser_permission_owners_and_acceptance_version(self):
+        catalog = json.loads((ROOT / "skills-index.json").read_text())
+        capabilities = {c["capability_id"]: c for c in catalog["capabilities"]}
+        packages = {p["name"]: p for p in catalog["packages"]}
+        coordinator = packages["dev-tests"]
+        self.assertEqual(coordinator["mutation_class"], "artifact-write")
+        self.assertNotIn("control-browser-state", coordinator["allowed_effects"])
+        self.assertIn("control-browser-state", coordinator["forbidden_effects"])
+        acceptance = capabilities["test.acceptance.execute"]
+        self.assertEqual(acceptance["capability_version"], "2.0.0")
+        permission = acceptance["permission_contract"]
+        self.assertEqual(permission["maximum_mutation_class"], "artifact-write")
+        self.assertNotIn("control-browser-state", permission["maximum_effects"])
+        self.assertIn("control-browser-state", permission["forbidden_effects"])
+        browser = capabilities["browser.runtime.operate"]
+        self.assertEqual(browser["package"], "ops-browser")
+        self.assertIn("control-browser-state", browser["permission_contract"]["maximum_effects"])
 
     def test_qa_schema_does_not_add_runtime_overrides(self):
         self.assertEqual(set(self.qa), {"name", "description", "developer_instructions"})
