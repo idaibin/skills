@@ -3,7 +3,7 @@
 ## Current package byte inventory
 
 - Digest scope: all 20 packages declared by `skills-index.json`.
-- Package digest: `sha256:ad5bf98badb7affbf72f3eba7bedd21d93da4a94d53675a766abedd47d78c2d1`
+- Package digest: `sha256:7e1e8a4de3a8b63faf37ab28c2e8614bf8c23231812e8a0296cb90fa1bb74bef`
 - This digest identifies current package bytes only. The historical live decisions
   below retain their original basis and do not establish behavior for this inventory.
 - The inherited 2026-10-22 retrospective reports five passing synthetic Codex CLI
