@@ -23,7 +23,7 @@ For test-asset updates, trace the issue and evidence limits, update guidance, ca
 
 To summarize a prior run, verify case ID and terminal status or name the missing evidence. [Prior test receipts](references/prior-test-receipts.md) covers summaries without a rerun.
 
-For new, disputed or previously false-green cases, use the [case-oracle check](references/coverage.md#checking-the-case-itself). For search races, report separately what request dispatch proves about debounce and what the final row IDs and count prove after late delivery to the mounted page.
+Use [case-oracle checks](references/coverage.md#checking-the-case-itself) for new, disputed or false-green cases and [text and interaction checks](references/coverage.md#text-request-timing-and-shared-feedback) for affected controls.
 
 ## Route Map
 

@@ -86,6 +86,21 @@ For a requested release-readiness assessment, identify missing version-bound hea
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
 
+## Text, request timing and shared feedback
+
+Apply only to affected surfaces and the accepted contract:
+
+| Risk | Minimum observable checks |
+| --- | --- |
+| Multiline or long input | Type and paste representative lines, blank lines and a long value; include just below, at and above the accepted limit and composition where relevant. Check editable value, allowed newlines, validation and recovery. When persistence applies, after save and reload compare the actual payload and read-back value to the accepted normalization and counting unit. |
+| Long or multiline display | Use the same source value in each affected detail/edit/list surface. Check approved wrapping, line clamp or ellipsis and access to complete text where required. Include a long unbroken token, narrow viewport and large text when supported; verify using rendered bounds and controls that text or actions are not unintentionally obscured. |
+| Debounce and latest query | Assert dispatch count, final parameters and approved Search/Enter behavior after rapid input. Where composition applies, assert no search is sent for unfinished IME input. Clear or exit before the timer fires to check that queued work does not run. Independently deliver an older result or error after the latest render and confirm the current data and feedback remain intact. |
+| Repeated activation | Assert the first accepted click or key activation is immediate within the accepted behavior. Send repeated clicks/keys inside the accepted throttle interval or while the write is pending, as applicable. Then exercise a valid retry or unrelated action. Count actual calls and resulting writes/navigation, not just disabled styles. |
+| Shared loading and controls | Check actual source import or component owner, then render the requested loading transitions and success, empty, failure or cancellation as applicable. Check scope, geometry and relevant focus/accessibility; assert no duplicate indicator and no interference with independent controls. A screenshot or build alone does not prove reuse, timing or terminal state. |
+
+Tie each checked behavior to its fixed source and evidence layer. Do not add an
+unapproved truncation control or loading state to make a test pass.
+
 ## Checking the case itself
 
 Describe the subject, test level and real dependencies, quality attribute, purpose and
