@@ -106,6 +106,12 @@ For a new or disputed high-risk case, freeze inputs and oracle. Run a known-good
 
 If both variants pass, record a test gap. If the accepted example fails, check setup, reachability and oracle before assigning a defect. If the trigger never occurred, record an inconclusive execution. If authorities conflict, retain the competing meanings and owner decision needed. Require evidence to declare either success or failure.
 
+When replacing a test implementation across runners or languages, compare the migrated
+case by existing case ID against its original expected outcomes and observable side
+effects. Record intentional contract changes separately from equivalent replacements.
+A green replacement without coverage for an original required assertion is not parity;
+retain that gap even when execution and response-shape checks pass.
+
 ## Existing-project default
 
 Without a complete PRD, automatically infer a bounded scenario inventory from the
