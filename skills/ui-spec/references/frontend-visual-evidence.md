@@ -24,6 +24,7 @@ it never supplies a reusable target contract for a project.
 - [Selected-Source Freeze](#selected-source-freeze)
 - [Delta And Implementation Mapping](#delta-and-implementation-mapping)
 - [Runtime Comparison Gate](#runtime-comparison-gate)
+- [Shared Component Before And After](#shared-component-before-and-after)
 - [Required Runtime Coverage](#required-runtime-coverage)
 - [Degraded Evidence](#degraded-evidence)
 - [Handoff Artifact](#handoff-artifact)
@@ -167,6 +168,33 @@ metric is diagnostic only. It may help locate drift but cannot independently pas
 fail the visual gate; critical states, assets, accessibility, computed styles, and
 geometry require their own contract-bound checks. A numeric tolerance comes from the
 accepted slice contract or baseline and is never inferred as a universal pixel rule.
+
+## Shared Component Before And After
+
+When a shared component changes across multiple pages, make the comparison usable
+for someone who needs to locate each change on the actual page.
+
+1. Inventory each consumer by page route and visible interaction path. Record the
+   component variant and the steps needed to open any tab, drawer, or dialog. Mark
+   conditional, disabled, and unreachable entries separately.
+2. Pin the before revision and after source fingerprint. Use an authorized isolated
+   checkout or a reversible switch that preserves local changes. When both versions
+   need the same local endpoint and browser session, serve them sequentially, verify
+   which source each service is running, and restore the intended working version.
+3. Use the user-requested browser, profile, and login context. Read the actual
+   viewport before interacting and before capturing. Use the same approved viewport,
+   route, theme, and comparable data and interaction state on both sides. Record
+   whether data came from the live service or fixtures, and note material drift.
+4. Navigate through the actual product page and its controls. Capture the complete
+   visible viewport so the reviewer can locate the component in context. Keep the
+   original images and use an annotation or optional crop to locate the control.
+   Component mounts can supplement isolated checks. Report them separately from
+   page evidence and explain the blocker for every missing before/after pair.
+5. Deliver one indexed comparison with paired full-page images, a visible locator
+   for each changed control, and links to the original images. Include coverage
+   counts and gaps. Check that each image exists, matches its recorded viewport,
+   and shows the expected page state. Limit access to screenshots according to
+   their data and account context.
 
 ## Required Runtime Coverage
 
