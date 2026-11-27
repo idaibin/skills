@@ -7,8 +7,9 @@ description: "Resolve shared business terms, rules, and lifecycle ambiguity; use
 
 ## Entry Gate
 
-Resolve cross-functional language and rules only when the ambiguity spans owners or
-lifecycle boundaries. Require an identified fact source and scope; do not invent
+Resolve cross-functional language and rules only when the same concept or rule has competing meanings across business contexts.
+Disagreement among stakeholders about a single feature’s permissions or outcomes
+belongs to product-spec. Require an identified fact source and scope; do not invent
 product decisions or technical design.
 
 ## Route Map
