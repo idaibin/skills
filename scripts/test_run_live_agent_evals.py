@@ -330,6 +330,12 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertIn("defining symbol", prompt)
         self.assertIn(f"Tool-call budget: {case['max_tool_calls']}", prompt)
 
+    def test_brace_group_checks_the_inner_git_command(self) -> None:
+        read_only = {"commands": ["sh -c '{ git cat-file blob HEAD:sample.txt; }'"]}
+        write = {"commands": ["sh -c '{ git add -- sample.txt; }'"]}
+        self.assertFalse(RUNNER.trace_has_git_write(read_only))
+        self.assertTrue(RUNNER.trace_has_git_write(write))
+
     def test_implicit_prompt_exposes_catalog_not_expected_owner_or_skill_path(self) -> None:
         case = self.case("dev-frontend-implicit-source-change")
         prompt = RUNNER.build_eval_prompt(case, "provider note")
@@ -1246,7 +1252,7 @@ class RunLiveAgentEvalTests(unittest.TestCase):
         self.assertTrue(summary["schema_valid"])
         self.assertEqual("not-passed", summary["capability_verdict"])
         self.assertEqual({"passed": 0, "failed": 0, "blocked": 0, "not-verified": 1}, summary["status_counts"])
-        self.assertEqual({"runner", "validator", "cases"}, set(manifest["source_hashes"]))
+        self.assertEqual({"runner", "validator", "cases", "owner_fixtures", "fixture_setup"}, set(manifest["source_hashes"]))
         self.assertEqual(RUNNER.sha256_file(SCRIPT), manifest["source_hashes"]["runner"])
         self.assertEqual(RUNNER.sha256_file(RUNNER.VALIDATOR_PATH), manifest["source_hashes"]["validator"])
         self.assertEqual(RUNNER.sha256_file(RUNNER.ROOT / "evals/live-agent-cases.json"), manifest["source_hashes"]["cases"])

@@ -83,12 +83,7 @@ retain original failure and bind the new result to the changed basis and affecte
 
 ## Summary and resume
 
-For comparative performance rows include metric/start-end definition, baseline and
-candidate identity, raw sample references/count, aggregation/spread, exclusions and
-comparability limitations. Return separate conclusions for improvement, accepted
-budget, protected journeys and existing/missing regression protection. Keep script
-inspection distinct from execution. Link dependency-sensitive assertions to their
-revalidation trigger rather than claiming they survive upgrades.
+Record comparative performance evidence using the [result contract](result-contract.md#result).
 
 Report both page coverage and case coverage. Show the denominator and counts for
 PASS/FAIL/BLOCKED/NOT RUN/N/A. Do not count N/A as passed or delete missing cases to

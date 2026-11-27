@@ -1461,13 +1461,12 @@
       "name": "dev-tests",
       "category": "repository-engineering",
       "owner": "dev-tests",
-      "mutation_class": "browser-control",
+      "mutation_class": "artifact-write",
       "required_capabilities": [
         "filesystem-read",
         "git-read",
         "artifact-write",
         "command-runner",
-        "browser-control",
         "visual-evidence"
       ],
       "allowed_effects": [
@@ -1476,12 +1475,12 @@
         "read-git-state",
         "write-artifact",
         "emit-findings",
-        "emit-handoff",
-        "control-browser-state"
+        "emit-handoff"
       ],
       "forbidden_effects": [
         "write-source",
         "write-git-state",
+        "control-browser-state",
         "control-client-state",
         "invoke-external-provider"
       ],
@@ -3309,7 +3308,7 @@
     },
     {
       "capability_id": "test.acceptance.execute",
-      "capability_version": "1.0.0",
+      "capability_version": "2.0.0",
       "package": "dev-tests",
       "description": "Execute scoped functional acceptance and correlate API, page, UI, click and business-state evidence.",
       "accepts": [
@@ -3339,19 +3338,19 @@
         "TYPED_OUTPUT_EMITTED"
       ],
       "permission_contract": {
-        "maximum_mutation_class": "browser-control",
+        "maximum_mutation_class": "artifact-write",
         "maximum_effects": [
           "read-repository",
           "read-git-state",
           "read-source",
           "write-artifact",
-          "control-browser-state",
           "emit-findings",
           "emit-handoff"
         ],
         "forbidden_effects": [
           "write-source",
           "write-git-state",
+          "control-browser-state",
           "control-client-state",
           "invoke-external-provider"
         ],

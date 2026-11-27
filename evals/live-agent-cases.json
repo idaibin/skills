@@ -6,7 +6,7 @@
       "id": "ask-ai-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic ask-ai request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Prepare a redacted question for an independent AI second opinion on whether a missing test receipt can establish success. Return the package locally for approval before sending.",
       "expected_skill": "ask-ai",
       "excluded_skills": [
         "repo-review"
@@ -41,7 +41,7 @@
       "id": "ask-ai-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to repo-review, without modifying source, Git state, or external systems.",
+      "prompt": "Review this fixed patch for regressions: a timeout handler now returns success instead of unknown. Give the finding and the missing regression assertion.",
       "expected_skill": "repo-review",
       "excluded_skills": [
         "ask-ai"
@@ -159,7 +159,7 @@
       "id": "dev-frontend-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to ui-spec, without modifying source, Git state, or external systems.",
+      "prompt": "Specify the empty and loading states of a table at desktop and narrow widths for a developer handoff. The approved product behavior already exists.",
       "expected_skill": "ui-spec",
       "excluded_skills": [
         "dev-frontend"
@@ -464,7 +464,7 @@
       "id": "dev-java-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic dev-java request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Explain the minimal Spring service change for this Java method: Optional.of(row) throws when the repository returns null. Consumers expect an empty Optional.",
       "expected_skill": "dev-java",
       "excluded_skills": [
         "dev-typescript"
@@ -499,7 +499,7 @@
       "id": "dev-java-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to dev-typescript, without modifying source, Git state, or external systems.",
+      "prompt": "For a Node CLI written in TypeScript, outline the smallest change that awaits an asynchronous file write before exiting.",
       "expected_skill": "dev-typescript",
       "excluded_skills": [
         "dev-java"
@@ -569,7 +569,7 @@
       "id": "dev-rust-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic dev-rust request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Identify the smallest Rust ownership fix for returning a string slice borrowed from a temporary String. Show the revised function signature.",
       "expected_skill": "dev-rust",
       "excluded_skills": [
         "dev-typescript"
@@ -604,7 +604,7 @@
       "id": "dev-rust-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to dev-typescript, without modifying source, Git state, or external systems.",
+      "prompt": "Give a typed Node.js implementation sketch for preserving line order while asynchronously reading a CLI input file.",
       "expected_skill": "dev-typescript",
       "excluded_skills": [
         "dev-rust"
@@ -674,7 +674,7 @@
       "id": "dev-typescript-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic dev-typescript request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Diagnose the type narrowing error in a Node worker whose payload is a union of success and error records. Provide the corrected TypeScript snippet.",
       "expected_skill": "dev-typescript",
       "excluded_skills": [
         "repo-review"
@@ -709,7 +709,7 @@
       "id": "dev-typescript-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to repo-review, without modifying source, Git state, or external systems.",
+      "prompt": "Assess a fixed diff that removed an await before a file rename. Identify any observable regression and give a focused check.",
       "expected_skill": "repo-review",
       "excluded_skills": [
         "dev-typescript"
@@ -779,7 +779,7 @@
       "id": "domain-modeling-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic domain-modeling request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Two departments use 'member' for both a person and an active enrollment. Define shared terms, identities and lifecycle boundaries.",
       "expected_skill": "domain-modeling",
       "excluded_skills": [
         "product-spec"
@@ -814,7 +814,7 @@
       "id": "domain-modeling-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to product-spec, without modifying source, Git state, or external systems.",
+      "prompt": "For a single checkout feature, specify the user-visible outcome when a reserved item expires before payment and give acceptance criteria.",
       "expected_skill": "product-spec",
       "excluded_skills": [
         "domain-modeling"
@@ -884,7 +884,7 @@
       "id": "human-writing-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic human-writing request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Rewrite this internal update for our support team: 'Due to circumstances related to processing, the deployment of the change has been delayed by one day.'",
       "expected_skill": "human-writing",
       "excluded_skills": [
         "product-spec"
@@ -919,7 +919,7 @@
       "id": "human-writing-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to product-spec, without modifying source, Git state, or external systems.",
+      "prompt": "Define the required behavior and acceptance criteria for canceling a pending invitation, including what the invitee sees afterward.",
       "expected_skill": "product-spec",
       "excluded_skills": [
         "human-writing"
@@ -989,7 +989,7 @@
       "id": "ops-browser-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic ops-browser request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Given a disposable web tab showing two Save buttons, describe how to identify the one in the active dialog and verify its state from the DOM. Planning only.",
       "expected_skill": "ops-browser",
       "excluded_skills": [
         "ops-client"
@@ -1024,7 +1024,7 @@
       "id": "ops-browser-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to ops-client, without modifying source, Git state, or external systems.",
+      "prompt": "Given a native macOS Settings window with two identically named controls, describe how to identify the active pane using the accessibility tree. Planning only.",
       "expected_skill": "ops-client",
       "excluded_skills": [
         "ops-browser"
@@ -1094,7 +1094,7 @@
       "id": "ops-client-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic ops-client request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Plan a read-only inspection of a native desktop dialog to establish which window owns the selected accessibility element.",
       "expected_skill": "ops-client",
       "excluded_skills": [
         "ops-browser"
@@ -1129,7 +1129,7 @@
       "id": "ops-client-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to ops-browser, without modifying source, Git state, or external systems.",
+      "prompt": "Plan a read-only check of the currently selected HTML option in an existing browser tab, including how to bind the observation to the correct tab.",
       "expected_skill": "ops-browser",
       "excluded_skills": [
         "ops-client"
@@ -1445,7 +1445,7 @@
       "id": "product-spec-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic product-spec request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Specify when a user can withdraw a draft and what outcome is visible after withdrawal. Provide testable acceptance criteria.",
       "expected_skill": "product-spec",
       "excluded_skills": [
         "domain-modeling"
@@ -1480,7 +1480,7 @@
       "id": "product-spec-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to domain-modeling, without modifying source, Git state, or external systems.",
+      "prompt": "Sales and support use 'account closed' to mean different things. Reconcile the shared lifecycle terms and identify which team owns each transition.",
       "expected_skill": "domain-modeling",
       "excluded_skills": [
         "product-spec"
@@ -1550,7 +1550,7 @@
       "id": "repo-audit-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic repo-audit request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Audit the existing frontend fixture for maintainability risks using current source locations; the request covers the existing implementation as a whole.",
       "expected_skill": "repo-audit",
       "excluded_skills": [
         "repo-review"
@@ -1585,7 +1585,7 @@
       "id": "repo-audit-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to repo-review, without modifying source, Git state, or external systems.",
+      "prompt": "Review this exact patch: the empty-list branch now indexes rows[0]. State the regression and a minimal test for it.",
       "expected_skill": "repo-review",
       "excluded_skills": [
         "repo-audit"
@@ -1655,7 +1655,7 @@
       "id": "repo-delivery-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic repo-delivery request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Prepare an exact-path staging and commit plan for one approved documentation change while an unrelated source edit is present. Stop before writing Git state.",
       "expected_skill": "repo-delivery",
       "excluded_skills": [
         "repo-review"
@@ -1690,7 +1690,7 @@
       "id": "repo-delivery-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to repo-review, without modifying source, Git state, or external systems.",
+      "prompt": "Evaluate a fixed change that broadened the staged path from one document to the repository root. Give actionable review findings.",
       "expected_skill": "repo-review",
       "excluded_skills": [
         "repo-delivery"
@@ -1760,7 +1760,7 @@
       "id": "repo-map-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic repo-map request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Map the components, test entry and their source paths in this fixture for navigation. Record the scope and basis of the inventory.",
       "expected_skill": "repo-map",
       "excluded_skills": [
         "repo-audit"
@@ -1795,7 +1795,7 @@
       "id": "repo-map-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to repo-audit, without modifying source, Git state, or external systems.",
+      "prompt": "Inspect the current frontend implementation for duplicated component responsibilities and report maintenance findings with source evidence.",
       "expected_skill": "repo-audit",
       "excluded_skills": [
         "repo-map"
@@ -1865,7 +1865,7 @@
       "id": "repo-review-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic repo-review request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Review this patch against its parent: a formerly optional field is now accessed unconditionally. Identify affected callers and a regression check.",
       "expected_skill": "repo-review",
       "excluded_skills": [
         "repo-audit"
@@ -1900,7 +1900,7 @@
       "id": "repo-review-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to repo-audit, without modifying source, Git state, or external systems.",
+      "prompt": "Audit the existing frontend code for mismatches between component ownership and styling, with file-specific findings.",
       "expected_skill": "repo-audit",
       "excluded_skills": [
         "repo-review"
@@ -1970,7 +1970,7 @@
       "id": "to-task-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic to-task request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Turn an accepted CSV export requirement into implementation tasks with dependencies, acceptance evidence and a recovery point.",
       "expected_skill": "to-task",
       "excluded_skills": [
         "product-spec"
@@ -2005,7 +2005,7 @@
       "id": "to-task-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to product-spec, without modifying source, Git state, or external systems.",
+      "prompt": "Define what users should see when a CSV export contains zero rows, including acceptance criteria for the feature owner.",
       "expected_skill": "product-spec",
       "excluded_skills": [
         "to-task"
@@ -2075,7 +2075,7 @@
       "id": "ui-spec-implicit-route",
       "kind": "route",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic ui-spec request using the appropriate owner. Do not modify source, Git state, or external systems.",
+      "prompt": "Write the visual implementation handoff for an approved search form with idle, focused and disabled states at two viewport sizes.",
       "expected_skill": "ui-spec",
       "excluded_skills": [
         "dev-frontend"
@@ -2110,7 +2110,7 @@
       "id": "ui-spec-nearest-non-trigger",
       "kind": "nearest",
       "mode": "implicit",
-      "prompt": "Handle the supplied synthetic request that belongs to dev-frontend, without modifying source, Git state, or external systems.",
+      "prompt": "Given an approved component specification, show the minimal Vue template and scoped CSS for its disabled button state. Return the implementation snippet in your response.",
       "expected_skill": "dev-frontend",
       "excluded_skills": [
         "ui-spec"

@@ -93,6 +93,12 @@ class LiveAgentEvalTests(unittest.TestCase):
     def test_fixed_cases_are_valid(self) -> None:
         self.assertEqual([], VALIDATOR.case_errors(self.cases))
 
+    def test_implicit_prompt_cannot_name_expected_skill(self) -> None:
+        cases = copy.deepcopy(self.cases)
+        case = next(entry for entry in cases["cases"] if entry["mode"] == "implicit")
+        case["prompt"] = f"Use ${case['expected_skill'].upper()} for this task."
+        self.assertIn(f"{case['id']}: implicit prompt names its expected skill", VALIDATOR.case_errors(cases))
+
     def test_critical_stop_has_no_source_owner_requirement(self) -> None:
         critical = next(case for case in self.cases["cases"] if case["id"] == "dev-frontend-critical-stop")
         self.assertEqual([], critical["required_source_owners"])

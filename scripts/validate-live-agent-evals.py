@@ -93,6 +93,8 @@ def case_errors(cases: dict[str, object]) -> list[str]:
             modes.add(mode)
         if not isinstance(case.get("prompt"), str) or not case["prompt"].strip():
             errors.append(f"{case_id}: prompt is required")
+        elif mode == "implicit" and isinstance(case.get("expected_skill"), str) and case["expected_skill"].casefold() in case["prompt"].casefold():
+            errors.append(f"{case_id}: implicit prompt names its expected skill")
         if not isinstance(case.get("expected_skill"), str):
             errors.append(f"{case_id}: expected_skill is required")
         for key in ("excluded_skills", "required_observations", "required_process", "required_source_owners", "allowed_changed_paths", "required_changed_paths", "required_effects", "forbidden_effects", "required_artifacts"):
