@@ -3,7 +3,7 @@
 ## Current package byte inventory
 
 - Digest scope: all 20 packages declared by `skills-index.json`.
-- Package digest: `sha256:56880812ea7dded6a07a8d0f991314b75180c896bc6782f93b32578fa94055ec`
+- Package digest: `sha256:61cc8a01649ecd3426e62cebe51c635379dd0749ce5e49a932eab431c1b31d64`
 - This digest identifies current package bytes only. The historical live decisions
   below retain their original basis and do not establish behavior for this inventory.
 - The inherited 2026-10-22 retrospective reports five passing synthetic Codex CLI
@@ -137,3 +137,29 @@ without changing parser code or project dependencies.
 Static package/routing gates establish catalog consistency. Native independent behavior
 results establish only observed decisions on their supplied fixtures. Neither proves
 all-account history access, production operation, exact token savings, or stable adoption.
+
+The bounded decision cases retain their expected answers for offline diagnostics.
+Live outcomes remain `not-verified`: the current workspace-write runner does not
+establish read isolation from those answers, and the questions' axis-selection
+semantics need independent validation. Answer matches alone are not owner evidence.
+
+## Evidence scope decision canary
+
+The historical report added in `62415e7` describes six synthetic decision prompts
+using the Dev Tests, browser-debug and host evidence guidance available at that time.
+The exact installed package and host basis is not established here. The visible
+terminal response satisfied all six decision oracles: a large route/state matrix
+received a representative byte estimate and assertion-scoped capture plan; API
+response reuse preserved failed-request and independent-state proof; a justified
+complete snapshot remained eligible; stale or active evidence was not deleted;
+one screenshot stayed browser-owned; and complete unchanged evidence produced a
+valid no-op. The large-matrix estimate was 187.5 GiB from supplied inputs, not an
+observed runtime or measured saving.
+
+This is decision-output evidence for these prompts only. The local trace records
+visible dispatch and terminal output, not the child's unexposed internal actions.
+The supporting trace and prompt details are local-only and are not distributed with
+this catalog; this summary alone cannot independently reproduce the assessment.
+No real application, browser capture, storage writer, baseline/candidate efficiency
+comparison or actual resource-reduction effect was exercised. Historical canaries
+above retain their original bases; this run does not extend their claims.

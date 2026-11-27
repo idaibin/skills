@@ -86,6 +86,21 @@ For a requested release-readiness assessment, identify missing version-bound hea
 signals and recovery/rollback evidence for the release owner. Test success alone cannot
 prove deployment health or authorize monitoring configuration, rollout or rollback.
 
+## Text, request timing and shared feedback
+
+Apply only to affected surfaces and the accepted contract:
+
+| Risk | Minimum observable checks |
+| --- | --- |
+| Multiline or long input | Type and paste representative lines, blank lines and a long value; include just below, at and above the accepted limit and composition where relevant. Check editable value, allowed newlines, validation and recovery. When persistence applies, after save and reload compare the actual payload and read-back value to the accepted normalization and counting unit. |
+| Long or multiline display | Use the same source value in each affected detail/edit/list surface. Check approved wrapping, line clamp or ellipsis and access to complete text where required. Include a long unbroken token, narrow viewport and large text when supported; verify using rendered bounds and controls that text or actions are not unintentionally obscured. |
+| Debounce and latest query | Assert dispatch count, final parameters and approved Search/Enter behavior after rapid input. Where composition applies, assert no search is sent for unfinished IME input. Clear or exit before the timer fires to check that queued work does not run. Independently deliver an older result or error after the latest render and confirm the current data and feedback remain intact. |
+| Repeated activation | Assert the first accepted click or key activation is immediate within the accepted behavior. Send repeated clicks/keys inside the accepted throttle interval or while the write is pending, as applicable. Then exercise a valid retry or unrelated action. Count actual calls and resulting writes/navigation, not just disabled styles. |
+| Shared loading and controls | Check actual source import or component owner, then render the requested loading transitions and success, empty, failure or cancellation as applicable. Check scope, geometry and relevant focus/accessibility; assert no duplicate indicator and no interference with independent controls. A screenshot or build alone does not prove reuse, timing or terminal state. |
+
+Tie each checked behavior to its fixed source and evidence layer. Do not add an
+unapproved truncation control or loading state to make a test pass.
+
 ## Checking the case itself
 
 Describe the subject, test level and real dependencies, quality attribute, purpose and
@@ -98,14 +113,19 @@ other behaviors exposed to the change, including consumers of a shared component
 Use equivalence classes and adjacent boundary values for input limits, decision tables
 for interacting conditions and transition tables for lifecycle rules. For a latest-query
 rule, observe A and B dispatched, B rendered, then A delivered to the still-mounted
-consumer. Compare the final row identities, count and current error state. Exercise the
-cancelled-request and debounce paths separately when they apply.
+consumer. After A settles and rendering completes on that same view, check B’s exact row identities, order, count and current error state. If A is still pending, credit only B’s intermediate render. For debounce, count requests actually dispatched during the input burst; for cancellation, observe abort. Neither path exercises an older response reaching a live handler.
 
 Name the independent authority, version, operation, role, initial state, unit, observable outcome and counterexample. Distinguish an accepted rule from an example, an observed baseline and a question. Trace who produced the expected and actual values. A document, mock and client type copied from the same response represent one source.
 
 For a new or disputed high-risk case, freeze inputs and oracle. Run a known-good example and a single relevant bad variant under the same harness. Check that the good example passes, the bad one fails at the intended assertion, and restoring the good example passes again. Include a legitimate variation likely to be over-rejected, such as another valid source or a second independent action. A setup error or an unobserved input cannot qualify the control. Reuse matching evidence on an unchanged basis.
 
 If both variants pass, record a test gap. If the accepted example fails, check setup, reachability and oracle before assigning a defect. If the trigger never occurred, record an inconclusive execution. If authorities conflict, retain the competing meanings and owner decision needed. Require evidence to declare either success or failure.
+
+When replacing a test implementation across runners or languages, compare the migrated
+case by existing case ID against its original expected outcomes and observable side
+effects. Record intentional contract changes separately from equivalent replacements.
+A green replacement without coverage for an original required assertion is not parity;
+retain that gap even when execution and response-shape checks pass.
 
 ## Existing-project default
 

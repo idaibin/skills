@@ -25,9 +25,14 @@ if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from live_owner_fixture import FIXTURES, prepare_owner_input
 from live_provider_evidence import sha256_file, verify_provider_evidence
 
 VALIDATOR_PATH = ROOT / "scripts/validate-live-agent-evals.py"
+_validator_spec = importlib.util.spec_from_file_location("live_agent_validator", VALIDATOR_PATH)
+assert _validator_spec and _validator_spec.loader
+EVAL_VALIDATOR = importlib.util.module_from_spec(_validator_spec)
+_validator_spec.loader.exec_module(EVAL_VALIDATOR)
 RESULT_SCHEMA_VERSION = "skill-live-agent-results/v1"
 SOURCE_PATH = "src/components/neutral-panel.ts"
 STOP_STATES = ("completed", "evidence-incomplete", "missing-authorization", "not-verified")
@@ -206,14 +211,15 @@ def trace_facts(trace_path: Path) -> dict[str, Any]:
     }
 
 
-def output_schema(path: Path) -> None:
+def output_schema(path: Path, owner_task: bool = False) -> None:
     path.write_text(
         json.dumps(
             {
                 "type": "object",
                 "additionalProperties": False,
-                "required": ["selected_skill", "process", "stop_state", "not_verified"],
+                "required": ["selected_skill", "process", "stop_state", "not_verified"] + (["deliverable"] if owner_task else []),
                 "properties": {
+                    **({"deliverable": {"type": "string"}} if owner_task else {}),
                     "selected_skill": {"type": "string"},
                     "process": {"type": "array", "items": {"type": "string"}},
                     "stop_state": {"type": "string", "enum": list(STOP_STATES)},
@@ -551,6 +557,9 @@ def command_argv_segments(command: str) -> list[list[str]]:
     if len(argv) >= 3 and Path(argv[0]).name in {"sh", "bash", "zsh"} and any(flag in argv[1:-1] for flag in ("-c", "-lc")):
         segments: list[list[str]] = []
         for part in split_shell_body(argv[-1]):
+            # The unquoted opening brace introduces a shell command group.
+            if re.match(r"^\{\s", part):
+                part = part[1:].lstrip()
             try:
                 tokens = shlex.split(part)
             except ValueError:
@@ -828,7 +837,12 @@ def run_case(
     with tempfile.TemporaryDirectory(prefix="skill-live-agent-") as temporary:
         workspace = Path(temporary) / "fixture"
         shutil.copytree(fixture, workspace)
-        initialize_fixture_repository(workspace)
+        fixture_spec = load_json(FIXTURES).get(case["id"])
+        brief = None
+        if fixture_spec:
+            brief = prepare_owner_input(workspace, case_root, fixture_spec, initialize_fixture_repository)
+        else:
+            initialize_fixture_repository(workspace)
         baseline_git = git_snapshot(workspace)
         before = copy_tree_snapshot(workspace)
         schema_path = case_root / "output-schema.json"
@@ -836,7 +850,7 @@ def run_case(
         last_message_path = case_root / "last-message.json"
         provider_required = case.get("required_provider")
         output_stop = expected_output_stop(case, provider_evidence)
-        output_schema(schema_path)
+        output_schema(schema_path, owner_task=fixture_spec is not None)
         provider_note = (
             "An independent provider result is not enabled for this run. Do not invoke an external provider; "
             "set stop_state to not-verified and report it Not verified."
@@ -844,6 +858,11 @@ def run_case(
             else "Do not invoke any external provider."
         )
         prompt = build_eval_prompt(case, provider_note)
+        if brief:
+            prompt += ("\nSupplied materials for this task:\n" + brief +
+                       "\nPut the requested written work or implementation snippet in deliverable. "
+                       "The response itself is the delivery channel. Work within the stated planning, "
+                       "review or snippet scope. Source changes and live operations are outside this task.")
         command = build_codex_command(
             workspace=workspace,
             schema_path=schema_path,
@@ -874,6 +893,7 @@ def run_case(
         check_code, check_output = focused_check(workspace, expects_change)
         (case_root / "focused-check.log").write_text(check_output, encoding="utf-8")
         final = parse_final_message(last_message_path)
+        decision_requested = "decision_oracle" in case
         effects = []
         if changed:
             effects.append("source-write")
@@ -1002,6 +1022,8 @@ def run_case(
         }
         if provider is not None:
             result["provider"] = provider
+        if decision_requested:
+            result["decision_oracle"] = {"version": EVAL_VALIDATOR.DECISION_ORACLE_VERSION, "answer": final}
         required = set(case["required_observations"]).issubset(result["observations"])
         expected = set(case["required_effects"]).issubset(effects) and not (set(case["forbidden_effects"]) & set(effects))
         artifacts_present = set(case["required_artifacts"]).issubset(result["artifacts"])
@@ -1026,6 +1048,17 @@ def run_case(
             result["status"] = "failed"
         elif provider_missing:
             result["status"] = "not-verified"
+        elif decision_requested:
+            # The candidate can read the catalog tree containing expected answers,
+            # and the fixed questions do not yet define every axis consistently.
+            # An answer match is not independent evidence of a correct decision.
+            if process.returncode == 0 and selection_trace and facts["tool_calls"] <= case["max_tool_calls"]:
+                result["status"] = "not-verified"
+                result["not_verified"] = sorted(set(result["not_verified"]) | {
+                    "decision-answer-isolation", "decision-oracle-semantics"
+                })
+            else:
+                result["status"] = "failed"
         elif "owner-result" in case["required_artifacts"] or "deliver-owner-output" in case["required_process"]:
             # This fixture has no independent oracle for another owner's deliverable.
             result["status"] = "not-verified"
@@ -1080,6 +1113,8 @@ def main() -> int:
                 "selected_case_ids": [case["id"] for case in selected],
                 "source_hashes": {
                     "runner": sha256_file(Path(__file__).resolve()),
+                    "owner_fixtures": sha256_file(FIXTURES),
+                    "fixture_setup": sha256_file(SCRIPT_DIR / "live_owner_fixture.py"),
                     "validator": sha256_file(VALIDATOR_PATH),
                     "cases": sha256_file(args.cases.resolve()),
                 },
@@ -1093,6 +1128,8 @@ def main() -> int:
         ) + "\n",
         encoding="utf-8",
     )
+    shutil.copyfile(args.cases, output_root / "case-definitions.json")
+    shutil.copyfile(FIXTURES, output_root / "owner-fixtures.json")
     results = [
         run_case(
             case,

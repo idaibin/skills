@@ -30,7 +30,7 @@ affected definition; return the exact gap to the product or domain owner. Eviden
 - Preserve project-native envelope, authentication, gateway, naming, pagination, and
   error conventions. Frontend wrappers, old prose, and parser success cannot establish
   backend truth. Read only sources allowed by the task and project.
-- Keep business context in its Markdown owner and wire structures in OpenAPI. Link
+- Keep business context in its Markdown owner and wire structures in the project-native contract. Link
   definitions instead of copying schemas into prose; create no unneeded companion file.
 - Only the accepted owner can promote a draft contract. Distinguish structural checks,
   compatibility, implementation, consumers, runtime/gateway, and deployment evidence.
@@ -48,8 +48,7 @@ artifacts and does not require a new project-side metadata format. Reconstructio
 ## Reference Map
 
 - Load [contract design](references/contract-design.md) for authority, lifecycle, and
-  authoring workflow; use [OpenAPI authoring](references/openapi-authoring.md) for the
-  changed wire or validation concern.
+  authoring workflow; use [OpenAPI authoring](references/openapi-authoring.md) when the project uses or explicitly requests OpenAPI.
 - Load [source reconstruction](references/source-reconstruction.md) for evidence-only reverse documentation.
 - Maintainers only: [eval cases](references/eval-cases.md); do not load during ordinary
   API authoring.

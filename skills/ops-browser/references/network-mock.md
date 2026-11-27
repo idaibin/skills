@@ -8,10 +8,14 @@ target project. Do not import Mock into production components or API clients.
 ## Contextual Selection And Local Reuse
 
 During browser testing or verification, use the task context and established user
-preferences to select this workflow; no Skill-name invocation is required. Observe
-real APIs first. When an API fails or cannot supply the required test data, use a
-project-local scenario automatically if synthetic inputs are within the task's
-accepted scope. Record valid empty business results separately; they are not defects.
+preferences to select this workflow; no Skill-name invocation is required. An explicitly
+authorized deterministic frontend fixture regression may install request-stage protection
+before navigation; no real API failure is required. Record the authorization source,
+target and allowed effects with the run evidence; stop if that authority is unverified.
+For ordinary real-service diagnosis,
+observe real APIs first. When an API fails or cannot supply the required test data, use a
+project-local scenario automatically if synthetic inputs are within the task's accepted
+scope. Record valid empty business results separately; they are not defects.
 Do not ask again for the same authorized fallback. Mock never broadens production
 write authority or proves real-service integration. If a required contract is missing,
 retain that gap rather than inventing a formally valid response.
@@ -34,10 +38,15 @@ Business envelopes and test data do not belong in generic Skill packages.
 1. The caller supplies an authorized test target, project contract/scenario,
    version-bound external runner and allowed effects. Verify the task-owned tab,
    account, frame/target, actual request placement and tool capabilities. Record
-   real results before substituting missing or failed interfaces. Authentication
+   real results before substitution for real-service diagnosis; for a preauthorized
+   fixture regression, install request-stage protection before navigation. Authentication
    and initial page loading are distinct from the protected test interval.
-2. Probe the adapter rather than assuming protocol documentation guarantees host
-   support. Cover both XHR and Fetch where available. List uncovered Document,
+2. Qualify the adapter on first use or after version/capability drift; reuse matching
+   proof across business cases. Verify each invocation's target/connection epoch, coverage
+   and isolation remain within that proof, including relevant worker/service-worker,
+   extension and proxy changes; missing or mismatched proof blocks dependent actions.
+   The following qualification checks probe actual adapter support rather than
+   assuming protocol documentation guarantees it. Cover both XHR and Fetch where available. List uncovered Document,
    beacon, worker/SW, popup, WebSocket and server-side traffic; stop interactions
    whose safety depends on unverified coverage. A new tab does not prove isolated
    cookie/storage/cache. Prefer explicit test-target cache/SW controls when supported.

@@ -30,13 +30,7 @@ Inspect current scripts/configuration and choose actual declared commands. Reuse
 nearest effective tests; do not invent `test`/`lint` commands, treat a build as testing,
 or launch new infrastructure implicitly. Capture a task-local baseline before tests.
 
-When tests resolve packages through another checkout/application, temporary links or
-ambient modules, record that dependency provenance as part of the run identity. Such
-results prove only that environment, not an independent lockfile installation. After
-replacing or removing those dependencies, rebind and rerun the affected checks; retain
-the original pass without promoting it to the new environment. Missing harness packages
-are environment/testability gaps, not product assertion failures. Dependency edits
-belong to their implementation owner and require the existing task authority.
+Bind dependency provenance and reruns to the [cross-target execution rules](execution.md#cross-target-evidence).
 
 Exit this step with one identified target and known effects. If authentication,
 identity, network or tools are missing, mark dependent cases BLOCKED and continue

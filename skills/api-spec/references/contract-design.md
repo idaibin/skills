@@ -7,11 +7,11 @@ Use for bounded API contract authoring or revision after business semantics are 
 Declare exactly one strategy for each bounded service before changing request or
 response definitions:
 
-- **Contract-first:** human-readable OpenAPI is the wire authority. Keep it `draft`
+- **Contract-first:** the project-owned contract (for example, an IDL or adopted OpenAPI document) is the wire authority. Keep it `draft`
   until the API owner accepts the exact scope, version, and content hash; implementation
   then conforms to that accepted artifact.
 - **Code-first:** backend routes, wire DTOs, validation, security, and error mappings are
-  the authority. OpenAPI is a generated derivative tied to a fixed source basis.
+  the authority. Generated descriptions, when used, are derivatives tied to a fixed source basis.
 
 Do not maintain parallel handwritten endpoint, DTO, response, or error authorities.
 Frontend wrappers, screenshots, legacy prose, repository inventories, and successful
@@ -32,11 +32,12 @@ behavior; a final document should not narrate the task conversation.
 3. Preserve the target project's native envelope, authentication, gateway prefix,
    naming, pagination, and error conventions. Treat external standards as defaults,
    never as evidence that the project implements them.
-4. Author or revise the native OpenAPI artifact using
+4. Use the existing native contract and its validation tools. When the project has
+   adopted OpenAPI or explicitly requests adoption, apply
    [OpenAPI authoring](openapi-authoring.md). Prefer YAML for handwritten
-   contract-first specifications unless a named consumer requires JSON.
+   OpenAPI specifications unless a named consumer requires JSON.
 5. Keep product behavior, UI handling, retries, deployment state, changelog, unresolved
-   decisions, and verification logs outside OpenAPI. Create a Markdown companion only
+   decisions, and verification logs outside the wire contract. Create a Markdown companion only
    when a real reader needs context; link to schemas instead of copying them.
 6. Validate with the project's pinned check-only parser/linter. If none exists, identify
    the gap and use an available generic validator without claiming project adoption.

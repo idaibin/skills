@@ -187,6 +187,125 @@
         "iOS and other required unobserved native cells remain unverified, blocked or not run with their actual reason",
         "retain the accepted Mock scope and continue independently authorized cases"
       ]
+    },
+    {
+      "id": "reuse-receipt-pass",
+      "prompt": "只概括原搜索回归 SR-17 的结果。昨天的导出在当前目录 receipt.json，相关输入基线仍是 B7。本次没有改动，请沿用原有证据，不要重跑。",
+      "fixture": {
+        "basis": "B7",
+        "scope": "browser with synthetic HTTP; no live backend",
+        "events": [
+          {
+            "caseId": "SR-17",
+            "attempt": 1,
+            "type": "observed",
+            "event": "response-rendered"
+          },
+          {
+            "caseId": "SR-71",
+            "attempt": 1,
+            "type": "terminal",
+            "outcome": "passed"
+          },
+          {
+            "caseId": "SR-17",
+            "attempt": 1,
+            "type": "terminal",
+            "outcome": "passed",
+            "assertion": "latest-visible-ids",
+            "expected": [
+              "row-B"
+            ],
+            "actual": [
+              "row-B"
+            ]
+          }
+        ]
+      },
+      "oracle": [
+        "read receipt.json; bind SR-17, attempt 1, basis B7",
+        "carry forward passed",
+        "keep the synthetic boundary, preserve failure details when present",
+        "never substitute SR-71 or rerun"
+      ]
+    },
+    {
+      "id": "reuse-receipt-fail",
+      "prompt": "只概括原搜索回归 SR-17 的结果。昨天的导出在当前目录 receipt.json，相关输入基线仍是 B7。本次没有改动，请沿用原有证据，不要重跑。",
+      "fixture": {
+        "basis": "B7",
+        "scope": "browser with synthetic HTTP; no live backend",
+        "events": [
+          {
+            "caseId": "SR-17",
+            "attempt": 1,
+            "type": "observed",
+            "event": "response-rendered"
+          },
+          {
+            "caseId": "SR-71",
+            "attempt": 1,
+            "type": "terminal",
+            "outcome": "passed"
+          },
+          {
+            "caseId": "SR-17",
+            "attempt": 1,
+            "type": "terminal",
+            "outcome": "failed",
+            "assertion": "latest-visible-ids",
+            "expected": [
+              "row-B"
+            ],
+            "actual": [
+              "row-A"
+            ]
+          }
+        ]
+      },
+      "oracle": [
+        "read receipt.json; bind SR-17, attempt 1, basis B7",
+        "carry forward failed",
+        "keep the synthetic boundary, preserve failure details when present",
+        "never substitute SR-71 or rerun"
+      ]
+    },
+    {
+      "id": "reuse-receipt-no-terminal",
+      "prompt": "只概括原搜索回归 SR-17 的结果。昨天的导出在当前目录 receipt.json，相关输入基线仍是 B7。本次没有改动，请沿用原有证据，不要重跑。",
+      "fixture": {
+        "basis": "B7",
+        "scope": "browser with synthetic HTTP; no live backend",
+        "events": [
+          {
+            "caseId": "SR-17",
+            "attempt": 1,
+            "type": "observed",
+            "event": "response-rendered"
+          },
+          {
+            "caseId": "SR-71",
+            "attempt": 1,
+            "type": "terminal",
+            "outcome": "passed"
+          }
+        ]
+      },
+      "oracle": [
+        "read receipt.json; bind SR-17, attempt 1, basis B7",
+        "SR-17 rendered, terminal absent: verdict unverified",
+        "keep the synthetic boundary, preserve failure details when present",
+        "never substitute SR-71 or rerun"
+      ]
+    },
+    {
+      "id": "historical-receipt-unavailable",
+      "prompt": "Summarize yesterday’s search regression. Its relevant inputs match and the run owner says render, response and assertion receipts exist. Only unrelated case files are accessible here. No rerun requested.",
+      "oracle": [
+        "use dev-tests even for a summary without a rerun",
+        "report the prior observations as supplied; original case ID and terminal inaccessible",
+        "leave historical verdict and real-service behavior unverified; do not rerun"
+      ]
     }
   ]
 }

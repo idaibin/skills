@@ -44,7 +44,7 @@ Agent installation, model configuration or a new test framework.
 A healer may propose a locator/wait/data correction only when the original expected
 behavior is preserved and observed evidence supports the change. A generated skip,
 fixme, expected failure, dropped case, weakened assertion or automatic screenshot
-rebaseline is not a passing repair. Stop that promotion and retain the original case.
+rebaseline is not a passing repair. Match the frozen case ID and project to the first attempt, original assertion, approved baseline and each retry disposition. If the original ID or approved comparison is missing, identify what must be recovered and keep the first failure open.
 A product defect needs source-write authority and a fresh test basis; it does not
 justify changing the expected business outcome.
 

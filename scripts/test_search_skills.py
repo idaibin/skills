@@ -18,6 +18,65 @@ SPEC.loader.exec_module(SEARCH)
 
 
 class SearchSkillsTests(unittest.TestCase):
+    def test_chinese_test_and_contract_candidates(self) -> None:
+        index = SEARCH.load_index(ROOT)
+        for query, owners in {
+            "测试重复提交与超时恢复": ["dev-tests"],
+            "回归测试": ["dev-tests"],
+            "为这个接口设计边界测试用例": ["dev-tests"],
+            "只设计 API 契约，不执行测试": ["api-spec"],
+            "帮我测试当前改动": ["dev-tests"],
+            "不要提交代码，只做测试": ["dev-tests"],
+            "提交当前代码到 Git": ["repo-delivery"],
+            "请设计 API 契约": ["api-spec"],
+            "测试当前仓库的重复提交": ["dev-tests"],
+            "不要做回归测试": [],
+            "测试提交代码时的超时恢复": ["dev-tests"],
+        }.items():
+            with self.subTest(query=query):
+                self.assertEqual([item["name"] for item in SEARCH.search(index, query)], owners)
+        for query in ("为这个接口设计边界测试用例", "设计测试用例，不执行测试"):
+            self.assertEqual(SEARCH.search(index, query)[0]["capability_ids"], ["testing.coverage.verify"])
+        self.assertIn("test.acceptance.execute", SEARCH.search(index, "设计测试用例，然后执行测试")[0]["capability_ids"])
+
+    def test_compound_test_capabilities(self):
+        index = SEARCH.load_index(ROOT)
+        design = "testing.coverage.verify"
+        execute = "test.acceptance.execute"
+        for request, expected in {
+            "设计测试用例并执行测试": {design, execute},
+            "设计测试用例，然后执行已有测试": {design, execute},
+            "设计测试用例，然后执行测试": {design, execute},
+            "设计边界测试用例并不执行已有测试": {design},
+            "不要执行已有测试，只设计测试用例": {design},
+            "不要设计测试用例，只执行已有测试": {execute},
+            "不设计测试用例，也不运行现有测试": set(),
+        }.items():
+            with self.subTest(request=request):
+                rows = SEARCH.search(index, "使用 dev-tests " + request)
+                self.assertEqual({cap for row in rows if row["name"] == "dev-tests"
+                                  for cap in row["capability_ids"]}, expected)
+
+    def test_mixed_language_local_commit_keeps_push_denial(self):
+        prompt = "先检查改动并截图，再在本地 commit；同步远端更新，不推送"
+        plan = SEARCH.parse_delivery_intent(prompt)
+        self.assertTrue(plan.authorized)
+        self.assertEqual(
+            [("commit", "command", True), ("push", "deny", True)],
+            [(event.action, event.modality, event.context) for event in plan.events],
+        )
+        for negative in ("先检查本地 commit", "不在本地 commit", "查一下本地 commit 是否完成",
+                         "请推送这个分支；不推送", "请提交代码；先不提交",
+                         "仅记录计划：本地 commit；不要实际执行",
+                         "有哪些方式：本地 commit；不推送",
+                         "需要确认后才能操作：本地 commit；我目前未授权",
+                         "先记录拟执行步骤，然后本地 commit；我目前未授权",
+                         "先检查改动，再在本地 commit。只做方案，我没有授权。",
+                         "请在本地 commit；先不要执行任何 Git 操作",
+                         "请在本地 commit?"):
+            with self.subTest(prompt=negative):
+                self.assertFalse(SEARCH.parse_delivery_intent(negative).authorized)
+
     def setUp(self) -> None:
         self.index = {
             "packages": [

@@ -1,0 +1,287 @@
+{
+  "api-spec-implicit-route": {
+    "brief": "Return the requested draft in the response for the service owner to review.",
+    "review": [
+      "OpenAPI draft defines GET /health without authentication or inputs",
+      "HTTP 200 application/json response requires a boolean ready property",
+      "The artifact is a draft for owner review and makes no claim of runtime conformance"
+    ]
+  },
+  "ask-ai-implicit-route": {
+    "brief": "Support needs an evidence-based answer: SR-17 was requested, the only receipt says SR-71 passed. The internal ticket number is INTERNAL-491. Prepare a local, redacted second-opinion request.",
+    "review": [
+      "Ready-to-send question distinguishes requested and observed cases",
+      "Omits internal ticket and requests terminal evidence without asserting success",
+      "Package only, no transmission"
+    ]
+  },
+  "ask-ai-nearest-non-trigger": {
+    "brief": "The caller must never mark paid without a definitive result. The immutable candidate is HEAD, baseline HEAD^; inspect that diff and the supplied caller. The requested output is the review itself.",
+    "review": [
+      "Binds finding to changed timeout behavior",
+      "Explains false payment success at the caller",
+      "Regression asserts timeout retains unknown and cannot mark paid"
+    ],
+    "files": {
+      "src/outcome.ts": "export const timeout = () => \"unknown\";",
+      "src/caller.ts": "import { timeout } from \"./outcome\";\nexport const markPaid = () => timeout() === \"success\";"
+    },
+    "candidate": {
+      "src/outcome.ts": "export const timeout = () => \"success\";"
+    }
+  },
+  "dev-frontend-nearest-non-trigger": {
+    "brief": "Approved table contract: at 1280px render three columns; at 360px stack one record per card. Empty copy: “No invoices”. Initial load has three skeleton records; pending refresh keeps prior records with a busy state. Design owner approved these states. Produce a written handoff only.",
+    "review": [
+      "Specifies columns versus stacked cards at both widths",
+      "Separates initial skeleton, empty copy and refresh with retained rows",
+      "Includes a verifiable loading/accessibility state and state checks"
+    ]
+  },
+  "dev-java-implicit-route": {
+    "brief": "Current service: Optional<Row> find(long id) { Row row = repository.find(id); return Optional.of(row); }. DAO returns null for missing ID; existing IDs must return the same row. Return a Java correction and two regression assertions.",
+    "review": [
+      "Uses nullable-aware Optional while preserving present row identity",
+      "Covers absent and present cases and keeps Optional<Row> contract"
+    ]
+  },
+  "dev-java-nearest-non-trigger": {
+    "brief": "Current Node TypeScript: async function main(){ writeFile(\"out.txt\", \"ready\"); process.exit(0); }. Consumers require durable completion of the write call before success, and nonzero exit on rejection. Provide a snippet only.",
+    "review": [
+      "Awaits or returns the write promise before reporting success",
+      "Propagates rejection to nonzero exit without premature process termination"
+    ]
+  },
+  "dev-rust-implicit-route": {
+    "brief": "Current Rust: fn label(id: u32) -> &str { format!(\"job-{id}\").as_str() }. API callers can own the returned value. Provide a compiling signature and body.",
+    "review": [
+      "Identifies temporary lifetime",
+      "Returns owned String and preserves job-ID formatting without leaking memory"
+    ]
+  },
+  "dev-rust-nearest-non-trigger": {
+    "brief": "Node TypeScript: transform(line: string): Promise<string>. Input is AsyncIterable<string>; the CLI emits each transformed line via emit(line: string): void. Return an implementation sketch.",
+    "review": [
+      "Consumes async iterable and awaits transform before emission",
+      "Preserves order and emits each value once without collecting entire input"
+    ]
+  },
+  "dev-typescript-implicit-route": {
+    "brief": "Current worker type is type Reply = {ok:true; value:number} | {ok:false; message:string}; function show(r:Reply):string { return String(r.value) }. tsc rejects r.value. Return a corrected function covering both cases.",
+    "review": [
+      "Narrows using discriminator before accessing fields",
+      "Returns string for both numeric success and original error message"
+    ]
+  },
+  "dev-typescript-nearest-non-trigger": {
+    "brief": "Successful publish requires the rename to have completed. The immutable candidate is HEAD, baseline HEAD^; inspect that diff and the supplied caller. The requested output is the review itself.",
+    "review": [
+      "Identifies detached rename and early readiness",
+      "Handles delayed resolution and rejection in a focused check"
+    ],
+    "files": {
+      "src/save.ts": "import { rename } from \"node:fs/promises\";\nexport async function save(){ await rename(\"tmp\",\"final\"); }",
+      "src/caller.ts": "import { save } from \"./save\";\nexport async function publish(){ await save(); return \"ready\"; }"
+    },
+    "candidate": {
+      "src/save.ts": "import { rename } from \"node:fs/promises\";\nexport async function save(){ rename(\"tmp\",\"final\"); }"
+    }
+  },
+  "domain-modeling-implicit-route": {
+    "brief": "Identity owns Person with stable personId. Membership owns Enrollment with enrollmentId, personId, groupId, start and end; rejoining creates a new enrollment. Support calls a person “member”; operations means active enrollment. Provide a shared glossary and transition rules.",
+    "review": [
+      "Distinguishes identity and enrollment plus ownership",
+      "Defines active/end/rejoin transitions with stable person and new enrollment identity"
+    ]
+  },
+  "domain-modeling-nearest-non-trigger": {
+    "brief": "Approved checkout policy: unpaid reservation expires at deadline, server rejects charge, releases stock once, UI offers “Reserve again”. Use server acceptance time to resolve the deadline race.",
+    "review": [
+      "States observable expiry, retry action and no charge",
+      "Deals with server cutoff and idempotent stock release; gives testable outcomes"
+    ]
+  },
+  "human-writing-implicit-route": {
+    "brief": "Audience is an internal support team. Confirmed fact: the planned deployment is delayed one day. No cause, replacement date or workaround was approved. Deliver only the rewritten update as the artifact.",
+    "review": [
+      "Plain concise internal update states one-day delay",
+      "Avoids invented dates, causes, commitments or instructions"
+    ]
+  },
+  "human-writing-nearest-non-trigger": {
+    "brief": "Approved policy: inviter alone may cancel a pending invite. A canceled link shows “Invitation canceled” and cannot be accepted. If acceptance commits first, cancel returns already accepted; first committed transition wins. Produce acceptance criteria.",
+    "review": [
+      "Identifies actor, pending prerequisite and resulting link text/action",
+      "Specifies both commit order outcomes and testable authorization checks"
+    ]
+  },
+  "ops-browser-implicit-route": {
+    "brief": "Planning against this recorded synthetic DOM only: tab T8, /draft/9; main page button Save enabled; visible dialog role=dialog named Publish, only its Save has aria-disabled=true. Provide a read-only inspection plan.",
+    "review": [
+      "Binds tab, dialog and unique scoped Save",
+      "Checks disabled semantics without clicking or claiming a live observation"
+    ]
+  },
+  "ops-browser-nearest-non-trigger": {
+    "brief": "Planning from a recorded macOS Settings AX tree: app PID 88; window w2 titled Network is focused; w1 General is behind. Each window has an Advanced button. Provide read-only inspection steps.",
+    "review": [
+      "Anchors to the intended app and focused Network window",
+      "Verifies unique AX ancestry and role/name without operating either control"
+    ]
+  },
+  "ops-client-implicit-route": {
+    "brief": "Plan only. Recorded native AX context: app NotesDemo PID 26; selected AXTextField identifier titleInput, parent sheet Edit Note attached to window Document B (id 204); separate Document A (id 203). Explain how the live inspection would confirm ownership.",
+    "review": [
+      "Traverses parent sheet to window 204 and distinguishes window 203",
+      "Binds app and selected element; describes read-only confirmation without asserting live execution"
+    ]
+  },
+  "ops-client-nearest-non-trigger": {
+    "brief": "Read-only plan for tab T17 at https://fixture.invalid/settings, select id=region, option value=n title=North. Binding is from the supplied scenario; no live tab access is requested.",
+    "review": [
+      "Binds tab and target URL/select",
+      "Inspects live selected option/value rather than default attribute, checks uniqueness and avoids changing selection"
+    ]
+  },
+  "product-spec-implicit-route": {
+    "brief": "Product owner approved: only creator may withdraw a draft before submission; withdrawn remains visible in history and cannot be edited. At concurrent submit/withdraw, first committed transition wins. Return cases for user-visible outcomes.",
+    "review": [
+      "Covers creator versus other users, state cutoff and history visibility",
+      "Specifies read-only withdrawn state and both race outcomes"
+    ]
+  },
+  "product-spec-nearest-non-trigger": {
+    "brief": "Sales uses closed to mean contract terminated at term end; Billing owns that contract transition. Support uses closed to mean login disabled immediately; Identity owns that access transition. Either can happen independently. Return terms, ownership and lifecycle examples.",
+    "review": [
+      "Separates contract termination from login disablement with their owners",
+      "Models timing and independence, avoiding a single ambiguous closed flag"
+    ]
+  },
+  "repo-audit-implicit-route": {
+    "brief": "Scope: current src/components only. Inspect the renderers, cite concrete source and one targeted maintainability recommendation. Static inspection only.",
+    "review": [
+      "Names both duplicated tally/sidebar paths and shared markup",
+      "Explains a concrete drift risk and a scoped change or test without claiming runtime coverage"
+    ],
+    "files": {
+      "src/components/tally.ts": "export const renderTally = (count: number) => \"<aside>\"+count+\"</aside>\";\n",
+      "src/components/sidebar.ts": "export const sidebar = (count: number) => \"<aside>\"+count+\"</aside>\";\n"
+    }
+  },
+  "repo-audit-nearest-non-trigger": {
+    "brief": "The contract for empty input is an empty string. The immutable candidate is HEAD, baseline HEAD^; inspect that diff and the supplied caller. The requested output is the review itself. Include both the failing boundary and one unaffected normal-input control in the regression check.",
+    "review": [
+      "Locates empty-array trim failure and affected caller",
+      "Specifies original empty-string assertion and a nonempty control"
+    ],
+    "files": {
+      "src/first.ts": "export const first = (rows: string[]) => rows[0]?.trim() ?? \"\";",
+      "src/caller.ts": "import { first } from \"./first\";\nexport const initial = () => first([]);"
+    },
+    "candidate": {
+      "src/first.ts": "export const first = (rows: string[]) => rows[0].trim();"
+    }
+  },
+  "repo-delivery-implicit-route": {
+    "brief": "Only the unstaged docs/usage.md edit is approved for a local documentation commit. src/flag.ts has an unrelated unstaged edit; index should be empty. Prepare the plan against this checkout, without executing mutations.",
+    "review": [
+      "Freezes status/basis and scopes staging to docs/usage.md",
+      "Includes staged diff verification, independent source edit preservation and no actual mutation"
+    ],
+    "files": {
+      "docs/usage.md": "Use the status command.",
+      "src/flag.ts": "export const flag = false;"
+    },
+    "dirty": {
+      "docs/usage.md": "Use the status command before launch.",
+      "src/flag.ts": "export const flag = true;"
+    }
+  },
+  "repo-delivery-nearest-non-trigger": {
+    "brief": "Only docs/usage.md was approved for staging; unrelated files may be dirty. The immutable candidate is HEAD, baseline HEAD^; inspect that diff and the supplied caller. The requested output is the review itself.",
+    "review": [
+      "Identifies broader staging scope at changed script and unintended source inclusion",
+      "Proposes exact path and staged-path negative regression"
+    ],
+    "files": {
+      "scripts/stage.sh": "git add -- docs/usage.md",
+      "src/caller.ts": "// An unrelated source edit may be present when maintenance staging is called."
+    },
+    "candidate": {
+      "scripts/stage.sh": "git add -- ."
+    }
+  },
+  "repo-map-implicit-route": {
+    "brief": "Use the attached real fixed-snapshot scan, validation and query receipts for this fixture. A read-only query result has already been produced; bind it to this checkout and give component and test paths, identities and coverage.",
+    "review": [
+      "Binds supplied validated scan/query to current fixture basis",
+      "Identifies actual component and test paths and qualifies graph coverage, relations and runtime limits"
+    ],
+    "graph": true
+  },
+  "repo-map-nearest-non-trigger": {
+    "brief": "Inspect the current two tally/sidebar renderers in src/components. Report concrete duplication findings and line references without editing.",
+    "review": [
+      "Locates both identical renderer responsibilities",
+      "Explains impact and gives scoped recommendation with file evidence"
+    ],
+    "files": {
+      "src/components/tally.ts": "export const renderTally = (count: number) => \"<aside>\"+count+\"</aside>\";\n",
+      "src/components/sidebar.ts": "export const sidebar = (count: number) => \"<aside>\"+count+\"</aside>\";\n"
+    }
+  },
+  "repo-review-implicit-route": {
+    "brief": "Caller accepts records without name; empty string is the accepted display fallback. The immutable candidate is HEAD, baseline HEAD^; inspect that diff and the supplied caller. The requested output is the review itself. Include both the failing boundary and one unaffected normal-input control in the regression check.",
+    "review": [
+      "Identifies runtime failure from nonnull assertion on missing name and actual caller",
+      "Defines missing-name fallback test plus valid-name control"
+    ],
+    "files": {
+      "src/display.ts": "export const display = (r:{name?:string}) => r.name?.trim() ?? \"\";",
+      "src/caller.ts": "import { display } from \"./display\";\nexport const blank = () => display({});"
+    },
+    "candidate": {
+      "src/display.ts": "export const display = (r:{name?:string}) => r.name!.trim();"
+    }
+  },
+  "repo-review-nearest-non-trigger": {
+    "brief": "Inspect current styling and component ownership under src/components. Source-only audit. Shared banner markup is consumed by two panels; both own different values for the same global .banner rule.",
+    "review": [
+      "Identifies both competing stylesheet paths and global selector",
+      "Explains order-dependent impact and recommends a scoped or shared owner without claiming browser evidence"
+    ],
+    "files": {
+      "src/components/alerts.css": ".banner { padding: 8px; }",
+      "src/components/news.css": ".banner { padding: 20px; }",
+      "src/components/panels.ts": "export const alerts = () => \"<div class=banner>Alerts</div>\";\nexport const news = () => \"<div class=banner>News</div>\";"
+    }
+  },
+  "to-task-implicit-route": {
+    "brief": "Accepted export requirement CSV-04: current filtered rows, columns id,name, UTF-8, header-only for zero rows. API team owns export, web team owns download. Acceptance by QA on frozen rows. Task artifact requested in response only; no existing project ledger.",
+    "review": [
+      "Decomposes named API/web/QA work with dependencies and first ready task",
+      "Defines fixture-based checks for filter/columns/zero rows and resumable blocker or recovery point"
+    ]
+  },
+  "to-task-nearest-non-trigger": {
+    "brief": "Approved behavior: empty result is a successful CSV download with the id,name header and no data rows. Existing download-complete feedback remains unchanged. Export creates no records. Specify acceptance criteria.",
+    "review": [
+      "Correct header-only successful download and unchanged feedback",
+      "Verifiable zero records and no side effects; no invented message"
+    ]
+  },
+  "ui-spec-implicit-route": {
+    "brief": "Approved contract: search input and Search button. At 1280px they share a row, at 360px stack full width. Idle uses border token line; keyboard focus uses 2px focus token ring; disabled input/button cannot submit and uses muted token. Written visual handoff only.",
+    "review": [
+      "Covers both widths and dimensions/layout",
+      "Covers idle/focus/disabled tokens and keyboard/non-submit verification"
+    ]
+  },
+  "ui-spec-nearest-non-trigger": {
+    "brief": "Approved Vue 3 button: label Save, disabled via boolean busy prop, scoped .save:disabled opacity .5 and cursor not-allowed. Give only the minimal template, prop declaration and scoped style as response; no source changes.",
+    "review": [
+      "Provides usable Vue busy binding and Save label",
+      "Scoped disabled CSS implements both approved values without new UI"
+    ]
+  }
+}

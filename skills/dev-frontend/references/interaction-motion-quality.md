@@ -4,13 +4,15 @@
 
 - [Authority And Purpose](#authority-and-purpose)
 - [Implementation Checks](#implementation-checks)
+- [Multiline And Long Text](#multiline-and-long-text)
+- [Search Timing And Click Frequency](#search-timing-and-click-frequency)
 - [Interaction State And Admission](#interaction-state-and-admission)
 - [Validation](#validation)
 - [Shared Motion Policy And Overlay Lifetime](#shared-motion-policy-and-overlay-lifetime)
 
-Load this reference only when the authorized frontend change adds or changes motion,
-gesture behavior, transition ownership, or user-visible interaction feedback. Do not
-load it for every frontend edit or use it to redesign an approved surface.
+Use the applicable sections for changes to text input/readback, request or click
+timing, loading and other visible feedback, or motion, gestures and transitions.
+Do not load unrelated sections or use this reference to redesign an approved surface.
 
 ## Authority And Purpose
 
@@ -48,6 +50,43 @@ load it for every frontend edit or use it to redesign an approved surface.
 - Avoid animation-only wrappers when an existing semantic or state-owning element can
   own the same effect without changing layout, accessibility, or reuse boundaries.
 
+When loading or request feedback is applicable, reuse the project's public component
+and approved copy, placement and behavior for the relevant scope: whole page, region,
+or initiating action. Do not add a second spinner, overlay, wrapper or disabled state
+without an accepted need. Keep unrelated controls available unless the approved flow
+blocks them. Terminate pending state on the matching success, empty, failure or
+cancellation path; older work must not alter a newer request's feedback.
+
+## Multiline And Long Text
+
+- For each affected text field, use the project-owned input or textarea that matches
+  the accepted single-line or multiline behavior. Confirm limits and counting units
+  with the native contract; distinguish character, grapheme and byte limits where
+  they differ. Cover paste and IME composition; do not submit, search, count final
+  input or cut a composing character prematurely. Retain allowed line breaks and
+  spacing through edit, validation and save/readback. For unsupported content or excess
+  input, follow the approved handling and preserve recoverable input; do not silently
+  trim meaningful text or invent a limit.
+- Define display separately for each consumer. Detail and edit must keep all information
+  the task requires. Dense lists/cards may use approved wrapping, clamping or ellipsis;
+  specify where the full value can be reached when it is needed, including on touch
+  and keyboard. Do not depend on hover alone or truncate stored/transmitted values
+  to fit a preview. Check long unbroken strings and multiple lines at narrow widths
+  and large text sizes; avoid hiding adjacent actions or creating page overflow.
+
+## Search Timing And Click Frequency
+
+- Debounce typing-driven searches only where request cost or noise warrants it.
+  Use project timing and trigger rules; keep input echo immediate and honor the
+  approved explicit Search/Enter and clear behavior. Cancel or invalidate queued work
+  on clear or exit. Cancel or ignore older requests so neither a late result nor
+  a late error or loading transition can replace the current query's state.
+- Use click throttling only for an action whose repeated invocation is harmful;
+  keep its first valid activation immediate and scope it to that action/target.
+  Unrelated controls and legitimate independent actions remain usable. For writes,
+  use the shared synchronous admission guard described below and native idempotency
+  where required; a timer or loading appearance alone cannot prevent duplicate writes.
+
 ## Interaction State And Admission
 
 For affected controls, distinguish transient hover/press, visible keyboard focus,
@@ -55,6 +94,7 @@ persistent selection, business-disabled, and request-pending states. Preserve th
 existing component/library state owner and applicable semantics; a palette override
 or pointer cursor does not establish complete feedback across its variants.
 
+- Keep an authorized form submit action clickable before validation. On activation, validate required inputs and explain the first failure. Show loading throughout the request, suppress duplicate writes, complete the success flow, and on failure show feedback, retain inputs and restore the action. When a write outcome is uncertain, make status checks visible and safe to retry with the original request identity.
 - Trace every reachable activation path for an async write: click, native form submit,
   keyboard activation, and alternate retry/action entrypoints. When overlap would
   duplicate a side effect, admit synchronously at the shared handler owner before

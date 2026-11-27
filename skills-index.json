@@ -1024,7 +1024,7 @@
         "record an authorized browser interaction with native browser capture",
         "preserve a configurable unified or operation-mapped local-browser tab workspace",
         "continue already-authorized local browser acceptance after implementation",
-        "verify an existing frontend page with task-authorized contextual network Mock fallback and reusable local fixtures",
+        "verify an existing frontend page with explicitly authorized deterministic network Mock fixtures or contextual fallback",
         "verify web content and requests in a mobile browser on a bound device"
       ],
       "keywords": [
@@ -1461,13 +1461,12 @@
       "name": "dev-tests",
       "category": "repository-engineering",
       "owner": "dev-tests",
-      "mutation_class": "browser-control",
+      "mutation_class": "artifact-write",
       "required_capabilities": [
         "filesystem-read",
         "git-read",
         "artifact-write",
         "command-runner",
-        "browser-control",
         "visual-evidence"
       ],
       "allowed_effects": [
@@ -1476,12 +1475,12 @@
         "read-git-state",
         "write-artifact",
         "emit-findings",
-        "emit-handoff",
-        "control-browser-state"
+        "emit-handoff"
       ],
       "forbidden_effects": [
         "write-source",
         "write-git-state",
+        "control-browser-state",
         "control-client-state",
         "invoke-external-provider"
       ],
@@ -1501,11 +1500,13 @@
         "select impacted regression tests after contract or source changes",
         "plan and execute end-to-end functional acceptance across APIs, pages, UI, clicks and business logic",
         "run system testing and regression with correlated business-state evidence",
-        "report test coverage, defects, affected retests and cleanup"
+        "report test coverage, defects, affected retests and cleanup",
+        "summarize prior test receipts by original case ID and terminal outcome"
       ],
       "keywords": [
         "layered test coverage",
         "test acceptance matrix",
+        "测试回执",
         "backend tests",
         "API tests",
         "frontend page tests",
@@ -1513,6 +1514,9 @@
         "end-to-end tests",
         "E2E coverage",
         "regression tests",
+        "回归测试",
+        "边界测试用例",
+        "异常与竞态测试",
         "测试矩阵",
         "端到端测试",
         "分层测试",
@@ -3225,7 +3229,7 @@
       "capability_id": "api.contract.specify",
       "capability_version": "1.0.0",
       "package": "api-spec",
-      "description": "Specify native API wire contracts and validate their OpenAPI artifacts.",
+      "description": "Specify native API wire contracts; validate OpenAPI when adopted or explicitly requested.",
       "accepts": [
         {
           "schema": "urn:skills:api-request:v1",
@@ -3307,7 +3311,7 @@
     },
     {
       "capability_id": "test.acceptance.execute",
-      "capability_version": "1.0.0",
+      "capability_version": "2.0.0",
       "package": "dev-tests",
       "description": "Execute scoped functional acceptance and correlate API, page, UI, click and business-state evidence.",
       "accepts": [
@@ -3337,19 +3341,19 @@
         "TYPED_OUTPUT_EMITTED"
       ],
       "permission_contract": {
-        "maximum_mutation_class": "browser-control",
+        "maximum_mutation_class": "artifact-write",
         "maximum_effects": [
           "read-repository",
           "read-git-state",
           "read-source",
           "write-artifact",
-          "control-browser-state",
           "emit-findings",
           "emit-handoff"
         ],
         "forbidden_effects": [
           "write-source",
           "write-git-state",
+          "control-browser-state",
           "control-client-state",
           "invoke-external-provider"
         ],

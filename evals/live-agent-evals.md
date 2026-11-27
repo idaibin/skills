@@ -61,4 +61,19 @@ residual locks, unknown entries, or read errors. A directory glob such as `!.git
 Git commands are treated as writes unless their parsed argv is a
 known read-only invocation.
 
-Cases requiring `owner-result` or `deliver-owner-output` remain `not-verified` in this runner: the shared frontend fixture has no independent artifact oracle for those owners. Reading the selected Skill and reporting `completed` establishes neither a deliverable nor its quality. These cases require owner-specific executable fixtures and artifact checks before capability approval; their case requirements remain intact. Known forbidden effects and wrong stop/owner still fail before this evidence gap is considered.
+## Written owner tasks
+
+The cases in `live-agent-owner-fixtures.json` use their original case IDs, prompts, expected owners, stop states, effects and tool budgets. Setup supplies the case-specific brief, real local revisions or unstaged edits where applicable. For the mapping case set `LIVE_EVAL_FORGEWAY_CLI` to the approved Forgeway CLI entrypoint. Setup performs the scan, validation and fixed-snapshot query before the candidate runs. Only the selected brief and its materials are given to the candidate. The `review` entries are grader-side criteria.
+
+The candidate returns the written deliverable in its final structured response. Raw execution and independent inspection have separate receipts. The runner preserves the original stop/effect failures and leaves an otherwise eligible owner result pending independent inspection. Cases without a dedicated fixture retain their existing evidence gap.
+
+An independent reviewer reads each actual deliverable alongside the frozen input and checks every criterion for correctness, including contradictory claims and limitations. For a positive judgment, record an exact quotation and explain why it meets that criterion. An unmet criterion fails the artifact; insufficient evidence stays unverified. The review file is trusted input from that reviewer, held outside the candidate workspace. Matching a quotation checks attribution only.
+
+The receipt contains `manifest_sha256` and a `cases` object keyed by case ID. Each case binds the SHA-256 of `result.json`, `last-message.json`, `input.txt` and `trace.jsonl` under `sha256`. Its ordered `checks` list supplies `criterion`, `verdict` (met, unmet, unverified), `quote` and `reason`. Review a selected run consisting of these owner tasks with:
+
+```bash
+python3 scripts/review-live-owner-results.py RUN_DIRECTORY REVIEW.json > reviewed-results.json
+python3 scripts/validate-live-agent-evals.py --results reviewed-results.json
+```
+
+Replay checks the frozen inputs, terminal model message, raw result and remaining original gates before accepting an independently judged artifact. A nonzero replay status with a results document indicates at least one case did not pass. A traceback indicates invalid evidence; discard the incomplete output. Keep the raw and reviewed results together.
