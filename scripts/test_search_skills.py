@@ -39,6 +39,24 @@ class SearchSkillsTests(unittest.TestCase):
             self.assertEqual(SEARCH.search(index, query)[0]["capability_ids"], ["testing.coverage.verify"])
         self.assertIn("test.acceptance.execute", SEARCH.search(index, "设计测试用例，然后执行测试")[0]["capability_ids"])
 
+    def test_compound_test_capabilities(self):
+        index = SEARCH.load_index(ROOT)
+        design = "testing.coverage.verify"
+        execute = "test.acceptance.execute"
+        for request, expected in {
+            "设计测试用例并执行测试": {design, execute},
+            "设计测试用例，然后执行已有测试": {design, execute},
+            "设计测试用例，然后执行测试": {design, execute},
+            "设计边界测试用例并不执行已有测试": {design},
+            "不要执行已有测试，只设计测试用例": {design},
+            "不要设计测试用例，只执行已有测试": {execute},
+            "不设计测试用例，也不运行现有测试": set(),
+        }.items():
+            with self.subTest(request=request):
+                rows = SEARCH.search(index, "使用 dev-tests " + request)
+                self.assertEqual({cap for row in rows if row["name"] == "dev-tests"
+                                  for cap in row["capability_ids"]}, expected)
+
     def setUp(self) -> None:
         self.index = {
             "packages": [
