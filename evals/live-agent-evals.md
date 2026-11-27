@@ -63,7 +63,7 @@ known read-only invocation.
 
 ## Written owner tasks
 
-The 31 cases in `live-agent-owner-fixtures.json` use their original case IDs, prompts, expected owners, stop states, effects and tool budgets. Setup supplies the case-specific brief, real local revisions or unstaged edits where applicable. For the mapping case set `LIVE_EVAL_FORGEWAY_CLI` to the approved Forgeway CLI entrypoint. Setup performs the scan, validation and fixed-snapshot query before the candidate runs. Only the selected brief and its materials are given to the candidate. The `review` entries are grader-side criteria.
+The cases in `live-agent-owner-fixtures.json` use their original case IDs, prompts, expected owners, stop states, effects and tool budgets. Setup supplies the case-specific brief, real local revisions or unstaged edits where applicable. For the mapping case set `LIVE_EVAL_FORGEWAY_CLI` to the approved Forgeway CLI entrypoint. Setup performs the scan, validation and fixed-snapshot query before the candidate runs. Only the selected brief and its materials are given to the candidate. The `review` entries are grader-side criteria.
 
 The candidate returns the written deliverable in its final structured response. Raw execution and independent inspection have separate receipts. The runner preserves the original stop/effect failures and leaves an otherwise eligible owner result pending independent inspection. Cases without a dedicated fixture retain their existing evidence gap.
 

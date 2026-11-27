@@ -1,4 +1,12 @@
 {
+  "api-spec-implicit-route": {
+    "brief": "Return the requested draft in the response for the service owner to review.",
+    "review": [
+      "OpenAPI draft defines GET /health without authentication or inputs",
+      "HTTP 200 application/json response requires a boolean ready property",
+      "The artifact is a draft for owner review and makes no claim of runtime conformance"
+    ]
+  },
   "ask-ai-implicit-route": {
     "brief": "Support needs an evidence-based answer: SR-17 was requested, the only receipt says SR-71 passed. The internal ticket number is INTERNAL-491. Prepare a local, redacted second-opinion request.",
     "review": [
