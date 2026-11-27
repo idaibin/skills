@@ -1029,6 +1029,15 @@ def parse_delivery_intent(query: str) -> DeliveryIntent:
             ):
                 modality = "command"
             occurrence_context = occurrence_has_git_context(action, segment, occurrence)
+            if action == "commit" and modality == "mention" and re.fullmatch(
+                r"\s*(?:请\s*|先(?:查看|检查|核对|审查)(?:本地)?(?:改动|变更)(?:并截图)?[，,]\s*(?:再|然后|随后)\s*)"
+                r"(?:在\s*)?本地\s+commit(?:\s*[；;，,]\s*(?:同步远端更新[，,]\s*)?不推送)?[。.]?\s*",
+                query,
+                re.IGNORECASE,
+            ):
+                # A bounded mixed-language command; other contexts need explicit Git phrasing.
+                occurrence_context = True
+                modality = "command"
             if modality == "deny" and not re.search(
                 r"\b(?:database|db|transaction|button)\b",
                 occurrence_window(segment, occurrence)[0] + occurrence.group(0) + occurrence_window(segment, occurrence)[1],
@@ -1062,6 +1071,7 @@ def parse_delivery_intent(query: str) -> DeliveryIntent:
                 denied = (
                     any(negation in local for negation in CHINESE_NEGATION)
                     or "不能" in local
+                    or bool(re.search(r"不\s*$", segment[local_start:cjk_match.start()]))
                     or bool(CHINESE_APPROVAL_PENDING_RE.search(local))
                 )
                 explicit = bool(re.search(r"(?:你可以|允许你|授权你|已授权).{0,12}" + re.escape(term), local))

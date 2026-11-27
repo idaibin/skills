@@ -57,6 +57,26 @@ class SearchSkillsTests(unittest.TestCase):
                 self.assertEqual({cap for row in rows if row["name"] == "dev-tests"
                                   for cap in row["capability_ids"]}, expected)
 
+    def test_mixed_language_local_commit_keeps_push_denial(self):
+        prompt = "先检查改动并截图，再在本地 commit；同步远端更新，不推送"
+        plan = SEARCH.parse_delivery_intent(prompt)
+        self.assertTrue(plan.authorized)
+        self.assertEqual(
+            [("commit", "command", True), ("push", "deny", True)],
+            [(event.action, event.modality, event.context) for event in plan.events],
+        )
+        for negative in ("先检查本地 commit", "不在本地 commit", "查一下本地 commit 是否完成",
+                         "请推送这个分支；不推送", "请提交代码；先不提交",
+                         "仅记录计划：本地 commit；不要实际执行",
+                         "有哪些方式：本地 commit；不推送",
+                         "需要确认后才能操作：本地 commit；我目前未授权",
+                         "先记录拟执行步骤，然后本地 commit；我目前未授权",
+                         "先检查改动，再在本地 commit。只做方案，我没有授权。",
+                         "请在本地 commit；先不要执行任何 Git 操作",
+                         "请在本地 commit?"):
+            with self.subTest(prompt=negative):
+                self.assertFalse(SEARCH.parse_delivery_intent(negative).authorized)
+
     def setUp(self) -> None:
         self.index = {
             "packages": [
