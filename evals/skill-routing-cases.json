@@ -921,6 +921,38 @@
       "prompt": "Verify the existing browser page with Playwright against the Drawer padding, scroll, and non-modal keyboard contract.",
       "expected_owner": "ops-browser",
       "expected_outcome": "route"
+    },
+    {
+      "id": "zh-regression",
+      "skill": "dev-tests",
+      "class": "normal",
+      "prompt": "回归测试",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "route"
+    },
+    {
+      "id": "zh-business-submit",
+      "skill": "repo-delivery",
+      "class": "boundary",
+      "prompt": "测试重复提交与超时恢复",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "zh-api-test-design",
+      "skill": "api-spec",
+      "class": "boundary",
+      "prompt": "为这个接口设计边界测试用例",
+      "expected_owner": "dev-tests",
+      "expected_outcome": "reroute"
+    },
+    {
+      "id": "zh-api-without-tests",
+      "skill": "dev-tests",
+      "class": "boundary",
+      "prompt": "只设计 API 契约，不执行测试",
+      "expected_owner": "api-spec",
+      "expected_outcome": "reroute"
     }
   ]
 }

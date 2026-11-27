@@ -18,6 +18,27 @@ SPEC.loader.exec_module(SEARCH)
 
 
 class SearchSkillsTests(unittest.TestCase):
+    def test_chinese_test_and_contract_candidates(self) -> None:
+        index = SEARCH.load_index(ROOT)
+        for query, owners in {
+            "测试重复提交与超时恢复": ["dev-tests"],
+            "回归测试": ["dev-tests"],
+            "为这个接口设计边界测试用例": ["dev-tests"],
+            "只设计 API 契约，不执行测试": ["api-spec"],
+            "帮我测试当前改动": ["dev-tests"],
+            "不要提交代码，只做测试": ["dev-tests"],
+            "提交当前代码到 Git": ["repo-delivery"],
+            "请设计 API 契约": ["api-spec"],
+            "测试当前仓库的重复提交": ["dev-tests"],
+            "不要做回归测试": [],
+            "测试提交代码时的超时恢复": ["dev-tests"],
+        }.items():
+            with self.subTest(query=query):
+                self.assertEqual([item["name"] for item in SEARCH.search(index, query)], owners)
+        for query in ("为这个接口设计边界测试用例", "设计测试用例，不执行测试"):
+            self.assertEqual(SEARCH.search(index, query)[0]["capability_ids"], ["testing.coverage.verify"])
+        self.assertIn("test.acceptance.execute", SEARCH.search(index, "设计测试用例，然后执行测试")[0]["capability_ids"])
+
     def setUp(self) -> None:
         self.index = {
             "packages": [
